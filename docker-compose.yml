@@ -1,0 +1,49 @@
+# Root docker-compose.yml
+version: '3.8'
+
+services:
+  backend:
+    container_name: atria-api
+    build:
+      context: ./backend/atria
+      dockerfile: Dockerfile
+    command: gunicorn -b 0.0.0.0:5000 api.wsgi:app
+    ports:
+      - '${BACKEND_PORT:-5000}:5000'
+    volumes:
+      - ./backend/atria:/app
+    env_file:
+      - .env
+      - ./backend/atria/.flaskenv
+    depends_on:
+      - db
+
+  frontend:
+    container_name: atria-client
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - '${FRONTEND_PORT:-5173}:5173'
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:5000/api
+    depends_on:
+      - backend
+
+  db:
+    container_name: atria-db
+    image: postgres:15-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    ports:
+      - '${POSTGRES_PORT:-5432}:5432'
+
+volumes:
+  postgres_data:

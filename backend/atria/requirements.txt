@@ -1,0 +1,16 @@
+marshmallow>=3
+flask
+flask-restful
+flask-migrate
+flask-sqlalchemy
+flask-marshmallow
+flask-jwt-extended
+marshmallow-sqlalchemy
+python-dotenv
+passlib
+apispec[yaml]
+apispec-webframeworks
+tox
+celery[redis]>=5.0.0
+gunicorn
+psycopg2-binary

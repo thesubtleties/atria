@@ -1,0 +1,9 @@
+default_context:
+    project_name: "atria"
+    app_name: "api"
+    python_version: "3.8"
+    admin_user_username: "admin"
+    admin_user_email: "steven@sbtl.ai"
+    admin_user_password: "password"
+    use_celery: "yes"
+    wsgi_server: "gunicorn"

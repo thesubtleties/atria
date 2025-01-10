@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+venv/
+*.so
+.env
+.env.*
+!.env.example
+
+# Node
+node_modules/
+dist/
+.DS_Store
+*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Docker
+postgres_data/
