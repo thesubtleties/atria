@@ -1,24 +1,37 @@
 """Default configuration
-
 Use env var to override
 """
 
 import os
+from datetime import timedelta
 
 ENV = os.getenv("FLASK_ENV", "development")
 DEBUG = ENV == "development"
 SECRET_KEY = os.getenv("SECRET_KEY", "changeme")
 
-# Update to use SQLALCHEMY_DATABASE_URI from .flaskenv
+# Database settings
 SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI")
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-# JWT settings (since we're using JWT)
+# JWT settings
 JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "jwt-secret-key")
-JWT_ACCESS_TOKEN_EXPIRES = 3600  # 1 hour
+JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
 
-# Remove CELERY config since we're not using it
-# CELERY = {
-#     "broker_url": os.getenv("CELERY_BROKER_URL"),
-#     "result_backend": os.getenv("CELERY_RESULT_BACKEND_URL"),
-# }
+# Swagger UI settings
+APISPEC_SWAGGER_URL = "/swagger.json"  # Where to serve swagger.json
+APISPEC_SWAGGER_UI_URL = "/swagger-ui"  # Where to serve swagger UI
+APISPEC_SPEC = {
+    "info": {
+        "title": "Atria API",
+        "version": "1.0.0",
+        "description": "API documentation for Atria",
+    },
+    "securityDefinitions": {
+        "Bearer": {
+            "type": "apiKey",
+            "in": "header",
+            "name": "Authorization",
+            "description": "Enter: **'Bearer &lt;JWT&gt;'**, where JWT is the access token",
+        }
+    },
+}

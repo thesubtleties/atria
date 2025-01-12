@@ -1,14 +1,60 @@
-from api.models import User
+# api/api/schemas/user.py
 from api.extensions import ma, db
+from api.models import User
+from marshmallow import validates, ValidationError
 
 
 class UserSchema(ma.SQLAlchemyAutoSchema):
-
-    id = ma.Int(dump_only=True)
-    password = ma.String(load_only=True, required=True)
+    """Base User Schema"""
 
     class Meta:
         model = User
-        sqla_session = db.session
         load_instance = True
-        exclude = ("_password",)
+        sqla_session = db.session
+        exclude = ("_password",)  # Don't expose password hash
+
+    # Computed Properties
+    full_name = ma.String(dump_only=True)
+
+
+class UserDetailSchema(UserSchema):
+    """Detailed User Schema with relationships"""
+
+    organizations = ma.Nested(
+        "OrganizationSchema", many=True, only=("id", "name")
+    )
+    events = ma.Nested(
+        "EventSchema", many=True, only=("id", "title", "start_date")
+    )
+    speaking_sessions = ma.Nested(
+        "SessionSchema", many=True, only=("id", "title")
+    )
+
+
+class UserCreateSchema(ma.Schema):
+    """Schema for user creation"""
+
+    email = ma.Email(required=True)
+    password = ma.String(required=True, load_only=True)
+    first_name = ma.String(required=True)
+    last_name = ma.String(required=True)
+    company_name = ma.String()
+    title = ma.String()
+    bio = ma.String()
+
+    @validates("password")
+    def validate_password(self, value):
+        if len(value) < 8:
+            raise ValidationError("Password must be at least 8 characters")
+
+
+class UserUpdateSchema(ma.Schema):
+    """Schema for user updates"""
+
+    first_name = ma.String()
+    last_name = ma.String()
+    company_name = ma.String()
+    title = ma.String()
+    bio = ma.String()
+    image_url = ma.URL()
+    social_links = ma.Dict()

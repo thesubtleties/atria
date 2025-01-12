@@ -14,6 +14,7 @@ like a redis or a memcached server.
 This example is heavily inspired by
 https://github.com/vimalloc/flask-jwt-extended/blob/master/examples/blocklist_database.py
 """
+
 from api.extensions import db
 
 
@@ -23,7 +24,9 @@ class TokenBlocklist(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     jti = db.Column(db.String(36), nullable=False, unique=True)
     token_type = db.Column(db.String(10), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    user_id = db.Column(
+        db.BigInteger, db.ForeignKey("users.id"), nullable=False
+    )
     revoked = db.Column(db.Boolean, nullable=False)
     expires = db.Column(db.DateTime, nullable=False)
 

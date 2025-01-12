@@ -14,3 +14,4 @@ tox
 celery[redis]>=5.0.0
 gunicorn
 psycopg2-binary
+python-slugify==8.0.1

@@ -1,21 +1,25 @@
+# api/api/resources/user.py
 from flask import request
 from flask_restful import Resource
-from flask_jwt_extended import jwt_required
-from api.api.schemas import UserSchema
-from api.models import User
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from api.extensions import db
-from api.commons.pagination import paginate
+from api.models import User
+from api.api.schemas import (
+    UserSchema,
+    UserDetailSchema,
+    UserCreateSchema,
+    UserUpdateSchema,
+)
 
 
 class UserResource(Resource):
-    """Single object resource
-
+    """
+    Single user operations
     ---
     get:
       tags:
-        - api
-      summary: Get a user
-      description: Get a single user by ID
+        - users
+      summary: Get user details
       parameters:
         - in: path
           name: user_id
@@ -25,17 +29,11 @@ class UserResource(Resource):
         200:
           content:
             application/json:
-              schema:
-                type: object
-                properties:
-                  user: UserSchema
-        404:
-          description: user does not exists
+              schema: UserDetailSchema
     put:
       tags:
-        - api
-      summary: Update a user
-      description: Update a single user by ID
+        - users
+      summary: Update user
       parameters:
         - in: path
           name: user_id
@@ -44,126 +42,106 @@ class UserResource(Resource):
       requestBody:
         content:
           application/json:
-            schema:
-              UserSchema
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  msg:
-                    type: string
-                    example: user updated
-                  user: UserSchema
-        404:
-          description: user does not exists
-    delete:
-      tags:
-        - api
-      summary: Delete a user
-      description: Delete a single user by ID
-      parameters:
-        - in: path
-          name: user_id
-          schema:
-            type: integer
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  msg:
-                    type: string
-                    example: user deleted
-        404:
-          description: user does not exists
+            schema: UserUpdateSchema
     """
 
-    method_decorators = [jwt_required()]
-
+    @jwt_required()
     def get(self, user_id):
-        schema = UserSchema()
         user = User.query.get_or_404(user_id)
-        return {"user": schema.dump(user)}
+        return UserDetailSchema().dump(user)
 
+    @jwt_required()
     def put(self, user_id):
-        schema = UserSchema(partial=True)
+        # Only allow users to edit their own profile
+        current_user_id = get_jwt_identity()
+        if current_user_id != user_id:
+            return {"message": "Not authorized"}, 403
+
         user = User.query.get_or_404(user_id)
-        user = schema.load(request.json, instance=user)
-
+        user = UserUpdateSchema().load(
+            request.json, instance=user, partial=True
+        )
         db.session.commit()
-
-        return {"msg": "user updated", "user": schema.dump(user)}
-
-    def delete(self, user_id):
-        user = User.query.get_or_404(user_id)
-        db.session.delete(user)
-        db.session.commit()
-
-        return {"msg": "user deleted"}
+        return UserDetailSchema().dump(user)
 
 
 class UserList(Resource):
-    """Creation and get_all
-
+    """
+    User list operations
     ---
     get:
       tags:
-        - api
-      summary: Get a list of users
-      description: Get a list of paginated users
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/PaginatedResult'
-                  - type: object
-                    properties:
-                      results:
-                        type: array
-                        items:
-                          $ref: '#/components/schemas/UserSchema'
+        - users
+      summary: List users
+      parameters:
+        - in: query
+          name: organization_id
+          schema:
+            type: integer
+          description: Filter by organization
+        - in: query
+          name: event_id
+          schema:
+            type: integer
+          description: Filter by event
     post:
       tags:
-        - api
-      summary: Create a user
-      description: Create a new user
+        - users
+      summary: Create user
       requestBody:
         content:
           application/json:
-            schema:
-              UserSchema
-      responses:
-        201:
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  msg:
-                    type: string
-                    example: user created
-                  user: UserSchema
+            schema: UserCreateSchema
     """
 
-    method_decorators = [jwt_required()]
-
+    @jwt_required()
     def get(self):
         schema = UserSchema(many=True)
         query = User.query
-        return paginate(query, schema)
+
+        # Add filters
+        org_id = request.args.get("organization_id", type=int)
+        event_id = request.args.get("event_id", type=int)
+
+        if org_id:
+            query = query.join(User.organization_users).filter_by(
+                organization_id=org_id
+            )
+        if event_id:
+            query = query.join(User.event_users).filter_by(event_id=event_id)
+
+        return schema.dump(query.all())
 
     def post(self):
-        schema = UserSchema()
+        schema = UserCreateSchema()
         user = schema.load(request.json)
-
         db.session.add(user)
         db.session.commit()
+        return UserSchema().dump(user), 201
 
-        return {"msg": "user created", "user": schema.dump(user)}, 201
+
+# Additional resources for specific user operations
+class UserEventsResource(Resource):
+    """Get user's events"""
+
+    @jwt_required()
+    def get(self, user_id):
+        user = User.query.get_or_404(user_id)
+        role = request.args.get("role")  # Optional role filter
+
+        if role:
+            events = user.get_events_by_role(role)
+        else:
+            events = user.events
+
+        return {"events": EventSchema(many=True).dump(events)}
+
+
+class UserSessionsResource(Resource):
+    """Get user's speaking sessions"""
+
+    @jwt_required()
+    def get(self, user_id):
+        user = User.query.get_or_404(user_id)
+        sessions = user.get_speaking_sessions()
+        return {"sessions": SessionSchema(many=True).dump(sessions)}
