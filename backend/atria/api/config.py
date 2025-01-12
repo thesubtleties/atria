@@ -16,7 +16,8 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 # JWT settings
 JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "jwt-secret-key")
 JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
-
+JWT_JSON_KEY = "id"  # This tells JWT to expect an integer ID
+JWT_IDENTITY_CLAIM = "id"  # This configures the identity claim
 # Swagger UI settings
 APISPEC_SWAGGER_URL = "/swagger.json"  # Where to serve swagger.json
 APISPEC_SWAGGER_UI_URL = "/swagger-ui"  # Where to serve swagger UI

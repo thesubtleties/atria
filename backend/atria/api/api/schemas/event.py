@@ -78,7 +78,7 @@ class EventCreateSchema(ma.Schema):
 
     # Optional fields
     description = ma.String()
-    status = ma.Enum(EventStatus, load_default="draft")
+    status = ma.Enum(EventStatus, load_default=EventStatus.DRAFT)
     branding = ma.Dict(
         load_default={
             "primary_color": "#000000",

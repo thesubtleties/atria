@@ -7,7 +7,6 @@ services:
     build:
       context: ./backend/atria
       dockerfile: Dockerfile
-    command: gunicorn -b 0.0.0.0:5000 api.wsgi:app
     ports:
       - '${BACKEND_PORT:-5000}:5000'
     volumes:

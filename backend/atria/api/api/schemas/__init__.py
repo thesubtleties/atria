@@ -11,25 +11,46 @@ from api.api.schemas.event import (
     EventDetailSchema,
     EventCreateSchema,
     EventUpdateSchema,
+    EventBrandingSchema,
 )
 from api.api.schemas.session import (
     SessionSchema,
     SessionDetailSchema,
     SessionCreateSchema,
     SessionUpdateSchema,
+    SessionTimesUpdateSchema,
+    SessionStatusUpdateSchema,
 )
 from api.api.schemas.organization import (
     OrganizationSchema,
     OrganizationDetailSchema,
+    OrganizationCreateSchema,
+    OrganizationUpdateSchema,
 )
-from api.api.schemas.event_user import EventUserSchema, EventUserDetailSchema
+from api.api.schemas.event_user import (
+    EventUserSchema,
+    EventUserDetailSchema,
+    EventUserCreateSchema,
+    EventUserUpdateSchema,
+    SpeakerInfoUpdateSchema,
+)
 from api.api.schemas.organization_user import (
     OrganizationUserSchema,
     OrganizationUserDetailSchema,
+    OrganizationUserCreateSchema,
+    OrganizationUserUpdateSchema,
 )
 from api.api.schemas.session_speaker import (
     SessionSpeakerSchema,
     SessionSpeakerDetailSchema,
+    SessionSpeakerCreateSchema,
+    SessionSpeakerUpdateSchema,
+    SpeakerReorderSchema,
+)
+
+from api.api.schemas.auth import (
+    LoginSchema,
+    SignupSchema,
 )
 
 __all__ = [
@@ -43,19 +64,35 @@ __all__ = [
     "EventDetailSchema",
     "EventCreateSchema",
     "EventUpdateSchema",
+    "EventBrandingSchema",
     # Session schemas
     "SessionSchema",
     "SessionDetailSchema",
     "SessionCreateSchema",
     "SessionUpdateSchema",
+    "SessionTimesUpdateSchema",
+    "SessionStatusUpdateSchema",
     # Organization schemas
     "OrganizationSchema",
     "OrganizationDetailSchema",
+    "OrganizationCreateSchema",
+    "OrganizationUpdateSchema",
     # Junction table schemas
     "EventUserSchema",
     "EventUserDetailSchema",
+    "EventUserCreateSchema",
+    "EventUserUpdateSchema",
     "OrganizationUserSchema",
     "OrganizationUserDetailSchema",
+    "OrganizationUserCreateSchema",
+    "OrganizationUserUpdateSchema",
     "SessionSpeakerSchema",
     "SessionSpeakerDetailSchema",
+    "SessionSpeakerCreateSchema",
+    "SessionSpeakerUpdateSchema",
+    "SpeakerReorderSchema",
+    "SpeakerInfoUpdateSchema",
+    # Auth schemas
+    "LoginSchema",
+    "SignupSchema",
 ]

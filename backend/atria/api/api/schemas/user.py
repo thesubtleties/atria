@@ -21,13 +21,29 @@ class UserDetailSchema(UserSchema):
     """Detailed User Schema with relationships"""
 
     organizations = ma.Nested(
-        "OrganizationSchema", many=True, only=("id", "name")
+        "OrganizationSchema",
+        many=True,
+        only=(
+            "id",
+            "name",
+        ),
     )
     events = ma.Nested(
-        "EventSchema", many=True, only=("id", "title", "start_date")
+        "EventSchema",
+        many=True,
+        only=(
+            "id",
+            "title",
+            "start_date",
+        ),
     )
     speaking_sessions = ma.Nested(
-        "SessionSchema", many=True, only=("id", "title")
+        "SessionSchema",
+        many=True,
+        only=(
+            "id",
+            "title",
+        ),
     )
 
 

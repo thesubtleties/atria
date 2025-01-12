@@ -4,6 +4,7 @@ from api.models.enums import SessionType, SessionStatus, SessionSpeakerRole
 from marshmallow import validates, ValidationError
 
 
+# api/api/schemas/session.py
 class SessionSchema(ma.SQLAlchemyAutoSchema):
     """Base Session Schema"""
 
@@ -11,6 +12,8 @@ class SessionSchema(ma.SQLAlchemyAutoSchema):
         model = Session
         sqla_session = db.session
         include_fk = True
+        # Exclude the speakers relationship from base schema
+        exclude = ("speakers",)
 
     # Computed Properties
     duration_minutes = ma.Integer(dump_only=True)
@@ -32,7 +35,7 @@ class SessionDetailSchema(SessionSchema):
         dump_only=True,
     )
 
-    # Include speakers with roles
+    # Add speakers here instead
     speakers = ma.Nested(
         "UserSchema",
         many=True,
@@ -42,7 +45,7 @@ class SessionDetailSchema(SessionSchema):
             "title",
             "company_name",
             "image_url",
-            "session_speakers.role",  # Include speaker role
+            "session_speakers.role",
         ),
         dump_only=True,
     )

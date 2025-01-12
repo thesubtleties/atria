@@ -27,12 +27,17 @@ class SessionSpeakerDetailSchema(SessionSpeakerSchema):
 
     session = ma.Nested(
         "SessionSchema",
-        only=("id", "title", "start_time", "end_time"),
+        only=(
+            "id",
+            "title",
+            "start_time",
+            "end_time",
+        ),
         dump_only=True,
     )
     user = ma.Nested(
         "UserSchema",
-        only=("bio"),
+        only=("bio",),
         dump_only=True,
     )
 

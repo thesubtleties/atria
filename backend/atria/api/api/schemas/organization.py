@@ -11,6 +11,10 @@ class OrganizationSchema(ma.SQLAlchemyAutoSchema):
         model = Organization
         sqla_session = db.session
         include_fk = True
+        exclude = (
+            "organization_users",
+            "users",
+        )
 
     owners = ma.Nested(
         "UserSchema",
@@ -23,7 +27,7 @@ class OrganizationSchema(ma.SQLAlchemyAutoSchema):
 class OrganizationDetailSchema(OrganizationSchema):
     """Detailed Organization Schema with relationships"""
 
-    # Add computed properties
+    # Computed properties
     member_count = ma.Integer(dump_only=True)
     owner_count = ma.Integer(dump_only=True)
 
@@ -31,7 +35,12 @@ class OrganizationDetailSchema(OrganizationSchema):
     users = ma.Nested(
         "UserSchema",
         many=True,
-        only=("id", "full_name", "email", "organization_users.role"),
+        only=(
+            "id",
+            "full_name",
+            "email",
+            "organization_users.role",
+        ),
         dump_only=True,
     )
 
@@ -39,7 +48,12 @@ class OrganizationDetailSchema(OrganizationSchema):
     upcoming_events = ma.Nested(
         "EventSchema",
         many=True,
-        only=("id", "title", "start_date", "status"),
+        only=(
+            "id",
+            "title",
+            "start_date",
+            "status",
+        ),
         dump_only=True,
     )
 
