@@ -38,6 +38,7 @@ class User(db.Model):
         "OrganizationUser",
         back_populates="user",
         overlaps="organizations,users",
+        cascade="all, delete-orphan",
     )
     events = db.relationship(
         "Event",
@@ -46,7 +47,10 @@ class User(db.Model):
         overlaps="event_users",
     )
     event_users = db.relationship(
-        "EventUser", back_populates="user", overlaps="events,users"
+        "EventUser",
+        back_populates="user",
+        overlaps="events,users",
+        cascade="all, delete-orphan",
     )
     speaking_sessions = db.relationship(
         "Session",
@@ -55,7 +59,10 @@ class User(db.Model):
         overlaps="session_speakers",
     )
     session_speakers = db.relationship(
-        "SessionSpeaker", back_populates="user", overlaps="speakers"
+        "SessionSpeaker",
+        back_populates="user",
+        overlaps="speakers",
+        cascade="all, delete-orphan",
     )
 
     @hybrid_property

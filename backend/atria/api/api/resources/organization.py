@@ -10,6 +10,7 @@ from api.api.schemas import (
     OrganizationCreateSchema,
     OrganizationUpdateSchema,
 )
+from api.commons.decorators import org_admin_required, org_member_required
 
 
 class OrganizationResource(Resource):
@@ -75,38 +76,29 @@ class OrganizationResource(Resource):
     """
 
     @jwt_required()
+    @org_member_required()
     def get(self, org_id):
         """Get organization details"""
-        # Get current user for permission check
-        current_user_id = get_jwt_identity()
-        current_user = User.query.get_or_404(current_user_id)
-
         # Get organization
         org = Organization.query.get_or_404(org_id)
-
-        # Check if user is member of organization
-        if not org.has_user(current_user):
-            return {"message": "Not a member of this organization"}, 403
 
         # Return detailed organization info
         return OrganizationDetailSchema().dump(org)
 
     @jwt_required()
+    @org_admin_required()
     def put(self, org_id):
         """Update organization"""
-        current_user_id = get_jwt_identity()
-        current_user = User.query.get_or_404(current_user_id)
+        org = Organization.query.get(org_id)
 
-        org = Organization.query.get_or_404(org_id)
+        # Validate the data
+        schema = OrganizationUpdateSchema()
+        data = schema.load(request.json, partial=True)
 
-        # Check if user is admin/owner
-        if not current_user.is_org_admin(org_id):
-            return {"message": "Must be admin to update organization"}, 403
+        # Update org manually
+        for key, value in data.items():
+            setattr(org, key, value)
 
-        # Update organization
-        org = OrganizationUpdateSchema().load(
-            request.json, instance=org, partial=True
-        )
         db.session.commit()
 
         return OrganizationDetailSchema().dump(org)

@@ -73,8 +73,8 @@ class SignupResource(Resource):
         db.session.commit()
 
         # Generate tokens for automatic login after signup
-        access_token = create_access_token(identity=user.id)
-        refresh_token = create_refresh_token(identity=user.id)
+        access_token = create_access_token(identity=str(user.id))
+        refresh_token = create_refresh_token(identity=str(user.id))
 
         return {
             "message": "User created successfully",
@@ -126,8 +126,8 @@ class LoginResource(Resource):
             return {"message": "Invalid email or password"}, 401
 
         # Generate new tokens
-        access_token = create_access_token(identity=user.id)
-        refresh_token = create_refresh_token(identity=user.id)
+        access_token = create_access_token(identity=str(user.id))
+        refresh_token = create_refresh_token(identity=str(user.id))
 
         return {"access_token": access_token, "refresh_token": refresh_token}
 
@@ -203,7 +203,13 @@ class LogoutResource(Resource):
         user_id = get_jwt_identity()
 
         # Add token to blocklist so it can't be used again
-        token = TokenBlocklist(jti=jti, user_id=user_id)
+        token = TokenBlocklist(
+            jti=jti,
+            token_type=token["type"],
+            user_id=user_id,
+            revoked=True,
+            expires=datetime.fromtimestamp(token["exp"]),
+        )
         db.session.add(token)
         db.session.commit()
 

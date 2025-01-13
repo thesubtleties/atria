@@ -12,6 +12,11 @@ from api.api.schemas import (
     SessionStatusUpdateSchema,
 )
 from api.commons.pagination import paginate
+from api.commons.decorators import (
+    event_member_required,
+    event_organizer_required,
+    session_access_required,
+)
 
 
 class SessionList(Resource):
@@ -61,15 +66,9 @@ class SessionList(Resource):
     """
 
     @jwt_required()
+    @event_member_required()
     def get(self, event_id):
         """Get event's sessions"""
-        current_user_id = get_jwt_identity()
-        event = Event.query.get_or_404(event_id)
-
-        # Check if user has access to event
-        if not event.has_user(User.query.get(current_user_id)):
-            return {"message": "Not authorized to view this event"}, 403
-
         # Build query
         query = Session.query.filter_by(event_id=event_id)
 
@@ -81,23 +80,20 @@ class SessionList(Resource):
         # Order by start time
         query = query.order_by(Session.start_time)
 
-        return paginate(query, SessionSchema(many=True))
+        return paginate(
+            query, SessionSchema(many=True), collection_name="sessions"
+        )
 
     @jwt_required()
+    @event_organizer_required()
     def post(self, event_id):
         """Create new session"""
-        current_user_id = get_jwt_identity()
-        event = Event.query.get_or_404(event_id)
-
-        # Check if user can edit event
-        if not event.can_user_edit(User.query.get(current_user_id)):
-            return {"message": "Not authorized to create sessions"}, 403
-
         # Validate and create session
         schema = SessionCreateSchema()
         data = schema.load(request.json)
 
-        session = Session(**data)
+        # Make sure session is associated with event
+        session = Session(event_id=event_id, **data)
 
         # Validate session times against event dates
         try:
@@ -153,32 +149,22 @@ class SessionResource(Resource):
     """
 
     @jwt_required()
+    @session_access_required()
     def get(self, session_id):
         """Get session details"""
-        current_user_id = get_jwt_identity()
         session = Session.query.get_or_404(session_id)
-
-        # Check if user has access to event
-        if not session.event.has_user(User.query.get(current_user_id)):
-            return {"message": "Not authorized to view this session"}, 403
 
         return SessionDetailSchema().dump(session)
 
     @jwt_required()
+    @event_organizer_required()
     def put(self, session_id):
         """Update session"""
-        current_user_id = get_jwt_identity()
         session = Session.query.get_or_404(session_id)
 
-        # Check if user can edit event
-        if not session.event.can_user_edit(User.query.get(current_user_id)):
-            return {"message": "Not authorized to update session"}, 403
-
-        # Update session
         schema = SessionUpdateSchema()
         session = schema.load(request.json, instance=session, partial=True)
 
-        # Validate times if updating them
         if "start_time" in request.json or "end_time" in request.json:
             try:
                 session.validate_times()
@@ -190,14 +176,10 @@ class SessionResource(Resource):
         return SessionDetailSchema().dump(session)
 
     @jwt_required()
+    @event_organizer_required()
     def delete(self, session_id):
         """Delete session"""
-        current_user_id = get_jwt_identity()
         session = Session.query.get_or_404(session_id)
-
-        # Check if user can edit event
-        if not session.event.can_user_edit(User.query.get(current_user_id)):
-            return {"message": "Not authorized to delete session"}, 403
 
         db.session.delete(session)
         db.session.commit()
@@ -226,14 +208,10 @@ class SessionStatusResource(Resource):
     """
 
     @jwt_required()
+    @event_organizer_required()
     def put(self, session_id):
         """Update session status"""
-        current_user_id = get_jwt_identity()
         session = Session.query.get_or_404(session_id)
-
-        # Check if user can edit event
-        if not session.event.can_user_edit(User.query.get(current_user_id)):
-            return {"message": "Not authorized to update session"}, 403
 
         schema = SessionStatusUpdateSchema()
         data = schema.load(request.json)
@@ -265,14 +243,10 @@ class SessionTimesResource(Resource):
     """
 
     @jwt_required()
+    @event_organizer_required()
     def put(self, session_id):
         """Update session times"""
-        current_user_id = get_jwt_identity()
         session = Session.query.get_or_404(session_id)
-
-        # Check if user can edit event
-        if not session.event.can_user_edit(User.query.get(current_user_id)):
-            return {"message": "Not authorized to update session"}, 403
 
         schema = SessionTimesUpdateSchema()
         data = schema.load(request.json)

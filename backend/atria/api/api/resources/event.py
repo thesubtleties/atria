@@ -12,6 +12,13 @@ from api.api.schemas import (
     EventBrandingSchema,
 )
 from api.commons.pagination import paginate
+from api.commons.decorators import (
+    event_organizer_required,
+    event_member_required,
+    org_admin_required,
+    org_member_required,
+    event_admin_required,
+)
 
 
 class EventList(Resource):
@@ -62,42 +69,30 @@ class EventList(Resource):
     """
 
     @jwt_required()
+    @org_member_required()
     def get(self, org_id):
         """Get organization's events"""
-        # Check org exists and user has access
-        current_user_id = get_jwt_identity()
-        org = Organization.query.get_or_404(org_id)
-
-        if not org.has_user(User.query.get(current_user_id)):
-            return {"message": "Not a member of this organization"}, 403
-
-        # Build query
         query = Event.query.filter_by(organization_id=org_id)
-
-        # Use pagination helper
-        return paginate(query, EventSchema(many=True))
+        return paginate(
+            query, EventSchema(many=True), collection_name="events"
+        )
 
     @jwt_required()
+    @org_admin_required()
     def post(self, org_id):
         """Create new event"""
-        current_user_id = get_jwt_identity()
+        current_user_id = int(get_jwt_identity())
         current_user = User.query.get_or_404(current_user_id)
-        org = Organization.query.get_or_404(org_id)
 
-        # Must be admin to create events
-        if not current_user.is_org_admin(org_id):
-            return {"message": "Must be admin to create events"}, 403
-
-        # Validate and create event
         schema = EventCreateSchema()
         data = schema.load(request.json)
 
-        event = Event(**data)
+        event = Event(organization_id=org_id, **data)
         db.session.add(event)
-        db.session.flush()  # Get event ID
+        db.session.flush()
 
-        # Add current user as organizer
-        event.add_user(current_user, EventUserRole.ORGANIZER)
+        # Make creator an ADMIN instead of just organizer?
+        event.add_user(current_user, EventUserRole.ADMIN)
 
         db.session.commit()
 
@@ -157,32 +152,20 @@ class EventResource(Resource):
     """
 
     @jwt_required()
+    @event_member_required()
     def get(self, event_id):
         """Get event details"""
-        current_user_id = get_jwt_identity()
-        event = Event.query.get_or_404(event_id)
-
-        # Check if user has access to event
-        if not event.has_user(User.query.get(current_user_id)):
-            return {"message": "Not authorized to view this event"}, 403
-
+        event = Event.query.get(event_id)  # No need for _or_404
         return EventDetailSchema().dump(event)
 
     @jwt_required()
+    @event_organizer_required()
     def put(self, event_id):
         """Update event"""
-        current_user_id = get_jwt_identity()
-        event = Event.query.get_or_404(event_id)
+        event = Event.query.get(event_id)
 
-        # Check if user can edit event
-        if not event.can_user_edit(User.query.get(current_user_id)):
-            return {"message": "Not authorized to edit this event"}, 403
-
-        # Update event
         schema = EventUpdateSchema()
         event = schema.load(request.json, instance=event, partial=True)
-
-        # Validate dates if updating them
         event.validate_dates()
 
         db.session.commit()
@@ -190,15 +173,10 @@ class EventResource(Resource):
         return EventDetailSchema().dump(event)
 
     @jwt_required()
+    @event_admin_required()
     def delete(self, event_id):
         """Delete event"""
-        current_user_id = get_jwt_identity()
         event = Event.query.get_or_404(event_id)
-
-        # Check if user can edit event
-        if not event.can_user_edit(User.query.get(current_user_id)):
-            return {"message": "Not authorized to delete this event"}, 403
-
         db.session.delete(event)
         db.session.commit()
 
@@ -226,13 +204,10 @@ class EventBrandingResource(Resource):
     """
 
     @jwt_required()
+    @event_organizer_required()
     def put(self, event_id):
         """Update event branding"""
-        current_user_id = get_jwt_identity()
         event = Event.query.get_or_404(event_id)
-
-        if not event.can_user_edit(User.query.get(current_user_id)):
-            return {"message": "Not authorized to edit this event"}, 403
 
         schema = EventBrandingSchema()
         data = schema.load(request.json)

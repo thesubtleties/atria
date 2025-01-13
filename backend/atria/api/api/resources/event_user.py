@@ -12,6 +12,11 @@ from api.api.schemas import (
     SpeakerInfoUpdateSchema,
 )
 from api.commons.pagination import paginate
+from api.commons.decorators import (
+    event_member_required,
+    event_organizer_required,
+    event_admin_required,
+)
 
 
 class EventUserList(Resource):
@@ -61,47 +66,32 @@ class EventUserList(Resource):
     """
 
     @jwt_required()
+    @event_member_required()
     def get(self, event_id):
         """Get list of event users"""
-        current_user_id = get_jwt_identity()
-        event = Event.query.get_or_404(event_id)
-
-        # Check if user has access to event
-        if not event.has_user(User.query.get(current_user_id)):
-            return {"message": "Not authorized to view this event"}, 403
-
-        # Build query
         query = EventUser.query.filter_by(event_id=event_id)
 
-        # Apply role filter if provided
         role = request.args.get("role")
         if role:
             query = query.filter_by(role=role)
 
-        return paginate(query, EventUserSchema(many=True))
+        return paginate(
+            query, EventUserSchema(many=True), collection_name="event_users"
+        )
 
     @jwt_required()
+    @event_organizer_required()
     def post(self, event_id):
         """Add user to event"""
-        current_user_id = get_jwt_identity()
-        event = Event.query.get_or_404(event_id)
-
-        # Check if user can edit event
-        if not event.can_user_edit(User.query.get(current_user_id)):
-            return {"message": "Not authorized to add users"}, 403
-
-        # Validate and load data
         schema = EventUserCreateSchema()
         data = schema.load(request.json)
 
-        # Get user to add
         new_user = User.query.get_or_404(data["user_id"])
+        event = Event.query.get(event_id)
 
-        # Check if already in event
         if event.has_user(new_user):
             return {"message": "User already in event"}, 400
 
-        # Add user with role and optional speaker info
         event.add_user(
             new_user,
             data["role"],
@@ -162,21 +152,13 @@ class EventUserDetail(Resource):
     """
 
     @jwt_required()
+    @event_organizer_required()
     def put(self, event_id, user_id):
         """Update user's role or info in event"""
-        current_user_id = get_jwt_identity()
-        event = Event.query.get_or_404(event_id)
-
-        # Check if user can edit event
-        if not event.can_user_edit(User.query.get(current_user_id)):
-            return {"message": "Not authorized to update users"}, 403
-
-        # Get event user record
         event_user = EventUser.query.filter_by(
             event_id=event_id, user_id=user_id
         ).first_or_404()
 
-        # Update role and/or speaker info
         schema = EventUserUpdateSchema()
         data = schema.load(request.json)
 
@@ -190,21 +172,17 @@ class EventUserDetail(Resource):
                 event_user.speaker_title = data["speaker_title"]
 
         db.session.commit()
-
         return EventUserDetailSchema().dump(event_user)
 
     @jwt_required()
+    @event_admin_required()
     def delete(self, event_id, user_id):
         """Remove user from event"""
-        current_user_id = get_jwt_identity()
-        event = Event.query.get_or_404(event_id)
+        current_user_id = int(get_jwt_identity())
+        event = Event.query.get(event_id)
         target_user = User.query.get_or_404(user_id)
 
-        # Check if user can edit event
-        if not event.can_user_edit(User.query.get(current_user_id)):
-            return {"message": "Not authorized to remove users"}, 403
-
-        # Can't remove self if last organizer
+        # Keep last organizer check
         if (
             current_user_id == user_id
             and event.get_user_role(target_user) == EventUserRole.ORGANIZER
@@ -212,14 +190,12 @@ class EventUserDetail(Resource):
         ):
             return {"message": "Cannot remove last organizer"}, 400
 
-        # Remove user
         event_user = EventUser.query.filter_by(
             event_id=event_id, user_id=user_id
         ).first_or_404()
 
         db.session.delete(event_user)
         db.session.commit()
-
         return {"message": "User removed from event"}
 
 

@@ -1,8 +1,9 @@
 from flask import request
 from flask_restful import Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from sqlalchemy import distinct
 from api.extensions import db
-from api.models import User
+from api.models import User, Event, EventUser
 from api.api.schemas import (
     UserSchema,
     UserDetailSchema,
@@ -71,12 +72,15 @@ class UserResource(Resource):
     @jwt_required()
     def get(self, user_id):
         """Get user profile"""
-        current_user_id = get_jwt_identity()
+        current_user_id = int(
+            get_jwt_identity()
+        )  # need int to compare userid because jwt stores in string
+        current_user = User.query.get_or_404(current_user_id)
         user = User.query.get_or_404(user_id)
 
         # Can view if:
         # 1. It's your own profile
-        if current_user_id == user_id:
+        if current_user_id == user_id:  # Now comparing ints to ints
             return UserDetailSchema().dump(user)
 
         # 2. You share any events
@@ -101,7 +105,7 @@ class UserResource(Resource):
     @jwt_required()
     def put(self, user_id):
         """Update user profile"""
-        current_user_id = get_jwt_identity()
+        current_user_id = int(get_jwt_identity())
 
         # Can only update own profile
         if current_user_id != user_id:
@@ -109,7 +113,8 @@ class UserResource(Resource):
 
         user = User.query.get_or_404(user_id)
         user = UserUpdateSchema().load(
-            request.json, instance=user, partial=True
+            request.json,
+            partial=True,
         )
         db.session.commit()
 

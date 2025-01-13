@@ -14,6 +14,8 @@ from api.api.schemas import (
     OrganizationUserCreateSchema,
     OrganizationUserUpdateSchema,
 )
+from api.commons.pagination import paginate
+from api.commons.decorators import org_admin_required, org_member_required
 
 
 class OrganizationUserList(Resource):
@@ -74,44 +76,37 @@ class OrganizationUserList(Resource):
     """
 
     @jwt_required()
+    @org_member_required()
     def get(self, org_id):
         """Get list of organization users"""
-        # Permission check
-        current_user_id = get_jwt_identity()
-        current_user = User.query.get_or_404(current_user_id)
-        org = Organization.query.get_or_404(org_id)
-
-        # Must be member to view users
-        if not org.has_user(current_user):
-            return {"message": "Not a member of this organization"}, 403
-
-        # Get organization users with optional role filter
-        role = request.args.get("role")
+        # Build query
         query = OrganizationUser.query.filter_by(organization_id=org_id)
 
+        # Apply role filter if provided
+        role = request.args.get("role")
         if role:
             query = query.filter_by(role=role)
 
-        org_users = query.order_by(OrganizationUser.created_at).all()
-        return OrganizationUserSchema(many=True).dump(org_users)
+        # Order by created_at
+        query = query.order_by(OrganizationUser.created_at)
+
+        return paginate(
+            query,
+            OrganizationUserSchema(many=True),
+            collection_name="organization_users",
+        )
 
     @jwt_required()
+    @org_admin_required()
     def post(self, org_id):
         """Add user to organization"""
-        current_user_id = get_jwt_identity()
-        current_user = User.query.get_or_404(current_user_id)
-        org = Organization.query.get_or_404(org_id)
-
-        # Must be admin/owner to add users
-        if not current_user.is_org_admin(org_id):
-            return {"message": "Must be admin to add users"}, 403
-
         # Validate and load data
         schema = OrganizationUserCreateSchema()
         data = schema.load(request.json)
 
         # Get user to add
         new_user = User.query.get_or_404(data["user_id"])
+        org = Organization.query.get(org_id)
 
         # Check if already in org
         if org.has_user(new_user):
@@ -121,14 +116,12 @@ class OrganizationUserList(Resource):
         org.add_user(new_user, data["role"])
         db.session.commit()
 
-        return (
-            OrganizationUserDetailSchema().dump(
-                OrganizationUser.query.filter_by(
-                    organization_id=org_id, user_id=new_user.id
-                ).first()
-            ),
-            201,
-        )
+        # Get the new organization user record
+        org_user = OrganizationUser.query.filter_by(
+            organization_id=org_id, user_id=new_user.id
+        ).first()
+
+        return OrganizationUserDetailSchema().dump(org_user), 201
 
 
 class OrganizationUserDetail(Resource):
@@ -185,58 +178,49 @@ class OrganizationUserDetail(Resource):
     """
 
     @jwt_required()
+    @org_admin_required()
     def put(self, org_id, user_id):
         """Update user's role in organization"""
-        current_user_id = get_jwt_identity()
-        current_user = User.query.get_or_404(current_user_id)
-        org = Organization.query.get_or_404(org_id)
-        # Remove this line since we don't use it:
-        # target_user = User.query.get_or_404(user_id)
-
-        # Must be admin/owner to change roles
-        if not current_user.is_org_admin(org_id):
-            return {"message": "Must be admin to update roles"}, 403
+        current_user_id = int(get_jwt_identity())
+        org = Organization.query.get(org_id)
 
         # Can't change own role if you're the last owner
         if (
             current_user_id == user_id
-            and org.get_user_role(current_user) == OrganizationUserRole.OWNER
+            and org.get_user_role(User.query.get(current_user_id))
+            == OrganizationUserRole.OWNER
             and org.owner_count == 1
         ):
             return {"message": "Cannot change role of last owner"}, 400
 
-        # Get the role from request body using our schema
+        # Get the role from request body
         schema = OrganizationUserUpdateSchema()
-        data = schema.load(request.json)  # Validates the incoming JSON
+        data = schema.load(request.json)
 
         # Find the organization-user relationship record
         org_user = OrganizationUser.query.filter_by(
             organization_id=org_id, user_id=user_id
         ).first_or_404()
 
-        # Update the role using our model method
+        # Update the role
         org_user.update_role(data["role"])
         db.session.commit()
 
-        # Return detailed view of the updated record
         return OrganizationUserDetailSchema().dump(org_user)
 
     @jwt_required()
+    @org_admin_required()
     def delete(self, org_id, user_id):
         """Remove user from organization"""
-        current_user_id = get_jwt_identity()
-        current_user = User.query.get_or_404(current_user_id)
-        org = Organization.query.get_or_404(org_id)
+        current_user_id = int(get_jwt_identity())
+        org = Organization.query.get(org_id)
         target_user = User.query.get_or_404(user_id)
-
-        # Must be admin/owner to remove users
-        if not current_user.is_org_admin(org_id):
-            return {"message": "Must be admin to remove users"}, 403
 
         # Can't remove self if last owner
         if (
             current_user_id == user_id
-            and org.get_user_role(current_user) == OrganizationUserRole.OWNER
+            and org.get_user_role(User.query.get(current_user_id))
+            == OrganizationUserRole.OWNER
             and org.owner_count == 1
         ):
             return {"message": "Cannot remove last owner"}, 400

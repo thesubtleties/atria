@@ -2,7 +2,7 @@ from api.extensions import ma, db
 from api.models import Event
 from api.models.enums import EventType, EventStatus
 from marshmallow import validates, ValidationError, validates_schema
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 class EventSchema(ma.SQLAlchemyAutoSchema):
@@ -70,7 +70,6 @@ class EventCreateSchema(ma.Schema):
 
     # Required fields
     title = ma.String(required=True)
-    organization_id = ma.Integer(required=True)
     event_type = ma.Enum(EventType, required=True)
     start_date = ma.DateTime(required=True)
     end_date = ma.DateTime(required=True)
@@ -102,7 +101,7 @@ class EventCreateSchema(ma.Schema):
                 raise ValidationError("End date must be after start date")
 
             # Ensure dates are in the future for new events
-            if data["start_date"] <= datetime.utcnow():
+            if data["start_date"] <= datetime.now(timezone.utc):
                 raise ValidationError("Start date must be in the future")
 
 

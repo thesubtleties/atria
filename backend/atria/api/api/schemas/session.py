@@ -54,7 +54,6 @@ class SessionDetailSchema(SessionSchema):
 class SessionCreateSchema(ma.Schema):
     """Schema for creating sessions"""
 
-    event_id = ma.Integer(required=True)
     title = ma.String(required=True)
     session_type = ma.Enum(SessionType, required=True)
     status = ma.Enum(SessionStatus, load_default=SessionStatus.SCHEDULED)

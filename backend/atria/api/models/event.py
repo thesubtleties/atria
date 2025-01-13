@@ -1,6 +1,7 @@
 from api.extensions import db
 from api.models.enums import EventType, EventStatus, EventUserRole
-from datetime import datetime
+from datetime import datetime, timezone
+from slugify import slugify
 
 
 class Event(db.Model):
@@ -42,7 +43,9 @@ class Event(db.Model):
     # Relationships
     organization = db.relationship("Organization", back_populates="events")
     sessions = db.relationship(
-        "Session", back_populates="event", cascade="all, delete-orphan"
+        "Session",
+        back_populates="event",
+        cascade="all, delete-orphan",
     )
     users = db.relationship(
         "User",
@@ -51,8 +54,26 @@ class Event(db.Model):
         overlaps="event_users",
     )
     event_users = db.relationship(
-        "EventUser", back_populates="event", overlaps="users,events"
+        "EventUser",
+        back_populates="event",
+        overlaps="users,events",
+        cascade="all, delete-orphan",
     )
+
+    def __init__(self, *args, **kwargs):
+        """Initialize event and generate slug from title"""
+        if "title" in kwargs and "slug" not in kwargs:
+            base_slug = slugify(kwargs["title"])
+            slug = base_slug
+            counter = 1
+
+            while Event.query.filter_by(slug=slug).first():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+
+            kwargs["slug"] = slug
+
+        super().__init__(*args, **kwargs)
 
     def add_user(self, user, role: EventUserRole):
         """Add user to event with role"""
@@ -121,16 +142,16 @@ class Event(db.Model):
 
     @property
     def is_upcoming(self) -> bool:
-        return self.start_date > datetime.utcnow()
+        return self.start_date > datetime.now(timezone.utc)
 
     @property
     def is_ongoing(self) -> bool:
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         return self.start_date <= now <= self.end_date
 
     @property
     def is_past(self) -> bool:
-        return self.end_date < datetime.utcnow()
+        return self.end_date < datetime.now(timezone.utc)
 
     def update_status(self, new_status: EventStatus):
         """Update event status with validation"""
@@ -178,7 +199,7 @@ class Event(db.Model):
         return (
             cls.query.filter(
                 cls.status == EventStatus.PUBLISHED,
-                cls.start_date > datetime.utcnow(),
+                cls.start_date > datetime.now(timezone.utc),
             )
             .order_by(cls.start_date)
             .all()
@@ -206,7 +227,6 @@ class Event(db.Model):
 
     def generate_slug(self):
         """Generate unique slug from title"""
-        from slugify import slugify
 
         base_slug = slugify(self.title)
         slug = base_slug

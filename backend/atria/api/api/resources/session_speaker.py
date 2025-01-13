@@ -12,6 +12,10 @@ from api.api.schemas import (
     SpeakerReorderSchema,
 )
 from api.commons.pagination import paginate
+from api.commons.decorators import (
+    event_member_required,
+    event_organizer_required,
+)
 
 
 class SessionSpeakerList(Resource):
@@ -46,15 +50,9 @@ class SessionSpeakerList(Resource):
     """
 
     @jwt_required()
+    @event_member_required()
     def get(self, session_id):
         """Get list of session speakers"""
-        current_user_id = get_jwt_identity()
-        session = Session.query.get_or_404(session_id)
-
-        # Check if user has access to event
-        if not session.event.has_user(User.query.get(current_user_id)):
-            return {"message": "Not authorized to view this session"}, 403
-
         # Build query - order by speaker order
         query = SessionSpeaker.query.filter_by(session_id=session_id).order_by(
             SessionSpeaker.order
@@ -65,38 +63,33 @@ class SessionSpeakerList(Resource):
         if role:
             query = query.filter_by(role=role)
 
-        return paginate(query, SessionSpeakerSchema(many=True))
+        return paginate(
+            query,
+            SessionSpeakerSchema(many=True),
+            collection_name="session_speakers",
+        )
 
     @jwt_required()
+    @event_organizer_required()
     def post(self, session_id):
         """Add speaker to session"""
-        current_user_id = get_jwt_identity()
         session = Session.query.get_or_404(session_id)
 
-        # Check if user can edit event
-        if not session.event.can_user_edit(User.query.get(current_user_id)):
-            return {"message": "Not authorized to add speakers"}, 403
-
-        # Validate and load data
         schema = SessionSpeakerCreateSchema()
         data = schema.load(request.json)
 
-        # Get user to add
         new_speaker = User.query.get_or_404(data["user_id"])
 
-        # Check if already a speaker
         if session.has_speaker(new_speaker):
             return {"message": "Already a speaker in this session"}, 400
 
-        # Check for scheduling conflicts
         if session.has_speaker_conflicts(new_speaker):
             return {"message": "Speaker has conflicting sessions"}, 400
 
-        # Add speaker with role and optional order
         session.add_speaker(
             new_speaker,
             role=data.get("role", SessionSpeakerRole.SPEAKER),
-            order=data.get("order"),  # Will be auto-set if not provided
+            order=data.get("order"),
         )
         db.session.commit()
 
@@ -136,21 +129,13 @@ class SessionSpeakerDetail(Resource):
     """
 
     @jwt_required()
+    @event_organizer_required()
     def put(self, session_id, user_id):
         """Update speaker's role or order"""
-        current_user_id = get_jwt_identity()
-        session = Session.query.get_or_404(session_id)
-
-        # Check if user can edit event
-        if not session.event.can_user_edit(User.query.get(current_user_id)):
-            return {"message": "Not authorized to update speakers"}, 403
-
-        # Get speaker record
         speaker = SessionSpeaker.query.filter_by(
             session_id=session_id, user_id=user_id
         ).first_or_404()
 
-        # Update role and/or order
         schema = SessionSpeakerUpdateSchema()
         data = schema.load(request.json)
 
@@ -164,16 +149,9 @@ class SessionSpeakerDetail(Resource):
         return SessionSpeakerDetailSchema().dump(speaker)
 
     @jwt_required()
+    @event_organizer_required()
     def delete(self, session_id, user_id):
         """Remove speaker from session"""
-        current_user_id = get_jwt_identity()
-        session = Session.query.get_or_404(session_id)
-
-        # Check if user can edit event
-        if not session.event.can_user_edit(User.query.get(current_user_id)):
-            return {"message": "Not authorized to remove speakers"}, 403
-
-        # Get and remove speaker
         speaker = SessionSpeaker.query.filter_by(
             session_id=session_id, user_id=user_id
         ).first_or_404()
@@ -205,23 +183,14 @@ class SessionSpeakerReorder(Resource):
     """
 
     @jwt_required()
+    @event_organizer_required()
     def put(self, session_id):
         """Reorder speakers"""
-        current_user_id = get_jwt_identity()
-        session = Session.query.get_or_404(session_id)
-
-        # Check if user can edit event
-        if not session.event.can_user_edit(User.query.get(current_user_id)):
-            return {"message": "Not authorized to reorder speakers"}, 403
-
-        # Validate order data
         schema = SpeakerReorderSchema()
         data = schema.load(request.json)
 
-        # Use model method to reorder
         SessionSpeaker.reorder_speakers(session_id, data["new_order"])
         db.session.commit()
 
-        # Return updated order
         speakers = SessionSpeaker.get_ordered_speakers(session_id)
         return SessionSpeakerSchema(many=True).dump(speakers)

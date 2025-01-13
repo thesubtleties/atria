@@ -6,6 +6,7 @@ from api.extensions import apispec
 from api.extensions import db
 from api.extensions import jwt
 from api.extensions import migrate  # Removed celery
+from api.models import TokenBlocklist
 
 
 def create_app(testing=False):
@@ -30,6 +31,7 @@ def configure_extensions(app):
     db.init_app(app)
     jwt.init_app(app)
     migrate.init_app(app, db)
+    configure_jwt_handlers(app)
 
 
 def configure_cli(app):
@@ -60,6 +62,29 @@ def register_blueprints(app):
     """Register all blueprints for application"""
     app.register_blueprint(auth.views.blueprint)
     app.register_blueprint(api.views.blueprint)
+
+
+# JWT handlers in their own function
+def configure_jwt_handlers(app):
+    """Configure JWT error handlers and callbacks"""
+
+    @jwt.token_in_blocklist_loader
+    def check_if_token_revoked(jwt_header, jwt_payload):
+        jti = jwt_payload["jti"]
+        token = TokenBlocklist.query.filter_by(jti=jti).first()
+        return token is not None and token.revoked
+
+    @jwt.invalid_token_loader
+    def invalid_token_callback(error):
+        return {"message": "Invalid token"}, 401
+
+    @jwt.expired_token_loader
+    def expired_token_callback(jwt_header, jwt_payload):
+        return {"message": "Token has expired"}, 401
+
+    @jwt.revoked_token_loader
+    def revoked_token_callback(jwt_header, jwt_payload):
+        return {"message": "Token has been revoked"}, 401
 
 
 # Removed init_celery function since we're not using Celery

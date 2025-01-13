@@ -1,6 +1,6 @@
 from api.extensions import db
 from api.models.enums import SessionType, SessionStatus, SessionSpeakerRole
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 class Session(db.Model):
@@ -34,7 +34,10 @@ class Session(db.Model):
         overlaps="session_speakers",
     )
     session_speakers = db.relationship(
-        "SessionSpeaker", back_populates="session", overlaps="speakers"
+        "SessionSpeaker",
+        back_populates="session",
+        overlaps="speakers",
+        cascade="all, delete-orphan",
     )
 
     def validate_times(self):
@@ -138,13 +141,13 @@ class Session(db.Model):
         """Check if session is upcoming"""
         return (
             self.status == SessionStatus.SCHEDULED
-            and self.start_time > datetime.utcnow()
+            and self.start_time > datetime.now(timezone.utc)
         )
 
     @property
     def is_in_progress(self):
         """Check if session is currently running"""
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         return (
             self.status == SessionStatus.LIVE
             and self.start_time <= now <= self.end_time
@@ -199,7 +202,7 @@ class Session(db.Model):
             cls.query.filter(
                 cls.event_id == event_id,
                 cls.status == SessionStatus.SCHEDULED,
-                cls.start_time > datetime.utcnow(),
+                cls.start_time > datetime.now(timezone.utc),
             )
             .order_by(cls.start_time)
             .all()
