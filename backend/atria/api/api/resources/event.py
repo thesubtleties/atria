@@ -165,8 +165,16 @@ class EventResource(Resource):
         event = Event.query.get(event_id)
 
         schema = EventUpdateSchema()
-        event = schema.load(request.json, instance=event, partial=True)
-        event.validate_dates()
+        data = schema.load(request.json, partial=True)
+
+        for key, value in data.items():
+            setattr(event, key, value)
+
+        if "start_date" in request.json or "end_date" in request.json:
+            try:
+                event.validate_dates()
+            except ValueError as e:
+                return {"message": str(e)}, 400
 
         db.session.commit()
 

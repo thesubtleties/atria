@@ -63,6 +63,25 @@ class SessionList(Resource):
         content:
           application/json:
             schema: SessionCreateSchema
+      responses:
+        201:
+          description: Session created successfully
+          content:
+            application/json:
+              schema: SessionDetailSchema
+        400:
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  errors:
+                    type: object
+        403:
+          description: Not authorized
     """
 
     @jwt_required()
@@ -141,6 +160,23 @@ class SessionResource(Resource):
         content:
           application/json:
             schema: SessionUpdateSchema
+      responses:
+        200:
+          description: Session updated successfully
+          content:
+            application/json:
+              schema: SessionDetailSchema
+        400:
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        403:
+          description: Not authorized
 
     delete:
       tags:
@@ -163,8 +199,12 @@ class SessionResource(Resource):
         session = Session.query.get_or_404(session_id)
 
         schema = SessionUpdateSchema()
-        session = schema.load(request.json, instance=session, partial=True)
+        data = schema.load(request.json, partial=True)
 
+        for key, value in data.items():
+            setattr(session, key, value)
+
+        # validate_times() on the session object (not the data dict)
         if "start_time" in request.json or "end_time" in request.json:
             try:
                 session.validate_times()
