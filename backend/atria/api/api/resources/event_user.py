@@ -51,7 +51,7 @@ class EventUserList(Resource):
 
     post:
       tags:
-        - event-users
+        - event users
       summary: Add user to event
       parameters:
         - in: path
@@ -59,10 +59,43 @@ class EventUserList(Resource):
           schema:
             type: integer
           required: true
+          description: ID of event to add user to
       requestBody:
         content:
           application/json:
-            schema: EventUserCreateSchema
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                  required: true
+                role:
+                  type: string
+                  enum: [ADMIN, ORGANIZER, SPEAKER, ATTENDEE, MODERATOR]
+                  default: ATTENDEE
+                speaker_bio:
+                  type: string
+                speaker_title:
+                  type: string
+      responses:
+        201:
+          description: User added to event successfully
+          content:
+            application/json:
+              schema: EventUserSchema
+        400:
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        403:
+          description: Not authorized
+        404:
+          description: Event or user not found
     """
 
     @jwt_required()
@@ -87,7 +120,7 @@ class EventUserList(Resource):
         data = schema.load(request.json)
 
         new_user = User.query.get_or_404(data["user_id"])
-        event = Event.query.get(event_id)
+        event = Event.query.get_or_404(event_id)
 
         if event.has_user(new_user):
             return {"message": "User already in event"}, 400
@@ -133,6 +166,25 @@ class EventUserDetail(Resource):
         content:
           application/json:
             schema: EventUserUpdateSchema
+      responses:
+        200:
+          description: User updated successfully
+          content:
+            application/json:
+              schema: EventUserDetailSchema
+        400:
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        403:
+          description: Not authorized
+        404:
+          description: User or event not found
 
     delete:
       tags:
@@ -149,6 +201,22 @@ class EventUserDetail(Resource):
           schema:
             type: integer
           required: true
+      responses:
+        200:
+          description: User removed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        400:
+          description: Cannot remove last organizer
+        403:
+          description: Not authorized
+        404:
+          description: User or event not found
     """
 
     @jwt_required()
@@ -222,21 +290,31 @@ class EventSpeakerInfo(Resource):
         content:
           application/json:
             schema: SpeakerInfoUpdateSchema
+      responses:
+        200:
+          description: Speaker info updated successfully
+          content:
+            application/json:
+              schema: EventUserDetailSchema
+        400:
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        403:
+          description: Not authorized
+        404:
+          description: User not found or not a speaker
     """
 
     @jwt_required()
+    @event_organizer_required()
     def put(self, event_id, user_id):
         """Update speaker info"""
-        current_user_id = get_jwt_identity()
-        event = Event.query.get_or_404(event_id)
-
-        # Can update own speaker info or if can edit event
-        if not (
-            current_user_id == user_id
-            or event.can_user_edit(User.query.get(current_user_id))
-        ):
-            return {"message": "Not authorized to update speaker info"}, 403
-
         event_user = EventUser.query.filter_by(
             event_id=event_id, user_id=user_id, role=EventUserRole.SPEAKER
         ).first_or_404()

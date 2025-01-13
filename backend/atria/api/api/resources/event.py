@@ -155,7 +155,7 @@ class EventResource(Resource):
     @event_member_required()
     def get(self, event_id):
         """Get event details"""
-        event = Event.query.get(event_id)  # No need for _or_404
+        event = Event.query.get(event_id)
         return EventDetailSchema().dump(event)
 
     @jwt_required()

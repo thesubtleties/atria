@@ -1,7 +1,7 @@
 from api.extensions import ma, db
 from api.models import EventUser
 from api.models.enums import EventUserRole
-from marshmallow import validates, ValidationError
+from marshmallow import validates_schema, ValidationError
 
 
 class EventUserSchema(ma.SQLAlchemyAutoSchema):
@@ -52,7 +52,7 @@ class SpeakerInfoUpdateSchema(ma.Schema):
     speaker_bio = ma.String()
     speaker_title = ma.String()
 
-    @validates("_schema")  # Validates at schema level without validates_schema
-    def validate_has_fields(self, data):
+    @validates_schema
+    def validate_has_fields(self, data, **kwargs):
         if not data.get("speaker_bio") and not data.get("speaker_title"):
             raise ValidationError("Must provide either bio or title to update")

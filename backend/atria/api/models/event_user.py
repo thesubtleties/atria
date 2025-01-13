@@ -52,15 +52,15 @@ class EventUser(db.Model):
         """Check if user is an organizer"""
         return self.role == EventUserRole.ORGANIZER
 
-    def update_speaker_info(self, bio=None, title=None):
+    def update_speaker_info(self, speaker_bio=None, speaker_title=None):
         """Update speaker bio and title"""
         if self.role != EventUserRole.SPEAKER:
             raise ValueError("Can only update speaker info for speakers")
 
-        if bio is not None:
-            self.speaker_bio = bio
-        if title is not None:
-            self.speaker_title = title
+        if speaker_bio is not None:
+            self.speaker_bio = speaker_bio
+        if speaker_title is not None:
+            self.speaker_title = speaker_title
 
     @classmethod
     def get_by_role(cls, event_id, role: EventUserRole):

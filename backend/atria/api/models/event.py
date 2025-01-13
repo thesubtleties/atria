@@ -75,19 +75,31 @@ class Event(db.Model):
 
         super().__init__(*args, **kwargs)
 
-    def add_user(self, user, role: EventUserRole):
-        """Add user to event with role"""
+    def add_user(self, user, role: EventUserRole, **kwargs):
+        """Add user to event with role and optional speaker info"""
         from api.models import EventUser
 
         if self.has_user(user):
             raise ValueError("User already in event")
 
-        event_user = EventUser(event_id=self.id, user_id=user.id, role=role)
+        event_user = EventUser(
+            event_id=self.id,
+            user_id=user.id,
+            role=role,
+            speaker_bio=kwargs.get("speaker_bio"),
+            speaker_title=kwargs.get("speaker_title"),
+        )
         db.session.add(event_user)
+        return event_user
 
-    def add_speaker(self, user):
-        """Convenience method to add speaker"""
-        self.add_user(user, EventUserRole.SPEAKER)
+    def add_speaker(self, user, **kwargs):
+        """Convenience method to add speaker with optional bio and title"""
+        return self.add_user(
+            user,
+            EventUserRole.SPEAKER,
+            speaker_bio=kwargs.get("speaker_bio"),
+            speaker_title=kwargs.get("speaker_title"),
+        )
 
     def has_user(self, user) -> bool:
         """Check if user is in event"""
