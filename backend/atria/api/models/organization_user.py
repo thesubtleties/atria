@@ -6,7 +6,9 @@ class OrganizationUser(db.Model):
     __tablename__ = "organization_users"
 
     organization_id = db.Column(
-        db.BigInteger, db.ForeignKey("organizations.id"), primary_key=True
+        db.BigInteger,
+        db.ForeignKey("organizations.id", ondelete="CASCADE"),
+        primary_key=True,
     )
     user_id = db.Column(
         db.BigInteger, db.ForeignKey("users.id"), primary_key=True

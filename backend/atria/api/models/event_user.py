@@ -6,7 +6,9 @@ class EventUser(db.Model):
     __tablename__ = "event_users"
 
     event_id = db.Column(
-        db.BigInteger, db.ForeignKey("events.id"), primary_key=True
+        db.BigInteger,
+        db.ForeignKey("events.id", ondelete="CASCADE"),
+        primary_key=True,
     )
     user_id = db.Column(
         db.BigInteger, db.ForeignKey("users.id"), primary_key=True

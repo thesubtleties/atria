@@ -8,7 +8,9 @@ class Session(db.Model):
 
     id = db.Column(db.BigInteger, primary_key=True)
     event_id = db.Column(
-        db.BigInteger, db.ForeignKey("events.id"), nullable=False
+        db.BigInteger,
+        db.ForeignKey("events.id", ondelete="CASCADE"),
+        nullable=False,
     )
     status = db.Column(db.Enum(SessionStatus), nullable=False)
     session_type = db.Column(db.Enum(SessionType), nullable=False)
@@ -36,8 +38,9 @@ class Session(db.Model):
     session_speakers = db.relationship(
         "SessionSpeaker",
         back_populates="session",
-        overlaps="speakers",
+        overlaps="speakers,speaking_sessions",
         cascade="all, delete-orphan",
+        passive_deletes=True,
     )
 
     def validate_times(self):
@@ -66,21 +69,22 @@ class Session(db.Model):
             self.start_time = new_start_time
             self.end_time = new_end_time
 
-    def add_speaker(self, user, role=SessionSpeakerRole.SPEAKER):
+    def add_speaker(self, user, role=SessionSpeakerRole.SPEAKER, order=None):
         """Add speaker with role to session"""
-        from api.models import (
-            SessionSpeaker,
-        )
+        from api.models import SessionSpeaker
 
         if user in self.speakers:
             raise ValueError("Already a speaker for this session")
 
         speaker = SessionSpeaker(
-            session_id=self.id, user_id=user.id, role=role
+            session_id=self.id, user_id=user.id, role=role, order=order
         )
         db.session.add(speaker)
 
-        self.event.add_speaker(user)
+        # Not adding speaker to event because our speaker list will only
+        # contain those registered to event as speaker.
+
+        return speaker
 
     def remove_speaker(self, user):
         """Remove speaker from session"""
