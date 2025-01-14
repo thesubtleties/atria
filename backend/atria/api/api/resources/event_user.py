@@ -2,7 +2,7 @@ from flask import request
 from flask_restful import Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from api.extensions import db
-from api.models import Event, User, EventUser
+from api.models import Event, User, EventUser, Session, SessionSpeaker
 from api.models.enums import EventUserRole
 from api.api.schemas import (
     EventUserSchema,
@@ -246,24 +246,40 @@ class EventUserDetail(Resource):
     @event_admin_required()
     def delete(self, event_id, user_id):
         """Remove user from event"""
-        current_user_id = int(get_jwt_identity())
-        event = Event.query.get(event_id)
+        event = Event.query.get_or_404(event_id)
         target_user = User.query.get_or_404(user_id)
+        target_role = event.get_user_role(target_user)
 
-        # Keep last organizer check
         if (
-            current_user_id == user_id
-            and event.get_user_role(target_user) == EventUserRole.ORGANIZER
-            and len(event.organizers) == 1
+            target_role == EventUserRole.ADMIN
+            and len(
+                [
+                    eu
+                    for eu in event.event_users
+                    if eu.role == EventUserRole.ADMIN
+                ]
+            )
+            <= 1
         ):
-            return {"message": "Cannot remove last organizer"}, 400
+            return {"message": "Cannot remove last admin"}, 400
 
+        # Remove from sessions using subquery
+        session_ids = Session.query.filter_by(event_id=event_id).with_entities(
+            Session.id
+        )
+        SessionSpeaker.query.filter(
+            SessionSpeaker.session_id.in_(session_ids),
+            SessionSpeaker.user_id == user_id,
+        ).delete(synchronize_session=False)
+
+        # Then remove from event
         event_user = EventUser.query.filter_by(
             event_id=event_id, user_id=user_id
         ).first_or_404()
 
         db.session.delete(event_user)
         db.session.commit()
+
         return {"message": "User removed from event"}
 
 

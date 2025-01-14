@@ -9,7 +9,9 @@ class Event(db.Model):
 
     id = db.Column(db.BigInteger, primary_key=True)
     organization_id = db.Column(
-        db.BigInteger, db.ForeignKey("organizations.id"), nullable=False
+        db.BigInteger,
+        db.ForeignKey("organizations.id", ondelete="CASCADE"),
+        nullable=False,
     )
     title = db.Column(db.Text, nullable=False)
     description = db.Column(db.Text)
@@ -42,22 +44,28 @@ class Event(db.Model):
 
     # Relationships
     organization = db.relationship("Organization", back_populates="events")
+
     sessions = db.relationship(
         "Session",
         back_populates="event",
         cascade="all, delete-orphan",
+        passive_deletes=True,
     )
+
     users = db.relationship(
         "User",
         secondary="event_users",
         back_populates="events",
         overlaps="event_users",
+        passive_deletes=True,
     )
+
     event_users = db.relationship(
         "EventUser",
         back_populates="event",
         overlaps="users,events",
         cascade="all, delete-orphan",
+        passive_deletes=True,
     )
 
     def __init__(self, *args, **kwargs):

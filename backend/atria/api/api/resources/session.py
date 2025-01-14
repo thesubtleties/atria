@@ -33,11 +33,13 @@ class SessionList(Resource):
           schema:
             type: integer
           required: true
+          example: 123
         - in: query
           name: day_number
           schema:
             type: integer
           description: Filter by day number
+          example: 1
       responses:
         200:
           content:
@@ -48,6 +50,19 @@ class SessionList(Resource):
                   results:
                     type: array
                     items: SessionSchema
+              example:
+                results: [
+                  {
+                    "title": "Opening Keynote: Future of Cloud Computing",
+                    "description": "Join our CEO for an inspiring look at the future of cloud technology and digital transformation",
+                    "session_type": "KEYNOTE",
+                    "start_time": "2025-06-15T09:00:00.000Z",
+                    "end_time": "2025-06-15T10:00:00.000Z",
+                    "stream_url": "https://stream.techcorp.com/keynote-2025",
+                    "status": "SCHEDULED",
+                    "day_number": 1
+                  }
+                ]
 
     post:
       tags:
@@ -59,29 +74,51 @@ class SessionList(Resource):
           schema:
             type: integer
           required: true
+          example: 123
       requestBody:
         content:
           application/json:
             schema: SessionCreateSchema
+            example:
+              title: "Opening Keynote: Future of Cloud Computing"
+              description: "Join our CEO for an inspiring look at the future of cloud technology and digital transformation"
+              session_type: "KEYNOTE"
+              start_time: "2025-06-15T09:00:00.000Z"
+              end_time: "2025-06-15T10:00:00.000Z"
+              stream_url: "https://stream.techcorp.com/keynote-2025"
+              status: "SCHEDULED"
+              day_number: 1
       responses:
         201:
           description: Session created successfully
           content:
             application/json:
               schema: SessionDetailSchema
+              example:
+                id: "789e4567-e89b-12d3-a456-426614174000"
+                title: "Opening Keynote: Future of Cloud Computing"
+                description: "Join our CEO for an inspiring look at the future of cloud technology and digital transformation"
+                session_type: "KEYNOTE"
+                start_time: "2025-06-15T09:00:00.000Z"
+                end_time: "2025-06-15T10:00:00.000Z"
+                stream_url: "https://stream.techcorp.com/keynote-2025"
+                status: "SCHEDULED"
+                day_number: 1
+                event_id: 123
         400:
           description: Validation error
           content:
             application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                  errors:
-                    type: object
+              example:
+                message: "Validation error"
+                errors:
+                  start_time: ["Session times must be within event dates"]
         403:
           description: Not authorized
+          content:
+            application/json:
+              example:
+                message: "You must be an event organizer to create sessions"
     """
 
     @jwt_required()

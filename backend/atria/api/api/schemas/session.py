@@ -105,3 +105,4 @@ class SessionSpeakerAddSchema(ma.Schema):
 
     user_id = ma.Integer(required=True)
     role = ma.Enum(SessionSpeakerRole, load_default=SessionSpeakerRole.SPEAKER)
+    order = ma.Integer(allow_none=True)

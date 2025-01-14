@@ -59,7 +59,6 @@ def org_member_required():
     return decorator
 
 
-# check if user has base event access
 def event_member_required():
     """Check if user has any role in event (attendee, speaker, organizer, admin)"""
 
@@ -68,12 +67,17 @@ def event_member_required():
         def decorated_function(*args, **kwargs):
             current_user_id = int(get_jwt_identity())
             current_user = User.query.get_or_404(current_user_id)
+
+            # Handle either direct event_id or get it from session
             event_id = kwargs.get("event_id")
+            if not event_id and "session_id" in kwargs:
+                session = Session.query.get_or_404(kwargs["session_id"])
+                event_id = session.event_id
 
-            event = Event.query.get(event_id)
-            if not event:
-                return {"message": f"Event with id {event_id} not found"}, 404
+            if not event_id:
+                return {"message": "No event ID found"}, 400
 
+            event = Event.query.get_or_404(event_id)
             if not event.has_user(current_user):
                 return {"message": "Not authorized to access this event"}, 403
 
