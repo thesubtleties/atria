@@ -5,12 +5,18 @@ from marshmallow import validates, ValidationError
 class LoginSchema(ma.Schema):
     """Schema for user login"""
 
+    class Meta:
+        name = "Login"
+
     email = ma.Email(required=True)
     password = ma.String(required=True, load_only=True)
 
 
 class SignupSchema(ma.Schema):
     """Schema for user signup"""
+
+    class Meta:
+        name = "Signup"
 
     email = ma.Email(required=True)
     password = ma.String(required=True, load_only=True)

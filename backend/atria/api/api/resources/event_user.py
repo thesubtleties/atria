@@ -9,7 +9,7 @@ from api.api.schemas import (
     EventUserDetailSchema,
     EventUserCreateSchema,
     EventUserUpdateSchema,
-    SpeakerInfoUpdateSchema,
+    EventSpeakerInfoUpdateSchema,
 )
 from api.commons.pagination import paginate
 from api.commons.decorators import (
@@ -305,7 +305,7 @@ class EventSpeakerInfo(Resource):
       requestBody:
         content:
           application/json:
-            schema: SpeakerInfoUpdateSchema
+            schema: EventSpeakerInfoUpdateSchema
       responses:
         200:
           description: Speaker info updated successfully
@@ -335,7 +335,7 @@ class EventSpeakerInfo(Resource):
             event_id=event_id, user_id=user_id, role=EventUserRole.SPEAKER
         ).first_or_404()
 
-        schema = SpeakerInfoUpdateSchema()
+        schema = EventSpeakerInfoUpdateSchema()
         data = schema.load(request.json)
 
         event_user.update_speaker_info(**data)

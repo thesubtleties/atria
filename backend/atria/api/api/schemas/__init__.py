@@ -32,7 +32,7 @@ from api.api.schemas.event_user import (
     EventUserDetailSchema,
     EventUserCreateSchema,
     EventUserUpdateSchema,
-    SpeakerInfoUpdateSchema,
+    EventSpeakerInfoUpdateSchema,
 )
 from api.api.schemas.organization_user import (
     OrganizationUserSchema,
@@ -82,6 +82,7 @@ __all__ = [
     "EventUserDetailSchema",
     "EventUserCreateSchema",
     "EventUserUpdateSchema",
+    "EventSpeakerInfoUpdateSchema",
     "OrganizationUserSchema",
     "OrganizationUserDetailSchema",
     "OrganizationUserCreateSchema",
@@ -91,7 +92,6 @@ __all__ = [
     "SessionSpeakerCreateSchema",
     "SessionSpeakerUpdateSchema",
     "SpeakerReorderSchema",
-    "SpeakerInfoUpdateSchema",
     # Auth schemas
     "LoginSchema",
     "SignupSchema",

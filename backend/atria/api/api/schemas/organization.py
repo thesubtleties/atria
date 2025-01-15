@@ -15,6 +15,7 @@ class OrganizationSchema(ma.SQLAlchemyAutoSchema):
             "organization_users",
             "users",
         )
+        name = "OrganizationBase"
 
     owners = ma.Nested(
         "UserSchema",
@@ -26,6 +27,9 @@ class OrganizationSchema(ma.SQLAlchemyAutoSchema):
 
 class OrganizationDetailSchema(OrganizationSchema):
     """Detailed Organization Schema with relationships"""
+
+    class Meta(OrganizationSchema.Meta):
+        name = "OrganizationDetail"
 
     # Computed properties
     member_count = ma.Integer(dump_only=True)
@@ -62,6 +66,9 @@ class OrganizationDetailSchema(OrganizationSchema):
 class OrganizationCreateSchema(ma.Schema):
     """Schema for creating new organizations"""
 
+    class Meta:
+        name = "OrganizationCreate"
+
     name = ma.String(required=True)
 
     @validates("name")
@@ -73,6 +80,9 @@ class OrganizationCreateSchema(ma.Schema):
 # Update Schema - Used for PUT /organizations/<id>
 class OrganizationUpdateSchema(ma.Schema):
     """Schema for updating organizations"""
+
+    class Meta:
+        name = "OrganizationUpdate"
 
     name = ma.String()
 
@@ -86,12 +96,18 @@ class OrganizationUpdateSchema(ma.Schema):
 class OrganizationUserRoleUpdateSchema(ma.Schema):
     """Schema for updating user roles in organization"""
 
+    class Meta:
+        name = "OrganizationUserRoleUpdate"
+
     role = ma.Enum(OrganizationUserRole, required=True)
 
 
 # User Add Schema - Used for POST /organizations/<id>/users
 class OrganizationAddUserSchema(ma.Schema):
     """Schema for adding users to organization"""
+
+    class Meta:
+        name = "OrganizationAddUser"
 
     user_id = ma.Integer(required=True)
     role = ma.Enum(OrganizationUserRole, required=True)

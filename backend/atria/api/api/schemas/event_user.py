@@ -11,6 +11,7 @@ class EventUserSchema(ma.SQLAlchemyAutoSchema):
         model = EventUser
         sqla_session = db.session
         include_fk = True
+        name = "EventUserBase"
 
     # Computed Properties
     user_name = ma.String(dump_only=True)
@@ -20,6 +21,9 @@ class EventUserSchema(ma.SQLAlchemyAutoSchema):
 
 class EventUserDetailSchema(EventUserSchema):
     """Detailed EventUser Schema with relationships"""
+
+    class Meta(EventUserSchema.Meta):
+        name = "EventUserDetail"
 
     event = ma.Nested("EventSchema", only=("id", "title"), dump_only=True)
     user = ma.Nested(
@@ -32,6 +36,9 @@ class EventUserDetailSchema(EventUserSchema):
 class EventUserCreateSchema(ma.Schema):
     """Schema for adding users to events"""
 
+    class Meta:
+        name = "EventUserCreate"
+
     user_id = ma.Integer(required=True)
     role = ma.Enum(EventUserRole, required=True)
     speaker_bio = ma.String()  # Optional
@@ -41,13 +48,19 @@ class EventUserCreateSchema(ma.Schema):
 class EventUserUpdateSchema(ma.Schema):
     """Schema for updating event user roles"""
 
+    class Meta:
+        name = "EventUserUpdate"
+
     role = ma.Enum(EventUserRole)
     speaker_bio = ma.String()
     speaker_title = ma.String()
 
 
-class SpeakerInfoUpdateSchema(ma.Schema):
+class EventSpeakerInfoUpdateSchema(ma.Schema):
     """Schema specifically for updating speaker info"""
+
+    class Meta:
+        name = "EventSpeakerInfoUpdate"
 
     speaker_bio = ma.String()
     speaker_title = ma.String()

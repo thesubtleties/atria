@@ -1,7 +1,7 @@
 from flask import Flask
 from api import api
 from api import manage
-from api.extensions import apispec
+from api.extensions import apispec, smorest_api
 from api.extensions import db
 from api.extensions import jwt
 from api.extensions import migrate
@@ -18,8 +18,9 @@ def create_app(testing=False):
 
     configure_extensions(app)
     configure_cli(app)
-    configure_apispec(app)
-    register_blueprints(app)
+    # configure_apispec(app)  #! will remove once smorest is working
+    configure_smorest(app)
+    # register_blueprints(app) #! turned off to use only new routes
 
     return app
 
@@ -30,6 +31,16 @@ def configure_extensions(app):
     jwt.init_app(app)
     migrate.init_app(app, db)
     configure_jwt_handlers(app)
+
+
+def configure_smorest(app):
+    """Configure Flask-SMOREST for OpenAPI documentation"""
+    smorest_api.init_app(app)
+
+    # Register all blueprints from routes
+    from api.api.routes import register_blueprints
+
+    register_blueprints(smorest_api)
 
 
 def configure_cli(app):

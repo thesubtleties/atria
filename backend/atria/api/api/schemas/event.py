@@ -13,6 +13,7 @@ class EventSchema(ma.SQLAlchemyAutoSchema):
         sqla_session = db.session
         include_fk = True
         load_instance = True
+        name = "EventBase"
 
     # Computed Properties - read only
     is_published = ma.Boolean(dump_only=True)
@@ -25,6 +26,9 @@ class EventSchema(ma.SQLAlchemyAutoSchema):
 # Detailed Schema - Used for GET /events/<id> with all relationships
 class EventDetailSchema(EventSchema):
     """Detailed Event Schema - includes relationships and nested data"""
+
+    class Meta(EventSchema.Meta):
+        name = "EventDetail"
 
     # Nested relationships - only include necessary fields
     organization = ma.Nested(
@@ -68,6 +72,9 @@ class EventDetailSchema(EventSchema):
 class EventCreateSchema(ma.Schema):
     """Schema for creating new events - strict validation"""
 
+    class Meta:
+        name = "EventCreate"
+
     # Required fields
     title = ma.String(required=True)
     event_type = ma.Enum(EventType, required=True)
@@ -109,6 +116,9 @@ class EventCreateSchema(ma.Schema):
 class EventUpdateSchema(ma.Schema):
     """Schema for updating events - all fields optional"""
 
+    class Meta:
+        name = "EventUpdate"
+
     title = ma.String()
     description = ma.String()
     event_type = ma.Enum(EventType)
@@ -129,6 +139,9 @@ class EventUpdateSchema(ma.Schema):
 # Branding Update Schema - Used for PATCH /events/<id>/branding
 class EventBrandingSchema(ma.Schema):
     """Schema for updating event branding only"""
+
+    class Meta:
+        name = "EventBranding"
 
     primary_color = ma.String()
     secondary_color = ma.String()
