@@ -6,10 +6,10 @@ from api.extensions import apispec
 # Import ALL resources
 from api.api.resources import (
     # Auth
-    SignupResource,
-    LoginResource,
-    RefreshResource,
-    LogoutResource,
+    AuthSignupResource,
+    AuthLoginResource,
+    AuthRefreshResource,
+    AuthLogoutResource,
     # User
     UserResource,
     UserEventsResource,
@@ -76,10 +76,10 @@ blueprint = Blueprint("api", __name__, url_prefix="/api")
 api = Api(blueprint)
 
 # Auth routes
-api.add_resource(SignupResource, "/auth/signup")
-api.add_resource(LoginResource, "/auth/login")
-api.add_resource(RefreshResource, "/auth/refresh")
-api.add_resource(LogoutResource, "/auth/logout")
+api.add_resource(AuthSignupResource, "/auth/signup")
+api.add_resource(AuthLoginResource, "/auth/login")
+api.add_resource(AuthRefreshResource, "/auth/refresh")
+api.add_resource(AuthLogoutResource, "/auth/logout")
 
 # User routes
 api.add_resource(UserResource, "/users/<int:user_id>")
@@ -116,7 +116,8 @@ api.add_resource(
     SessionSpeakerDetail, "/sessions/<int:session_id>/speakers/<int:user_id>"
 )
 api.add_resource(
-    SessionSpeakerReorder, "/sessions/<int:session_id>/speakers/reorder"
+    SessionSpeakerReorder,
+    "/sessions/<int:session_id>/speakers/<int:user_id>/reorder",
 )
 
 
@@ -171,10 +172,10 @@ def register_views():
     # Register ALL resources for Swagger
     resources = [
         # Auth resources
-        SignupResource,
-        LoginResource,
-        RefreshResource,
-        LogoutResource,
+        AuthSignupResource,
+        AuthLoginResource,
+        AuthRefreshResource,
+        AuthLogoutResource,
         # User resources
         UserResource,
         UserEventsResource,

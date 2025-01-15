@@ -6,7 +6,9 @@ class SessionSpeaker(db.Model):
     __tablename__ = "session_speakers"
 
     session_id = db.Column(
-        db.BigInteger, db.ForeignKey("sessions.id"), primary_key=True
+        db.BigInteger,
+        db.ForeignKey("sessions.id", ondelete="CASCADE"),
+        primary_key=True,
     )
     user_id = db.Column(
         db.BigInteger, db.ForeignKey("users.id"), primary_key=True
@@ -18,7 +20,7 @@ class SessionSpeaker(db.Model):
         db.DateTime(timezone=True), server_default=db.func.current_timestamp()
     )
 
-    # Add relationships
+    # Relationships
     session = db.relationship(
         "Session",
         back_populates="session_speakers",
@@ -31,9 +33,28 @@ class SessionSpeaker(db.Model):
     )
 
     def __init__(self, **kwargs):
+        if "order" in kwargs and kwargs["order"] is not None:
+            session_id = kwargs["session_id"]
+            requested_order = kwargs["order"]
+
+            # Find all speakers that need to be shifted
+            speakers_to_shift = (
+                SessionSpeaker.query.filter(
+                    SessionSpeaker.session_id == session_id,
+                    SessionSpeaker.order >= requested_order,
+                )
+                .order_by(SessionSpeaker.order.desc())
+                .all()
+            )
+
+            # Shift each speaker up by one
+            for speaker in speakers_to_shift:
+                speaker.order += 1
+
         super().__init__(**kwargs)
+
         if self.order is None:
-            # Auto-set order if not provided
+            # Auto-set order if not provided (add to end)
             existing = SessionSpeaker.query.filter_by(
                 session_id=self.session_id
             ).count()
@@ -43,23 +64,6 @@ class SessionSpeaker(db.Model):
     def speaker_name(self):
         """Get speaker's full name"""
         return f"{self.user.first_name} {self.user.last_name}"
-
-    @classmethod
-    def reorder_speakers(cls, session_id, new_order: list):
-        """
-        Reorder speakers for a session
-
-        Args:
-            session_id: The session ID
-            new_order: List of user_ids in desired order
-        """
-        with db.session.begin_nested():
-            for index, user_id in enumerate(new_order, 1):
-                speaker = cls.query.filter_by(
-                    session_id=session_id, user_id=user_id
-                ).first()
-                if speaker:
-                    speaker.order = index
 
     @classmethod
     def get_ordered_speakers(cls, session_id):
@@ -78,6 +82,33 @@ class SessionSpeaker(db.Model):
             .order_by(cls.order)
             .all()
         )
+
+    def update_order(self, new_order):
+        """Update speaker order and maintain sequence"""
+        old_order = self.order
+
+        # Get all speakers
+        speakers = (
+            SessionSpeaker.query.filter_by(session_id=self.session_id)
+            .order_by(SessionSpeaker.order)
+            .all()
+        )
+
+        if new_order < 1 or new_order > len(speakers):
+            raise ValueError(f"Order must be between 1 and {len(speakers)}")
+
+        # Update orders
+        if old_order < new_order:
+            for speaker in speakers:
+                if old_order < speaker.order <= new_order:
+                    speaker.order -= 1
+        else:
+            for speaker in speakers:
+                if new_order <= speaker.order < old_order:
+                    speaker.order += 1
+
+        self.order = new_order
+        return speakers
 
     def update_role(self, new_role: SessionSpeakerRole):
         """Update speaker's role"""

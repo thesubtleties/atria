@@ -58,17 +58,11 @@ class SessionSpeakerUpdateSchema(ma.Schema):
 
 
 class SpeakerReorderSchema(ma.Schema):
-    """Schema for reordering speakers"""
+    """Schema for reordering speaker"""
 
-    new_order = ma.List(
-        ma.Integer(),
-        required=True,
-        description="List of user IDs in desired order",
-    )
+    order = ma.Integer(required=True)
 
-    @validates("new_order")
+    @validates("order")
     def validate_order(self, value):
-        if not value:
-            raise ValidationError("Order list cannot be empty")
-        if len(set(value)) != len(value):
-            raise ValidationError("Duplicate user IDs not allowed")
+        if value < 1:
+            raise ValidationError("Order must be positive")

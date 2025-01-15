@@ -1,11 +1,10 @@
 from flask import Flask
 from api import api
-from api import auth
 from api import manage
 from api.extensions import apispec
 from api.extensions import db
 from api.extensions import jwt
-from api.extensions import migrate  # Removed celery
+from api.extensions import migrate
 from api.models import TokenBlocklist
 
 
@@ -21,7 +20,6 @@ def create_app(testing=False):
     configure_cli(app)
     configure_apispec(app)
     register_blueprints(app)
-    # Removed init_celery(app)
 
     return app
 
@@ -60,11 +58,10 @@ def configure_apispec(app):
 
 def register_blueprints(app):
     """Register all blueprints for application"""
-    app.register_blueprint(auth.views.blueprint)
+    # Now only registering the api blueprint which contains all resources
     app.register_blueprint(api.views.blueprint)
 
 
-# JWT handlers in their own function
 def configure_jwt_handlers(app):
     """Configure JWT error handlers and callbacks"""
 
@@ -85,6 +82,3 @@ def configure_jwt_handlers(app):
     @jwt.revoked_token_loader
     def revoked_token_callback(jwt_header, jwt_payload):
         return {"message": "Token has been revoked"}, 401
-
-
-# Removed init_celery function since we're not using Celery

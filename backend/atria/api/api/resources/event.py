@@ -36,6 +36,7 @@ class EventList(Resource):
             type: integer
           required: true
           description: Organization ID
+          example: 123
       responses:
         200:
           content:
@@ -46,6 +47,24 @@ class EventList(Resource):
                   results:
                     type: array
                     items: EventSchema
+              example:
+                results: [
+                  {
+                    "title": "TechCorp DevCon 2025",
+                    "event_type": "CONFERENCE",
+                    "start_date": "2025-06-15T00:00:00.000Z",
+                    "end_date": "2025-06-18T00:00:00.000Z",
+                    "company_name": "TechCorp International",
+                    "description": "Annual developer conference featuring workshops, keynotes, and networking opportunities in cloud computing and AI",
+                    "status": "DRAFT",
+                    "branding": {
+                      "primary_color": "#4A90E2",
+                      "secondary_color": "#2C3E50",
+                      "logo_url": "https://example.com/logo.png",
+                      "banner_url": null
+                    }
+                  }
+                ]
 
     post:
       tags:
@@ -57,15 +76,51 @@ class EventList(Resource):
           schema:
             type: integer
           required: true
+          example: 123
       requestBody:
         content:
           application/json:
             schema: EventCreateSchema
+            example:
+              title: "TechCorp DevCon 2025"
+              event_type: "CONFERENCE"
+              start_date: "2025-06-15T00:00:00.000Z"
+              end_date: "2025-06-18T00:00:00.000Z"
+              company_name: "TechCorp International"
+              description: "Annual developer conference featuring workshops, keynotes, and networking opportunities in cloud computing and AI"
+              status: "DRAFT"
+              branding:
+                primary_color: "#4A90E2"
+                secondary_color: "#2C3E50"
+                logo_url: "https://example.com/logo.png"
+                banner_url: null
       responses:
         201:
           content:
             application/json:
               schema: EventDetailSchema
+              example:
+                id: "123e4567-e89b-12d3-a456-426614174000"
+                title: "TechCorp DevCon 2025"
+                event_type: "CONFERENCE"
+                start_date: "2025-06-15T00:00:00.000Z"
+                end_date: "2025-06-18T00:00:00.000Z"
+                company_name: "TechCorp International"
+                description: "Annual developer conference featuring workshops, keynotes, and networking opportunities in cloud computing and AI"
+                status: "DRAFT"
+                branding:
+                  primary_color: "#4A90E2"
+                  secondary_color: "#2C3E50"
+                  logo_url: "https://example.com/logo.png"
+                  banner_url: null
+        400:
+          description: Validation error
+          content:
+            application/json:
+              example:
+                message: "Validation error"
+                errors:
+                  start_date: ["Start date must be in the future"]
     """
 
     @jwt_required()

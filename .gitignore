@@ -21,3 +21,6 @@ dist/
 
 # Docker
 postgres_data/
+
+# Schema Query
+schema-query.sql

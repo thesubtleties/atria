@@ -1,8 +1,8 @@
 from api.api.resources.auth import (
-    SignupResource,
-    LoginResource,
-    RefreshResource,
-    LogoutResource,
+    AuthSignupResource,
+    AuthLoginResource,
+    AuthRefreshResource,
+    AuthLogoutResource,
 )
 from api.api.resources.user import (
     UserResource,
@@ -41,10 +41,10 @@ from api.api.resources.session_speaker import (
 
 __all__ = [
     # Auth
-    "SignupResource",
-    "LoginResource",
-    "RefreshResource",
-    "LogoutResource",
+    "AuthSignupResource",
+    "AuthLoginResource",
+    "AuthRefreshResource",
+    "AuthLogoutResource",
     # User
     "UserResource",
     "UserEventsResource",
