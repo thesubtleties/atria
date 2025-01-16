@@ -17,9 +17,13 @@ from api.api.schemas import (
     OrganizationUserCreateSchema,
     OrganizationUserUpdateSchema,
 )
-from api.commons.pagination import paginate
+from api.commons.pagination import (
+    paginate,
+    PAGINATION_PARAMETERS,
+    get_pagination_schema,
+)
 from api.commons.decorators import org_admin_required, org_member_required
-from api.api.schemas.pagination import create_paginated_schema
+
 
 blp = Blueprint(
     "organization_users",
@@ -31,10 +35,7 @@ blp = Blueprint(
 
 @blp.route("/organizations/<int:org_id>/users")
 class OrganizationUserList(MethodView):
-    @blp.response(
-        200,
-        create_paginated_schema(OrganizationUserSchema, "organization_users"),
-    )
+    @blp.response(200)
     @blp.doc(
         summary="List organization users",
         parameters=[
@@ -50,22 +51,18 @@ class OrganizationUserList(MethodView):
                 "name": "role",
                 "schema": {"type": "string"},
                 "description": "Filter by role (optional)",
+                "enum": [
+                    role.value for role in OrganizationUserRole
+                ],  # Dynamic from enum
             },
-            {
-                "in": "query",
-                "name": "page",
-                "schema": {"type": "integer"},
-                "description": "Page number (default: 1)",
-            },
-            {
-                "in": "query",
-                "name": "per_page",
-                "schema": {"type": "integer"},
-                "description": "Items per page (default: 50)",
-            },
+            *PAGINATION_PARAMETERS,  # imported from pagination helper
         ],
         responses={
+            200: get_pagination_schema(
+                "organization_users", "OrganizationUserBase"
+            ),  # imported from pagination helper
             403: {"description": "Not authorized to view organization users"},
+            404: {"description": "Organization not found"},
         },
     )
     @jwt_required()

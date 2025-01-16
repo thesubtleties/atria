@@ -1,19 +1,24 @@
 from flask.views import MethodView
 from flask_smorest import Blueprint
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from flask import request
+from flask import request, current_app
 from sqlalchemy import distinct
 
 from api.extensions import db
 from api.models import User, Event, EventUser
+from api.models.enums import EventUserRole
 from api.api.schemas import (
     UserDetailSchema,
     UserUpdateSchema,
     EventSchema,
     SessionSchema,
 )
-from api.commons.pagination import paginate
-from api.api.schemas.pagination import create_paginated_schema
+from api.commons.pagination import (
+    paginate,
+    PAGINATION_PARAMETERS,
+    get_pagination_schema,
+)
+
 
 blp = Blueprint(
     "users",
@@ -93,7 +98,7 @@ class UserResource(MethodView):
 
 @blp.route("/<int:user_id>/events")
 class UserEventsResource(MethodView):
-    @blp.response(200, create_paginated_schema(EventSchema, "events"))
+    @blp.response(200)
     @blp.doc(
         summary="Get user's events",
         description="Get all events a user is participating in",
@@ -103,21 +108,17 @@ class UserEventsResource(MethodView):
                 "name": "role",
                 "schema": {"type": "string"},
                 "description": "Filter by role in event (optional)",
+                "enum": [
+                    role.value for role in EventUserRole
+                ],  # Dynamic from enum
             },
-            {
-                "in": "query",
-                "name": "page",
-                "schema": {"type": "integer"},
-                "description": "Page number (default: 1)",
-            },
-            {
-                "in": "query",
-                "name": "per_page",
-                "schema": {"type": "integer"},
-                "description": "Items per page (default: 50)",
-            },
+            *PAGINATION_PARAMETERS,  # imported from pagination helper
         ],
         responses={
+            200: get_pagination_schema(
+                "events", "EventBase"
+            ),  # imported from pagination helper
+            403: {"description": "Not authorized"},
             404: {"description": "User not found"},
         },
     )
@@ -141,7 +142,7 @@ class UserEventsResource(MethodView):
 
 @blp.route("/<int:user_id>/speaking-sessions")
 class UserSessionsResource(MethodView):
-    @blp.response(200, create_paginated_schema(SessionSchema, "sessions"))
+    @blp.response(200)
     @blp.doc(
         summary="Get user's speaking sessions",
         description="Get all sessions where user is speaking",
@@ -171,3 +172,19 @@ class UserSessionsResource(MethodView):
         return paginate(
             query, SessionSchema(many=True), collection_name="sessions"
         )
+
+
+@blp.route("/debug")
+class DebugView(MethodView):
+    def get(self):
+        """Debug endpoint"""
+        return {
+            "endpoints": [
+                {
+                    "url": str(rule),
+                    "endpoint": rule.endpoint,
+                    "methods": list(rule.methods),
+                }
+                for rule in current_app.url_map.iter_rules()
+            ]
+        }

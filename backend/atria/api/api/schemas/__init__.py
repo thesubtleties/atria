@@ -1,5 +1,3 @@
-# Location: api/api/schemas/__init__.py
-
 from api.api.schemas.user import (
     UserSchema,
     UserDetailSchema,

@@ -13,13 +13,17 @@ from api.api.schemas import (
     EventUserUpdateSchema,
     EventSpeakerInfoUpdateSchema,
 )
-from api.commons.pagination import paginate
+from api.commons.pagination import (
+    paginate,
+    PAGINATION_PARAMETERS,
+    get_pagination_schema,
+)
 from api.commons.decorators import (
     event_member_required,
     event_organizer_required,
     event_admin_required,
 )
-from api.api.schemas.pagination import create_paginated_schema
+
 
 blp = Blueprint(
     "event_users",
@@ -31,7 +35,7 @@ blp = Blueprint(
 
 @blp.route("/events/<int:event_id>/users")
 class EventUserList(MethodView):
-    @blp.response(200, create_paginated_schema(EventUserSchema, "event_users"))
+    @blp.response(200)
     @blp.doc(
         summary="List event users",
         description="Get all users associated with an event",
@@ -48,28 +52,14 @@ class EventUserList(MethodView):
                 "name": "role",
                 "schema": {"type": "string"},
                 "description": "Filter by role (optional)",
-                "enum": [
-                    "ADMIN",
-                    "ORGANIZER",
-                    "MODERATOR",
-                    "SPEAKER",
-                    "ATTENDEE",
-                ],
+                "enum": [role.value for role in EventUserRole],
             },
-            {
-                "in": "query",
-                "name": "page",
-                "schema": {"type": "integer"},
-                "description": "Page number (default: 1)",
-            },
-            {
-                "in": "query",
-                "name": "per_page",
-                "schema": {"type": "integer"},
-                "description": "Items per page (default: 50)",
-            },
+            *PAGINATION_PARAMETERS,  # imported from pagination helper
         ],
         responses={
+            200: get_pagination_schema(
+                "event_users", "EventUserBase"
+            ),  # imported from pagination helper
             403: {"description": "Not authorized to view event users"},
             404: {"description": "Event not found"},
         },

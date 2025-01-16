@@ -14,12 +14,16 @@ from api.api.schemas import (
     SessionSpeakerUpdateSchema,
     SpeakerReorderSchema,
 )
-from api.commons.pagination import paginate
+from api.commons.pagination import (
+    paginate,
+    PAGINATION_PARAMETERS,
+    get_pagination_schema,
+)
 from api.commons.decorators import (
     event_member_required,
     event_organizer_required,
 )
-from api.api.schemas.pagination import create_paginated_schema
+
 
 blp = Blueprint(
     "session_speakers",
@@ -31,9 +35,7 @@ blp = Blueprint(
 
 @blp.route("/sessions/<int:session_id>/speakers")
 class SessionSpeakerList(MethodView):
-    @blp.response(
-        200, create_paginated_schema(SessionSpeakerSchema, "session_speakers")
-    )
+    @blp.response(200)
     @blp.doc(
         summary="List session speakers",
         parameters=[
@@ -42,14 +44,26 @@ class SessionSpeakerList(MethodView):
                 "name": "session_id",
                 "schema": {"type": "integer"},
                 "required": True,
+                "description": "Session ID",
             },
             {
                 "in": "query",
                 "name": "role",
                 "schema": {"type": "string"},
                 "description": "Filter by role (optional)",
+                "enum": [
+                    role.value for role in SessionSpeakerRole
+                ],  # Dynamic from enum
             },
+            *PAGINATION_PARAMETERS,  # imported from pagination helper
         ],
+        responses={
+            200: get_pagination_schema(
+                "session_speakers", "SessionSpeakerBase"
+            ),  # imported from pagination helper
+            403: {"description": "Not authorized to view session speakers"},
+            404: {"description": "Session not found"},
+        },
     )
     @jwt_required()
     @event_member_required()

@@ -13,13 +13,17 @@ from api.api.schemas import (
     SessionTimesUpdateSchema,
     SessionStatusUpdateSchema,
 )
-from api.commons.pagination import paginate
+from api.commons.pagination import (
+    paginate,
+    PAGINATION_PARAMETERS,
+    get_pagination_schema,
+)
 from api.commons.decorators import (
     event_member_required,
     event_organizer_required,
     session_access_required,
 )
-from api.api.schemas.pagination import create_paginated_schema
+
 
 blp = Blueprint(
     "sessions",
@@ -31,7 +35,7 @@ blp = Blueprint(
 
 @blp.route("/events/<int:event_id>/sessions")
 class SessionList(MethodView):
-    @blp.response(200, create_paginated_schema(SessionSchema, "sessions"))
+    @blp.response(200)
     @blp.doc(
         summary="List event sessions",
         description="Get all sessions for an event",
@@ -50,20 +54,12 @@ class SessionList(MethodView):
                 "description": "Filter by day number",
                 "example": 1,
             },
-            {
-                "in": "query",
-                "name": "page",
-                "schema": {"type": "integer"},
-                "description": "Page number (default: 1)",
-            },
-            {
-                "in": "query",
-                "name": "per_page",
-                "schema": {"type": "integer"},
-                "description": "Items per page (default: 50)",
-            },
+            *PAGINATION_PARAMETERS,  # imported from pagination helper
         ],
         responses={
+            200: get_pagination_schema(
+                "sessions", "SessionBase"
+            ),  # imported from pagination helper
             404: {"description": "Event not found"},
         },
     )
@@ -126,7 +122,8 @@ class SessionList(MethodView):
         db.session.add(session)
         db.session.commit()
 
-        return session, 201
+        schema = SessionDetailSchema()
+        return schema.dump(session, context={"session_id": session.id}), 201
 
 
 @blp.route("/sessions/<int:session_id>")
@@ -144,7 +141,10 @@ class SessionResource(MethodView):
     def get(self, session_id):
         """Get session details"""
         session = Session.query.get_or_404(session_id)
-        return session
+        schema = SessionDetailSchema()
+        return schema.dump(
+            session, context={"session_id": session_id}
+        )  # Adding session id to connect schemas
 
     @blp.arguments(SessionUpdateSchema)
     @blp.response(200, SessionDetailSchema)
@@ -181,7 +181,8 @@ class SessionResource(MethodView):
                 return {"message": str(e)}, 400
 
         db.session.commit()
-        return session
+        schema = SessionDetailSchema()
+        return schema.dump(session, context={"session_id": session_id})
 
     @blp.response(204)
     @blp.doc(
@@ -220,7 +221,8 @@ class SessionStatusResource(MethodView):
         session = Session.query.get_or_404(session_id)
         session.update_status(status_data["status"])
         db.session.commit()
-        return session
+        schema = SessionDetailSchema()
+        return schema.dump(session, context={"session_id": session_id})
 
 
 @blp.route("/sessions/<int:session_id>/times")
@@ -258,4 +260,5 @@ class SessionTimesResource(MethodView):
         except ValueError as e:
             return {"message": str(e)}, 400
 
-        return session
+        schema = SessionDetailSchema()
+        return schema.dump(session, context={"session_id": session_id})

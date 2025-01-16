@@ -13,8 +13,12 @@ from api.api.schemas import (
     OrganizationUpdateSchema,
 )
 from api.commons.decorators import org_admin_required, org_member_required
-from api.commons.pagination import paginate
-from api.api.schemas.pagination import create_paginated_schema
+from api.commons.pagination import (
+    paginate,
+    PAGINATION_PARAMETERS,
+    get_pagination_schema,
+)
+
 
 blp = Blueprint(
     "organizations",
@@ -87,26 +91,20 @@ class OrganizationResource(MethodView):
 
 @blp.route("/organizations")
 class OrganizationList(MethodView):
-    @blp.response(
-        200, create_paginated_schema(OrganizationSchema, "organizations")
-    )
+    @blp.response(200)
     @blp.doc(
         summary="List user's organizations",
         description="Get all organizations user belongs to",
         parameters=[
-            {
-                "in": "query",
-                "name": "page",
-                "schema": {"type": "integer"},
-                "description": "Page number (default: 1)",
-            },
-            {
-                "in": "query",
-                "name": "per_page",
-                "schema": {"type": "integer"},
-                "description": "Items per page (default: 50)",
-            },
+            *PAGINATION_PARAMETERS,  # imported from pagination helper
         ],
+        responses={
+            200: get_pagination_schema(
+                "organizations", "OrganizationBase"
+            ),  # imported from pagination helper
+            401: {"description": "Not authenticated"},
+            403: {"description": "Not authorized"},
+        },
     )
     @jwt_required()
     def get(self):

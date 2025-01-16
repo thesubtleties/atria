@@ -20,8 +20,12 @@ from api.commons.decorators import (
     org_member_required,
     event_admin_required,
 )
-from api.commons.pagination import paginate
-from api.api.schemas.pagination import create_paginated_schema
+from api.commons.pagination import (
+    paginate,
+    PAGINATION_PARAMETERS,
+    get_pagination_schema,
+)
+
 
 blp = Blueprint(
     "events",
@@ -33,7 +37,7 @@ blp = Blueprint(
 
 @blp.route("/organizations/<int:org_id>/events")
 class EventList(MethodView):
-    @blp.response(200, create_paginated_schema(EventSchema, "events"))
+    @blp.response(200)
     @blp.doc(
         summary="List organization events",
         description="Get all events for an organization",
@@ -46,20 +50,12 @@ class EventList(MethodView):
                 "description": "Organization ID",
                 "example": 123,
             },
-            {
-                "in": "query",
-                "name": "page",
-                "schema": {"type": "integer"},
-                "description": "Page number (default: 1)",
-            },
-            {
-                "in": "query",
-                "name": "per_page",
-                "schema": {"type": "integer"},
-                "description": "Items per page (default: 50)",
-            },
+            *PAGINATION_PARAMETERS,  # imported from pagination helper
         ],
         responses={
+            200: get_pagination_schema(
+                "events", "EventBase"
+            ),  # imported from pagination helper
             404: {"description": "Organization not found"},
         },
     )
