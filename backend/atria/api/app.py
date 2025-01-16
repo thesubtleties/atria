@@ -1,11 +1,12 @@
 from flask import Flask
 from api import api
 from api import manage
-from api.extensions import apispec
+from api.extensions import apispec, smorest_api
 from api.extensions import db
 from api.extensions import jwt
 from api.extensions import migrate
 from api.models import TokenBlocklist
+from apispec.ext.marshmallow import MarshmallowPlugin
 
 
 def create_app(testing=False):
@@ -16,10 +17,18 @@ def create_app(testing=False):
     if testing is True:
         app.config["TESTING"] = True
 
+    app.config["API_SPEC_OPTIONS"] = {
+        **app.config.get("API_SPEC_OPTIONS", {}),
+        "marshmallow_plugin": MarshmallowPlugin(
+            schema_name_resolver=schema_name_resolver
+        ),
+    }
+
     configure_extensions(app)
     configure_cli(app)
-    configure_apispec(app)
-    register_blueprints(app)
+    # configure_apispec(app)  #! will remove once smorest is working
+    configure_smorest(app)
+    # register_blueprints(app) #! turned off to use only new routes
 
     return app
 
@@ -30,6 +39,29 @@ def configure_extensions(app):
     jwt.init_app(app)
     migrate.init_app(app, db)
     configure_jwt_handlers(app)
+
+
+def schema_name_resolver(schema):
+    """Custom resolver to handle nested schema names"""
+    if hasattr(schema, "__nested_in__"):
+        parent_schema = schema.__nested_in__.__class__
+        field_name = schema.__field_name__
+        return f"{parent_schema.__name__}_{field_name}_Schema"
+
+    if hasattr(schema, "Meta") and hasattr(schema.Meta, "name"):
+        return schema.Meta.name
+    print(f"schema-not-nested:", schema.__class__.__name__)
+    return schema.__class__.__name__
+
+
+def configure_smorest(app):
+    """Configure Flask-SMOREST for OpenAPI documentation"""
+    smorest_api.init_app(app)
+
+    # Register all blueprints from routes
+    from api.api.routes import register_blueprints
+
+    register_blueprints(smorest_api)
 
 
 def configure_cli(app):

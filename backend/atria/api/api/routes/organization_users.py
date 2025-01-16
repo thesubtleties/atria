@@ -1,6 +1,9 @@
-from flask import request
-from flask_restful import Resource
+# api/api/routes/organization_users.py
+from flask.views import MethodView
+from flask_smorest import Blueprint
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask import request
+
 from api.extensions import db
 from api.models import (
     Organization,
@@ -14,67 +17,54 @@ from api.api.schemas import (
     OrganizationUserCreateSchema,
     OrganizationUserUpdateSchema,
 )
-from api.commons.pagination import paginate
+from api.commons.pagination import (
+    paginate,
+    PAGINATION_PARAMETERS,
+    get_pagination_schema,
+)
 from api.commons.decorators import org_admin_required, org_member_required
 
 
-class OrganizationUserList(Resource):
-    """
-    Organization user list operations
-    ---
-    get:
-      tags:
-        - organization-users
-      summary: List organization users
-      parameters:
-        - in: path
-          name: org_id
-          schema:
-            type: integer
-          required: true
-          description: Organization ID
-        - in: query
-          name: role
-          schema:
-            type: string
-          description: Filter by role (optional)
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                type: array
-                items: OrganizationUserSchema
-        403:
-          description: Not authorized to view organization users
+blp = Blueprint(
+    "organization_users",
+    "organization_users",
+    url_prefix="/api",
+    description="Operations on organization users",
+)
 
-    post:
-      tags:
-        - organization-users
-      summary: Add user to organization
-      parameters:
-        - in: path
-          name: org_id
-          schema:
-            type: integer
-          required: true
-      requestBody:
-        content:
-          application/json:
-            schema: OrganizationUserCreateSchema
-      responses:
-        201:
-          content:
-            application/json:
-              schema: OrganizationUserDetailSchema
-        403:
-          description: Not authorized to add users
-        404:
-          description: User not found
-        400:
-          description: User already in organization
-    """
 
+@blp.route("/organizations/<int:org_id>/users")
+class OrganizationUserList(MethodView):
+    @blp.response(200)
+    @blp.doc(
+        summary="List organization users",
+        parameters=[
+            {
+                "in": "path",
+                "name": "org_id",
+                "schema": {"type": "integer"},
+                "required": True,
+                "description": "Organization ID",
+            },
+            {
+                "in": "query",
+                "name": "role",
+                "schema": {"type": "string"},
+                "description": "Filter by role (optional)",
+                "enum": [
+                    role.value for role in OrganizationUserRole
+                ],  # Dynamic from enum
+            },
+            *PAGINATION_PARAMETERS,  # imported from pagination helper
+        ],
+        responses={
+            200: get_pagination_schema(
+                "organization_users", "OrganizationUserBase"
+            ),  # imported from pagination helper
+            403: {"description": "Not authorized to view organization users"},
+            404: {"description": "Organization not found"},
+        },
+    )
     @jwt_required()
     @org_member_required()
     def get(self, org_id):
@@ -96,15 +86,21 @@ class OrganizationUserList(Resource):
             collection_name="organization_users",
         )
 
+    @blp.arguments(OrganizationUserCreateSchema)
+    @blp.response(201, OrganizationUserDetailSchema)
+    @blp.doc(
+        summary="Add user to organization",
+        responses={
+            400: {"description": "User already in organization"},
+            403: {"description": "Not authorized to add users"},
+            404: {"description": "User not found"},
+        },
+    )
     @jwt_required()
     @org_admin_required()
-    def post(self, org_id):
+    def post(self, data, org_id):
         """Add user to organization"""
         # Validate and load data
-        schema = OrganizationUserCreateSchema()
-        data = schema.load(request.json)
-
-        # Get user to add
         new_user = User.query.get_or_404(data["user_id"])
         org = Organization.query.get(org_id)
 
@@ -121,65 +117,23 @@ class OrganizationUserList(Resource):
             organization_id=org_id, user_id=new_user.id
         ).first()
 
-        return OrganizationUserDetailSchema().dump(org_user), 201
+        return org_user, 201
 
 
-class OrganizationUserDetail(Resource):
-    """
-    Single organization user operations
-    ---
-    put:
-      tags:
-        - organization-users
-      summary: Update user role
-      parameters:
-        - in: path
-          name: org_id
-          schema:
-            type: integer
-          required: true
-        - in: path
-          name: user_id
-          schema:
-            type: integer
-          required: true
-      requestBody:
-        content:
-          application/json:
-            schema: OrganizationUserUpdateSchema
-      responses:
-        200:
-          content:
-            application/json:
-              schema: OrganizationUserDetailSchema
-        403:
-          description: Not authorized to update role
-
-    delete:
-      tags:
-        - organization-users
-      summary: Remove user from organization
-      parameters:
-        - in: path
-          name: org_id
-          schema:
-            type: integer
-          required: true
-        - in: path
-          name: user_id
-          schema:
-            type: integer
-          required: true
-      responses:
-        200:
-          description: User removed from organization
-        403:
-          description: Not authorized to remove user
-    """
-
+@blp.route("/organizations/<int:org_id>/users/<int:user_id>")
+class OrganizationUserDetail(MethodView):
+    @blp.arguments(OrganizationUserUpdateSchema)
+    @blp.response(200, OrganizationUserDetailSchema)
+    @blp.doc(
+        summary="Update user role",
+        responses={
+            400: {"description": "Cannot change role of last owner"},
+            403: {"description": "Not authorized to update role"},
+        },
+    )
     @jwt_required()
     @org_admin_required()
-    def put(self, org_id, user_id):
+    def put(self, update_data, org_id, user_id):
         """Update user's role in organization"""
         current_user_id = int(get_jwt_identity())
         org = Organization.query.get(org_id)
@@ -193,21 +147,25 @@ class OrganizationUserDetail(Resource):
         ):
             return {"message": "Cannot change role of last owner"}, 400
 
-        # Get the role from request body
-        schema = OrganizationUserUpdateSchema()
-        data = schema.load(request.json)
-
         # Find the organization-user relationship record
         org_user = OrganizationUser.query.filter_by(
             organization_id=org_id, user_id=user_id
         ).first_or_404()
 
         # Update the role
-        org_user.update_role(data["role"])
+        org_user.update_role(update_data["role"])
         db.session.commit()
 
-        return OrganizationUserDetailSchema().dump(org_user)
+        return org_user
 
+    @blp.response(200)
+    @blp.doc(
+        summary="Remove user from organization",
+        responses={
+            400: {"description": "Cannot remove last owner"},
+            403: {"description": "Not authorized to remove user"},
+        },
+    )
     @jwt_required()
     @org_admin_required()
     def delete(self, org_id, user_id):

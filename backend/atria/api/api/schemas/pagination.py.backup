@@ -1,0 +1,40 @@
+from marshmallow import Schema, fields
+
+
+class PaginatedSchema(Schema):
+    """Base schema for paginated results"""
+
+    class Meta:
+        name = "PaginatedBase"
+
+    total_items = fields.Int()
+    total_pages = fields.Int()
+    current_page = fields.Int()
+    per_page = fields.Int()
+    self = fields.Str()
+    first = fields.Str()
+    last = fields.Str()
+    next = fields.Str(allow_none=True)
+    prev = fields.Str(allow_none=True)
+
+
+def create_paginated_schema(item_schema, collection_name="results"):
+    """Create a schema for paginated results with custom collection name"""
+
+    if hasattr(item_schema, "Meta") and hasattr(item_schema.Meta, "name"):
+        base_name = item_schema.Meta.name
+    else:
+        base_name = item_schema.__class__.__name__.replace("Schema", "")
+
+    schema_name = f"Paginated{base_name}List"
+
+    # Create Meta that inherits from PaginatedSchema.Meta
+    meta_dict = {"name": schema_name}
+
+    schema_dict = {
+        "__name__": schema_name,
+        "Meta": type("Meta", (), meta_dict),
+        collection_name: fields.Nested(item_schema, many=True),
+    }
+
+    return type(schema_name, (PaginatedSchema,), schema_dict)

@@ -21,7 +21,6 @@ __all__ = [
     "Session",
     "EventUser",
     "OrganizationUser",
-    "OrganizationUserRole",
     "SessionSpeaker",
     "TokenBlocklist",
 ]
