@@ -12,6 +12,7 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
         load_instance = True
         sqla_session = db.session
         exclude = ("_password",)  # Don't expose password hash
+        name = "UserBase"
 
     # Computed Properties
     full_name = ma.String(dump_only=True)
@@ -20,19 +21,41 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
 class UserDetailSchema(UserSchema):
     """Detailed User Schema with relationships"""
 
+    class Meta(UserSchema.Meta):
+        name = "UserDetail"
+
     organizations = ma.Nested(
-        "OrganizationSchema", many=True, only=("id", "name")
+        "OrganizationSchema",
+        many=True,
+        only=(
+            "id",
+            "name",
+        ),
     )
     events = ma.Nested(
-        "EventSchema", many=True, only=("id", "title", "start_date")
+        "EventSchema",
+        many=True,
+        only=(
+            "id",
+            "title",
+            "start_date",
+        ),
     )
     speaking_sessions = ma.Nested(
-        "SessionSchema", many=True, only=("id", "title")
+        "SessionSchema",
+        many=True,
+        only=(
+            "id",
+            "title",
+        ),
     )
 
 
 class UserCreateSchema(ma.Schema):
     """Schema for user creation"""
+
+    class Meta:
+        name = "UserCreate"
 
     email = ma.Email(required=True)
     password = ma.String(required=True, load_only=True)
@@ -49,7 +72,10 @@ class UserCreateSchema(ma.Schema):
 
 
 class UserUpdateSchema(ma.Schema):
-    """Schema for user updates"""
+    """Schema for admin creating user accounts"""
+
+    class Meta:
+        name = "UserUpdate"
 
     first_name = ma.String()
     last_name = ma.String()

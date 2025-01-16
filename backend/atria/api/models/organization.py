@@ -21,11 +21,17 @@ class Organization(db.Model):
         back_populates="organizations",
         overlaps="organization_users",
     )
-    events = db.relationship("Event", back_populates="organization")
+    events = db.relationship(
+        "Event",
+        back_populates="organization",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+    )
     organization_users = db.relationship(
         "OrganizationUser",
         back_populates="organization",
-        overlaps="users,organizations",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
     )
 
     def add_user(self, user, role: OrganizationUserRole):

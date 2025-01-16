@@ -2,7 +2,7 @@ from api.extensions import ma, db
 from api.models import Event
 from api.models.enums import EventType, EventStatus
 from marshmallow import validates, ValidationError, validates_schema
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 class EventSchema(ma.SQLAlchemyAutoSchema):
@@ -13,6 +13,7 @@ class EventSchema(ma.SQLAlchemyAutoSchema):
         sqla_session = db.session
         include_fk = True
         load_instance = True
+        name = "EventBase"
 
     # Computed Properties - read only
     is_published = ma.Boolean(dump_only=True)
@@ -25,6 +26,9 @@ class EventSchema(ma.SQLAlchemyAutoSchema):
 # Detailed Schema - Used for GET /events/<id> with all relationships
 class EventDetailSchema(EventSchema):
     """Detailed Event Schema - includes relationships and nested data"""
+
+    class Meta(EventSchema.Meta):
+        name = "EventDetail"
 
     # Nested relationships - only include necessary fields
     organization = ma.Nested(
@@ -68,9 +72,11 @@ class EventDetailSchema(EventSchema):
 class EventCreateSchema(ma.Schema):
     """Schema for creating new events - strict validation"""
 
+    class Meta:
+        name = "EventCreate"
+
     # Required fields
     title = ma.String(required=True)
-    organization_id = ma.Integer(required=True)
     event_type = ma.Enum(EventType, required=True)
     start_date = ma.DateTime(required=True)
     end_date = ma.DateTime(required=True)
@@ -78,7 +84,7 @@ class EventCreateSchema(ma.Schema):
 
     # Optional fields
     description = ma.String()
-    status = ma.Enum(EventStatus, load_default="draft")
+    status = ma.Enum(EventStatus, load_default=EventStatus.DRAFT)
     branding = ma.Dict(
         load_default={
             "primary_color": "#000000",
@@ -102,13 +108,16 @@ class EventCreateSchema(ma.Schema):
                 raise ValidationError("End date must be after start date")
 
             # Ensure dates are in the future for new events
-            if data["start_date"] <= datetime.utcnow():
+            if data["start_date"] <= datetime.now(timezone.utc):
                 raise ValidationError("Start date must be in the future")
 
 
 # Update Schema - Used for PUT /events/<id>
 class EventUpdateSchema(ma.Schema):
     """Schema for updating events - all fields optional"""
+
+    class Meta:
+        name = "EventUpdate"
 
     title = ma.String()
     description = ma.String()
@@ -130,6 +139,9 @@ class EventUpdateSchema(ma.Schema):
 # Branding Update Schema - Used for PATCH /events/<id>/branding
 class EventBrandingSchema(ma.Schema):
     """Schema for updating event branding only"""
+
+    class Meta:
+        name = "EventBranding"
 
     primary_color = ma.String()
     secondary_color = ma.String()

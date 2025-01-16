@@ -1,11 +1,11 @@
 from flask import Flask
 from api import api
-from api import auth
 from api import manage
-from api.extensions import apispec
+from api.extensions import smorest_api
 from api.extensions import db
 from api.extensions import jwt
-from api.extensions import migrate  # Removed celery
+from api.extensions import migrate
+from api.models import TokenBlocklist
 
 
 def create_app(testing=False):
@@ -18,9 +18,9 @@ def create_app(testing=False):
 
     configure_extensions(app)
     configure_cli(app)
-    configure_apispec(app)
-    register_blueprints(app)
-    # Removed init_celery(app)
+    # configure_apispec(app)  #! will remove once smorest is working
+    configure_smorest(app)
+    # register_blueprints(app) #! turned off to use only new routes
 
     return app
 
@@ -30,6 +30,15 @@ def configure_extensions(app):
     db.init_app(app)
     jwt.init_app(app)
     migrate.init_app(app, db)
+    configure_jwt_handlers(app)
+
+
+def configure_smorest(app):
+    """Configure Flask-SMOREST for OpenAPI documentation"""
+    smorest_api.init_app(app)
+    from api.api.routes import register_blueprints
+
+    register_blueprints(smorest_api)
 
 
 def configure_cli(app):
@@ -58,8 +67,27 @@ def configure_apispec(app):
 
 def register_blueprints(app):
     """Register all blueprints for application"""
-    app.register_blueprint(auth.views.blueprint)
+    # Now only registering the api blueprint which contains all resources
     app.register_blueprint(api.views.blueprint)
 
 
-# Removed init_celery function since we're not using Celery
+def configure_jwt_handlers(app):
+    """Configure JWT error handlers and callbacks"""
+
+    @jwt.token_in_blocklist_loader
+    def check_if_token_revoked(jwt_header, jwt_payload):
+        jti = jwt_payload["jti"]
+        token = TokenBlocklist.query.filter_by(jti=jti).first()
+        return token is not None and token.revoked
+
+    @jwt.invalid_token_loader
+    def invalid_token_callback(error):
+        return {"message": "Invalid token"}, 401
+
+    @jwt.expired_token_loader
+    def expired_token_callback(jwt_header, jwt_payload):
+        return {"message": "Token has expired"}, 401
+
+    @jwt.revoked_token_loader
+    def revoked_token_callback(jwt_header, jwt_payload):
+        return {"message": "Token has been revoked"}, 401
