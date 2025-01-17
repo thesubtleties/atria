@@ -1,15 +1,51 @@
 import { Button, Group } from '@mantine/core';
+import { useModals } from '@mantine/modals';
+import { LoginModal } from '@/shared/components/modals/auth/LoginModal';
+import { SignupModal } from '@/shared/components/modals/auth/SignupModal';
 import styles from './styles/HeroActions.module.css';
+import { useNavigate } from 'react-router-dom';
 
 export const HeroActions = () => {
+  const modals = useModals();
+  const navigate = useNavigate();
+
   const handleLogin = () => {
-    // TODO: Open login modal
-    console.log('Open login modal');
+    modals.openModal({
+      title: 'Log In',
+      children: (
+        <LoginModal
+          onClose={() => modals.closeAll()}
+          onSuccess={() => {
+            modals.closeAll();
+            navigate('/app');
+          }}
+        />
+      ),
+      size: 'md',
+      centered: true,
+      // Optional configurations
+      closeOnClickOutside: true,
+      closeOnEscape: true,
+    });
   };
 
   const handleSignup = () => {
-    // TODO: Open signup modal
-    console.log('Open signup modal');
+    modals.openModal({
+      title: 'Create Account',
+      children: (
+        <SignupModal
+          onClose={() => modals.closeAll()}
+          onSuccess={() => {
+            modals.closeAll();
+            navigate('/app');
+          }}
+        />
+      ),
+      size: 'md',
+      centered: true,
+      closeOnClickOutside: true,
+      closeOnEscape: true,
+    });
   };
 
   return (
