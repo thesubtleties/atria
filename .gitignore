@@ -21,3 +21,6 @@ dist/
 
 # Docker
 postgres_data/
+
+#frontend
+frontend/setup-structure.sh

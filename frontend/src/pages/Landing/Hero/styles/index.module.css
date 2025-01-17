@@ -1,0 +1,82 @@
+/* app/features/landing/components/Hero/styles/index.module.css */
+.heroSection {
+  position: relative;
+  padding: 8rem 0 12rem;
+  overflow: hidden;
+  /*   background: linear-gradient(
+    to bottom,
+    var(--mantine-color-gray-0) 0%,
+    var(--mantine-color-gray-1) 100%
+  ); */
+}
+
+.heroBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('/path-to-your-image.jpg'); /* Add your image path */
+  background-size: cover;
+  background-position: center;
+  opacity: 0.1;
+}
+
+.heroContainer {
+  position: relative;
+  z-index: 2;
+}
+
+.heroContent {
+  position: relative;
+}
+
+/* Curved shape at the bottom */
+.heroSection::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 150px;
+  background: #f8f9fa;
+  border-radius: 50% 50% 0 0;
+  transform: translateY(50%);
+}
+
+@media (max-width: 768px) {
+  .heroSection {
+    padding: 6rem 0 10rem;
+  }
+
+  .heroSection::after {
+    height: 100px;
+  }
+}
+
+/* Optional: Add animation for the background */
+@keyframes gradientFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.heroSection {
+  background: linear-gradient(-45deg, #d698db, #563ab1, #8831c7, #d6d6d6);
+  /* OR using Mantine colors if you want to stay in theme */
+  /* background: linear-gradient(
+      -45deg,
+      var(--mantine-color-dark-9),
+      var(--mantine-color-violet-9),
+      var(--mantine-color-indigo-9),
+      var(--mantine-color-dark-8)
+    ); */
+  background-size: 400% 400%;
+  animation: gradientFlow 15s ease infinite;
+}
