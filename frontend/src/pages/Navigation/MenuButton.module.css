@@ -1,0 +1,17 @@
+.menuButton {
+  background: none;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.menuButton:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.menuIcon {
+  font-size: 1.5rem;
+  color: #333;
+}

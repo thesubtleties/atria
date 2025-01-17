@@ -2,14 +2,46 @@
 import { Outlet } from 'react-router-dom';
 import { AuthGuard } from '../guards/AuthGuard';
 import { AppLayout } from '../layouts/AppLayout';
-import { OrganizationsPage } from '@/features/organizations/pages';
-import { OrganizationDashboard } from '@/features/organizations/pages';
-import { EventsListView } from '@/features/events/pages';
-import { EventAgenda } from '@/features/events/pages';
-import { EventDashboard } from '@/features/events/pages';
-import { JoinEventPage } from '@/features/events/pages';
 
-// Remove type annotation and just export the array
+// Placeholder component for development
+const PlaceholderComponent = ({ routeName = 'This page' }) => (
+  <div
+    style={{
+      padding: '20px',
+      textAlign: 'center',
+      margin: '20px',
+      border: '2px dashed #ccc',
+      borderRadius: '8px',
+    }}
+  >
+    <h2>{routeName} is under construction</h2>
+    <p>🚧 Coming Soon 🚧</p>
+    <pre style={{ textAlign: 'left', background: '#f5f5f5', padding: '10px' }}>
+      Current Route: {routeName}
+    </pre>
+  </div>
+);
+
+const COMPONENTS_READY = {
+  OrganizationsPage: false,
+  OrganizationDashboard: false,
+  EventsListView: false,
+  EventAgenda: false,
+  EventDashboard: false,
+  JoinEventPage: false,
+};
+
+const getComponent = (componentName, context = '') => {
+  if (COMPONENTS_READY[componentName]) {
+    return <PlaceholderComponent routeName={`${componentName} (Ready)`} />;
+  }
+  return (
+    <PlaceholderComponent
+      routeName={`${componentName}${context ? ` (${context})` : ''}`}
+    />
+  );
+};
+
 export const protectedRoutes = [
   {
     path: '/app',
@@ -21,35 +53,35 @@ export const protectedRoutes = [
     children: [
       {
         path: 'organizations',
-        element: <Outlet />, // Shows either: OrganizationsPage or org content
+        element: <Outlet />,
         children: [
           {
             path: '',
-            element: <OrganizationsPage />,
+            element: getComponent('OrganizationsPage'),
           },
           {
             path: ':orgId',
-            element: <Outlet />, // Shows: Dashboard, events list, or event content
+            element: <Outlet />,
             children: [
               {
                 path: '',
-                element: <OrganizationDashboard />,
+                element: getComponent('OrganizationDashboard'),
               },
               {
                 path: 'events',
-                element: <EventsListView context="organization" />,
+                element: getComponent('EventsListView', 'organization'),
               },
               {
                 path: 'events/:eventId',
-                element: <Outlet />, // Shows: Agenda or Dashboard
+                element: <Outlet />,
                 children: [
                   {
                     path: '',
-                    element: <EventAgenda />,
+                    element: getComponent('EventAgenda'),
                   },
                   {
                     path: 'admin',
-                    element: <EventDashboard />,
+                    element: getComponent('EventDashboard'),
                   },
                 ],
               },
@@ -59,15 +91,15 @@ export const protectedRoutes = [
       },
       {
         path: 'events',
-        element: <Outlet />, // Shows: User's events or join page
+        element: <Outlet />,
         children: [
           {
             path: '',
-            element: <EventsListView context="user" />,
+            element: getComponent('EventsListView', 'user'),
           },
           {
             path: 'join',
-            element: <JoinEventPage />,
+            element: getComponent('JoinEventPage'),
           },
         ],
       },

@@ -1,0 +1,17 @@
+.card {
+  display: flex;
+  align-items: center;
+  gap: 4rem;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+  .card {
+    flex-direction: column;
+    gap: 2rem;
+    padding: 1rem;
+  }
+}

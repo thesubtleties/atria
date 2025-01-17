@@ -1,0 +1,14 @@
+.statsList {
+  display: flex;
+  justify-content: center;
+  gap: 4rem;
+  padding: 2rem;
+}
+
+@media (max-width: 768px) {
+  .statsList {
+    flex-direction: column;
+    gap: 2rem;
+    padding: 1rem;
+  }
+}
