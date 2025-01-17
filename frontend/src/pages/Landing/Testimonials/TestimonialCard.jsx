@@ -1,9 +1,9 @@
-import { Group } from '@mantine/core';
+import styles from './styles/TestimonialCard.module.css';
 import { TestimonialImage } from './TestimonialImage';
 import { TestimonialContent } from './TestimonialContent';
 
 export const TestimonialCard = ({ testimonial }) => (
-  <Group align="center" gap="xl">
+  <div className={styles.card}>
     <TestimonialImage
       src={testimonial.image}
       alt={`${testimonial.author} photo`}
@@ -13,5 +13,5 @@ export const TestimonialCard = ({ testimonial }) => (
       author={testimonial.author}
       role={testimonial.role}
     />
-  </Group>
+  </div>
 );

@@ -1,5 +1,6 @@
 import { Button, Group } from '@mantine/core';
 import styles from './styles/HeroActions.module.css';
+
 export const HeroActions = () => {
   const handleLogin = () => {
     // TODO: Open login modal
@@ -12,13 +13,25 @@ export const HeroActions = () => {
   };
 
   return (
-    <Group justify="center" gap="md">
-      <Button variant="filled" onClick={handleLogin}>
-        Log In
-      </Button>
-      <Button variant="outline" onClick={handleSignup}>
-        Sign Up
-      </Button>
-    </Group>
+    <div className={styles.actionsWrapper}>
+      <Group className={styles.buttonGroup} justify="center" gap="md">
+        <Button
+          className={styles.loginButton}
+          variant="filled"
+          onClick={handleLogin}
+          size="lg"
+        >
+          Log In
+        </Button>
+        <Button
+          className={styles.signupButton}
+          variant="outline"
+          onClick={handleSignup}
+          size="lg"
+        >
+          Sign Up
+        </Button>
+      </Group>
+    </div>
   );
 };

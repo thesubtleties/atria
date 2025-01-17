@@ -1,12 +1,8 @@
-import { Stack, Text } from '@mantine/core';
+import styles from './styles/StatItem.module.css';
 
 export const StatItem = ({ value, label }) => (
-  <Stack align="center" spacing="xs">
-    <Text size="xl" fw={700}>
-      {value}
-    </Text>
-    <Text size="sm" c="dimmed">
-      {label}
-    </Text>
-  </Stack>
+  <div className={styles.statItem}>
+    <span className={styles.value}>{value}</span>
+    <span className={styles.label}>{label}</span>
+  </div>
 );

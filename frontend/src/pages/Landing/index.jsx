@@ -1,11 +1,11 @@
 import { Hero } from './Hero';
 import { Stats } from './Stats';
-import { Testimonial } from './Testimonials';
-
+import { Testimonials } from './Testimonials';
+import styles from './index.module.css';
 export const Landing = () => (
-  <main>
+  <main className={styles.mainContainer}>
     <Hero />
     <Stats />
-    <Testimonial />
+    <Testimonials />
   </main>
 );

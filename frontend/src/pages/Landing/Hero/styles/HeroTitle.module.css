@@ -1,0 +1,9 @@
+.title {
+  font-size: 4rem;
+  font-weight: 700;
+  text-align: center;
+  color: #e4e4e4;
+  margin: 0;
+  padding: 0;
+  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
+}
