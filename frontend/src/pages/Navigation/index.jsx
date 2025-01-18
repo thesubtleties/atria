@@ -1,6 +1,6 @@
 import React from 'react';
 import { MenuButton } from './MenuButton';
-import { CenterContent } from './CenterContent';
+import { CenterContent } from './CenterContent/index.jsx';
 import styles from './Navigation.module.css';
 
 export const Navigation = ({ context }) => {

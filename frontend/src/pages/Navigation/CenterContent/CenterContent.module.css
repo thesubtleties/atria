@@ -1,0 +1,22 @@
+.centerContent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 1rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.titleContainer {
+  text-align: center;
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: var(--mantine-color-gray-6);
+  margin-top: 0.25rem;
+}
