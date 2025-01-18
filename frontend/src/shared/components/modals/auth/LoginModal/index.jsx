@@ -1,12 +1,13 @@
-import { TextInput, PasswordInput, Button, Stack, Alert } from '@mantine/core';
+import { TextInput, PasswordInput, Button, Stack } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
-import { useLoginMutation } from '@/app/features/auth/api';
+import { useDispatch } from 'react-redux';
+import { useLoginMutation, authApi } from '@/app/features/auth/api';
 import { loginSchema } from './schemas/loginSchema';
 import styles from './styles/index.module.css';
-import { isConstructorDeclaration } from 'typescript';
 
 export const LoginModal = ({ onClose, onSuccess }) => {
-  const [login, { isLoading, error }] = useLoginMutation();
+  const dispatch = useDispatch();
+  const [login, { isLoading }] = useLoginMutation();
 
   const form = useForm({
     initialValues: {
@@ -18,12 +19,13 @@ export const LoginModal = ({ onClose, onSuccess }) => {
 
   const handleSubmit = async (values) => {
     try {
-      console.log(values);
-      const result = await login(values).unwrap();
-
-      // tokens are stored in the RTK Query Mutation
-
-      onSuccess();
+      await login(values).unwrap();
+      const userData = await dispatch(
+        authApi.endpoints.getCurrentUser.initiate()
+      ).unwrap();
+      if (userData) {
+        onSuccess();
+      }
     } catch (error) {
       if (error.status === 401) {
         form.setErrors({ password: 'Invalid email or password' });

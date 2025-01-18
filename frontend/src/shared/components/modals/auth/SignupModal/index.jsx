@@ -1,16 +1,19 @@
 import { TextInput, PasswordInput, Button, Stack } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
-import { useSignupMutation } from '@/app/features/auth/api';
+import { useDispatch } from 'react-redux';
+import { useSignupMutation, authApi } from '@/app/features/auth/api';
 import { signupSchema } from './schemas/signupSchema';
 import styles from './styles/index.module.css';
 
 export const SignupModal = ({ onClose, onSuccess }) => {
+  const dispatch = useDispatch();
   const [signup, { isLoading }] = useSignupMutation();
 
   const form = useForm({
     initialValues: {
       email: '',
       password: '',
+      password_confirm: '', // Add this field
       first_name: '',
       last_name: '',
     },
@@ -19,12 +22,18 @@ export const SignupModal = ({ onClose, onSuccess }) => {
 
   const handleSubmit = async (values) => {
     try {
-      await signup(values).unwrap();
-      // tokens are stored in RTK Query mutation
-      onSuccess();
+      // Remove password_confirm before sending to API
+      const { password_confirm, ...submitData } = values;
+      await signup(submitData).unwrap();
+
+      const userData = await dispatch(
+        authApi.endpoints.getCurrentUser.initiate()
+      ).unwrap();
+      if (userData) {
+        onSuccess();
+      }
     } catch (error) {
       if (error.status === 409) {
-        // If email already exists
         form.setErrors({ email: 'Email already in use' });
       } else {
         form.setErrors({ email: 'An unexpected error occurred' });
@@ -60,6 +69,13 @@ export const SignupModal = ({ onClose, onSuccess }) => {
           label="Password"
           placeholder="Create a password"
           {...form.getInputProps('password')}
+          disabled={isLoading}
+        />
+
+        <PasswordInput
+          label="Confirm Password"
+          placeholder="Confirm your password"
+          {...form.getInputProps('password_confirm')}
           disabled={isLoading}
         />
 

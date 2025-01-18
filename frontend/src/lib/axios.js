@@ -8,8 +8,10 @@ const axiosClient = axios.create({
 });
 
 // Add interceptors to the base instance
+// REQ interceptor (adds to all requests)
 axiosClient.interceptors.request.use(
   (config) => {
+    console.log('Final URL:', `${config.baseURL}${config.url}`);
     const accessToken = localStorage.getItem('access_token');
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
@@ -19,6 +21,7 @@ axiosClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// RES interceptor (adds to all responses)
 axiosClient.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -27,8 +30,12 @@ axiosClient.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        // Get refresh token from localStorage
         const refreshToken = localStorage.getItem('refresh_token');
+        if (!refreshToken) {
+          // No refresh token, don't attempt refresh
+          throw new Error('No refresh token available');
+        }
+
         const response = await axiosClient.post(
           '/auth/refresh',
           {},
@@ -44,7 +51,7 @@ axiosClient.interceptors.response.use(
       } catch (refreshError) {
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
-        window.location.href = '/login';
+        window.location.href = '/'; // Change to root path
         return Promise.reject(refreshError);
       }
     }

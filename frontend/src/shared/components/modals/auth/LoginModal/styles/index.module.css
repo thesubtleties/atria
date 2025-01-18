@@ -2,19 +2,15 @@
   padding: 1rem 0;
 }
 
-/* Optional: Add some spacing between form elements */
 .form > div {
-  /* Targets the Stack component */
   gap: 1.25rem;
 }
 
-/* Optional: Style inputs when disabled */
 .form input:disabled {
   opacity: 0.7;
   cursor: not-allowed;
 }
 
-/* Optional: Add a subtle animation */
 .form {
   animation: fadeIn 0.2s ease;
 }

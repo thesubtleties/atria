@@ -1,17 +1,14 @@
 .menuButton {
-  background: none;
+  background: transparent;
   border: none;
-  padding: 8px 12px;
   cursor: pointer;
-  border-radius: 4px;
-  transition: background-color 0.2s ease;
-}
-
-.menuButton:hover {
-  background-color: rgba(0, 0, 0, 0.05);
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .menuIcon {
   font-size: 1.5rem;
-  color: #333;
+  color: var(--mantine-color-gray-7);
 }

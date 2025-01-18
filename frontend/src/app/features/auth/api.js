@@ -10,28 +10,11 @@ export const authApi = baseApi.injectEndpoints({
         method: 'POST',
         body: credentials,
       }),
-      // transformResponse for login because we need to handle tokens
       transformResponse: (response) => {
         localStorage.setItem('access_token', response.access_token);
         localStorage.setItem('refresh_token', response.refresh_token);
         return response;
       },
-      // After login success, fetch user data
-      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-        try {
-          await queryFulfilled;
-          // After successful login, fetch user data
-          const result = await dispatch(
-            authApi.endpoints.getCurrentUser.initiate()
-          );
-          if (result.data) {
-            dispatch(setUser(result.data));
-          }
-        } catch {
-          dispatch(setUser(null));
-        }
-      },
-      invalidatesTags: ['Auth'],
     }),
 
     signup: builder.mutation({
@@ -40,51 +23,56 @@ export const authApi = baseApi.injectEndpoints({
         method: 'POST',
         body: userData,
       }),
+      // Just handle tokens
       transformResponse: (response) => {
         localStorage.setItem('access_token', response.access_token);
         localStorage.setItem('refresh_token', response.refresh_token);
         return response;
       },
-      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-        try {
-          await queryFulfilled;
-          // After successful signup, fetch user data
-          const result = await dispatch(
-            authApi.endpoints.getCurrentUser.initiate()
-          );
-          if (result.data) {
-            dispatch(setUser(result.data));
-          }
-        } catch {
-          dispatch(setUser(null));
-        }
-      },
-      invalidatesTags: ['Auth'],
     }),
 
     // Get current user data - no transformResponse needed because no token handling
     getCurrentUser: builder.query({
-      query: () => '/auth/me',
-      // Only need onQueryStarted to update Redux state with user data
+      query: () => ({
+        // Change from string to object format
+        url: '/auth/me', // Specify url property
+        method: 'GET', // Explicitly set method
+      }),
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
+          console.log(data);
           dispatch(setUser(data));
         } catch {
           dispatch(setUser(null));
         }
       },
-      providesTags: ['User'], // Add this for cache invalidation
+      providesTags: ['User'],
     }),
-
+    //! This may need updated to remove double refresh... we still want this for api calls but we also are hitting it during refreshes...
     refresh: builder.mutation({
       query: () => ({
         url: '/auth/refresh',
         method: 'POST',
       }),
-      transformResponse: (response) => {
-        localStorage.setItem('access_token', response.access_token);
-        return response;
+      onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        queryFulfilled
+          .then(({ data }) => {
+            localStorage.setItem('access_token', data.access_token);
+            return data;
+          })
+          .then(() => {
+            return dispatch(
+              authApi.endpoints.getCurrentUser.initiate()
+            ).unwrap();
+          })
+          .then((userData) => {
+            dispatch(setUser(userData));
+          })
+          .catch((error) => {
+            console.error('Refresh flow failed:', error);
+            dispatch(setUser(null));
+          });
       },
     }),
 
