@@ -34,9 +34,8 @@ export const authApi = baseApi.injectEndpoints({
     // Get current user data - no transformResponse needed because no token handling
     getCurrentUser: builder.query({
       query: () => ({
-        // Change from string to object format
-        url: '/auth/me', // Specify url property
-        method: 'GET', // Explicitly set method
+        url: '/auth/me',
+        method: 'GET',
       }),
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {

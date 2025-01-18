@@ -3,7 +3,9 @@ import { baseApi } from '../api';
 export const usersApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getUser: builder.query({
-      query: (id) => `/users/${id}`,
+      query: (id) => ({
+        url: `/users/${id}`,
+      }),
       providesTags: (result, error, id) => [{ type: 'Users', id }],
     }),
     updateUser: builder.mutation({
@@ -22,7 +24,9 @@ export const usersApi = baseApi.injectEndpoints({
       providesTags: ['Events'],
     }),
     getUserSpeakingSessions: builder.query({
-      query: (userId) => `/users/${userId}/speaking-sessions`,
+      query: (userId) => ({
+        url: `/users/${userId}/speaking-sessions`,
+      }),
       providesTags: ['Sessions'],
     }),
   }),

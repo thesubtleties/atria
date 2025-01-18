@@ -1,0 +1,16 @@
+.container {
+  padding: 24px 0;
+}
+
+.button {
+  transition: all 0.2s ease;
+}
+
+.button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--mantine-shadow-md);
+}
+
+.button:active {
+  transform: translateY(0);
+}

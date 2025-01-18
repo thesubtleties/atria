@@ -6,6 +6,9 @@
 
 .main {
   flex: 1;
-  padding: 2rem;
+  padding-top: var(
+    --mantine-header-height,
+    60px
+  ); /* This value needs to match height of header */
   background-color: var(--mantine-color-gray-0);
 }

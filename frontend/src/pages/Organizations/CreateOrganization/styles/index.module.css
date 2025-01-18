@@ -1,0 +1,27 @@
+.container {
+  margin-top: 120px;
+}
+
+.form {
+  width: 100%;
+  max-width: 480px;
+}
+
+.button {
+  transition: all 0.2s ease;
+}
+
+.button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--mantine-shadow-md);
+}
+
+.button:active {
+  transform: translateY(0);
+  box-shadow: var(--mantine-shadow-sm);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, #9c42f5 90%, black),
+    color-mix(in srgb, #6d42f5 90%, black)
+  );
+}
