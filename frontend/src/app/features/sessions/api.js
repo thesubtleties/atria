@@ -10,7 +10,9 @@ export const sessionsApi = baseApi.injectEndpoints({
       providesTags: ['Sessions'],
     }),
     getSession: builder.query({
-      query: (id) => `/sessions/${id}`,
+      query: (id) => ({
+        url: `/sessions/${id}`,
+      }),
       providesTags: (result, error, id) => [{ type: 'Sessions', id }],
     }),
     createSession: builder.mutation({

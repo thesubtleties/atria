@@ -1,0 +1,20 @@
+.container {
+  max-width: 800px;
+  margin: 48px auto;
+  padding: 0 24px;
+  text-align: center;
+}
+
+.container h2 {
+  color: #333;
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  font-weight: 600;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-top: 32px;
+}

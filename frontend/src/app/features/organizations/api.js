@@ -3,11 +3,15 @@ import { baseApi } from '../api';
 export const organizationsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getOrganizations: builder.query({
-      query: () => '/organizations',
+      query: () => ({
+        url: '/organizations',
+      }),
       providesTags: ['Organizations'],
     }),
     getOrganization: builder.query({
-      query: (id) => `/organizations/${id}`,
+      query: (id) => ({
+        url: `/organizations/${id}`,
+      }),
       providesTags: (result, error, id) => [{ type: 'Organizations', id }],
     }),
     createOrganization: builder.mutation({

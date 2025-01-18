@@ -3,21 +3,26 @@ import { useGetOrganizationQuery } from '@/app/features/organizations/api';
 import { useGetEventQuery } from '@/app/features/events/api';
 import { ROUTES } from '../constants/routes';
 
+// src/pages/Navigation/hooks/useNavigationTitle.js
 export const useNavigationTitle = () => {
   const location = useLocation();
   const { orgId, eventId } = useParams();
 
+  // Check if we're on a route that needs data
+  const needsOrgData = location.pathname.includes(`/organizations/${orgId}`);
+  const needsEventData = location.pathname.includes(`/events/${eventId}`);
+
   const { data: organization, isLoading: isLoadingOrg } =
     useGetOrganizationQuery(orgId, {
-      skip: !orgId,
+      skip: !needsOrgData || !orgId,
     });
 
   const { data: event, isLoading: isLoadingEvent } = useGetEventQuery(eventId, {
-    skip: !eventId,
+    skip: !needsEventData || !eventId,
   });
 
   const getTitle = () => {
-    // Root routes
+    // Simple routes - no API calls needed
     switch (location.pathname) {
       case ROUTES.ORGANIZATIONS:
         return { text: 'Organizations' };
@@ -27,22 +32,21 @@ export const useNavigationTitle = () => {
         return { text: 'Join Event' };
     }
 
-    // Organization routes
-    if (orgId) {
+    // Only check org/event routes if we need the data
+    if (needsOrgData && organization) {
       if (location.pathname === ROUTES.ORGANIZATION(orgId)) {
-        return { text: organization?.name || 'Organization' };
+        return { text: organization.name };
       }
 
       if (location.pathname === ROUTES.ORGANIZATION_EVENTS(orgId)) {
-        return { text: 'Events' };
+        return { text: `${organization.name} - Events` };
       }
+    }
 
-      if (eventId && event) {
-        return {
-          text: event.name,
-          subtitle: 'Organizer View',
-        };
-      }
+    if (needsEventData && event) {
+      return needsOrgData
+        ? { text: event.name, subtitle: 'Organizer View' }
+        : { text: event.name };
     }
 
     return null;
@@ -50,6 +54,7 @@ export const useNavigationTitle = () => {
 
   return {
     titleData: getTitle(),
-    isLoading: isLoadingOrg || isLoadingEvent,
+    isLoading:
+      (needsOrgData && isLoadingOrg) || (needsEventData && isLoadingEvent),
   };
 };

@@ -10,7 +10,9 @@ export const eventsApi = baseApi.injectEndpoints({
       providesTags: ['Events'],
     }),
     getEvent: builder.query({
-      query: (id) => `/events/${id}`,
+      query: (id) => ({
+        url: `/events/${id}`,
+      }),
       providesTags: (result, error, id) => [{ type: 'Events', id }],
     }),
     createEvent: builder.mutation({

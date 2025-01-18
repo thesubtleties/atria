@@ -2,6 +2,9 @@
 import { Outlet } from 'react-router-dom';
 import { AuthGuard } from '../guards/AuthGuard';
 import { AppLayout } from '../layouts/AppLayout';
+import { NewUserCheck } from '../../../pages/NewUserLanding';
+import { CreateOrganization } from '../../../pages/Organizations/CreateOrganization';
+import { OrganizationsList } from '../../../pages/Organizations/OrganizationsList';
 
 // Placeholder component for development
 const PlaceholderComponent = ({ routeName = 'This page' }) => (
@@ -52,12 +55,20 @@ export const protectedRoutes = [
     ),
     children: [
       {
+        index: true,
+        element: <NewUserCheck />,
+      },
+      {
         path: 'organizations',
         element: <Outlet />,
         children: [
           {
             path: '',
-            element: getComponent('OrganizationsPage'),
+            element: <OrganizationsList />,
+          },
+          {
+            path: 'new',
+            element: <CreateOrganization />,
           },
           {
             path: ':orgId',
