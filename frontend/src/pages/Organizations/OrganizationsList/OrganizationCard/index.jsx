@@ -11,11 +11,11 @@ export const OrganizationCard = ({ organization }) => (
     radius="md"
   >
     <Group position="apart" mb="md">
-      <Text weight={500} c="white" size="lg" className={styles.title}>
+      <Text weight={500} size="lg" className={styles.title}>
         {organization.name}
       </Text>
     </Group>
-    <Text c="white" size="sm" className={styles.date}>
+    <Text size="sm" className={styles.date}>
       Created {new Date(organization.created_at).toLocaleDateString()}
     </Text>
   </Card>

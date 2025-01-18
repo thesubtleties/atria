@@ -1,10 +1,16 @@
 .card {
-  background: linear-gradient(135deg, #9c42f5 0%, #6d42f5 100%);
-  min-height: 120px;
+  display: block;
+  padding: 32px;
+  border-radius: 12px;
   text-decoration: none;
-  transition: all 0.2s ease;
+  color: inherit;
+  transition: all 0.3s ease;
+  background: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   position: relative;
   overflow: hidden;
+  min-height: 120px;
 }
 
 .card::before {
@@ -13,19 +19,15 @@
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.1) 0%,
-    rgba(255, 255, 255, 0) 100%
-  );
+  height: 4px;
+  background: linear-gradient(135deg, #9c42f5 0%, #6d42f5 100%);
   opacity: 0;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.3s ease;
 }
 
 .card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 4px 20px rgba(156, 66, 245, 0.2);
+  box-shadow: 0 8px 20px rgba(156, 66, 245, 0.15);
 }
 
 .card:hover::before {
@@ -33,14 +35,14 @@
 }
 
 .title {
-  position: relative;
-
+  color: #333;
+  font-size: 1.5rem;
   font-weight: 600;
-  letter-spacing: 0.2px;
+  margin-bottom: 16px;
 }
 
 .date {
-  position: relative;
-  z-index: 1;
-  opacity: 0.9;
+  color: #666;
+  line-height: 1.5;
+  font-size: 1rem;
 }
