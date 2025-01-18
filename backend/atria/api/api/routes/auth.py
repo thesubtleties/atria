@@ -11,7 +11,7 @@ from flask import request, current_app
 
 from api.extensions import db
 from api.models import User
-from api.api.schemas import LoginSchema, SignupSchema
+from api.api.schemas import LoginSchema, SignupSchema, UserDetailSchema
 from api.auth.helpers import add_token_to_database, revoke_token
 
 blp = Blueprint(
@@ -66,6 +66,29 @@ class AuthLoginResource(MethodView):
         )
 
         return {"access_token": access_token, "refresh_token": refresh_token}
+
+
+@blp.route("/me")
+class AuthMeResource(MethodView):
+    @blp.response(200, UserDetailSchema)
+    @blp.doc(
+        summary="Get current user",
+        description="Get detailed information about the currently authenticated user",
+        responses={
+            200: {
+                "description": "Current user details retrieved successfully",
+                "content": {"application/json": {"schema": UserDetailSchema}},
+            },
+            401: {"description": "Not authenticated"},
+            404: {"description": "User not found"},
+        },
+    )
+    @jwt_required()
+    def get(self):
+        """Get current authenticated user"""
+        user_id = int(get_jwt_identity())
+        user = User.query.get_or_404(user_id)
+        return user
 
 
 @blp.route("/refresh")

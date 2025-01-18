@@ -1,8 +1,13 @@
 import { Landing } from '../../../pages/Landing';
+import { PublicGuard } from '../guards/PublicGuard';
 
 export const publicRoutes = [
   {
     path: '/',
-    element: <Landing />,
+    element: (
+      <PublicGuard>
+        <Landing />
+      </PublicGuard>
+    ),
   },
 ];

@@ -1,0 +1,14 @@
+.menuButton {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menuIcon {
+  font-size: 1.5rem;
+  color: var(--mantine-color-gray-7);
+}

@@ -1,12 +1,9 @@
-import axios from 'axios';
-
-const api = axios.create({
-  baseURL: '/api',
-});
+import axiosInstance from '@/lib/axios';
 
 export const axiosBaseQuery = async ({ url, method = 'GET', body, params }) => {
+  console.log('RTK Query URL:', url);
   try {
-    const result = await api({
+    const result = await axiosInstance({
       url,
       method,
       data: body,
@@ -14,6 +11,12 @@ export const axiosBaseQuery = async ({ url, method = 'GET', body, params }) => {
     });
     return { data: result.data };
   } catch (error) {
-    return { error };
+    return {
+      error: {
+        status: error.response?.status,
+        data: error.response?.data,
+        message: error.message,
+      },
+    };
   }
 };
