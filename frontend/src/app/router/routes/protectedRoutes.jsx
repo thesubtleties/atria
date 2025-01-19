@@ -5,6 +5,8 @@ import { AppLayout } from '../layouts/AppLayout';
 import { NewUserCheck } from '../../../pages/NewUserLanding';
 import { CreateOrganization } from '../../../pages/Organizations/CreateOrganization';
 import { OrganizationsList } from '../../../pages/Organizations/OrganizationsList';
+import { EventsList } from '../../../pages/Events/EventsList';
+import { OrganizationEvents } from '../../../pages/Events/OrganizationEvents';
 
 // Placeholder component for development
 const PlaceholderComponent = ({ routeName = 'This page' }) => (
@@ -80,7 +82,7 @@ export const protectedRoutes = [
               },
               {
                 path: 'events',
-                element: getComponent('EventsListView', 'organization'),
+                element: <OrganizationEvents />,
               },
               {
                 path: 'events/:eventId',
@@ -106,7 +108,7 @@ export const protectedRoutes = [
         children: [
           {
             path: '',
-            element: getComponent('EventsListView', 'user'),
+            element: <EventsList />,
           },
           {
             path: 'join',

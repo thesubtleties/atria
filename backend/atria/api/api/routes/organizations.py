@@ -31,6 +31,8 @@ blp = Blueprint(
 @blp.route("/organizations/<int:org_id>")
 class OrganizationResource(MethodView):
     @blp.response(200, OrganizationDetailSchema)
+    @jwt_required()
+    @org_member_required()
     @blp.doc(
         summary="Get organization details",
         responses={
@@ -38,11 +40,10 @@ class OrganizationResource(MethodView):
             404: {"description": "Organization not found"},
         },
     )
-    @jwt_required()
-    @org_member_required()
     def get(self, org_id):
         """Get organization details"""
         org = Organization.query.get_or_404(org_id)
+        print(f"Events: {org.events}")  # Debug print
         return org
 
     @blp.arguments(OrganizationUpdateSchema)

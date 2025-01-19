@@ -28,3 +28,11 @@
   gap: 24px;
   margin-top: 32px;
 }
+.plusIcon {
+  transition: all 0.3s ease;
+}
+
+.button:hover .plusIcon {
+  transform: scale(1.2);
+  color: #9c42f5;
+}

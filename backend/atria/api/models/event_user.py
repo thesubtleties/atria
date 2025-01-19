@@ -54,6 +54,21 @@ class EventUser(db.Model):
         """Check if user is an organizer"""
         return self.role == EventUserRole.ORGANIZER
 
+    @property
+    def id(self):
+        """Get user's id"""
+        return self.user.id
+
+    @property
+    def full_name(self):
+        """Get user's full name"""
+        return self.user.full_name
+
+    @property
+    def email(self):
+        """Get user's email"""
+        return self.user.email
+
     def update_speaker_info(self, speaker_bio=None, speaker_title=None):
         """Update speaker bio and title"""
         if self.role != EventUserRole.SPEAKER:

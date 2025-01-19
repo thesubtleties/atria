@@ -1,7 +1,26 @@
 from api.extensions import ma, db
-from api.models import Organization
+from api.models import Organization, User
 from api.models.enums import OrganizationUserRole
-from marshmallow import validates, ValidationError
+from marshmallow import validates, ValidationError, post_dump
+
+
+class OrganizationUserNestedSchema(ma.SQLAlchemyAutoSchema):
+    """Schema for users when nested in organization"""
+
+    class Meta:
+        model = User
+        fields = ("id", "full_name", "email")
+
+    role = ma.Function(
+        lambda obj, parent: next(
+            (
+                ou.role.value
+                for ou in parent.organization_users
+                if ou.user_id == obj.id
+            ),
+            None,
+        )
+    )
 
 
 class OrganizationSchema(ma.SQLAlchemyAutoSchema):
@@ -11,17 +30,13 @@ class OrganizationSchema(ma.SQLAlchemyAutoSchema):
         model = Organization
         sqla_session = db.session
         include_fk = True
-        exclude = (
-            "organization_users",
-            "users",
-        )
         name = "OrganizationBase"
 
-    owners = ma.Nested(
-        "UserSchema",
+    users = ma.Nested(
+        "api.api.schemas.organization_user.OrganizationUserNestedSchema",  # Full path
         many=True,
-        only=("id", "full_name", "image_url"),
-        attribute="get_users_by_role(OrganizationUserRole.OWNER)",
+        attribute="organization_users",
+        dump_only=True,
     )
 
 
@@ -31,33 +46,20 @@ class OrganizationDetailSchema(OrganizationSchema):
     class Meta(OrganizationSchema.Meta):
         name = "OrganizationDetail"
 
-    # Computed properties
     member_count = ma.Integer(dump_only=True)
     owner_count = ma.Integer(dump_only=True)
+    user_is_admin_or_owner = ma.Boolean(dump_only=True)
 
-    # Flatter structure for users with roles
     users = ma.Nested(
-        "UserSchema",
+        "api.api.schemas.organization_user.OrganizationUserNestedSchema",
         many=True,
-        only=(
-            "id",
-            "full_name",
-            "email",
-            "organization_users.role",
-        ),
+        attribute="organization_users",
         dump_only=True,
     )
 
-    # Include upcoming events
     upcoming_events = ma.Nested(
-        "EventSchema",
+        "api.api.schemas.event.EventNestedSchema",  # Use full path like we did with users
         many=True,
-        only=(
-            "id",
-            "title",
-            "start_date",
-            "status",
-        ),
         dump_only=True,
     )
 

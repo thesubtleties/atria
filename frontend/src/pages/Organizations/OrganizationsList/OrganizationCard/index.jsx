@@ -1,22 +1,17 @@
-import { Card, Text, Group } from '@mantine/core';
+import { Text, Group } from '@mantine/core';
 import { Link } from 'react-router-dom';
 import styles from './styles/index.module.css';
 
 export const OrganizationCard = ({ organization }) => (
-  <Card
-    component={Link}
+  <Link
     to={`/app/organizations/${organization.id}/events`}
     className={styles.card}
-    padding="lg"
-    radius="md"
   >
     <Group position="apart" mb="md">
-      <Text weight={500} size="lg" className={styles.title}>
-        {organization.name}
-      </Text>
+      <Text className={styles.title}>{organization.name}</Text>
     </Group>
-    <Text size="sm" className={styles.date}>
+    <Text className={styles.date}>
       Created {new Date(organization.created_at).toLocaleDateString()}
     </Text>
-  </Card>
+  </Link>
 );

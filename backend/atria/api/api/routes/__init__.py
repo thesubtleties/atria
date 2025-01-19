@@ -27,6 +27,7 @@ __all__ = [
 
 
 def register_blueprints(api):
+    print("\n\nRegistering blueprints\n\n")
     # Auth
     api.register_blueprint(auth_blp)
 

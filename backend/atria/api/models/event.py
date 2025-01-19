@@ -122,16 +122,24 @@ class Event(db.Model):
         ).first()
         return event_user.role if event_user else None
 
-    def get_users_by_role(self, role: EventUserRole):
-        """Get all users with specific role"""
+    def get_users_by_role(self, *roles: EventUserRole):
+        """Get all users with specific roles"""
         from api.models import EventUser
 
         return [
             event_user.user
-            for event_user in EventUser.query.filter_by(
-                event_id=self.id, role=role
+            for event_user in EventUser.query.filter(
+                EventUser.event_id == self.id, EventUser.role.in_(roles)
             ).all()
         ]
+
+    def get_event_users_by_role(self, *roles: EventUserRole):
+        """Get all EventUser objects with specific roles"""
+        from api.models import EventUser
+
+        return EventUser.query.filter(
+            EventUser.event_id == self.id, EventUser.role.in_(roles)
+        ).all()
 
     @property
     def speakers(self):
@@ -140,8 +148,17 @@ class Event(db.Model):
 
     @property
     def organizers(self):
-        """Get all organizers"""
-        return self.get_users_by_role(EventUserRole.ORGANIZER)
+        """Get all organizers and admins with their roles - for role-aware contexts"""
+        return self.get_event_users_by_role(
+            EventUserRole.ORGANIZER, EventUserRole.ADMIN
+        )
+
+    @property
+    def organizer_users(self):
+        """Get all organizer users - for user-only contexts"""
+        return self.get_users_by_role(
+            EventUserRole.ORGANIZER, EventUserRole.ADMIN
+        )
 
     @property
     def attendees(self):
