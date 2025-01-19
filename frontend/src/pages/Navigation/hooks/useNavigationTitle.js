@@ -39,7 +39,7 @@ export const useNavigationTitle = () => {
       }
 
       if (location.pathname === ROUTES.ORGANIZATION_EVENTS(orgId)) {
-        return { text: `${organization.name} - Events` };
+        return { text: `${organization.name}` };
       }
     }
 

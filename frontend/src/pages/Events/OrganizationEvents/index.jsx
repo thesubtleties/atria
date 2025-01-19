@@ -1,28 +1,30 @@
 // pages/Events/OrganizationEvents/index.jsx
 import { useGetEventsQuery } from '@/app/features/events/api';
+import { useGetOrganizationQuery } from '@/app/features/organizations/api';
 import { Container, Group, Button } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { useState } from 'react';
 import { EventCard } from '../EventsList/EventCard';
+import { EventModal } from '@/shared/components/modals/event/EventModal';
 import styles from './styles/index.module.css';
 
 export const OrganizationEvents = () => {
-  const navigate = useNavigate();
   const { orgId } = useParams();
-  const { data, isLoading } = useGetEventsQuery({ orgId });
-  const events = data?.events || [];
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
-  // TODO: Get this from org context/state
-  const canCreateEvents = true; // Temporary, should check if admin/owner
+  const { data: orgData } = useGetOrganizationQuery(orgId);
+  const { data: eventsData, isLoading } = useGetEventsQuery({ orgId });
+
+  const events = eventsData?.events || [];
+  const canCreateEvents = orgData?.user_is_admin_or_owner || false;
 
   return (
     <Container className={styles.container}>
       {canCreateEvents && (
         <Group position="right" mb="xl">
           <Button
-            onClick={() => {
-              /* TODO: Open create event modal */
-            }}
+            onClick={() => setShowCreateModal(true)}
             className={styles.button}
             variant="default"
           >
@@ -40,10 +42,16 @@ export const OrganizationEvents = () => {
             key={event.id}
             event={event}
             isOrgView={true}
-            canEdit={canCreateEvents} // Same permission as create
+            canEdit={canCreateEvents}
           />
         ))}
       </div>
+
+      <EventModal
+        orgId={orgId}
+        opened={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+      />
     </Container>
   );
 };

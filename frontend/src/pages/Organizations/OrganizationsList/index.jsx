@@ -1,12 +1,13 @@
 import { useGetOrganizationsQuery } from '@/app/features/organizations/api';
 import { Container, Group, Button } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { OrganizationCard } from './OrganizationCard';
+import { OrganizationModal } from '@/shared/components/modals/organization/OrganizationModal';
 import styles from './styles/index.module.css';
 
 export const OrganizationsList = () => {
-  const navigate = useNavigate();
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const { data, isLoading } = useGetOrganizationsQuery();
   const organizations = data?.organizations || [];
 
@@ -14,7 +15,7 @@ export const OrganizationsList = () => {
     <Container className={styles.container}>
       <Group position="right" mb="xl">
         <Button
-          onClick={() => navigate('/app/organizations/new')}
+          onClick={() => setShowCreateModal(true)}
           className={styles.button}
           variant="default"
         >
@@ -30,6 +31,12 @@ export const OrganizationsList = () => {
           <OrganizationCard key={org.id} organization={org} />
         ))}
       </div>
+
+      <OrganizationModal
+        opened={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onSuccess={() => setShowCreateModal(false)}
+      />
     </Container>
   );
 };

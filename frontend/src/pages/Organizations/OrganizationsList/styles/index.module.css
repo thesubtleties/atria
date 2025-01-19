@@ -15,7 +15,7 @@
 
 .button:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(156, 66, 245, 0.15);
+  box-shadow: 0 8px 20px rgba(78, 78, 78, 0.15);
 }
 
 .button:active {

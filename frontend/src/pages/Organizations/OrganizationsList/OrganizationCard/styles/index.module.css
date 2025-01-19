@@ -1,3 +1,8 @@
+.cardWrapper {
+  position: relative;
+  width: 100%;
+}
+
 .card {
   display: block;
   padding: 32px;
@@ -34,15 +39,45 @@
   opacity: 1;
 }
 
+.content {
+  position: relative;
+}
+
 .title {
   color: #333;
   font-size: 1.5rem;
   font-weight: 600;
   margin-bottom: 16px;
+  padding-right: 40px;
 }
 
 .date {
   color: #666;
   line-height: 1.5;
   font-size: 1rem;
+}
+
+.actionButton {
+  position: absolute !important;
+  top: 32px !important;
+  right: 32px !important;
+  opacity: 0;
+  transition: all 0.3s ease;
+  background-color: white !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+  color: #666 !important;
+  z-index: 2;
+}
+
+.card:hover .actionButton {
+  opacity: 1;
+}
+
+.actionButton:hover {
+  background-color: white !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(156, 66, 245, 0.15) !important;
+  color: #9c42f5 !important;
+  border-color: rgba(156, 66, 245, 0.3) !important;
 }

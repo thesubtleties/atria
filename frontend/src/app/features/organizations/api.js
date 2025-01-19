@@ -30,6 +30,7 @@ export const organizationsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: (result, error, { id }) => [
         { type: 'Organizations', id },
+        'Organizations',
       ],
     }),
     deleteOrganization: builder.mutation({
