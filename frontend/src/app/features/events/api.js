@@ -29,7 +29,10 @@ export const eventsApi = baseApi.injectEndpoints({
         method: 'PUT',
         body: updates,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'Events', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'Events', id },
+        'Events',
+      ],
     }),
     updateEventBranding: builder.mutation({
       query: ({ id, ...branding }) => ({

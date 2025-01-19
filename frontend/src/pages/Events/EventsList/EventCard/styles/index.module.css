@@ -1,4 +1,4 @@
-.card {
+.cardConference {
   display: block;
   padding: 32px;
   border-radius: 12px;
@@ -13,7 +13,7 @@
   min-height: 120px;
 }
 
-.card::before {
+.cardConference::before {
   content: '';
   position: absolute;
   top: 0;
@@ -25,12 +25,48 @@
   transition: opacity 0.3s ease;
 }
 
-.card:hover {
+.cardConference:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 20px rgba(156, 66, 245, 0.15);
 }
 
-.card:hover::before {
+.cardConference:hover::before {
+  opacity: 1;
+}
+
+.cardSingleDay {
+  display: block;
+  padding: 32px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s ease;
+  background: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  min-height: 120px;
+}
+
+.cardSingleDay::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(135deg, var(--card-gradient));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.cardSingleDay:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(67, 248, 209, 0.15);
+}
+
+.cardSingleDay:hover::before {
   opacity: 1;
 }
 
@@ -53,7 +89,8 @@
   background: rgba(0, 0, 0, 0.05);
 }
 
-.card:hover .editButton {
+.cardConference:hover .editButton,
+.cardSingleDay:hover .editButton {
   opacity: 1;
 }
 

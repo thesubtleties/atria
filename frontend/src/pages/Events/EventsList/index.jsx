@@ -1,11 +1,11 @@
 // src/pages/Events/EventsList/index.jsx
-import { useGetUserEventsQuery } from '@/app/features/users/api'; // Changed from events to users
+import { useGetUserEventsQuery } from '@/app/features/users/api';
 import { Container, Group } from '@mantine/core';
 import { EventCard } from './EventCard';
 import styles from './styles/index.module.css';
 
 export const EventsList = () => {
-  const { data, isLoading } = useGetUserEventsQuery(); // This is the correct hook name
+  const { data, isLoading } = useGetUserEventsQuery();
   const events = data?.events || [];
 
   return (
