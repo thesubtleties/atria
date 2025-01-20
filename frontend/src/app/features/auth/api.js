@@ -48,30 +48,27 @@ export const authApi = baseApi.injectEndpoints({
       },
       providesTags: ['User'],
     }),
-    //! This may need updated to remove double refresh... we still want this for api calls but we also are hitting it during refreshes...
     refresh: builder.mutation({
       query: () => ({
         url: '/auth/refresh',
         method: 'POST',
       }),
-      onQueryStarted(arg, { dispatch, queryFulfilled }) {
-        queryFulfilled
-          .then(({ data }) => {
-            localStorage.setItem('access_token', data.access_token);
-            return data;
-          })
-          .then(() => {
-            return dispatch(
-              authApi.endpoints.getCurrentUser.initiate()
-            ).unwrap();
-          })
-          .then((userData) => {
-            dispatch(setUser(userData));
-          })
-          .catch((error) => {
-            console.error('Refresh flow failed:', error);
-            dispatch(setUser(null));
-          });
+      onQueryStarted: async (arg, { dispatch, queryFulfilled }) => {
+        try {
+          const { data } = await queryFulfilled;
+          localStorage.setItem('access_token', data.access_token);
+          // Get current user data
+          const userData = await dispatch(
+            authApi.endpoints.getCurrentUser.initiate()
+          ).unwrap();
+          dispatch(setUser(userData));
+        } catch (error) {
+          console.error('Refresh flow failed:', error);
+          // Clear all auth state on refresh failure
+          localStorage.clear();
+          dispatch(setUser(null));
+          window.location.href = '/';
+        }
       },
     }),
 

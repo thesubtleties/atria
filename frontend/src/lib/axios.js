@@ -22,17 +22,22 @@ axiosClient.interceptors.request.use(
 );
 
 // RES interceptor (adds to all responses)
+// lib/axios.js
 axiosClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // Add check for refresh endpoint to prevent loops
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.url.includes('/auth/refresh')
+    ) {
       originalRequest._retry = true;
       try {
         const refreshToken = localStorage.getItem('refresh_token');
         if (!refreshToken) {
-          // No refresh token, don't attempt refresh
           throw new Error('No refresh token available');
         }
 
@@ -49,9 +54,9 @@ axiosClient.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${access_token}`;
         return axiosClient(originalRequest);
       } catch (refreshError) {
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
-        window.location.href = '/'; // Change to root path
+        // Clear auth state and redirect
+        localStorage.clear();
+        window.location.href = '/';
         return Promise.reject(refreshError);
       }
     }
