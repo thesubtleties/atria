@@ -64,6 +64,7 @@ export const OrganizationModal = ({
       opened={opened}
       onClose={onClose}
       title={isEditing ? 'Edit Organization' : 'Create Organization'}
+      centered
       size="md"
     >
       <form onSubmit={form.onSubmit(handleSubmit)} className={styles.form}>

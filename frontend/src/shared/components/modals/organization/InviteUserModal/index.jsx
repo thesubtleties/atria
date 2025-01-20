@@ -1,4 +1,4 @@
-import { TextInput, Button, Stack, Select } from '@mantine/core';
+import { TextInput, Button, Stack, Select, Modal } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { useAddOrganizationUserMutation } from '@/app/features/organizations/api';
 import { inviteUserSchema } from './schemas/inviteUserSchema';
@@ -9,7 +9,7 @@ const ROLES = [
   { value: 'admin', label: 'Admin' },
 ];
 
-export const InviteUserModal = ({ organizationId, onClose, onSuccess }) => {
+export const InviteUserModal = ({ organizationId, opened, onClose }) => {
   const [addUser, { isLoading }] = useAddOrganizationUserMutation();
 
   const form = useForm({
@@ -33,7 +33,6 @@ export const InviteUserModal = ({ organizationId, onClose, onSuccess }) => {
         password: 'changeme', // Default password for new users
       }).unwrap();
 
-      onSuccess?.();
       onClose();
     } catch (error) {
       if (error.status === 409) {
@@ -45,44 +44,52 @@ export const InviteUserModal = ({ organizationId, onClose, onSuccess }) => {
   };
 
   return (
-    <form onSubmit={form.onSubmit(handleSubmit)} className={styles.form}>
-      <Stack gap="md">
-        <TextInput
-          label="Email"
-          placeholder="user@email.com"
-          required
-          {...form.getInputProps('email')}
-          disabled={isLoading}
-        />
+    <Modal
+      opened={opened}
+      onClose={onClose}
+      title="Add Member"
+      centered
+      size="md"
+    >
+      <form onSubmit={form.onSubmit(handleSubmit)} className={styles.form}>
+        <Stack gap="md">
+          <TextInput
+            label="Email"
+            placeholder="user@email.com"
+            required
+            {...form.getInputProps('email')}
+            disabled={isLoading}
+          />
 
-        <TextInput
-          label="First Name"
-          placeholder="First Name"
-          required
-          {...form.getInputProps('firstName')}
-          disabled={isLoading}
-        />
+          <TextInput
+            label="First Name"
+            placeholder="First Name"
+            required
+            {...form.getInputProps('firstName')}
+            disabled={isLoading}
+          />
 
-        <TextInput
-          label="Last Name"
-          placeholder="Last Name"
-          required
-          {...form.getInputProps('lastName')}
-          disabled={isLoading}
-        />
+          <TextInput
+            label="Last Name"
+            placeholder="Last Name"
+            required
+            {...form.getInputProps('lastName')}
+            disabled={isLoading}
+          />
 
-        <Select
-          label="Role"
-          data={ROLES}
-          required
-          {...form.getInputProps('role')}
-          disabled={isLoading}
-        />
+          <Select
+            label="Role"
+            data={ROLES}
+            required
+            {...form.getInputProps('role')}
+            disabled={isLoading}
+          />
 
-        <Button type="submit" loading={isLoading} fullWidth>
-          {isLoading ? 'Inviting...' : 'Invite User'}
-        </Button>
-      </Stack>
-    </form>
+          <Button type="submit" loading={isLoading} fullWidth>
+            {isLoading ? 'Inviting...' : 'Invite User'}
+          </Button>
+        </Stack>
+      </form>
+    </Modal>
   );
 };

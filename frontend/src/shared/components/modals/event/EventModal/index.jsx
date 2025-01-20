@@ -96,6 +96,7 @@ export const EventModal = ({ event, orgId, opened, onClose }) => {
     <Modal
       opened={opened}
       onClose={onClose}
+      centered
       title={isEditing ? 'Edit Event' : 'Create Event'}
       size="md"
     >

@@ -1,5 +1,17 @@
 .container {
-  padding: 24px 0;
+  max-width: 1200px;
+  margin: 48px auto;
+  padding: 0 24px;
+}
+
+.eventsSection {
+  min-height: 50vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.buttonContainer {
+  margin-bottom: 24px;
 }
 
 .grid {
@@ -19,4 +31,15 @@
 
 .button:active {
   transform: translateY(0);
+}
+
+.emptyState {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 12px;
+  margin: 32px 0;
 }
