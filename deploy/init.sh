@@ -1,0 +1,77 @@
+#!/bin/sh
+
+# Exit on any error
+set -e
+
+echo "[$(date)] Starting initialization script..."
+
+# Wait for database with timeout
+MAX_TRIES=30
+TRIES=0
+echo "[$(date)] Waiting for postgres..."
+while ! nc -z atria-db 5432; do
+    echo "[$(date)] Postgres is unavailable - sleeping"
+    TRIES=$((TRIES+1))
+    if [ $TRIES -gt $MAX_TRIES ]; then
+        echo "[$(date)] ERROR: Postgres did not become available in time"
+        exit 1
+    fi
+    sleep 1
+done
+echo "[$(date)] PostgreSQL started successfully!"
+
+# Initialize database with better error handling
+echo "[$(date)] Initializing database..."
+
+if [ -d "migrations" ]; then
+    echo "[$(date)] Existing migrations found, backing up..."
+    mv migrations migrations_backup_$(date +%Y%m%d_%H%M%S)
+fi
+
+echo "[$(date)] Initializing Flask-Migrate..."
+flask db init || { echo "[$(date)] ERROR: Flask db init failed"; exit 1; }
+
+echo "[$(date)] Creating migrations..."
+flask db migrate -m "Initial migration $(date +%Y%m%d_%H%M%S)" || { echo "[$(date)] ERROR: Migration creation failed"; exit 1; }
+
+echo "[$(date)] Applying migrations..."
+flask db upgrade || { echo "[$(date)] ERROR: Migration upgrade failed"; exit 1; }
+
+# Verify database setup with more detailed output
+echo "[$(date)] Verifying database setup..."
+python << END
+from api.app import create_app
+from api.extensions import db
+from sqlalchemy import inspect
+import sys
+
+try:
+    app = create_app()
+    with app.app_context():
+        inspector = inspect(db.engine)
+        tables = inspector.get_table_names()
+        print(f"[$(date)] Found tables: {tables}")
+        
+        # Additional verification
+        for table in tables:
+            columns = inspector.get_columns(table)
+            print(f"[$(date)] Table {table} columns: {[col['name'] for col in columns]}")
+            
+except Exception as e:
+    print(f"[$(date)] ERROR during verification: {str(e)}", file=sys.stderr)
+    sys.exit(1)
+END
+
+echo "[$(date)] Starting Gunicorn server..."
+exec python -u -m gunicorn "api.wsgi:app" \
+    --bind 0.0.0.0:5000 \
+    --workers 1 \
+    --threads 2 \
+    --reload \
+    --log-level debug \
+    --access-logfile - \
+    --error-logfile - \
+    --capture-output \
+    --timeout 120 \
+    --logger-class=gunicorn.glogging.Logger \
+    --access-logformat '%(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s" %(L)s'
