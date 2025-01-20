@@ -1,6 +1,10 @@
 // MenuButton.jsx
 import { Menu, Button, rem } from '@mantine/core';
-import { IconUser, IconLogout, IconSettings } from '@tabler/icons-react';
+import {
+  IconUser,
+  IconLogout,
+  IconSettings,
+} from '@/shared/components/ui/Icons';
 import styles from './MenuButton.module.css';
 
 export const MenuButton = () => {

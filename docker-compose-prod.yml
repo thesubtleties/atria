@@ -1,4 +1,3 @@
-# docker-compose.yml
 version: '3.8'
 
 services:
@@ -14,8 +13,6 @@ services:
     env_file:
       - .env
       - ./backend/atria/.flaskenv
-    environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DB_CONTAINER_NAME}:${POSTGRES_PORT}/${POSTGRES_DB}
     depends_on:
       db:
         condition: service_healthy

@@ -1,6 +1,6 @@
 import { useGetOrganizationsQuery } from '@/app/features/organizations/api';
 import { Container, Group, Button } from '@mantine/core';
-import { IconPlus } from '@tabler/icons-react';
+import { IconPlus } from '@/shared/components/ui/Icons';
 import { useState } from 'react';
 import { OrganizationCard } from './OrganizationCard';
 import { OrganizationModal } from '@/shared/components/modals/organization/OrganizationModal';

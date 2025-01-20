@@ -1,6 +1,6 @@
 // pages/Events/EventsList/EventCard/index.jsx
 import { Text, Group } from '@mantine/core';
-import { IconEdit } from '@tabler/icons-react';
+import { IconEdit } from '@/shared/components/ui/Icons';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { EventModal } from '@/shared/components/modals/event/EventModal';
