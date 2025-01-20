@@ -1,6 +1,6 @@
 // pages/Organizations/OrganizationsList/OrganizationCard/index.jsx
 import { Text, ActionIcon } from '@mantine/core';
-import { IconPencil } from '@/shared/components/ui/Icons';
+import { IconPencil } from '@tabler/icons-react';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';

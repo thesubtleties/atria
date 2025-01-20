@@ -1,5 +1,5 @@
 import { Group, Button, Text } from '@mantine/core';
-import { IconPlus } from '@/shared/components/ui/Icons';
+import { IconPlus } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useGetOrganizationQuery } from '@/app/features/organizations/api';
 import { InviteUserModal } from '@/shared/components/modals/organization/InviteUserModal';
