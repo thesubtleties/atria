@@ -1,7 +1,7 @@
 import { useGetEventsQuery } from '@/app/features/events/api';
 import { useGetOrganizationQuery } from '@/app/features/organizations/api';
 import { Container, Group, Button, Text, Title } from '@mantine/core';
-import { IconPlus } from '@tabler/icons-react';
+import { IconPlus } from '@/shared/components/ui/Icons';
 import { useParams } from 'react-router-dom';
 import { useState } from 'react';
 import { EventCard } from '../EventsList/EventCard';

@@ -1,4 +1,3 @@
-# docker-compose.yml
 version: '3.8'
 
 services:
@@ -14,8 +13,6 @@ services:
     env_file:
       - .env
       - ./backend/atria/.flaskenv
-    environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DB_CONTAINER_NAME}:${POSTGRES_PORT}/${POSTGRES_DB}
     depends_on:
       db:
         condition: service_healthy
@@ -51,7 +48,7 @@ services:
     container_name: ${DB_CONTAINER_NAME:-atria-db}
     image: postgres:15-alpine
     volumes:
-      - ${POSTGRES_VOLUME_NAME:-atria_postgres_data}:/var/lib/postgresql/data
+      - atria_postgres_data:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -68,7 +65,7 @@ services:
       - shared_portainer_network
 
 volumes:
-  ${POSTGRES_VOLUME_NAME:-atria_postgres_data}:
+  atria_postgres_data:
 
 networks:
   default:
