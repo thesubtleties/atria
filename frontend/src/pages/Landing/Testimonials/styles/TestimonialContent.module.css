@@ -1,0 +1,33 @@
+.content {
+  padding: 2rem;
+}
+
+.quote {
+  font-size: 1.25rem;
+  font-style: italic;
+  color: #1a1b1e;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.author {
+  font-weight: 600;
+  color: #1a1b1e;
+  margin: 0;
+}
+
+.role {
+  color: #666;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+@media (max-width: 768px) {
+  .content {
+    padding: 1rem;
+  }
+
+  .quote {
+    font-size: 1.125rem;
+  }
+}

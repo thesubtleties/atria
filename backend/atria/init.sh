@@ -42,4 +42,8 @@ with app.app_context():
 END
 
 echo "Starting Gunicorn server..."
-exec gunicorn --bind 0.0.0.0:5000 "api.wsgi:app"
+exec python -u -m gunicorn --bind 0.0.0.0:5000 "api.wsgi:app" \
+    --log-level debug \
+    --capture-output \
+    --workers 1 \
+    --reload

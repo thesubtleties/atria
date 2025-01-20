@@ -55,3 +55,23 @@ class OrganizationUserUpdateSchema(ma.Schema):
         name = "OrganizationUserUpdate"
 
     role = ma.Enum(OrganizationUserRole, required=True)
+
+
+class OrganizationUserNestedSchema(ma.SQLAlchemyAutoSchema):
+    """Schema for organization users when nested"""
+
+    class Meta:
+        model = OrganizationUser
+        include_fk = True
+        exclude = (
+            "organization",
+            "organization_id",
+            "created_at",
+            "user_id",
+        )  # Add user_id to exclude
+
+    # Flatten user data
+    id = ma.Integer(attribute="user.id")
+    full_name = ma.String(attribute="user.full_name")
+    email = ma.String(attribute="user.email")
+    role = ma.Enum(OrganizationUserRole)  # Include role directly

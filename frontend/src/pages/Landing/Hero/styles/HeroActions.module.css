@@ -1,0 +1,39 @@
+.actionsWrapper {
+  margin-top: 2rem;
+  width: 100%;
+  max-width: 400px;
+}
+
+.buttonGroup {
+  width: 100%;
+}
+
+.loginButton,
+.signupButton {
+  min-width: 120px;
+  font-weight: 600;
+}
+
+.loginButton {
+  background-color: var(--mantine-primary-color-filled);
+}
+
+.loginButton:hover {
+  background-color: var(--mantine-primary-color-filled-hover);
+}
+
+.signupButton {
+  border-width: 2px;
+}
+
+@media (max-width: 768px) {
+  .actionsWrapper {
+    max-width: 100%;
+    padding: 0 1rem;
+  }
+
+  .loginButton,
+  .signupButton {
+    width: 100%;
+  }
+}

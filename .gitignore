@@ -21,3 +21,10 @@ dist/
 
 # Docker
 postgres_data/
+
+# Migrations
+backend/atria/migrations/*
+
+#frontend
+frontend/setup-structure.sh
+

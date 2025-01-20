@@ -1,5 +1,7 @@
 from api.extensions import db
 from api.models.enums import OrganizationUserRole
+from flask_jwt_extended import get_jwt_identity
+from datetime import datetime, timezone
 
 
 class Organization(db.Model):
@@ -85,6 +87,13 @@ class Organization(db.Model):
             ).all()
         ]
 
+    def is_user_admin_or_owner(self, user) -> bool:
+        user_role = self.get_user_role(user)
+        return user_role in [
+            OrganizationUserRole.OWNER,
+            OrganizationUserRole.ADMIN,
+        ]
+
     @property
     def owner_count(self):
         """Get number of owners"""
@@ -106,11 +115,28 @@ class Organization(db.Model):
     @property
     def upcoming_events(self):
         """Get organization's upcoming events using relationship"""
-        return (
-            self.events.filter(db.text("start_date > CURRENT_TIMESTAMP"))
-            .order_by(db.text("start_date"))
-            .all()
-        )
+        return [
+            event
+            for event in self.events
+            if event.start_date > datetime.datetime.now(timezone.utc)
+        ]
+
+    @property
+    def user_is_admin_or_owner(self):
+        """Determine if current JWT user is admin or owner"""
+
+        current_user_id = int(get_jwt_identity())
+        # Import here to avoid circular imports
+        from api.models import User
+
+        user = User.query.get(current_user_id)
+        if not user:
+            return False
+        user_role = self.get_user_role(user)
+        return user_role in [
+            OrganizationUserRole.OWNER,
+            OrganizationUserRole.ADMIN,
+        ]
 
     def transfer_ownership(self, from_user, to_user):
         """Transfer organization ownership"""

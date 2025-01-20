@@ -1,0 +1,7 @@
+.stats {
+  display: flex;
+  justify-content: center;
+  gap: 4rem;
+  padding: 4rem 2rem;
+  background: #f8f9fa;
+}

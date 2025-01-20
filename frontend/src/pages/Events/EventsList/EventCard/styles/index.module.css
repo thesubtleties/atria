@@ -1,0 +1,111 @@
+.cardConference {
+  display: block;
+  padding: 32px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s ease;
+  background: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  min-height: 120px;
+}
+
+.cardConference::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(135deg, var(--card-gradient));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.cardConference:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(156, 66, 245, 0.15);
+}
+
+.cardConference:hover::before {
+  opacity: 1;
+}
+
+.cardSingleDay {
+  display: block;
+  padding: 32px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s ease;
+  background: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  min-height: 120px;
+}
+
+.cardSingleDay::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(135deg, var(--card-gradient));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.cardSingleDay:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(67, 248, 209, 0.15);
+}
+
+.cardSingleDay:hover::before {
+  opacity: 1;
+}
+
+.editButton {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  opacity: 0;
+  transition: all 0.3s ease;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+.editButton:hover {
+  color: var(--card-gradient);
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.cardConference:hover .editButton,
+.cardSingleDay:hover .editButton {
+  opacity: 1;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.company {
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.date {
+  color: #666;
+  font-size: 0.9rem;
+}

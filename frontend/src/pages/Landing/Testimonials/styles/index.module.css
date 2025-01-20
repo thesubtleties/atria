@@ -1,0 +1,17 @@
+.testimonials {
+  display: flex;
+  align-items: center;
+  gap: 4rem;
+  padding: 6rem 2rem;
+  background: #f8f9fa;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .testimonials {
+    flex-direction: column;
+    padding: 3rem 1rem;
+    gap: 2rem;
+  }
+}

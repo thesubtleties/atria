@@ -52,9 +52,15 @@ class EventDetailSchema(EventSchema):
     )
 
     organizers = ma.Nested(
-        "UserSchema",
+        "UserWithRoleSchema",
         many=True,
-        only=("id", "full_name", "email"),
+        attributes="organizers",
+        only=(
+            "id",
+            "full_name",
+            "email",
+            "role",
+        ),
         dump_only=True,
         dump_default=None,
     )
@@ -153,3 +159,16 @@ class EventBrandingSchema(ma.Schema):
         """Ensure color is valid hex code"""
         if not value.startswith("#") or len(value) != 7:
             raise ValidationError("Must be valid hex color (e.g., #FF0000)")
+
+
+class EventNestedSchema(ma.SQLAlchemyAutoSchema):
+    """Schema for events when nested in other schemas"""
+
+    class Meta:
+        model = Event
+        fields = (
+            "id",
+            "title",
+            "start_date",
+            "status",
+        )  # Only the fields we need

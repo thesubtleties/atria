@@ -1,0 +1,14 @@
+.layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  flex: 1;
+  padding-top: var(
+    --mantine-header-height,
+    60px
+  ); /* This value needs to match height of header */
+  background-color: var(--mantine-color-gray-0);
+}
