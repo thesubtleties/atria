@@ -1,12 +1,14 @@
 import { TextInput, Button, Stack, Select, Modal } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { useAddOrganizationUserMutation } from '@/app/features/organizations/api';
+import { useCheckUserExistsQuery } from '@/app/features/users/api';
 import { inviteUserSchema } from './schemas/inviteUserSchema';
+import { useEffect } from 'react';
 import styles from './styles/index.module.css';
 
 const ROLES = [
-  { value: 'member', label: 'Member' },
-  { value: 'admin', label: 'Admin' },
+  { value: 'MEMBER', label: 'Member' },
+  { value: 'ADMIN', label: 'Admin' },
 ];
 
 export const InviteUserModal = ({ organizationId, opened, onClose }) => {
@@ -22,6 +24,23 @@ export const InviteUserModal = ({ organizationId, opened, onClose }) => {
     validate: zodResolver(inviteUserSchema),
   });
 
+  // Only skip if email is empty or too short
+  const email = form.values.email;
+  const skipQuery = !email || email.length < 5; // Basic length check
+  const { data: userExists, isFetching } = useCheckUserExistsQuery(email, {
+    skip: skipQuery,
+  });
+
+  // When email changes and user exists, pre-fill name fields
+  useEffect(() => {
+    if (userExists?.user) {
+      form.setValues({
+        firstName: userExists.user.first_name,
+        lastName: userExists.user.last_name,
+      });
+    }
+  }, [userExists]);
+
   const handleSubmit = async (values) => {
     try {
       await addUser({
@@ -29,12 +48,14 @@ export const InviteUserModal = ({ organizationId, opened, onClose }) => {
         email: values.email,
         first_name: values.firstName,
         last_name: values.lastName,
-        role: values.role,
-        password: 'changeme', // Default password for new users
+        role: values.role, // This will be handled separately in backend
+        password: userExists?.user ? undefined : 'changeme',
       }).unwrap();
 
+      form.reset();
       onClose();
     } catch (error) {
+      console.error('Submission error:', error);
       if (error.status === 409) {
         form.setErrors({ email: 'User already in organization' });
       } else {
@@ -42,6 +63,10 @@ export const InviteUserModal = ({ organizationId, opened, onClose }) => {
       }
     }
   };
+
+  // Only disable fields if we have a confirmed existing user
+  const areNameFieldsDisabled =
+    isLoading || (userExists?.user !== null && userExists?.user !== undefined);
 
   return (
     <Modal
@@ -66,7 +91,7 @@ export const InviteUserModal = ({ organizationId, opened, onClose }) => {
             placeholder="First Name"
             required
             {...form.getInputProps('firstName')}
-            disabled={isLoading}
+            disabled={areNameFieldsDisabled}
           />
 
           <TextInput
@@ -74,7 +99,7 @@ export const InviteUserModal = ({ organizationId, opened, onClose }) => {
             placeholder="Last Name"
             required
             {...form.getInputProps('lastName')}
-            disabled={isLoading}
+            disabled={areNameFieldsDisabled}
           />
 
           <Select
@@ -86,7 +111,7 @@ export const InviteUserModal = ({ organizationId, opened, onClose }) => {
           />
 
           <Button type="submit" loading={isLoading} fullWidth>
-            {isLoading ? 'Inviting...' : 'Invite User'}
+            {isLoading ? 'Adding...' : 'Add Member'}
           </Button>
         </Stack>
       </form>

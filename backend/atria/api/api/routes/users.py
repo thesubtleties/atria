@@ -12,6 +12,7 @@ from api.api.schemas import (
     UserUpdateSchema,
     EventSchema,
     SessionSchema,
+    UserCheckResponseSchema,
 )
 from api.commons.pagination import (
     paginate,
@@ -188,3 +189,32 @@ class DebugView(MethodView):
                 for rule in current_app.url_map.iter_rules()
             ]
         }
+
+
+@blp.route("/check-email")
+class UserEmailCheck(MethodView):
+    @blp.response(200, UserCheckResponseSchema)
+    @blp.doc(
+        summary="Check if user exists by email",
+        description="Check if a user exists and return their basic info",
+        parameters=[
+            {
+                "in": "query",
+                "name": "email",
+                "schema": {"type": "string"},
+                "required": True,
+                "description": "Email address to check",
+            }
+        ],
+        responses={
+            400: {"description": "Missing email parameter"},
+        },
+    )
+    def get(self):
+        """Check if user exists by email"""
+        email = request.args.get("email")
+        if not email:
+            return {"message": "Email parameter required"}, 400
+
+        user = User.query.filter_by(email=email).first()
+        return {"user": user}

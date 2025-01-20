@@ -75,3 +75,16 @@ class OrganizationUserNestedSchema(ma.SQLAlchemyAutoSchema):
     full_name = ma.String(attribute="user.full_name")
     email = ma.String(attribute="user.email")
     role = ma.Enum(OrganizationUserRole)  # Include role directly
+
+
+class AddUserToOrgSchema(ma.Schema):
+    """Schema for adding/creating users in organization"""
+
+    class Meta:
+        name = "AddUserToOrg"
+
+    email = ma.Email(required=True)
+    password = ma.String(load_only=True)
+    first_name = ma.String(required=True)
+    last_name = ma.String(required=True)
+    role = ma.Enum(OrganizationUserRole, required=True)
