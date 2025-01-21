@@ -1,9 +1,27 @@
 // MenuButton.jsx
 import { Menu, Button, rem } from '@mantine/core';
-import { IconUser, IconLogout, IconSettings } from '@tabler/icons-react';
+import {
+  IconLogout,
+  IconBuilding,
+  IconCalendarEvent,
+} from '@tabler/icons-react';
+import { useNavigate } from 'react-router-dom';
+import { useLogoutMutation } from '@/app/features/auth/api'; // Adjust import path as needed
 import styles from './MenuButton.module.css';
 
 export const MenuButton = () => {
+  const navigate = useNavigate();
+  const [logout] = useLogoutMutation();
+
+  const handleLogout = async () => {
+    try {
+      await logout().unwrap();
+      navigate('/'); // Optionally redirect to landing page after logout
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+
   return (
     <Menu
       position="bottom-end"
@@ -42,20 +60,24 @@ export const MenuButton = () => {
       </Menu.Target>
 
       <Menu.Dropdown>
-        <Menu.Label>Account</Menu.Label>
+        <Menu.Label>Navigation</Menu.Label>
 
         <Menu.Item
-          leftSection={<IconUser style={{ width: rem(14), height: rem(14) }} />}
+          leftSection={
+            <IconBuilding style={{ width: rem(14), height: rem(14) }} />
+          }
+          onClick={() => navigate('/app/organizations')}
         >
-          Profile
+          Organizations
         </Menu.Item>
 
         <Menu.Item
           leftSection={
-            <IconSettings style={{ width: rem(14), height: rem(14) }} />
+            <IconCalendarEvent style={{ width: rem(14), height: rem(14) }} />
           }
+          onClick={() => navigate('/app/events')}
         >
-          Settings
+          Events
         </Menu.Item>
 
         <Menu.Divider />
@@ -65,9 +87,7 @@ export const MenuButton = () => {
           leftSection={
             <IconLogout style={{ width: rem(14), height: rem(14) }} />
           }
-          onClick={() => {
-            /* handle logout */
-          }}
+          onClick={handleLogout}
         >
           Logout
         </Menu.Item>
