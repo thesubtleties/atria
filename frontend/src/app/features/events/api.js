@@ -23,6 +23,13 @@ export const eventsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Events'],
     }),
+    deleteEvent: builder.mutation({
+      query: (id) => ({
+        url: `/events/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Events'],
+    }),
     updateEvent: builder.mutation({
       query: ({ id, ...updates }) => ({
         url: `/events/${id}`,
@@ -58,6 +65,14 @@ export const eventsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['EventUsers'],
     }),
+    addOrCreateEventUser: builder.mutation({
+      query: ({ eventId, ...userData }) => ({
+        url: `/events/${eventId}/users/add`, // Note the /add here
+        method: 'POST',
+        body: userData,
+      }),
+      invalidatesTags: ['EventUsers'],
+    }),
     updateEventUser: builder.mutation({
       query: ({ eventId, userId, ...updates }) => ({
         url: `/events/${eventId}/users/${userId}`,
@@ -87,4 +102,6 @@ export const {
   useAddEventUserMutation,
   useUpdateEventUserMutation,
   useUpdateEventSpeakerInfoMutation,
+  useDeleteEventMutation,
+  useAddOrCreateEventUserMutation,
 } = eventsApi;

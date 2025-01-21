@@ -10,10 +10,20 @@ export const authApi = baseApi.injectEndpoints({
         method: 'POST',
         body: credentials,
       }),
-      transformResponse: (response) => {
-        localStorage.setItem('access_token', response.access_token);
-        localStorage.setItem('refresh_token', response.refresh_token);
+      // Only transform successful responses
+      async transformResponse(response, meta, arg) {
+        if (response.access_token && response.refresh_token) {
+          localStorage.setItem('access_token', response.access_token);
+          localStorage.setItem('refresh_token', response.refresh_token);
+        }
         return response;
+      },
+
+      transformErrorResponse(error) {
+        // Clear any existing tokens on error
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        return error;
       },
     }),
 
@@ -42,8 +52,9 @@ export const authApi = baseApi.injectEndpoints({
           const { data } = await queryFulfilled;
           console.log(data);
           dispatch(setUser(data));
-        } catch {
-          dispatch(setUser(null));
+        } catch (error) {
+          // Don't dispatch setUser(null) on error during login
+          console.error('Failed to get user:', error);
         }
       },
       providesTags: ['User'],

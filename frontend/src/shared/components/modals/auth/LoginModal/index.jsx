@@ -1,8 +1,9 @@
-import { TextInput, PasswordInput, Button, Stack } from '@mantine/core';
+import { TextInput, PasswordInput, Button, Stack, Group } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { useDispatch } from 'react-redux';
 import { useLoginMutation, authApi } from '@/app/features/auth/api';
 import { loginSchema } from './schemas/loginSchema';
+import { setUser } from '@/app/store/authSlice';
 import styles from './styles/index.module.css';
 
 export const LoginModal = ({ onClose, onSuccess }) => {
@@ -35,8 +36,32 @@ export const LoginModal = ({ onClose, onSuccess }) => {
     }
   };
 
+  const handleDemoLogin = async (e) => {
+    e.preventDefault();
+    try {
+      await login({
+        email: 'demouser@demo.com',
+        password: 'changeme',
+      }).unwrap();
+      const userData = await dispatch(
+        authApi.endpoints.getCurrentUser.initiate()
+      ).unwrap();
+      if (userData) {
+        onSuccess();
+      }
+    } catch (error) {
+      form.setErrors({ email: 'Demo login failed. Please try again.' });
+    }
+  };
+
   return (
-    <form onSubmit={form.onSubmit(handleSubmit)} className={styles.form}>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        form.onSubmit(handleSubmit)(e);
+      }}
+      className={styles.form}
+    >
       <Stack gap="md">
         <TextInput
           label="Email"
@@ -52,9 +77,18 @@ export const LoginModal = ({ onClose, onSuccess }) => {
           disabled={isLoading}
         />
 
-        <Button type="submit" loading={isLoading} fullWidth>
-          {isLoading ? 'Logging in...' : 'Log in'}
-        </Button>
+        <Group grow>
+          <Button type="submit" loading={isLoading}>
+            {isLoading ? 'Logging in...' : 'Log in'}
+          </Button>
+          <Button
+            variant="light"
+            onClick={handleDemoLogin}
+            disabled={isLoading}
+          >
+            Demo Login
+          </Button>
+        </Group>
       </Stack>
     </form>
   );

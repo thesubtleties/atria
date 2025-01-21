@@ -37,11 +37,11 @@ class SessionStatus(str, Enum):
 
 
 class EventUserRole(str, Enum):
-    ADMIN = "admin"
-    ORGANIZER = "organizer"
-    MODERATOR = "moderator"
-    SPEAKER = "speaker"
-    ATTENDEE = "attendee"
+    ADMIN = "ADMIN"
+    ORGANIZER = "ORGANIZER"
+    MODERATOR = "MODERATOR"
+    SPEAKER = "SPEAKER"
+    ATTENDEE = "ATTENDEE"
 
 
 class OrganizationUserRole(str, Enum):

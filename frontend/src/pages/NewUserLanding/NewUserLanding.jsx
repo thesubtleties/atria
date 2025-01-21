@@ -14,7 +14,7 @@ export const NewUserLanding = () => {
         <ActionCard
           title="Attend an Event?"
           description="Join an existing event"
-          to="/app/events/join"
+          to="/app/events"
         />
       </div>
     </div>

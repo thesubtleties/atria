@@ -20,7 +20,8 @@ export const SetupSession = () => {
 
   if (event && !isOrganizerOrAdmin) {
     navigate(
-      `/app/organizations/${event.organization_id}/events/${eventId}/session-pending`
+      `/app/organizations/${event.organization_id}/events/${eventId}/session-pending`,
+      { replace: true }
     );
     return null;
   }
@@ -53,7 +54,8 @@ export const SetupSession = () => {
         onSuccess={(sessionId) => {
           // After successful creation, navigate to the session page
           navigate(
-            `/app/organizations/${event.organization_id}/events/${eventId}/sessions/${sessionId}`
+            `/app/organizations/${event.organization_id}/events/${eventId}/sessions/${sessionId}`,
+            { replace: true }
           );
         }}
       />

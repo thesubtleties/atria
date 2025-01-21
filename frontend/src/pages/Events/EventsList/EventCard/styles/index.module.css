@@ -70,18 +70,31 @@
   opacity: 1;
 }
 
-.editButton {
+.actionButtons {
   position: absolute;
   top: 12px;
   right: 12px;
+  display: flex;
+  gap: 8px;
   opacity: 0;
   transition: all 0.3s ease;
+  z-index: 2;
+}
+
+.cardConference:hover .actionButtons,
+.cardSingleDay:hover .actionButtons {
+  opacity: 1;
+}
+
+.editButton,
+.deleteButton {
   background: transparent;
   border: none;
   cursor: pointer;
   color: #666;
   padding: 8px;
   border-radius: 4px;
+  transition: all 0.3s ease;
 }
 
 .editButton:hover {
@@ -89,9 +102,9 @@
   background: rgba(0, 0, 0, 0.05);
 }
 
-.cardConference:hover .editButton,
-.cardSingleDay:hover .editButton {
-  opacity: 1;
+.deleteButton:hover {
+  color: #ff0000;
+  background: rgba(255, 0, 0, 0.1);
 }
 
 .title {
@@ -109,13 +122,71 @@
   color: #666;
   font-size: 0.9rem;
 }
+
 .setupBadge {
   position: absolute;
   bottom: 12px;
   right: 12px;
 }
 
-/* Adjust edit button z-index to be above badge */
-.editButton {
-  z-index: 2;
+/* New styles for non-clickable cards */
+.notClickable {
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.notClickable:hover {
+  transform: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.notClickable:hover::before {
+  opacity: 0;
+}
+
+/* Container and grid styles */
+.container {
+  padding: 24px 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+/* Empty state styles */
+.emptyState {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  text-align: center;
+  padding: 48px;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 12px;
+  margin: 24px 0;
+}
+
+/* Button styles */
+.button {
+  transition: all 0.2s ease;
+}
+
+.button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--mantine-shadow-md);
+}
+
+.button:active {
+  transform: translateY(0);
+}
+
+/* Loading state styles */
+.loadingState {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  text-align: center;
 }

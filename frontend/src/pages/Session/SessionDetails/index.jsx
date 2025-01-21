@@ -1,12 +1,14 @@
 // pages/Session/SessionDetails/index.jsx
 import { Text, Group, Button, Stack } from '@mantine/core';
-import { IconEdit } from '@tabler/icons-react';
+import { IconEdit, IconUserPlus } from '@tabler/icons-react';
 import { useState } from 'react';
 import { EditSessionModal } from '@/shared/components/modals/session/EditSessionModal';
+import { AddEventUserModal } from '@/shared/components/modals/session/AddEventUserModal';
 import styles from './styles/index.module.css';
 
 export const SessionDetails = ({ session, canEdit }) => {
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showAddUserModal, setShowAddUserModal] = useState(false);
 
   const formatTime = (dateString) => {
     if (!dateString) return '';
@@ -44,20 +46,31 @@ export const SessionDetails = ({ session, canEdit }) => {
   return (
     <div className={styles.detailsSection}>
       <div className={styles.detailsContainer}>
-        <Group position="apart" mb="xl">
+        <div className={styles.header}>
           <Text size="lg" weight={500}>
             Session Details
           </Text>
           {canEdit && (
-            <Button
-              leftIcon={<IconEdit size={16} />}
-              variant="light"
-              onClick={() => setShowEditModal(true)}
-            >
-              Edit Session
-            </Button>
+            <Group spacing="sm">
+              <Button
+                leftIcon={<IconUserPlus size={16} />}
+                variant="subtle"
+                className={styles.editButton}
+                onClick={() => setShowAddUserModal(true)}
+              >
+                Add User
+              </Button>
+              <Button
+                leftIcon={<IconEdit size={16} />}
+                variant="subtle"
+                className={styles.editButton}
+                onClick={() => setShowEditModal(true)}
+              >
+                Edit Session
+              </Button>
+            </Group>
           )}
-        </Group>
+        </div>
 
         <Stack spacing="md">
           <div className={styles.detailItem}>
@@ -106,6 +119,12 @@ export const SessionDetails = ({ session, canEdit }) => {
         opened={showEditModal}
         onClose={() => setShowEditModal(false)}
         isEditing={true}
+      />
+
+      <AddEventUserModal
+        eventId={session.event_id}
+        opened={showAddUserModal}
+        onClose={() => setShowAddUserModal(false)}
       />
     </div>
   );

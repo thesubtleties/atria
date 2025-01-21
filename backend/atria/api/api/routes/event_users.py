@@ -12,6 +12,7 @@ from api.api.schemas import (
     EventUserCreateSchema,
     EventUserUpdateSchema,
     EventSpeakerInfoUpdateSchema,
+    AddUserToEventSchema,
 )
 from api.commons.pagination import (
     paginate,
@@ -31,6 +32,64 @@ blp = Blueprint(
     url_prefix="/api",
     description="Operations on event users",
 )
+
+
+@blp.route("/events/<int:event_id>/users/add")
+class AddEventUser(MethodView):
+    @blp.arguments(AddUserToEventSchema)
+    @blp.response(201, EventUserDetailSchema)
+    @blp.doc(
+        summary="Add or create user and add to event",
+        description="Create a new user if needed and add them to the event",
+        responses={
+            400: {
+                "description": "Validation error",
+                "content": {
+                    "application/json": {
+                        "example": {"message": "User already in event"}
+                    }
+                },
+            },
+            403: {"description": "Not authorized to add users to event"},
+            404: {"description": "Event not found"},
+        },
+    )
+    @jwt_required()
+    @event_organizer_required()
+    def post(self, data, event_id):
+        """Add or create user and add to event"""
+        # Check if user exists
+        user = User.query.filter_by(email=data["email"]).first()
+
+        if not user:
+            # Create new user if they don't exist
+            user = User(
+                email=data["email"],
+                first_name=data["first_name"],
+                last_name=data["last_name"],
+                password=data.get("password", "changeme"),
+            )
+            db.session.add(user)
+            db.session.flush()  # Get user ID without committing
+
+        event = Event.query.get_or_404(event_id)
+
+        if event.has_user(user):
+            return {"message": "User already in event"}, 400
+
+        event.add_user(
+            user,
+            data["role"],
+        )
+
+        db.session.commit()
+
+        return (
+            EventUser.query.filter_by(
+                event_id=event_id, user_id=user.id
+            ).first(),
+            201,
+        )
 
 
 @blp.route("/events/<int:event_id>/users")
