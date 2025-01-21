@@ -19,7 +19,7 @@ export const InviteUserModal = ({ organizationId, opened, onClose }) => {
       email: '',
       firstName: '',
       lastName: '',
-      role: 'member',
+      role: 'MEMBER',
     },
     validate: zodResolver(inviteUserSchema),
   });
