@@ -24,7 +24,11 @@ export const sessionsApi = baseApi.injectEndpoints({
         method: 'POST',
         body: sessionData,
       }),
-      invalidatesTags: ['Sessions'],
+      invalidatesTags: (result, error, { eventId }) => [
+        { type: 'Events', id: eventId },
+        'Events',
+        'Sessions',
+      ],
     }),
     updateSession: builder.mutation({
       query: ({ id, ...updates }) => ({

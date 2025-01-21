@@ -1,21 +1,28 @@
 // pages/Events/EventsList/EventCard/index.jsx
-import { Text, Group, Badge } from '@mantine/core';
-import { IconEdit } from '@tabler/icons-react';
+import { Text, Group, Badge, Modal, Button } from '@mantine/core';
+import { IconEdit, IconX } from '@tabler/icons-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { EventModal } from '@/shared/components/modals/event/EventModal';
-import { useGetEventQuery } from '@/app/features/events/api';
-import { format, parseISO } from 'date-fns';
+import {
+  useGetEventQuery,
+  useDeleteEventMutation,
+} from '@/app/features/events/api';
+import { format } from 'date-fns';
 import styles from './styles/index.module.css';
 
 export const EventCard = ({ event, isOrgView, canEdit }) => {
   const navigate = useNavigate();
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteEvent] = useDeleteEventMutation();
 
   // Only fetch details if it's a single session event
   const { data: eventDetails } = useGetEventQuery(event.id, {
     skip: event.event_type !== 'SINGLE_SESSION',
   });
+
+  const isAdmin = eventDetails?.organizers?.some((org) => org.role === 'ADMIN');
 
   const cardClass =
     event.event_type === 'CONFERENCE'
@@ -58,6 +65,7 @@ export const EventCard = ({ event, isOrgView, canEdit }) => {
       );
     }
   };
+
   const formatDate = (dateString) => {
     // Parse the ISO string and format it, preserving the date regardless of timezone
     const date = new Date(dateString);
@@ -65,6 +73,15 @@ export const EventCard = ({ event, isOrgView, canEdit }) => {
       new Date(date.getTime() + date.getTimezoneOffset() * 60000),
       'M/d/yyyy'
     );
+  };
+
+  const handleDelete = async () => {
+    try {
+      await deleteEvent(event.id).unwrap();
+      setShowDeleteModal(false);
+    } catch (error) {
+      console.error('Failed to delete event:', error);
+    }
   };
 
   return (
@@ -78,16 +95,30 @@ export const EventCard = ({ event, isOrgView, canEdit }) => {
         }}
       >
         {canEdit && (
-          <button
-            className={styles.editButton}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              setShowEditModal(true);
-            }}
-          >
-            <IconEdit size={20} />
-          </button>
+          <div className={styles.actionButtons}>
+            <button
+              className={styles.editButton}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setShowEditModal(true);
+              }}
+            >
+              <IconEdit size={20} />
+            </button>
+            {isAdmin && (
+              <button
+                className={styles.deleteButton}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setShowDeleteModal(true);
+                }}
+              >
+                <IconX size={20} />
+              </button>
+            )}
+          </div>
         )}
 
         <Group position="apart" mb="md">
@@ -100,7 +131,6 @@ export const EventCard = ({ event, isOrgView, canEdit }) => {
           {formatDate(event.start_date)} - {formatDate(event.end_date)}
         </Text>
 
-        {/* Moved badge here, after other content */}
         {event.event_type === 'SINGLE_SESSION' &&
           eventDetails &&
           !eventDetails.sessions?.length && (
@@ -121,6 +151,26 @@ export const EventCard = ({ event, isOrgView, canEdit }) => {
           onClose={() => setShowEditModal(false)}
         />
       )}
+
+      <Modal
+        opened={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        title="Delete Event"
+        size="sm"
+      >
+        <Text size="sm" mb="lg">
+          Are you sure you want to delete this event? This action cannot be
+          undone.
+        </Text>
+        <Group position="right">
+          <Button variant="default" onClick={() => setShowDeleteModal(false)}>
+            Cancel
+          </Button>
+          <Button color="red" onClick={handleDelete}>
+            Delete
+          </Button>
+        </Group>
+      </Modal>
     </>
   );
 };

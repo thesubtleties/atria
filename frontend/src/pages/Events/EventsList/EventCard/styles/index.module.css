@@ -1,3 +1,5 @@
+/* pages/Events/EventsList/EventCard/styles/index.module.css */
+
 .cardConference {
   display: block;
   padding: 32px;
@@ -70,18 +72,31 @@
   opacity: 1;
 }
 
-.editButton {
+.actionButtons {
   position: absolute;
   top: 12px;
   right: 12px;
+  display: flex;
+  gap: 8px;
   opacity: 0;
   transition: all 0.3s ease;
+  z-index: 2;
+}
+
+.cardConference:hover .actionButtons,
+.cardSingleDay:hover .actionButtons {
+  opacity: 1;
+}
+
+.editButton,
+.deleteButton {
   background: transparent;
   border: none;
   cursor: pointer;
   color: #666;
   padding: 8px;
   border-radius: 4px;
+  transition: all 0.3s ease;
 }
 
 .editButton:hover {
@@ -89,9 +104,9 @@
   background: rgba(0, 0, 0, 0.05);
 }
 
-.cardConference:hover .editButton,
-.cardSingleDay:hover .editButton {
-  opacity: 1;
+.deleteButton:hover {
+  color: #ff0000;
+  background: rgba(255, 0, 0, 0.1);
 }
 
 .title {
@@ -109,13 +124,9 @@
   color: #666;
   font-size: 0.9rem;
 }
+
 .setupBadge {
   position: absolute;
   bottom: 12px;
   right: 12px;
-}
-
-/* Adjust edit button z-index to be above badge */
-.editButton {
-  z-index: 2;
 }
