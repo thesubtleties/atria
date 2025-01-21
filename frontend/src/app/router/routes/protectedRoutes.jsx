@@ -127,6 +127,20 @@ export const protectedRoutes = [
             element: <EventsList />,
           },
           {
+            path: ':eventId',
+            element: <Outlet />,
+            children: [
+              {
+                path: 'sessions/:sessionId',
+                element: <SessionPage />,
+              },
+              {
+                path: 'session-pending',
+                element: <SessionPending />,
+              },
+            ],
+          },
+          {
             path: 'join',
             element: getComponent('JoinEventPage'),
           },

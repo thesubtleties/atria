@@ -1,5 +1,3 @@
-/* pages/Events/EventsList/EventCard/styles/index.module.css */
-
 .cardConference {
   display: block;
   padding: 32px;
@@ -129,4 +127,66 @@
   position: absolute;
   bottom: 12px;
   right: 12px;
+}
+
+/* New styles for non-clickable cards */
+.notClickable {
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.notClickable:hover {
+  transform: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.notClickable:hover::before {
+  opacity: 0;
+}
+
+/* Container and grid styles */
+.container {
+  padding: 24px 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+/* Empty state styles */
+.emptyState {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  text-align: center;
+  padding: 48px;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 12px;
+  margin: 24px 0;
+}
+
+/* Button styles */
+.button {
+  transition: all 0.2s ease;
+}
+
+.button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--mantine-shadow-md);
+}
+
+.button:active {
+  transform: translateY(0);
+}
+
+/* Loading state styles */
+.loadingState {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  text-align: center;
 }
