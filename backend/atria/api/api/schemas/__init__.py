@@ -14,6 +14,7 @@ from api.api.schemas.event import (
     EventUpdateSchema,
     EventBrandingSchema,
     EventNestedSchema,
+    AddUserToEventSchema,
 )
 from api.api.schemas.session import (
     SessionSchema,
@@ -73,6 +74,7 @@ __all__ = [
     "EventUpdateSchema",
     "EventBrandingSchema",
     "EventNestedSchema",
+    "AddUserToEventSchema",
     # Session schemas
     "SessionSchema",
     "SessionDetailSchema",

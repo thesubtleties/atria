@@ -1,6 +1,6 @@
 from api.extensions import ma, db
 from api.models import Event
-from api.models.enums import EventType, EventStatus
+from api.models.enums import EventType, EventStatus, EventUserRole
 from marshmallow import validates, ValidationError, validates_schema
 from datetime import datetime, timezone
 
@@ -172,3 +172,16 @@ class EventNestedSchema(ma.SQLAlchemyAutoSchema):
             "start_date",
             "status",
         )  # Only the fields we need
+
+
+class AddUserToEventSchema(ma.Schema):
+    """Schema for adding/creating users in events"""
+
+    class Meta:
+        name = "AddUserToEvent"
+
+    email = ma.Email(required=True)
+    password = ma.String(load_only=True)
+    first_name = ma.String(required=True)
+    last_name = ma.String(required=True)
+    role = ma.Enum(EventUserRole, required=True)

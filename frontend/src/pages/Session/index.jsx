@@ -1,5 +1,6 @@
 import { Container, LoadingOverlay, Alert } from '@mantine/core';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import {
   useGetSessionQuery,
   useUpdateSessionStatusMutation,
@@ -14,6 +15,8 @@ import styles from './styles/index.module.css';
 export const SessionPage = () => {
   const { sessionId } = useParams();
   const navigate = useNavigate();
+  const currentUser = useSelector((state) => state.auth.user);
+
   const { data: session, isLoading } = useGetSessionQuery(sessionId);
   const { data: event } = useGetEventQuery(session?.event_id, {
     skip: !session?.event_id,
@@ -33,9 +36,10 @@ export const SessionPage = () => {
     );
   }
 
-  // Get canEdit from event data
-  const canEdit = event?.organizers?.some((org) =>
-    ['ADMIN', 'ORGANIZER'].includes(org.role)
+  // Check if current user is an organizer/admin
+  const canEdit = event?.organizers?.some(
+    (org) =>
+      org.id === currentUser?.id && ['ADMIN', 'ORGANIZER'].includes(org.role)
   );
 
   const handleStatusChange = async (newStatus) => {
@@ -70,13 +74,6 @@ export const SessionPage = () => {
           title={session.title}
           status={session.status}
         />
-
-        {/* <SessionSpeakers
-          sessionId={sessionId}
-          eventId={session.event_id}
-          speakers={session.speakers}
-          canEdit={canEdit}
-        /> */}
 
         <SessionDetails
           session={session}

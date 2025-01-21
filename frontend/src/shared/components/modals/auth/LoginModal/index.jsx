@@ -1,4 +1,4 @@
-import { TextInput, PasswordInput, Button, Stack } from '@mantine/core';
+import { TextInput, PasswordInput, Button, Stack, Group } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { useDispatch } from 'react-redux';
 import { useLoginMutation, authApi } from '@/app/features/auth/api';
@@ -19,12 +19,15 @@ export const LoginModal = ({ onClose, onSuccess }) => {
 
   const handleSubmit = async (values) => {
     try {
-      await login(values).unwrap();
-      const userData = await dispatch(
-        authApi.endpoints.getCurrentUser.initiate()
-      ).unwrap();
-      if (userData) {
-        onSuccess();
+      const result = await login(values).unwrap();
+      // Only proceed if we got tokens
+      if (result.access_token) {
+        const userData = await dispatch(
+          authApi.endpoints.getCurrentUser.initiate()
+        ).unwrap();
+        if (userData) {
+          onSuccess();
+        }
       }
     } catch (error) {
       if (error.status === 401) {
@@ -32,6 +35,27 @@ export const LoginModal = ({ onClose, onSuccess }) => {
       } else {
         form.setErrors({ email: 'An unexpected error occurred' });
       }
+    }
+  };
+
+  const handleDemoLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const result = await login({
+        email: 'demouser@demo.com',
+        password: 'changeme',
+      }).unwrap();
+      // Only proceed if we got tokens
+      if (result.access_token) {
+        const userData = await dispatch(
+          authApi.endpoints.getCurrentUser.initiate()
+        ).unwrap();
+        if (userData) {
+          onSuccess();
+        }
+      }
+    } catch (error) {
+      form.setErrors({ email: 'Demo login failed. Please try again.' });
     }
   };
 
@@ -52,9 +76,18 @@ export const LoginModal = ({ onClose, onSuccess }) => {
           disabled={isLoading}
         />
 
-        <Button type="submit" loading={isLoading} fullWidth>
-          {isLoading ? 'Logging in...' : 'Log in'}
-        </Button>
+        <Group grow>
+          <Button type="submit" loading={isLoading}>
+            {isLoading ? 'Logging in...' : 'Log in'}
+          </Button>
+          <Button
+            variant="light"
+            onClick={handleDemoLogin}
+            disabled={isLoading}
+          >
+            Demo Login
+          </Button>
+        </Group>
       </Stack>
     </form>
   );

@@ -12,6 +12,7 @@ import { useForm, zodResolver } from '@mantine/form';
 import {
   useCreateEventMutation,
   useUpdateEventMutation,
+  useGetEventQuery,
 } from '@/app/features/events/api';
 import { eventSchema } from './schemas/eventSchema';
 import { useEffect } from 'react';
@@ -42,9 +43,13 @@ export const EventModal = ({
   allowConferences = false,
 }) => {
   const isEditing = !!event;
+  const { data: eventDetails } = useGetEventQuery(event?.id, {
+    skip: !event?.id || event?.event_type !== 'SINGLE_SESSION',
+  });
   const [createEvent, { isLoading: isCreating }] = useCreateEventMutation();
   const [updateEvent, { isLoading: isUpdating }] = useUpdateEventMutation();
   const isLoading = isCreating || isUpdating;
+  const hasSession = eventDetails?.sessions?.length > 0;
 
   const form = useForm({
     initialValues: {
@@ -159,7 +164,12 @@ export const EventModal = ({
             label="Start Date (UTC)"
             required
             {...form.getInputProps('start_date')}
-            disabled={isLoading}
+            disabled={isLoading || hasSession}
+            description={
+              hasSession
+                ? 'Start date cannot be modified once a session is created'
+                : undefined
+            }
           />
 
           <TextInput

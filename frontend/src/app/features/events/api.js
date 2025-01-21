@@ -65,6 +65,14 @@ export const eventsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['EventUsers'],
     }),
+    addOrCreateEventUser: builder.mutation({
+      query: ({ eventId, ...userData }) => ({
+        url: `/events/${eventId}/users/add`, // Note the /add here
+        method: 'POST',
+        body: userData,
+      }),
+      invalidatesTags: ['EventUsers'],
+    }),
     updateEventUser: builder.mutation({
       query: ({ eventId, userId, ...updates }) => ({
         url: `/events/${eventId}/users/${userId}`,
@@ -95,4 +103,5 @@ export const {
   useUpdateEventUserMutation,
   useUpdateEventSpeakerInfoMutation,
   useDeleteEventMutation,
+  useAddOrCreateEventUserMutation,
 } = eventsApi;

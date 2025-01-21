@@ -10,10 +10,20 @@ export const authApi = baseApi.injectEndpoints({
         method: 'POST',
         body: credentials,
       }),
-      transformResponse: (response) => {
-        localStorage.setItem('access_token', response.access_token);
-        localStorage.setItem('refresh_token', response.refresh_token);
+      // Only transform successful responses
+      async transformResponse(response, meta, arg) {
+        if (response.access_token && response.refresh_token) {
+          localStorage.setItem('access_token', response.access_token);
+          localStorage.setItem('refresh_token', response.refresh_token);
+        }
         return response;
+      },
+
+      transformErrorResponse(error) {
+        // Clear any existing tokens on error
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        return error;
       },
     }),
 
