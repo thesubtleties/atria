@@ -3,6 +3,7 @@ import { useForm, zodResolver } from '@mantine/form';
 import { useDispatch } from 'react-redux';
 import { useLoginMutation, authApi } from '@/app/features/auth/api';
 import { loginSchema } from './schemas/loginSchema';
+import { setUser } from '@/app/store/authSlice';
 import styles from './styles/index.module.css';
 
 export const LoginModal = ({ onClose, onSuccess }) => {
@@ -19,15 +20,12 @@ export const LoginModal = ({ onClose, onSuccess }) => {
 
   const handleSubmit = async (values) => {
     try {
-      const result = await login(values).unwrap();
-      // Only proceed if we got tokens
-      if (result.access_token) {
-        const userData = await dispatch(
-          authApi.endpoints.getCurrentUser.initiate()
-        ).unwrap();
-        if (userData) {
-          onSuccess();
-        }
+      await login(values).unwrap();
+      const userData = await dispatch(
+        authApi.endpoints.getCurrentUser.initiate()
+      ).unwrap();
+      if (userData) {
+        onSuccess();
       }
     } catch (error) {
       if (error.status === 401) {
@@ -41,18 +39,15 @@ export const LoginModal = ({ onClose, onSuccess }) => {
   const handleDemoLogin = async (e) => {
     e.preventDefault();
     try {
-      const result = await login({
+      await login({
         email: 'demouser@demo.com',
         password: 'changeme',
       }).unwrap();
-      // Only proceed if we got tokens
-      if (result.access_token) {
-        const userData = await dispatch(
-          authApi.endpoints.getCurrentUser.initiate()
-        ).unwrap();
-        if (userData) {
-          onSuccess();
-        }
+      const userData = await dispatch(
+        authApi.endpoints.getCurrentUser.initiate()
+      ).unwrap();
+      if (userData) {
+        onSuccess();
       }
     } catch (error) {
       form.setErrors({ email: 'Demo login failed. Please try again.' });
@@ -60,7 +55,13 @@ export const LoginModal = ({ onClose, onSuccess }) => {
   };
 
   return (
-    <form onSubmit={form.onSubmit(handleSubmit)} className={styles.form}>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        form.onSubmit(handleSubmit)(e);
+      }}
+      className={styles.form}
+    >
       <Stack gap="md">
         <TextInput
           label="Email"

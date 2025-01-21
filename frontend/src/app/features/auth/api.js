@@ -52,8 +52,9 @@ export const authApi = baseApi.injectEndpoints({
           const { data } = await queryFulfilled;
           console.log(data);
           dispatch(setUser(data));
-        } catch {
-          dispatch(setUser(null));
+        } catch (error) {
+          // Don't dispatch setUser(null) on error during login
+          console.error('Failed to get user:', error);
         }
       },
       providesTags: ['User'],
