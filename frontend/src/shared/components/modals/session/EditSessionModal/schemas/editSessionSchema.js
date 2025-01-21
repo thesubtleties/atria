@@ -1,0 +1,44 @@
+// shared/components/modals/session/EditSessionModal/schemas/editSessionSchema.js
+import { z } from 'zod';
+
+const SessionType = z.enum([
+  'KEYNOTE',
+  'WORKSHOP',
+  'PANEL',
+  'PRESENTATION',
+  'NETWORKING',
+  'QA',
+]);
+
+export const editSessionSchema = z
+  .object({
+    title: z.string().min(1, 'Title is required'),
+    description: z.string().optional(),
+    session_type: SessionType,
+    start_time: z
+      .string()
+      .regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Invalid time format'),
+    end_time: z
+      .string()
+      .regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Invalid time format'),
+    stream_url: z.string().url().optional().or(z.literal('')),
+  })
+  .refine(
+    (data) => {
+      // Compare times
+      const [startHour, startMin] = data.start_time.split(':').map(Number);
+      const [endHour, endMin] = data.end_time.split(':').map(Number);
+
+      if (
+        startHour > endHour ||
+        (startHour === endHour && startMin >= endMin)
+      ) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: 'End time must be after start time',
+      path: ['end_time'],
+    }
+  );

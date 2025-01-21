@@ -109,3 +109,13 @@
   color: #666;
   font-size: 0.9rem;
 }
+.setupBadge {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+}
+
+/* Adjust edit button z-index to be above badge */
+.editButton {
+  z-index: 2;
+}

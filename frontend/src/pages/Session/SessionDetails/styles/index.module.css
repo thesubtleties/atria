@@ -1,0 +1,36 @@
+/* pages/Session/SessionDetails/styles/index.module.css */
+.detailsSection {
+  margin-top: 48px;
+  padding: 0 24px;
+}
+
+.detailsContainer {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.editButton {
+  color: #666;
+  transition: all 0.2s ease;
+}
+
+.editButton:hover {
+  background: rgba(0, 0, 0, 0.05);
+  transform: translateY(-1px);
+}
+
+.detailItem {
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 8px;
+}

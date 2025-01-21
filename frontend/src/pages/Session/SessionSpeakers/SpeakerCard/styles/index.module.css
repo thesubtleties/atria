@@ -1,0 +1,11 @@
+.card {
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  background: rgba(0, 0, 0, 0.04);
+}

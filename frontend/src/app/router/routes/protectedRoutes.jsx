@@ -7,6 +7,9 @@ import { CreateOrganization } from '../../../pages/Organizations/CreateOrganizat
 import { OrganizationsList } from '../../../pages/Organizations/OrganizationsList';
 import { EventsList } from '../../../pages/Events/EventsList';
 import { OrganizationEvents } from '../../../pages/Events/OrganizationEvents';
+import { SetupSession } from '../../../pages/Session/SetupSession';
+import { SessionPage } from '../../../pages/Session';
+import { SessionPending } from '../../../pages/Session/SessionPending';
 
 // Placeholder component for development
 const PlaceholderComponent = ({ routeName = 'This page' }) => (
@@ -95,6 +98,19 @@ export const protectedRoutes = [
                   {
                     path: 'admin',
                     element: getComponent('EventDashboard'),
+                  },
+                  // New session-related routes
+                  {
+                    path: 'sessions/:sessionId',
+                    element: <SessionPage />,
+                  },
+                  {
+                    path: 'setup-session',
+                    element: <SetupSession />,
+                  },
+                  {
+                    path: 'session-pending',
+                    element: <SessionPending />,
                   },
                 ],
               },

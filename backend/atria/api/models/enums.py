@@ -5,7 +5,7 @@ class SessionType(str, Enum):
     KEYNOTE = "keynote"
     WORKSHOP = "workshop"
     PANEL = "panel"
-    PRESENTATION = "presentation"
+    PRESENTATION = "PRESENTATION"
     NETWORKING = "networking"
     QA = "qa"
 
