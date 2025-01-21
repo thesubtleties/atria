@@ -8,6 +8,13 @@ export const usersApi = baseApi.injectEndpoints({
       }),
       providesTags: (result, error, id) => [{ type: 'Users', id }],
     }),
+    checkUserExists: builder.query({
+      query: (email) => ({
+        url: `/users/check-email?email=${encodeURIComponent(email)}`,
+        method: 'GET',
+      }),
+      providesTags: ['Users'],
+    }),
     updateUser: builder.mutation({
       query: ({ id, ...updates }) => ({
         url: `/users/${id}`,
@@ -34,6 +41,7 @@ export const usersApi = baseApi.injectEndpoints({
 
 export const {
   useGetUserQuery,
+  useCheckUserExistsQuery,
   useUpdateUserMutation,
   useGetUserEventsQuery,
   useGetUserSpeakingSessionsQuery,

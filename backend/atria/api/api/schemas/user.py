@@ -121,3 +121,21 @@ class UserNestedSchema(ma.SQLAlchemyAutoSchema):
             print(f"Role found: {role}")  # Debug print
             return role.value if role else None
         return None
+
+
+class UserBasicSchema(ma.SQLAlchemyAutoSchema):
+    """Basic user information schema"""
+
+    class Meta:
+        model = User
+        fields = ("id", "email", "first_name", "last_name")
+        name = "UserBasic"
+
+
+class UserCheckResponseSchema(ma.Schema):
+    """Schema for user check response"""
+
+    class Meta:
+        name = "UserCheckResponse"
+
+    user = ma.Nested(UserBasicSchema, allow_none=True)

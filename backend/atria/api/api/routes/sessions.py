@@ -122,8 +122,7 @@ class SessionList(MethodView):
         db.session.add(session)
         db.session.commit()
 
-        schema = SessionDetailSchema()
-        return schema.dump(session, context={"session_id": session.id}), 201
+        return session, 201
 
 
 @blp.route("/sessions/<int:session_id>")
@@ -141,10 +140,8 @@ class SessionResource(MethodView):
     def get(self, session_id):
         """Get session details"""
         session = Session.query.get_or_404(session_id)
-        schema = SessionDetailSchema()
-        return schema.dump(
-            session, context={"session_id": session_id}
-        )  # Adding session id to connect schemas
+        # Remove the context argument
+        return session
 
     @blp.arguments(SessionUpdateSchema)
     @blp.response(200, SessionDetailSchema)
@@ -169,20 +166,22 @@ class SessionResource(MethodView):
     @event_organizer_required()
     def put(self, update_data, session_id):
         """Update session"""
+        print("Received update data:", update_data)  # Add this log
         session = Session.query.get_or_404(session_id)
 
         for key, value in update_data.items():
+            print(f"Setting {key} to {value}")  # Add this log
             setattr(session, key, value)
 
         if "start_time" in update_data or "end_time" in update_data:
             try:
                 session.validate_times()
             except ValueError as e:
+                print("Time validation failed:", str(e))  # Add this log
                 return {"message": str(e)}, 400
 
         db.session.commit()
-        schema = SessionDetailSchema()
-        return schema.dump(session, context={"session_id": session_id})
+        return session
 
     @blp.response(204)
     @blp.doc(

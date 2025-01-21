@@ -5,7 +5,7 @@ class SessionType(str, Enum):
     KEYNOTE = "keynote"
     WORKSHOP = "workshop"
     PANEL = "panel"
-    PRESENTATION = "presentation"
+    PRESENTATION = "PRESENTATION"
     NETWORKING = "networking"
     QA = "qa"
 
@@ -45,9 +45,9 @@ class EventUserRole(str, Enum):
 
 
 class OrganizationUserRole(str, Enum):
-    ADMIN = "admin"
-    MEMBER = "member"
-    OWNER = "owner"
+    ADMIN = "ADMIN"
+    MEMBER = "MEMBER"
+    OWNER = "OWNER"
 
 
 class SessionSpeakerRole(str, Enum):

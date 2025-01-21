@@ -4,6 +4,8 @@ from api.api.schemas.user import (
     UserCreateSchema,
     UserUpdateSchema,
     UserNestedSchema,
+    UserCheckResponseSchema,
+    UserBasicSchema,
 )
 from api.api.schemas.event import (
     EventSchema,
@@ -40,6 +42,7 @@ from api.api.schemas.organization_user import (
     OrganizationUserCreateSchema,
     OrganizationUserUpdateSchema,
     OrganizationUserNestedSchema,
+    AddUserToOrgSchema,
 )
 from api.api.schemas.session_speaker import (
     SessionSpeakerSchema,
@@ -61,6 +64,8 @@ __all__ = [
     "UserCreateSchema",
     "UserUpdateSchema",
     "UserNestedSchema",
+    "UserCheckResponseSchema",
+    "BasicUserSchema",
     # Event schemas
     "EventSchema",
     "EventDetailSchema",
@@ -91,6 +96,7 @@ __all__ = [
     "OrganizationUserCreateSchema",
     "OrganizationUserUpdateSchema",
     "OrganizationUserNestedSchema",
+    "AddUserToOrgSchema",
     "SessionSpeakerSchema",
     "SessionSpeakerDetailSchema",
     "SessionSpeakerCreateSchema",

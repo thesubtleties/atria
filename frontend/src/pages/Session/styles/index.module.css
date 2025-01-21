@@ -1,0 +1,26 @@
+.pageContainer {
+  padding: var(--mantine-spacing-md);
+  min-height: calc(100vh - var(--mantine-header-height, 0px));
+  display: flex;
+  flex-direction: column;
+}
+
+.contentWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mantine-spacing-xl);
+  width: 100%;
+  /* Remove any extra margin/padding */
+  margin-top: 0;
+  padding-top: 0;
+}
+/* Add some responsive padding */
+@media (max-width: 768px) {
+  .pageContainer {
+    padding: var(--mantine-spacing-xs);
+  }
+
+  .contentWrapper {
+    gap: var(--mantine-spacing-lg);
+  }
+}

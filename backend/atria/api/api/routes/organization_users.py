@@ -16,6 +16,7 @@ from api.api.schemas import (
     OrganizationUserDetailSchema,
     OrganizationUserCreateSchema,
     OrganizationUserUpdateSchema,
+    AddUserToOrgSchema,
 )
 from api.commons.pagination import (
     paginate,
@@ -86,35 +87,44 @@ class OrganizationUserList(MethodView):
             collection_name="organization_users",
         )
 
-    @blp.arguments(OrganizationUserCreateSchema)
+    @blp.arguments(AddUserToOrgSchema)  # Just user fields, no role
     @blp.response(201, OrganizationUserDetailSchema)
-    @blp.doc(
-        summary="Add user to organization",
-        responses={
-            400: {"description": "User already in organization"},
-            403: {"description": "Not authorized to add users"},
-            404: {"description": "User not found"},
-        },
-    )
     @jwt_required()
     @org_admin_required()
-    def post(self, data, org_id):
+    def post(self, user_data, org_id):
         """Add user to organization"""
-        # Validate and load data
-        new_user = User.query.get_or_404(data["user_id"])
-        org = Organization.query.get(org_id)
+        org = Organization.query.get_or_404(org_id)
+
+        # Get or create user
+        user = User.query.filter_by(email=user_data["email"]).first()
+        if not user:
+            # Create new user
+            user = User(
+                email=user_data["email"],
+                password=user_data.get("password", "changeme"),
+                first_name=user_data["first_name"],
+                last_name=user_data["last_name"],
+                is_active=True,
+            )
+            db.session.add(user)
+            db.session.flush()  # Get user.id without committing
 
         # Check if already in org
-        if org.has_user(new_user):
-            return {"message": "User already in organization"}, 400
+        if org.has_user(user):
+            return {"message": "User already in organization"}, 409
 
-        # Add user with specified role
-        org.add_user(new_user, data["role"])
+        # Get role from request
+        role = request.json.get(
+            "role", "MEMBER"
+        )  # Default to MEMBER if not specified
+
+        # Add user to organization with role
+        org.add_user(user, OrganizationUserRole(role))
         db.session.commit()
 
         # Get the new organization user record
         org_user = OrganizationUser.query.filter_by(
-            organization_id=org_id, user_id=new_user.id
+            organization_id=org_id, user_id=user.id
         ).first()
 
         return org_user, 201

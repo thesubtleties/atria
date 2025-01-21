@@ -22,40 +22,67 @@ const EVENT_TYPES = [
   { value: 'SINGLE_SESSION', label: 'Single Session' },
 ];
 
-export const EventModal = ({ event, orgId, opened, onClose }) => {
-  const isEditing = !!event;
+const SINGLE_SESSION_TYPE = 'SINGLE_SESSION';
 
+const formatDateForInput = (dateString) => {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  return date.toISOString().split('T')[0];
+};
+
+const createUTCDate = (dateString) => {
+  return `${dateString}T00:00:00.000Z`;
+};
+
+export const EventModal = ({
+  event,
+  orgId,
+  opened,
+  onClose,
+  allowConferences = false,
+}) => {
+  const isEditing = !!event;
   const [createEvent, { isLoading: isCreating }] = useCreateEventMutation();
   const [updateEvent, { isLoading: isUpdating }] = useUpdateEventMutation();
-
   const isLoading = isCreating || isUpdating;
 
   const form = useForm({
     initialValues: {
       title: event?.title || '',
       description: event?.description || '',
-      event_type: event?.event_type || 'CONFERENCE',
-      start_date: event?.start_date
-        ? new Date(event.start_date).toISOString().split('T')[0]
-        : '',
-      end_date: event?.end_date
-        ? new Date(event.end_date).toISOString().split('T')[0]
-        : '',
+      event_type: event?.event_type || SINGLE_SESSION_TYPE,
+      start_date: event?.start_date ? formatDateForInput(event.start_date) : '',
+      end_date: event?.end_date ? formatDateForInput(event.end_date) : '',
       company_name: event?.company_name || '',
     },
     validate: zodResolver(eventSchema),
     transformValues: (values) => ({
       ...values,
-      start_date: new Date(values.start_date).toISOString(),
-      end_date: new Date(values.end_date).toISOString(),
+      start_date: createUTCDate(values.start_date),
+      end_date: createUTCDate(values.end_date),
     }),
   });
+
+  useEffect(() => {
+    if (
+      form.values.event_type === SINGLE_SESSION_TYPE &&
+      form.values.start_date
+    ) {
+      const nextDay = new Date(`${form.values.start_date}T00:00:00.000Z`);
+      nextDay.setUTCDate(nextDay.getUTCDate() + 1);
+      form.setFieldValue('end_date', nextDay.toISOString().split('T')[0]);
+    }
+  }, [form.values.start_date, form.values.event_type]);
 
   useEffect(() => {
     if (!opened) {
       form.reset();
     }
   }, [opened]);
+
+  const availableEventTypes = allowConferences
+    ? EVENT_TYPES
+    : EVENT_TYPES.filter((type) => type.value === SINGLE_SESSION_TYPE);
 
   const handleSubmit = async (values) => {
     try {
@@ -117,17 +144,19 @@ export const EventModal = ({ event, orgId, opened, onClose }) => {
             disabled={isLoading}
           />
 
-          <Select
-            label="Event Type"
-            data={EVENT_TYPES}
-            required
-            {...form.getInputProps('event_type')}
-            disabled={isLoading}
-          />
+          {allowConferences && (
+            <Select
+              label="Event Type"
+              data={availableEventTypes}
+              required
+              {...form.getInputProps('event_type')}
+              disabled={isLoading}
+            />
+          )}
 
           <TextInput
             type="date"
-            label="Start Date"
+            label="Start Date (UTC)"
             required
             {...form.getInputProps('start_date')}
             disabled={isLoading}
@@ -135,10 +164,12 @@ export const EventModal = ({ event, orgId, opened, onClose }) => {
 
           <TextInput
             type="date"
-            label="End Date"
+            label="End Date (UTC)"
             required
             {...form.getInputProps('end_date')}
-            disabled={isLoading}
+            disabled={
+              isLoading || form.values.event_type === SINGLE_SESSION_TYPE
+            }
             min={form.values.start_date}
           />
 
@@ -161,7 +192,7 @@ export const EventModal = ({ event, orgId, opened, onClose }) => {
           </Button>
 
           {form.errors._schema && (
-            <Text color="red" size="sm" align="center">
+            <Text c="red" size="sm" align="center">
               {form.errors._schema}
             </Text>
           )}

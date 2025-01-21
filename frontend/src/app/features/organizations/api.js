@@ -46,7 +46,10 @@ export const organizationsApi = baseApi.injectEndpoints({
         url: `/organizations/${orgId}/users`,
         params: { role, page, per_page },
       }),
-      providesTags: ['OrganizationUsers'],
+      providesTags: (result, error, { orgId }) => [
+        { type: 'Organizations', id: orgId },
+        'OrganizationUsers',
+      ],
     }),
     addOrganizationUser: builder.mutation({
       query: ({ orgId, ...userData }) => ({
@@ -54,7 +57,11 @@ export const organizationsApi = baseApi.injectEndpoints({
         method: 'POST',
         body: userData,
       }),
-      invalidatesTags: ['OrganizationUsers'],
+      invalidatesTags: (result, error, { orgId }) => [
+        { type: 'Organizations', id: orgId },
+        'Organizations',
+        'OrganizationUsers',
+      ],
     }),
     updateOrganizationUser: builder.mutation({
       query: ({ orgId, userId, ...updates }) => ({

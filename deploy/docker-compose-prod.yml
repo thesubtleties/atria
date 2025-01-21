@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  backend:
+    container_name: atria-api
+    build:
+      context: ./backend/atria
+      dockerfile: Dockerfile
+    expose:
+      - '5000'
+    volumes:
+      - ./backend/atria:/app
+    env_file:
+      - .env
+      - ./backend/atria/.flaskenv
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - default
+      - shared_portainer_network
+
+  frontend:
+    container_name: atria-client
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    expose:
+      - '80' # Changed from 5173 to 80 since we'll serve built files
+    networks:
+      - default
+      - shared_portainer_network
+    depends_on:
+      - backend
+
+  db:
+    container_name: atria-db
+    image: postgres:15-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    expose:
+      - '5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - default
+      - shared_portainer_network
+
+volumes:
+  postgres_data:
+
+networks:
+  default:
+  shared_portainer_network:
+    external: true

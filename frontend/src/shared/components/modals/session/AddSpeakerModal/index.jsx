@@ -1,55 +1,54 @@
-import { TextInput, Button, Stack, Select, Modal } from '@mantine/core';
+// shared/components/modals/session/AddSpeakerModal/index.jsx
+import { TextInput, Button, Stack, Modal, Textarea } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
-import { useAddOrganizationUserMutation } from '@/app/features/organizations/api';
+import { useAddSessionSpeakerMutation } from '@/app/features/sessions/api';
 import { useCheckUserExistsQuery } from '@/app/features/users/api';
-import { inviteUserSchema } from './schemas/inviteUserSchema';
+import { addSpeakerSchema } from './schemas/addSpeakerSchema';
 import { useEffect } from 'react';
 import styles from './styles/index.module.css';
 
-const ROLES = [
-  { value: 'MEMBER', label: 'Member' },
-  { value: 'ADMIN', label: 'Admin' },
-];
-
-export const InviteUserModal = ({ organizationId, opened, onClose }) => {
-  const [addUser, { isLoading }] = useAddOrganizationUserMutation();
+export const AddSpeakerModal = ({ sessionId, opened, onClose }) => {
+  const [addSpeaker, { isLoading }] = useAddSessionSpeakerMutation();
 
   const form = useForm({
     initialValues: {
       email: '',
       firstName: '',
       lastName: '',
-      role: 'member',
+      title: '',
+      speaker_bio: '',
     },
-    validate: zodResolver(inviteUserSchema),
+    validate: zodResolver(addSpeakerSchema),
   });
 
-  // Only skip if email is empty or too short
+  // Skip if email is empty or too short
   const email = form.values.email;
-  const skipQuery = !email || email.length < 5; // Basic length check
+  const skipQuery = !email || email.length < 5;
   const { data: userExists, isFetching } = useCheckUserExistsQuery(email, {
     skip: skipQuery,
   });
 
-  // When email changes and user exists, pre-fill name fields
+  // Pre-fill form if user exists
   useEffect(() => {
     if (userExists?.user) {
       form.setValues({
         firstName: userExists.user.first_name,
         lastName: userExists.user.last_name,
+        title: userExists.user.title || '',
+        speaker_bio: userExists.user.bio || '',
       });
     }
   }, [userExists]);
 
   const handleSubmit = async (values) => {
     try {
-      await addUser({
-        orgId: organizationId,
+      await addSpeaker({
+        sessionId,
         email: values.email,
         first_name: values.firstName,
         last_name: values.lastName,
-        role: values.role, // This will be handled separately in backend
-        password: userExists?.user ? undefined : 'changeme',
+        title: values.title,
+        speaker_bio: values.speaker_bio,
       }).unwrap();
 
       form.reset();
@@ -57,14 +56,13 @@ export const InviteUserModal = ({ organizationId, opened, onClose }) => {
     } catch (error) {
       console.error('Submission error:', error);
       if (error.status === 409) {
-        form.setErrors({ email: 'User already in organization' });
+        form.setErrors({ email: 'Speaker already added to session' });
       } else {
         form.setErrors({ email: 'An unexpected error occurred' });
       }
     }
   };
 
-  // Only disable fields if we have a confirmed existing user
   const areNameFieldsDisabled =
     isLoading || (userExists?.user !== null && userExists?.user !== undefined);
 
@@ -72,7 +70,7 @@ export const InviteUserModal = ({ organizationId, opened, onClose }) => {
     <Modal
       opened={opened}
       onClose={onClose}
-      title="Add Member"
+      title="Add Speaker"
       centered
       size="md"
     >
@@ -80,7 +78,7 @@ export const InviteUserModal = ({ organizationId, opened, onClose }) => {
         <Stack gap="md">
           <TextInput
             label="Email"
-            placeholder="user@email.com"
+            placeholder="speaker@email.com"
             required
             {...form.getInputProps('email')}
             disabled={isLoading}
@@ -102,16 +100,23 @@ export const InviteUserModal = ({ organizationId, opened, onClose }) => {
             disabled={areNameFieldsDisabled}
           />
 
-          <Select
-            label="Role"
-            data={ROLES}
-            required
-            {...form.getInputProps('role')}
+          <TextInput
+            label="Title"
+            placeholder="Speaker Title"
+            {...form.getInputProps('title')}
+            disabled={isLoading}
+          />
+
+          <Textarea
+            label="Speaker Bio"
+            placeholder="Speaker Biography"
+            minRows={3}
+            {...form.getInputProps('speaker_bio')}
             disabled={isLoading}
           />
 
           <Button type="submit" loading={isLoading} fullWidth>
-            {isLoading ? 'Adding...' : 'Add Member'}
+            {isLoading ? 'Adding...' : 'Add Speaker'}
           </Button>
         </Stack>
       </form>
