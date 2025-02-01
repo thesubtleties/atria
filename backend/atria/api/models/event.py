@@ -254,19 +254,24 @@ class Event(db.Model):
         role = self.get_user_role(user)
         return role in [EventUserRole.ORGANIZER, EventUserRole.MODERATOR]
 
-    def validate_dates(self):
-        """Validate event dates"""
-        if self.end_date <= self.start_date:
+    def validate_dates(self, new_start_date=None, new_end_date=None):
+        """Validate event dates and session conflicts"""
+        start = new_start_date or self.start_date
+        end = new_end_date or self.end_date
+
+        # Basic date order validation
+        if end <= start:
             raise ValueError("End date must be after start date")
 
-        for session in self.sessions:
-            # Get full datetime for session times
-            session_start = session.start_datetime
-            session_end = session.end_datetime
+        # Check if shortening event would orphan sessions
+        if self.sessions:
+            new_duration = (end.date() - start.date()).days + 1
+            max_day = max(session.day_number for session in self.sessions)
 
-            if session_start < self.start_date or session_end > self.end_date:
+            if max_day > new_duration:
                 raise ValueError(
-                    f"Session '{session.title}' times are outside event dates"
+                    f"Cannot shorten event: sessions exist on day {max_day}. "
+                    f"Please remove or reschedule sessions beyond day {new_duration} first."
                 )
 
     def generate_slug(self):

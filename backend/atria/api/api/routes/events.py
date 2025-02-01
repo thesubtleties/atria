@@ -152,17 +152,22 @@ class EventResource(MethodView):
         """Update event"""
         event = Event.query.get_or_404(event_id)
 
-        for key, value in update_data.items():
-            setattr(event, key, value)
+        try:
+            # Validate dates first if they're being updated
+            if "start_date" in update_data or "end_date" in update_data:
+                event.validate_dates(
+                    update_data.get("start_date"), update_data.get("end_date")
+                )
 
-        if "start_date" in update_data or "end_date" in update_data:
-            try:
-                event.validate_dates()
-            except ValueError as e:
-                return {"message": str(e)}, 400
+            # If validation passed, update all fields
+            for key, value in update_data.items():
+                setattr(event, key, value)
 
-        db.session.commit()
-        return event
+            db.session.commit()
+            return event
+
+        except ValueError as e:
+            return {"message": str(e)}, 400
 
     @blp.response(204)
     @blp.doc(
