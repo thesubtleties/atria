@@ -220,8 +220,15 @@ class Event(db.Model):
                 self.branding[key] = value
 
     def get_sessions_by_day(self, day_number):
-        """Get all sessions for a specific day"""
-        return [s for s in self.sessions if s.day_number == day_number]
+        """Get all sessions for a specific day, ordered by start time"""
+        from api.models.session import Session
+
+        # returns sessions by time of day
+        return (
+            Session.query.filter_by(event_id=self.id, day_number=day_number)
+            .order_by(Session.start_time)
+            .all()
+        )
 
     @property
     def day_count(self):
@@ -252,12 +259,12 @@ class Event(db.Model):
         if self.end_date <= self.start_date:
             raise ValueError("End date must be after start date")
 
-        # Check if sessions are within event dates
         for session in self.sessions:
-            if (
-                session.start_time < self.start_date
-                or session.end_time > self.end_date
-            ):
+            # Get full datetime for session times
+            session_start = session.start_datetime
+            session_end = session.end_datetime
+
+            if session_start < self.start_date or session_end > self.end_date:
                 raise ValueError(
                     f"Session '{session.title}' times are outside event dates"
                 )

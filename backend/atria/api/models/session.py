@@ -1,6 +1,6 @@
 from api.extensions import db
 from api.models.enums import SessionType, SessionStatus, SessionSpeakerRole
-from datetime import datetime, timezone
+from datetime import datetime, timezone, time, date, timedelta
 
 
 class Session(db.Model):
@@ -16,8 +16,8 @@ class Session(db.Model):
     session_type = db.Column(db.Enum(SessionType), nullable=False)
     title = db.Column(db.Text, nullable=False)
     description = db.Column(db.Text)
-    start_time = db.Column(db.DateTime(timezone=True), nullable=False)
-    end_time = db.Column(db.DateTime(timezone=True), nullable=False)
+    start_time = db.Column(db.Time, nullable=False)
+    end_time = db.Column(db.Time, nullable=False)
     stream_url = db.Column(db.Text)
     day_number = db.Column(db.BigInteger, nullable=False)
     created_at = db.Column(
@@ -43,27 +43,34 @@ class Session(db.Model):
         passive_deletes=True,
     )
 
-    def validate_times(self):
-        """Validate session times are within event dates"""
-        if hasattr(self, "event") and self.event:  # Check if event is loaded
-            if (
-                self.start_time < self.event.start_date
-                or self.end_time > self.event.end_date
-            ):
-                raise ValueError("Session must be within event dates")
+    def get_datetime_for_time(self, time_obj: time) -> datetime:
+        """Convert time to full datetime based on event date and day number"""
+        event_start_date = self.event.start_date.date()
+        session_date = event_start_date + timedelta(days=self.day_number - 1)
+        return datetime.combine(session_date, time_obj).replace(
+            tzinfo=timezone.utc
+        )
 
-    def update_times(self, new_start_time, new_end_time):
-        """
-        Update both times together safely.
-        """
-        if new_end_time <= new_start_time:
+    def validate_times(self):
+        """Validate session times"""
+        # Check time order
+        if self.end_time <= self.start_time:
             raise ValueError("End time must be after start time")
 
-        if (
-            new_start_time < self.event.start_date
-            or new_end_time > self.event.end_date
-        ):
-            raise ValueError("Session must be within event dates")
+        # Check if day number is valid
+        if hasattr(self, "event") and self.event:
+            event_duration = (
+                self.event.end_date.date() - self.event.start_date.date()
+            ).days + 1
+            if self.day_number < 1 or self.day_number > event_duration:
+                raise ValueError(
+                    f"Day number must be between 1 and {event_duration}"
+                )
+
+    def update_times(self, new_start_time: time, new_end_time: time):
+        """Update both times together safely."""
+        if new_end_time <= new_start_time:
+            raise ValueError("End time must be after start time")
 
         with db.session.begin_nested():
             self.start_time = new_start_time
@@ -124,6 +131,16 @@ class Session(db.Model):
         self.update_status(SessionStatus.CANCELLED)
 
     @property
+    def start_datetime(self) -> datetime:
+        """Get full start datetime"""
+        return self.get_datetime_for_time(self.start_time)
+
+    @property
+    def end_datetime(self) -> datetime:
+        """Get full end datetime"""
+        return self.get_datetime_for_time(self.end_time)
+
+    @property
     def is_live(self) -> bool:
         return self.status == SessionStatus.LIVE
 
@@ -138,14 +155,16 @@ class Session(db.Model):
     @property
     def duration_minutes(self):
         """Get session duration in minutes"""
-        return int((self.end_time - self.start_time).total_seconds() / 60)
+        start_minutes = self.start_time.hour * 60 + self.start_time.minute
+        end_minutes = self.end_time.hour * 60 + self.end_time.minute
+        return end_minutes - start_minutes
 
     @property
     def is_upcoming(self):
         """Check if session is upcoming"""
         return (
             self.status == SessionStatus.SCHEDULED
-            and self.start_time > datetime.now(timezone.utc)
+            and self.start_datetime > datetime.now(timezone.utc)
         )
 
     @property
@@ -154,7 +173,7 @@ class Session(db.Model):
         now = datetime.now(timezone.utc)
         return (
             self.status == SessionStatus.LIVE
-            and self.start_time <= now <= self.end_time
+            and self.start_datetime <= now <= self.end_datetime
         )
 
     @property
@@ -187,7 +206,8 @@ class Session(db.Model):
         for session in user_sessions:
             if session.id != self.id:  # Don't check against self
                 if (
-                    self.start_time < session.end_time
+                    session.day_number == self.day_number  # Same day
+                    and self.start_time < session.end_time
                     and self.end_time > session.start_time
                 ):
                     return True
@@ -202,13 +222,32 @@ class Session(db.Model):
     @classmethod
     def get_upcoming(cls, event_id):
         """Get upcoming sessions for event"""
+        now = datetime.now(timezone.utc)
+
+        # First get the event
+        from api.models import Event
+
+        event = Event.query.get(event_id)
+        if not event:
+            return []
+
+        # Calculate current day number
+        current_day = (now.date() - event.start_date.date()).days + 1
+        current_time = now.time()
+
         return (
             cls.query.filter(
                 cls.event_id == event_id,
                 cls.status == SessionStatus.SCHEDULED,
-                cls.start_time > datetime.now(timezone.utc),
+                db.or_(
+                    cls.day_number > current_day,
+                    db.and_(
+                        cls.day_number == current_day,
+                        cls.start_time > current_time,
+                    ),
+                ),
             )
-            .order_by(cls.start_time)
+            .order_by(cls.day_number, cls.start_time)
             .all()
         )
 

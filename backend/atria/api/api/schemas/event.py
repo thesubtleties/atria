@@ -43,6 +43,7 @@ class EventDetailSchema(EventSchema):
             "title",
             "start_time",
             "end_time",
+            "day_number",
             "session_type",
             "description",
             "speakers",
