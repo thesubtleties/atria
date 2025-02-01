@@ -1,4 +1,3 @@
-// shared/components/modals/event/EventModal/index.jsx
 import {
   TextInput,
   Button,
@@ -24,6 +23,7 @@ const EVENT_TYPES = [
 ];
 
 const SINGLE_SESSION_TYPE = 'SINGLE_SESSION';
+const CONFERENCE_TYPE = 'CONFERENCE';
 
 const formatDateForInput = (dateString) => {
   if (!dateString) return '';
@@ -44,7 +44,7 @@ export const EventModal = ({
 }) => {
   const isEditing = !!event;
   const { data: eventDetails } = useGetEventQuery(event?.id, {
-    skip: !event?.id || event?.event_type !== 'SINGLE_SESSION',
+    skip: !event?.id || event?.event_type !== SINGLE_SESSION_TYPE,
   });
   const [createEvent, { isLoading: isCreating }] = useCreateEventMutation();
   const [updateEvent, { isLoading: isUpdating }] = useUpdateEventMutation();
@@ -68,6 +68,7 @@ export const EventModal = ({
     }),
   });
 
+  // Automatically set end date for single session events
   useEffect(() => {
     if (
       form.values.event_type === SINGLE_SESSION_TYPE &&
@@ -79,6 +80,7 @@ export const EventModal = ({
     }
   }, [form.values.start_date, form.values.event_type]);
 
+  // Reset form when modal is closed
   useEffect(() => {
     if (!opened) {
       form.reset();
@@ -178,9 +180,18 @@ export const EventModal = ({
             required
             {...form.getInputProps('end_date')}
             disabled={
-              isLoading || form.values.event_type === SINGLE_SESSION_TYPE
+              isLoading ||
+              form.values.event_type === SINGLE_SESSION_TYPE ||
+              hasSession
             }
             min={form.values.start_date}
+            description={
+              form.values.event_type === SINGLE_SESSION_TYPE
+                ? 'End date is automatically set to the day after the start date for single session events'
+                : hasSession
+                  ? 'End date cannot be modified once a session is created'
+                  : undefined
+            }
           />
 
           <TextInput

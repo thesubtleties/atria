@@ -66,6 +66,7 @@ export const OrganizationEvents = () => {
       <EventModal
         orgId={orgId}
         opened={showCreateModal}
+        allowConferences={true}
         onClose={() => setShowCreateModal(false)}
       />
     </Container>

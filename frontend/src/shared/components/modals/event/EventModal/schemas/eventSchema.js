@@ -11,6 +11,10 @@ export const eventSchema = z
   })
   .refine(
     (data) => {
+      // Skip validation for SINGLE_SESSION events (end date is auto-set)
+      if (data.event_type === 'SINGLE_SESSION') return true;
+
+      // Validate end date for CONFERENCE events
       const start = new Date(data.start_date);
       const end = new Date(data.end_date);
       return end >= start;
