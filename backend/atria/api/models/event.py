@@ -18,8 +18,8 @@ class Event(db.Model):
     event_type = db.Column(
         db.Enum(EventType), nullable=False
     )  # enum: 'conference', 'single_session',
-    start_date = db.Column(db.DateTime(timezone=True), nullable=False)
-    end_date = db.Column(db.DateTime(timezone=True), nullable=False)
+    start_date = db.Column(db.Date, nullable=False)
+    end_date = db.Column(db.Date, nullable=False)
     company_name = db.Column(db.Text, nullable=False)
     slug = db.Column(db.Text, nullable=False, unique=True)
     status = db.Column(
@@ -179,16 +179,46 @@ class Event(db.Model):
 
     @property
     def is_upcoming(self) -> bool:
-        return self.start_date > datetime.now(timezone.utc)
+        return self.start_date > datetime.now(timezone.utc).date()
 
     @property
     def is_ongoing(self) -> bool:
-        now = datetime.now(timezone.utc)
+        now = datetime.now(timezone.utc).date()
         return self.start_date <= now <= self.end_date
 
     @property
     def is_past(self) -> bool:
-        return self.end_date < datetime.now(timezone.utc)
+        return self.end_date < datetime.now(timezone.utc).date()
+
+    @property
+    def first_session_time(self):
+        """Get earliest session start time for the event"""
+        if not self.sessions:
+            return None
+        return min(session.start_time for session in self.sessions)
+
+    @property
+    def last_session_time(self):
+        """Get latest session end time for the event"""
+        if not self.sessions:
+            return None
+        return max(session.end_time for session in self.sessions)
+
+    @property
+    def event_hours(self):
+        """Get actual event hours based on sessions"""
+        first = self.first_session_time
+        last = self.last_session_time
+        if first and last:
+            return {"start": first, "end": last}
+        return None
+
+    @property
+    def day_count(self):
+        """Get number of days in event"""
+        if not self.sessions:
+            return (self.end_date - self.start_date).days + 1
+        return max(s.day_number for s in self.sessions)
 
     def update_status(self, new_status: EventStatus):
         """Update event status with validation"""
@@ -230,13 +260,6 @@ class Event(db.Model):
             .all()
         )
 
-    @property
-    def day_count(self):
-        """Get number of days in event"""
-        if not self.sessions:
-            return (self.end_date - self.start_date).days + 1
-        return max(s.day_number for s in self.sessions)
-
     @classmethod
     def get_upcoming(cls):
         """Get all upcoming published events"""
@@ -265,7 +288,9 @@ class Event(db.Model):
 
         # Check if shortening event would orphan sessions
         if self.sessions:
-            new_duration = (end.date() - start.date()).days + 1
+            new_duration = (
+                end - start
+            ).days + 1  # Changed because using Date objects
             max_day = max(session.day_number for session in self.sessions)
 
             if max_day > new_duration:
