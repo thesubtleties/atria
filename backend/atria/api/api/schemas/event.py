@@ -21,6 +21,9 @@ class EventSchema(ma.SQLAlchemyAutoSchema):
     is_ongoing = ma.Boolean(dump_only=True)
     is_past = ma.Boolean(dump_only=True)
     day_count = ma.Integer(dump_only=True)
+    first_session_time = ma.String(dump_only=True)
+    last_session_time = ma.String(dump_only=True)
+    event_hours = ma.Dict(dump_only=True)
 
 
 # Detailed Schema - Used for GET /events/<id> with all relationships
@@ -85,8 +88,8 @@ class EventCreateSchema(ma.Schema):
     # Required fields
     title = ma.String(required=True)
     event_type = ma.Enum(EventType, required=True)
-    start_date = ma.DateTime(required=True)
-    end_date = ma.DateTime(required=True)
+    start_date = ma.Date(required=True)
+    end_date = ma.Date(required=True)
     company_name = ma.String(required=True)
 
     # Optional fields
@@ -111,12 +114,11 @@ class EventCreateSchema(ma.Schema):
     @validates_schema
     def validate_dates(self, data, **kwargs):
         if "start_date" in data and "end_date" in data:
-            if data["end_date"] <= data["start_date"]:
-                raise ValidationError("End date must be after start date")
+            if data["end_date"] < data["start_date"]:
+                raise ValidationError("End date cannot be before start date")
 
-            # Ensure dates are in the future for new events
-            if data["start_date"] <= datetime.now(timezone.utc):
-                raise ValidationError("Start date must be in the future")
+            if data["start_date"] < datetime.now(timezone.utc).date():
+                raise ValidationError("Start date cannot be in the past")
 
 
 # Update Schema - Used for PUT /events/<id>
@@ -129,8 +131,8 @@ class EventUpdateSchema(ma.Schema):
     title = ma.String()
     description = ma.String()
     event_type = ma.Enum(EventType)
-    start_date = ma.DateTime()
-    end_date = ma.DateTime()
+    start_date = ma.Date()
+    end_date = ma.Date()
     company_name = ma.String()
     status = ma.Enum(EventStatus)
     branding = ma.Dict()
@@ -139,8 +141,8 @@ class EventUpdateSchema(ma.Schema):
     def validate_dates(self, data, **kwargs):
         """Validate dates if provided"""
         if "start_date" in data and "end_date" in data:
-            if data["end_date"] <= data["start_date"]:
-                raise ValidationError("End date must be after start date")
+            if data["end_date"] < data["start_date"]:
+                raise ValidationError("End date cannot be before start date")
 
 
 # Branding Update Schema - Used for PATCH /events/<id>/branding

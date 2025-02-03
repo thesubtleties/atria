@@ -64,6 +64,15 @@ class EventList(MethodView):
     def get(self, org_id):
         """Get organization's events"""
         query = Event.query.filter_by(organization_id=org_id)
+        events = query.all()
+        print("Raw events:", events)  # Debug
+        for event in events:
+            print("Event sessions:", event.sessions)  # Debug
+            if event.sessions:
+                for session in event.sessions:
+                    print(
+                        "Session times:", session.start_time, session.end_time
+                    )  # Debug
         return paginate(
             query, EventSchema(many=True), collection_name="events"
         )
@@ -137,7 +146,7 @@ class EventResource(MethodView):
                 "content": {
                     "application/json": {
                         "example": {
-                            "message": "End date must be after start date"
+                            "message": "End date cannot be before start date"  # Updated message
                         }
                     }
                 },

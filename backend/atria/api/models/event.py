@@ -83,6 +83,15 @@ class Event(db.Model):
 
         super().__init__(*args, **kwargs)
 
+    def __repr__(self):
+        return (
+            f"Event(id={self.id}, "
+            f"title='{self.title}', "
+            f"type={self.event_type.value}, "
+            f"dates={self.start_date} to {self.end_date}, "
+            f"sessions={len(self.sessions)})"
+        )
+
     def add_user(self, user, role: EventUserRole, **kwargs):
         """Add user to event with role and optional speaker info"""
         from api.models import EventUser
@@ -195,14 +204,16 @@ class Event(db.Model):
         """Get earliest session start time for the event"""
         if not self.sessions:
             return None
-        return min(session.start_time for session in self.sessions)
+        time_obj = min(session.start_time for session in self.sessions)
+        return time_obj.strftime("%H:%M:%S") if time_obj else None
 
     @property
     def last_session_time(self):
         """Get latest session end time for the event"""
         if not self.sessions:
             return None
-        return max(session.end_time for session in self.sessions)
+        time_obj = max(session.end_time for session in self.sessions)
+        return time_obj.strftime("%H:%M:%S") if time_obj else None
 
     @property
     def event_hours(self):
@@ -210,7 +221,7 @@ class Event(db.Model):
         first = self.first_session_time
         last = self.last_session_time
         if first and last:
-            return {"start": first, "end": last}
+            return {"start": first, "end": last}  # Now they're strings
         return None
 
     @property
@@ -283,14 +294,12 @@ class Event(db.Model):
         end = new_end_date or self.end_date
 
         # Basic date order validation
-        if end <= start:
-            raise ValueError("End date must be after start date")
+        if end < start:
+            raise ValueError("End date cannot be before start date")
 
         # Check if shortening event would orphan sessions
         if self.sessions:
-            new_duration = (
-                end - start
-            ).days + 1  # Changed because using Date objects
+            new_duration = (end - start).days + 1
             max_day = max(session.day_number for session in self.sessions)
 
             if max_day > new_duration:

@@ -43,6 +43,14 @@ class Session(db.Model):
         passive_deletes=True,
     )
 
+    def __repr__(self):
+        return (
+            f"Session(id={self.id}, "
+            f"title='{self.title}', "
+            f"day={self.day_number}, "
+            f"time={self.start_time}-{self.end_time})"
+        )
+
     def get_datetime_for_time(self, time_obj: time) -> datetime:
         """Convert time to full datetime based on event date and day number"""
         event_start_date = self.event.start_date.date()

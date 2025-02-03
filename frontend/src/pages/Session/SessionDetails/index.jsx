@@ -10,22 +10,23 @@ export const SessionDetails = ({ session, canEdit }) => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showAddUserModal, setShowAddUserModal] = useState(false);
 
-  const formatTime = (dateString) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    // Format in 12-hour time with AM/PM
-    let hours = date.getUTCHours();
-    const minutes = date.getUTCMinutes();
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12;
-    hours = hours ? hours : 12; // the hour '0' should be '12'
-    const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
-    return `${hours}:${formattedMinutes} ${ampm}`;
+  const formatTime = (timeString) => {
+    if (!timeString) return '';
+    // Parse HH:MM:SS format
+    const [hours, minutes] = timeString.split(':');
+    const h = parseInt(hours, 10);
+    // Convert to 12-hour format
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    const hour12 = h % 12 || 12;
+    return `${hour12}:${minutes} ${ampm}`;
   };
 
-  const formatDate = (dateString) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
+  const getSessionDate = () => {
+    if (!session.event?.start_date) return '';
+    const eventStart = new Date(session.event.start_date);
+    const sessionDate = new Date(eventStart);
+    sessionDate.setDate(eventStart.getDate() + session.day_number - 1);
+
     const months = [
       'January',
       'February',
@@ -40,7 +41,7 @@ export const SessionDetails = ({ session, canEdit }) => {
       'November',
       'December',
     ];
-    return `${months[date.getUTCMonth()]} ${date.getUTCDate()}, ${date.getUTCFullYear()}`;
+    return `${months[sessionDate.getMonth()]} ${sessionDate.getDate()}, ${sessionDate.getFullYear()}`;
   };
 
   return (
@@ -75,23 +76,32 @@ export const SessionDetails = ({ session, canEdit }) => {
         <Stack spacing="md">
           <div className={styles.detailItem}>
             <Text size="sm" color="dimmed">
-              Date (UTC)
+              Event Day
             </Text>
-            <Text>{formatDate(session.start_time)}</Text>
+            <Text>
+              Day {session.day_number} - {getSessionDate()}
+            </Text>
           </div>
 
           <div className={styles.detailItem}>
             <Text size="sm" color="dimmed">
-              Start Time (UTC)
+              Start Time
             </Text>
             <Text>{formatTime(session.start_time)}</Text>
           </div>
 
           <div className={styles.detailItem}>
             <Text size="sm" color="dimmed">
-              End Time (UTC)
+              End Time
             </Text>
             <Text>{formatTime(session.end_time)}</Text>
+          </div>
+
+          <div className={styles.detailItem}>
+            <Text size="sm" color="dimmed">
+              Duration
+            </Text>
+            <Text>{session.formatted_duration}</Text>
           </div>
 
           <div className={styles.detailItem}>

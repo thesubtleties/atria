@@ -13,7 +13,7 @@ import {
   useUpdateEventMutation,
   useGetEventQuery,
 } from '@/app/features/events/api';
-import { eventSchema } from './schemas/eventSchema';
+import { eventSchema, eventUpdateSchema } from './schemas/eventSchema';
 import { useEffect } from 'react';
 import styles from './styles/index.module.css';
 
@@ -23,16 +23,10 @@ const EVENT_TYPES = [
 ];
 
 const SINGLE_SESSION_TYPE = 'SINGLE_SESSION';
-const CONFERENCE_TYPE = 'CONFERENCE';
 
 const formatDateForInput = (dateString) => {
   if (!dateString) return '';
-  const date = new Date(dateString);
-  return date.toISOString().split('T')[0];
-};
-
-const createUTCDate = (dateString) => {
-  return `${dateString}T00:00:00.000Z`;
+  return dateString; // Already in YYYY-MM-DD format
 };
 
 export const EventModal = ({
@@ -60,23 +54,16 @@ export const EventModal = ({
       end_date: event?.end_date ? formatDateForInput(event.end_date) : '',
       company_name: event?.company_name || '',
     },
-    validate: zodResolver(eventSchema),
-    transformValues: (values) => ({
-      ...values,
-      start_date: createUTCDate(values.start_date),
-      end_date: createUTCDate(values.end_date),
-    }),
+    validate: zodResolver(isEditing ? eventUpdateSchema : eventSchema),
   });
 
-  // Automatically set end date for single session events
+  // Handle single session end date
   useEffect(() => {
     if (
       form.values.event_type === SINGLE_SESSION_TYPE &&
       form.values.start_date
     ) {
-      const nextDay = new Date(`${form.values.start_date}T00:00:00.000Z`);
-      nextDay.setUTCDate(nextDay.getUTCDate() + 1);
-      form.setFieldValue('end_date', nextDay.toISOString().split('T')[0]);
+      form.setFieldValue('end_date', form.values.start_date);
     }
   }, [form.values.start_date, form.values.event_type]);
 
@@ -157,26 +144,31 @@ export const EventModal = ({
               data={availableEventTypes}
               required
               {...form.getInputProps('event_type')}
-              disabled={isLoading}
+              disabled={isLoading || hasSession}
+              description={
+                hasSession
+                  ? 'Event type cannot be modified once sessions are created'
+                  : undefined
+              }
             />
           )}
 
           <TextInput
             type="date"
-            label="Start Date (UTC)"
+            label="Start Date"
             required
             {...form.getInputProps('start_date')}
             disabled={isLoading || hasSession}
             description={
               hasSession
-                ? 'Start date cannot be modified once a session is created'
+                ? 'Start date cannot be modified once sessions are created'
                 : undefined
             }
           />
 
           <TextInput
             type="date"
-            label="End Date (UTC)"
+            label="End Date"
             required
             {...form.getInputProps('end_date')}
             disabled={
@@ -187,9 +179,9 @@ export const EventModal = ({
             min={form.values.start_date}
             description={
               form.values.event_type === SINGLE_SESSION_TYPE
-                ? 'End date is automatically set to the day after the start date for single session events'
+                ? 'Single session events are one-day events'
                 : hasSession
-                  ? 'End date cannot be modified once a session is created'
+                  ? 'End date cannot be modified once sessions are created'
                   : undefined
             }
           />

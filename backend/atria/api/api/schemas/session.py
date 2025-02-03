@@ -1,7 +1,7 @@
 from api.extensions import ma, db
 from api.models import Session
 from api.models.enums import SessionType, SessionStatus, SessionSpeakerRole
-from marshmallow import validates, ValidationError
+from marshmallow import validates, validates_schema, ValidationError
 from datetime import time
 
 
@@ -81,11 +81,12 @@ class SessionCreateSchema(ma.Schema):
         if value < 1:
             raise ValidationError("Day number must be positive")
 
-    @validates("end_time")
-    def validate_times(self, end_time, **kwargs):
-        start_time = kwargs["data"].get("start_time")
-        if start_time and end_time <= start_time:
-            raise ValidationError("End time must be after start time")
+    @validates_schema
+    def validate_times(self, data, **kwargs):
+        """Validate that end time is after start time"""
+        if "start_time" in data and "end_time" in data:
+            if data["end_time"] <= data["start_time"]:
+                raise ValidationError("End time must be after start time")
 
 
 class SessionUpdateSchema(ma.Schema):
@@ -113,10 +114,10 @@ class SessionTimesUpdateSchema(ma.Schema):
     start_time = ma.Time(required=True)
     end_time = ma.Time(required=True)
 
-    @validates("end_time")
-    def validate_times(self, end_time, **kwargs):
-        start_time = kwargs["data"].get("start_time")
-        if start_time and end_time <= start_time:
+    @validates_schema
+    def validate_times(self, data, **kwargs):
+        """Validate that end time is after start time"""
+        if data["end_time"] <= data["start_time"]:
             raise ValidationError("End time must be after start time")
 
 
