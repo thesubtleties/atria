@@ -1,0 +1,11 @@
+.container {
+  padding: 24px;
+  background-color: var(--mantine-color-white);
+  border-radius: 8px;
+  box-shadow: var(--mantine-shadow-xs);
+}
+
+.sessionsGrid {
+  display: grid;
+  gap: 16px;
+}

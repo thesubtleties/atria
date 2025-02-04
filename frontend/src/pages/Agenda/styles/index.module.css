@@ -1,0 +1,11 @@
+.container {
+  max-width: 1200px;
+  margin: 48px auto;
+  padding: 0 24px;
+}
+
+.agendaSection {
+  min-height: 50vh;
+  display: flex;
+  flex-direction: column;
+}

@@ -8,7 +8,6 @@ export const useNavigationTitle = () => {
   const location = useLocation();
   const { orgId, eventId } = useParams();
 
-  // Check if we're on a route that needs data
   const needsOrgData = location.pathname.includes(`/organizations/${orgId}`);
   const needsEventData = location.pathname.includes(`/events/${eventId}`);
 
@@ -44,9 +43,14 @@ export const useNavigationTitle = () => {
     }
 
     if (needsEventData && event) {
-      return needsOrgData
-        ? { text: event.name, subtitle: 'Organizer View' }
-        : { text: event.name };
+      // Fix: Make sure we're returning both the event title and subtitle
+      if (needsOrgData) {
+        return {
+          text: event.title, // Make sure this matches your event object property (title or name)
+          subtitle: 'Organizer View',
+        };
+      }
+      return { text: event.title }; // Again, make sure this matches your event object property
     }
 
     return null;
