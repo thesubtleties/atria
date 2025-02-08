@@ -1,0 +1,72 @@
+/* src/pages/Agenda/DateNavigation/styles/index.module.css */
+.dateNavigation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.dayNumber {
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dateSelector {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 4px;
+}
+
+.currentDate {
+  font-size: 20px;
+  font-weight: 500;
+  min-width: 240px;
+  text-align: center;
+  color: #1a1a1a;
+}
+
+.navButton {
+  padding: 8px;
+  border: 1px solid rgba(0, 102, 255, 0.1);
+  background: white;
+  cursor: pointer;
+  font-size: 16px;
+  color: #0066ff;
+  border-radius: 4px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.navButton:hover:not(:disabled) {
+  background: #0066ff;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 102, 255, 0.2);
+}
+
+.navButton:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.navButton:disabled {
+  color: #ccc;
+  border-color: rgba(0, 0, 0, 0.05);
+  cursor: not-allowed;
+  background: #f5f5f5;
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+}

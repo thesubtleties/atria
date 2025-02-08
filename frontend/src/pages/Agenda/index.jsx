@@ -1,56 +1,54 @@
-// src/pages/Agenda/AgendaView/index.jsx
-import { useSessionLayout } from './hooks/useSessionLayout';
-import { SessionCard } from './SessionCard';
-import { useEffect } from 'react';
+// pages/Agenda/index.jsx
+import { DateNavigation } from './DateNavigation';
+import { AgendaView } from './AgendaView';
+import { useState } from 'react';
 import styles from './styles/index.module.css';
+import PropTypes from 'prop-types';
 
-// src/pages/Agenda/AgendaView/index.jsx
-export const AgendaView = ({ sessions }) => {
-  const { rows, getSessionWidth, getSessionHeight, getSessionTop, isKeynote } =
-    useSessionLayout(sessions);
-  // useEffect(() => {
-  //   console.log(
-  //     'Session data:',
-  //     sessions.map((session) => ({
-  //       title: session.title,
-  //       start: session.start_time,
-  //       end: session.end_time,
-  //       type: session.session_type,
-  //     }))
-  //   );
-  // }, [sessions]);
+export const AgendaPage = ({ event, sessions = [] }) => {
+  const [currentDay, setCurrentDay] = useState(1);
+
+  if (!event?.start_date || !event?.day_count) {
+    return <div>Event information not available</div>;
+  }
+
+  const filteredSessions = sessions?.filter((session) => {
+    if (!session.start_time) return false;
+
+    const sessionDate = new Date(session.start_time);
+    const dayStart = new Date(event.start_date);
+    dayStart.setDate(dayStart.getDate() + (currentDay - 1));
+
+    return sessionDate.toDateString() === dayStart.toDateString();
+  });
 
   return (
     <div className={styles.container}>
-      <div className={styles.agendaGrid}>
-        {rows.map((row, rowIndex) => {
-          const rowTop = getSessionTop(row[0]); // Get top position from first session in row
-          console.log(`Row ${rowIndex} top:`, rowTop);
-
-          return (
-            <div
-              key={rowIndex}
-              className={styles.sessionRow}
-              style={{
-                top: rowTop,
-              }}
-            >
-              {row.map((session) => (
-                <SessionCard
-                  key={session.id}
-                  {...session}
-                  style={{
-                    width: isKeynote(session)
-                      ? '100%'
-                      : getSessionWidth(rowIndex),
-                    height: getSessionHeight(session),
-                  }}
-                />
-              ))}
-            </div>
-          );
-        })}
-      </div>
+      <DateNavigation
+        startDate={event.start_date}
+        dayCount={event.day_count}
+        currentDay={currentDay}
+        onDateChange={setCurrentDay}
+      />
+      <AgendaView sessions={filteredSessions || []} />
     </div>
   );
 };
+
+AgendaPage.propTypes = {
+  event: PropTypes.shape({
+    start_date: PropTypes.string.isRequired,
+    day_count: PropTypes.number.isRequired,
+    title: PropTypes.string,
+  }).isRequired,
+  sessions: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      title: PropTypes.string.isRequired,
+      start_time: PropTypes.string,
+      end_time: PropTypes.string,
+    })
+  ),
+};
+
+export default AgendaPage;

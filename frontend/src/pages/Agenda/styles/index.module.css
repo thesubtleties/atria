@@ -1,51 +1,9 @@
+/* pages/Agenda/styles/index.module.css */
 .container {
-  /* Max-width approach (more responsive) */
-  max-width: 1200px;
-  width: 100%;
-  margin: 0 auto;
-  padding: 0 16px;
-}
-
-.agendaGrid {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  width: 100%;
-  overflow: visible;
-}
-
-.sessionRow {
-  display: flex;
-  gap: 16px;
-  width: 100%;
-  overflow: visible;
-}
-/* Add this to prevent cards from collapsing */
-.sessionRow > * {
-  flex-shrink: 0;
-}
-/* Make items in row take equal width */
-.sessionRow > * {
-  flex: 1;
-  min-width: 0; /* Allows flex items to shrink below content size if needed */
-}
-
-/* If there's only one item in a row, let it take full width */
-.sessionRow:only-child {
-  width: 100%;
-}
-
-/* For two items */
-.sessionRow:has(> :nth-child(2):last-child) > * {
-  width: calc(50% - 8px); /* 50% minus half the gap */
-}
-
-/* For three items */
-.sessionRow:has(> :nth-child(3):last-child) > * {
-  width: calc(33.333% - 11px); /* Third minus appropriate gap */
-}
-
-/* For four items */
-.sessionRow:has(> :nth-child(4):last-child) > * {
-  width: calc(25% - 12px); /* Quarter minus appropriate gap */
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
 }

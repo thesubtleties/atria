@@ -1,7 +1,7 @@
 // src/stories/components/Agenda/AgendaView.stories.tsx
 import type { Meta, StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
-import { AgendaView } from '../../../pages/Agenda';
+import AgendaView from '../../../pages/Agenda/AgendaView';
 
 // Mock speakers first for reuse
 const mockSpeakers = {
