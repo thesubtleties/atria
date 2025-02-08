@@ -34,6 +34,24 @@ const meta = {
   parameters: {
     layout: 'centered',
   },
+  layout: {
+    width: '600px',
+    margin: '0, auto',
+  },
+  decorators: [
+    (Story) => (
+      <div
+        style={{
+          width: '600px',
+          margin: '0 auto',
+          // Optional: add max-width for responsiveness
+          maxWidth: '100%',
+        }}
+      >
+        <Story />
+      </div>
+    ),
+  ],
   tags: ['autodocs'],
   argTypes: {
     session_type: {
