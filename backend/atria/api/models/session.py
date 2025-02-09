@@ -207,6 +207,28 @@ class Session(db.Model):
             ).all()
         ]
 
+    def get_speakers_with_details(self):
+        """Get speakers with their roles and details combined"""
+        return [
+            {
+                "id": speaker.id,
+                "full_name": speaker.full_name,
+                "title": speaker.title,
+                "company_name": speaker.company_name,
+                "image_url": speaker.image_url,
+                "social_links": speaker.social_links,
+                "role": next(
+                    (
+                        ss.role.value
+                        for ss in self.session_speakers
+                        if ss.user_id == speaker.id
+                    ),
+                    None,
+                ),
+            }
+            for speaker in self.speakers
+        ]
+
     def has_speaker_conflicts(self, user):
         """Check if speaker has conflicts with other sessions"""
         user_sessions = user.speaking_sessions

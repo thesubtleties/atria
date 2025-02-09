@@ -54,12 +54,13 @@ class SessionList(MethodView):
                 "description": "Filter by day number",
                 "example": 1,
             },
-            *PAGINATION_PARAMETERS,  # imported from pagination helper
+            *PAGINATION_PARAMETERS,
         ],
         responses={
             200: get_pagination_schema(
-                "sessions", "SessionBase"
-            ),  # imported from pagination helper
+                "sessions",
+                "SessionDetail",  # Changed from SessionBase to SessionDetail
+            ),
             404: {"description": "Event not found"},
         },
     )
@@ -67,7 +68,10 @@ class SessionList(MethodView):
     @event_member_required()
     def get(self, event_id):
         """Get event's sessions"""
-        query = Session.query.filter_by(event_id=event_id)
+        query = Session.query.options(
+            db.joinedload(Session.speakers),
+            db.joinedload(Session.session_speakers),
+        ).filter_by(event_id=event_id)
 
         day_number = request.args.get("day_number", type=int)
         if day_number:
@@ -76,7 +80,9 @@ class SessionList(MethodView):
         query = query.order_by(Session.day_number, Session.start_time)
 
         return paginate(
-            query, SessionSchema(many=True), collection_name="sessions"
+            query,
+            SessionDetailSchema(many=True),  # Use DetailSchema instead
+            collection_name="sessions",
         )
 
     @blp.arguments(SessionCreateSchema)

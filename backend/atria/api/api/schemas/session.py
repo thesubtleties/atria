@@ -40,19 +40,9 @@ class SessionDetailSchema(SessionSchema):
         dump_only=True,
     )
 
-    # Add speakers here instead
-    speakers = ma.Nested(
-        "UserSchema",
-        many=True,
-        only=(
-            "id",
-            "full_name",
-            "title",
-            "company_name",
-            "image_url",
-            "session_speakers.role",
-        ),
-        dump_only=True,
+    # Use the existing SessionSpeakerSchema
+    session_speakers = ma.Nested(
+        "SessionSpeakerSchema", many=True, dump_only=True
     )
 
 
