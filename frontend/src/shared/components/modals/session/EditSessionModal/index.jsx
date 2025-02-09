@@ -83,6 +83,14 @@ export const EditSessionModal = ({
           stream_url: '',
         },
     validate: zodResolver(editSessionSchema),
+    transform: {
+      input: (values) => ({
+        ...values,
+        // Ensure consistent HH:mm format for both touched and untouched times
+        start_time: values.start_time?.substring(0, 5) || values.start_time,
+        end_time: values.end_time?.substring(0, 5) || values.end_time,
+      }),
+    },
   });
 
   const handleSubmit = async (values) => {

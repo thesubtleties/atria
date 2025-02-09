@@ -53,7 +53,7 @@ class Session(db.Model):
 
     def get_datetime_for_time(self, time_obj: time) -> datetime:
         """Convert time to full datetime based on event date and day number"""
-        event_start_date = self.event.start_date.date()
+        event_start_date = self.event.start_date
         session_date = event_start_date + timedelta(days=self.day_number - 1)
         return datetime.combine(session_date, time_obj).replace(
             tzinfo=timezone.utc
@@ -68,7 +68,7 @@ class Session(db.Model):
         # Check if day number is valid
         if hasattr(self, "event") and self.event:
             event_duration = (
-                self.event.end_date.date() - self.event.start_date.date()
+                self.event.end_date - self.event.start_date
             ).days + 1
             if self.day_number < 1 or self.day_number > event_duration:
                 raise ValueError(
