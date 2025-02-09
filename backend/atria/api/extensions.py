@@ -11,8 +11,23 @@ from flask_marshmallow import Marshmallow
 from flask_migrate import Migrate
 from flask_smorest import Api as BaseApi
 from apispec.ext.marshmallow import MarshmallowPlugin
+from flask.json.provider import JSONProvider
+from datetime import time
 
-# from api.commons.apispec import APISpecExt
+
+# serialize time objects
+# class CustomJSONProvider(JSONProvider):
+#     def default(self, obj):
+#         print(f"CustomJSONProvider.default called with: {type(obj)}")  # Debug
+#         if isinstance(obj, time):
+#             print(f"Converting time object: {obj}")  # Debug
+#             return obj.strftime("%H:%M:%S")
+#         return super().default(obj)
+
+#     def dumps(self, obj, **kwargs):
+#         print("CustomJSONProvider.dumps called")  # Debug
+#         kwargs.setdefault("default", self.default)
+#         return json.dumps(obj, **kwargs)
 
 
 def schema_name_resolver(schema):
@@ -43,7 +58,4 @@ ma = Marshmallow()
 migrate = Migrate()
 # apispec = APISpecExt()  # Keep for now during migration
 pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
-smorest_api = Api()  # Add this
-
-# celery off for now
-# from celery import Celery
+smorest_api = Api()

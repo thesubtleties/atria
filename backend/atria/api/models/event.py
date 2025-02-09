@@ -18,8 +18,8 @@ class Event(db.Model):
     event_type = db.Column(
         db.Enum(EventType), nullable=False
     )  # enum: 'conference', 'single_session',
-    start_date = db.Column(db.DateTime(timezone=True), nullable=False)
-    end_date = db.Column(db.DateTime(timezone=True), nullable=False)
+    start_date = db.Column(db.Date, nullable=False)
+    end_date = db.Column(db.Date, nullable=False)
     company_name = db.Column(db.Text, nullable=False)
     slug = db.Column(db.Text, nullable=False, unique=True)
     status = db.Column(
@@ -82,6 +82,15 @@ class Event(db.Model):
             kwargs["slug"] = slug
 
         super().__init__(*args, **kwargs)
+
+    def __repr__(self):
+        return (
+            f"Event(id={self.id}, "
+            f"title='{self.title}', "
+            f"type={self.event_type.value}, "
+            f"dates={self.start_date} to {self.end_date}, "
+            f"sessions={len(self.sessions)})"
+        )
 
     def add_user(self, user, role: EventUserRole, **kwargs):
         """Add user to event with role and optional speaker info"""
@@ -179,16 +188,48 @@ class Event(db.Model):
 
     @property
     def is_upcoming(self) -> bool:
-        return self.start_date > datetime.now(timezone.utc)
+        return self.start_date > datetime.now(timezone.utc).date()
 
     @property
     def is_ongoing(self) -> bool:
-        now = datetime.now(timezone.utc)
+        now = datetime.now(timezone.utc).date()
         return self.start_date <= now <= self.end_date
 
     @property
     def is_past(self) -> bool:
-        return self.end_date < datetime.now(timezone.utc)
+        return self.end_date < datetime.now(timezone.utc).date()
+
+    @property
+    def first_session_time(self):
+        """Get earliest session start time for the event"""
+        if not self.sessions:
+            return None
+        time_obj = min(session.start_time for session in self.sessions)
+        return time_obj.strftime("%H:%M:%S") if time_obj else None
+
+    @property
+    def last_session_time(self):
+        """Get latest session end time for the event"""
+        if not self.sessions:
+            return None
+        time_obj = max(session.end_time for session in self.sessions)
+        return time_obj.strftime("%H:%M:%S") if time_obj else None
+
+    @property
+    def event_hours(self):
+        """Get actual event hours based on sessions"""
+        first = self.first_session_time
+        last = self.last_session_time
+        if first and last:
+            return {"start": first, "end": last}  # Now they're strings
+        return None
+
+    @property
+    def day_count(self):
+        """Get number of days in event"""
+        if not self.sessions:
+            return (self.end_date - self.start_date).days + 1
+        return max(s.day_number for s in self.sessions)
 
     def update_status(self, new_status: EventStatus):
         """Update event status with validation"""
@@ -220,15 +261,15 @@ class Event(db.Model):
                 self.branding[key] = value
 
     def get_sessions_by_day(self, day_number):
-        """Get all sessions for a specific day"""
-        return [s for s in self.sessions if s.day_number == day_number]
+        """Get all sessions for a specific day, ordered by start time"""
+        from api.models.session import Session
 
-    @property
-    def day_count(self):
-        """Get number of days in event"""
-        if not self.sessions:
-            return (self.end_date - self.start_date).days + 1
-        return max(s.day_number for s in self.sessions)
+        # returns sessions by time of day
+        return (
+            Session.query.filter_by(event_id=self.id, day_number=day_number)
+            .order_by(Session.start_time)
+            .all()
+        )
 
     @classmethod
     def get_upcoming(cls):
@@ -247,19 +288,24 @@ class Event(db.Model):
         role = self.get_user_role(user)
         return role in [EventUserRole.ORGANIZER, EventUserRole.MODERATOR]
 
-    def validate_dates(self):
-        """Validate event dates"""
-        if self.end_date <= self.start_date:
-            raise ValueError("End date must be after start date")
+    def validate_dates(self, new_start_date=None, new_end_date=None):
+        """Validate event dates and session conflicts"""
+        start = new_start_date or self.start_date
+        end = new_end_date or self.end_date
 
-        # Check if sessions are within event dates
-        for session in self.sessions:
-            if (
-                session.start_time < self.start_date
-                or session.end_time > self.end_date
-            ):
+        # Basic date order validation
+        if end < start:
+            raise ValueError("End date cannot be before start date")
+
+        # Check if shortening event would orphan sessions
+        if self.sessions:
+            new_duration = (end - start).days + 1
+            max_day = max(session.day_number for session in self.sessions)
+
+            if max_day > new_duration:
                 raise ValueError(
-                    f"Session '{session.title}' times are outside event dates"
+                    f"Cannot shorten event: sessions exist on day {max_day}. "
+                    f"Please remove or reschedule sessions beyond day {new_duration} first."
                 )
 
     def generate_slug(self):

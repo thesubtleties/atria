@@ -9,6 +9,7 @@ import { EventsList } from '../../../pages/Events/EventsList';
 import { OrganizationEvents } from '../../../pages/Events/OrganizationEvents';
 import { SetupSession } from '../../../pages/Session/SetupSession';
 import { SessionPage } from '../../../pages/Session';
+import { AgendaPage } from '../../../pages/Agenda';
 import { SessionPending } from '../../../pages/Session/SessionPending';
 
 // Placeholder component for development
@@ -93,7 +94,7 @@ export const protectedRoutes = [
                 children: [
                   {
                     path: '',
-                    element: getComponent('EventAgenda'),
+                    element: <AgendaPage />,
                   },
                   {
                     path: 'admin',
@@ -130,6 +131,10 @@ export const protectedRoutes = [
             path: ':eventId',
             element: <Outlet />,
             children: [
+              {
+                path: '',
+                element: <AgendaPage />,
+              },
               {
                 path: 'sessions/:sessionId',
                 element: <SessionPage />,

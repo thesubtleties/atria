@@ -1,7 +1,8 @@
 from api.extensions import ma, db
 from api.models import Session
 from api.models.enums import SessionType, SessionStatus, SessionSpeakerRole
-from marshmallow import validates, ValidationError
+from marshmallow import validates, validates_schema, ValidationError
+from datetime import time
 
 
 # api/api/schemas/session.py
@@ -39,19 +40,9 @@ class SessionDetailSchema(SessionSchema):
         dump_only=True,
     )
 
-    # Add speakers here instead
-    speakers = ma.Nested(
-        "UserSchema",
-        many=True,
-        only=(
-            "id",
-            "full_name",
-            "title",
-            "company_name",
-            "image_url",
-            "session_speakers.role",
-        ),
-        dump_only=True,
+    # Use the existing SessionSpeakerSchema
+    session_speakers = ma.Nested(
+        "SessionSpeakerSchema", many=True, dump_only=True
     )
 
 
@@ -65,8 +56,8 @@ class SessionCreateSchema(ma.Schema):
     session_type = ma.Enum(SessionType, required=True)
     status = ma.Enum(SessionStatus, load_default=SessionStatus.SCHEDULED)
     description = ma.String()
-    start_time = ma.DateTime(required=True)
-    end_time = ma.DateTime(required=True)
+    start_time = ma.Time(required=True)
+    end_time = ma.Time(required=True)
     stream_url = ma.String()
     day_number = ma.Integer(required=True)
 
@@ -80,6 +71,13 @@ class SessionCreateSchema(ma.Schema):
         if value < 1:
             raise ValidationError("Day number must be positive")
 
+    @validates_schema
+    def validate_times(self, data, **kwargs):
+        """Validate that end time is after start time"""
+        if "start_time" in data and "end_time" in data:
+            if data["end_time"] <= data["start_time"]:
+                raise ValidationError("End time must be after start time")
+
 
 class SessionUpdateSchema(ma.Schema):
     """Schema for updating sessions"""
@@ -91,8 +89,8 @@ class SessionUpdateSchema(ma.Schema):
     session_type = ma.Enum(SessionType)
     status = ma.Enum(SessionStatus)
     description = ma.String()
-    start_time = ma.DateTime()
-    end_time = ma.DateTime()
+    start_time = ma.Time()
+    end_time = ma.Time()
     stream_url = ma.String()
     day_number = ma.Integer()
 
@@ -103,8 +101,14 @@ class SessionTimesUpdateSchema(ma.Schema):
     class Meta:
         name = "SessionTimesUpdate"
 
-    start_time = ma.DateTime(required=True)
-    end_time = ma.DateTime(required=True)
+    start_time = ma.Time(required=True)
+    end_time = ma.Time(required=True)
+
+    @validates_schema
+    def validate_times(self, data, **kwargs):
+        """Validate that end time is after start time"""
+        if data["end_time"] <= data["start_time"]:
+            raise ValidationError("End time must be after start time")
 
 
 class SessionStatusUpdateSchema(ma.Schema):

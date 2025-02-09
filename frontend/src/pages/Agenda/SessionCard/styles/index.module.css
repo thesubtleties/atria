@@ -1,0 +1,271 @@
+/* src/components/Agenda/SessionCard/styles/index.module.css */
+
+/* Base card styles */
+.sessionCard {
+  background: white;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  min-height: 80px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 1;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  container-type: inline-size;
+  text-decoration: none;
+}
+
+.sessionCard:hover {
+  transform: scale(1.02) translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+
+/* Type tag styles */
+.typeTag {
+  padding: 0;
+  margin: 0;
+}
+
+.sessionType {
+  display: inline-block;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  border-top-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  color: white;
+}
+
+/* Session type colors */
+.keynote {
+  background-color: #0066ff;
+}
+.panel {
+  background-color: #7b61ff;
+}
+.workshop {
+  background-color: #00c2a8;
+}
+.presentation {
+  background-color: #ff6b6b;
+}
+.qa {
+  background-color: #ffa94d;
+}
+.networking {
+  background-color: #4caf50;
+}
+
+/* Main content styles */
+.content {
+  padding: 12px 16px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1a1a1a;
+  line-height: 1.4;
+}
+
+.time {
+  font-size: 12px;
+  color: #666;
+}
+
+/* Expanded content styles */
+.expandedContent {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 101;
+}
+
+.sessionCard:hover .expandedContent {
+  max-height: 750px;
+  opacity: 1;
+  padding: 0 16px 16px 16px;
+}
+
+.description {
+  font-size: 14px;
+  color: #333;
+  margin: 12px 0;
+  line-height: 1.4;
+}
+
+/* Role group styles */
+.roleGroup {
+  margin-top: 0px;
+  padding-top: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  width: 100%;
+}
+
+.roleTitle {
+  font-size: 13px;
+  text-transform: uppercase;
+  color: #666;
+  margin: 0 0 8px 0;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Speakers layout */
+.speakers {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.roleGroup .speakersRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  width: 100%;
+}
+
+/* Speaker responsive layout
+@container (min-width: 600px) {
+  .roleGroup .speakersRow {
+    gap: 16px 24px;
+  }
+
+  .roleGroup .speaker {
+    flex: 1 1 calc(50% - 12px);
+    min-width: 200px;
+  }
+}
+
+@container (min-width: 900px) {
+  .roleGroup .speaker {
+    flex: 1 1 calc(33.333% - 16px);
+  }
+} */
+
+/* Individual speaker styles */
+.speaker {
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding-right: 16px;
+  flex: 0 1 auto; /* Change from flex: 1 to flex: 0 1 auto */
+  margin-bottom: 12px;
+  /* min-width: 250px; Set a minimum width that looks good */
+  max-width: fit-content; /* Let it be as wide as it needs */
+}
+
+/* .speaker:not(:last-child)::after {
+  content: '|';
+  position: absolute;
+  right: 0;
+  color: #ddd;
+  opacity: 0.6;
+} */
+
+/* .speaker:last-child::after,
+.speaker:nth-child(2n)::after {
+  display: none;
+} */
+
+.withDivider::after {
+  content: '|';
+  position: absolute;
+  right: 0;
+  color: #ddd;
+  opacity: 0.6;
+}
+.speaker:last-child {
+  margin-bottom: 0;
+}
+
+/* Avatar styles */
+.avatarWrapper {
+  width: 32px;
+  height: 32px;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.avatarPlaceholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: #0066ff;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Speaker info styles */
+.speakerInfo {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.speakerName {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1a1a1a;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.speakerTitle {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Social link styles */
+.socialLinks {
+  display: flex;
+  gap: 2px;
+  margin-top: 0;
+}
+
+.socialLink {
+  color: #666;
+  display: flex;
+  align-items: center;
+  height: 20px;
+  transition: color 0.2s ease;
+}
+
+.socialLink:hover {
+  color: #0066ff;
+}

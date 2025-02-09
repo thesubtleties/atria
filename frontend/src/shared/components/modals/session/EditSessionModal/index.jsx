@@ -25,12 +25,26 @@ const SESSION_TYPES = [
   { value: 'QA', label: 'Q&A Session' },
 ];
 
-const getTimeFromDateTime = (dateTimeString) => {
-  if (!dateTimeString) return '';
-  const date = new Date(dateTimeString);
-  const hours = date.getUTCHours();
-  const minutes = date.getUTCMinutes();
-  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+// Helper to get available days based on event dates
+const getEventDays = (event) => {
+  if (!event?.start_date || !event?.end_date) return [];
+
+  const start = new Date(event.start_date);
+  const end = new Date(event.end_date);
+  const days = [];
+  let currentDate = start;
+  let dayNumber = 1;
+
+  while (currentDate <= end) {
+    days.push({
+      value: dayNumber.toString(),
+      label: `Day ${dayNumber} - ${currentDate.toLocaleDateString()}`,
+    });
+    currentDate.setDate(currentDate.getDate() + 1);
+    dayNumber++;
+  }
+
+  return days;
 };
 
 export const EditSessionModal = ({
@@ -44,8 +58,9 @@ export const EditSessionModal = ({
   const [createSession, { isLoading: isCreating }] = useCreateSessionMutation();
   const [updateSession, { isLoading: isUpdating }] = useUpdateSessionMutation();
   const { data: event } = useGetEventQuery(session?.event_id || eventId);
-
   const isLoading = isCreating || isUpdating;
+
+  const availableDays = getEventDays(event);
 
   const form = useForm({
     initialValues: isEditing
@@ -53,8 +68,9 @@ export const EditSessionModal = ({
           title: session.title,
           description: session.description || '',
           session_type: session.session_type,
-          start_time: getTimeFromDateTime(session.start_time),
-          end_time: getTimeFromDateTime(session.end_time),
+          start_time: session.start_time, // Already in HH:mm format
+          end_time: session.end_time, // Already in HH:mm format
+          day_number: session.day_number.toString(),
           stream_url: session.stream_url || '',
         }
       : {
@@ -63,36 +79,31 @@ export const EditSessionModal = ({
           session_type: 'PRESENTATION',
           start_time: '09:00',
           end_time: '10:00',
+          day_number: '1',
           stream_url: '',
         },
     validate: zodResolver(editSessionSchema),
+    transform: {
+      input: (values) => ({
+        ...values,
+        // Ensure consistent HH:mm format for both touched and untouched times
+        start_time: values.start_time?.substring(0, 5) || values.start_time,
+        end_time: values.end_time?.substring(0, 5) || values.end_time,
+      }),
+    },
   });
 
   const handleSubmit = async (values) => {
     try {
-      // Get event start date
-      const eventDate = event.start_date.split('T')[0]; // Gets "2025-01-23"
-
-      // Create the start and end DateTimes using the event date (in UTC)
-      const startDateTime = new Date(
-        `${eventDate}T${values.start_time}:00.000Z`
-      );
-      const endDateTime = new Date(`${eventDate}T${values.end_time}:00.000Z`);
-
       const sessionData = {
         title: values.title,
         description: values.description,
         session_type: values.session_type,
-        start_time: startDateTime.toISOString(),
-        end_time: endDateTime.toISOString(),
+        start_time: values.start_time, // Just send HH:mm
+        end_time: values.end_time, // Just send HH:mm
+        day_number: parseInt(values.day_number, 10),
         stream_url: values.stream_url || '',
-        day_number: 1,
       };
-
-      console.log('Times being sent:', {
-        start: sessionData.start_time,
-        end: sessionData.end_time,
-      });
 
       let result;
       if (isEditing) {
@@ -110,10 +121,7 @@ export const EditSessionModal = ({
       onSuccess?.(result.id);
       onClose();
     } catch (error) {
-      console.error('Submission error:', {
-        message: error.message,
-        values: values,
-      });
+      console.error('Submission error:', error);
       form.setErrors({ title: 'Failed to update session' });
     }
   };
@@ -149,16 +157,23 @@ export const EditSessionModal = ({
             {...form.getInputProps('session_type')}
           />
 
+          <Select
+            label="Event Day"
+            data={availableDays}
+            required
+            {...form.getInputProps('day_number')}
+          />
+
           <Group grow>
             <TimeInput
-              label="Start Time (UTC)"
+              label="Start Time"
               required
               format="24"
               {...form.getInputProps('start_time')}
             />
 
             <TimeInput
-              label="End Time (UTC)"
+              label="End Time"
               required
               format="24"
               {...form.getInputProps('end_time')}
