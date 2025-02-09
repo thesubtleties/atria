@@ -28,7 +28,7 @@ function hasTimeOverlap(session1, session2) {
 
 function organizeTimeSlots(sessions) {
   // Sort ALL sessions strictly by start time
-  const sorted = sessions?.sort((a, b) => {
+  const sorted = [...sessions].sort((a, b) => {
     return timeToMinutes(a.start_time) - timeToMinutes(b.start_time);
   });
 

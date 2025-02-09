@@ -1,31 +1,17 @@
 // src/pages/Agenda/AgendaView/index.jsx
 import { useSessionLayout } from '../hooks/useSessionLayout';
 import { SessionCard } from '../SessionCard';
-import { useEffect } from 'react';
 import styles from './styles/index.module.css';
 
-// src/pages/Agenda/AgendaView/index.jsx
-export const AgendaView = ({ sessions }) => {
+export const AgendaView = ({ sessions, isOrgView, orgId, eventId }) => {
   const { rows, getSessionWidth, getSessionHeight, getSessionTop, isKeynote } =
     useSessionLayout(sessions);
-  // useEffect(() => {
-  //   console.log(
-  //     'Session data:',
-  //     sessions.map((session) => ({
-  //       title: session.title,
-  //       start: session.start_time,
-  //       end: session.end_time,
-  //       type: session.session_type,
-  //     }))
-  //   );
-  // }, [sessions]);
 
   return (
     <div className={styles.container}>
       <div className={styles.agendaGrid}>
         {rows.map((row, rowIndex) => {
-          const rowTop = getSessionTop(row[0]); // Get top position from first session in row
-          console.log(`Row ${rowIndex} top:`, rowTop);
+          const rowTop = getSessionTop(row[0]);
 
           return (
             <div
@@ -39,6 +25,9 @@ export const AgendaView = ({ sessions }) => {
                 <SessionCard
                   key={session.id}
                   {...session}
+                  isOrgView={isOrgView}
+                  orgId={orgId}
+                  eventId={eventId}
                   style={{
                     width: isKeynote(session)
                       ? '100%'
@@ -54,4 +43,5 @@ export const AgendaView = ({ sessions }) => {
     </div>
   );
 };
+
 export default AgendaView;

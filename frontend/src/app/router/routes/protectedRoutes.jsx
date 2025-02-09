@@ -132,6 +132,10 @@ export const protectedRoutes = [
             element: <Outlet />,
             children: [
               {
+                path: '',
+                element: <AgendaPage />,
+              },
+              {
                 path: 'sessions/:sessionId',
                 element: <SessionPage />,
               },
