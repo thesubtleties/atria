@@ -11,16 +11,84 @@ export const eventSchema = z
   })
   .refine(
     (data) => {
-      // Skip validation for SINGLE_SESSION events (end date is auto-set)
-      if (data.event_type === 'SINGLE_SESSION') return true;
-
-      // Validate end date for CONFERENCE events
-      const start = new Date(data.start_date);
-      const end = new Date(data.end_date);
-      return end >= start;
+      // For single session, end_date must equal start_date
+      if (data.event_type === 'SINGLE_SESSION') {
+        return data.end_date === data.start_date;
+      }
+      // For conferences, end_date must be >= start_date
+      return data.end_date >= data.start_date;
     },
     {
-      message: 'End date must be after or equal to start date',
+      message: ({ data }) =>
+        data.event_type === 'SINGLE_SESSION'
+          ? 'Single session events must start and end on the same day'
+          : 'End date must be after or equal to start date',
       path: ['end_date'],
+    }
+  )
+  .refine(
+    (data) => {
+      // Ensure start_date is not in the past
+      const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD
+      return data.start_date >= today;
+    },
+    {
+      message: 'Start date cannot be in the past',
+      path: ['start_date'],
+    }
+  );
+export const eventUpdateSchema = z
+  .object({
+    title: z.string().min(3, 'Title must be at least 3 characters').optional(),
+    description: z.string().optional().nullable(),
+    event_type: z.enum(['CONFERENCE', 'SINGLE_SESSION']).optional(),
+    start_date: z.string().optional(),
+    end_date: z.string().optional(),
+    company_name: z.string().min(1, 'Company name is required').optional(),
+  })
+  .refine(
+    (data) => {
+      // Skip if no dates provided
+      if (!data.start_date && !data.end_date) return true;
+
+      // If only one date is provided, need both for validation
+      if (data.start_date && !data.end_date) return false;
+      if (!data.start_date && data.end_date) return false;
+
+      // For single session, end_date must equal start_date
+      if (data.event_type === 'SINGLE_SESSION') {
+        return data.end_date === data.start_date;
+      }
+
+      // For conferences, end_date must be >= start_date
+      return data.end_date >= data.start_date;
+    },
+    {
+      message: ({ data }) => {
+        if (
+          (data.start_date && !data.end_date) ||
+          (!data.start_date && data.end_date)
+        ) {
+          return 'Both start and end dates must be provided together';
+        }
+        return data.event_type === 'SINGLE_SESSION'
+          ? 'Single session events must start and end on the same day'
+          : 'End date must be after or equal to start date';
+      },
+      path: ['end_date'],
+    }
+  )
+  .refine(
+    (data) => {
+      // Skip if no start date provided
+      if (!data.start_date) return true;
+
+      // Ensure start_date is not in the past
+      const today = new Date().toISOString().split('T')[0];
+      return data.start_date >= today;
+    },
+    {
+      message: 'Start date cannot be in the past',
+      path: ['start_date'],
     }
   );

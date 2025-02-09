@@ -54,12 +54,13 @@ class SessionList(MethodView):
                 "description": "Filter by day number",
                 "example": 1,
             },
-            *PAGINATION_PARAMETERS,  # imported from pagination helper
+            *PAGINATION_PARAMETERS,
         ],
         responses={
             200: get_pagination_schema(
-                "sessions", "SessionBase"
-            ),  # imported from pagination helper
+                "sessions",
+                "SessionDetail",  # Changed from SessionBase to SessionDetail
+            ),
             404: {"description": "Event not found"},
         },
     )
@@ -67,16 +68,21 @@ class SessionList(MethodView):
     @event_member_required()
     def get(self, event_id):
         """Get event's sessions"""
-        query = Session.query.filter_by(event_id=event_id)
+        query = Session.query.options(
+            db.joinedload(Session.speakers),
+            db.joinedload(Session.session_speakers),
+        ).filter_by(event_id=event_id)
 
         day_number = request.args.get("day_number", type=int)
         if day_number:
             query = query.filter_by(day_number=day_number)
 
-        query = query.order_by(Session.start_time)
+        query = query.order_by(Session.day_number, Session.start_time)
 
         return paginate(
-            query, SessionSchema(many=True), collection_name="sessions"
+            query,
+            SessionDetailSchema(many=True),  # Use DetailSchema instead
+            collection_name="sessions",
         )
 
     @blp.arguments(SessionCreateSchema)
@@ -166,20 +172,21 @@ class SessionResource(MethodView):
     @event_organizer_required()
     def put(self, update_data, session_id):
         """Update session"""
-        print("Received update data:", update_data)  # Add this log
         session = Session.query.get_or_404(session_id)
-
-        for key, value in update_data.items():
-            print(f"Setting {key} to {value}")  # Add this log
-            setattr(session, key, value)
-
+        # time fields
         if "start_time" in update_data or "end_time" in update_data:
             try:
+                if "start_time" in update_data:
+                    session.start_time = update_data["start_time"]
+                if "end_time" in update_data:
+                    session.end_time = update_data["end_time"]
                 session.validate_times()
             except ValueError as e:
-                print("Time validation failed:", str(e))  # Add this log
                 return {"message": str(e)}, 400
-
+        # other fields
+        for key, value in update_data.items():
+            if key not in ["start_time", "end_time"]:
+                setattr(session, key, value)
         db.session.commit()
         return session
 
@@ -259,5 +266,4 @@ class SessionTimesResource(MethodView):
         except ValueError as e:
             return {"message": str(e)}, 400
 
-        schema = SessionDetailSchema()
-        return schema.dump(session, context={"session_id": session_id})
+        return session

@@ -37,11 +37,16 @@ export const EventCard = ({ event, isOrgView, canEdit }) => {
   const handleCardClick = (e) => {
     e.preventDefault();
 
-    // If we're in the events view and there's no session, don't navigate
-    if (!isOrgView && !hasSession) {
+    if (event.event_type === 'CONFERENCE') {
+      // Always navigate for conferences
+      const basePath = isOrgView
+        ? `/app/organizations/${event.organization_id}/events/${event.id}`
+        : `/app/events/${event.id}`;
+      navigate(basePath);
       return;
     }
 
+    // Single session logic
     if (event.event_type === 'SINGLE_SESSION') {
       const basePath = isOrgView
         ? `/app/organizations/${event.organization_id}/events/${event.id}`
@@ -61,13 +66,6 @@ export const EventCard = ({ event, isOrgView, canEdit }) => {
         } else {
           navigate(`${basePath}/session-pending`);
         }
-      }
-    } else {
-      // Conference - use default routing (only in org view)
-      if (isOrgView) {
-        navigate(
-          `/app/organizations/${event.organization_id}/events/${event.id}`
-        );
       }
     }
   };
@@ -90,7 +88,8 @@ export const EventCard = ({ event, isOrgView, canEdit }) => {
   };
 
   // Determine if the card should be clickable
-  const isClickable = isOrgView || hasSession;
+  const isClickable =
+    isOrgView || event.event_type === 'CONFERENCE' || hasSession;
 
   return (
     <>
@@ -142,9 +141,19 @@ export const EventCard = ({ event, isOrgView, canEdit }) => {
         {!isOrgView && (
           <Badge
             className={styles.setupBadge}
-            color={hasSession ? 'blue' : 'gray'}
+            color={
+              event.event_type === 'CONFERENCE'
+                ? 'blue'
+                : hasSession
+                  ? 'blue'
+                  : 'gray'
+            }
           >
-            {hasSession ? 'Ready to Join' : 'Coming Soon'}
+            {event.event_type === 'CONFERENCE'
+              ? `${event.day_count || 1} Day Conference`
+              : hasSession
+                ? 'Ready to Join'
+                : 'Coming Soon'}
           </Badge>
         )}
 

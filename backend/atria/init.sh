@@ -27,6 +27,10 @@ flask db migrate -m "Initial migration"
 echo "Applying migrations..."
 flask db upgrade
 
+# Add seeding step
+echo "Seeding database..."
+python -m seeders.seed_db
+
 # Verify database setup
 echo "Verifying database setup..."
 python << END

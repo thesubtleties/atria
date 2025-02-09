@@ -1,4 +1,3 @@
-// shared/components/modals/session/EditSessionModal/schemas/editSessionSchema.js
 import { z } from 'zod';
 
 const SessionType = z.enum([
@@ -15,6 +14,7 @@ export const editSessionSchema = z
     title: z.string().min(1, 'Title is required'),
     description: z.string().optional(),
     session_type: SessionType,
+    day_number: z.string().min(1, 'Day number is required'),
     start_time: z
       .string()
       .regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Invalid time format'),
@@ -29,13 +29,9 @@ export const editSessionSchema = z
       const [startHour, startMin] = data.start_time.split(':').map(Number);
       const [endHour, endMin] = data.end_time.split(':').map(Number);
 
-      if (
-        startHour > endHour ||
-        (startHour === endHour && startMin >= endMin)
-      ) {
-        return false;
-      }
-      return true;
+      return (
+        endHour > startHour || (endHour === startHour && endMin > startMin)
+      );
     },
     {
       message: 'End time must be after start time',

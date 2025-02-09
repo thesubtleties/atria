@@ -5,12 +5,15 @@ from api.extensions import smorest_api
 from api.extensions import db
 from api.extensions import jwt
 from api.extensions import migrate
+
+# from api.extensions import CustomJSONProvider
 from api.models import TokenBlocklist
 
 
 def create_app(testing=False):
     """Application factory, used to create application"""
     app = Flask("api")
+    # app.json_provider_class = CustomJSONProvider # Commented out because I think we fixed serialization problems
     app.config.from_object("api.config")
 
     if testing is True:
@@ -35,6 +38,7 @@ def configure_extensions(app):
 
 def configure_smorest(app):
     """Configure Flask-SMOREST for OpenAPI documentation"""
+    # app.json_provider_class = CustomJSONProvider # Commented out because I think we fixed serialization problems
     smorest_api.init_app(app)
     from api.api.routes import register_blueprints
 

@@ -32,6 +32,7 @@ class SessionSpeakerDetailSchema(SessionSpeakerSchema):
             "title",
             "start_time",
             "end_time",
+            "day_number",
         ),
         dump_only=True,
     )
