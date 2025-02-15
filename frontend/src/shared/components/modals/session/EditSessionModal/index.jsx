@@ -68,8 +68,8 @@ export const EditSessionModal = ({
           title: session.title,
           description: session.description || '',
           session_type: session.session_type,
-          start_time: session.start_time, // Already in HH:mm format
-          end_time: session.end_time, // Already in HH:mm format
+          start_time: session.start_time.substring(0, 5), // Updated to be in HH:mm format
+          end_time: session.end_time.substring(0, 5), // Updated to be in HH:mm format
           day_number: session.day_number.toString(),
           stream_url: session.stream_url || '',
         }
@@ -82,13 +82,16 @@ export const EditSessionModal = ({
           day_number: '1',
           stream_url: '',
         },
-    validate: zodResolver(editSessionSchema),
+    validate: (values) => {
+      console.log('Validation values:', values);
+      return zodResolver(editSessionSchema)(values);
+    },
     transform: {
       input: (values) => ({
         ...values,
         // Ensure consistent HH:mm format for both touched and untouched times
-        start_time: values.start_time?.substring(0, 5) || values.start_time,
-        end_time: values.end_time?.substring(0, 5) || values.end_time,
+        start_time: values.start_time?.substring(0, 5),
+        end_time: values.end_time?.substring(0, 5),
       }),
     },
   });
