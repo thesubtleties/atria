@@ -6,6 +6,7 @@
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  max-width: 90%;
 }
 
 @media (max-width: 768px) {
@@ -13,5 +14,6 @@
     flex-direction: column;
     gap: 2rem;
     padding: 1rem;
+    max-width: 90%;
   }
 }
