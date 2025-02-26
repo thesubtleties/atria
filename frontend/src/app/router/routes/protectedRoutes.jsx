@@ -136,12 +136,20 @@ export const protectedRoutes = [
                 element: <AgendaPage />,
               },
               {
+                path: 'agenda',
+                element: <AgendaPage />,
+              },
+              {
                 path: 'sessions/:sessionId',
                 element: <SessionPage />,
               },
               {
                 path: 'session-pending',
                 element: <SessionPending />,
+              },
+              {
+                path: 'setup-session',
+                element: <SetupSession />,
               },
             ],
           },

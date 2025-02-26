@@ -1,4 +1,4 @@
-import { useNavigationTitle } from '../hooks/useNavigationTitle';
+import { useNavigationTitle } from '../../../hooks/useNavigationTitle';
 import { SimpleTitle } from './SimpleTitle';
 import { TitleWithSubtitle } from './TitleWithSubtitle';
 import styles from './CenterContent.module.css';

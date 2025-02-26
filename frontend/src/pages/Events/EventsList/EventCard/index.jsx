@@ -37,21 +37,17 @@ export const EventCard = ({ event, isOrgView, canEdit }) => {
   const handleCardClick = (e) => {
     e.preventDefault();
 
+    // Always use the /app/events/:eventId path regardless of where we're viewing from
+    const basePath = `/app/events/${event.id}`;
+
     if (event.event_type === 'CONFERENCE') {
       // Always navigate for conferences
-      const basePath = isOrgView
-        ? `/app/organizations/${event.organization_id}/events/${event.id}`
-        : `/app/events/${event.id}`;
       navigate(basePath);
       return;
     }
 
     // Single session logic
     if (event.event_type === 'SINGLE_SESSION') {
-      const basePath = isOrgView
-        ? `/app/organizations/${event.organization_id}/events/${event.id}`
-        : `/app/events/${event.id}`;
-
       if (hasSession) {
         // Has session - go directly to it
         navigate(`${basePath}/sessions/${eventDetails.sessions[0].id}`);
