@@ -56,3 +56,8 @@ class SessionSpeakerRole(str, Enum):
     PANELIST = "panelist"
     MODERATOR = "moderator"
     KEYNOTE = "keynote"
+
+
+class EventFormat(str, Enum):
+    VIRTUAL = "virtual"
+    HYBRID = "hybrid"

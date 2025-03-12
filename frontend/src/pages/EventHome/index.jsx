@@ -7,10 +7,11 @@ import FAQ from './FAQ';
 import EventInfo from './EventInfo';
 import styles from './styles/index.module.css';
 
-export default function EventHome() {
-  const { id } = useParams();
-  const { data: event, isLoading, isError } = useGetEventQuery(id);
+export const EventHome = () => {
+  const { eventId } = useParams();
+  const { data: event, isLoading, isError } = useGetEventQuery(eventId);
 
+  console.log(event);
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error loading event</div>;
   if (!event) return <div>Event not found</div>;
@@ -59,4 +60,6 @@ export default function EventHome() {
       {sections?.faqs && <FAQ faqs={sections.faqs} />}
     </div>
   );
-}
+};
+
+export default EventHome;

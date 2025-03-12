@@ -1,0 +1,62 @@
+/* pages/EventHome/Hero/styles/index.module.css */
+.hero {
+  width: 100%;
+  position: relative;
+  height: 400px; /* Or we could make it viewport based */
+}
+
+.heroBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.heroBackground::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7));
+}
+
+.heroContent {
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 20px;
+  color: white;
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.description {
+  font-size: 1.5rem;
+  max-width: 600px;
+  line-height: 1.5;
+}
+
+/* Media query for mobile image */
+@media (max-width: 768px) {
+  .heroBackground {
+    background-image: var(--mobile-image-url) !important;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .description {
+    font-size: 1.25rem;
+  }
+}

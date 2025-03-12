@@ -76,20 +76,34 @@ def seed_database():
 
             print("Seeding events...")
             for event_data in seed_events():
-                # Convert branding dict to JSON string
+                # Convert JSON fields to strings
                 event_data = dict(event_data)  # Make a copy
                 event_data["branding"] = json.dumps(event_data["branding"])
+                event_data["hero_images"] = json.dumps(
+                    event_data["hero_images"]
+                )
+                event_data["sections"] = json.dumps(event_data["sections"])
 
                 db.session.execute(
                     text(
                         """
-                    INSERT INTO events (id, organization_id, title, description,
-                                      event_type, start_date, end_date, company_name,
-                                      slug, status, branding, created_at)
-                    VALUES (:id, :organization_id, :title, :description,
-                           :event_type, :start_date, :end_date, :company_name,
-                           :slug, :status, :branding, CURRENT_TIMESTAMP)
-                    """
+                        INSERT INTO events (
+                            id, organization_id, title, description,
+                            hero_description, hero_images,
+                            event_type, event_format, is_private,
+                            venue_name, venue_address, venue_city, venue_country,
+                            start_date, end_date, company_name,
+                            slug, status, branding, sections, created_at
+                        )
+                        VALUES (
+                            :id, :organization_id, :title, :description,
+                            :hero_description, :hero_images,
+                            :event_type, :event_format, :is_private,
+                            :venue_name, :venue_address, :venue_city, :venue_country,
+                            :start_date, :end_date, :company_name,
+                            :slug, :status, :branding, :sections, CURRENT_TIMESTAMP
+                        )
+                        """
                     ),
                     event_data,
                 )

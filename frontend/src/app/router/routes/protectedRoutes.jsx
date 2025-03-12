@@ -10,6 +10,7 @@ import { OrganizationEvents } from '../../../pages/Events/OrganizationEvents';
 import { SetupSession } from '../../../pages/Session/SetupSession';
 import { SessionPage } from '../../../pages/Session';
 import { AgendaPage } from '../../../pages/Agenda';
+import { EventHome } from '../../../pages/EventHome';
 import { SessionPending } from '../../../pages/Session/SessionPending';
 
 // Placeholder component for development
@@ -133,7 +134,7 @@ export const protectedRoutes = [
             children: [
               {
                 path: '',
-                element: <AgendaPage />,
+                element: <EventHome />,
               },
               {
                 path: 'agenda',

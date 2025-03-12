@@ -87,7 +87,18 @@ def seed_events():
             "organization_id": 1,
             "title": "Atria TechConf 2025",
             "description": "Three-day technology conference featuring industry leaders",
+            "hero_description": "Join us for the premier tech conference of 2025, featuring industry leaders from Netflix, Stripe, and GitHub",
+            "hero_images": {
+                "desktop": "https://example.com/hero-desktop.jpg",
+                "mobile": "https://example.com/hero-mobile.jpg",
+            },
             "event_type": "CONFERENCE",
+            "event_format": "HYBRID",
+            "is_private": False,
+            "venue_name": "San Francisco Convention Center",
+            "venue_address": "747 Howard Street",
+            "venue_city": "San Francisco",
+            "venue_country": "United States",
             "start_date": date(2025, 3, 15),
             "end_date": date(2025, 3, 17),
             "company_name": "Atria Tech Conference",
@@ -98,6 +109,39 @@ def seed_events():
                 "secondary_color": "#ffffff",
                 "logo_url": None,
                 "banner_url": None,
+            },
+            "sections": {
+                "welcome": {
+                    "title": "Welcome to Atria TechConf 2025",
+                    "content": "Join us for three days of cutting-edge technology discussions, workshops, and networking",
+                },
+                "highlights": [
+                    {
+                        "title": "50+ Industry Speakers",
+                        "description": "Learn from tech leaders at Netflix, Stripe, GitHub and more",
+                        "icon": "speakers-icon",
+                    },
+                    {
+                        "title": "Hands-on Workshops",
+                        "description": "Interactive sessions on React, Docker, and Kubernetes",
+                        "icon": "workshop-icon",
+                    },
+                    {
+                        "title": "Hybrid Format",
+                        "description": "Join us in San Francisco or stream online",
+                        "icon": "hybrid-icon",
+                    },
+                ],
+                "faqs": [
+                    {
+                        "question": "Is there a virtual attendance option?",
+                        "answer": "Yes, all sessions will be streamed live for virtual attendees",
+                    },
+                    {
+                        "question": "Will sessions be recorded?",
+                        "answer": "Yes, all sessions will be available on-demand for 30 days after the event",
+                    },
+                ],
             },
         }
     ]
