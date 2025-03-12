@@ -69,6 +69,31 @@ class EventUser(db.Model):
         """Get user's email"""
         return self.user.email
 
+    @property
+    def first_name(self):
+        """Get user's first name"""
+        return self.user.first_name
+
+    @property
+    def last_name(self):
+        """Get user's last name"""
+        return self.user.last_name
+
+    @property
+    def sort_name(self):
+        """Get name for sorting (last name first)"""
+        return f"{self.user.last_name}, {self.user.first_name}"
+
+    @property
+    def image_url(self):
+        """Get user's image URL or return None"""
+        return self.user.image_url
+
+    @property
+    def social_links(self):
+        """Get user's social links"""
+        return self.user.social_links
+
     def update_speaker_info(self, speaker_bio=None, speaker_title=None):
         """Update speaker bio and title"""
         if self.role != EventUserRole.SPEAKER:

@@ -11,7 +11,7 @@ export const DateNavigation = ({
   onDateChange,
 }) => {
   const dates = Array.from({ length: dayCount }, (_, i) =>
-    addDays(new Date(startDate), i + 1)
+    addDays(new Date(startDate), i)
   );
 
   const currentDate = dates[currentDay - 1];

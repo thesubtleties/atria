@@ -67,11 +67,9 @@ export const EventCard = ({ event, isOrgView, canEdit }) => {
   };
 
   const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return format(
-      new Date(date.getTime() + date.getTimezoneOffset() * 60000),
-      'M/d/yyyy'
-    );
+    // Parse as UTC, then convert to local
+    const date = new Date(dateString + 'Z'); // Add Z to force UTC interpretation
+    return format(date, 'M/d/yyyy');
   };
 
   const handleDelete = async () => {

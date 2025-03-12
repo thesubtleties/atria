@@ -11,6 +11,7 @@ import { SetupSession } from '../../../pages/Session/SetupSession';
 import { SessionPage } from '../../../pages/Session';
 import { AgendaPage } from '../../../pages/Agenda';
 import { EventHome } from '../../../pages/EventHome';
+import { SpeakersPage } from '../../../pages/Speakers';
 import { SessionPending } from '../../../pages/Session/SessionPending';
 
 // Placeholder component for development
@@ -139,6 +140,10 @@ export const protectedRoutes = [
               {
                 path: 'agenda',
                 element: <AgendaPage />,
+              },
+              {
+                path: 'speakers',
+                element: <SpeakersPage />,
               },
               {
                 path: 'sessions/:sessionId',
