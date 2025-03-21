@@ -4,7 +4,10 @@ flask-restful
 flask-migrate
 flask-sqlalchemy
 flask-jwt-extended
+flask-socketio
 gunicorn
+eventlet
+
 
 # Schema & Serialization
 marshmallow>=3

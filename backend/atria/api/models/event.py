@@ -65,6 +65,21 @@ class Event(db.Model):
         db.DateTime(timezone=True), onupdate=db.func.current_timestamp()
     )
 
+    icebreakers = db.Column(
+        db.JSON,
+        nullable=True,
+        default=[
+            "Hi! I noticed we're both interested in similar sessions. Would you like to connect?",
+            "Hello! I saw your profile and would love to discuss technology with you.",
+            "I'm looking to connect with others in the tech field. Would you be open to chatting?",
+            "Hi there! I enjoyed your question during the session. Could we discuss it further?",
+            "Hello! I'm exploring opportunities in this field. Would you have a few minutes to chat?",
+            "I see we're both from the same industry. I'd love to connect!",
+            "Hi! I'm interested in learning more about your work. Could we chat?",
+            "Hello! I'm building a network of professionals. Would you like to connect?",
+        ],
+    )
+
     # Relationships
     organization = db.relationship("Organization", back_populates="events")
 
@@ -89,6 +104,12 @@ class Event(db.Model):
         overlaps="users,events",
         cascade="all, delete-orphan",
         passive_deletes=True,
+    )
+    chat_rooms = db.relationship(
+        "ChatRoom", back_populates="event", cascade="all, delete-orphan"
+    )
+    originated_connections = db.relationship(
+        "Connection", back_populates="originating_event"
     )
 
     def __init__(self, *args, **kwargs):
@@ -172,6 +193,60 @@ class Event(db.Model):
         return EventUser.query.filter(
             EventUser.event_id == self.id, EventUser.role.in_(roles)
         ).all()
+
+    def add_icebreaker(self, message):
+        """Add a new icebreaker message"""
+        if not self.icebreakers:
+            self.icebreakers = []
+        self.icebreakers.append(message)
+        return self.icebreakers
+
+    def remove_icebreaker(self, index):
+        """Remove an icebreaker by index"""
+        if self.icebreakers and 0 <= index < len(self.icebreakers):
+            self.icebreakers.pop(index)
+        return self.icebreakers
+
+    def create_default_chat_rooms(self):
+        """Create default chat rooms for the event"""
+        from api.models.chat_room import ChatRoom
+
+        # Check if global chat room exists
+        global_room = ChatRoom.query.filter_by(
+            event_id=self.id, is_global=True
+        ).first()
+        if not global_room:
+            global_room = ChatRoom(
+                event_id=self.id,
+                name="General",
+                description="General discussion for all attendees",
+                is_global=True,
+            )
+            db.session.add(global_room)
+
+        # other default rooms
+        topic_rooms = [
+            {"name": "Q&A", "description": "Ask questions about the event"},
+            {
+                "name": "Networking",
+                "description": "Connect with other attendees",
+            },
+        ]
+
+        for room_data in topic_rooms:
+            existing = ChatRoom.query.filter_by(
+                event_id=self.id, name=room_data["name"]
+            ).first()
+            if not existing:
+                room = ChatRoom(
+                    event_id=self.id,
+                    name=room_data["name"],
+                    description=room_data["description"],
+                    is_global=False,
+                )
+                db.session.add(room)
+
+        db.session.commit()
 
     @property
     def speakers(self):

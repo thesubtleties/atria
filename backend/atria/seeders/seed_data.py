@@ -393,6 +393,226 @@ def seed_session_speakers():
     ]
 
 
+def seed_chat_rooms():
+    return [
+        # Global chat room for the event
+        {
+            "id": 1,
+            "event_id": 1,
+            "name": "General",
+            "description": "General discussion for all attendees",
+            "is_global": True,
+        },
+        # Topic-specific chat rooms
+        {
+            "id": 2,
+            "event_id": 1,
+            "name": "Q&A",
+            "description": "Ask questions about the event",
+            "is_global": False,
+        },
+        {
+            "id": 3,
+            "event_id": 1,
+            "name": "Networking",
+            "description": "Connect with other attendees",
+            "is_global": False,
+        },
+        # Technology-specific chat rooms
+        {
+            "id": 4,
+            "event_id": 1,
+            "name": "Frontend",
+            "description": "Discuss React, TypeScript, and other frontend technologies",
+            "is_global": False,
+        },
+        {
+            "id": 5,
+            "event_id": 1,
+            "name": "DevOps",
+            "description": "Discuss Docker, Kubernetes, and CI/CD",
+            "is_global": False,
+        },
+    ]
+
+
+def seed_chat_messages():
+    return [
+        # Messages in General chat
+        {
+            "id": 1,
+            "room_id": 1,
+            "user_id": 1,  # Demo User
+            "content": "Welcome everyone to Atria TechConf 2025! Feel free to introduce yourselves.",
+        },
+        {
+            "id": 2,
+            "room_id": 1,
+            "user_id": 2,  # Sarah Chen
+            "content": "Hi everyone! I'm Sarah from Netflix. Looking forward to my keynote tomorrow morning.",
+        },
+        {
+            "id": 3,
+            "room_id": 1,
+            "user_id": 3,  # Marcus Rodriguez
+            "content": "Hello from Stripe! Excited to share performance optimization techniques in my workshop.",
+        },
+        # Messages in Q&A chat
+        {
+            "id": 4,
+            "room_id": 2,
+            "user_id": 4,  # Emily Johnson
+            "content": "I'll be answering questions about DevOps and automation here after my session.",
+        },
+        {
+            "id": 5,
+            "room_id": 2,
+            "user_id": 1,  # Demo User
+            "content": "For any logistics questions about the venue or schedule, feel free to ask here!",
+        },
+    ]
+
+
+def seed_connections():
+    return [
+        # Demo user connected with all speakers
+        {
+            "id": 1,
+            "requester_id": 1,  # Demo User
+            "recipient_id": 2,  # Sarah Chen
+            "status": "ACCEPTED",
+            "icebreaker_message": "Hi Sarah, I'm organizing the conference and would love to connect!",
+            "originating_event_id": 1,
+        },
+        {
+            "id": 2,
+            "requester_id": 1,  # Demo User
+            "recipient_id": 3,  # Marcus Rodriguez
+            "status": "ACCEPTED",
+            "icebreaker_message": "Hi Marcus, looking forward to your session on performance optimization!",
+            "originating_event_id": 1,
+        },
+        {
+            "id": 3,
+            "requester_id": 1,  # Demo User
+            "recipient_id": 4,  # Emily Johnson
+            "status": "ACCEPTED",
+            "icebreaker_message": "Hi Emily, excited to have you speaking about DevOps at our conference!",
+            "originating_event_id": 1,
+        },
+        # Pending connection request
+        {
+            "id": 4,
+            "requester_id": 2,  # Sarah Chen
+            "recipient_id": 3,  # Marcus Rodriguez
+            "status": "PENDING",
+            "icebreaker_message": "Hi Marcus, I enjoyed your talk at last year's conference. Would love to connect!",
+            "originating_event_id": 1,
+        },
+    ]
+
+
+def seed_direct_message_threads():
+    return [
+        # Thread between Demo User and Sarah Chen
+        {
+            "id": 1,
+            "user1_id": 1,  # Demo User
+            "user2_id": 2,  # Sarah Chen
+            "is_encrypted": False,
+        },
+        # Thread between Demo User and Marcus Rodriguez
+        {
+            "id": 2,
+            "user1_id": 1,  # Demo User
+            "user2_id": 3,  # Marcus Rodriguez
+            "is_encrypted": False,
+        },
+        # Thread between Demo User and Emily Johnson
+        {
+            "id": 3,
+            "user1_id": 1,  # Demo User
+            "user2_id": 4,  # Emily Johnson
+            "is_encrypted": True,  # Example of an encrypted thread
+        },
+    ]
+
+
+def seed_direct_messages():
+    return [
+        # Messages between Demo User and Sarah Chen
+        {
+            "id": 1,
+            "thread_id": 1,
+            "sender_id": 1,  # Demo User
+            "content": "Hi Sarah, thanks for accepting my connection request!",
+            "status": "READ",
+        },
+        {
+            "id": 2,
+            "thread_id": 1,
+            "sender_id": 2,  # Sarah Chen
+            "content": "Hi Demo! Looking forward to the conference.",
+            "status": "READ",
+        },
+        {
+            "id": 3,
+            "thread_id": 1,
+            "sender_id": 1,  # Demo User
+            "content": "Great! Let me know if you need anything for your keynote.",
+            "status": "READ",
+        },
+        # Messages between Demo User and Marcus Rodriguez
+        {
+            "id": 4,
+            "thread_id": 2,
+            "sender_id": 1,  # Demo User
+            "content": "Hi Marcus, just checking if you received the schedule for your workshop?",
+            "status": "READ",
+        },
+        {
+            "id": 5,
+            "thread_id": 2,
+            "sender_id": 3,  # Marcus Rodriguez
+            "content": "Yes, got it! Everything looks good.",
+            "status": "READ",
+        },
+        # Messages between Demo User and Emily Johnson (encrypted)
+        {
+            "id": 6,
+            "thread_id": 3,
+            "sender_id": 1,  # Demo User
+            "content": "Hi Emily, this is an encrypted thread for sensitive discussions.",
+            "encrypted_content": "U2FtcGxlIGVuY3J5cHRlZCBjb250ZW50IGZvciBkZW1vIHB1cnBvc2Vz",  # Sample encrypted content
+            "status": "READ",
+        },
+        {
+            "id": 7,
+            "thread_id": 3,
+            "sender_id": 4,  # Emily Johnson
+            "content": "Got it, thanks for setting this up!",
+            "encrypted_content": "QW5vdGhlciBzYW1wbGUgZW5jcnlwdGVkIG1lc3NhZ2UgZm9yIHRlc3Rpbmc=",  # Sample encrypted content
+            "status": "READ",
+        },
+    ]
+
+
+def seed_user_encryption_keys():
+    return [
+        # Sample encryption keys (in a real app, these would be generated client-side)
+        {
+            "id": 1,
+            "user_id": 1,  # Demo User
+            "public_key": '{"kty":"RSA","e":"AQAB","n":"sample-public-key-for-demo-user","alg":"RS256"}',
+        },
+        {
+            "id": 2,
+            "user_id": 4,  # Emily Johnson
+            "public_key": '{"kty":"RSA","e":"AQAB","n":"sample-public-key-for-emily","alg":"RS256"}',
+        },
+    ]
+
+
 # Make sure all functions are exported
 __all__ = [
     "seed_users",
@@ -402,4 +622,10 @@ __all__ = [
     "seed_event_users",
     "seed_sessions",
     "seed_session_speakers",
+    "seed_chat_rooms",
+    "seed_chat_messages",
+    "seed_connections",
+    "seed_direct_message_threads",
+    "seed_direct_messages",
+    "seed_user_encryption_keys",
 ]

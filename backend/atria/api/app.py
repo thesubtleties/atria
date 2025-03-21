@@ -5,6 +5,7 @@ from api.extensions import smorest_api
 from api.extensions import db
 from api.extensions import jwt
 from api.extensions import migrate
+from api.extensions import socketio
 
 # from api.extensions import CustomJSONProvider
 from api.models import TokenBlocklist
@@ -33,6 +34,7 @@ def configure_extensions(app):
     db.init_app(app)
     jwt.init_app(app)
     migrate.init_app(app, db)
+    socketio.init_app(app, cors_allowed_origins="*")
     configure_jwt_handlers(app)
 
 
