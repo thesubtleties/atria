@@ -8,6 +8,9 @@ flask-socketio
 gunicorn
 eventlet
 
+#scheduling
+apscheduler
+
 
 # Schema & Serialization
 marshmallow>=3

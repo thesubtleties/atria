@@ -35,6 +35,12 @@ def configure_extensions(app):
     jwt.init_app(app)
     migrate.init_app(app, db)
     socketio.init_app(app, cors_allowed_origins="*")
+    from api.api.sockets import register_socket_handlers
+
+    register_socket_handlers()
+    from api.api.sockets import setup_socket_maintenance
+
+    setup_socket_maintenance()
     configure_jwt_handlers(app)
 
 

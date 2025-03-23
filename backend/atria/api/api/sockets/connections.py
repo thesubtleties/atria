@@ -1,4 +1,3 @@
-# api/sockets/connections.py
 from api.extensions import socketio, db
 from api.commons.socket_decorators import socket_authenticated_only
 from flask_socketio import emit
@@ -17,8 +16,10 @@ from datetime import datetime
 
 @socketio.on("get_connections")
 @socket_authenticated_only
-def handle_get_connections(data):
-    user_id = int(get_jwt_identity())
+def handle_get_connections(user_id, data):
+    print(
+        f"Received get_connections event from user {user_id} with data: {data}"
+    )
     status = data.get("status", ConnectionStatus.ACCEPTED.value)
 
     # Get connections where user is either requester or recipient
@@ -80,8 +81,10 @@ def handle_get_connections(data):
 
 @socketio.on("get_pending_requests")
 @socket_authenticated_only
-def handle_get_pending_requests(data):
-    user_id = int(get_jwt_identity())
+def handle_get_pending_requests(user_id, data):
+    print(
+        f"Received get_pending_requests event from user {user_id} with data: {data}"
+    )
 
     # Get pending connection requests received by this user
     pending_requests = (
@@ -125,8 +128,10 @@ def handle_get_pending_requests(data):
 
 @socketio.on("send_connection_request")
 @socket_authenticated_only
-def handle_send_connection_request(data):
-    user_id = int(get_jwt_identity())
+def handle_send_connection_request(user_id, data):
+    print(
+        f"Received send_connection_request event from user {user_id} with data: {data}"
+    )
     recipient_id = data.get("recipient_id")
     icebreaker_message = data.get("icebreaker_message")
     originating_event_id = data.get("event_id")  # Optional
@@ -239,8 +244,10 @@ def handle_send_connection_request(data):
 
 @socketio.on("respond_to_connection_request")
 @socket_authenticated_only
-def handle_respond_to_connection_request(data):
-    user_id = int(get_jwt_identity())
+def handle_respond_to_connection_request(user_id, data):
+    print(
+        f"Received respond_to_connection_request event from user {user_id} with data: {data}"
+    )
     connection_id = data.get("connection_id")
     accept = data.get("accept", False)
 
@@ -345,8 +352,10 @@ def handle_respond_to_connection_request(data):
 
 @socketio.on("get_event_connections")
 @socket_authenticated_only
-def handle_get_event_connections(data):
-    user_id = int(get_jwt_identity())
+def handle_get_event_connections(user_id, data):
+    print(
+        f"Received get_event_connections event from user {user_id} with data: {data}"
+    )
     event_id = data.get("event_id")
 
     if not event_id:

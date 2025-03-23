@@ -1,4 +1,3 @@
-# api/sockets/direct_messages.py
 from api.extensions import socketio, db
 from api.commons.socket_decorators import socket_authenticated_only
 from flask_socketio import emit, join_room
@@ -10,8 +9,10 @@ from datetime import datetime
 
 @socketio.on("get_direct_message_threads")
 @socket_authenticated_only
-def handle_get_direct_message_threads(data):
-    user_id = int(get_jwt_identity())
+def handle_get_direct_message_threads(user_id, data):
+    print(
+        f"Received get_direct_message_threads event from user {user_id} with data: {data}"
+    )
 
     # Get all threads for the user
     threads = (
@@ -77,8 +78,10 @@ def handle_get_direct_message_threads(data):
 
 @socketio.on("get_direct_messages")
 @socket_authenticated_only
-def handle_get_direct_messages(data):
-    user_id = int(get_jwt_identity())
+def handle_get_direct_messages(user_id, data):
+    print(
+        f"Received get_direct_messages event from user {user_id} with data: {data}"
+    )
     thread_id = data.get("thread_id")
 
     if not thread_id:
@@ -91,6 +94,15 @@ def handle_get_direct_messages(data):
         emit("error", {"message": "Thread not found"})
         return
 
+    print(f"User ID: {user_id} (type: {type(user_id)})")
+    print(
+        f"Thread user1_id: {thread.user1_id} (type: {type(thread.user1_id)})"
+    )
+    print(
+        f"Thread user2_id: {thread.user2_id} (type: {type(thread.user2_id)})"
+    )
+
+    print(f"{user_id} - {thread.user1_id} - {thread.user2_id}")
     if thread.user1_id != user_id and thread.user2_id != user_id:
         emit("error", {"message": "Not authorized to view these messages"})
         return
@@ -176,8 +188,10 @@ def handle_get_direct_messages(data):
 
 @socketio.on("send_direct_message")
 @socket_authenticated_only
-def handle_send_direct_message(data):
-    user_id = int(get_jwt_identity())
+def handle_send_direct_message(user_id, data):
+    print(
+        f"Received send_direct_message event from user {user_id} with data: {data}"
+    )
     thread_id = data.get("thread_id")
     content = data.get("content")
     encrypted_content = data.get("encrypted_content")
@@ -251,15 +265,18 @@ def handle_send_direct_message(data):
 
     # Send to recipient
     emit("new_direct_message", message_data, room=f"user_{other_user_id}")
-
+    # Send to sender
+    emit("new_direct_message", message_data, room=f"user_{user_id}")
     # Confirm to sender
     emit("direct_message_sent", message_data)
 
 
 @socketio.on("mark_messages_read")
 @socket_authenticated_only
-def handle_mark_messages_read(data):
-    user_id = int(get_jwt_identity())
+def handle_mark_messages_read(user_id, data):
+    print(
+        f"Received mark_messages_read event from user {user_id} with data: {data}"
+    )
     thread_id = data.get("thread_id")
 
     if not thread_id:

@@ -1,4 +1,3 @@
-# api/sockets/chat.py
 from api.extensions import socketio, db
 from api.commons.socket_decorators import (
     socket_authenticated_only,
@@ -14,8 +13,10 @@ from datetime import datetime
 
 @socketio.on("join_chat_room")
 @socket_authenticated_only
-def handle_join_chat_room(data):
-    user_id = int(get_jwt_identity())
+def handle_join_chat_room(user_id, data):
+    print(
+        f"Received join_chat_room event from user {user_id} with data: {data}"
+    )
     room_id = data.get("room_id")
 
     if not room_id:
@@ -79,7 +80,10 @@ def handle_join_chat_room(data):
 
 @socketio.on("leave_chat_room")
 @socket_authenticated_only
-def handle_leave_chat_room(data):
+def handle_leave_chat_room(user_id, data):
+    print(
+        f"Received leave_chat_room event from user {user_id} with data: {data}"
+    )
     room_id = data.get("room_id")
     if not room_id:
         emit("error", {"message": "Missing room ID"})
@@ -91,8 +95,8 @@ def handle_leave_chat_room(data):
 
 @socketio.on("chat_message")
 @socket_chat_room_access_required
-def handle_chat_message(data):
-    user_id = int(get_jwt_identity())
+def handle_chat_message(user_id, data):
+    print(f"Received chat_message event from user {user_id} with data: {data}")
     room_id = data.get("room_id")
     content = data.get("content")
 
@@ -130,8 +134,10 @@ def handle_chat_message(data):
 
 @socketio.on("delete_chat_message")
 @socket_authenticated_only
-def handle_delete_chat_message(data):
-    user_id = int(get_jwt_identity())
+def handle_delete_chat_message(user_id, data):
+    print(
+        f"Received delete_chat_message event from user {user_id} with data: {data}"
+    )
     message_id = data.get("message_id")
 
     if not message_id:
@@ -174,8 +180,10 @@ def handle_delete_chat_message(data):
 
 @socketio.on("create_chat_room")
 @socket_authenticated_only
-def handle_create_chat_room(data):
-    user_id = int(get_jwt_identity())
+def handle_create_chat_room(user_id, data):
+    print(
+        f"Received create_chat_room event from user {user_id} with data: {data}"
+    )
     event_id = data.get("event_id")
     name = data.get("name")
     description = data.get("description", "")
@@ -229,8 +237,10 @@ def handle_create_chat_room(data):
 
 @socketio.on("update_chat_room")
 @socket_authenticated_only
-def handle_update_chat_room(data):
-    user_id = int(get_jwt_identity())
+def handle_update_chat_room(user_id, data):
+    print(
+        f"Received update_chat_room event from user {user_id} with data: {data}"
+    )
     room_id = data.get("room_id")
     name = data.get("name")
     description = data.get("description")
@@ -281,8 +291,10 @@ def handle_update_chat_room(data):
 
 @socketio.on("delete_chat_room")
 @socket_authenticated_only
-def handle_delete_chat_room(data):
-    user_id = int(get_jwt_identity())
+def handle_delete_chat_room(user_id, data):
+    print(
+        f"Received delete_chat_room event from user {user_id} with data: {data}"
+    )
     room_id = data.get("room_id")
 
     if not room_id:
@@ -318,8 +330,10 @@ def handle_delete_chat_room(data):
 
 @socketio.on("get_chat_rooms")
 @socket_authenticated_only
-def handle_get_chat_rooms(data):
-    user_id = int(get_jwt_identity())
+def handle_get_chat_rooms(user_id, data):
+    print(
+        f"Received get_chat_rooms event from user {user_id} with data: {data}"
+    )
     event_id = data.get("event_id")
 
     if not event_id:
