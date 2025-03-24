@@ -3,9 +3,6 @@ from flask_smorest import Blueprint
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask import request
 
-from api.extensions import db
-from api.models import Event, Organization, User
-from api.models.enums import EventUserRole
 from api.api.schemas import (
     EventSchema,
     EventDetailSchema,
@@ -21,10 +18,10 @@ from api.commons.decorators import (
     event_admin_required,
 )
 from api.commons.pagination import (
-    paginate,
     PAGINATION_PARAMETERS,
     get_pagination_schema,
 )
+from api.services.event import EventService
 
 
 blp = Blueprint(
@@ -50,12 +47,10 @@ class EventList(MethodView):
                 "description": "Organization ID",
                 "example": 123,
             },
-            *PAGINATION_PARAMETERS,  # imported from pagination helper
+            *PAGINATION_PARAMETERS,
         ],
         responses={
-            200: get_pagination_schema(
-                "events", "EventBase"
-            ),  # imported from pagination helper
+            200: get_pagination_schema("events", "EventBase"),
             404: {"description": "Organization not found"},
         },
     )
@@ -63,18 +58,8 @@ class EventList(MethodView):
     @org_member_required()
     def get(self, org_id):
         """Get organization's events"""
-        query = Event.query.filter_by(organization_id=org_id)
-        events = query.all()
-        print("Raw events:", events)  # Debug
-        for event in events:
-            print("Event sessions:", event.sessions)  # Debug
-            if event.sessions:
-                for session in event.sessions:
-                    print(
-                        "Session times:", session.start_time, session.end_time
-                    )  # Debug
-        return paginate(
-            query, EventSchema(many=True), collection_name="events"
+        return EventService.get_organization_events(
+            org_id, EventSchema(many=True)
         )
 
     @blp.arguments(EventCreateSchema)
@@ -107,15 +92,7 @@ class EventList(MethodView):
     def post(self, event_data, org_id):
         """Create new event"""
         current_user_id = int(get_jwt_identity())
-        current_user = User.query.get_or_404(current_user_id)
-
-        event = Event(organization_id=org_id, **event_data)
-        db.session.add(event)
-        db.session.flush()
-
-        event.add_user(current_user, EventUserRole.ADMIN)
-        db.session.commit()
-
+        event = EventService.create_event(org_id, event_data, current_user_id)
         return event, 201
 
 
@@ -133,8 +110,7 @@ class EventResource(MethodView):
     @event_member_required()
     def get(self, event_id):
         """Get event details"""
-        event = Event.query.get_or_404(event_id)
-        return event
+        return EventService.get_event(event_id)
 
     @blp.arguments(EventUpdateSchema)
     @blp.response(200, EventDetailSchema)
@@ -146,7 +122,7 @@ class EventResource(MethodView):
                 "content": {
                     "application/json": {
                         "example": {
-                            "message": "End date cannot be before start date"  # Updated message
+                            "message": "End date cannot be before start date"
                         }
                     }
                 },
@@ -159,22 +135,9 @@ class EventResource(MethodView):
     @event_organizer_required()
     def put(self, update_data, event_id):
         """Update event"""
-        event = Event.query.get_or_404(event_id)
-
         try:
-            # Validate dates first if they're being updated
-            if "start_date" in update_data or "end_date" in update_data:
-                event.validate_dates(
-                    update_data.get("start_date"), update_data.get("end_date")
-                )
-
-            # If validation passed, update all fields
-            for key, value in update_data.items():
-                setattr(event, key, value)
-
-            db.session.commit()
+            event = EventService.update_event(event_id, update_data)
             return event
-
         except ValueError as e:
             return {"message": str(e)}, 400
 
@@ -190,9 +153,7 @@ class EventResource(MethodView):
     @event_admin_required()
     def delete(self, event_id):
         """Delete event"""
-        event = Event.query.get_or_404(event_id)
-        db.session.delete(event)
-        db.session.commit()
+        EventService.delete_event(event_id)
         return ""
 
 
@@ -212,7 +173,4 @@ class EventBrandingResource(MethodView):
     @event_organizer_required()
     def put(self, branding_data, event_id):
         """Update event branding"""
-        event = Event.query.get_or_404(event_id)
-        event.update_branding(**branding_data)
-        db.session.commit()
-        return event
+        return EventService.update_event_branding(event_id, branding_data)

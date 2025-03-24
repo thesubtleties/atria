@@ -44,7 +44,7 @@ class ChatMessageSchema(ma.SQLAlchemyAutoSchema):
 
     user = ma.Nested(
         "UserSchema",
-        only=("id", "full_name", "email", "image_url"),
+        only=("id", "full_name", "image_url"),
         dump_only=True,
     )
 

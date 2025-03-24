@@ -1,22 +1,21 @@
-# api/api/routes/connections.py
 from flask.views import MethodView
 from flask_smorest import Blueprint
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask import request
 
-from api.extensions import db
-from api.models import Connection, User, Event
-from api.models.enums import ConnectionStatus
 from api.api.schemas import (
+    UserSchema,
     ConnectionSchema,
     ConnectionCreateSchema,
     ConnectionUpdateSchema,
 )
 from api.commons.pagination import (
-    paginate,
     PAGINATION_PARAMETERS,
     get_pagination_schema,
 )
+from api.models.enums import ConnectionStatus
+from api.services.connection import ConnectionService
+
 
 blp = Blueprint(
     "connections",
@@ -50,23 +49,10 @@ class ConnectionList(MethodView):
     def get(self):
         """Get user's connections"""
         user_id = int(get_jwt_identity())
-
-        # Build query for connections where user is either requester or recipient
-        query = Connection.query.filter(
-            (Connection.requester_id == user_id)
-            | (Connection.recipient_id == user_id)
-        )
-
-        # Filter by status if provided
         status = request.args.get("status")
-        if status:
-            query = query.filter_by(status=status)
 
-        # Order by created_at descending
-        query = query.order_by(Connection.created_at.desc())
-
-        return paginate(
-            query, ConnectionSchema(many=True), collection_name="connections"
+        return ConnectionService.get_user_connections(
+            user_id, status, ConnectionSchema(many=True)
         )
 
     @blp.arguments(ConnectionCreateSchema)
@@ -90,39 +76,17 @@ class ConnectionList(MethodView):
     def post(self, connection_data):
         """Create connection request"""
         user_id = int(get_jwt_identity())
-        recipient_id = connection_data["recipient_id"]
 
-        # Check if recipient exists
-        recipient = User.query.get_or_404(recipient_id)
-
-        # Check if connection already exists
-        existing = Connection.query.filter(
-            (
-                (Connection.requester_id == user_id)
-                & (Connection.recipient_id == recipient_id)
+        try:
+            connection = ConnectionService.create_connection_request(
+                user_id,
+                connection_data["recipient_id"],
+                connection_data["icebreaker_message"],
+                connection_data.get("originating_event_id"),
             )
-            | (
-                (Connection.requester_id == recipient_id)
-                & (Connection.recipient_id == user_id)
-            )
-        ).first()
-
-        if existing:
-            return {"message": "Connection already exists"}, 400
-
-        # Create new connection
-        connection = Connection(
-            requester_id=user_id,
-            recipient_id=recipient_id,
-            icebreaker_message=connection_data["icebreaker_message"],
-            originating_event_id=connection_data.get("originating_event_id"),
-            status=ConnectionStatus.PENDING,
-        )
-
-        db.session.add(connection)
-        db.session.commit()
-
-        return connection, 201
+            return connection, 201
+        except ValueError as e:
+            return {"message": str(e)}, 400
 
 
 @blp.route("/connections/<int:connection_id>")
@@ -140,16 +104,10 @@ class ConnectionDetail(MethodView):
         """Get connection details"""
         user_id = int(get_jwt_identity())
 
-        connection = Connection.query.get_or_404(connection_id)
-
-        # Check if user is part of this connection
-        if (
-            connection.requester_id != user_id
-            and connection.recipient_id != user_id
-        ):
-            return {"message": "Not authorized to view this connection"}, 403
-
-        return connection
+        try:
+            return ConnectionService.get_connection(connection_id, user_id)
+        except ValueError as e:
+            return {"message": str(e)}, 403
 
     @blp.arguments(ConnectionUpdateSchema)
     @blp.response(200, ConnectionSchema)
@@ -167,59 +125,13 @@ class ConnectionDetail(MethodView):
         """Update connection status"""
         user_id = int(get_jwt_identity())
 
-        connection = Connection.query.get_or_404(connection_id)
-
-        # Only recipient can accept/reject
-        if connection.recipient_id != user_id:
-            return {
-                "message": "Only the recipient can accept or reject connections"
-            }, 403
-
-        # Only pending connections can be updated
-        if connection.status != ConnectionStatus.PENDING:
-            return {"message": "Only pending connections can be updated"}, 400
-
-        # Update status
-        connection.status = update_data["status"]
-        db.session.commit()
-
-        # If accepted, create a direct message thread
-        if connection.status == ConnectionStatus.ACCEPTED:
-            from api.models import DirectMessageThread, DirectMessage
-
-            # Check if thread already exists
-            thread = DirectMessageThread.query.filter(
-                (
-                    (DirectMessageThread.user1_id == connection.requester_id)
-                    & (DirectMessageThread.user2_id == connection.recipient_id)
-                )
-                | (
-                    (DirectMessageThread.user1_id == connection.recipient_id)
-                    & (DirectMessageThread.user2_id == connection.requester_id)
-                )
-            ).first()
-
-            if not thread:
-                # Create new thread
-                thread = DirectMessageThread(
-                    user1_id=connection.requester_id,
-                    user2_id=connection.recipient_id,
-                    is_encrypted=False,
-                )
-                db.session.add(thread)
-                db.session.flush()
-
-                # Add initial message with the icebreaker
-                message = DirectMessage(
-                    thread_id=thread.id,
-                    sender_id=connection.requester_id,
-                    content=connection.icebreaker_message,
-                    status="DELIVERED",
-                )
-                db.session.add(message)
-                db.session.commit()
-
-        return connection
+        try:
+            connection, _ = ConnectionService.update_connection_status(
+                connection_id, user_id, update_data["status"]
+            )
+            return connection
+        except ValueError as e:
+            return {"message": str(e)}, 400
 
 
 @blp.route("/connections/pending")
@@ -238,12 +150,8 @@ class PendingConnectionList(MethodView):
         """Get pending connection requests"""
         user_id = int(get_jwt_identity())
 
-        query = Connection.query.filter_by(
-            recipient_id=user_id, status=ConnectionStatus.PENDING
-        ).order_by(Connection.created_at.desc())
-
-        return paginate(
-            query, ConnectionSchema(many=True), collection_name="connections"
+        return ConnectionService.get_pending_requests(
+            user_id, ConnectionSchema(many=True)
         )
 
 
@@ -264,23 +172,25 @@ class EventConnectionList(MethodView):
     def get(self, event_id):
         """Get connected users in event"""
         user_id = int(get_jwt_identity())
-        current_user = User.query.get_or_404(user_id)
 
-        # Check if user is in event
-        event = Event.query.get_or_404(event_id)
-        if not event.has_user(current_user):
-            return {"message": "Not authorized to access this event"}, 403
+        try:
+            # Get the connections data
+            event_connections = ConnectionService.get_event_connections(
+                user_id, event_id
+            )
 
-        # Get connected users in event
-        connected_users = current_user.get_connected_users_in_event(event_id)
+            # Extract user IDs for pagination
+            user_ids = [conn["user"]["id"] for conn in event_connections]
 
-        # Convert to a query for pagination
-        from sqlalchemy import func
+            # Create a query for pagination
+            from sqlalchemy import func
 
-        user_ids = [user.id for user in connected_users]
-        query = User.query.filter(User.id.in_(user_ids))
+            query = User.query.filter(User.id.in_(user_ids))
 
-        # Apply pagination
-        from api.schemas.user import UserSchema
+            # Apply pagination
+            return paginate(
+                query, UserSchema(many=True), collection_name="users"
+            )
 
-        return paginate(query, UserSchema(many=True), collection_name="users")
+        except ValueError as e:
+            return {"message": str(e)}, 403
