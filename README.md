@@ -72,7 +72,7 @@ The application follows a clean architecture with clear separation of concerns:
 - Python 3.9+
 - Node.js 16+
 - PostgreSQL (recommended for production)
-- Redis (for Socket.IO)
+- Redis (planned for future Socket.IO scaling - not yet implemented)
 
 ### Setup with Docker (Recommended)
 
@@ -339,7 +339,7 @@ A separate commercial license is required. Please contact the copyright holder f
 
 - [ ] Backend optimization
   - [ ] Query optimization
-  - [ ] Caching implementation
+  - [ ] Redis integration for Socket.IO scaling
   - [ ] API response time improvements
 - [ ] Frontend optimization
   - [ ] Bundle size reduction
