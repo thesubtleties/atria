@@ -9,6 +9,8 @@ from .sessions import blp as sessions_blp
 from .session_speakers import blp as session_speakers_blp
 from .auth import blp as auth_blp
 from .connections import blp as connections_blp
+from .chat_rooms import blp as chat_rooms_blp
+from .direct_messages import blp as direct_messages_blp
 
 __all__ = [
     # User blueprints
@@ -26,6 +28,9 @@ __all__ = [
     "auth_blp",
     # Connection blueprints
     "connections_blp",
+    # Chat blueprints
+    "chat_rooms_blp",
+    "direct_messages_blp",
 ]
 
 
@@ -51,3 +56,6 @@ def register_blueprints(api):
 
     # Connections
     api.register_blueprint(connections_blp)
+    # Chat
+    api.register_blueprint(chat_rooms_blp)
+    api.register_blueprint(direct_messages_blp)

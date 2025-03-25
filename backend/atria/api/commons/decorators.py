@@ -1,6 +1,6 @@
 from functools import wraps
 from flask_jwt_extended import get_jwt_identity
-from api.models import User, Organization, Event, Session
+from api.models import User, Organization, Event, Session, ChatRoom
 from api.models.enums import EventUserRole, OrganizationUserRole
 
 

@@ -1,11 +1,9 @@
+# api/api/routes/organizations.py
 from flask.views import MethodView
 from flask_smorest import Blueprint
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask import request
 
-from api.extensions import db
-from api.models import Organization, User
-from api.models.enums import OrganizationUserRole
 from api.api.schemas import (
     OrganizationSchema,
     OrganizationDetailSchema,
@@ -14,10 +12,10 @@ from api.api.schemas import (
 )
 from api.commons.decorators import org_admin_required, org_member_required
 from api.commons.pagination import (
-    paginate,
     PAGINATION_PARAMETERS,
     get_pagination_schema,
 )
+from api.services.organization import OrganizationService
 
 
 blp = Blueprint(
@@ -42,9 +40,7 @@ class OrganizationResource(MethodView):
     )
     def get(self, org_id):
         """Get organization details"""
-        org = Organization.query.get_or_404(org_id)
-        print(f"Events: {org.events}")  # Debug print
-        return org
+        return OrganizationService.get_organization(org_id)
 
     @blp.arguments(OrganizationUpdateSchema)
     @blp.response(200, OrganizationDetailSchema)
@@ -59,13 +55,14 @@ class OrganizationResource(MethodView):
     @org_admin_required()
     def put(self, update_data, org_id):
         """Update organization"""
-        org = Organization.query.get_or_404(org_id)
+        user_id = int(get_jwt_identity())
 
-        for key, value in update_data.items():
-            setattr(org, key, value)
-
-        db.session.commit()
-        return org
+        try:
+            return OrganizationService.update_organization(
+                org_id, user_id, update_data
+            )
+        except ValueError as e:
+            return {"message": str(e)}, 403
 
     @blp.response(204)
     @blp.doc(
@@ -78,16 +75,13 @@ class OrganizationResource(MethodView):
     @jwt_required()
     def delete(self, org_id):
         """Delete organization"""
-        current_user_id = int(get_jwt_identity())
-        current_user = User.query.get_or_404(current_user_id)
-        org = Organization.query.get_or_404(org_id)
+        user_id = int(get_jwt_identity())
 
-        if org.get_user_role(current_user) != OrganizationUserRole.OWNER:
-            return {"message": "Must be owner to delete organization"}, 403
-
-        db.session.delete(org)
-        db.session.commit()
-        return ""
+        try:
+            OrganizationService.delete_organization(org_id, user_id)
+            return "", 204
+        except ValueError as e:
+            return {"message": str(e)}, 403
 
 
 @blp.route("/organizations")
@@ -97,12 +91,10 @@ class OrganizationList(MethodView):
         summary="List user's organizations",
         description="Get all organizations user belongs to",
         parameters=[
-            *PAGINATION_PARAMETERS,  # imported from pagination helper
+            *PAGINATION_PARAMETERS,
         ],
         responses={
-            200: get_pagination_schema(
-                "organizations", "OrganizationBase"
-            ),  # imported from pagination helper
+            200: get_pagination_schema("organizations", "OrganizationBase"),
             401: {"description": "Not authenticated"},
             403: {"description": "Not authorized"},
         },
@@ -110,16 +102,10 @@ class OrganizationList(MethodView):
     @jwt_required()
     def get(self):
         """Get list of organizations user belongs to"""
-        current_user_id = int(get_jwt_identity())
+        user_id = int(get_jwt_identity())
 
-        query = Organization.query.join(
-            Organization.organization_users
-        ).filter_by(user_id=current_user_id)
-
-        return paginate(
-            query,
-            OrganizationSchema(many=True),
-            collection_name="organizations",
+        return OrganizationService.get_user_organizations(
+            user_id, OrganizationSchema(many=True)
         )
 
     @blp.arguments(OrganizationCreateSchema)
@@ -133,14 +119,9 @@ class OrganizationList(MethodView):
     @jwt_required()
     def post(self, org_data):
         """Create new organization"""
-        current_user_id = int(get_jwt_identity())
-        current_user = User.query.get_or_404(current_user_id)
+        user_id = int(get_jwt_identity())
 
-        org = Organization(**org_data)
-        db.session.add(org)
-        db.session.flush()
-
-        org.add_user(current_user, OrganizationUserRole.OWNER)
-        db.session.commit()
-
+        org = OrganizationService.create_organization(
+            org_data["name"], user_id
+        )
         return org, 201

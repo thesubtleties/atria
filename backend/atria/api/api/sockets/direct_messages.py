@@ -1,10 +1,8 @@
-from api.extensions import socketio, db
+# api/api/sockets/direct_messages.py
+from api.extensions import socketio
 from api.commons.socket_decorators import socket_authenticated_only
 from flask_socketio import emit, join_room
-from flask_jwt_extended import get_jwt_identity
-from api.models import DirectMessageThread, DirectMessage, User, Connection
-from api.models.enums import MessageStatus, ConnectionStatus
-from datetime import datetime
+from api.services.direct_message import DirectMessageService
 
 
 @socketio.on("get_direct_message_threads")
@@ -15,62 +13,14 @@ def handle_get_direct_message_threads(user_id, data):
     )
 
     # Get all threads for the user
-    threads = (
-        DirectMessageThread.query.filter(
-            (DirectMessageThread.user1_id == user_id)
-            | (DirectMessageThread.user2_id == user_id)
-        )
-        .order_by(DirectMessageThread.last_message_at.desc())
-        .all()
-    )
+    threads = DirectMessageService.get_user_threads(user_id)
 
     # Format threads for response
     thread_list = []
     for thread in threads:
-        # Get the other user in the conversation
-        other_user_id = (
-            thread.user2_id if thread.user1_id == user_id else thread.user1_id
+        thread_data = DirectMessageService.format_thread_for_response(
+            thread, user_id
         )
-        other_user = User.query.get(other_user_id)
-
-        # Get the last message
-        last_message = (
-            DirectMessage.query.filter_by(thread_id=thread.id)
-            .order_by(DirectMessage.created_at.desc())
-            .first()
-        )
-
-        # Get unread count
-        unread_count = (
-            DirectMessage.query.filter_by(
-                thread_id=thread.id, status=MessageStatus.DELIVERED
-            )
-            .filter(DirectMessage.sender_id != user_id)
-            .count()
-        )
-
-        thread_data = {
-            "id": thread.id,
-            "is_encrypted": thread.is_encrypted,
-            "created_at": thread.created_at.isoformat(),
-            "last_message_at": thread.last_message_at.isoformat(),
-            "other_user": {
-                "id": other_user.id,
-                "full_name": other_user.full_name,
-                "image_url": other_user.image_url,
-            },
-            "unread_count": unread_count,
-        }
-
-        if last_message:
-            thread_data["last_message"] = {
-                "id": last_message.id,
-                "sender_id": last_message.sender_id,
-                "content": last_message.content,
-                "created_at": last_message.created_at.isoformat(),
-                "status": last_message.status.value,
-            }
-
         thread_list.append(thread_data)
 
     emit("direct_message_threads", {"threads": thread_list})
@@ -83,107 +33,48 @@ def handle_get_direct_messages(user_id, data):
         f"Received get_direct_messages event from user {user_id} with data: {data}"
     )
     thread_id = data.get("thread_id")
+    page = data.get("page", 1)
+    per_page = min(data.get("per_page", 50), 100)
 
     if not thread_id:
         emit("error", {"message": "Missing thread ID"})
         return
 
-    # Verify user has access to this thread
-    thread = DirectMessageThread.query.get(thread_id)
-    if not thread:
-        emit("error", {"message": "Thread not found"})
-        return
+    try:
+        # Get thread and messages
+        thread = DirectMessageService.get_thread(thread_id, user_id)
+        result = DirectMessageService.get_thread_messages(
+            thread_id, user_id, page=page, per_page=per_page
+        )
 
-    print(f"User ID: {user_id} (type: {type(user_id)})")
-    print(
-        f"Thread user1_id: {thread.user1_id} (type: {type(thread.user1_id)})"
-    )
-    print(
-        f"Thread user2_id: {thread.user2_id} (type: {type(thread.user2_id)})"
-    )
+        # Format messages for response
+        message_list = DirectMessageService.format_messages_for_response(
+            result["messages"], reverse=True
+        )
 
-    print(f"{user_id} - {thread.user1_id} - {thread.user2_id}")
-    if thread.user1_id != user_id and thread.user2_id != user_id:
-        emit("error", {"message": "Not authorized to view these messages"})
-        return
+        # Get the other user in the conversation
+        other_user_id = (
+            thread.user2_id if thread.user1_id == user_id else thread.user1_id
+        )
+        other_user = User.query.get(other_user_id)
 
-    # Get messages with pagination
-    page = data.get("page", 1)
-    per_page = min(data.get("per_page", 50), 100)
-
-    messages_query = DirectMessage.query.filter_by(
-        thread_id=thread_id
-    ).order_by(DirectMessage.created_at.desc())
-
-    # Calculate total and pages
-    total = messages_query.count()
-    total_pages = (total + per_page - 1) // per_page
-
-    # Get paginated messages
-    messages = (
-        messages_query.offset((page - 1) * per_page).limit(per_page).all()
-    )
-
-    # Format messages for response
-    message_list = []
-    for message in reversed(messages):  # Reverse to get chronological order
-        sender = User.query.get(message.sender_id)
-        message_list.append(
+        emit(
+            "direct_messages",
             {
-                "id": message.id,
-                "thread_id": message.thread_id,
-                "sender_id": message.sender_id,
-                "sender": {
-                    "id": sender.id,
-                    "full_name": sender.full_name,
-                    "image_url": sender.image_url,
+                "thread_id": thread_id,
+                "messages": message_list,
+                "pagination": result["pagination"],
+                "other_user": {
+                    "id": other_user.id,
+                    "full_name": other_user.full_name,
+                    "image_url": other_user.image_url,
                 },
-                "content": message.content,
-                "encrypted_content": message.encrypted_content,
-                "status": message.status.value,
-                "created_at": message.created_at.isoformat(),
-            }
+                "is_encrypted": thread.is_encrypted,
+            },
         )
 
-    # Mark unread messages as read
-    unread_messages = (
-        DirectMessage.query.filter_by(
-            thread_id=thread_id, status=MessageStatus.DELIVERED
-        )
-        .filter(DirectMessage.sender_id != user_id)
-        .all()
-    )
-
-    for message in unread_messages:
-        message.status = MessageStatus.READ
-
-    db.session.commit()
-
-    # Get the other user in the conversation
-    other_user_id = (
-        thread.user2_id if thread.user1_id == user_id else thread.user1_id
-    )
-    other_user = User.query.get(other_user_id)
-
-    emit(
-        "direct_messages",
-        {
-            "thread_id": thread_id,
-            "messages": message_list,
-            "pagination": {
-                "page": page,
-                "per_page": per_page,
-                "total": total,
-                "total_pages": total_pages,
-            },
-            "other_user": {
-                "id": other_user.id,
-                "full_name": other_user.full_name,
-                "image_url": other_user.image_url,
-            },
-            "is_encrypted": thread.is_encrypted,
-        },
-    )
+    except ValueError as e:
+        emit("error", {"message": str(e)})
 
 
 @socketio.on("send_direct_message")
@@ -200,75 +91,26 @@ def handle_send_direct_message(user_id, data):
         emit("error", {"message": "Missing required fields"})
         return
 
-    # Verify user has access to this thread
-    thread = DirectMessageThread.query.get(thread_id)
-    if not thread:
-        emit("error", {"message": "Thread not found"})
-        return
-
-    if thread.user1_id != user_id and thread.user2_id != user_id:
-        emit(
-            "error",
-            {"message": "Not authorized to send messages in this thread"},
+    try:
+        # Create the message
+        message, other_user_id = DirectMessageService.create_message(
+            thread_id, user_id, content, encrypted_content
         )
-        return
 
-    # Verify users are connected
-    other_user_id = (
-        thread.user2_id if thread.user1_id == user_id else thread.user1_id
-    )
-    current_user = User.query.get(user_id)
-
-    if not current_user.is_connected_with(other_user_id):
-        emit(
-            "error",
-            {
-                "message": "You must be connected with this user to send messages"
-            },
+        # Format message for response
+        message_data = DirectMessageService.format_message_for_response(
+            message
         )
-        return
 
-    # Create the message
-    message = DirectMessage(
-        thread_id=thread_id,
-        sender_id=user_id,
-        content=content,
-        encrypted_content=encrypted_content if thread.is_encrypted else None,
-        status=MessageStatus.DELIVERED,
-    )
+        # Send to recipient
+        emit("new_direct_message", message_data, room=f"user_{other_user_id}")
+        # Send to sender (in case they have multiple sessions)
+        emit("new_direct_message", message_data, room=f"user_{user_id}")
+        # Confirm to sender
+        emit("direct_message_sent", message_data)
 
-    db.session.add(message)
-
-    # Update thread's last_message_at
-    thread.last_message_at = datetime.utcnow()
-
-    db.session.commit()
-
-    # Get sender for response
-    sender = User.query.get(user_id)
-
-    # Prepare message data
-    message_data = {
-        "id": message.id,
-        "thread_id": message.thread_id,
-        "sender_id": message.sender_id,
-        "sender": {
-            "id": sender.id,
-            "full_name": sender.full_name,
-            "image_url": sender.image_url,
-        },
-        "content": message.content,
-        "encrypted_content": message.encrypted_content,
-        "status": message.status.value,
-        "created_at": message.created_at.isoformat(),
-    }
-
-    # Send to recipient
-    emit("new_direct_message", message_data, room=f"user_{other_user_id}")
-    # Send to sender
-    emit("new_direct_message", message_data, room=f"user_{user_id}")
-    # Confirm to sender
-    emit("direct_message_sent", message_data)
+    except ValueError as e:
+        emit("error", {"message": str(e)})
 
 
 @socketio.on("mark_messages_read")
@@ -283,40 +125,108 @@ def handle_mark_messages_read(user_id, data):
         emit("error", {"message": "Missing thread ID"})
         return
 
-    # Verify user has access to this thread
-    thread = DirectMessageThread.query.get(thread_id)
-    if not thread:
-        emit("error", {"message": "Thread not found"})
-        return
-
-    if thread.user1_id != user_id and thread.user2_id != user_id:
-        emit("error", {"message": "Not authorized to access this thread"})
-        return
-
-    # Mark unread messages as read
-    unread_messages = (
-        DirectMessage.query.filter_by(
-            thread_id=thread_id, status=MessageStatus.DELIVERED
+    try:
+        # Mark messages as read
+        thread_id, other_user_id, had_unread = (
+            DirectMessageService.mark_messages_read(thread_id, user_id)
         )
-        .filter(DirectMessage.sender_id != user_id)
-        .all()
+
+        # Only notify if there were unread messages
+        if had_unread:
+            # Notify the sender that their messages were read
+            emit(
+                "messages_read",
+                {"thread_id": thread_id, "reader_id": user_id},
+                room=f"user_{other_user_id}",
+            )
+
+        emit("messages_marked_read", {"thread_id": thread_id})
+
+    except ValueError as e:
+        emit("error", {"message": str(e)})
+
+
+@socketio.on("toggle_encryption")
+@socket_authenticated_only
+def handle_toggle_encryption(user_id, data):
+    print(
+        f"Received toggle_encryption event from user {user_id} with data: {data}"
     )
+    thread_id = data.get("thread_id")
+    enable_encryption = data.get("enable_encryption", False)
 
-    for message in unread_messages:
-        message.status = MessageStatus.READ
+    if not thread_id:
+        emit("error", {"message": "Missing thread ID"})
+        return
 
-    db.session.commit()
+    try:
+        # Toggle encryption
+        thread = DirectMessageService.toggle_encryption(
+            thread_id, user_id, enable_encryption
+        )
 
-    # Get the other user in the conversation
-    other_user_id = (
-        thread.user2_id if thread.user1_id == user_id else thread.user1_id
+        # Get the other user ID for notification
+        other_user_id = (
+            thread.user2_id if thread.user1_id == user_id else thread.user1_id
+        )
+
+        # Notify both users
+        encryption_update = {
+            "thread_id": thread_id,
+            "is_encrypted": thread.is_encrypted,
+            "updated_by": user_id,
+        }
+
+        # Notify the other user
+        emit(
+            "encryption_changed",
+            encryption_update,
+            room=f"user_{other_user_id}",
+        )
+
+        # Confirm to requester
+        emit("encryption_updated", encryption_update)
+
+    except ValueError as e:
+        emit("error", {"message": str(e)})
+
+
+@socketio.on("create_direct_message_thread")
+@socket_authenticated_only
+def handle_create_direct_message_thread(user_id, data):
+    print(
+        f"Received create_direct_message_thread event from user {user_id} with data: {data}"
     )
+    other_user_id = data.get("user_id")
 
-    # Notify the sender that their messages were read
-    emit(
-        "messages_read",
-        {"thread_id": thread_id, "reader_id": user_id},
-        room=f"user_{other_user_id}",
-    )
+    if not other_user_id:
+        emit("error", {"message": "Missing user ID"})
+        return
 
-    emit("messages_marked_read", {"thread_id": thread_id})
+    try:
+        # Check if users are connected
+        current_user = User.query.get(user_id)
+        if not current_user.is_connected_with(other_user_id):
+            emit(
+                "error",
+                {
+                    "message": "You must be connected with this user to start a conversation"
+                },
+            )
+            return
+
+        # Get or create thread
+        thread, is_new = DirectMessageService.get_or_create_thread(
+            user_id, other_user_id
+        )
+
+        # Format thread for response
+        thread_data = DirectMessageService.format_thread_for_response(
+            thread, user_id
+        )
+        thread_data["is_new"] = is_new
+
+        emit("direct_message_thread_created", thread_data)
+
+    except ValueError as e:
+        emit("error", {"message": str(e)})
