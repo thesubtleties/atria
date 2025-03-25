@@ -223,6 +223,21 @@ A separate commercial license is required. Please contact the copyright holder f
   - [ ] Link existing users as speakers
   - [ ] Invite external speakers
 
+## Phase 2.5: Streaming Integration
+
+### Video Streaming Services
+
+- [ ] Multiple streaming provider integration
+  - [ ] Zoom meeting/webinar embed support (Otherwise will have open in Zoom app - TBD)
+  - [ ] Dacast integration
+  - [ ] Alternative embed solutions
+- [ ] Session-streaming association
+  - [ ] Automatically update session to "live" ~5 minutes before start time
+- [ ] Live vs. Recorded content handling
+  - [ ] Live indicator for active streams
+  - [ ] Playback controls for recorded content
+  - [ ] Transition from live to recorded - Vimeo should handle automatically, but allow option to change embed link out.
+
 ## Phase 3: Admin Functionality
 
 ### User Management
@@ -356,9 +371,13 @@ A separate commercial license is required. Please contact the copyright holder f
 ## Future Considerations
 
 - Mobile app development
+- Presenter backend that takes in Vmix Call embed + internet clicker embed + enables polling (either built in or 3rd party) for high end fully produced events.
 - Calendar/scheduling integration
-- Virtual event streaming
 - Payment processing for ticketing
 - Multi-language support
 - Advanced content management
 - Exhibitor management
+- Streaming CDN partnerships for preferred pricing/features
+- White-label streaming solution integrations
+- Custom player with branding options
+
