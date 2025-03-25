@@ -1,0 +1,10 @@
+.faq {
+  padding: 2rem 1rem;
+  background-color: var(--mantine-color-gray-0);
+}
+
+.faqList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}

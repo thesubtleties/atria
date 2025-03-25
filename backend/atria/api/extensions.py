@@ -13,6 +13,7 @@ from flask_smorest import Api as BaseApi
 from apispec.ext.marshmallow import MarshmallowPlugin
 from flask.json.provider import JSONProvider
 from datetime import time
+from flask_socketio import SocketIO
 
 
 # serialize time objects
@@ -59,3 +60,4 @@ migrate = Migrate()
 # apispec = APISpecExt()  # Keep for now during migration
 pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 smorest_api = Api()
+socketio = SocketIO()

@@ -46,11 +46,11 @@ export const useNavigationTitle = () => {
       // Fix: Make sure we're returning both the event title and subtitle
       if (needsOrgData) {
         return {
-          text: event.title, // Make sure this matches your event object property (title or name)
+          text: event.title, // Make sure this matches event object property (title or name)
           subtitle: 'Organizer View',
         };
       }
-      return { text: event.title }; // Again, make sure this matches your event object property
+      return { text: event.title }; // make sure this matches event object property
     }
 
     return null;

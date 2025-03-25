@@ -1,0 +1,38 @@
+/* pages/EventHome/Welcome/styles/index.module.css */
+.welcome {
+  padding: 4rem 1rem;
+  background-color: var(--background-color, #ffffff);
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary, #1a1a1a);
+}
+
+.content {
+  font-size: 1.125rem;
+  line-height: 1.7;
+  color: var(--text-secondary, #4a4a4a);
+}
+
+@media (max-width: 768px) {
+  .welcome {
+    padding: 3rem 1rem;
+  }
+
+  .title {
+    font-size: 1.75rem;
+  }
+
+  .content {
+    font-size: 1rem;
+  }
+}

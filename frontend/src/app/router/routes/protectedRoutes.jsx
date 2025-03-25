@@ -10,6 +10,8 @@ import { OrganizationEvents } from '../../../pages/Events/OrganizationEvents';
 import { SetupSession } from '../../../pages/Session/SetupSession';
 import { SessionPage } from '../../../pages/Session';
 import { AgendaPage } from '../../../pages/Agenda';
+import { EventHome } from '../../../pages/EventHome';
+import { SpeakersPage } from '../../../pages/Speakers';
 import { SessionPending } from '../../../pages/Session/SessionPending';
 
 // Placeholder component for development
@@ -133,7 +135,15 @@ export const protectedRoutes = [
             children: [
               {
                 path: '',
+                element: <EventHome />,
+              },
+              {
+                path: 'agenda',
                 element: <AgendaPage />,
+              },
+              {
+                path: 'speakers',
+                element: <SpeakersPage />,
               },
               {
                 path: 'sessions/:sessionId',
@@ -142,6 +152,10 @@ export const protectedRoutes = [
               {
                 path: 'session-pending',
                 element: <SessionPending />,
+              },
+              {
+                path: 'setup-session',
+                element: <SetupSession />,
               },
             ],
           },

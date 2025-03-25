@@ -1,0 +1,32 @@
+/* pages/EventHome/Highlights/styles/HighlightCard.module.css */
+.card {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: var(--primary-color, #0066ff);
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: var(--text-primary, #1a1a1a);
+}
+
+.description {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--text-secondary, #4a4a4a);
+}

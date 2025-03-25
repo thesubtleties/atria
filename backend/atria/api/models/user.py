@@ -4,6 +4,7 @@ from api.models.enums import (
     SessionSpeakerRole,
     OrganizationUserRole,
     EventUserRole,
+    ConnectionStatus,
 )
 
 
@@ -64,6 +65,36 @@ class User(db.Model):
         overlaps="speakers",
         cascade="all, delete-orphan",
     )
+    sent_connections = db.relationship(
+        "Connection",
+        foreign_keys="Connection.requester_id",
+        back_populates="requester",
+        cascade="all, delete-orphan",
+    )
+    received_connections = db.relationship(
+        "Connection",
+        foreign_keys="Connection.recipient_id",
+        back_populates="recipient",
+        cascade="all, delete-orphan",
+    )
+    chat_messages = db.relationship(
+        "ChatMessage", back_populates="user", cascade="all, delete-orphan"
+    )
+    sent_direct_messages = db.relationship(
+        "DirectMessage", back_populates="sender", cascade="all, delete-orphan"
+    )
+    encryption_key = db.relationship(
+        "UserEncryptionKey",
+        uselist=False,
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+    key_backup = db.relationship(
+        "UserKeyBackup",
+        uselist=False,
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
 
     @hybrid_property
     def password(self):
@@ -116,11 +147,6 @@ class User(db.Model):
         ).first()
         return session_speaker.role if session_speaker else None
 
-    @property
-    def full_name(self) -> str:
-        """Get user's full name"""
-        return f"{self.first_name} {self.last_name}"
-
     def get_upcoming_events(self):
         """Get user's upcoming events using relationship"""
         return (
@@ -155,3 +181,101 @@ class User(db.Model):
     def get_events_by_role(self, role: EventUserRole):
         """Get all events where user has specific role"""
         return self.events.filter(EventUser.role == role).all()
+
+    def get_connections(self, status=ConnectionStatus.ACCEPTED):
+        """Get all connections with specified status"""
+        from api.models.connection import Connection
+
+        sent = Connection.query.filter_by(
+            requester_id=self.id, status=status
+        ).all()
+        received = Connection.query.filter_by(
+            recipient_id=self.id, status=status
+        ).all()
+
+        # Combine and return unique users
+        connected_users = []
+        for conn in sent:
+            connected_users.append(conn.recipient)
+        for conn in received:
+            connected_users.append(conn.requester)
+
+        return connected_users
+
+    def get_connection_with(self, other_user_id):
+        """Get connection object between this user and another user"""
+        from api.models.connection import Connection
+
+        conn = Connection.query.filter(
+            (
+                (Connection.requester_id == self.id)
+                & (Connection.recipient_id == other_user_id)
+            )
+            | (
+                (Connection.requester_id == other_user_id)
+                & (Connection.recipient_id == self.id)
+            )
+        ).first()
+        return conn
+
+    def is_connected_with(
+        self, other_user_id, status=ConnectionStatus.ACCEPTED
+    ):
+        """Check if user is connected with another user"""
+        conn = self.get_connection_with(other_user_id)
+        return conn is not None and conn.status == status
+
+    def get_message_thread_with(self, other_user_id):
+        """Get message thread with another user"""
+        from api.models.direct_message_thread import DirectMessageThread
+
+        thread = DirectMessageThread.query.filter(
+            (
+                (DirectMessageThread.user1_id == self.id)
+                & (DirectMessageThread.user2_id == other_user_id)
+            )
+            | (
+                (DirectMessageThread.user1_id == other_user_id)
+                & (DirectMessageThread.user2_id == self.id)
+            )
+        ).first()
+
+        return thread
+
+    def get_direct_message_threads(self):
+        """Get all direct message threads for this user"""
+        from api.models.direct_message_thread import DirectMessageThread
+
+        return (
+            DirectMessageThread.query.filter(
+                (DirectMessageThread.user1_id == self.id)
+                | (DirectMessageThread.user2_id == self.id)
+            )
+            .order_by(DirectMessageThread.last_message_at.desc())
+            .all()
+        )
+
+    def get_pending_connection_requests(self):
+        """Get all pending connection requests received by this user"""
+        from api.models.connection import Connection
+
+        return Connection.query.filter_by(
+            recipient_id=self.id, status=ConnectionStatus.PENDING
+        ).all()
+
+    def get_connected_users_in_event(self, event_id):
+        """Get all users connected with this user who are also in a specific event"""
+        from api.models import EventUser
+
+        connected_users = self.get_connections()
+
+        # Filter to only those in the event
+        event_users = EventUser.query.filter_by(event_id=event_id).all()
+        event_user_ids = [eu.user_id for eu in event_users]
+
+        return [user for user in connected_users if user.id in event_user_ids]
+
+    @property
+    def full_name(self) -> str:
+        """Get user's full name"""
+        return f"{self.first_name} {self.last_name}"

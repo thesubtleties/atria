@@ -69,3 +69,28 @@ class OrganizationUser(db.Model):
     def is_admin(self):
         """Check if user is admin"""
         return self.role == OrganizationUserRole.ADMIN
+
+    @property
+    def first_name(self):
+        """Get user's first name"""
+        return self.user.first_name
+
+    @property
+    def last_name(self):
+        """Get user's last name"""
+        return self.user.last_name
+
+    @property
+    def sort_name(self):
+        """Get name for sorting (last name first)"""
+        return f"{self.user.last_name}, {self.user.first_name}"
+
+    @property
+    def image_url(self):
+        """Get user's image URL"""
+        return self.user.image_url
+
+    @property
+    def social_links(self):
+        """Get user's social links"""
+        return self.user.social_links
