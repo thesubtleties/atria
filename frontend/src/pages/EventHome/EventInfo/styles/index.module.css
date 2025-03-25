@@ -1,0 +1,22 @@
+/* pages/EventHome/EventInfo/styles/index.module.css */
+.eventInfo {
+  padding: 2rem 1rem;
+  background-color: var(--mantine-color-gray-0);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

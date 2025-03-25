@@ -1,5 +1,5 @@
 from api.extensions import db
-from api.models.enums import EventType, EventStatus, EventUserRole
+from api.models.enums import EventType, EventStatus, EventUserRole, EventFormat
 from datetime import datetime, timezone
 from slugify import slugify
 
@@ -35,11 +35,49 @@ class Event(db.Model):
             "banner_url": None,
         },
     )
+    hero_description = db.Column(db.Text)
+    hero_images = db.Column(
+        db.JSON, nullable=True, default={"desktop": None, "mobile": None}
+    )
+
+    event_format = db.Column(
+        db.Enum(EventFormat), nullable=False, default=EventFormat.VIRTUAL
+    )
+    is_private = db.Column(db.Boolean, default=False)
+    venue_name = db.Column(db.String(255), nullable=True)
+    venue_address = db.Column(db.Text, nullable=True)
+    venue_city = db.Column(db.String(100), nullable=True)
+    venue_country = db.Column(db.String(100), nullable=True)
+
+    sections = db.Column(
+        db.JSON,
+        nullable=True,
+        default={
+            "welcome": {"title": None, "content": None},
+            "highlights": [],
+            "faqs": [],
+        },
+    )
     created_at = db.Column(
         db.DateTime(timezone=True), server_default=db.func.current_timestamp()
     )
     updated_at = db.Column(
         db.DateTime(timezone=True), onupdate=db.func.current_timestamp()
+    )
+
+    icebreakers = db.Column(
+        db.JSON,
+        nullable=True,
+        default=[
+            "Hi! I noticed we're both interested in similar sessions. Would you like to connect?",
+            "Hello! I saw your profile and would love to discuss technology with you.",
+            "I'm looking to connect with others in the tech field. Would you be open to chatting?",
+            "Hi there! I enjoyed your question during the session. Could we discuss it further?",
+            "Hello! I'm exploring opportunities in this field. Would you have a few minutes to chat?",
+            "I see we're both from the same industry. I'd love to connect!",
+            "Hi! I'm interested in learning more about your work. Could we chat?",
+            "Hello! I'm building a network of professionals. Would you like to connect?",
+        ],
     )
 
     # Relationships
@@ -66,6 +104,12 @@ class Event(db.Model):
         overlaps="users,events",
         cascade="all, delete-orphan",
         passive_deletes=True,
+    )
+    chat_rooms = db.relationship(
+        "ChatRoom", back_populates="event", cascade="all, delete-orphan"
+    )
+    originated_connections = db.relationship(
+        "Connection", back_populates="originating_event"
     )
 
     def __init__(self, *args, **kwargs):
@@ -149,6 +193,60 @@ class Event(db.Model):
         return EventUser.query.filter(
             EventUser.event_id == self.id, EventUser.role.in_(roles)
         ).all()
+
+    def add_icebreaker(self, message):
+        """Add a new icebreaker message"""
+        if not self.icebreakers:
+            self.icebreakers = []
+        self.icebreakers.append(message)
+        return self.icebreakers
+
+    def remove_icebreaker(self, index):
+        """Remove an icebreaker by index"""
+        if self.icebreakers and 0 <= index < len(self.icebreakers):
+            self.icebreakers.pop(index)
+        return self.icebreakers
+
+    def create_default_chat_rooms(self):
+        """Create default chat rooms for the event"""
+        from api.models.chat_room import ChatRoom
+
+        # Check if global chat room exists
+        global_room = ChatRoom.query.filter_by(
+            event_id=self.id, is_global=True
+        ).first()
+        if not global_room:
+            global_room = ChatRoom(
+                event_id=self.id,
+                name="General",
+                description="General discussion for all attendees",
+                is_global=True,
+            )
+            db.session.add(global_room)
+
+        # other default rooms
+        topic_rooms = [
+            {"name": "Q&A", "description": "Ask questions about the event"},
+            {
+                "name": "Networking",
+                "description": "Connect with other attendees",
+            },
+        ]
+
+        for room_data in topic_rooms:
+            existing = ChatRoom.query.filter_by(
+                event_id=self.id, name=room_data["name"]
+            ).first()
+            if not existing:
+                room = ChatRoom(
+                    event_id=self.id,
+                    name=room_data["name"],
+                    description=room_data["description"],
+                    is_global=False,
+                )
+                db.session.add(room)
+
+        db.session.commit()
 
     @property
     def speakers(self):
@@ -246,6 +344,10 @@ class Event(db.Model):
             raise ValueError("Event must have start and end dates")
         if not self.organizers:
             raise ValueError("Event must have at least one organizer")
+        if not self.hero_description:
+            raise ValueError("Event must have a hero description")
+        if self.event_format == EventFormat.HYBRID and not self.venue_name:
+            raise ValueError("Hybrid events must have a venue")
 
     def update_branding(self, **kwargs):
         """Update branding fields"""
@@ -320,3 +422,72 @@ class Event(db.Model):
             counter += 1
 
         self.slug = slug
+
+    def update_hero(
+        self, description=None, desktop_image=None, mobile_image=None
+    ):
+        """Update hero content"""
+        if description is not None:
+            self.hero_description = description
+
+        if desktop_image is not None or mobile_image is not None:
+            images = self.hero_images or {}
+            if desktop_image is not None:
+                images["desktop"] = desktop_image
+            if mobile_image is not None:
+                images["mobile"] = mobile_image
+            self.hero_images = images
+
+    def update_venue(self, **kwargs):
+        """Update venue information"""
+        valid_fields = {
+            "venue_name",
+            "venue_address",
+            "venue_city",
+            "venue_country",
+        }
+        for field, value in kwargs.items():
+            if field in valid_fields:
+                setattr(self, field, value)
+
+    def update_section_field(self, section_type, field, value):
+        """Update a specific field in sections"""
+        sections = self.sections or {}
+        if section_type not in sections:
+            sections[section_type] = {}
+        sections[section_type][field] = value
+        self.sections = sections
+
+    def add_highlight(self, title, description, icon=None):
+        """Add a highlight to sections"""
+        sections = self.sections or {}
+        if "highlights" not in sections:
+            sections["highlights"] = []
+        sections["highlights"].append(
+            {"title": title, "description": description, "icon": icon}
+        )
+        self.sections = sections
+
+    def remove_highlight(self, index):
+        """Remove a highlight by index"""
+        sections = self.sections or {}
+        if "highlights" in sections and 0 <= index < len(
+            sections["highlights"]
+        ):
+            sections["highlights"].pop(index)
+            self.sections = sections
+
+    def add_faq(self, question, answer):
+        """Add an FAQ"""
+        sections = self.sections or {}
+        if "faqs" not in sections:
+            sections["faqs"] = []
+        sections["faqs"].append({"question": question, "answer": answer})
+        self.sections = sections
+
+    def remove_faq(self, index):
+        """Remove an FAQ by index"""
+        sections = self.sections or {}
+        if "faqs" in sections and 0 <= index < len(sections["faqs"]):
+            sections["faqs"].pop(index)
+            self.sections = sections

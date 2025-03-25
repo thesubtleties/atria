@@ -1,0 +1,15 @@
+.questionContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.question {
+  width: 100%;
+  transition: background-color 200ms ease;
+}
+
+.question:hover {
+  background-color: var(--mantine-color-gray-0);
+}

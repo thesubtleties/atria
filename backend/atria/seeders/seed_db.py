@@ -14,6 +14,12 @@ from .seed_data import (
     seed_event_users,
     seed_sessions,
     seed_session_speakers,
+    seed_chat_rooms,
+    seed_chat_messages,
+    seed_connections,
+    seed_direct_message_threads,
+    seed_direct_messages,
+    seed_user_encryption_keys,
 )
 
 
@@ -26,6 +32,14 @@ def seed_database():
             db.session.execute(text("TRUNCATE TABLE organizations CASCADE"))
             db.session.execute(text("TRUNCATE TABLE events CASCADE"))
             db.session.execute(text("TRUNCATE TABLE sessions CASCADE"))
+            db.session.execute(text("TRUNCATE TABLE chat_rooms CASCADE"))
+            db.session.execute(text("TRUNCATE TABLE connections CASCADE"))
+            db.session.execute(
+                text("TRUNCATE TABLE direct_message_threads CASCADE")
+            )
+            db.session.execute(
+                text("TRUNCATE TABLE user_encryption_keys CASCADE")
+            )
             db.session.commit()
 
             print("Seeding users...")
@@ -76,20 +90,34 @@ def seed_database():
 
             print("Seeding events...")
             for event_data in seed_events():
-                # Convert branding dict to JSON string
+                # Convert JSON fields to strings
                 event_data = dict(event_data)  # Make a copy
                 event_data["branding"] = json.dumps(event_data["branding"])
+                event_data["hero_images"] = json.dumps(
+                    event_data["hero_images"]
+                )
+                event_data["sections"] = json.dumps(event_data["sections"])
 
                 db.session.execute(
                     text(
                         """
-                    INSERT INTO events (id, organization_id, title, description,
-                                      event_type, start_date, end_date, company_name,
-                                      slug, status, branding, created_at)
-                    VALUES (:id, :organization_id, :title, :description,
-                           :event_type, :start_date, :end_date, :company_name,
-                           :slug, :status, :branding, CURRENT_TIMESTAMP)
-                    """
+                        INSERT INTO events (
+                            id, organization_id, title, description,
+                            hero_description, hero_images,
+                            event_type, event_format, is_private,
+                            venue_name, venue_address, venue_city, venue_country,
+                            start_date, end_date, company_name,
+                            slug, status, branding, sections, created_at
+                        )
+                        VALUES (
+                            :id, :organization_id, :title, :description,
+                            :hero_description, :hero_images,
+                            :event_type, :event_format, :is_private,
+                            :venue_name, :venue_address, :venue_city, :venue_country,
+                            :start_date, :end_date, :company_name,
+                            :slug, :status, :branding, :sections, CURRENT_TIMESTAMP
+                        )
+                        """
                     ),
                     event_data,
                 )
@@ -136,6 +164,88 @@ def seed_database():
                     """
                     ),
                     speaker_data,
+                )
+
+            print("Seeding chat rooms...")
+            for chat_room_data in seed_chat_rooms():
+                db.session.execute(
+                    text(
+                        """
+                    INSERT INTO chat_rooms (id, event_id, name, description, is_global, created_at)
+                    VALUES (:id, :event_id, :name, :description, :is_global, CURRENT_TIMESTAMP)
+                    """
+                    ),
+                    chat_room_data,
+                )
+
+            print("Seeding chat messages...")
+            for message_data in seed_chat_messages():
+                db.session.execute(
+                    text(
+                        """
+                    INSERT INTO chat_messages (id, room_id, user_id, content, created_at)
+                    VALUES (:id, :room_id, :user_id, :content, CURRENT_TIMESTAMP)
+                    """
+                    ),
+                    message_data,
+                )
+
+            print("Seeding connections...")
+            for connection_data in seed_connections():
+                db.session.execute(
+                    text(
+                        """
+                    INSERT INTO connections (id, requester_id, recipient_id, status, 
+                                        icebreaker_message, originating_event_id, created_at)
+                    VALUES (:id, :requester_id, :recipient_id, :status, 
+                        :icebreaker_message, :originating_event_id, CURRENT_TIMESTAMP)
+                    """
+                    ),
+                    connection_data,
+                )
+
+            print("Seeding direct message threads...")
+            for thread_data in seed_direct_message_threads():
+                db.session.execute(
+                    text(
+                        """
+                    INSERT INTO direct_message_threads (id, user1_id, user2_id, is_encrypted, 
+                                                    created_at, last_message_at)
+                    VALUES (:id, :user1_id, :user2_id, :is_encrypted, 
+                        CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+                    """
+                    ),
+                    thread_data,
+                )
+
+            print("Seeding direct messages...")
+            for message_data in seed_direct_messages():
+                # Handle encrypted_content which might be None
+                if "encrypted_content" not in message_data:
+                    message_data["encrypted_content"] = None
+
+                db.session.execute(
+                    text(
+                        """
+                    INSERT INTO direct_messages (id, thread_id, sender_id, content, 
+                                            encrypted_content, status, created_at)
+                    VALUES (:id, :thread_id, :sender_id, :content, 
+                        :encrypted_content, :status, CURRENT_TIMESTAMP)
+                    """
+                    ),
+                    message_data,
+                )
+
+            print("Seeding user encryption keys...")
+            for key_data in seed_user_encryption_keys():
+                db.session.execute(
+                    text(
+                        """
+                    INSERT INTO user_encryption_keys (id, user_id, public_key, created_at)
+                    VALUES (:id, :user_id, :public_key, CURRENT_TIMESTAMP)
+                    """
+                    ),
+                    key_data,
                 )
 
             db.session.commit()

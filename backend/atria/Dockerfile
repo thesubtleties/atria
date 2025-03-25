@@ -14,6 +14,7 @@ COPY requirements.txt setup.py tox.ini ./
 RUN pip install -U pip
 RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install -e .
+RUN pip install eventlet  # Add this line to install eventlet
 
 COPY api api/
 COPY init.sh .

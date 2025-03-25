@@ -5,7 +5,7 @@ from api.api.schemas.user import (
     UserUpdateSchema,
     UserNestedSchema,
     UserCheckResponseSchema,
-    UserBasicSchema,
+    # UserBasicSchema,
 )
 from api.api.schemas.event import (
     EventSchema,
@@ -58,6 +58,24 @@ from api.api.schemas.auth import (
     SignupSchema,
 )
 
+from api.api.schemas.chat import (
+    ChatRoomSchema,
+    ChatRoomDetailSchema,
+    ChatRoomCreateSchema,
+    ChatMessageSchema,
+    ChatMessageCreateSchema,
+)
+from api.api.schemas.connection import (
+    ConnectionSchema,
+    ConnectionCreateSchema,
+    ConnectionUpdateSchema,
+)
+from api.api.schemas.direct_message import (
+    DirectMessageThreadSchema,
+    DirectMessageSchema,
+    DirectMessageCreateSchema,
+)
+
 __all__ = [
     # User schemas
     "UserSchema",
@@ -107,4 +125,16 @@ __all__ = [
     # Auth schemas
     "LoginSchema",
     "SignupSchema",
+    # Networking schemas
+    "ChatRoomSchema",
+    "ChatRoomDetailSchema",
+    "ChatRoomCreateSchema",
+    "ChatMessageSchema",
+    "ChatMessageCreateSchema",
+    "ConnectionSchema",
+    "ConnectionCreateSchema",
+    "ConnectionUpdateSchema",
+    "DirectMessageThreadSchema",
+    "DirectMessageSchema",
+    "DirectMessageCreateSchema",
 ]

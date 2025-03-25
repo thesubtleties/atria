@@ -45,9 +45,10 @@ with app.app_context():
     print(f"Found tables: {tables}")
 END
 
-echo "Starting Gunicorn server..."
+echo "Starting Gunicorn server with Socket.IO support..."
 exec python -u -m gunicorn --bind 0.0.0.0:5000 "api.wsgi:app" \
     --log-level debug \
     --capture-output \
+    --worker-class eventlet \
     --workers 1 \
     --reload

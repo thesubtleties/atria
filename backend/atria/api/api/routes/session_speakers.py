@@ -4,8 +4,6 @@ from flask_smorest import Blueprint
 from flask_jwt_extended import jwt_required
 from flask import request
 
-from api.extensions import db
-from api.models import Session, User, SessionSpeaker
 from api.models.enums import SessionSpeakerRole
 from api.api.schemas import (
     SessionSpeakerSchema,
@@ -15,7 +13,6 @@ from api.api.schemas import (
     SpeakerReorderSchema,
 )
 from api.commons.pagination import (
-    paginate,
     PAGINATION_PARAMETERS,
     get_pagination_schema,
 )
@@ -23,6 +20,7 @@ from api.commons.decorators import (
     event_member_required,
     event_organizer_required,
 )
+from api.services.session_speaker import SessionSpeakerService
 
 
 blp = Blueprint(
@@ -51,16 +49,14 @@ class SessionSpeakerList(MethodView):
                 "name": "role",
                 "schema": {"type": "string"},
                 "description": "Filter by role (optional)",
-                "enum": [
-                    role.value for role in SessionSpeakerRole
-                ],  # Dynamic from enum
+                "enum": [role.value for role in SessionSpeakerRole],
             },
-            *PAGINATION_PARAMETERS,  # imported from pagination helper
+            *PAGINATION_PARAMETERS,
         ],
         responses={
             200: get_pagination_schema(
                 "session_speakers", "SessionSpeakerBase"
-            ),  # imported from pagination helper
+            ),
             403: {"description": "Not authorized to view session speakers"},
             404: {"description": "Session not found"},
         },
@@ -69,20 +65,11 @@ class SessionSpeakerList(MethodView):
     @event_member_required()
     def get(self, session_id):
         """Get list of session speakers"""
-        # Build query - order by speaker order
-        query = SessionSpeaker.query.filter_by(session_id=session_id).order_by(
-            SessionSpeaker.order
-        )
-
-        # Apply role filter if provided
+        # Get role filter if provided
         role = request.args.get("role")
-        if role:
-            query = query.filter_by(role=role)
 
-        return paginate(
-            query,
-            SessionSpeakerSchema(many=True),
-            collection_name="session_speakers",
+        return SessionSpeakerService.get_session_speakers(
+            session_id, role, SessionSpeakerSchema(many=True)
         )
 
     @blp.arguments(SessionSpeakerCreateSchema)
@@ -108,28 +95,16 @@ class SessionSpeakerList(MethodView):
     @event_organizer_required()
     def post(self, data, session_id):
         """Add speaker to session"""
-        session = Session.query.get_or_404(session_id)
-        new_speaker = User.query.get_or_404(data["user_id"])
-
-        if session.has_speaker(new_speaker):
-            return {"message": "Already a speaker in this session"}, 400
-
-        if session.has_speaker_conflicts(new_speaker):
-            return {"message": "Speaker has conflicting sessions"}, 400
-
-        session.add_speaker(
-            new_speaker,
-            role=data.get("role", SessionSpeakerRole.SPEAKER),
-            order=data.get("order"),
-        )
-        db.session.commit()
-
-        return (
-            SessionSpeaker.query.filter_by(
-                session_id=session_id, user_id=new_speaker.id
-            ).first(),
-            201,
-        )
+        try:
+            speaker = SessionSpeakerService.add_speaker_to_session(
+                session_id,
+                data["user_id"],
+                data.get("role", SessionSpeakerRole.SPEAKER),
+                data.get("order"),
+            )
+            return speaker, 201
+        except ValueError as e:
+            return {"message": str(e)}, 400
 
 
 @blp.route("/sessions/<int:session_id>/speakers/<int:user_id>")
@@ -149,18 +124,9 @@ class SessionSpeakerDetail(MethodView):
     @event_organizer_required()
     def put(self, update_data, session_id, user_id):
         """Update speaker's role or order"""
-        speaker = SessionSpeaker.query.filter_by(
-            session_id=session_id, user_id=user_id
-        ).first_or_404()
-
-        if "role" in update_data:
-            speaker.role = update_data["role"]
-        if "order" in update_data:
-            speaker.order = update_data["order"]
-
-        db.session.commit()
-
-        return speaker
+        return SessionSpeakerService.update_speaker(
+            session_id, user_id, update_data
+        )
 
     @blp.response(200)
     @blp.doc(
@@ -183,13 +149,7 @@ class SessionSpeakerDetail(MethodView):
     @event_organizer_required()
     def delete(self, session_id, user_id):
         """Remove speaker from session"""
-        speaker = SessionSpeaker.query.filter_by(
-            session_id=session_id, user_id=user_id
-        ).first_or_404()
-
-        db.session.delete(speaker)
-        db.session.commit()
-
+        SessionSpeakerService.remove_speaker(session_id, user_id)
         return {"message": "Speaker removed from session"}
 
 
@@ -219,13 +179,10 @@ class SessionSpeakerReorder(MethodView):
     @event_organizer_required()
     def put(self, order_data, session_id, user_id):
         """Update speaker order"""
-        speaker = SessionSpeaker.query.filter_by(
-            session_id=session_id, user_id=user_id
-        ).first_or_404()
-
         try:
-            speakers = speaker.update_order(order_data["order"])
-            db.session.commit()
+            speakers = SessionSpeakerService.update_speaker_order(
+                session_id, user_id, order_data["order"]
+            )
             return speakers
         except ValueError as e:
             return {"message": str(e)}, 400

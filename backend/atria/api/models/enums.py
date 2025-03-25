@@ -56,3 +56,21 @@ class SessionSpeakerRole(str, Enum):
     PANELIST = "panelist"
     MODERATOR = "moderator"
     KEYNOTE = "keynote"
+
+
+class EventFormat(str, Enum):
+    VIRTUAL = "virtual"
+    HYBRID = "hybrid"
+
+
+class ConnectionStatus(str, Enum):
+    PENDING = "pending"
+    ACCEPTED = "accepted"
+    REJECTED = "rejected"
+    BLOCKED = "blocked"
+
+
+class MessageStatus(str, Enum):
+    SENT = "sent"
+    DELIVERED = "delivered"
+    READ = "read"
