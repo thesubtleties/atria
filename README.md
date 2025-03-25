@@ -1,6 +1,6 @@
 # Atria - Event Management & Networking Platform
 
-Atria is a comprehensive event management platform that enables organizers to create and manage events, sessions, and facilitate networking among attendees. The platform offers real-time communication features, detailed session management, and robust user administration capabilities. This is a work in progress, and a roadmap can be found at the bottom of this readme.
+Atria is a comprehensive event management platform that enables organizers to create and manage events, sessions, and facilitate networking among attendees. The platform offers real-time communication features, detailed session management, and robust user administration capabilities. This is a work in progress, and a (very rough, preliminary) roadmap can be found at the bottom of this readme.
 
 ## 🚀 Features
 
