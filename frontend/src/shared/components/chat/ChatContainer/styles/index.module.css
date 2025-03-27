@@ -1,25 +1,34 @@
-/* src/shared/components/chat/ChatContainer/ChatContainer.module.css */
 .chatContainer {
   position: fixed;
   bottom: 0;
   right: 0;
   z-index: 999;
+  padding-right: 330px; /* Space for sidebar */
+}
+
+/* Container for all windows */
+.windowsContainer {
+  display: flex;
+  flex-direction: row-reverse; /* Start from right side */
+  gap: 10px;
+  padding: 0 10px;
+  align-items: flex-end; /* Align items to bottom */
+  max-width: calc(100vw - 350px); /* Prevent overflow */
+  overflow-x: auto; /* Allow scrolling if needed */
+  scrollbar-width: none; /* Hide scrollbar in Firefox */
+}
+
+.windowsContainer::-webkit-scrollbar {
+  display: none; /* Hide scrollbar in Chrome/Safari */
 }
 
 .windowWrapper {
-  position: fixed;
-  bottom: 0;
-}
-
-.minimizedWindows {
-  position: fixed;
-  bottom: 0;
-  right: 330px;
-  display: flex;
-  gap: 10px;
+  flex: 0 0 auto;
+  /* No positioning needed */
 }
 
 .minimizedWindow {
+  flex: 0 0 auto;
   width: 200px;
   height: 40px;
   background: white;

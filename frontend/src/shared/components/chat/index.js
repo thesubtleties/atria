@@ -1,5 +1,3 @@
-// src/shared/components/chat/index.js
-
 // Export all chat components
 export { default as ChatSidebar } from './ChatSidebar';
 export { default as ChatThreadList } from './ChatThreadList';

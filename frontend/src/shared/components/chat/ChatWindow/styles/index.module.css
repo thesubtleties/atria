@@ -1,8 +1,8 @@
 /* src/shared/components/chat/ChatWindow/ChatWindow.module.css */
 .chatWindow {
-  position: fixed;
+  /* position: fixed;
   bottom: 0;
-  right: 330px;
+  right: 330px; */
   width: 300px;
   height: 350px;
   background: white;

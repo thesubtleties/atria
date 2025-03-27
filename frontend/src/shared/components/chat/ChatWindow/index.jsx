@@ -14,6 +14,8 @@ import {
   maximizeThread,
 } from '../../../../app/store/chatSlice';
 import { useSocketMessages } from '../../../hooks/useSocketMessages';
+import ChatMessage from '../ChatMessage';
+import { selectUser } from '@/app/store/authSlice';
 import styles from './styles/index.module.css';
 
 function ChatWindow({ threadId }) {
@@ -21,8 +23,8 @@ function ChatWindow({ threadId }) {
   const [isMaximized, setIsMaximized] = useState(false);
   const messagesEndRef = useRef(null);
   const messagesContainerRef = useRef(null);
-  const { currentUser } = useSelector((state) => state.auth);
-
+  const currentUser = useSelector(selectUser);
+  console.log('current user', currentUser);
   const {
     messages,
     otherUser,
@@ -173,25 +175,11 @@ function ChatWindow({ threadId }) {
         )}
 
         {messages.map((message) => (
-          <div
+          <ChatMessage
             key={message.id}
-            className={`${styles.message} ${
-              message.sender_id === currentUser?.id
-                ? styles.sent
-                : styles.received
-            } ${message.pending ? styles.pending : ''}`}
-          >
-            <div className={styles.messageContent}>{message.content}</div>
-            <div className={styles.messageTime}>
-              {new Date(message.created_at).toLocaleTimeString([], {
-                hour: '2-digit',
-                minute: '2-digit',
-              })}
-              {message.status === 'READ' && (
-                <span className={styles.readStatus}>✓</span>
-              )}
-            </div>
-          </div>
+            message={message}
+            isCurrentUser={message.sender_id === currentUser?.id}
+          />
         ))}
         <div ref={messagesEndRef} />
       </div>
