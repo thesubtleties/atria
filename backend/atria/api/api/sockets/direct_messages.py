@@ -3,6 +3,7 @@ from api.extensions import socketio
 from api.commons.socket_decorators import socket_authenticated_only
 from flask_socketio import emit, join_room
 from api.services.direct_message import DirectMessageService
+from api.models.user import User
 
 
 @socketio.on("get_direct_message_threads")

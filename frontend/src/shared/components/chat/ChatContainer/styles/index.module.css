@@ -1,0 +1,40 @@
+/* src/shared/components/chat/ChatContainer/ChatContainer.module.css */
+.chatContainer {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  z-index: 999;
+}
+
+.windowWrapper {
+  position: fixed;
+  bottom: 0;
+}
+
+.minimizedWindows {
+  position: fixed;
+  bottom: 0;
+  right: 330px;
+  display: flex;
+  gap: 10px;
+}
+
+.minimizedWindow {
+  width: 200px;
+  height: 40px;
+  background: white;
+  border-radius: 8px 8px 0 0;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  cursor: pointer;
+}
+
+.minimizedContent {
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
