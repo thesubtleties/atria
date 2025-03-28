@@ -3,52 +3,81 @@
 # Exit on any error
 set -e
 
-echo "Starting initialization script..."
+echo "[$(date)] Starting initialization script..."
 
-# Wait for database
-echo "Waiting for postgres..."
+# Wait for database with timeout
+MAX_TRIES=30
+TRIES=0
+echo "[$(date)] Waiting for postgres..."
 while ! nc -z atria-db 5432; do
-  echo "Postgres is unavailable - sleeping"
-  sleep 1
+    echo "[$(date)] Postgres is unavailable - sleeping"
+    TRIES=$((TRIES+1))
+    if [ $TRIES -gt $MAX_TRIES ]; then
+        echo "[$(date)] ERROR: Postgres did not become available in time"
+        exit 1
+    fi
+    sleep 1
 done
-echo "PostgreSQL started successfully!"
+echo "[$(date)] PostgreSQL started successfully!"
 
-# Initialize database
-echo "Initializing database..."
+# Initialize database with better error handling
+echo "[$(date)] Initializing database..."
 
-# Remove existing migrations if they exist
-rm -rf migrations/
-flask db init
+if [ -d "migrations" ]; then
+    echo "[$(date)] Existing migrations found, backing up..."
+    mv migrations migrations_backup_$(date +%Y%m%d_%H%M%S)
+fi
 
-# Create and apply migrations
-echo "Creating migrations..."
-flask db migrate -m "Initial migration"
+echo "[$(date)] Initializing Flask-Migrate..."
+flask db init || { echo "[$(date)] ERROR: Flask db init failed"; exit 1; }
 
-echo "Applying migrations..."
-flask db upgrade
+echo "[$(date)] Creating migrations..."
+flask db migrate -m "Initial migration $(date +%Y%m%d_%H%M%S)" || { echo "[$(date)] ERROR: Migration creation failed"; exit 1; }
+
+echo "[$(date)] Applying migrations..."
+flask db upgrade || { echo "[$(date)] ERROR: Migration upgrade failed"; exit 1; }
 
 # Add seeding step
-echo "Seeding database..."
-python -m seeders.seed_db
+echo "[$(date)] Seeding database..."
+python -m seeders.seed_db || { echo "[$(date)] ERROR: Seeding failed"; exit 1; }
 
-# Verify database setup
-echo "Verifying database setup..."
+# Verify database setup with more detailed output
+echo "[$(date)] Verifying database setup..."
 python << END
 from api.app import create_app
 from api.extensions import db
 from sqlalchemy import inspect
+import sys
 
-app = create_app()
-with app.app_context():
-    inspector = inspect(db.engine)
-    tables = inspector.get_table_names()
-    print(f"Found tables: {tables}")
+try:
+    app = create_app()
+    with app.app_context():
+        inspector = inspect(db.engine)
+        tables = inspector.get_table_names()
+        print(f"[$(date)] Found tables: {tables}")
+        
+        # Additional verification
+        for table in tables:
+            columns = inspector.get_columns(table)
+            print(f"[$(date)] Table {table} columns: {[col['name'] for col in columns]}")
+            
+except Exception as e:
+    print(f"[$(date)] ERROR during verification: {str(e)}", file=sys.stderr)
+    sys.exit(1)
 END
 
-echo "Starting Gunicorn server with Socket.IO support..."
-exec python -u -m gunicorn --bind 0.0.0.0:5000 "api.wsgi:app" \
-    --log-level debug \
-    --capture-output \
-    --worker-class eventlet \
+
+echo "[$(date)] Starting Gunicorn server..."
+exec python -u -m gunicorn "api.wsgi:app" \
+    --bind 0.0.0.0:5000 \
     --workers 1 \
-    --reload
+    --threads 2 \
+    --reload \
+    --log-level debug \
+    --access-logfile - \
+    --error-logfile - \
+    --capture-output \
+    --timeout 120 \
+    --logger-class=gunicorn.glogging.Logger \
+    --access-logformat '%(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s" %(L)s'
+

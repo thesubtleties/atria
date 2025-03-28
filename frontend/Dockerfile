@@ -1,12 +1,28 @@
+# Build stage
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Install dependencies
+COPY package*.json ./
+RUN npm ci
+
+# Copy source and build
+COPY . .
+RUN npm run build
+
+# Serve stage
 FROM node:20-alpine
 
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm install
+# Install serve globally
+RUN npm install -g serve
 
-COPY . .
+# Copy built files from builder
+COPY --from=builder /app/dist ./dist
 
-EXPOSE 5173
+EXPOSE 80
 
-CMD ["npm", "run", "dev", "--", "--host"]
+# Serve the built files on port 80
+CMD ["serve", "-s", "dist", "-l", "80"]

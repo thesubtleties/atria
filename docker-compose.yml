@@ -1,4 +1,3 @@
-# Root docker-compose.yml
 version: '3.8'
 
 services:
@@ -7,28 +6,30 @@ services:
     build:
       context: ./backend/atria
       dockerfile: Dockerfile
-    ports:
-      - '${BACKEND_PORT:-5000}:5000'
+    expose:
+      - '5000'
     volumes:
       - ./backend/atria:/app
     env_file:
       - .env
       - ./backend/atria/.flaskenv
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    networks:
+      - default
+      - shared_portainer_network
 
   frontend:
     container_name: atria-client
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    ports:
-      - '${FRONTEND_PORT:-5173}:5173'
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    environment:
-      - VITE_API_URL=http://localhost:5000/api
+    expose:
+      - '80' # Changed from 5173 to 80 since we'll serve built files
+    networks:
+      - default
+      - shared_portainer_network
     depends_on:
       - backend
 
@@ -41,8 +42,21 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
-    ports:
-      - '${POSTGRES_PORT:-5432}:5432'
+    expose:
+      - '5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - default
+      - shared_portainer_network
 
 volumes:
   postgres_data:
+
+networks:
+  default:
+  shared_portainer_network:
+    external: true
