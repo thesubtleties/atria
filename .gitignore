@@ -28,3 +28,6 @@ backend/atria/migrations/*
 #frontend
 frontend/setup-structure.sh
 
+
+
+migrations_backup_*/
