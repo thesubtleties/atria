@@ -8,6 +8,7 @@ function ChatMessage({ message, isCurrentUser }) {
     sender_id: message.sender_id,
     isCurrentUser: isCurrentUser,
     messageClass: isCurrentUser ? 'sent' : 'received',
+    messageStatus: message.status,
   });
 
   const messageClass = isCurrentUser ? styles.sent : styles.received;
@@ -21,7 +22,7 @@ function ChatMessage({ message, isCurrentUser }) {
           hour: '2-digit',
           minute: '2-digit',
         })}
-        {message.status === 'READ' && isCurrentUser && (
+        {message.status === 'read' && isCurrentUser && (
           <span className={styles.readStatus}>✓</span>
         )}
       </div>
