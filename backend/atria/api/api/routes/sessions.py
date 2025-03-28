@@ -1,10 +1,9 @@
+# api/api/routes/sessions.py
 from flask.views import MethodView
 from flask_smorest import Blueprint
 from flask_jwt_extended import jwt_required
 from flask import request
 
-from api.extensions import db
-from api.models import Session, Event, User
 from api.api.schemas import (
     SessionSchema,
     SessionDetailSchema,
@@ -14,7 +13,6 @@ from api.api.schemas import (
     SessionStatusUpdateSchema,
 )
 from api.commons.pagination import (
-    paginate,
     PAGINATION_PARAMETERS,
     get_pagination_schema,
 )
@@ -23,6 +21,7 @@ from api.commons.decorators import (
     event_organizer_required,
     session_access_required,
 )
+from api.services.session import SessionService
 
 
 blp = Blueprint(
@@ -59,7 +58,7 @@ class SessionList(MethodView):
         responses={
             200: get_pagination_schema(
                 "sessions",
-                "SessionDetail",  # Changed from SessionBase to SessionDetail
+                "SessionDetail",
             ),
             404: {"description": "Event not found"},
         },
@@ -68,21 +67,10 @@ class SessionList(MethodView):
     @event_member_required()
     def get(self, event_id):
         """Get event's sessions"""
-        query = Session.query.options(
-            db.joinedload(Session.speakers),
-            db.joinedload(Session.session_speakers),
-        ).filter_by(event_id=event_id)
-
         day_number = request.args.get("day_number", type=int)
-        if day_number:
-            query = query.filter_by(day_number=day_number)
 
-        query = query.order_by(Session.day_number, Session.start_time)
-
-        return paginate(
-            query,
-            SessionDetailSchema(many=True),  # Use DetailSchema instead
-            collection_name="sessions",
+        return SessionService.get_event_sessions(
+            event_id, day_number, SessionDetailSchema(many=True)
         )
 
     @blp.arguments(SessionCreateSchema)
@@ -118,17 +106,11 @@ class SessionList(MethodView):
     @event_organizer_required()
     def post(self, session_data, event_id):
         """Create new session"""
-        session = Session(event_id=event_id, **session_data)
-
         try:
-            session.validate_times()
+            session = SessionService.create_session(event_id, session_data)
+            return session, 201
         except ValueError as e:
             return {"message": str(e)}, 400
-
-        db.session.add(session)
-        db.session.commit()
-
-        return session, 201
 
 
 @blp.route("/sessions/<int:session_id>")
@@ -145,9 +127,7 @@ class SessionResource(MethodView):
     @session_access_required()
     def get(self, session_id):
         """Get session details"""
-        session = Session.query.get_or_404(session_id)
-        # Remove the context argument
-        return session
+        return SessionService.get_session(session_id)
 
     @blp.arguments(SessionUpdateSchema)
     @blp.response(200, SessionDetailSchema)
@@ -172,23 +152,10 @@ class SessionResource(MethodView):
     @event_organizer_required()
     def put(self, update_data, session_id):
         """Update session"""
-        session = Session.query.get_or_404(session_id)
-        # time fields
-        if "start_time" in update_data or "end_time" in update_data:
-            try:
-                if "start_time" in update_data:
-                    session.start_time = update_data["start_time"]
-                if "end_time" in update_data:
-                    session.end_time = update_data["end_time"]
-                session.validate_times()
-            except ValueError as e:
-                return {"message": str(e)}, 400
-        # other fields
-        for key, value in update_data.items():
-            if key not in ["start_time", "end_time"]:
-                setattr(session, key, value)
-        db.session.commit()
-        return session
+        try:
+            return SessionService.update_session(session_id, update_data)
+        except ValueError as e:
+            return {"message": str(e)}, 400
 
     @blp.response(204)
     @blp.doc(
@@ -202,10 +169,8 @@ class SessionResource(MethodView):
     @event_organizer_required()
     def delete(self, session_id):
         """Delete session"""
-        session = Session.query.get_or_404(session_id)
-        db.session.delete(session)
-        db.session.commit()
-        return ""
+        SessionService.delete_session(session_id)
+        return "", 204
 
 
 @blp.route("/sessions/<int:session_id>/status")
@@ -224,11 +189,9 @@ class SessionStatusResource(MethodView):
     @event_organizer_required()
     def put(self, status_data, session_id):
         """Update session status"""
-        session = Session.query.get_or_404(session_id)
-        session.update_status(status_data["status"])
-        db.session.commit()
-        schema = SessionDetailSchema()
-        return schema.dump(session, context={"session_id": session_id})
+        return SessionService.update_session_status(
+            session_id, status_data["status"]
+        )
 
 
 @blp.route("/sessions/<int:session_id>/times")
@@ -256,14 +219,9 @@ class SessionTimesResource(MethodView):
     @event_organizer_required()
     def put(self, times_data, session_id):
         """Update session times"""
-        session = Session.query.get_or_404(session_id)
-
         try:
-            session.update_times(
-                times_data["start_time"], times_data["end_time"]
+            return SessionService.update_session_times(
+                session_id, times_data["start_time"], times_data["end_time"]
             )
-            db.session.commit()
         except ValueError as e:
             return {"message": str(e)}, 400
-
-        return session

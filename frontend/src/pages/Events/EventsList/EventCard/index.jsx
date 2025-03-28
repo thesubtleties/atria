@@ -37,21 +37,17 @@ export const EventCard = ({ event, isOrgView, canEdit }) => {
   const handleCardClick = (e) => {
     e.preventDefault();
 
+    // Always use the /app/events/:eventId path regardless of where we're viewing from
+    const basePath = `/app/events/${event.id}`;
+
     if (event.event_type === 'CONFERENCE') {
       // Always navigate for conferences
-      const basePath = isOrgView
-        ? `/app/organizations/${event.organization_id}/events/${event.id}`
-        : `/app/events/${event.id}`;
       navigate(basePath);
       return;
     }
 
     // Single session logic
     if (event.event_type === 'SINGLE_SESSION') {
-      const basePath = isOrgView
-        ? `/app/organizations/${event.organization_id}/events/${event.id}`
-        : `/app/events/${event.id}`;
-
       if (hasSession) {
         // Has session - go directly to it
         navigate(`${basePath}/sessions/${eventDetails.sessions[0].id}`);
@@ -71,11 +67,9 @@ export const EventCard = ({ event, isOrgView, canEdit }) => {
   };
 
   const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return format(
-      new Date(date.getTime() + date.getTimezoneOffset() * 60000),
-      'M/d/yyyy'
-    );
+    // Parse as UTC, then convert to local
+    const date = new Date(dateString + 'Z'); // Add Z to force UTC interpretation
+    return format(date, 'M/d/yyyy');
   };
 
   const handleDelete = async () => {

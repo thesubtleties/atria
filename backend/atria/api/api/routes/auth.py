@@ -1,18 +1,9 @@
 from flask.views import MethodView
 from flask_smorest import Blueprint
-from flask_jwt_extended import (
-    create_access_token,
-    create_refresh_token,
-    jwt_required,
-    get_jwt_identity,
-    get_jwt,
-)
-from flask import request, current_app
+from flask_jwt_extended import jwt_required
 
-from api.extensions import db
-from api.models import User
 from api.api.schemas import LoginSchema, SignupSchema, UserDetailSchema
-from api.auth.helpers import add_token_to_database, revoke_token
+from api.services.auth import AuthService
 
 blp = Blueprint(
     "auth",
@@ -49,23 +40,10 @@ class AuthLoginResource(MethodView):
     )
     def post(self, login_data):
         """Authenticate user"""
-        user = User.query.filter_by(email=login_data["email"]).first()
-        if not user or not user.verify_password(login_data["password"]):
+        try:
+            return AuthService.login(login_data)
+        except ValueError:
             return {"message": "Invalid credentials"}, 401
-
-        # Create tokens
-        access_token = create_access_token(identity=str(user.id))
-        refresh_token = create_refresh_token(identity=str(user.id))
-
-        # Add tokens to blocklist database (unrevoked)
-        add_token_to_database(
-            access_token, current_app.config["JWT_IDENTITY_CLAIM"]
-        )
-        add_token_to_database(
-            refresh_token, current_app.config["JWT_IDENTITY_CLAIM"]
-        )
-
-        return {"access_token": access_token, "refresh_token": refresh_token}
 
 
 @blp.route("/me")
@@ -86,9 +64,7 @@ class AuthMeResource(MethodView):
     @jwt_required()
     def get(self):
         """Get current authenticated user"""
-        user_id = int(get_jwt_identity())
-        user = User.query.get_or_404(user_id)
-        return user
+        return AuthService.get_current_user()
 
 
 @blp.route("/refresh")
@@ -115,15 +91,7 @@ class AuthRefreshResource(MethodView):
     @jwt_required(refresh=True)
     def post(self):
         """Refresh access token"""
-        current_user = get_jwt_identity()
-        access_token = create_access_token(identity=current_user)
-
-        # Add new access token to blocklist database
-        add_token_to_database(
-            access_token, current_app.config["JWT_IDENTITY_CLAIM"]
-        )
-
-        return {"access_token": access_token}
+        return AuthService.refresh_token()
 
 
 @blp.route("/logout")
@@ -160,10 +128,7 @@ class AuthLogoutResource(MethodView):
     def post(self):
         """Logout user"""
         try:
-            jti = get_jwt()["jti"]
-            user_identity = get_jwt_identity()
-            revoke_token(jti, user_identity)
-            return {"message": "Successfully logged out"}
+            return AuthService.logout()
         except Exception as e:
             return {"message": str(e)}, 400
 
@@ -196,27 +161,8 @@ class AuthSignupResource(MethodView):
     )
     def post(self, signup_data):
         """Register new user"""
-        if User.query.filter_by(email=signup_data["email"]).first():
-            return {"message": "Email already registered"}, 400
-
-        user = User(**signup_data)
-        db.session.add(user)
-        db.session.commit()
-
-        # Create tokens
-        access_token = create_access_token(identity=str(user.id))
-        refresh_token = create_refresh_token(identity=str(user.id))
-
-        # Add tokens to blocklist database
-        add_token_to_database(
-            access_token, current_app.config["JWT_IDENTITY_CLAIM"]
-        )
-        add_token_to_database(
-            refresh_token, current_app.config["JWT_IDENTITY_CLAIM"]
-        )
-
-        return {
-            "message": "User created successfully",
-            "access_token": access_token,
-            "refresh_token": refresh_token,
-        }, 201
+        try:
+            result = AuthService.signup(signup_data)
+            return result, 201
+        except ValueError as e:
+            return {"message": str(e)}, 400

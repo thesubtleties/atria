@@ -14,6 +14,14 @@ from api.models.organization_user import OrganizationUser, OrganizationUserRole
 from api.models.session_speaker import SessionSpeaker
 from api.models.blocklist import TokenBlocklist
 
+from api.models.connection import Connection
+from api.models.chat_room import ChatRoom
+from api.models.chat_message import ChatMessage
+from api.models.direct_message_thread import DirectMessageThread
+from api.models.direct_message import DirectMessage
+from api.models.user_encryption_key import UserEncryptionKey
+from api.models.user_key_backup import UserKeyBackup
+
 __all__ = [
     "User",
     "Organization",
@@ -21,6 +29,14 @@ __all__ = [
     "Session",
     "EventUser",
     "OrganizationUser",
+    "OrganizationUserRole",
     "SessionSpeaker",
     "TokenBlocklist",
+    "Connection",
+    "ChatRoom",
+    "ChatMessage",
+    "DirectMessageThread",
+    "DirectMessage",
+    "UserEncryptionKey",
+    "UserKeyBackup",
 ]

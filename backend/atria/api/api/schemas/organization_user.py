@@ -18,8 +18,14 @@ class OrganizationUserSchema(ma.SQLAlchemyAutoSchema):
     is_owner = ma.Boolean(dump_only=True)
     is_admin = ma.Boolean(dump_only=True)
 
-    # User field
-    image_url = ma.String(attribute="user.image_url")
+    first_name = ma.String(dump_only=True)
+    last_name = ma.String(dump_only=True)
+    sort_name = ma.String(dump_only=True)
+    image_url = ma.String(dump_only=True)
+    social_links = ma.Dict(dump_only=True)
+
+    # # User field
+    # image_url = ma.String(attribute="user.image_url") # attribute is used to access nested fields - in case we have circular imports
 
 
 class OrganizationUserDetailSchema(OrganizationUserSchema):

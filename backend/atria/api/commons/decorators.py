@@ -1,6 +1,6 @@
 from functools import wraps
 from flask_jwt_extended import get_jwt_identity
-from api.models import User, Organization, Event, Session
+from api.models import User, Organization, Event, Session, ChatRoom
 from api.models.enums import EventUserRole, OrganizationUserRole
 
 
@@ -157,6 +157,31 @@ def session_access_required():
             if not session.event.has_user(current_user):
                 return {
                     "message": "Not authorized to access this session"
+                }, 403
+
+            return f(*args, **kwargs)
+
+        return decorated_function
+
+    return decorator
+
+
+def chat_room_access_required():
+    """Check if user has access to chat room's event"""
+
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            current_user_id = int(get_jwt_identity())
+            current_user = User.query.get_or_404(current_user_id)
+            room_id = kwargs.get("room_id")
+
+            chat_room = ChatRoom.query.get_or_404(room_id)
+            event = Event.query.get_or_404(chat_room.event_id)
+
+            if not event.has_user(current_user):
+                return {
+                    "message": "Not authorized to access this chat room"
                 }, 403
 
             return f(*args, **kwargs)

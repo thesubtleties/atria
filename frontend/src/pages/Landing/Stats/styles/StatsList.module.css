@@ -7,7 +7,7 @@
 
 @media (max-width: 768px) {
   .statsList {
-    flex-direction: column;
+    flex-direction: row;
     gap: 2rem;
     padding: 1rem;
   }

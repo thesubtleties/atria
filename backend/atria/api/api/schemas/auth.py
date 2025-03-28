@@ -8,8 +8,15 @@ class LoginSchema(ma.Schema):
     class Meta:
         name = "Login"
 
-    email = ma.Email(required=True)
-    password = ma.String(required=True, load_only=True)
+    email = ma.Email(
+        required=True,
+        metadata={"example": "demouser@demo.com", "description": "User email"},
+    )
+    password = ma.String(
+        required=True,
+        load_only=True,
+        metadata={"example": "changeme", "description": "User password"},
+    )
 
 
 class SignupSchema(ma.Schema):

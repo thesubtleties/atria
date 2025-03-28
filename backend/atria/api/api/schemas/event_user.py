@@ -17,6 +17,11 @@ class EventUserSchema(ma.SQLAlchemyAutoSchema):
     user_name = ma.String(dump_only=True)
     is_speaker = ma.Boolean(dump_only=True)
     is_organizer = ma.Boolean(dump_only=True)
+    first_name = ma.String(dump_only=True)
+    last_name = ma.String(dump_only=True)
+    sort_name = ma.String(dump_only=True)
+    image_url = ma.String(dump_only=True)
+    social_links = ma.Dict(dump_only=True)
 
 
 class EventUserDetailSchema(EventUserSchema):
