@@ -1,11 +1,10 @@
+// vite.config.js
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -19,6 +18,13 @@ export default defineConfig({
         target: 'http://atria-api:5000',
         changeOrigin: true,
         secure: false,
+      },
+      '/socket.io': {
+        // Socket.io proxy configuration
+        target: 'http://atria-api:5000',
+        changeOrigin: true,
+        secure: false,
+        ws: true, // Critical for WebSockets
       },
     },
   },
