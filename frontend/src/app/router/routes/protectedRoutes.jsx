@@ -13,6 +13,7 @@ import { AgendaPage } from '../../../pages/Agenda';
 import { EventHome } from '../../../pages/EventHome';
 import { SpeakersPage } from '../../../pages/Speakers';
 import { SessionPending } from '../../../pages/Session/SessionPending';
+import RoadmapPage from '@/pages/Roadmap';
 
 // Placeholder component for development
 const PlaceholderComponent = ({ routeName = 'This page' }) => (
@@ -156,6 +157,10 @@ export const protectedRoutes = [
               {
                 path: 'setup-session',
                 element: <SetupSession />,
+              },
+              {
+                path: '*',
+                element: <RoadmapPage />,
               },
             ],
           },
