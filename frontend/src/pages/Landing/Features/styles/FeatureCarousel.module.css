@@ -1,0 +1,38 @@
+/* Features/styles/FeatureCarousel.module.css */
+.carouselRoot {
+  width: 100%;
+  padding: 0 20px;
+}
+
+.carouselControls {
+  margin-top: 1rem;
+}
+
+.carouselControls button {
+  background-color: rgba(86, 58, 177, 0.2);
+  color: #563ab1;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+.carouselControls button:hover {
+  background-color: rgba(86, 58, 177, 0.4);
+}
+
+.carouselIndicators {
+  margin-top: 1.5rem;
+}
+
+.carouselIndicators button {
+  width: 8px;
+  height: 8px;
+  background-color: rgba(86, 58, 177, 0.3);
+  transition:
+    width 0.3s ease,
+    background-color 0.3s ease;
+}
+
+.carouselIndicators button[data-active] {
+  width: 24px;
+  background-color: #563ab1;
+}
