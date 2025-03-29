@@ -8,7 +8,7 @@ import {
   useGetEventQuery,
   useDeleteEventMutation,
 } from '@/app/features/events/api';
-import { format } from 'date-fns';
+import { useFormatDate } from '@/shared/hooks/formatDate';
 import styles from './styles/index.module.css';
 
 export const EventCard = ({ event, isOrgView, canEdit }) => {
@@ -16,6 +16,7 @@ export const EventCard = ({ event, isOrgView, canEdit }) => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteEvent] = useDeleteEventMutation();
+  const { formatDate } = useFormatDate();
 
   // Only fetch details if it's a single session event
   const { data: eventDetails } = useGetEventQuery(event.id, {
@@ -66,11 +67,11 @@ export const EventCard = ({ event, isOrgView, canEdit }) => {
     }
   };
 
-  const formatDate = (dateString) => {
-    // Parse as UTC, then convert to local
-    const date = new Date(dateString + 'Z'); // Add Z to force UTC interpretation
-    return format(date, 'M/d/yyyy');
-  };
+  // const formatDate = (dateString) => {
+  //   // Parse as UTC, then convert to local
+  //   const date = parseISO(dateString);
+  //   return format(date, 'M/d/yyyy');
+  // };
 
   const handleDelete = async () => {
     try {
