@@ -8,6 +8,9 @@
     var(--mantine-color-gray-0) 0%,
     var(--mantine-color-gray-1) 100%
   ); */
+
+  /* shape cutout */
+  clip-path: ellipse(120% 100% at 50% -5%);
 }
 
 .heroBackground {
@@ -32,7 +35,7 @@
 }
 
 /* Curved shape at the bottom */
-.heroSection::after {
+/* .heroSection::after {
   content: '';
   position: absolute;
   bottom: 0;
@@ -42,6 +45,21 @@
   background: #f8f9fa;
   border-radius: 50% 50% 0 0;
   transform: translateY(50%);
+} */
+
+.heroSection::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 150px;
+  /* Remove the background color */
+  background: transparent;
+  /* Use a clip-path instead to create the curved shape */
+  clip-path: ellipse(50% 50% at 50% 100%);
+  /* Ensure it's above the gradient background */
+  z-index: 1;
 }
 
 @media (max-width: 768px) {

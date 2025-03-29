@@ -1,0 +1,63 @@
+/* Features/styles/index.module.css */
+/* .featuresSection {
+  padding: 5rem 0;
+  background: linear-gradient(to bottom, #f8f9fa 0%, #e9ecef 100%);
+  position: relative;
+} */
+
+.featuresContainer {
+  position: relative;
+  z-index: 2;
+}
+
+.sectionHeader {
+  margin-bottom: 3rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.sectionTitle {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  background: linear-gradient(45deg, #563ab1, #8831c7);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.sectionDescription {
+  font-size: 1.25rem;
+  line-height: 1.6;
+}
+
+/* Add curved shape at the bottom, similar to Hero section */
+/* .featuresSection::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  background: #ffffff;
+  border-radius: 50% 50% 0 0;
+  transform: translateY(50%);
+} */
+
+@media (max-width: 768px) {
+  .featuresSection {
+    padding: 4rem 0;
+  }
+
+  .sectionTitle {
+    font-size: 2rem;
+  }
+
+  .sectionDescription {
+    font-size: 1rem;
+  }
+
+  .featuresSection::after {
+    height: 80px;
+  }
+}
