@@ -16,6 +16,7 @@ import {
 import { eventSchema, eventUpdateSchema } from './schemas/eventSchema';
 import { useEffect } from 'react';
 import styles from './styles/index.module.css';
+import { useFormatDate } from '@/shared/hooks/formatDate';
 
 const EVENT_TYPES = [
   { value: 'CONFERENCE', label: 'Conference' },
@@ -24,11 +25,6 @@ const EVENT_TYPES = [
 
 const SINGLE_SESSION_TYPE = 'SINGLE_SESSION';
 
-const formatDateForInput = (dateString) => {
-  if (!dateString) return '';
-  return dateString; // Already in YYYY-MM-DD format
-};
-
 export const EventModal = ({
   event,
   orgId,
@@ -36,6 +32,8 @@ export const EventModal = ({
   onClose,
   allowConferences = false,
 }) => {
+  const { formatDateForInput } = useFormatDate();
+
   const isEditing = !!event;
   const { data: eventDetails } = useGetEventQuery(event?.id, {
     skip: !event?.id || event?.event_type !== SINGLE_SESSION_TYPE,
