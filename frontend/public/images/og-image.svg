@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d698db" />
+      <stop offset="33%" stop-color="#563ab1" />
+      <stop offset="66%" stop-color="#8831c7" />
+      <stop offset="100%" stop-color="#d6d6d6" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#gradient)" />
+  <text x="600" y="290" font-family="Arial, sans-serif" font-size="100" font-weight="bold" text-anchor="middle" fill="white">atria</text>
+  <text x="600" y="390" font-family="Arial, sans-serif" font-size="40" text-anchor="middle" fill="white">Connect Virtual + Live Events</text>
+</svg>
