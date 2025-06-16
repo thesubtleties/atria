@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   backend:
-    container_name: atria-api
+    container_name: atria-api-dev
     build:
       context: ./backend/atria
       dockerfile: Dockerfile
@@ -11,8 +11,10 @@ services:
     volumes:
       - ./backend/atria:/app
     env_file:
-      - .env
+      - .env.development
       - ./backend/atria/.flaskenv
+    environment:
+      - SEED_DB=${SEED_DB:-true}
     depends_on:
       db:
         condition: service_healthy
@@ -21,12 +23,12 @@ services:
       - shared_portainer_network
 
   frontend:
-    container_name: atria-client
+    container_name: atria-client-dev
     build:
       context: ./frontend
       dockerfile: Dockerfile
     expose:
-      - '80' # Changed from 5173 to 80 since we'll serve built files
+      - '80'
     networks:
       - default
       - shared_portainer_network
@@ -34,10 +36,10 @@ services:
       - backend
 
   db:
-    container_name: atria-db
+    container_name: atria-db-dev
     image: postgres:15-alpine
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data_dev:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -54,7 +56,7 @@ services:
       - shared_portainer_network
 
 volumes:
-  postgres_data:
+  postgres_data_dev:
 
 networks:
   default:

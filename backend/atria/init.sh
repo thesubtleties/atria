@@ -37,9 +37,13 @@ flask db migrate -m "Initial migration $(date +%Y%m%d_%H%M%S)" || { echo "[$(dat
 echo "[$(date)] Applying migrations..."
 flask db upgrade || { echo "[$(date)] ERROR: Migration upgrade failed"; exit 1; }
 
-# Add seeding step
-echo "[$(date)] Seeding database..."
-python -m seeders.seed_db || { echo "[$(date)] ERROR: Seeding failed"; exit 1; }
+# Add optional seeding step
+if [ "${SEED_DB:-true}" = "true" ]; then
+    echo "[$(date)] Seeding database..."
+    python -m seeders.seed_db || { echo "[$(date)] ERROR: Seeding failed"; exit 1; }
+else
+    echo "[$(date)] Skipping database seeding (SEED_DB=false)"
+fi
 
 # Verify database setup with more detailed output
 echo "[$(date)] Verifying database setup..."
