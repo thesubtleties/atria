@@ -5,7 +5,7 @@ services:
     container_name: atria-api-prod
     build:
       context: ./backend/atria
-      dockerfile: ../../../deploy/Dockerfile.backend.prod
+      dockerfile: ../../deploy/Dockerfile.backend.prod
     expose:
       - '5000'
     env_file:
