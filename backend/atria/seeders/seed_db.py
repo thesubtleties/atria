@@ -249,6 +249,36 @@ def seed_database():
                 )
 
             db.session.commit()
+            
+            # Reset sequences to avoid ID conflicts
+            print("Resetting sequences...")
+            sequences_to_reset = [
+                ("users_id_seq", "users"),
+                ("organizations_id_seq", "organizations"),
+                ("events_id_seq", "events"),
+                ("sessions_id_seq", "sessions"),
+                ("chat_rooms_id_seq", "chat_rooms"),
+                ("chat_messages_id_seq", "chat_messages"),
+                ("connections_id_seq", "connections"),
+                ("direct_message_threads_id_seq", "direct_message_threads"),
+                ("direct_messages_id_seq", "direct_messages"),
+                ("user_encryption_keys_id_seq", "user_encryption_keys"),
+            ]
+            
+            for seq_name, table_name in sequences_to_reset:
+                try:
+                    db.session.execute(
+                        text(f"""
+                            SELECT setval('{seq_name}', 
+                                (SELECT COALESCE(MAX(id), 0) FROM {table_name}) + 1, 
+                                false
+                            )
+                        """)
+                    )
+                except Exception as e:
+                    print(f"Warning: Could not reset sequence {seq_name}: {str(e)}")
+            
+            db.session.commit()
             print("Database seeded successfully!")
 
         except Exception as e:

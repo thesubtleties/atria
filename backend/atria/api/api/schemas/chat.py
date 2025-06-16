@@ -30,7 +30,7 @@ class ChatRoomCreateSchema(ma.Schema):
 
     name = ma.String(required=True)
     description = ma.String()
-    is_global = ma.Boolean(default=False)
+    is_global = ma.Boolean(load_default=False)
 
 
 class ChatMessageSchema(ma.SQLAlchemyAutoSchema):

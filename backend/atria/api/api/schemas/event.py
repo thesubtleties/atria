@@ -58,7 +58,7 @@ class EventDetailSchema(EventSchema):
     organizers = ma.Nested(
         "UserWithRoleSchema",
         many=True,
-        attributes="organizers",
+        attribute="organizers",
         only=(
             "id",
             "full_name",
