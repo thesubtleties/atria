@@ -48,7 +48,6 @@ Atria is a comprehensive event management platform that enables organizers to cr
 
 ## 🏗️ Architecture
 
-The application follows a clean architecture with clear separation of concerns:
 
 ### Backend
 
@@ -174,209 +173,178 @@ A separate commercial license is required. Please contact the copyright holder f
 
 ## Phase 1: Networking Integration (Current Priority)
 
-### Real-time Communication
+# Atria Development Roadmap
 
-- [ ] Implement chat room UI components
-  - [ ] Chat message display
-  - [ ] Message input with emoji support
-  - [ ] Chat member list sidebar
-- [ ] Connect Socket.IO events to frontend
-  - [ ] Chat room subscription
-  - [ ] Real-time message updates
-  - [ ] Online status indicators
-- [ ] Direct messaging interface
-  - [ ] Conversation list
-  - [ ] Message thread view
-  - [ ] New conversation creation
+## Phase 1: Networking Integration (In Progress)
+Building core networking and communication features
 
-### Connection Management
+### Chat (In Progress)
+Public chat functionality for events
 
-- [ ] User discovery interface
-  - [ ] Searchable attendee directory
-  - [ ] Filter by interests/role
-  - [ ] Attendee profile cards
-- [ ] Connection request flow
-  - [ ] Send/receive connection requests
-  - [ ] Accept/decline functionality
-  - [ ] Connection management page
+- [x] Backend
+- [ ] Networking area chat rooms
+- [ ] Individual session chat room
+- [ ] Moderation/muting capabilities
+- [ ] Public chat notifications
 
-## Phase 2: Session Management Enhancement
+### Direct Messaging (In Progress)
+Private messaging between users
 
-### Session UI Improvements
+- [x] Direct message functionality
+- [x] List of conversations
+- [x] Base frontend UI
+- [ ] Proper filtering
+- [ ] End-to-end encryption
+- [ ] Ice breaker connection starter
+- [ ] Block/remove connection options
+- [ ] Emoji support
+- [ ] Admin connection options
 
-- [ ] Detailed session view page
-  - [ ] Session description
-  - [ ] Date/time with timezone support
-  - [ ] Speaker information
-- [ ] Session editing modal improvements
-  - [ ] Speaker assignment interface
-  - [ ] Speaker selection from event attendees
-  - [ ] Multiple speaker support
+### Connection Management (Planned)
+Manage connections with other attendees
 
-### Speaker Management
+- [ ] Attendee directory
+- [ ] Attendee cards/base profiles
 
-- [ ] Speaker profiles
-  - [ ] Bio and photo
-  - [ ] Speaking history
-  - [ ] Contact information (private to organizers)
-- [ ] Speaker assignment interface
-  - [ ] Link existing users as speakers
-  - [ ] Invite external speakers
+## Phase 2: Personal Pages (Planned)
+User profiles and personal networking features
 
-## Phase 2.5: Streaming Integration
+### Profile Management (Planned)
+User profile creation and management
 
-### Video Streaming Services
+- [ ] Create/update profile page
+- [ ] Profile image upload/emoji generator
+- [ ] Cards for connections
 
-- [ ] Multiple streaming provider integration
-  - [ ] Zoom meeting/webinar embed support (Otherwise will have open in Zoom app - TBD)
-  - [ ] Dacast integration
-  - [ ] Alternative embed solutions
-- [ ] Session-streaming association
-  - [ ] Automatically update session to "live" ~5 minutes before start time
-- [ ] Live vs. Recorded content handling
-  - [ ] Live indicator for active streams
-  - [ ] Playback controls for recorded content
-  - [ ] Transition from live to recorded - Vimeo should handle automatically, but allow option to change embed link out.
+### Connection Features (Planned)
+Connection management capabilities
 
-## Phase 3: Admin Functionality
+- [ ] Ability to start connections
+- [ ] Create DM from connection page
+- [ ] Favorite specific connections
+- [ ] Accept/decline connection requests
+- [ ] Speaker connection preferences
 
-### User Management
+## Phase 3: Attendee Management (Planned)
+Tools for managing event attendees
 
-- [ ] Admin dashboard for user management
-  - [ ] User listing with filtering and search
-  - [ ] Role management
-  - [ ] Status indicators
-- [ ] Invitation system
-  - [ ] Email invitation interface
-  - [ ] Batch invitation via CSV upload
-  - [ ] Invitation tracking
+### Invitation System (Planned)
+Attendee invitation functionality
 
-### Role Management
+- [ ] Invite attendee via email
+- [ ] Invitation status tracking
+- [ ] Existing account handling
+- [ ] CSV/mass invite options
 
-- [ ] Role assignment interface
-  - [ ] Predefined roles (Admin, Organizer, Speaker, Attendee)
-  - [ ] Role permissions configuration
-  - [ ] Custom role creation
+### Attendee Controls (Planned)
+Attendee management features
 
-### Networking Control
+- [ ] Ability for attendees to leave event
+- [ ] Event archiving
+- [ ] Role assignment upon invitation
 
-- [ ] Networking permissions integrated in user management
-  - [ ] Toggle networking access per user
-  - [ ] Batch enable/disable networking
-  - [ ] Networking access levels (all, groups, none)
+## Phase 4: Sessions/Session Management (Planned)
+Enhanced session organization and features
 
-## Phase 4: Event Configuration
+### Session Content (Planned)
+Session content and details
 
-### Event Settings
+- [ ] Cleaner session page with details
+- [ ] Speakers area with social links
+- [ ] Speaker ordering capability
 
-- [ ] Event settings page
-  - [ ] Basic information (name, dates, description)
-  - [ ] Branding options (logo, colors)
-  - [ ] Privacy settings
-- [ ] Event customization
-  - [ ] Custom fields for registration
-  - [ ] Agenda display options
-  - [ ] Feature toggles (networking, chat, etc.)
+### Session Features (Planned)
+Interactive session capabilities
 
-### Agenda Management
+- [ ] Per-session chat option
+- [ ] Session tracking
+- [ ] Event timer for video preparation
 
-- [ ] Drag-and-drop agenda builder
-  - [ ] Time slot management
-  - [ ] Track organization
-  - [ ] Session assignment to slots
+### Updated Streaming Integration (Planned)
+Video streaming capabilities
 
-## Phase 5: Sponsor Management
+- [ ] Basic streaming integration
+- [ ] Vimeo, DaCast and other embeds
 
-### Sponsor Features
+## Phase 5: Admin Features (Planned)
+Administrative tools for event management
 
-- [ ] Backend models and APIs for sponsors
-  - [ ] Sponsor data model
-  - [ ] CRUD operations
-  - [ ] Sponsor levels/tiers
-- [ ] Sponsor management interface
-  - [ ] Sponsor listing
-  - [ ] Logo and profile management
-  - [ ] Sponsorship level assignment
+### Chat Administration (Planned)
+Chat room management tools
 
-### Sponsor Integration
+- [ ] Add/change chat rooms
+- [ ] Set time on chat room open/close
 
-- [ ] Sponsor display page
-  - [ ] Tiered sponsor showcase
-  - [ ] Sponsor profiles
-  - [ ] Contact information
-- [ ] Sponsor chat rooms
-  - [ ] Branded chat spaces
-  - [ ] Representatives assignment
-  - [ ] Attendee access control
+### Event Settings (Planned)
+Event configuration options
 
-## Phase 6: Analytics and Reporting
+- [ ] Theme options
+- [ ] Highlight and front page customization
+- [ ] Comprehensive event settings page
 
-### Event Analytics
+## Phase 6: Sponsors (Planned)
+Sponsor management and integration
 
-- [ ] Attendance tracking
-  - [ ] Session attendance metrics
-  - [ ] User engagement statistics
-  - [ ] Real-time participation monitoring
-- [ ] Networking analytics
-  - [ ] Connection statistics
-  - [ ] Message activity metrics
-  - [ ] Most active users/sessions
+### Sponsor Management (Planned)
+Core sponsor functionality
 
-### Reporting
+- [ ] Sponsors page
+- [ ] Per-session sponsorship area
+- [ ] Sponsor levels with custom names
+- [ ] Sponsor level descriptions
 
-- [ ] Customizable reports
-  - [ ] Attendance reports
-  - [ ] Session popularity
-  - [ ] User feedback aggregation
-- [ ] Export functionality
-  - [ ] CSV/Excel export
-  - [ ] PDF report generation
-  - [ ] Scheduled report delivery
+### Sponsor Integration (Planned)
+Sponsor visibility features
 
-## Phase 7: Platform Refinement
+- [ ] Sponsor imagery management
+- [ ] Sponsored chat rooms with timed opening
+- [ ] Chat page sponsorship options
+- [ ] Topical sponsorship for chat rooms
 
-### Performance Optimization
+## Phase 7: Long-term Features (Planned)
+Advanced features for future development
 
-- [ ] Backend optimization
-  - [ ] Query optimization
-  - [ ] Redis integration for Socket.IO scaling
-  - [ ] API response time improvements
-- [ ] Frontend optimization
-  - [ ] Bundle size reduction
-  - [ ] Lazy loading implementation
-  - [ ] Component memoization
+### Direct Messaging Enhancements (Planned)
+Advanced messaging capabilities
 
-### UI/UX Improvements
+- [ ] Event-specific chatbot with RAG
+- [ ] WebRTC video calls with connections
 
-- [ ] Design system refinement
-  - [ ] Consistent component styling
-  - [ ] Accessibility improvements
-  - [ ] Mobile responsiveness
-- [ ] User flow optimization
-  - [ ] Onboarding experience
-  - [ ] Navigation simplification
-  - [ ] Contextual help
+### Ticketing (Planned)
+Comprehensive ticketing system
 
-### Testing and Stability
+- [ ] Paid ticketing options
+- [ ] Public and private event settings
+- [ ] Upcoming events page
+- [ ] Placement promotion for events
+- [ ] Privacy-preserving analytics
 
-- [ ] Comprehensive test coverage
-  - [ ] Unit tests
-  - [ ] Integration tests
-  - [ ] End-to-end tests
-- [ ] Error handling improvements
-  - [ ] User-friendly error messages
-  - [ ] Recovery flows
-  - [ ] Logging and monitoring
+### Session Enhancements (Planned)
+Advanced session features
 
-## Future Considerations
+- [ ] Q&A functionality
+- [ ] Live polling integration
+- [ ] Hybrid event support
+- [ ] Zoom embed support
 
-- Mobile app development
-- Presenter backend that takes in Vmix Call embed + internet clicker embed + enables polling (either built in or 3rd party) for high end fully produced events.
-- Calendar/scheduling integration
-- Payment processing for ticketing
-- Multi-language support
-- Advanced content management
-- Exhibitor management
-- Streaming CDN partnerships for preferred pricing/features
-- White-label streaming solution integrations
-- Custom player with branding options
+### Sponsor Enhancements (Planned)
+Advanced sponsor capabilities
+
+- [ ] Direct ticket purchasing for attendees
+- [ ] Cross-event invitation capabilities
+
+### Promotional Features (Planned)
+Marketing and promotional tools
+
+- [ ] White-label streaming platform
+- [ ] Food delivery partnerships
+- [ ] Event hosting fee model
+- [ ] Broadcasting partnerships
+
+### Platform Expansion (Planned)
+Expanding platform availability
+
+- [ ] Progressive web app
+- [ ] Electron app
+- [ ] Mobile application
+- [ ] LLM integration for content
