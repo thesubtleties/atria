@@ -8,6 +8,6 @@ export const TestimonialImage = ({ src, alt }) => (
     h={400}
     w={{ base: '90%', sm: 400 }}
     fit="cover"
-    fallbackSrc="https://cdn.midjourney.com/5d6f3487-c90a-4cda-a099-c27bc0588445/0_2.png" // Placeholder image
+    fallbackSrc="/images/virtuallanding.png" // Placeholder image
   />
 );
