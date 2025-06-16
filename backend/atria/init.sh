@@ -9,7 +9,7 @@ echo "[$(date)] Starting initialization script..."
 MAX_TRIES=30
 TRIES=0
 echo "[$(date)] Waiting for postgres..."
-while ! nc -z atria-db 5432; do
+while ! nc -z ${DB_HOST:-db} 5432; do
     echo "[$(date)] Postgres is unavailable - sleeping"
     TRIES=$((TRIES+1))
     if [ $TRIES -gt $MAX_TRIES ]; then
@@ -23,24 +23,29 @@ echo "[$(date)] PostgreSQL started successfully!"
 # Initialize database with better error handling
 echo "[$(date)] Initializing database..."
 
-if [ -d "migrations" ]; then
-    echo "[$(date)] Existing migrations found, backing up..."
-    mv migrations migrations_backup_$(date +%Y%m%d_%H%M%S)
-fi
+# Initialize database with direct schema creation for now
+echo "[$(date)] Setting up database schema..."
 
-echo "[$(date)] Initializing Flask-Migrate..."
-flask db init || { echo "[$(date)] ERROR: Flask db init failed"; exit 1; }
+python << END
+from api.app import create_app
+from api.extensions import db
+import sys
 
-echo "[$(date)] Creating migrations..."
-flask db migrate -m "Initial migration $(date +%Y%m%d_%H%M%S)" || { echo "[$(date)] ERROR: Migration creation failed"; exit 1; }
-
-echo "[$(date)] Applying migrations..."
-flask db upgrade || { echo "[$(date)] ERROR: Migration upgrade failed"; exit 1; }
+try:
+    app = create_app()
+    with app.app_context():
+        # Create all tables directly
+        db.create_all()
+        print("[$(date)] Database schema created successfully")
+except Exception as e:
+    print(f"[$(date)] ERROR during schema creation: {str(e)}", file=sys.stderr)
+    sys.exit(1)
+END
 
 # Add optional seeding step
 if [ "${SEED_DB:-true}" = "true" ]; then
     echo "[$(date)] Seeding database..."
-    python -m seeders.seed_db || { echo "[$(date)] ERROR: Seeding failed"; exit 1; }
+    PYTHONPATH=/app python -m seeders.seed_db || { echo "[$(date)] ERROR: Seeding failed"; exit 1; }
 else
     echo "[$(date)] Skipping database seeding (SEED_DB=false)"
 fi
@@ -75,6 +80,7 @@ echo "[$(date)] Starting Gunicorn server..."
 exec python -u -m gunicorn "api.wsgi:app" \
     --bind 0.0.0.0:5000 \
     --workers 1 \
+    --worker-class eventlet \
     --threads 2 \
     --reload \
     --log-level debug \
