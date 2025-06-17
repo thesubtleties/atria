@@ -23,24 +23,20 @@ echo "[$(date)] PostgreSQL started successfully!"
 # Initialize database with better error handling
 echo "[$(date)] Initializing database..."
 
-# Initialize database with direct schema creation for now
-echo "[$(date)] Setting up database schema..."
+# Initialize database with Flask-Migrate (original working approach)
+if [ -d "migrations" ]; then
+    echo "[$(date)] Existing migrations found, backing up..."
+    mv migrations migrations_backup_$(date +%Y%m%d_%H%M%S)
+fi
 
-python << END
-from api.app import create_app
-from api.extensions import db
-import sys
+echo "[$(date)] Initializing Flask-Migrate..."
+flask db init || { echo "[$(date)] ERROR: Flask db init failed"; exit 1; }
 
-try:
-    app = create_app()
-    with app.app_context():
-        # Create all tables directly
-        db.create_all()
-        print("[$(date)] Database schema created successfully")
-except Exception as e:
-    print(f"[$(date)] ERROR during schema creation: {str(e)}", file=sys.stderr)
-    sys.exit(1)
-END
+echo "[$(date)] Creating migrations..."
+flask db migrate -m "Initial migration $(date +%Y%m%d_%H%M%S)" || { echo "[$(date)] ERROR: Migration creation failed"; exit 1; }
+
+echo "[$(date)] Applying migrations..."
+flask db upgrade || { echo "[$(date)] ERROR: Migration upgrade failed"; exit 1; }
 
 # Add optional seeding step
 if [ "${SEED_DB:-true}" = "true" ]; then

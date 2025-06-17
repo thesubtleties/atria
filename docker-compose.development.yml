@@ -6,8 +6,8 @@ services:
     build:
       context: ./backend/atria
       dockerfile: Dockerfile
-    expose:
-      - '5000'
+    ports:
+      - '5000:5000'
     volumes:
       - ./backend/atria:/app
     env_file:
@@ -27,8 +27,8 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    expose:
-      - '80'
+    ports:
+      - '8080:80'
     networks:
       - default
       - shared_portainer_network
