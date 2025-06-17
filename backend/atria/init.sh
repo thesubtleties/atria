@@ -23,20 +23,13 @@ echo "[$(date)] PostgreSQL started successfully!"
 # Initialize database with better error handling
 echo "[$(date)] Initializing database..."
 
-# Initialize database with Flask-Migrate (original working approach)
-if [ -d "migrations" ]; then
-    echo "[$(date)] Existing migrations found, backing up..."
-    mv migrations migrations_backup_$(date +%Y%m%d_%H%M%S)
-fi
-
-echo "[$(date)] Initializing Flask-Migrate..."
-flask db init || { echo "[$(date)] ERROR: Flask db init failed"; exit 1; }
-
-echo "[$(date)] Creating migrations..."
-flask db migrate -m "Initial migration $(date +%Y%m%d_%H%M%S)" || { echo "[$(date)] ERROR: Migration creation failed"; exit 1; }
-
-echo "[$(date)] Applying migrations..."
-flask db upgrade || { echo "[$(date)] ERROR: Migration upgrade failed"; exit 1; }
+# Initialize database with Flask-Migrate
+echo "[$(date)] Setting up database schema..."
+# Always start fresh with migrations in the container
+rm -rf migrations
+flask db init
+flask db migrate -m "Initial migration $(date +%Y%m%d_%H%M%S)"
+flask db upgrade
 
 # Add optional seeding step
 if [ "${SEED_DB:-true}" = "true" ]; then
@@ -75,15 +68,12 @@ END
 echo "[$(date)] Starting Gunicorn server..."
 exec python -u -m gunicorn "api.wsgi:app" \
     --bind 0.0.0.0:5000 \
-    --workers 1 \
-    --worker-class eventlet \
+    --workers ${GUNICORN_WORKERS:-4} \
     --threads 2 \
-    --reload \
-    --log-level debug \
+    --log-level ${LOG_LEVEL:-warning} \
     --access-logfile - \
     --error-logfile - \
     --capture-output \
     --timeout 120 \
-    --logger-class=gunicorn.glogging.Logger \
     --access-logformat '%(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s" %(L)s'
 

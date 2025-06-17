@@ -24,21 +24,19 @@ COPY seeders seeders/
 COPY init.sh .
 RUN chmod +x init.sh
 
-# Environment variables for better logging and debugging
+# Environment variables for production
 ENV PYTHONPATH=/app
 ENV PYTHONUNBUFFERED=1
-ENV FLASK_DEBUG=1
-ENV FLASK_ENV=development
+ENV FLASK_DEBUG=0
+ENV FLASK_ENV=production
 ENV GUNICORN_CMD_ARGS="--bind=0.0.0.0:5000 \
-    --workers=1 \
+    --workers=4 \
     --threads=2 \
-    --reload \
-    --log-level=debug \
+    --log-level=warning \
     --access-logfile=- \
     --error-logfile=- \
     --capture-output \
-    --timeout=120 \
-    --logger-class=gunicorn.glogging.Logger"
+    --timeout=120"
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
