@@ -28,6 +28,7 @@ backend/atria/migrations/*
 #frontend
 frontend/setup-structure.sh
 
-
+# Debug docs
+docs/docker_debug.md
 
 migrations_backup_*/

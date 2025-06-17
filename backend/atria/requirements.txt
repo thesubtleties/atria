@@ -5,6 +5,7 @@ flask-migrate
 flask-sqlalchemy
 flask-jwt-extended
 flask-socketio
+flask-cors
 gunicorn
 eventlet
 

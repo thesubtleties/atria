@@ -27,8 +27,12 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=http://localhost:5000/api
     ports:
       - '8080:80'
+    env_file:
+      - .env.development
     networks:
       - default
       - shared_portainer_network
