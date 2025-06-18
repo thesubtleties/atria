@@ -9,8 +9,8 @@ services:
     expose:
       - '5000'
     env_file:
-      - .env.production
       - ./backend/atria/.flaskenv
+      - .env.production
     environment:
       - SEED_DB=${SEED_DB:-false}
     depends_on:

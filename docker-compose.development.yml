@@ -11,8 +11,8 @@ services:
     volumes:
       - ./backend/atria:/app
     env_file:
-      - .env.development
       - ./backend/atria/.flaskenv
+      - .env.development
     environment:
       - SEED_DB=${SEED_DB:-true}
     depends_on:
