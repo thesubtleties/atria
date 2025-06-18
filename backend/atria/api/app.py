@@ -36,35 +36,46 @@ def configure_extensions(app):
     db.init_app(app)
     jwt.init_app(app)
     migrate.init_app(app, db)
-    
+
     # Configure CORS based on environment
     flask_env = os.getenv("FLASK_ENV", "production")
     if flask_env == "development":
         # Development: Allow localhost origins
-        CORS(app, origins=[
-            "http://localhost:3000",
-            "http://localhost:5173", 
-            "http://localhost:8080"
-        ])
-        socketio.init_app(app, cors_allowed_origins=[
-            "http://localhost:3000",
-            "http://localhost:5173",
-            "http://localhost:8080"
-        ])
+        CORS(
+            app,
+            origins=[
+                "http://localhost:3000",
+                "http://localhost:5173",
+                "http://localhost:8080",
+            ],
+        )
+        socketio.init_app(
+            app,
+            cors_allowed_origins=[
+                "http://localhost:3000",
+                "http://localhost:5173",
+                "http://localhost:8080",
+            ],
+        )
     else:
         # Production: Only allow production domain
-        CORS(app, origins=[
-            "https://atria.sbtl.dev",
-            "https://www.atria.sbtl.dev"
-        ])
-        socketio.init_app(app, cors_allowed_origins=[
-            "https://atria.sbtl.dev",
-            "https://www.atria.sbtl.dev"
-        ])
-    
+        CORS(
+            app,
+            origins=["https://atria.sbtl.dev", "https://www.atria.sbtl.dev"],
+        )
+        socketio.init_app(
+            app,
+            cors_allowed_origins=[
+                "https://atria.sbtl.dev",
+                "https://www.atria.sbtl.dev",
+            ],
+        )
+
     from api.api.sockets import register_socket_handlers
+
     register_socket_handlers()
     from api.api.sockets import setup_socket_maintenance
+
     setup_socket_maintenance()
     configure_jwt_handlers(app)
 

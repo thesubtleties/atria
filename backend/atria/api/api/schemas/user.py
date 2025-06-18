@@ -99,28 +99,33 @@ class UserWithRoleSchema(ma.Schema):
     role = ma.Enum(EventUserRole, dump_only=True)
 
 
-# In schemas/user.py
-class UserNestedSchema(ma.SQLAlchemyAutoSchema):
-    """Schema for users when nested in other schemas"""
+# TODO: Remove UserNestedSchema - confirmed unused during codebase analysis
+# This schema is not imported or used anywhere in routes, services, or other schemas.
+# It was likely leftover from the resources_OLD → routes/schemas/services refactor.
+# Keeping commented out temporarily in case there are hidden dependencies.
+# Safe to delete after thorough testing of user-related functionality.
 
-    class Meta:
-        model = User
-        fields = (
-            "id",
-            "full_name",
-            "email",
-            "role",
-        )  # Only the fields we need
-
-    role = ma.Method("get_role")
-
-    def get_role(self, obj):
-        organization = obj.organizations[0] if obj.organizations else None
-        if organization:
-            role = organization.get_user_role(obj)
-            print(f"Role found: {role}")  # Debug print
-            return role.value if role else None
-        return None
+# class UserNestedSchema(ma.SQLAlchemyAutoSchema):
+#     """Schema for users when nested in other schemas"""
+#
+#     class Meta:
+#         model = User
+#         fields = (
+#             "id",
+#             "full_name",
+#             "email",
+#             "role",
+#         )  # Only the fields we need
+#
+#     role = ma.Method("get_role")
+#
+#     def get_role(self, obj):
+#         organization = obj.organizations[0] if obj.organizations else None
+#         if organization:
+#             role = organization.get_user_role(obj)
+#             print(f"Role found: {role}")  # Debug print
+#             return role.value if role else None
+#         return None
 
 
 class UserBasicSchema(ma.SQLAlchemyAutoSchema):

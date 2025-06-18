@@ -3,9 +3,9 @@ from api.api.schemas.user import (
     UserDetailSchema,
     UserCreateSchema,
     UserUpdateSchema,
-    UserNestedSchema,
+    # UserNestedSchema,  # TODO: Remove - confirmed unused, commented out in user.py
     UserCheckResponseSchema,
-    # UserBasicSchema,
+    UserBasicSchema,  # Actually used in UserCheckResponseSchema
 )
 from api.api.schemas.event import (
     EventSchema,

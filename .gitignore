@@ -31,4 +31,9 @@ frontend/setup-structure.sh
 # Debug docs
 docs/docker_debug.md
 
+# Development planning docs
+docs/development-gameplan.md
+docs/next-update.md
+/docs
+
 migrations_backup_*/
