@@ -41,13 +41,16 @@ axiosClient.interceptors.response.use(
           throw new Error('No refresh token available');
         }
 
-        const response = await axiosClient.post(
-          '/auth/refresh',
-          {},
-          {
-            headers: { Authorization: `Bearer ${refreshToken}` },
-          }
-        );
+        // Create a new axios instance without interceptors to avoid infinite loops
+        const refreshAxios = axios.create({
+          baseURL: import.meta.env.VITE_API_URL || '/api',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${refreshToken}`
+          },
+        });
+        
+        const response = await refreshAxios.post('/auth/refresh', {});
         const { access_token } = response.data;
 
         localStorage.setItem('access_token', access_token);

@@ -63,22 +63,32 @@ export const authApi = baseApi.injectEndpoints({
       query: () => ({
         url: '/auth/refresh',
         method: 'POST',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('refresh_token')}`,
+        },
       }),
-      onQueryStarted: async (arg, { dispatch, queryFulfilled }) => {
+      transformResponse: (response) => {
+        // Update the access token
+        if (response.access_token) {
+          localStorage.setItem('access_token', response.access_token);
+        }
+        return response;
+      },
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
-          localStorage.setItem('access_token', data.access_token);
-          // Get current user data
+          // After successful refresh, get current user data
           const userData = await dispatch(
             authApi.endpoints.getCurrentUser.initiate()
           ).unwrap();
           dispatch(setUser(userData));
         } catch (error) {
-          console.error('Refresh flow failed:', error);
-          // Clear all auth state on refresh failure
-          localStorage.clear();
+          console.error('Refresh failed:', error);
+          // Only clear auth state if refresh truly failed
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('refresh_token');
           dispatch(setUser(null));
-          window.location.href = '/';
+          // Don't redirect here - let the router handle it
         }
       },
     }),

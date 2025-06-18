@@ -37,3 +37,6 @@ docs/next-update.md
 /docs
 
 migrations_backup_*/
+
+# Claude Code documentation
+CLAUDE.md
