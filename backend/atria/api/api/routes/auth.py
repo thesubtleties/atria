@@ -94,6 +94,36 @@ class AuthRefreshResource(MethodView):
         return AuthService.refresh_token()
 
 
+@blp.route("/socket-token")
+class AuthSocketTokenResource(MethodView):
+    @blp.response(200)
+    @blp.doc(
+        summary="Get token for WebSocket connection",
+        description="Returns the current JWT token for WebSocket authentication",
+        responses={
+            200: {
+                "description": "Token retrieved successfully",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {"token": {"type": "string"}},
+                        }
+                    }
+                },
+            },
+            401: {"description": "Not authenticated"},
+        },
+    )
+    @jwt_required()
+    def get(self):
+        """Get current JWT token for WebSocket"""
+        from flask_jwt_extended import get_jwt
+        # Return the current token from the request
+        # In a production app, you might want to create a short-lived token specifically for WebSocket
+        return AuthService.get_socket_token()
+
+
 @blp.route("/logout")
 class AuthLogoutResource(MethodView):
     @blp.response(200)

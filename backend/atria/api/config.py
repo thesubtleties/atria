@@ -21,6 +21,14 @@ JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
 JWT_BLOCKLIST_ENABLED = True
 JWT_BLOCKLIST_TOKEN_CHECKS = ["access", "refresh"]
 
+# JWT Cookie settings
+JWT_TOKEN_LOCATION = ["cookies", "headers"]  # Check cookies first, then headers
+JWT_COOKIE_SECURE = ENV == "production"  # Only use secure in production
+JWT_ACCESS_COOKIE_PATH = "/api"
+JWT_REFRESH_COOKIE_PATH = "/api/auth/refresh"
+JWT_COOKIE_CSRF_PROTECT = False  # We'll use SameSite instead
+JWT_COOKIE_SAMESITE = "Lax"
+
 # Flask-SMOREST configs
 API_TITLE = "Atria API"
 API_VERSION = "1.0.0"

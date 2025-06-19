@@ -40,7 +40,7 @@ def configure_extensions(app):
     # Configure CORS based on environment
     flask_env = os.getenv("FLASK_ENV", "production")
     if flask_env == "development":
-        # Development: Allow localhost origins
+        # Development: Allow localhost origins with credentials
         CORS(
             app,
             origins=[
@@ -48,6 +48,7 @@ def configure_extensions(app):
                 "http://localhost:5173",
                 "http://localhost:8080",
             ],
+            supports_credentials=True,
         )
         socketio.init_app(
             app,
@@ -58,10 +59,11 @@ def configure_extensions(app):
             ],
         )
     else:
-        # Production: Only allow production domain
+        # Production: Only allow production domain with credentials
         CORS(
             app,
             origins=["https://atria.sbtl.dev", "https://www.atria.sbtl.dev"],
+            supports_credentials=True,
         )
         socketio.init_app(
             app,
