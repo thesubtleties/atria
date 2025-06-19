@@ -210,7 +210,7 @@ class ChatMessageList(MethodView):
     def get(self, room_id):
         """Get chat room messages"""
         query = ChatMessage.query.filter_by(room_id=room_id).order_by(
-            ChatMessage.created_at.desc()
+            ChatMessage.created_at.asc()
         )
         return paginate(
             query, ChatMessageSchema(many=True), collection_name="messages"

@@ -1,0 +1,23 @@
+.message {
+  padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+  border-radius: var(--mantine-radius-md);
+  transition: background-color 0.1s ease;
+}
+
+.message:hover {
+  background-color: var(--mantine-color-gray-0);
+}
+
+.avatar {
+  flex-shrink: 0;
+}
+
+.messageContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.messageText {
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}

@@ -1,33 +1,34 @@
 import { useState, useEffect } from 'react';
-import { Tabs, ScrollArea, TextInput, ActionIcon, Group, Text, Avatar, Stack, Loader, Center } from '@mantine/core';
-import { IconSend, IconHash } from '@tabler/icons-react';
+import { Tabs, Text, Stack, Loader, Center, Badge } from '@mantine/core';
+import { IconHash, IconLock, IconGlobe } from '@tabler/icons-react';
 import { useGetChatRoomsQuery, useSendMessageMutation } from '@/app/features/chat/api';
-import { useSocketMessages } from '@/shared/hooks/useSocketMessages';
+import { ChatRoom } from './ChatRoom';
 import styles from './styles/index.module.css';
 
 export function ChatArea({ eventId }) {
+  console.log('ChatArea component mounting with eventId:', eventId);
+  
   const [activeRoom, setActiveRoom] = useState(null);
   const [messages, setMessages] = useState({});
   const [inputValues, setInputValues] = useState({});
   
-  const { data: chatRooms, isLoading } = useGetChatRoomsQuery(eventId);
-  const [sendMessage] = useSendMessageMutation();
+  console.log('About to call useGetChatRoomsQuery with eventId:', eventId, 'type:', typeof eventId);
   
-  // Set up socket message handling
-  useSocketMessages((message) => {
-    if (message.chatRoomId) {
-      setMessages(prev => ({
-        ...prev,
-        [message.chatRoomId]: [...(prev[message.chatRoomId] || []), message]
-      }));
-    }
+  const { data: chatRooms, isLoading, error } = useGetChatRoomsQuery(eventId, {
+    skip: !eventId
   });
+  const [sendMessage] = useSendMessageMutation();
+
+  // Extract chat rooms from paginated response
+  const rooms = chatRooms?.chat_rooms || [];
+  
+  console.log('ChatArea API response:', { eventId, chatRooms, rooms, isLoading, error });
 
   useEffect(() => {
-    if (chatRooms?.length > 0 && !activeRoom) {
-      setActiveRoom(chatRooms[0].id);
+    if (rooms.length > 0 && !activeRoom) {
+      setActiveRoom(rooms[0].id);
     }
-  }, [chatRooms, activeRoom]);
+  }, [rooms, activeRoom]);
 
   const handleSendMessage = async (roomId) => {
     const content = inputValues[roomId]?.trim();
@@ -52,14 +53,27 @@ export function ChatArea({ eventId }) {
       </Center>
     );
   }
-
-  if (!chatRooms?.length) {
+  
+  if (!rooms.length) {
     return (
       <Center className={styles.empty}>
-        <Text color="dimmed">No chat rooms available for this event</Text>
+        <Text c="dimmed">No chat rooms available for this event</Text>
       </Center>
     );
   }
+
+  // Check if room requires admin role
+  const isAdminRoom = (room) => {
+    return room.name?.toLowerCase().includes('admin') || 
+           room.name?.toLowerCase().includes('organizer');
+  };
+
+  // Check if user can access room
+  const canAccessRoom = (room) => {
+    if (!isAdminRoom(room)) return true;
+    // TODO: Check user's event role once we have that data
+    return true; // For now, allow all
+  };
 
   return (
     <div className={styles.container}>
@@ -69,90 +83,65 @@ export function ChatArea({ eventId }) {
         className={styles.tabs}
       >
         <Tabs.List className={styles.tabsList}>
-          {chatRooms.map(room => (
+          {rooms.map(room => (
             <Tabs.Tab 
               key={room.id} 
               value={room.id.toString()}
-              leftSection={<IconHash size={16} />}
+              leftSection={
+                room.is_global ? 
+                  <IconGlobe size={16} /> : 
+                  isAdminRoom(room) ? 
+                    <IconLock size={16} /> : 
+                    <IconHash size={16} />
+              }
+              className={isAdminRoom(room) ? styles.adminTab : undefined}
+              disabled={!canAccessRoom(room)}
             >
               {room.name}
+              {isAdminRoom(room) && (
+                <Badge size="xs" color="red" ml={4}>
+                  Admin
+                </Badge>
+              )}
             </Tabs.Tab>
           ))}
         </Tabs.List>
 
-        {chatRooms.map(room => (
+        {rooms.map(room => (
           <Tabs.Panel 
             key={room.id} 
             value={room.id.toString()} 
             className={styles.tabPanel}
           >
-            <div className={styles.chatContainer}>
-              <ScrollArea className={styles.messagesArea}>
-                <Stack gap="sm" p="md">
-                  {(messages[room.id] || room.messages || []).map((message, index) => (
-                    <MessageBubble key={message.id || index} message={message} />
-                  ))}
+            {canAccessRoom(room) ? (
+              <ChatRoom 
+                room={room} 
+                eventId={eventId}
+                inputValue={inputValues[room.id] || ''}
+                onInputChange={(value) => setInputValues(prev => ({ 
+                  ...prev, 
+                  [room.id]: value 
+                }))}
+                onSendMessage={() => handleSendMessage(room.id)}
+                messages={messages[room.id]}
+                onNewMessage={(message) => {
+                  setMessages(prev => ({
+                    ...prev,
+                    [room.id]: [...(prev[room.id] || []), message]
+                  }));
+                }}
+              />
+            ) : (
+              <Center className={styles.restricted}>
+                <Stack align="center" spacing="sm">
+                  <IconLock size={48} />
+                  <Text>This chat room is restricted to administrators</Text>
                 </Stack>
-              </ScrollArea>
-
-              <div className={styles.inputArea}>
-                <TextInput
-                  placeholder={`Message #${room.name}`}
-                  value={inputValues[room.id] || ''}
-                  onChange={(e) => setInputValues(prev => ({ 
-                    ...prev, 
-                    [room.id]: e.target.value 
-                  }))}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault();
-                      handleSendMessage(room.id);
-                    }
-                  }}
-                  rightSection={
-                    <ActionIcon 
-                      onClick={() => handleSendMessage(room.id)}
-                      disabled={!inputValues[room.id]?.trim()}
-                    >
-                      <IconSend size={18} />
-                    </ActionIcon>
-                  }
-                  className={styles.input}
-                />
-              </div>
-            </div>
+              </Center>
+            )}
           </Tabs.Panel>
         ))}
       </Tabs>
     </div>
-  );
-}
-
-function MessageBubble({ message }) {
-  const { user, content, createdAt } = message;
-  const time = new Date(createdAt).toLocaleTimeString([], { 
-    hour: '2-digit', 
-    minute: '2-digit' 
-  });
-
-  return (
-    <Group gap="sm" align="flex-start" className={styles.message}>
-      <Avatar size="sm" radius="xl">
-        {user?.firstName?.[0] || '?'}
-      </Avatar>
-      <div className={styles.messageContent}>
-        <Group gap="xs">
-          <Text size="sm" weight={600}>
-            {user?.firstName} {user?.lastName}
-          </Text>
-          <Text size="xs" color="dimmed">
-            {time}
-          </Text>
-        </Group>
-        <Text size="sm" className={styles.messageText}>
-          {content}
-        </Text>
-      </div>
-    </Group>
   );
 }

@@ -64,3 +64,20 @@
   align-items: center;
   justify-content: center;
 }
+
+.adminTab {
+  color: var(--mantine-color-red-7);
+}
+
+.adminTab[data-active="true"] {
+  border-bottom-color: var(--mantine-color-red-6);
+  color: var(--mantine-color-red-7);
+}
+
+.restricted {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--mantine-color-gray-6);
+}

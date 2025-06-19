@@ -4,7 +4,10 @@ export const chatApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // Get all chat rooms for an event
     getChatRooms: builder.query({
-      query: (eventId) => `/events/${eventId}/chat-rooms`,
+      query: (eventId) => ({
+        url: `/events/${eventId}/chat-rooms`,
+        method: 'GET'
+      }),
       providesTags: ['ChatRoom']
     }),
 

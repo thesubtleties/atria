@@ -244,6 +244,67 @@ export const networkingApi = baseApi.injectEndpoints({
         { type: 'DirectMessage', id: threadId },
       ],
     }),
+    // Connection endpoints
+    // Create connection request
+    createConnection: builder.mutation({
+      query: ({ recipientId, icebreakerMessage, originatingEventId }) => ({
+        url: '/connections',
+        method: 'POST',
+        body: {
+          recipient_id: recipientId,
+          icebreaker_message: icebreakerMessage,
+          originating_event_id: originatingEventId
+        }
+      }),
+      invalidatesTags: ['Connection']
+    }),
+
+    // Get user connections
+    getConnections: builder.query({
+      query: ({ status, page = 1, perPage = 50 }) => ({
+        url: '/connections',
+        params: {
+          status,
+          page,
+          per_page: perPage
+        }
+      }),
+      providesTags: ['Connection']
+    }),
+
+    // Update connection status (accept/reject)
+    updateConnectionStatus: builder.mutation({
+      query: ({ connectionId, status }) => ({
+        url: `/connections/${connectionId}`,
+        method: 'PUT',
+        body: { status }
+      }),
+      invalidatesTags: ['Connection', 'Thread']
+    }),
+
+    // Get connections within an event
+    getEventConnections: builder.query({
+      query: ({ eventId, page = 1, perPage = 50 }) => ({
+        url: `/events/${eventId}/connections`,
+        params: {
+          page,
+          per_page: perPage
+        }
+      }),
+      providesTags: ['Connection']
+    }),
+
+    // Get pending connection requests
+    getPendingConnections: builder.query({
+      query: ({ page = 1, perPage = 50 }) => ({
+        url: '/connections/pending',
+        params: {
+          page,
+          per_page: perPage
+        }
+      }),
+      providesTags: ['Connection']
+    })
   }),
   overrideExisting: false,
 });
@@ -254,4 +315,9 @@ export const {
   useSendDirectMessageMutation,
   useCreateDirectMessageThreadMutation,
   useMarkMessagesReadMutation,
+  useCreateConnectionMutation,
+  useGetConnectionsQuery,
+  useUpdateConnectionStatusMutation,
+  useGetEventConnectionsQuery,
+  useGetPendingConnectionsQuery
 } = networkingApi;

@@ -12,6 +12,12 @@ export const baseApi = createApi({
     'EventUsers',
     'Sessions',
     'SessionSpeakers',
+    'ChatRoom',
+    'ChatMessage',
+    'Attendee',
+    'Connection',
+    'Thread',
+    'DirectMessage',
   ],
   endpoints: () => ({}),
 });
