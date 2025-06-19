@@ -6,24 +6,28 @@ import { selectUser, selectIsAuthenticated } from '../../store/authSlice';
 
 let socket = null;
 
-export const initializeSocket = (token) => {
+export const initializeSocket = (token = null) => {
   if (socket) return socket;
 
-  console.log('Initializing socket with token');
-
-  // Create socket connection with auth header
-  console.log('Initializing socket with token');
+  console.log('Initializing socket connection');
 
   // Connect using the proxy
-  socket = io({
-    path: '/socket.io', // Make sure this matches your backend
-    extraHeaders: {
-      Authorization: `Bearer ${token}`,
-    },
-    // auth: { token },
-    // autoConnect: true,
-    // transports: ['websocket', 'polling'], // Try websocket first, then polling
-  });
+  const socketUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || '';
+  
+  // For WebSocket connections, we need to pass token in auth object
+  // since cookies don't work with WebSocket upgrade
+  const socketOptions = {
+    path: '/socket.io',
+    transports: ['websocket', 'polling'],
+    withCredentials: true, // This will send cookies for polling transport
+  };
+
+  // If token is provided, add it to auth object for WebSocket
+  if (token) {
+    socketOptions.auth = { token };
+  }
+  
+  socket = io(socketUrl, socketOptions);
 
   // Add detailed error logging
   socket.on('connect_error', (error) => {

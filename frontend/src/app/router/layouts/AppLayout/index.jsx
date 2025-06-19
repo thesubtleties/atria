@@ -35,27 +35,36 @@ export const AppLayout = () => {
   // Initialize socket when authenticated
   useEffect(() => {
     if (isAuthenticated && user) {
-      // Get token from localStorage
-      const accessToken = localStorage.getItem('access_token');
-      if (accessToken) {
+      const initSocket = async () => {
         try {
-          console.log('Initializing socket in AppLayout');
-          const socket = initializeSocket(accessToken);
+          // Fetch socket token from API
+          const apiUrl = import.meta.env.VITE_API_URL || '/api';
+          const response = await fetch(`${apiUrl}/auth/socket-token`, {
+            credentials: 'include',
+          });
+          
+          if (response.ok) {
+            const { token } = await response.json();
+            console.log('Initializing socket in AppLayout');
+            const socket = initializeSocket(token);
 
-          // If socket is already connected, fetch data immediately
-          if (socket.connected) {
-            console.log('Socket already connected, fetching initial data');
-            fetchInitialData().catch((err) =>
-              console.error('Error fetching initial data:', err)
-            );
+            // If socket is already connected, fetch data immediately
+            if (socket.connected) {
+              console.log('Socket already connected, fetching initial data');
+              fetchInitialData().catch((err) =>
+                console.error('Error fetching initial data:', err)
+              );
+            }
+            // Otherwise socket.on('connect') in socketClient will handle it
+          } else {
+            console.error('Failed to get socket token:', response.status, response.statusText);
           }
-          // Otherwise socket.on('connect') in socketClient will handle it
         } catch (error) {
           console.error('Error initializing socket:', error);
         }
-      } else {
-        console.warn('No access token found for socket initialization');
-      }
+      };
+
+      initSocket();
     }
 
     // Cleanup socket on unmount
