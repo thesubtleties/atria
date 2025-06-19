@@ -14,13 +14,21 @@ export const AgendaPage = () => {
   const [currentDay, setCurrentDay] = useState(1);
 
   const { data: event, isLoading: eventLoading } = useGetEventQuery(
-    parseInt(eventId)
+    parseInt(eventId),
+    {
+      skip: !eventId,
+    }
   );
   const { data: sessionsData, isLoading: sessionsLoading } =
-    useGetSessionsQuery({
-      eventId: parseInt(eventId),
-      dayNumber: currentDay,
-    });
+    useGetSessionsQuery(
+      {
+        eventId: parseInt(eventId),
+        dayNumber: currentDay,
+      },
+      {
+        skip: !eventId,
+      }
+    );
 
   if (eventLoading || sessionsLoading) {
     return <div>Loading...</div>;

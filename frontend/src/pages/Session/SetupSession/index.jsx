@@ -11,7 +11,9 @@ export const SetupSession = () => {
   const { eventId } = useParams();
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
-  const { data: event } = useGetEventQuery(eventId);
+  const { data: event } = useGetEventQuery(eventId, {
+    skip: !eventId,
+  });
 
   // Redirect if user doesn't have permission
   const isOrganizerOrAdmin = event?.organizers?.some((org) =>

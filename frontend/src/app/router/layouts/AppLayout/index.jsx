@@ -24,7 +24,10 @@ export const AppLayout = () => {
   const user = useSelector(selectUser);
   const isAuthenticated = useSelector(selectIsAuthenticated);
 
-  const { data: event } = useGetEventQuery(eventId);
+  // Only fetch event data if eventId exists
+  const { data: event } = useGetEventQuery(eventId, {
+    skip: !eventId, // Skip the query if eventId is undefined
+  });
   const isAdmin = event?.organizers?.some((org) => org.role === 'ADMIN');
 
   const showEventNav = Boolean(eventId);
