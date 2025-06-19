@@ -1,0 +1,66 @@
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+}
+
+.tabs {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.tabsList {
+  border-bottom: 1px solid #e9ecef;
+  background-color: #f8f9fa;
+}
+
+.tabPanel {
+  flex: 1;
+  overflow: hidden;
+  padding: 0;
+}
+
+.chatContainer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.messagesArea {
+  flex: 1;
+  background-color: #ffffff;
+}
+
+.inputArea {
+  padding: var(--mantine-spacing-md);
+  border-top: 1px solid #e9ecef;
+  background-color: #f8f9fa;
+}
+
+.input {
+  width: 100%;
+}
+
+.message {
+  padding: var(--mantine-spacing-xs) 0;
+}
+
+.messageContent {
+  flex: 1;
+}
+
+.messageText {
+  margin-top: 4px;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
+.loader,
+.empty {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
