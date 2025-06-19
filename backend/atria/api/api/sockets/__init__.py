@@ -7,24 +7,54 @@ from .session_manager import session_manager, authenticated_only
 
 
 @socketio.on("connect")
-def handle_connect():
+def handle_connect(auth=None):
     print(f"Client connecting: {request.sid}")
+    print(f"Auth data received: {auth}")
 
-    # Get the auth token from the request headers
-    auth_header = request.headers.get("Authorization")
-    print(f"Auth header: {auth_header}")
-
-    if not auth_header or not auth_header.startswith("Bearer "):
-        print("No valid auth header found")
+    # Try multiple auth methods
+    token = None
+    
+    # 1. Check auth object (best for WebSocket)
+    if auth and isinstance(auth, dict) and 'token' in auth:
+        token = auth['token']
+        print("Token found in auth object")
+    
+    # 2. Check cookies (if using httpOnly cookies)
+    if not token:
+        from flask_jwt_extended import jwt_required, verify_jwt_in_request
+        try:
+            # This will check cookies automatically based on JWT_TOKEN_LOCATION config
+            verify_jwt_in_request(optional=True)
+            # If we get here, a valid token was found in cookies
+            print("Token found in cookies")
+            token = "cookie"  # We don't need the actual token, just need to know it's valid
+        except:
+            pass
+    
+    # 3. Check Authorization header (fallback for polling)
+    if not token:
+        auth_header = request.headers.get("Authorization")
+        print(f"Auth header: {auth_header}")
+        
+        if auth_header and auth_header.startswith("Bearer "):
+            token = auth_header.split(" ")[1]
+            print("Token found in Authorization header")
+    
+    if not token:
+        print("No valid auth token found in any location")
         emit("auth_required", {"message": "Authentication required"})
         return
 
-    token = auth_header.split(" ")[1]
-
     try:
-        # Manually verify the token
-        decoded_token = decode_token(token)
-        user_id = decoded_token["sub"]
+        # Get user ID based on auth method
+        if token == "cookie":
+            # Token was already verified by verify_jwt_in_request
+            from flask_jwt_extended import get_jwt_identity
+            user_id = get_jwt_identity()
+        else:
+            # Manually verify the token from auth object or header
+            decoded_token = decode_token(token)
+            user_id = decoded_token["sub"]
 
         # Authenticate the session
         session_manager.authenticate(request.sid, user_id)
