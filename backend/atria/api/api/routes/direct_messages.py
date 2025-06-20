@@ -126,16 +126,8 @@ class DirectMessageList(MethodView):
             )
 
             # Emit socket event for real-time notification
-            from api.extensions import socketio
-
-            message_data = DirectMessageService.format_message_for_response(
-                message
-            )
-            socketio.emit(
-                "new_direct_message",
-                message_data,
-                room=f"user_{other_user_id}",
-            )
+            from api.api.sockets.dm_notifications import emit_new_direct_message
+            emit_new_direct_message(message, thread_id, other_user_id)
 
             return message, 201
 

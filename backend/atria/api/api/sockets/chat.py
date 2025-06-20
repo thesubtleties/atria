@@ -9,7 +9,7 @@ from flask_jwt_extended import get_jwt_identity
 from api.models import User, Event
 from api.models.enums import EventUserRole
 from api.services.chat_room import ChatRoomService
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 @socketio.on("join_chat_room")
@@ -36,7 +36,7 @@ def handle_join_chat_room(user_id, data):
     messages = ChatRoomService.get_recent_messages(room_id)
 
     emit(
-        "room_joined",
+        "chat_room_joined",
         {
             "room_id": room_id,
             "room_name": chat_room.name,
@@ -57,7 +57,7 @@ def handle_leave_chat_room(user_id, data):
         return
 
     leave_room(f"room_{room_id}")
-    emit("room_left", {"room_id": room_id})
+    emit("chat_room_left", {"room_id": room_id})
 
 
 @socketio.on("chat_message")
@@ -73,10 +73,14 @@ def handle_chat_message(user_id, data):
 
     # Save message and get formatted response
     message = ChatRoomService.send_message(room_id, user_id, content)
+    
+    # Use centralized notification function
+    from api.api.sockets.chat_notifications import emit_new_chat_message
+    emit_new_chat_message(message, room_id)
+    
+    # Send confirmation to sender
     message_data = ChatRoomService.format_message_for_response(message)
-
-    # Broadcast to room
-    emit("new_chat_message", message_data, room=f"room_{room_id}")
+    emit("chat_message_sent", message_data)
 
 
 @socketio.on("delete_chat_message")
@@ -178,7 +182,7 @@ def handle_update_chat_room(user_id, data):
 
         # Format response
         room_data = ChatRoomService.format_room_for_response(chat_room)
-        room_data["updated_at"] = datetime.utcnow().isoformat()
+        room_data["updated_at"] = datetime.now(timezone.utc).isoformat()
 
         # Notify event participants
         emit(

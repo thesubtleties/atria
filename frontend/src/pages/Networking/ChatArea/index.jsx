@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Tabs, Text, Stack, Loader, Center, Badge } from '@mantine/core';
 import { IconHash, IconLock, IconGlobe } from '@tabler/icons-react';
 import { useGetChatRoomsQuery, useSendMessageMutation } from '@/app/features/chat/api';
+import { joinEventNotifications, leaveEventNotifications } from '@/app/features/networking/socketClient';
 import { ChatRoom } from './ChatRoom';
 import styles from './styles/index.module.css';
 
@@ -9,7 +10,6 @@ export function ChatArea({ eventId }) {
   console.log('ChatArea component mounting with eventId:', eventId);
   
   const [activeRoom, setActiveRoom] = useState(null);
-  const [messages, setMessages] = useState({});
   const [inputValues, setInputValues] = useState({});
   
   console.log('About to call useGetChatRoomsQuery with eventId:', eventId, 'type:', typeof eventId);
@@ -30,19 +30,36 @@ export function ChatArea({ eventId }) {
     }
   }, [rooms, activeRoom]);
 
+  // Join event notifications for chat updates
+  useEffect(() => {
+    if (eventId) {
+      console.log('Joining event notifications for eventId:', eventId);
+      joinEventNotifications(eventId);
+      
+      return () => {
+        console.log('Leaving event notifications for eventId:', eventId);
+        leaveEventNotifications(eventId);
+      };
+    }
+  }, [eventId]);
+
   const handleSendMessage = async (roomId) => {
     const content = inputValues[roomId]?.trim();
     if (!content) return;
 
+    console.log('📤 Sending message to room:', roomId, 'Content:', content);
+    
     try {
-      await sendMessage({ 
+      // Use REST API to send (backend will emit Socket.IO event)
+      const result = await sendMessage({ 
         chatRoomId: roomId, 
         content 
       }).unwrap();
       
+      console.log('📤 Message sent successfully:', result);
       setInputValues(prev => ({ ...prev, [roomId]: '' }));
     } catch (error) {
-      console.error('Failed to send message:', error);
+      console.error('📤 Failed to send message:', error);
     }
   };
 
@@ -123,13 +140,6 @@ export function ChatArea({ eventId }) {
                   [room.id]: value 
                 }))}
                 onSendMessage={() => handleSendMessage(room.id)}
-                messages={messages[room.id]}
-                onNewMessage={(message) => {
-                  setMessages(prev => ({
-                    ...prev,
-                    [room.id]: [...(prev[room.id] || []), message]
-                  }));
-                }}
               />
             ) : (
               <Center className={styles.restricted}>

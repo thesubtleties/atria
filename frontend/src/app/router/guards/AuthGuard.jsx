@@ -10,17 +10,14 @@ export const AuthGuard = ({ children }) => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const authChecked = useSelector(selectAuthChecked);
   const location = useLocation();
-  const hasTokens =
-    localStorage.getItem('access_token') &&
-    localStorage.getItem('refresh_token');
 
-  // Only show loading state if we have tokens AND auth hasn't been checked
-  if (hasTokens && !authChecked) {
+  // Show loading state while checking auth
+  if (!authChecked) {
     return null;
   }
 
-  // Only redirect if we're sure we're not authenticated
-  if (!isAuthenticated && authChecked) {
+  // Redirect if not authenticated after check
+  if (!isAuthenticated) {
     return <Navigate to="/" state={{ from: location }} replace />;
   }
 

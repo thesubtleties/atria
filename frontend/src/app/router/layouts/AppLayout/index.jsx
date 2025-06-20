@@ -24,6 +24,9 @@ export const AppLayout = () => {
   const user = useSelector(selectUser);
   const isAuthenticated = useSelector(selectIsAuthenticated);
 
+  // Debug auth state
+  console.log('🔐 AppLayout - Auth state:', { isAuthenticated, user });
+
   // Only fetch event data if eventId exists
   const { data: event } = useGetEventQuery(eventId, {
     skip: !eventId, // Skip the query if eventId is undefined
@@ -34,6 +37,7 @@ export const AppLayout = () => {
 
   // Initialize socket when authenticated
   useEffect(() => {
+    console.log('🔐 AppLayout useEffect - Auth check:', { isAuthenticated, hasUser: !!user });
     if (isAuthenticated && user) {
       const initSocket = async () => {
         try {
@@ -43,9 +47,13 @@ export const AppLayout = () => {
             credentials: 'include',
           });
           
+          console.log('Socket token response:', response.status, response.statusText);
+          
           if (response.ok) {
-            const { token } = await response.json();
-            console.log('Initializing socket in AppLayout');
+            const data = await response.json();
+            console.log('Socket token data:', data);
+            const { token } = data;
+            console.log('Initializing socket in AppLayout with token:', token ? 'YES' : 'NO');
             const socket = initializeSocket(token);
 
             // If socket is already connected, fetch data immediately
@@ -69,7 +77,7 @@ export const AppLayout = () => {
 
     // Cleanup socket on unmount
     return () => {
-      console.log('Cleaning up socket connection');
+      console.log('🔌 AppLayout cleanup - disconnecting socket');
       disconnectSocket();
     };
   }, [isAuthenticated, user]);

@@ -11,17 +11,14 @@ export const RootLayout = () => {
 
   useEffect(() => {
     const initializeAuth = async () => {
-      const accessToken = localStorage.getItem('access_token');
-      if (accessToken) {
-        try {
-          await dispatch(authApi.endpoints.getCurrentUser.initiate()).unwrap();
-        } catch (error) {
-          // If getCurrentUser fails, clear auth state
-          console.error('Auth initialization failed:', error);
-          localStorage.clear();
-          dispatch(setUser(null));
-          navigate('/');
-        }
+      // Always try to get current user - cookies will be sent automatically
+      try {
+        await dispatch(authApi.endpoints.getCurrentUser.initiate()).unwrap();
+      } catch (error) {
+        // If getCurrentUser fails with 401, user is not authenticated
+        // Don't redirect - let the user stay on public pages
+        console.log('User not authenticated or session expired');
+        dispatch(setUser(null));
       }
     };
 
