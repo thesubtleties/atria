@@ -73,12 +73,13 @@ def handle_chat_message(user_id, data):
 
     # Save message and get formatted response
     message = ChatRoomService.send_message(room_id, user_id, content)
-    message_data = ChatRoomService.format_message_for_response(message)
-
-    # Broadcast to room
-    emit("new_chat_message", message_data, room=f"room_{room_id}")
+    
+    # Use centralized notification function
+    from api.api.sockets.chat_notifications import emit_new_chat_message
+    emit_new_chat_message(message, room_id)
     
     # Send confirmation to sender
+    message_data = ChatRoomService.format_message_for_response(message)
     emit("chat_message_sent", message_data)
 
 

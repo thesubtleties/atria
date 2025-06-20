@@ -98,16 +98,16 @@ def handle_send_direct_message(user_id, data):
             thread_id, user_id, content, encrypted_content
         )
 
-        # Format message for response
-        message_data = DirectMessageService.format_message_for_response(
-            message
-        )
-
+        # Use centralized notification function
+        from api.api.sockets.dm_notifications import emit_new_direct_message
+        
         # Send to recipient
-        emit("new_direct_message", message_data, room=f"user_{other_user_id}")
+        emit_new_direct_message(message, thread_id, other_user_id)
         # Send to sender (in case they have multiple sessions)
-        emit("new_direct_message", message_data, room=f"user_{user_id}")
+        emit_new_direct_message(message, thread_id, user_id)
+        
         # Confirm to sender
+        message_data = DirectMessageService.format_message_for_response(message)
         emit("direct_message_sent", message_data)
 
     except ValueError as e:
@@ -134,12 +134,9 @@ def handle_mark_messages_read(user_id, data):
 
         # Only notify if there were unread messages
         if had_unread:
-            # Notify the sender that their messages were read
-            emit(
-                "messages_read",
-                {"thread_id": thread_id, "reader_id": user_id},
-                room=f"user_{other_user_id}",
-            )
+            # Use centralized notification function
+            from api.api.sockets.dm_notifications import emit_messages_read
+            emit_messages_read(thread_id, user_id, other_user_id)
 
         emit("messages_marked_read", {"thread_id": thread_id})
 
@@ -221,13 +218,17 @@ def handle_create_direct_message_thread(user_id, data):
             user_id, other_user_id
         )
 
-        # Format thread for response
-        thread_data = DirectMessageService.format_thread_for_response(
-            thread, user_id
-        )
-        thread_data["is_new"] = is_new
-
-        emit("direct_message_thread_created", thread_data)
+        # If it's a new thread, notify both users
+        if is_new:
+            from api.api.sockets.dm_notifications import emit_direct_message_thread_created
+            emit_direct_message_thread_created(thread, user_id, other_user_id)
+        else:
+            # For existing threads, just confirm to the requester
+            thread_data = DirectMessageService.format_thread_for_response(
+                thread, user_id
+            )
+            thread_data["is_new"] = is_new
+            emit("direct_message_thread_created", thread_data)
 
     except ValueError as e:
         emit("error", {"message": str(e)})

@@ -4,7 +4,7 @@ from flask_smorest import Blueprint
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask import request
 
-from api.extensions import db, socketio
+from api.extensions import db
 from api.models import ChatRoom, ChatMessage, Event, User
 from api.models.enums import EventUserRole
 from api.api.schemas import (
@@ -244,10 +244,8 @@ class ChatMessageList(MethodView):
         db.session.add(message)
         db.session.commit()
 
-        # Format message for socket response
-        message_data = ChatRoomService.format_message_for_response(message)
-        
         # Emit to all users in the chat room via Socket.IO
-        socketio.emit("new_chat_message", message_data, room=f"room_{room_id}")
+        from api.api.sockets.chat_notifications import emit_new_chat_message
+        emit_new_chat_message(message, room_id)
 
         return message, 201

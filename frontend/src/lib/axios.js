@@ -42,8 +42,8 @@ axiosClient.interceptors.response.use(
         // Retry the original request with the new cookies
         return axiosClient(originalRequest);
       } catch (refreshError) {
-        // Redirect to login
-        window.location.href = '/';
+        // Don't redirect here - let the app handle auth state
+        // The guards will handle redirects based on auth state
         return Promise.reject(refreshError);
       }
     }

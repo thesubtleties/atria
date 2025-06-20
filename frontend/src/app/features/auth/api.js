@@ -37,11 +37,12 @@ export const authApi = baseApi.injectEndpoints({
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
-          console.log(data);
+          console.log('getCurrentUser success:', data);
           dispatch(setUser(data));
         } catch (error) {
-          // Don't dispatch setUser(null) on error during login
-          console.error('Failed to get user:', error);
+          // User is not authenticated - set authChecked to true
+          console.log('getCurrentUser failed - user not authenticated');
+          dispatch(setUser(null));
         }
       },
       providesTags: ['User'],
