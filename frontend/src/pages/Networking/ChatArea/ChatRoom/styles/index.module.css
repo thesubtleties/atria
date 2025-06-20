@@ -20,3 +20,26 @@
 .input {
   width: 100%;
 }
+
+.presenceIndicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #40c057;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(64, 192, 87, 0.7);
+  }
+  50% {
+    opacity: 0.8;
+    box-shadow: 0 0 0 4px rgba(64, 192, 87, 0.3);
+  }
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(64, 192, 87, 0.7);
+  }
+}

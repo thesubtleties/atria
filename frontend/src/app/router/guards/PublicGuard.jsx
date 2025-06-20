@@ -8,18 +8,15 @@ import {
 
 export const PublicGuard = ({ children }) => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
-  const authChecked = useSelector(selectAuthChecked); // Add this selector
-  const hasTokens =
-    localStorage.getItem('access_token') &&
-    localStorage.getItem('refresh_token');
+  const authChecked = useSelector(selectAuthChecked);
 
-  // Only show loading state if we have tokens AND auth hasn't been checked
-  if (hasTokens && !authChecked) {
+  // Show loading state while checking auth
+  if (!authChecked) {
     return null;
   }
 
-  // Only redirect if we're actually authenticated
-  if (isAuthenticated && authChecked) {
+  // Redirect if authenticated
+  if (isAuthenticated) {
     return <Navigate to="/app" replace />;
   }
 

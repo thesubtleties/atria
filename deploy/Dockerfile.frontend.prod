@@ -9,6 +9,8 @@ RUN npm ci
 
 # Copy source and build
 COPY . .
+# Set NODE_ENV for production build
+ENV NODE_ENV=production
 RUN npm run build
 
 # Serve stage

@@ -4,8 +4,9 @@ from flask_smorest import Blueprint
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask import request
 
-from api.extensions import db
+from api.extensions import db, socketio
 from api.models import ChatRoom, ChatMessage, Event, User
+from api.models.enums import EventUserRole
 from api.api.schemas import (
     ChatRoomSchema,
     ChatRoomDetailSchema,
@@ -24,6 +25,7 @@ from api.commons.pagination import (
     PAGINATION_PARAMETERS,
     get_pagination_schema,
 )
+from api.services.chat_room import ChatRoomService
 
 blp = Blueprint(
     "chat_rooms",
@@ -241,5 +243,11 @@ class ChatMessageList(MethodView):
 
         db.session.add(message)
         db.session.commit()
+
+        # Format message for socket response
+        message_data = ChatRoomService.format_message_for_response(message)
+        
+        # Emit to all users in the chat room via Socket.IO
+        socketio.emit("new_chat_message", message_data, room=f"room_{room_id}")
 
         return message, 201
