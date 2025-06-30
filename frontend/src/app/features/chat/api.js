@@ -1,23 +1,24 @@
 import { baseApi } from '../api';
 
+// socket connectivity handled in networking/socketClient.js
 export const chatApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // Get all chat rooms for an event
     getChatRooms: builder.query({
       query: (eventId) => ({
         url: `/events/${eventId}/chat-rooms`,
-        method: 'GET'
+        method: 'GET',
       }),
-      providesTags: ['ChatRoom']
+      providesTags: ['ChatRoom'],
     }),
 
     // Get messages for a specific chat room
     getChatRoomMessages: builder.query({
       query: ({ chatRoomId, limit = 50, offset = 0 }) => ({
         url: `/chat-rooms/${chatRoomId}/messages`,
-        params: { limit, offset }
+        params: { limit, offset },
       }),
-      providesTags: ['ChatMessage']
+      providesTags: ['ChatMessage'],
     }),
 
     // Send a message to a chat room
@@ -25,29 +26,29 @@ export const chatApi = baseApi.injectEndpoints({
       query: ({ chatRoomId, content }) => ({
         url: `/chat-rooms/${chatRoomId}/messages`,
         method: 'POST',
-        body: { content }
+        body: { content },
       }),
-      invalidatesTags: ['ChatMessage']
+      invalidatesTags: ['ChatMessage'],
     }),
 
     // Join a chat room
     joinChatRoom: builder.mutation({
       query: (chatRoomId) => ({
         url: `/chat-rooms/${chatRoomId}/join`,
-        method: 'POST'
+        method: 'POST',
       }),
-      invalidatesTags: ['ChatRoom']
+      invalidatesTags: ['ChatRoom'],
     }),
 
     // Leave a chat room
     leaveChatRoom: builder.mutation({
       query: (chatRoomId) => ({
         url: `/chat-rooms/${chatRoomId}/leave`,
-        method: 'POST'
+        method: 'POST',
       }),
-      invalidatesTags: ['ChatRoom']
-    })
-  })
+      invalidatesTags: ['ChatRoom'],
+    }),
+  }),
 });
 
 export const {
@@ -55,5 +56,5 @@ export const {
   useGetChatRoomMessagesQuery,
   useSendMessageMutation,
   useJoinChatRoomMutation,
-  useLeaveChatRoomMutation
+  useLeaveChatRoomMutation,
 } = chatApi;

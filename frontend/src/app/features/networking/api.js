@@ -126,6 +126,8 @@ if (!baseApi.endpoints.customQuery) {
 export const networkingApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // Get all direct message threads
+    // Socket: get_direct_message_threads -> direct_message_threads response
+    // HTTP: GET /direct-messages/threads
     getDirectMessageThreads: builder.query({
       queryFn: async (arg, api, extraOptions) => {
         return queryWithFallback(
@@ -150,6 +152,8 @@ export const networkingApi = baseApi.injectEndpoints({
     }),
 
     // Get messages for a thread with pagination
+    // Socket: get_direct_messages -> direct_messages response
+    // HTTP: GET /direct-messages/threads/:threadId/messages?page=X&per_page=Y
     getDirectMessages: builder.query({
       queryFn: async (arg, api, extraOptions) => {
         return queryWithFallback(
@@ -171,14 +175,16 @@ export const networkingApi = baseApi.injectEndpoints({
           other_user: null,
           is_encrypted: false,
         };
-
+        // normalization of the response whether it comes from socket or HTTP
         if (response.messages) {
+          // Socket response
           result.messages = response.messages;
           result.pagination = response.pagination;
           result.thread_id = response.thread_id;
           result.other_user = response.other_user;
           result.is_encrypted = response.is_encrypted;
         } else if (response.data) {
+          // HTTP response
           result.messages = response.data.messages || [];
           result.pagination = response.data.pagination;
           result.thread_id = response.data.thread_id;
@@ -194,6 +200,8 @@ export const networkingApi = baseApi.injectEndpoints({
     }),
 
     // Send a direct message
+    // Socket: send_direct_message -> direct_message_sent response
+    // HTTP: POST /direct-messages/threads/:threadId/messages
     sendDirectMessage: builder.mutation({
       queryFn: async (arg, api, extraOptions) => {
         return queryWithFallback(
@@ -212,6 +220,8 @@ export const networkingApi = baseApi.injectEndpoints({
     }),
 
     // Create a new thread
+    // Socket: create_direct_message_thread -> direct_message_thread_created response
+    // HTTP: POST /direct-messages/threads
     createDirectMessageThread: builder.mutation({
       queryFn: async (arg, api, extraOptions) => {
         return queryWithFallback(
@@ -228,6 +238,8 @@ export const networkingApi = baseApi.injectEndpoints({
     }),
 
     // Mark messages as read
+    // Socket: mark_messages_read -> messages_marked_read response
+    // HTTP: POST /direct-messages/threads/:threadId/read
     markMessagesRead: builder.mutation({
       queryFn: async (arg, api, extraOptions) => {
         return queryWithFallback(
@@ -246,6 +258,7 @@ export const networkingApi = baseApi.injectEndpoints({
     }),
     // Connection endpoints
     // Create connection request
+    // HTTP only: POST /connections
     createConnection: builder.mutation({
       query: ({ recipientId, icebreakerMessage, originatingEventId }) => ({
         url: '/connections',
@@ -253,58 +266,62 @@ export const networkingApi = baseApi.injectEndpoints({
         body: {
           recipient_id: recipientId,
           icebreaker_message: icebreakerMessage,
-          originating_event_id: originatingEventId
-        }
+          originating_event_id: originatingEventId,
+        },
       }),
-      invalidatesTags: ['Connection']
+      invalidatesTags: ['Connection'],
     }),
 
     // Get user connections
+    // HTTP only: GET /connections?status=X&page=Y&per_page=Z
     getConnections: builder.query({
       query: ({ status, page = 1, perPage = 50 }) => ({
         url: '/connections',
         params: {
           status,
           page,
-          per_page: perPage
-        }
+          per_page: perPage,
+        },
       }),
-      providesTags: ['Connection']
+      providesTags: ['Connection'],
     }),
 
     // Update connection status (accept/reject)
+    // HTTP only: PUT /connections/:connectionId
     updateConnectionStatus: builder.mutation({
       query: ({ connectionId, status }) => ({
         url: `/connections/${connectionId}`,
         method: 'PUT',
-        body: { status }
+        body: { status },
       }),
-      invalidatesTags: ['Connection', 'Thread']
+      invalidatesTags: ['Connection', 'Thread'],
     }),
 
     // Get connections within an event
+    // HTTP only: GET /events/:eventId/connections?page=Y&per_page=Z
     getEventConnections: builder.query({
       query: ({ eventId, page = 1, perPage = 50 }) => ({
         url: `/events/${eventId}/connections`,
         params: {
           page,
-          per_page: perPage
-        }
+          per_page: perPage,
+        },
       }),
-      providesTags: ['Connection']
+      providesTags: ['Connection'],
     }),
 
     // Get pending connection requests
+    // HTTP only: GET /connections/pending?page=Y&per_page=Z
     getPendingConnections: builder.query({
       query: ({ page = 1, perPage = 50 }) => ({
         url: '/connections/pending',
         params: {
           page,
-          per_page: perPage
-        }
+          per_page: perPage,
+        },
       }),
-      providesTags: ['Connection']
-    })
+      providesTags: ['Connection'],
+    }),
   }),
   overrideExisting: false,
 });
@@ -319,5 +336,5 @@ export const {
   useGetConnectionsQuery,
   useUpdateConnectionStatusMutation,
   useGetEventConnectionsQuery,
-  useGetPendingConnectionsQuery
+  useGetPendingConnectionsQuery,
 } = networkingApi;
