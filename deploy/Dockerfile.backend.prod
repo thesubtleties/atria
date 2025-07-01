@@ -13,15 +13,15 @@ RUN apk add --no-cache \
 WORKDIR /app
 
 # Install Python dependencies
-COPY requirements.txt setup.py tox.ini ./
+COPY backend/atria/requirements.txt backend/atria/setup.py backend/atria/tox.ini ./
 RUN pip install --no-cache-dir -U pip && \
     pip install --no-cache-dir -r requirements.txt && \
     pip install -e .
 
 # Copy application code
-COPY api api/
-COPY seeders seeders/
-COPY init.sh .
+COPY backend/atria/api api/
+COPY backend/atria/seeders seeders/
+COPY backend/atria/init.sh .
 RUN chmod +x init.sh
 
 # Environment variables for production
