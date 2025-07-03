@@ -12,9 +12,18 @@ env:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    outputs:
+      image-tag: ${{ steps.generate-tag.outputs.tag }}
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+
+    - name: Generate unique image tag
+      id: generate-tag
+      run: |
+        TAG="${GITHUB_SHA::8}-$(date +%s)"
+        echo "tag=${TAG}" >> $GITHUB_OUTPUT
+        echo "Generated tag: ${TAG}"
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
@@ -31,7 +40,9 @@ jobs:
         context: .
         file: ./deploy/Dockerfile.backend.prod
         push: true
-        tags: ${{ env.BACKEND_IMAGE }}:latest
+        tags: |
+          ${{ env.BACKEND_IMAGE }}:${{ steps.generate-tag.outputs.tag }}
+          ${{ env.BACKEND_IMAGE }}:latest
         cache-from: type=gha
         cache-to: type=gha,mode=max
 
@@ -41,7 +52,9 @@ jobs:
         context: .
         file: ./deploy/Dockerfile.frontend.prod
         push: true
-        tags: ${{ env.FRONTEND_IMAGE }}:latest
+        tags: |
+          ${{ env.FRONTEND_IMAGE }}:${{ steps.generate-tag.outputs.tag }}
+          ${{ env.FRONTEND_IMAGE }}:latest
         build-args: |
           VITE_API_URL=https://atria.sbtl.dev/api
         cache-from: type=gha
@@ -60,15 +73,17 @@ jobs:
         key: ${{ secrets.K3S_SSH_KEY }}
         port: ${{ secrets.K3S_PORT }}
         script: |
-          # Pull the new images
-          echo "Pulling new Docker images..."
-          sudo k3s crictl pull ${{ env.BACKEND_IMAGE }}:latest
-          sudo k3s crictl pull ${{ env.FRONTEND_IMAGE }}:latest
+          IMAGE_TAG="${{ needs.build-and-push.outputs.image-tag }}"
           
-          # Update deployments
+          # Pull the new images with specific tag
+          echo "Pulling new Docker images with tag: ${IMAGE_TAG}"
+          sudo k3s crictl pull ${{ env.BACKEND_IMAGE }}:${IMAGE_TAG}
+          sudo k3s crictl pull ${{ env.FRONTEND_IMAGE }}:${IMAGE_TAG}
+          
+          # Update deployments with specific image tag
           echo "Updating Kubernetes deployments..."
-          kubectl rollout restart deployment/backend-deployment -n atria
-          kubectl rollout restart deployment/frontend-deployment -n atria
+          kubectl set image deployment/backend-deployment backend=${{ env.BACKEND_IMAGE }}:${IMAGE_TAG} -n atria
+          kubectl set image deployment/frontend-deployment frontend=${{ env.FRONTEND_IMAGE }}:${IMAGE_TAG} -n atria
           
           # Wait for rollout to complete
           echo "Waiting for backend rollout..."
