@@ -67,8 +67,8 @@ jobs:
           
           # Update deployments
           echo "Updating Kubernetes deployments..."
-          kubectl set image deployment/backend-deployment backend=${{ env.BACKEND_IMAGE }}:latest -n atria
-          kubectl set image deployment/frontend-deployment frontend=${{ env.FRONTEND_IMAGE }}:latest -n atria
+          kubectl rollout restart deployment/backend-deployment -n atria
+          kubectl rollout restart deployment/frontend-deployment -n atria
           
           # Wait for rollout to complete
           echo "Waiting for backend rollout..."
