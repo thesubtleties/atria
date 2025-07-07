@@ -80,6 +80,18 @@ class Event(db.Model):
         ],
     )
 
+    sponsor_tiers = db.Column(
+        db.JSON,
+        nullable=True,
+        default=[
+            {"id": "platinum", "name": "Platinum Sponsor", "order": 1},
+            {"id": "gold", "name": "Gold Sponsor", "order": 2},
+            {"id": "silver", "name": "Silver Sponsor", "order": 3},
+            {"id": "bronze", "name": "Bronze Sponsor", "order": 4},
+            {"id": "community", "name": "Community Partner", "order": 5},
+        ],
+    )
+
     # Relationships
     organization = db.relationship("Organization", back_populates="events")
 
@@ -110,6 +122,12 @@ class Event(db.Model):
     )
     originated_connections = db.relationship(
         "Connection", back_populates="originating_event"
+    )
+    sponsors = db.relationship(
+        "Sponsor",
+        back_populates="event",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
     )
 
     def __init__(self, *args, **kwargs):

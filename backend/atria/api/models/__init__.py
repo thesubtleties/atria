@@ -21,6 +21,7 @@ from api.models.direct_message_thread import DirectMessageThread
 from api.models.direct_message import DirectMessage
 from api.models.user_encryption_key import UserEncryptionKey
 from api.models.user_key_backup import UserKeyBackup
+from api.models.sponsor import Sponsor
 
 __all__ = [
     "User",
@@ -39,4 +40,5 @@ __all__ = [
     "DirectMessage",
     "UserEncryptionKey",
     "UserKeyBackup",
+    "Sponsor",
 ]

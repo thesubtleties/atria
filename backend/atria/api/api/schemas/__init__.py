@@ -75,6 +75,14 @@ from api.api.schemas.direct_message import (
     DirectMessageSchema,
     DirectMessageCreateSchema,
 )
+from api.api.schemas.sponsor import (
+    SponsorSchema,
+    SponsorDetailSchema,
+    SponsorCreateSchema,
+    SponsorUpdateSchema,
+    SponsorListSchema,
+    SponsorTierSchema,
+)
 
 __all__ = [
     # User schemas
@@ -137,4 +145,11 @@ __all__ = [
     "DirectMessageThreadSchema",
     "DirectMessageSchema",
     "DirectMessageCreateSchema",
+    # Sponsor schemas
+    "SponsorSchema",
+    "SponsorDetailSchema",
+    "SponsorCreateSchema",
+    "SponsorUpdateSchema",
+    "SponsorListSchema",
+    "SponsorTierSchema",
 ]

@@ -11,6 +11,7 @@ from .auth import blp as auth_blp
 from .connections import blp as connections_blp
 from .chat_rooms import blp as chat_rooms_blp
 from .direct_messages import blp as direct_messages_blp
+from .sponsors import blp as sponsors_blp
 
 __all__ = [
     # User blueprints
@@ -31,6 +32,8 @@ __all__ = [
     # Chat blueprints
     "chat_rooms_blp",
     "direct_messages_blp",
+    # Sponsors blueprint
+    "sponsors_blp",
 ]
 
 
@@ -59,3 +62,5 @@ def register_blueprints(api):
     # Chat
     api.register_blueprint(chat_rooms_blp)
     api.register_blueprint(direct_messages_blp)
+    # Sponsors
+    api.register_blueprint(sponsors_blp)
