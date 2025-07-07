@@ -19,7 +19,7 @@ const RoadmapPage = () => {
           description: 'Public chat functionality for events',
           details: [
             { text: 'Backend', status: 'complete' },
-            { text: 'Networking area chat rooms', status: 'planned' },
+            { text: 'Networking area chat rooms', status: 'complete' },
             { text: 'Individual session chat room', status: 'planned' },
             { text: 'Moderation/muting capabilities', status: 'planned' },
             { text: 'Public chat notifications', status: 'planned' },
@@ -33,7 +33,7 @@ const RoadmapPage = () => {
             { text: 'Direct message functionality', status: 'complete' },
             { text: 'List of conversations', status: 'complete' },
             { text: 'Base frontend UI', status: 'complete' },
-            { text: 'Proper filtering', status: 'planned' },
+            { text: 'Proper filtering', status: 'complete' },
             { text: 'End-to-end encryption', status: 'planned' },
             { text: 'Ice breaker connection starter', status: 'planned' },
             { text: 'Block/remove connection options', status: 'planned' },
@@ -181,17 +181,17 @@ const RoadmapPage = () => {
     {
       id: 'phase6',
       title: 'Phase 6: Sponsors',
-      status: 'planned',
+      status: 'partial',
       description: 'Sponsor management and integration',
       items: [
         {
           title: 'Sponsor Management',
-          status: 'planned',
+          status: 'partial',
           description: 'Core sponsor functionality',
           details: [
-            { text: 'Sponsors page', status: 'planned' },
+            { text: 'Sponsors page', status: 'complete' },
             { text: 'Per-session sponsorship area', status: 'planned' },
-            { text: 'Sponsor levels with custom names', status: 'planned' },
+            { text: 'Sponsor levels with custom names', status: 'complete' },
             { text: 'Sponsor level descriptions', status: 'planned' },
           ],
         },

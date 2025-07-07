@@ -182,7 +182,7 @@ Building core networking and communication features
 Public chat functionality for events
 
 - [x] Backend
-- [ ] Networking area chat rooms
+- [x] Networking area chat rooms
 - [ ] Individual session chat room
 - [ ] Moderation/muting capabilities
 - [ ] Public chat notifications
@@ -193,7 +193,7 @@ Private messaging between users
 - [x] Direct message functionality
 - [x] List of conversations
 - [x] Base frontend UI
-- [ ] Proper filtering
+- [x] Proper filtering
 - [ ] End-to-end encryption
 - [ ] Ice breaker connection starter
 - [ ] Block/remove connection options
@@ -288,9 +288,9 @@ Sponsor management and integration
 ### Sponsor Management (Planned)
 Core sponsor functionality
 
-- [ ] Sponsors page
+- [x] Sponsors page
 - [ ] Per-session sponsorship area
-- [ ] Sponsor levels with custom names
+- [x] Sponsor levels with custom names
 - [ ] Sponsor level descriptions
 
 ### Sponsor Integration (Planned)
