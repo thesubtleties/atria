@@ -15,6 +15,7 @@ import { SpeakersPage } from '../../../pages/Speakers';
 import { SessionPending } from '../../../pages/Session/SessionPending';
 import RoadmapPage from '@/pages/Roadmap';
 import { Networking } from '../../../pages/Networking';
+import { SponsorsPage } from '../../../pages/Sponsors';
 
 // Placeholder component for development
 const PlaceholderComponent = ({ routeName = 'This page' }) => (
@@ -150,6 +151,10 @@ export const protectedRoutes = [
               {
                 path: 'networking',
                 element: <Networking />,
+              },
+              {
+                path: 'sponsors',
+                element: <SponsorsPage />,
               },
               {
                 path: 'sessions/:sessionId',

@@ -1,0 +1,67 @@
+import { SimpleGrid, Title, Text, Group, Container } from '@mantine/core';
+import SponsorCard from './SponsorCard';
+import styles from './styles/index.module.css';
+
+export default function SponsorsList({ sponsors, tiers }) {
+  // Group sponsors by tier
+  const sponsorsByTier = sponsors.reduce((acc, sponsor) => {
+    const tierId = sponsor.tierId || 'other';
+    if (!acc[tierId]) {
+      acc[tierId] = [];
+    }
+    acc[tierId].push(sponsor);
+    return acc;
+  }, {});
+
+  // Sort tiers by order
+  const sortedTiers = tiers.sort((a, b) => a.order - b.order);
+
+  // Add "Other" tier at the end if there are sponsors without a tier
+  const tiersToDisplay = [
+    ...sortedTiers,
+    ...(sponsorsByTier.other ? [{ id: 'other', name: 'Other Sponsors', order: 999 }] : [])
+  ];
+
+  return (
+    <Container size="xl" className={styles.container}>
+      {tiersToDisplay.map((tier) => {
+        const tiersSponsors = sponsorsByTier[tier.id];
+        if (!tiersSponsors || tiersSponsors.length === 0) return null;
+
+        // Sort sponsors within tier by displayOrder
+        const sortedSponsors = tiersSponsors.sort((a, b) => a.displayOrder - b.displayOrder);
+
+        return (
+          <div key={tier.id} className={styles.tierSection}>
+            <Group className={styles.tierHeader}>
+              <Title order={2} className={styles.tierTitle}>
+                {tier.name}
+              </Title>
+              <Text c="dimmed" size="sm">
+                ({sortedSponsors.length} {sortedSponsors.length === 1 ? 'sponsor' : 'sponsors'})
+              </Text>
+            </Group>
+
+            <SimpleGrid
+              cols={{ base: 1, sm: 2, md: 3, lg: 4 }}
+              spacing="lg"
+              className={styles.sponsorGrid}
+            >
+              {sortedSponsors.map((sponsor) => (
+                <SponsorCard key={sponsor.id} sponsor={sponsor} />
+              ))}
+            </SimpleGrid>
+          </div>
+        );
+      })}
+
+      {sponsors.length === 0 && (
+        <div className={styles.noSponsors}>
+          <Text size="lg" c="dimmed" ta="center">
+            No sponsors yet for this event.
+          </Text>
+        </div>
+      )}
+    </Container>
+  );
+}

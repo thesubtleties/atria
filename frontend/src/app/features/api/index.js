@@ -18,6 +18,8 @@ export const baseApi = createApi({
     'Connection',
     'Thread',
     'DirectMessage',
+    'Sponsor',
+    'SponsorTiers',
   ],
   endpoints: () => ({}),
 });

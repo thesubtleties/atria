@@ -1,0 +1,49 @@
+.container {
+  padding: 2rem 0;
+}
+
+.tierSection {
+  margin-bottom: 3rem;
+}
+
+.tierSection:last-child {
+  margin-bottom: 0;
+}
+
+.tierHeader {
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--mantine-color-gray-3);
+}
+
+.tierTitle {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--mantine-color-gray-9);
+}
+
+.sponsorGrid {
+  margin-top: 1rem;
+}
+
+.noSponsors {
+  padding: 4rem 2rem;
+  text-align: center;
+  background-color: var(--mantine-color-gray-0);
+  border-radius: 8px;
+  border: 1px dashed var(--mantine-color-gray-3);
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem 0;
+  }
+  
+  .tierSection {
+    margin-bottom: 2rem;
+  }
+  
+  .tierTitle {
+    font-size: 1.5rem;
+  }
+}
