@@ -40,3 +40,7 @@ migrations_backup_*/
 
 # Claude Code documentation
 CLAUDE.md
+
+# Local development scripts
+start-dev-tmux.sh
+stop-dev-tmux.sh
