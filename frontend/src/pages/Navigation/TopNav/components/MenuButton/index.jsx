@@ -1,9 +1,12 @@
 // MenuButton.jsx
-import { Menu, Button, rem } from '@mantine/core';
+import { Menu, Button, rem, Image } from '@mantine/core';
 import {
   IconLogout,
   IconBuilding,
   IconCalendarEvent,
+  IconUser,
+  IconUsers,
+  IconSettings,
 } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { useLogoutMutation } from '@/app/features/auth/api'; // Adjust import path as needed
@@ -55,12 +58,35 @@ export const MenuButton = () => {
             },
           }}
         >
-          <span className={styles.menuIcon}>☰</span>
+          <Image
+            src="/favicon/android-chrome-192x192.png"
+            alt="Atria"
+            width={24}
+            height={24}
+          />
         </Button>
       </Menu.Target>
 
       <Menu.Dropdown>
         <Menu.Label>Navigation</Menu.Label>
+
+        <Menu.Item
+          leftSection={
+            <IconUser style={{ width: rem(14), height: rem(14) }} />
+          }
+          onClick={() => navigate('/app/profile')}
+        >
+          Profile
+        </Menu.Item>
+
+        <Menu.Item
+          leftSection={
+            <IconUsers style={{ width: rem(14), height: rem(14) }} />
+          }
+          onClick={() => navigate('/app/network')}
+        >
+          Network
+        </Menu.Item>
 
         <Menu.Item
           leftSection={
@@ -78,6 +104,15 @@ export const MenuButton = () => {
           onClick={() => navigate('/app/events')}
         >
           Events
+        </Menu.Item>
+
+        <Menu.Item
+          leftSection={
+            <IconSettings style={{ width: rem(14), height: rem(14) }} />
+          }
+          onClick={() => navigate('/app/settings')}
+        >
+          Settings
         </Menu.Item>
 
         <Menu.Divider />
