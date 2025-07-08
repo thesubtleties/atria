@@ -23,6 +23,8 @@ RUN pip install --no-cache-dir -U pip && \
 
 # Copy application code
 COPY api api/
+COPY migrations migrations/
+COPY seeders seeders/
 COPY init.sh .
 RUN chmod +x init.sh
 
