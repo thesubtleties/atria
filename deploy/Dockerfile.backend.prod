@@ -21,6 +21,7 @@ RUN pip install --no-cache-dir -U pip && \
 # Copy application code
 COPY backend/atria/api api/
 COPY backend/atria/seeders seeders/
+COPY backend/atria/migrations migrations/
 COPY backend/atria/init.sh .
 RUN chmod +x init.sh
 
