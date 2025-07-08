@@ -16,6 +16,9 @@ import { SessionPending } from '../../../pages/Session/SessionPending';
 import RoadmapPage from '@/pages/Roadmap';
 import { Networking } from '../../../pages/Networking';
 import { SponsorsPage } from '../../../pages/Sponsors';
+import Profile from '../../../pages/Profile';
+import Network from '../../../pages/Network';
+import Settings from '../../../pages/Settings';
 
 // Placeholder component for development
 const PlaceholderComponent = ({ routeName = 'This page' }) => (
@@ -68,6 +71,18 @@ export const protectedRoutes = [
       {
         index: true,
         element: <NewUserCheck />,
+      },
+      {
+        path: 'profile',
+        element: <Profile />,
+      },
+      {
+        path: 'network',
+        element: <Network />,
+      },
+      {
+        path: 'settings',
+        element: <Settings />,
       },
       {
         path: 'organizations',

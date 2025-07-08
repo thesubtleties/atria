@@ -75,6 +75,9 @@ jobs:
         script: |
           IMAGE_TAG="${{ needs.build-and-push.outputs.image-tag }}"
           
+          # Set KUBECONFIG to use user's config
+          export KUBECONFIG=$HOME/.kube/config
+          
           # Pull the new images with specific tag
           echo "Pulling new Docker images with tag: ${IMAGE_TAG}"
           sudo k3s crictl pull ${{ env.BACKEND_IMAGE }}:${IMAGE_TAG}
