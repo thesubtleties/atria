@@ -22,8 +22,9 @@ dist/
 # Docker
 postgres_data/
 
-# Migrations
-backend/atria/migrations/*
+# Migrations - Track migration files but not __pycache__
+backend/atria/migrations/__pycache__/
+backend/atria/migrations/versions/__pycache__/
 
 #frontend
 frontend/setup-structure.sh
