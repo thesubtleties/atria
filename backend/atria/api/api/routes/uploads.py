@@ -11,7 +11,6 @@ from api.api.schemas.upload import (
     ImageUploadResponseSchema,
     PresignedUrlResponseSchema
 )
-from api.exceptions import APIException
 from api.commons.decorators import event_member_required
 from api.models import User
 
@@ -43,11 +42,11 @@ class ImageUploadResource(MethodView):
         current_user_id = int(get_jwt_identity())
         
         if 'file' not in request.files:
-            raise APIException(message="No file provided", status_code=400)
+            return {"message": "No file provided"}, 400
         
         file = request.files['file']
         if not file or file.filename == '':
-            raise APIException(message="No file selected", status_code=400)
+            return {"message": "No file selected"}, 400
         
         context = args['context']
         
@@ -57,7 +56,7 @@ class ImageUploadResource(MethodView):
             kwargs['user_id'] = current_user_id
         elif context in ['event_logo', 'event_banner', 'sponsor_logo', 'event_document']:
             if 'event_id' not in args:
-                raise APIException(message="event_id required for this context", status_code=400)
+                return {"message": "event_id required for this context"}, 400
             kwargs['event_id'] = args['event_id']
         
         try:
@@ -80,10 +79,10 @@ class ImageUploadResource(MethodView):
                 'context': result['context']
             }, 201
             
-        except APIException:
-            raise
+        except ValueError as e:
+            return {"message": str(e)}, 400
         except Exception as e:
-            raise APIException(message="Failed to upload image", status_code=500)
+            return {"message": "Failed to upload image"}, 500
 
 
 @blp.route("/content/<path:object_key>")
@@ -102,7 +101,7 @@ class AuthenticatedContentResource(MethodView):
         """Get presigned URL for authenticated content"""
         # Verify file exists
         if not storage_service.file_exists(StorageBucket.AUTHENTICATED.value, object_key):
-            raise APIException(message="Content not found", status_code=404)
+            return {"message": "Content not found"}, 404
         
         # Generate presigned URL
         url = storage_service.get_presigned_url(
@@ -136,12 +135,12 @@ class PrivateContentResource(MethodView):
         # Extract event_id from object_key (format: events/{event_id}/...)
         parts = object_key.split('/')
         if len(parts) < 2 or parts[0] != 'events':
-            raise APIException(message="Invalid private content path", status_code=400)
+            return {"message": "Invalid private content path"}, 400
         
         try:
             event_id = int(parts[1])
         except ValueError:
-            raise APIException(message="Invalid event ID in path", status_code=400)
+            return {"message": "Invalid event ID in path"}, 400
         
         # Check event membership using the decorator logic
         from api.models import Event, User
@@ -149,11 +148,11 @@ class PrivateContentResource(MethodView):
         event = Event.query.get_or_404(event_id)
         
         if not event.is_user_in_event(current_user):
-            raise APIException(message="Not authorized to access this content", status_code=403)
+            return {"message": "Not authorized to access this content"}, 403
         
         # Verify file exists
         if not storage_service.file_exists(StorageBucket.PRIVATE.value, object_key):
-            raise APIException(message="Content not found", status_code=404)
+            return {"message": "Content not found"}, 404
         
         # Generate presigned URL
         url = storage_service.get_presigned_url(
@@ -211,7 +210,7 @@ class UploadDeleteResource(MethodView):
                 try:
                     file_user_id = int(parts[1])
                     if file_user_id != current_user_id:
-                        raise APIException(message="Not authorized to delete this file", status_code=403)
+                        return {"message": "Not authorized to delete this file"}, 403
                 except ValueError:
                     pass
         elif object_key.startswith('events/'):
@@ -222,10 +221,10 @@ class UploadDeleteResource(MethodView):
             # TODO: Add admin check for public content
         
         if not bucket:
-            raise APIException(message="Invalid file path", status_code=400)
+            return {"message": "Invalid file path"}, 400
         
         success = storage_service.delete_file(bucket, object_key)
         if not success:
-            raise APIException(message="Failed to delete file", status_code=404)
+            return {"message": "Failed to delete file"}, 404
         
         return '', 204

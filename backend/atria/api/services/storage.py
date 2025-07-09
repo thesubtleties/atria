@@ -10,7 +10,6 @@ from minio.error import S3Error
 from PIL import Image
 from werkzeug.datastructures import FileStorage
 
-from api.exceptions import APIException
 
 
 class StorageBucket(Enum):
@@ -49,18 +48,27 @@ class StorageService:
         self.secret_key = os.getenv('MINIO_SECRET_KEY')
         self.use_ssl = os.getenv('MINIO_USE_SSL', 'false').lower() == 'true'
         self.external_url = os.getenv('MINIO_EXTERNAL_URL', 'https://storage.sbtl.dev')
+        self.client = None
+        self._connected = False
         
         if not self.access_key or not self.secret_key:
-            raise ValueError("MinIO credentials not configured")
+            print("Warning: MinIO credentials not configured. Storage operations will fail.")
+            return
         
-        self.client = Minio(
-            self.endpoint,
-            access_key=self.access_key,
-            secret_key=self.secret_key,
-            secure=self.use_ssl
-        )
-        
-        self._ensure_buckets_exist()
+        try:
+            self.client = Minio(
+                self.endpoint,
+                access_key=self.access_key,
+                secret_key=self.secret_key,
+                secure=self.use_ssl
+            )
+            
+            self._ensure_buckets_exist()
+            self._connected = True
+            print(f"Successfully connected to MinIO at {self.endpoint}")
+        except Exception as e:
+            print(f"Warning: Could not connect to MinIO at {self.endpoint}: {e}")
+            print("Storage operations will fail, but app will start")
     
     def _ensure_buckets_exist(self):
         """Ensure all required buckets exist."""
@@ -106,7 +114,7 @@ class StorageService:
     def _get_storage_config(self, context: str, **kwargs) -> Tuple[str, str]:
         """Get bucket and path for a given storage context."""
         if context not in self.STORAGE_PATHS:
-            raise APIException(message=f"Invalid storage context: {context}", status_code=400)
+            raise ValueError(f"Invalid storage context: {context}")
         
         bucket, path_template = self.STORAGE_PATHS[context]
         
@@ -114,7 +122,7 @@ class StorageService:
         try:
             path = path_template.format(**kwargs)
         except KeyError as e:
-            raise APIException(message=f"Missing required parameter for {context}: {e}", status_code=400)
+            raise ValueError(f"Missing required parameter for {context}: {e}")
         
         return bucket, path
     
@@ -130,10 +138,13 @@ class StorageService:
         Returns:
             Dictionary with object_key and url
         """
+        if not self._connected:
+            raise Exception("Storage service not connected")
+            
         # Validate the image
         is_valid, error = self._validate_image(file)
         if not is_valid:
-            raise APIException(message=error, status_code=400)
+            raise ValueError(error)
         
         # Get bucket and path
         bucket, path = self._get_storage_config(context, **kwargs)
@@ -170,7 +181,7 @@ class StorageService:
             }
             
         except S3Error as e:
-            raise APIException(message=f"Failed to upload file: {str(e)}", status_code=500)
+            raise Exception(f"Failed to upload file: {str(e)}")
     
     def delete_file(self, bucket: str, object_name: str) -> bool:
         """
@@ -183,6 +194,9 @@ class StorageService:
         Returns:
             True if successful, False otherwise
         """
+        if not self._connected:
+            return False
+            
         try:
             self.client.remove_object(bucket, object_name)
             return True
@@ -201,6 +215,9 @@ class StorageService:
         Returns:
             Presigned URL
         """
+        if not self._connected:
+            raise Exception("Storage service not connected")
+            
         try:
             url = self.client.presigned_get_object(
                 bucket,
@@ -209,10 +226,13 @@ class StorageService:
             )
             return url
         except S3Error as e:
-            raise APIException(message=f"Failed to generate URL: {str(e)}", status_code=500)
+            raise Exception(f"Failed to generate URL: {str(e)}")
     
     def file_exists(self, bucket: str, object_name: str) -> bool:
         """Check if a file exists in MinIO."""
+        if not self._connected:
+            return False
+            
         try:
             self.client.stat_object(bucket, object_name)
             return True
