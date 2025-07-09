@@ -83,6 +83,11 @@ from api.api.schemas.sponsor import (
     SponsorListSchema,
     SponsorTierSchema,
 )
+from api.api.schemas.upload import (
+    ImageUploadSchema,
+    ImageUploadResponseSchema,
+    PresignedUrlResponseSchema,
+)
 
 __all__ = [
     # User schemas
@@ -152,4 +157,8 @@ __all__ = [
     "SponsorUpdateSchema",
     "SponsorListSchema",
     "SponsorTierSchema",
+    # Upload schemas
+    "ImageUploadSchema",
+    "ImageUploadResponseSchema",
+    "PresignedUrlResponseSchema",
 ]

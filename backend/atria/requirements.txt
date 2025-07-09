@@ -31,6 +31,10 @@ python-dotenv
 passlib
 python-slugify
 
+# Object Storage
+minio
+Pillow
+
 # Testing
 tox
 
