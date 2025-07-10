@@ -64,6 +64,6 @@ class SpeakerReorderSchema(ma.Schema):
     order = ma.Integer(required=True)
 
     @validates("order")
-    def validate_order(self, value):
+    def validate_order(self, value, **kwargs):
         if value < 1:
             raise ValidationError("Order must be positive")

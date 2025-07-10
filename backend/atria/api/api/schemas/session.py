@@ -62,12 +62,12 @@ class SessionCreateSchema(ma.Schema):
     day_number = ma.Integer(required=True)
 
     @validates("title")
-    def validate_title(self, value):
+    def validate_title(self, value, **kwargs):
         if len(value.strip()) < 3:
             raise ValidationError("Title must be at least 3 characters")
 
     @validates("day_number")
-    def validate_day_number(self, value):
+    def validate_day_number(self, value, **kwargs):
         if value < 1:
             raise ValidationError("Day number must be positive")
 

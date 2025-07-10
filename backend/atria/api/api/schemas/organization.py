@@ -74,7 +74,7 @@ class OrganizationCreateSchema(ma.Schema):
     name = ma.String(required=True)
 
     @validates("name")
-    def validate_name(self, value):
+    def validate_name(self, value, **kwargs):
         if len(value.strip()) < 2:
             raise ValidationError("Name must be at least 2 characters")
 
@@ -89,7 +89,7 @@ class OrganizationUpdateSchema(ma.Schema):
     name = ma.String()
 
     @validates("name")
-    def validate_name(self, value):
+    def validate_name(self, value, **kwargs):
         if len(value.strip()) < 2:
             raise ValidationError("Name must be at least 2 characters")
 

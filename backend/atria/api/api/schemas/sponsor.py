@@ -58,7 +58,7 @@ class SponsorCreateSchema(ma.Schema):
     social_links = ma.Dict(allow_none=True)
 
     @validates("website_url")
-    def validate_website_url(self, value):
+    def validate_website_url(self, value, **kwargs):
         """Validate website URL format"""
         if value and not value.startswith(("http://", "https://")):
             raise ValidationError(
@@ -66,7 +66,7 @@ class SponsorCreateSchema(ma.Schema):
             )
 
     @validates("social_links")
-    def validate_social_links(self, value):
+    def validate_social_links(self, value, **kwargs):
         """Validate social media links structure"""
         if not value:
             return

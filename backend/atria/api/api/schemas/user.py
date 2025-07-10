@@ -67,7 +67,7 @@ class UserCreateSchema(ma.Schema):
     bio = ma.String()
 
     @validates("password")
-    def validate_password(self, value):
+    def validate_password(self, value, **kwargs):
         if len(value) < 8:
             raise ValidationError("Password must be at least 8 characters")
 

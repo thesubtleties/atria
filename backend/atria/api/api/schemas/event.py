@@ -106,7 +106,7 @@ class EventCreateSchema(ma.Schema):
 
     # Validate individual fields
     @validates("title")
-    def validate_title(self, value):
+    def validate_title(self, value, **kwargs):
         if len(value.strip()) < 3:
             raise ValidationError("Title must be at least 3 characters")
 
@@ -158,7 +158,7 @@ class EventBrandingSchema(ma.Schema):
     banner_url = ma.URL(allow_none=True)
 
     @validates("primary_color")
-    def validate_color(self, value):
+    def validate_color(self, value, **kwargs):
         """Ensure color is valid hex code"""
         if not value.startswith("#") or len(value) != 7:
             raise ValidationError("Must be valid hex color (e.g., #FF0000)")
