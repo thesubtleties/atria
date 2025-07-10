@@ -1,6 +1,7 @@
-import { Container, LoadingOverlay, Alert } from '@mantine/core';
+import { Container, LoadingOverlay, Alert, Stack, Title, Text, Group, Badge } from '@mantine/core';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { useState } from 'react';
 import {
   useGetSessionQuery,
   useUpdateSessionStatusMutation,
@@ -10,12 +11,14 @@ import { useGetEventQuery } from '@/app/features/events/api';
 import { SessionDisplay } from './SessionDisplay';
 import { SessionSpeakers } from './SessionSpeakers';
 import { SessionDetails } from './SessionDetails';
+import { SessionChat } from './SessionChat';
 import styles from './styles/index.module.css';
 
 export const SessionPage = () => {
   const { sessionId } = useParams();
   const navigate = useNavigate();
   const currentUser = useSelector((state) => state.auth.user);
+  const [isChatOpen, setIsChatOpen] = useState(true);
 
   const { data: session, isLoading } = useGetSessionQuery(sessionId);
   const { data: event } = useGetEventQuery(session?.event_id, {
@@ -65,24 +68,75 @@ export const SessionPage = () => {
   };
 
   return (
-    <Container size="xl" className={styles.pageContainer}>
-      <div className={styles.contentWrapper}>
-        <SessionDisplay
-          isLive={session.is_live}
-          streamUrl={session.stream_url}
-          startTime={session.start_time}
-          title={session.title}
-          status={session.status}
-        />
+    <>
+      <Container size="xl" className={styles.pageContainer}>
+        <Stack spacing="xl">
+          {/* Session Header */}
+          <div className={styles.header}>
+            <div>
+              <Title order={1} className={styles.title}>
+                {session.title}
+              </Title>
+              {session.is_live && (
+                <Badge 
+                  size="sm" 
+                  color="red" 
+                  variant="dot"
+                  className={styles.liveBadge}
+                  mt="xs"
+                >
+                  LIVE
+                </Badge>
+              )}
+            </div>
+          </div>
 
-        <SessionDetails
-          session={session}
-          canEdit={canEdit}
-          onStatusChange={handleStatusChange}
-          onUpdate={handleUpdate}
-        />
-      </div>
-    </Container>
+          {/* Main Content with Collapsible Chat */}
+          <div className={styles.contentWithChat}>
+            {/* Main Content Area */}
+            <div className={`${styles.mainContent} ${isChatOpen ? '' : styles.chatClosed}`}>
+              {/* Video Display */}
+              <SessionDisplay
+                streamUrl={session.stream_url}
+              />
+              
+              {/* Session Details - Horizontal under video */}
+              <SessionDetails
+                session={session}
+                canEdit={canEdit}
+                onStatusChange={handleStatusChange}
+                onUpdate={handleUpdate}
+              />
+              
+              {/* About This Session Section */}
+              <div className={styles.aboutSection}>
+                <Title order={3} mb="md">About This Session</Title>
+                
+                {/* Speakers */}
+                <SessionSpeakers
+                  sessionId={sessionId}
+                  canEdit={canEdit}
+                />
+                
+                {/* Description */}
+                {session.description && (
+                  <Text mt="lg" className={styles.description}>
+                    {session.description}
+                  </Text>
+                )}
+              </div>
+            </div>
+          </div>
+        </Stack>
+      </Container>
+      
+      {/* Collapsible Chat Sidebar - Fixed position outside Container */}
+      <SessionChat 
+        sessionId={sessionId}
+        isEnabled={true} // TODO: Check if chat is enabled for this session
+        onToggle={setIsChatOpen}
+      />
+    </>
   );
 };
 

@@ -1,36 +1,67 @@
 /* pages/Session/SessionDetails/styles/index.module.css */
 .detailsSection {
-  margin-top: 48px;
-  padding: 0 24px;
+  background: var(--mantine-color-gray-0);
+  border-radius: var(--mantine-radius-sm);
+  padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+  margin-top: var(--mantine-spacing-sm);
 }
 
-.detailsContainer {
-  background: white;
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
+.detailsGrid {
+  flex-wrap: wrap;
   align-items: center;
-  margin-bottom: 24px;
 }
 
-.editButton {
-  color: #666;
-  transition: all 0.2s ease;
+/* Modern type tag styling */
+.typeTag {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background-color: var(--mantine-color-gray-1);
+  color: var(--mantine-color-gray-7);
 }
 
-.editButton:hover {
-  background: rgba(0, 0, 0, 0.05);
-  transform: translateY(-1px);
+/* Session type colors matching the main page */
+.keynote {
+  background-color: var(--mantine-color-grape-1);
+  color: var(--mantine-color-grape-7);
 }
 
-.detailItem {
-  padding: 16px;
-  background: rgba(0, 0, 0, 0.02);
-  border-radius: 8px;
+.panel {
+  background-color: var(--mantine-color-blue-1);
+  color: var(--mantine-color-blue-7);
+}
+
+.workshop {
+  background-color: var(--mantine-color-teal-1);
+  color: var(--mantine-color-teal-7);
+}
+
+.presentation {
+  background-color: var(--mantine-color-orange-1);
+  color: var(--mantine-color-orange-7);
+}
+
+.qa, .q_a {
+  background-color: var(--mantine-color-pink-1);
+  color: var(--mantine-color-pink-7);
+}
+
+.networking {
+  background-color: var(--mantine-color-green-1);
+  color: var(--mantine-color-green-7);
+}
+
+@media (max-width: 768px) {
+  .detailsGrid {
+    gap: var(--mantine-spacing-sm);
+  }
+  
+  .detailsGrid > div[style*="vertical"] {
+    display: none;
+  }
 }

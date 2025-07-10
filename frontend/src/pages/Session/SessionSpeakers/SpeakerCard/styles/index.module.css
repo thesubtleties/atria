@@ -9,3 +9,37 @@
   transform: translateY(-2px);
   background: rgba(0, 0, 0, 0.04);
 }
+
+/* Modern role tag styling */
+.roleTag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  background-color: var(--mantine-color-gray-1);
+  color: var(--mantine-color-gray-7);
+  margin-top: 4px;
+}
+
+/* Speaker role colors */
+.primary, .primary_speaker {
+  background-color: var(--mantine-color-grape-1);
+  color: var(--mantine-color-grape-7);
+}
+
+.co_speaker, .cospeaker {
+  background-color: var(--mantine-color-blue-1);
+  color: var(--mantine-color-blue-7);
+}
+
+.moderator {
+  background-color: var(--mantine-color-teal-1);
+  color: var(--mantine-color-teal-7);
+}
+
+.panelist {
+  background-color: var(--mantine-color-orange-1);
+  color: var(--mantine-color-orange-7);
+}

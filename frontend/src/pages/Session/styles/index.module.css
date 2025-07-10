@@ -1,26 +1,120 @@
 .pageContainer {
   padding: var(--mantine-spacing-md);
   min-height: calc(100vh - var(--mantine-header-height, 0px));
-  display: flex;
-  flex-direction: column;
 }
 
-.contentWrapper {
+.header {
+  margin-bottom: var(--mantine-spacing-lg);
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0;
+  color: var(--mantine-color-gray-9);
+}
+
+.typeTag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background-color: var(--mantine-color-gray-1);
+  color: var(--mantine-color-gray-7);
+}
+
+/* Session type colors matching agenda */
+.keynote {
+  background-color: var(--mantine-color-grape-1);
+  color: var(--mantine-color-grape-7);
+}
+
+.panel {
+  background-color: var(--mantine-color-blue-1);
+  color: var(--mantine-color-blue-7);
+}
+
+.workshop {
+  background-color: var(--mantine-color-teal-1);
+  color: var(--mantine-color-teal-7);
+}
+
+.presentation {
+  background-color: var(--mantine-color-orange-1);
+  color: var(--mantine-color-orange-7);
+}
+
+.qa, .q_a {
+  background-color: var(--mantine-color-pink-1);
+  color: var(--mantine-color-pink-7);
+}
+
+.networking {
+  background-color: var(--mantine-color-green-1);
+  color: var(--mantine-color-green-7);
+}
+
+.liveBadge {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+.contentWithChat {
+  position: relative;
+}
+
+.mainContent {
+  width: 100%;
+  padding-right: 340px; /* 320px chat + 20px gap */
   display: flex;
   flex-direction: column;
-  gap: var(--mantine-spacing-xl);
-  width: 100%;
-  /* Remove any extra margin/padding */
-  margin-top: 0;
-  padding-top: 0;
+  gap: 0;
+  transition: padding-right 0.3s ease;
 }
-/* Add some responsive padding */
+
+.mainContent.chatClosed {
+  padding-right: 0;
+}
+
+.aboutSection {
+  background-color: white;
+  padding: var(--mantine-spacing-lg);
+  border-radius: var(--mantine-radius-md);
+  margin-top: var(--mantine-spacing-md);
+  border: 1px solid var(--mantine-color-gray-2);
+}
+
+.description {
+  line-height: 1.6;
+  color: var(--mantine-color-gray-7);
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+  .contentWithChat {
+    gap: var(--mantine-spacing-md);
+  }
+}
+
 @media (max-width: 768px) {
   .pageContainer {
     padding: var(--mantine-spacing-xs);
   }
-
-  .contentWrapper {
-    gap: var(--mantine-spacing-lg);
+  
+  .title {
+    font-size: 1.5rem;
+  }
+  
+  .aboutSection {
+    padding: var(--mantine-spacing-md);
   }
 }
