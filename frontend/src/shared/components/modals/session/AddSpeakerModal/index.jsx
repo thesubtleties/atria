@@ -1,54 +1,54 @@
 // shared/components/modals/session/AddSpeakerModal/index.jsx
-import { TextInput, Button, Stack, Modal, Textarea } from '@mantine/core';
-import { useForm, zodResolver } from '@mantine/form';
-import { useAddSessionSpeakerMutation } from '@/app/features/sessions/api';
-import { useCheckUserExistsQuery } from '@/app/features/users/api';
-import { addSpeakerSchema } from './schemas/addSpeakerSchema';
-import { useEffect } from 'react';
+import { Select, Button, Stack, Modal, Alert } from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { 
+  useAddSessionSpeakerMutation, 
+  useGetSessionQuery,
+  useGetSessionSpeakersQuery 
+} from '@/app/features/sessions/api';
+import { useGetEventUsersQuery } from '@/app/features/events/api';
+import { useMemo } from 'react';
 import styles from './styles/index.module.css';
 
 export const AddSpeakerModal = ({ sessionId, opened, onClose }) => {
   const [addSpeaker, { isLoading }] = useAddSessionSpeakerMutation();
+  const { data: session } = useGetSessionQuery(sessionId, { skip: !sessionId });
+  const { data: eventSpeakers } = useGetEventUsersQuery(
+    { eventId: session?.event_id, role: 'SPEAKER' },
+    { skip: !session?.event_id }
+  );
+  const { data: currentSpeakers } = useGetSessionSpeakersQuery(
+    { sessionId },
+    { skip: !sessionId }
+  );
 
   const form = useForm({
     initialValues: {
-      email: '',
-      firstName: '',
-      lastName: '',
-      title: '',
-      speaker_bio: '',
+      user_id: '',
+      role: 'SPEAKER',
     },
-    validate: zodResolver(addSpeakerSchema),
   });
 
-  // Skip if email is empty or too short
-  const email = form.values.email;
-  const skipQuery = !email || email.length < 5;
-  const { data: userExists, isFetching } = useCheckUserExistsQuery(email, {
-    skip: skipQuery,
-  });
-
-  // Pre-fill form if user exists
-  useEffect(() => {
-    if (userExists?.user) {
-      form.setValues({
-        firstName: userExists.user.first_name,
-        lastName: userExists.user.last_name,
-        title: userExists.user.title || '',
-        speaker_bio: userExists.user.bio || '',
-      });
-    }
-  }, [userExists]);
+  // Get list of speakers not already assigned to this session
+  const availableSpeakers = useMemo(() => {
+    if (!eventSpeakers?.event_users) return [];
+    
+    const currentSpeakerIds = currentSpeakers?.session_speakers?.map(s => s.user_id) || [];
+    
+    return eventSpeakers.event_users
+      .filter(user => !currentSpeakerIds.includes(user.user_id))
+      .map(user => ({
+        value: user.user_id.toString(),
+        label: `${user.first_name} ${user.last_name}${user.title ? ` - ${user.title}` : ''}`,
+      }));
+  }, [eventSpeakers, currentSpeakers]);
 
   const handleSubmit = async (values) => {
     try {
       await addSpeaker({
         sessionId,
-        email: values.email,
-        first_name: values.firstName,
-        last_name: values.lastName,
-        title: values.title,
-        speaker_bio: values.speaker_bio,
+        user_id: parseInt(values.user_id),
+        role: values.role,
       }).unwrap();
 
       form.reset();
@@ -56,68 +56,63 @@ export const AddSpeakerModal = ({ sessionId, opened, onClose }) => {
     } catch (error) {
       console.error('Submission error:', error);
       if (error.status === 409) {
-        form.setErrors({ email: 'Speaker already added to session' });
+        form.setErrors({ user_id: 'Speaker already added to session' });
       } else {
-        form.setErrors({ email: 'An unexpected error occurred' });
+        form.setErrors({ user_id: 'An unexpected error occurred' });
       }
     }
   };
-
-  const areNameFieldsDisabled =
-    isLoading || (userExists?.user !== null && userExists?.user !== undefined);
 
   return (
     <Modal
       opened={opened}
       onClose={onClose}
-      title="Add Speaker"
+      title="Add Speaker to Session"
       centered
-      size="md"
+      size="sm"
     >
       <form onSubmit={form.onSubmit(handleSubmit)} className={styles.form}>
         <Stack gap="md">
-          <TextInput
-            label="Email"
-            placeholder="speaker@email.com"
-            required
-            {...form.getInputProps('email')}
-            disabled={isLoading}
-          />
+          {availableSpeakers.length === 0 ? (
+            <Alert color="yellow" variant="light">
+              No available speakers found. All event speakers have been assigned to this session, 
+              or there are no speakers registered for this event.
+            </Alert>
+          ) : (
+            <>
+              <Select
+                label="Select Speaker"
+                placeholder="Choose a speaker"
+                data={availableSpeakers}
+                required
+                searchable
+                {...form.getInputProps('user_id')}
+                disabled={isLoading}
+              />
 
-          <TextInput
-            label="First Name"
-            placeholder="First Name"
-            required
-            {...form.getInputProps('firstName')}
-            disabled={areNameFieldsDisabled}
-          />
+              <Select
+                label="Speaker Role"
+                data={[
+                  { value: 'SPEAKER', label: 'Speaker' },
+                  { value: 'PRIMARY', label: 'Primary Speaker' },
+                  { value: 'CO_SPEAKER', label: 'Co-Speaker' },
+                  { value: 'MODERATOR', label: 'Moderator' },
+                  { value: 'PANELIST', label: 'Panelist' },
+                ]}
+                {...form.getInputProps('role')}
+                disabled={isLoading}
+              />
 
-          <TextInput
-            label="Last Name"
-            placeholder="Last Name"
-            required
-            {...form.getInputProps('lastName')}
-            disabled={areNameFieldsDisabled}
-          />
-
-          <TextInput
-            label="Title"
-            placeholder="Speaker Title"
-            {...form.getInputProps('title')}
-            disabled={isLoading}
-          />
-
-          <Textarea
-            label="Speaker Bio"
-            placeholder="Speaker Biography"
-            minRows={3}
-            {...form.getInputProps('speaker_bio')}
-            disabled={isLoading}
-          />
-
-          <Button type="submit" loading={isLoading} fullWidth>
-            {isLoading ? 'Adding...' : 'Add Speaker'}
-          </Button>
+              <Button 
+                type="submit" 
+                loading={isLoading} 
+                fullWidth
+                disabled={!form.values.user_id}
+              >
+                {isLoading ? 'Adding...' : 'Add Speaker'}
+              </Button>
+            </>
+          )}
         </Stack>
       </form>
     </Modal>
