@@ -4,6 +4,8 @@
   flex-direction: column;
   transition: all 0.2s ease;
   cursor: pointer;
+  position: relative;
+  overflow: visible;
 }
 
 .card:hover {
@@ -24,6 +26,38 @@
 
 .badge {
   margin-top: 4px;
+}
+
+/* Modern squared role badges */
+.roleBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+}
+
+/* Role colors matching session types */
+.admin,
+.organizer {
+  background-color: var(--mantine-color-grape-1);
+  color: var(--mantine-color-grape-7);
+}
+
+.speaker {
+  background-color: var(--mantine-color-blue-1);
+  color: var(--mantine-color-blue-7);
+}
+
+.attendee {
+  background-color: var(--mantine-color-gray-1);
+  color: var(--mantine-color-gray-7);
 }
 
 .content {
@@ -48,8 +82,14 @@
 }
 
 .socials {
+  margin-top: auto; /* Push to bottom */
   padding-top: var(--mantine-spacing-xs);
   border-top: 1px solid #e9ecef;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 32px; /* Fixed height to match button height + alignment */
 }
 
 .actions {
@@ -65,4 +105,26 @@
 
 .connectBadge:hover {
   transform: scale(1.02);
+}
+
+/* Action button wrapper */
+.actionButtonWrapper {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.actionButton {
+  padding: 4px 12px;
+  height: 28px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  margin: 0; /* Ensure no margin */
+}
+
+.actionButton:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }

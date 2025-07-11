@@ -13,17 +13,48 @@ export function AttendeesGrid({ eventId }) {
   const [page, setPage] = useState(1);
   const perPage = 50;
   
-  const { data, isLoading, error } = useGetEventUsersQuery({
+  // Fetch both ADMIN and ORGANIZER when "organizer" is selected
+  const { data: adminData, isLoading: isLoadingAdmins } = useGetEventUsersQuery({
     eventId: eventId,
-    role: filterRole === 'all' ? undefined : filterRole.toUpperCase(),
+    role: 'ADMIN',
     page: page,
     per_page: perPage
   }, {
-    skip: !eventId
+    skip: !eventId || filterRole !== 'organizer'
   });
   
+  const { data: organizerData, isLoading: isLoadingOrganizers } = useGetEventUsersQuery({
+    eventId: eventId,
+    role: 'ORGANIZER',
+    page: page,
+    per_page: perPage
+  }, {
+    skip: !eventId || filterRole !== 'organizer'
+  });
+  
+  const { data: regularData, isLoading: isLoadingRegular } = useGetEventUsersQuery({
+    eventId: eventId,
+    role: filterRole === 'all' ? undefined : filterRole === 'organizer' ? undefined : filterRole.toUpperCase(),
+    page: page,
+    per_page: perPage
+  }, {
+    skip: !eventId || filterRole === 'organizer'
+  });
+  
+  // Determine which data to use based on filter
+  const isLoading = filterRole === 'organizer' 
+    ? (isLoadingAdmins || isLoadingOrganizers)
+    : isLoadingRegular;
+  
+  const data = filterRole === 'organizer'
+    ? {
+        event_users: [...(adminData?.event_users || []), ...(organizerData?.event_users || [])],
+        total_items: (adminData?.total_items || 0) + (organizerData?.total_items || 0)
+      }
+    : regularData;
+  
   const attendees = data?.event_users || [];
-  console.log('AttendeesGrid debug:', { eventId, data, attendees, isLoading, error });
+  console.log('AttendeesGrid debug:', { eventId, data, attendees, isLoading });
   const [createConnection] = useCreateConnectionMutation();
   const navigate = useNavigate();
 
@@ -46,8 +77,8 @@ export function AttendeesGrid({ eventId }) {
 
   const filteredAttendees = attendees?.filter(attendee => {
     const matchesSearch = !searchQuery || 
-      attendee.user_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      attendee.speaker_title?.toLowerCase().includes(searchQuery.toLowerCase());
+      attendee.user_name?.toLowerCase().includes(searchQuery?.toLowerCase() || '') ||
+      attendee.speaker_title?.toLowerCase().includes(searchQuery?.toLowerCase() || '');
     
     // Role filtering is now handled by the API query
     return matchesSearch;
@@ -126,6 +157,7 @@ export function AttendeesGrid({ eventId }) {
                 privacySettings: {}
               }}
               variant={attendee.is_speaker ? 'speaker' : 'attendee'}
+              role={attendee.role}
               onConnect={() => handleConnect(attendee)}
               onMessage={() => handleMessage(attendee)}
             />
