@@ -46,8 +46,8 @@ const RoadmapPage = () => {
           status: 'planned',
           description: 'Manage connections with other attendees',
           details: [
-            { text: 'Attendee directory', status: 'planned' },
-            { text: 'Attendee cards/base profiles', status: 'planned' },
+            { text: 'Attendee directory', status: 'complete' },
+            { text: 'Attendee cards/base profiles', status: 'complete' },
           ],
         },
       ],
@@ -63,7 +63,7 @@ const RoadmapPage = () => {
           status: 'planned',
           description: 'User profile creation and management',
           details: [
-            { text: 'Create/update profile page', status: 'planned' },
+            { text: 'Create/update profile page', status: 'complete' },
             { text: 'Profile image upload/emoji generator', status: 'planned' },
             { text: 'Cards for connections', status: 'planned' },
           ],
@@ -122,9 +122,21 @@ const RoadmapPage = () => {
           status: 'planned',
           description: 'Session content and details',
           details: [
-            { text: 'Cleaner session page with details', status: 'planned' },
-            { text: 'Speakers area with social links', status: 'planned' },
-            { text: 'Speaker ordering capability', status: 'planned' },
+            { text: 'Cleaner session page with details', status: 'complete' },
+            { text: 'Speakers area with social links', status: 'complete' },
+            { text: 'Speaker ordering capability', status: 'complete' },
+            { text: 'Short description for agenda view', status: 'planned' },
+          ],
+        },
+        {
+          title: 'Session Creation/Editing',
+          status: 'planned',
+          description: 'Session management tools',
+          details: [
+            { text: 'Magic import from CSV/run of show docs', status: 'planned' },
+            { text: 'LLM-powered document parsing', status: 'planned' },
+            { text: 'Mass session import', status: 'planned' },
+            { text: 'Session creation wizard', status: 'planned' },
           ],
         },
         {
