@@ -1,5 +1,5 @@
 from flask.views import MethodView
-from flask_smorest import Blueprint
+from flask_smorest import Blueprint, abort
 from flask_jwt_extended import jwt_required
 
 from api.api.schemas import LoginSchema, SignupSchema, UserDetailSchema
@@ -160,7 +160,7 @@ class AuthLogoutResource(MethodView):
         try:
             return AuthService.logout()
         except Exception as e:
-            return {"message": str(e)}, 400
+            abort(400, message=str(e))
 
 
 @blp.route("/signup")
@@ -195,4 +195,4 @@ class AuthSignupResource(MethodView):
             result = AuthService.signup(signup_data)
             return result, 201
         except ValueError as e:
-            return {"message": str(e)}, 400
+            abort(400, message=str(e))
