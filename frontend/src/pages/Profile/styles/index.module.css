@@ -1,1 +1,109 @@
-/* Profile styles - placeholder for future implementation */
+.container {
+  padding: var(--mantine-spacing-md);
+  min-height: calc(100vh - var(--mantine-header-height, 0px));
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--mantine-color-gray-9);
+}
+
+.profileCard,
+.accountCard {
+  background: white;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.avatar {
+  border: 3px solid var(--mantine-color-gray-2);
+}
+
+.name {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--mantine-color-gray-9);
+  margin: 0;
+}
+
+.sectionTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--mantine-color-gray-8);
+  margin-bottom: 0;
+}
+
+.infoGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.infoItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--mantine-color-gray-2);
+}
+
+.infoItem:last-child {
+  border-bottom: none;
+}
+
+.infoLabel {
+  font-weight: 600;
+  color: var(--mantine-color-gray-7);
+  min-width: 100px;
+  font-size: 0.875rem;
+}
+
+.infoValue {
+  color: var(--mantine-color-gray-9);
+  font-size: 1rem;
+}
+
+.bio {
+  line-height: 1.6;
+  color: var(--mantine-color-gray-7);
+  white-space: pre-wrap;
+}
+
+.link {
+  color: var(--mantine-color-blue-6);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.link:hover {
+  color: var(--mantine-color-blue-8);
+  text-decoration: underline;
+}
+
+/* Match the squared pill style from session page */
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .container {
+    padding: var(--mantine-spacing-sm);
+  }
+  
+  .title {
+    font-size: 1.5rem;
+  }
+  
+  .profileCard,
+  .accountCard {
+    padding: var(--mantine-spacing-md);
+  }
+}
