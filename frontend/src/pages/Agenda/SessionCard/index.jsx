@@ -4,8 +4,7 @@ import styles from './styles/index.module.css';
 import PropTypes from 'prop-types';
 import { IconBrandLinkedin, IconWorld } from '@tabler/icons-react';
 import { format } from 'date-fns';
-
-const ROLE_ORDER = ['HOST', 'KEYNOTE', 'SPEAKER', 'MODERATOR', 'PANELIST'];
+import { SPEAKER_SPEAKER_ROLE_ORDER } from '@/shared/constants/speakerRoles';
 
 export const SessionCard = ({
   title,
@@ -34,7 +33,7 @@ export const SessionCard = ({
     social_links: speaker.social_links,
   }));
 
-  const speakersByRole = ROLE_ORDER.reduce((acc, role) => {
+  const speakersByRole = SPEAKER_ROLE_ORDER.reduce((acc, role) => {
     const roleSpeakers = speakers.filter((s) => s.role === role);
     if (roleSpeakers.length > 0) {
       acc[role] = roleSpeakers;
@@ -201,7 +200,7 @@ SessionCard.propTypes = {
       speaker_name: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,
       company_name: PropTypes.string,
-      role: PropTypes.oneOf(ROLE_ORDER),
+      role: PropTypes.oneOf(SPEAKER_ROLE_ORDER),
       image_url: PropTypes.string,
       social_links: PropTypes.shape({
         linkedin: PropTypes.string,

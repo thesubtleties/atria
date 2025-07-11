@@ -22,3 +22,44 @@
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: var(--mantine-spacing-sm);
 }
+
+.speakerWrapper {
+  position: relative;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.speakerWrapper[draggable="true"] {
+  cursor: move;
+}
+
+.speakerWrapper[draggable="true"]:hover {
+  transform: scale(1.02);
+}
+
+.dragOver {
+  position: relative;
+}
+
+.dragOver::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--mantine-color-blue-5);
+  border-radius: 2px;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
