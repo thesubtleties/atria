@@ -8,6 +8,7 @@ import {
 } from '@/app/features/sessions/api';
 import { useGetEventUsersQuery } from '@/app/features/events/api';
 import { useMemo } from 'react';
+import { SPEAKER_ROLES, SPEAKER_ROLE_OPTIONS } from '@/shared/constants/speakerRoles';
 import styles from './styles/index.module.css';
 
 export const AddSpeakerModal = ({ sessionId, opened, onClose }) => {
@@ -25,7 +26,7 @@ export const AddSpeakerModal = ({ sessionId, opened, onClose }) => {
   const form = useForm({
     initialValues: {
       user_id: '',
-      role: 'SPEAKER',
+      role: SPEAKER_ROLES.SPEAKER,
     },
   });
 
@@ -95,13 +96,7 @@ export const AddSpeakerModal = ({ sessionId, opened, onClose }) => {
 
               <Select
                 label="Speaker Role"
-                data={[
-                  { value: 'SPEAKER', label: 'Speaker' },
-                  { value: 'PRIMARY', label: 'Primary Speaker' },
-                  { value: 'CO_SPEAKER', label: 'Co-Speaker' },
-                  { value: 'MODERATOR', label: 'Moderator' },
-                  { value: 'PANELIST', label: 'Panelist' },
-                ]}
+                data={SPEAKER_ROLE_OPTIONS}
                 {...form.getInputProps('role')}
                 disabled={isLoading}
               />
