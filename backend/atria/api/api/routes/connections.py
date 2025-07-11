@@ -1,5 +1,5 @@
 from flask.views import MethodView
-from flask_smorest import Blueprint
+from flask_smorest import Blueprint, abort
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask import request
 
@@ -86,7 +86,7 @@ class ConnectionList(MethodView):
             )
             return connection, 201
         except ValueError as e:
-            return {"message": str(e)}, 400
+            abort(400, message=str(e))
 
 
 @blp.route("/connections/<int:connection_id>")
@@ -131,7 +131,7 @@ class ConnectionDetail(MethodView):
             )
             return connection
         except ValueError as e:
-            return {"message": str(e)}, 400
+            abort(400, message=str(e))
 
 
 @blp.route("/connections/pending")

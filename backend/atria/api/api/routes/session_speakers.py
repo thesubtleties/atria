@@ -1,6 +1,6 @@
 # api/api/routes/session_speakers.py
 from flask.views import MethodView
-from flask_smorest import Blueprint
+from flask_smorest import Blueprint, abort
 from flask_jwt_extended import jwt_required
 from flask import request
 
@@ -104,7 +104,7 @@ class SessionSpeakerList(MethodView):
             )
             return speaker, 201
         except ValueError as e:
-            return {"message": str(e)}, 400
+            abort(400, message=str(e))
 
 
 @blp.route("/sessions/<int:session_id>/speakers/<int:user_id>")
@@ -185,4 +185,4 @@ class SessionSpeakerReorder(MethodView):
             )
             return speakers
         except ValueError as e:
-            return {"message": str(e)}, 400
+            abort(400, message=str(e))

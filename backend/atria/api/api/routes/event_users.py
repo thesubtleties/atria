@@ -1,5 +1,5 @@
 from flask.views import MethodView
-from flask_smorest import Blueprint
+from flask_smorest import Blueprint, abort
 from flask_jwt_extended import jwt_required
 from flask import request
 from api.models.enums import EventUserRole
@@ -59,7 +59,7 @@ class AddEventUser(MethodView):
             event_user = EventUserService.add_or_create_user(event_id, data)
             return event_user, 201
         except ValueError as e:
-            return {"message": str(e)}, 400
+            abort(400, message=str(e))
 
 
 @blp.route("/events/<int:event_id>/users")
@@ -126,7 +126,7 @@ class EventUserList(MethodView):
             event_user = EventUserService.add_user_to_event(event_id, data)
             return event_user, 201
         except ValueError as e:
-            return {"message": str(e)}, 400
+            abort(400, message=str(e))
 
 
 @blp.route("/events/<int:event_id>/users/<int:user_id>")
@@ -174,7 +174,7 @@ class EventUserDetail(MethodView):
         try:
             return EventUserService.remove_user_from_event(event_id, user_id)
         except ValueError as e:
-            return {"message": str(e)}, 400
+            abort(400, message=str(e))
 
 
 @blp.route("/events/<int:event_id>/users/<int:user_id>/speaker-info")

@@ -1,5 +1,5 @@
 from flask.views import MethodView
-from flask_smorest import Blueprint
+from flask_smorest import Blueprint, abort
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask import request
 
@@ -139,7 +139,7 @@ class EventResource(MethodView):
             event = EventService.update_event(event_id, update_data)
             return event
         except ValueError as e:
-            return {"message": str(e)}, 400
+            abort(400, message=str(e))
 
     @blp.response(204)
     @blp.doc(

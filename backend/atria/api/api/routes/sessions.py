@@ -1,6 +1,6 @@
 # api/api/routes/sessions.py
 from flask.views import MethodView
-from flask_smorest import Blueprint
+from flask_smorest import Blueprint, abort
 from flask_jwt_extended import jwt_required
 from flask import request
 
@@ -110,7 +110,7 @@ class SessionList(MethodView):
             session = SessionService.create_session(event_id, session_data)
             return session, 201
         except ValueError as e:
-            return {"message": str(e)}, 400
+            abort(400, message=str(e))
 
 
 @blp.route("/sessions/<int:session_id>")
@@ -155,7 +155,7 @@ class SessionResource(MethodView):
         try:
             return SessionService.update_session(session_id, update_data)
         except ValueError as e:
-            return {"message": str(e)}, 400
+            abort(400, message=str(e))
 
     @blp.response(204)
     @blp.doc(
@@ -224,4 +224,4 @@ class SessionTimesResource(MethodView):
                 session_id, times_data["start_time"], times_data["end_time"]
             )
         except ValueError as e:
-            return {"message": str(e)}, 400
+            abort(400, message=str(e))

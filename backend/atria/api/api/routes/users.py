@@ -1,6 +1,6 @@
 # api/api/routes/users.py
 from flask.views import MethodView
-from flask_smorest import Blueprint
+from flask_smorest import Blueprint, abort
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask import request, current_app
 
@@ -174,7 +174,7 @@ class UserEmailCheck(MethodView):
         """Check if user exists by email"""
         email = request.args.get("email")
         if not email:
-            return {"message": "Email parameter required"}, 400
+            abort(400, message="Email parameter required")
 
         user = UserService.check_user_by_email(email)
         return {"user": user}

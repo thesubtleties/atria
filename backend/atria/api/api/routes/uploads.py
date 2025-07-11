@@ -1,6 +1,6 @@
 # api/api/routes/uploads.py
 from flask.views import MethodView
-from flask_smorest import Blueprint
+from flask_smorest import Blueprint, abort
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask import request, jsonify, send_file
 from io import BytesIO
@@ -42,11 +42,11 @@ class ImageUploadResource(MethodView):
         current_user_id = int(get_jwt_identity())
         
         if 'file' not in request.files:
-            return {"message": "No file provided"}, 400
+            abort(400, message="No file provided")
         
         file = request.files['file']
         if not file or file.filename == '':
-            return {"message": "No file selected"}, 400
+            abort(400, message="No file selected")
         
         context = args['context']
         
@@ -56,7 +56,7 @@ class ImageUploadResource(MethodView):
             kwargs['user_id'] = current_user_id
         elif context in ['event_logo', 'event_banner', 'sponsor_logo', 'event_document']:
             if 'event_id' not in args:
-                return {"message": "event_id required for this context"}, 400
+                abort(400, message="event_id required for this context")
             kwargs['event_id'] = args['event_id']
         
         try:
@@ -80,7 +80,7 @@ class ImageUploadResource(MethodView):
             }, 201
             
         except ValueError as e:
-            return {"message": str(e)}, 400
+            abort(400, message=str(e))
         except Exception as e:
             return {"message": "Failed to upload image"}, 500
 
@@ -135,12 +135,12 @@ class PrivateContentResource(MethodView):
         # Extract event_id from object_key (format: events/{event_id}/...)
         parts = object_key.split('/')
         if len(parts) < 2 or parts[0] != 'events':
-            return {"message": "Invalid private content path"}, 400
+            abort(400, message="Invalid private content path")
         
         try:
             event_id = int(parts[1])
         except ValueError:
-            return {"message": "Invalid event ID in path"}, 400
+            abort(400, message="Invalid event ID in path")
         
         # Check event membership using the decorator logic
         from api.models import Event, User
@@ -221,7 +221,7 @@ class UploadDeleteResource(MethodView):
             # TODO: Add admin check for public content
         
         if not bucket:
-            return {"message": "Invalid file path"}, 400
+            abort(400, message="Invalid file path")
         
         success = storage_service.delete_file(bucket, object_key)
         if not success:

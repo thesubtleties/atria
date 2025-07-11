@@ -55,8 +55,11 @@ export const AddSpeakerModal = ({ sessionId, opened, onClose }) => {
       onClose();
     } catch (error) {
       console.error('Submission error:', error);
+      console.error('Error details:', error.data);
       if (error.status === 409) {
         form.setErrors({ user_id: 'Speaker already added to session' });
+      } else if (error.status === 400 && error.data?.message) {
+        form.setErrors({ user_id: error.data.message });
       } else {
         form.setErrors({ user_id: 'An unexpected error occurred' });
       }

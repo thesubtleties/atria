@@ -1,6 +1,6 @@
 # api/api/routes/organization_users.py
 from flask.views import MethodView
-from flask_smorest import Blueprint
+from flask_smorest import Blueprint, abort
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask import request
 
@@ -108,7 +108,7 @@ class OrganizationUserDetail(MethodView):
             )
             return org_user
         except ValueError as e:
-            return {"message": str(e)}, 400
+            abort(400, message=str(e))
 
     @blp.response(200)
     @blp.doc(
@@ -130,4 +130,4 @@ class OrganizationUserDetail(MethodView):
             )
             return {"message": "User removed from organization"}
         except ValueError as e:
-            return {"message": str(e)}, 400
+            abort(400, message=str(e))
