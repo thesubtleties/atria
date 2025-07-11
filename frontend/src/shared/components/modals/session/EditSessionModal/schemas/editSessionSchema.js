@@ -12,6 +12,7 @@ const SessionType = z.enum([
 export const editSessionSchema = z
   .object({
     title: z.string().min(1, 'Title is required'),
+    short_description: z.string().max(200, 'Short description must be 200 characters or less').optional(),
     description: z.string().optional(),
     session_type: SessionType,
     day_number: z.string().min(1, 'Day number is required'),

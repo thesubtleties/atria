@@ -15,7 +15,8 @@ class Session(db.Model):
     status = db.Column(db.Enum(SessionStatus), nullable=False)
     session_type = db.Column(db.Enum(SessionType), nullable=False)
     title = db.Column(db.Text, nullable=False)
-    description = db.Column(db.Text)
+    short_description = db.Column(db.String(200))  # For agenda view, max 200 chars
+    description = db.Column(db.Text)  # Full description for session detail page
     start_time = db.Column(db.Time, nullable=False)
     end_time = db.Column(db.Time, nullable=False)
     stream_url = db.Column(db.Text)
