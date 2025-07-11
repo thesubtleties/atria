@@ -11,6 +11,7 @@ export const SessionCard = ({
   session_type = 'PRESENTATION',
   start_time,
   end_time,
+  short_description,
   description,
   session_speakers = [],
   isOrgView = false,
@@ -69,7 +70,7 @@ export const SessionCard = ({
       </div>
 
       <div className={styles.expandedContent}>
-        {description && <p className={styles.description}>{description}</p>}
+        {short_description && <p className={styles.description}>{short_description}</p>}
 
         {speakers?.length > 0 && (
           <div className={styles.speakers}>
@@ -193,6 +194,7 @@ SessionCard.propTypes = {
   ]),
   start_time: PropTypes.string.isRequired,
   end_time: PropTypes.string.isRequired,
+  short_description: PropTypes.string,
   description: PropTypes.string,
   session_speakers: PropTypes.arrayOf(
     PropTypes.shape({

@@ -1,7 +1,7 @@
 from api.extensions import ma, db
 from api.models import Session
 from api.models.enums import SessionType, SessionStatus, SessionSpeakerRole
-from marshmallow import validates, validates_schema, ValidationError
+from marshmallow import validates, validates_schema, ValidationError, validate
 from datetime import time
 
 
@@ -55,6 +55,7 @@ class SessionCreateSchema(ma.Schema):
     title = ma.String(required=True)
     session_type = ma.Enum(SessionType, required=True)
     status = ma.Enum(SessionStatus, load_default=SessionStatus.SCHEDULED)
+    short_description = ma.String(validate=validate.Length(max=200))
     description = ma.String()
     start_time = ma.Time(required=True)
     end_time = ma.Time(required=True)
@@ -88,6 +89,7 @@ class SessionUpdateSchema(ma.Schema):
     title = ma.String()
     session_type = ma.Enum(SessionType)
     status = ma.Enum(SessionStatus)
+    short_description = ma.String(validate=validate.Length(max=200))
     description = ma.String()
     start_time = ma.Time()
     end_time = ma.Time()

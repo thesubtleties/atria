@@ -66,6 +66,7 @@ export const EditSessionModal = ({
     initialValues: isEditing
       ? {
           title: session.title,
+          short_description: session.short_description || '',
           description: session.description || '',
           session_type: session.session_type,
           start_time: session.start_time.substring(0, 5), // Updated to be in HH:mm format
@@ -75,6 +76,7 @@ export const EditSessionModal = ({
         }
       : {
           title: '',
+          short_description: '',
           description: '',
           session_type: 'PRESENTATION',
           start_time: '09:00',
@@ -100,6 +102,7 @@ export const EditSessionModal = ({
     try {
       const sessionData = {
         title: values.title,
+        short_description: values.short_description,
         description: values.description,
         session_type: values.session_type,
         start_time: values.start_time, // Just send HH:mm
@@ -147,9 +150,17 @@ export const EditSessionModal = ({
           />
 
           <Textarea
-            label="Description"
-            placeholder="Session Description"
-            minRows={3}
+            label="Short Description (for agenda)"
+            placeholder="Brief description for the agenda view (max 200 characters)"
+            minRows={2}
+            maxLength={200}
+            {...form.getInputProps('short_description')}
+          />
+
+          <Textarea
+            label="Full Description"
+            placeholder="Detailed description for the session page"
+            minRows={4}
             {...form.getInputProps('description')}
           />
 
