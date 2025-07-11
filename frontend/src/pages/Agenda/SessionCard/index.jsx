@@ -4,7 +4,7 @@ import styles from './styles/index.module.css';
 import PropTypes from 'prop-types';
 import { IconBrandLinkedin, IconWorld } from '@tabler/icons-react';
 import { format } from 'date-fns';
-import { SPEAKER_SPEAKER_ROLE_ORDER } from '@/shared/constants/speakerRoles';
+import { SPEAKER_ROLE_ORDER } from '@/shared/constants/speakerRoles';
 
 export const SessionCard = ({
   title,
