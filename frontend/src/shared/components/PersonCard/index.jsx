@@ -1,14 +1,17 @@
-import { Card, Text, Avatar, Group, Badge, ActionIcon, Stack } from '@mantine/core';
-import { IconBrandLinkedin, IconWorld, IconMail, IconMessageCircle } from '@tabler/icons-react';
+import { Card, Text, Avatar, Group, Badge, Button, ActionIcon, Stack } from '@mantine/core';
+import { IconBrandLinkedin, IconWorld, IconMail, IconMessageCircle, IconUserPlus } from '@tabler/icons-react';
+import { useSelector } from 'react-redux';
 import styles from './styles/index.module.css';
 
 export function PersonCard({ 
   person, 
   variant = 'attendee', // 'speaker' | 'attendee'
+  role, // User's actual role: ADMIN, ORGANIZER, SPEAKER, ATTENDEE
   onConnect,
   onMessage,
   showActions = true 
 }) {
+  const currentUser = useSelector((state) => state.auth.user);
   const { 
     firstName, 
     lastName, 
@@ -23,7 +26,7 @@ export function PersonCard({
     privacySettings = {}
   } = person;
 
-  const fullName = `${firstName} ${lastName}`;
+  const fullName = `${firstName || ''} ${lastName || ''}`.trim();
   const initial = firstName?.[0]?.toUpperCase() || '?';
   
   // Privacy controls - what info to show
@@ -42,13 +45,13 @@ export function PersonCard({
         >
           {!avatarUrl && initial}
         </Avatar>
-        
-        {variant === 'speaker' && (
-          <Badge color="blue" variant="light" className={styles.badge}>
-            Speaker
-          </Badge>
-        )}
       </div>
+      
+      {role && (
+        <div className={`${styles.roleBadge} ${styles[role?.toLowerCase() || '']}`}>
+          {role?.charAt(0) + role?.slice(1).toLowerCase()}
+        </div>
+      )}
 
       <Stack gap="xs" className={styles.content}>
         <Text size="lg" weight={600} className={styles.name}>
@@ -73,71 +76,91 @@ export function PersonCard({
           </Text>
         )}
 
-        {showSocials && (linkedin || website || (showEmail && email)) && (
-          <Group gap="xs" className={styles.socials}>
-            {linkedin && (
-              <ActionIcon 
-                size="sm" 
-                variant="subtle" 
-                component="a" 
-                href={linkedin} 
-                target="_blank"
-                aria-label="LinkedIn"
-              >
-                <IconBrandLinkedin size={16} />
-              </ActionIcon>
-            )}
-            {website && (
-              <ActionIcon 
-                size="sm" 
-                variant="subtle" 
-                component="a" 
-                href={website} 
-                target="_blank"
-                aria-label="Website"
-              >
-                <IconWorld size={16} />
-              </ActionIcon>
-            )}
-            {showEmail && email && (
-              <ActionIcon 
-                size="sm" 
-                variant="subtle" 
-                component="a" 
-                href={`mailto:${email}`}
-                aria-label="Email"
-              >
-                <IconMail size={16} />
-              </ActionIcon>
-            )}
-          </Group>
-        )}
-
-        {variant === 'attendee' && showActions && (
-          <Group gap="xs" className={styles.actions}>
-            {connectionStatus === 'connected' ? (
-              <ActionIcon 
-                variant="filled" 
-                color="blue" 
-                size="md"
-                onClick={() => onMessage?.(person)}
-                aria-label="Send message"
-              >
-                <IconMessageCircle size={16} />
-              </ActionIcon>
-            ) : (
-              <Badge 
-                variant="light" 
-                color={connectionStatus === 'pending' ? 'yellow' : 'blue'}
-                className={styles.connectBadge}
-                onClick={() => !connectionStatus && onConnect?.(person)}
-                style={{ cursor: connectionStatus ? 'default' : 'pointer' }}
-              >
-                {connectionStatus === 'pending' ? 'Pending' : 'Connect'}
-              </Badge>
-            )}
-          </Group>
-        )}
+        <Group gap="xs" className={styles.socials}>
+          {showSocials && (
+            <>
+              {linkedin && (
+                <ActionIcon 
+                  size="sm" 
+                  variant="subtle" 
+                  component="a" 
+                  href={linkedin} 
+                  target="_blank"
+                  aria-label="LinkedIn"
+                >
+                  <IconBrandLinkedin size={16} />
+                </ActionIcon>
+              )}
+              {website && (
+                <ActionIcon 
+                  size="sm" 
+                  variant="subtle" 
+                  component="a" 
+                  href={website} 
+                  target="_blank"
+                  aria-label="Website"
+                >
+                  <IconWorld size={16} />
+                </ActionIcon>
+              )}
+              {showEmail && email && (
+                <ActionIcon 
+                  size="sm" 
+                  variant="subtle" 
+                  component="a" 
+                  href={`mailto:${email}`}
+                  aria-label="Email"
+                >
+                  <IconMail size={16} />
+                </ActionIcon>
+              )}
+            </>
+          )}
+          
+          {showActions && currentUser?.id !== person.id && (
+            <div className={styles.actionButtonWrapper}>
+              {connectionStatus === 'connected' ? (
+                <Button
+                  size="xs"
+                  variant="light"
+                  color="blue"
+                  leftIcon={<IconMessageCircle size={14} />}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onMessage?.(person);
+                  }}
+                  className={styles.actionButton}
+                >
+                  Message
+                </Button>
+              ) : connectionStatus === 'pending' ? (
+                <Button
+                  size="xs"
+                  variant="light"
+                  color="yellow"
+                  disabled
+                  className={styles.actionButton}
+                >
+                  Pending
+                </Button>
+              ) : (
+                <Button
+                  size="xs"
+                  variant="light"
+                  color="blue"
+                  leftIcon={<IconUserPlus size={14} />}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onConnect?.(person);
+                  }}
+                  className={styles.actionButton}
+                >
+                  Connect
+                </Button>
+              )}
+            </div>
+          )}
+        </Group>
       </Stack>
     </Card>
   );
