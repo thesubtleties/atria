@@ -48,6 +48,9 @@ class SessionService:
     @staticmethod
     def create_session(event_id: int, session_data: Dict[str, Any]):
         """Create a new session for an event"""
+        from api.models.chat_room import ChatRoom
+        from api.models.enums import ChatRoomType
+        
         # Verify event exists
         event = Event.query.get_or_404(event_id)
 
@@ -61,6 +64,31 @@ class SessionService:
             raise ValueError(str(e))
 
         db.session.add(session)
+        db.session.flush()  # Get session ID before commit
+        
+        # Create chat rooms for the session
+        chat_rooms = [
+            ChatRoom(
+                event_id=event_id,
+                session_id=session.id,
+                name=f"{session.title} - Chat",
+                description=f"Public discussion for {session.title}",
+                room_type=ChatRoomType.PUBLIC,
+                is_enabled=True
+            ),
+            ChatRoom(
+                event_id=event_id,
+                session_id=session.id,
+                name=f"{session.title} - Backstage",
+                description=f"Speaker and organizer coordination",
+                room_type=ChatRoomType.BACKSTAGE,
+                is_enabled=True
+            )
+        ]
+        
+        for room in chat_rooms:
+            db.session.add(room)
+        
         db.session.commit()
 
         return session
