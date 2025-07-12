@@ -81,8 +81,7 @@ export function ChatArea({ eventId }) {
 
   // Check if room requires admin role
   const isAdminRoom = (room) => {
-    return room.name?.toLowerCase().includes('admin') || 
-           room.name?.toLowerCase().includes('organizer');
+    return room.room_type === 'ADMIN';
   };
 
   // Check if user can access room
@@ -105,9 +104,9 @@ export function ChatArea({ eventId }) {
               key={room.id} 
               value={room.id.toString()}
               leftSection={
-                room.is_global ? 
+                room.room_type === 'GLOBAL' ? 
                   <IconGlobe size={16} /> : 
-                  isAdminRoom(room) ? 
+                  room.room_type === 'ADMIN' ? 
                     <IconLock size={16} /> : 
                     <IconHash size={16} />
               }
