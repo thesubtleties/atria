@@ -6,7 +6,7 @@ from flask import request
 
 from api.extensions import db
 from api.models import ChatRoom, ChatMessage, Event, User
-from api.models.enums import EventUserRole
+from api.models.enums import EventUserRole, ChatRoomType
 from api.api.schemas import (
     ChatRoomSchema,
     ChatRoomDetailSchema,
@@ -62,7 +62,23 @@ class ChatRoomList(MethodView):
     @event_member_required()
     def get(self, event_id):
         """Get event's chat rooms"""
-        query = ChatRoom.query.filter_by(event_id=event_id)
+        user_id = int(get_jwt_identity())
+        current_user = User.query.get_or_404(user_id)
+        event = Event.query.get_or_404(event_id)
+        
+        # Start with GLOBAL rooms (visible to all event members)
+        query = ChatRoom.query.filter_by(event_id=event_id).filter(
+            ChatRoom.room_type == ChatRoomType.GLOBAL
+        )
+        
+        # Add ADMIN rooms if user is admin/organizer
+        user_role = event.get_user_role(current_user)
+        if user_role in [EventUserRole.ADMIN, EventUserRole.ORGANIZER]:
+            # Include both GLOBAL and ADMIN rooms
+            query = ChatRoom.query.filter_by(event_id=event_id).filter(
+                ChatRoom.room_type.in_([ChatRoomType.GLOBAL, ChatRoomType.ADMIN])
+            )
+        
         return paginate(
             query, ChatRoomSchema(many=True), collection_name="chat_rooms"
         )

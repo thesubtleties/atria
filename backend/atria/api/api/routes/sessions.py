@@ -11,6 +11,7 @@ from api.api.schemas import (
     SessionUpdateSchema,
     SessionTimesUpdateSchema,
     SessionStatusUpdateSchema,
+    SessionChatRoomSchema,
 )
 from api.commons.pagination import (
     PAGINATION_PARAMETERS,
@@ -225,3 +226,52 @@ class SessionTimesResource(MethodView):
             )
         except ValueError as e:
             abort(400, message=str(e))
+
+
+@blp.route("/sessions/<int:session_id>/chat-rooms")
+class SessionChatRoomList(MethodView):
+    @blp.response(200, SessionChatRoomSchema(many=True))
+    @blp.doc(
+        summary="Get session chat rooms",
+        description="Get all chat rooms for a session (PUBLIC and BACKSTAGE)",
+        responses={
+            403: {"description": "Not authorized to view this session"},
+            404: {"description": "Session not found"},
+        },
+    )
+    @jwt_required()
+    @session_access_required()
+    def get(self, session_id):
+        """Get session's chat rooms"""
+        from api.models import ChatRoom, ChatMessage
+        from api.models.enums import ChatRoomType
+        from flask_jwt_extended import get_jwt_identity
+        from api.models import User, Session
+        from api.models.enums import EventUserRole
+        
+        # Get the session
+        session = Session.query.get_or_404(session_id)
+        
+        # Get current user
+        user_id = int(get_jwt_identity())
+        current_user = User.query.get(user_id)
+        
+        # Check user's role in the event
+        user_role = session.event.get_user_role(current_user)
+        is_speaker = session.has_speaker(current_user)
+        is_organizer = user_role in [EventUserRole.ADMIN, EventUserRole.ORGANIZER]
+        
+        # Build query based on permissions
+        query = ChatRoom.query.filter_by(session_id=session_id, is_enabled=True)
+        
+        # If user is not a speaker or organizer, only show PUBLIC rooms
+        if not is_speaker and not is_organizer:
+            query = query.filter(ChatRoom.room_type == ChatRoomType.PUBLIC)
+        
+        chat_rooms = query.all()
+        
+        # Add message count to each room
+        for room in chat_rooms:
+            room.message_count = ChatMessage.query.filter_by(room_id=room.id).count()
+        
+        return chat_rooms

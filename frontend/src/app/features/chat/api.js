@@ -48,6 +48,15 @@ export const chatApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['ChatRoom'],
     }),
+
+    // Get chat rooms for a session
+    getSessionChatRooms: builder.query({
+      query: (sessionId) => ({
+        url: `/sessions/${sessionId}/chat-rooms`,
+        method: 'GET',
+      }),
+      providesTags: ['ChatRoom', 'SessionChatRoom'],
+    }),
   }),
 });
 
@@ -57,4 +66,5 @@ export const {
   useSendMessageMutation,
   useJoinChatRoomMutation,
   useLeaveChatRoomMutation,
+  useGetSessionChatRoomsQuery,
 } = chatApi;

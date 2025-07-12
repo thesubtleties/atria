@@ -255,3 +255,87 @@ def handle_get_chat_rooms(user_id, data):
         rooms.append(ChatRoomService.format_room_for_response(room))
 
     emit("chat_rooms", {"event_id": event_id, "rooms": rooms})
+
+
+@socketio.on("join_session_chat_rooms")
+@socket_authenticated_only
+def handle_join_session_chat_rooms(user_id, data):
+    """Join all chat rooms for a session that the user has access to"""
+    print(f"Received join_session_chat_rooms event from user {user_id} with data: {data}")
+    session_id = data.get("session_id")
+    
+    if not session_id:
+        emit("error", {"message": "Missing session ID"})
+        return
+    
+    from api.models import Session, ChatRoom
+    from api.models.enums import ChatRoomType
+    
+    # Get the session
+    session = Session.query.get(session_id)
+    if not session:
+        emit("error", {"message": "Session not found"})
+        return
+    
+    # Check if user is part of the event
+    current_user = User.query.get(user_id)
+    if not session.event.has_user(current_user):
+        emit("error", {"message": "Not authorized to access this session"})
+        return
+    
+    # Get user's role and permissions
+    user_role = session.event.get_user_role(current_user)
+    is_speaker = session.has_speaker(current_user)
+    is_organizer = user_role in [EventUserRole.ADMIN, EventUserRole.ORGANIZER]
+    
+    # Join appropriate rooms based on permissions
+    joined_rooms = []
+    
+    for chat_room in session.chat_rooms:
+        if not chat_room.is_enabled:
+            continue
+            
+        can_access = False
+        
+        if chat_room.room_type == ChatRoomType.PUBLIC:
+            can_access = True
+        elif chat_room.room_type == ChatRoomType.BACKSTAGE:
+            can_access = is_speaker or is_organizer
+            
+        if can_access:
+            join_room(f"room_{chat_room.id}")
+            room_data = ChatRoomService.format_room_for_response(chat_room)
+            from api.models import ChatMessage
+            room_data["message_count"] = ChatMessage.query.filter_by(room_id=chat_room.id).count()
+            joined_rooms.append(room_data)
+    
+    emit("session_chat_rooms_joined", {
+        "session_id": session_id,
+        "rooms": joined_rooms
+    })
+
+
+@socketio.on("leave_session_chat_rooms")
+@socket_authenticated_only
+def handle_leave_session_chat_rooms(user_id, data):
+    """Leave all chat rooms for a session"""
+    print(f"Received leave_session_chat_rooms event from user {user_id} with data: {data}")
+    session_id = data.get("session_id")
+    
+    if not session_id:
+        emit("error", {"message": "Missing session ID"})
+        return
+    
+    from api.models import Session
+    
+    # Get the session
+    session = Session.query.get(session_id)
+    if not session:
+        emit("error", {"message": "Session not found"})
+        return
+    
+    # Leave all session chat rooms
+    for chat_room in session.chat_rooms:
+        leave_room(f"room_{chat_room.id}")
+    
+    emit("session_chat_rooms_left", {"session_id": session_id})

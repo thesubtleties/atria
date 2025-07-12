@@ -228,21 +228,23 @@ class Event(db.Model):
     def create_default_chat_rooms(self):
         """Create default chat rooms for the event"""
         from api.models.chat_room import ChatRoom
+        from api.models.enums import ChatRoomType
 
         # Check if global chat room exists
         global_room = ChatRoom.query.filter_by(
-            event_id=self.id, is_global=True
+            event_id=self.id, room_type=ChatRoomType.GLOBAL, name="General"
         ).first()
         if not global_room:
             global_room = ChatRoom(
                 event_id=self.id,
                 name="General",
                 description="General discussion for all attendees",
-                is_global=True,
+                room_type=ChatRoomType.GLOBAL,
+                is_enabled=True,
             )
             db.session.add(global_room)
 
-        # other default rooms
+        # other default rooms (all are GLOBAL event-wide rooms)
         topic_rooms = [
             {"name": "Q&A", "description": "Ask questions about the event"},
             {
@@ -260,7 +262,8 @@ class Event(db.Model):
                     event_id=self.id,
                     name=room_data["name"],
                     description=room_data["description"],
-                    is_global=False,
+                    room_type=ChatRoomType.GLOBAL,
+                    is_enabled=True,
                 )
                 db.session.add(room)
 

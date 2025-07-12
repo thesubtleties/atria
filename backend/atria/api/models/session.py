@@ -43,6 +43,12 @@ class Session(db.Model):
         cascade="all, delete-orphan",
         passive_deletes=True,
     )
+    chat_rooms = db.relationship(
+        "ChatRoom",
+        back_populates="session",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+    )
 
     def __repr__(self):
         return (
@@ -196,6 +202,18 @@ class Session(db.Model):
     def has_speaker(self, user):
         """Check if user is a speaker"""
         return user in self.speakers
+
+    @property
+    def public_chat_room(self):
+        """Get the public chat room for this session"""
+        from api.models.enums import ChatRoomType
+        return next((room for room in self.chat_rooms if room.room_type == ChatRoomType.PUBLIC), None)
+    
+    @property
+    def backstage_chat_room(self):
+        """Get the backstage chat room for this session"""
+        from api.models.enums import ChatRoomType
+        return next((room for room in self.chat_rooms if room.room_type == ChatRoomType.BACKSTAGE), None)
 
     def get_speakers_by_role(self, role: SessionSpeakerRole):
         """Get all speakers with specific role"""

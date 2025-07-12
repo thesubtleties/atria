@@ -74,3 +74,10 @@ class MessageStatus(str, Enum):
     SENT = "sent"
     DELIVERED = "delivered"
     READ = "read"
+
+
+class ChatRoomType(str, Enum):
+    GLOBAL = "global"           # Event-wide, all attendees
+    PUBLIC = "public"           # Session-specific, all attendees
+    BACKSTAGE = "backstage"     # Session-specific, speakers/organizers only
+    ADMIN = "admin"             # Event-wide, admins/organizers only

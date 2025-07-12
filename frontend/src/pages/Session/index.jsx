@@ -1,7 +1,7 @@
 import { Container, LoadingOverlay, Alert, Stack, Title, Text, Group, Badge } from '@mantine/core';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   useGetSessionQuery,
   useUpdateSessionStatusMutation,
@@ -19,6 +19,8 @@ export const SessionPage = () => {
   const navigate = useNavigate();
   const currentUser = useSelector((state) => state.auth.user);
   const [isChatOpen, setIsChatOpen] = useState(true);
+  const [shouldShiftContent, setShouldShiftContent] = useState(false);
+  const mainContentRef = useRef(null);
 
   const { data: session, isLoading } = useGetSessionQuery(sessionId);
   const { data: event } = useGetEventQuery(session?.event_id, {
@@ -26,6 +28,54 @@ export const SessionPage = () => {
   });
   const [updateStatus] = useUpdateSessionStatusMutation();
   const [updateSession] = useUpdateSessionMutation();
+
+  // Check if we need to shift content when chat opens
+  useEffect(() => {
+    const checkSpace = () => {
+      if (!mainContentRef.current || !isChatOpen) {
+        setShouldShiftContent(false);
+        return;
+      }
+      
+      // Get the main element (total available width)
+      const mainElement = document.querySelector('main');
+      if (!mainElement) return;
+      
+      const totalWidth = mainElement.offsetWidth;
+      
+      // Get the container element
+      const container = mainContentRef.current.closest('.mantine-Container-root');
+      if (!container) return;
+      
+      const containerWidth = container.offsetWidth;
+      const containerStyles = window.getComputedStyle(container);
+      const containerMarginLeft = parseFloat(containerStyles.marginLeft) || 0;
+      const containerMarginRight = parseFloat(containerStyles.marginRight) || 0;
+      
+      // Calculate total margin space available
+      const totalMargin = containerMarginLeft + containerMarginRight;
+      
+      // Chat needs 394px (370px width + 24px gap)
+      const chatSpace = 394;
+      
+      // Check if we have enough margin space
+      if (totalMargin >= chatSpace) {
+        // Enough margin space - no need to shift
+        setShouldShiftContent(false);
+      } else {
+        // Not enough margin - need to shift content
+        setShouldShiftContent(true);
+        
+        // Could also calculate partial shift here if needed
+        // const partialShift = chatSpace - totalMargin;
+      }
+    };
+
+    // Small delay to ensure DOM is ready
+    setTimeout(checkSpace, 50);
+    window.addEventListener('resize', checkSpace);
+    return () => window.removeEventListener('resize', checkSpace);
+  }, [isChatOpen]);
 
   if (isLoading) {
     return <LoadingOverlay visible />;
@@ -94,7 +144,9 @@ export const SessionPage = () => {
           {/* Main Content with Collapsible Chat */}
           <div className={styles.contentWithChat}>
             {/* Main Content Area */}
-            <div className={`${styles.mainContent} ${isChatOpen ? '' : styles.chatClosed}`}>
+            <div 
+              ref={mainContentRef}
+              className={`${styles.mainContent} ${shouldShiftContent ? '' : styles.chatClosed}`}>
               {/* Video Display */}
               <SessionDisplay
                 streamUrl={session.stream_url}

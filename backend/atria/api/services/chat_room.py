@@ -142,15 +142,20 @@ class ChatRoomService:
         return {
             "id": room.id,
             "event_id": room.event_id,
+            "session_id": room.session_id,
             "name": room.name,
             "description": room.description,
             "is_global": room.is_global,
+            "room_type": room.room_type.value if room.room_type else None,
+            "is_enabled": room.is_enabled,
             "created_at": room.created_at.isoformat(),
         }
 
     @staticmethod
     def check_room_access(room_id, user_id):
         """Check if a user has access to a chat room"""
+        from api.models.enums import ChatRoomType
+        
         chat_room = ChatRoom.query.get(room_id)
         if not chat_room:
             return False
@@ -159,8 +164,39 @@ class ChatRoomService:
         event_user = EventUser.query.filter_by(
             event_id=chat_room.event_id, user_id=user_id
         ).first()
-
-        return event_user is not None
+        
+        if not event_user:
+            return False
+            
+        # Check room type specific permissions
+        return ChatRoomService.can_access_room_type(chat_room, event_user.user, event_user.role)
+    
+    @staticmethod
+    def can_access_room_type(chat_room, user, user_event_role=None):
+        """Check if user can access a specific room type"""
+        from api.models.enums import ChatRoomType
+        
+        if chat_room.room_type == ChatRoomType.GLOBAL:
+            # All event attendees can access
+            return True
+            
+        elif chat_room.room_type == ChatRoomType.PUBLIC:
+            # All event attendees can access
+            return True
+            
+        elif chat_room.room_type == ChatRoomType.BACKSTAGE:
+            # Only speakers and organizers
+            if chat_room.session:
+                is_speaker = chat_room.session.has_speaker(user)
+                is_organizer = user_event_role in [EventUserRole.ADMIN, EventUserRole.ORGANIZER]
+                return is_speaker or is_organizer
+            return False
+            
+        elif chat_room.room_type == ChatRoomType.ADMIN:
+            # Only event admins/organizers
+            return user_event_role in [EventUserRole.ADMIN, EventUserRole.ORGANIZER]
+            
+        return False
 
     @staticmethod
     def get_recent_messages(room_id, limit=50):

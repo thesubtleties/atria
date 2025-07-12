@@ -1,41 +1,35 @@
 .chatSidebar {
-  width: 320px;
   position: fixed !important;
-  top: calc(var(--mantine-header-height, 60px) + var(--mantine-spacing-xl));
-  right: var(--mantine-spacing-xl);
+  top: 100px;
+  right: 24px;
   bottom: 100px;
-  background: white;
-  border-radius: var(--mantine-radius-md);
-  padding: 0;
-  border: 1px solid var(--mantine-color-gray-2);
+  width: 370px;
+  z-index: 50;
   display: flex;
   flex-direction: column;
+  background: white;
+  border-radius: var(--mantine-radius-md);
+  border: 1px solid var(--mantine-color-gray-2);
   transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  z-index: 50;
+  overflow: hidden;
 }
 
 .floatingChatButton {
   position: fixed !important;
-  top: calc(var(--mantine-header-height, 60px) + var(--mantine-spacing-xl));
-  right: var(--mantine-spacing-xl);
+  top: 100px;
+  right: 24px;
+  z-index: 50;
   background: var(--mantine-color-blue-6);
   color: white;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   transition: all 0.2s ease;
-  z-index: 50;
 }
 
 .floatingChatButton:hover {
   background: var(--mantine-color-blue-7);
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-}
-
-.header {
-  padding: var(--mantine-spacing-md);
-  border-bottom: 1px solid var(--mantine-color-gray-2);
-  flex-shrink: 0;
 }
 
 .chatContent {
@@ -50,18 +44,12 @@
 
 @media (max-width: 1200px) {
   .chatSidebar {
-    width: 280px;
-    right: var(--mantine-spacing-md);
+    width: 320px;
   }
 }
 
 @media (max-width: 1024px) {
   .chatSidebar {
     display: none;
-  }
-  
-  .floatingChatButton {
-    top: calc(var(--mantine-header-height, 60px) + var(--mantine-spacing-md));
-    right: var(--mantine-spacing-md);
   }
 }

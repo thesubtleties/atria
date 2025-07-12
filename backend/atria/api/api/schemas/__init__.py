@@ -64,6 +64,7 @@ from api.api.schemas.chat import (
     ChatRoomCreateSchema,
     ChatMessageSchema,
     ChatMessageCreateSchema,
+    SessionChatRoomSchema,
 )
 from api.api.schemas.connection import (
     ConnectionSchema,
@@ -144,6 +145,7 @@ __all__ = [
     "ChatRoomCreateSchema",
     "ChatMessageSchema",
     "ChatMessageCreateSchema",
+    "SessionChatRoomSchema",
     "ConnectionSchema",
     "ConnectionCreateSchema",
     "ConnectionUpdateSchema",

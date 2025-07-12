@@ -1,10 +1,13 @@
 # api/api/schemas/chat.py
 from api.extensions import ma, db
 from api.models import ChatRoom, ChatMessage
+from api.models.enums import ChatRoomType
 
 
 class ChatRoomSchema(ma.SQLAlchemyAutoSchema):
     """Base ChatRoom Schema"""
+    
+    room_type = ma.Enum(ChatRoomType)
 
     class Meta:
         model = ChatRoom
@@ -20,6 +23,7 @@ class ChatRoomDetailSchema(ChatRoomSchema):
         name = "ChatRoomDetail"
 
     event = ma.Nested("EventSchema", only=("id", "title"), dump_only=True)
+    session = ma.Nested("SessionSchema", only=("id", "title"), dump_only=True)
 
 
 class ChatRoomCreateSchema(ma.Schema):
@@ -56,3 +60,12 @@ class ChatMessageCreateSchema(ma.Schema):
         name = "ChatMessageCreate"
 
     content = ma.String(required=True)
+
+
+class SessionChatRoomSchema(ChatRoomSchema):
+    """Schema for session chat rooms with message count"""
+    
+    message_count = ma.Integer(dump_only=True)
+    
+    class Meta(ChatRoomSchema.Meta):
+        name = "SessionChatRoom"
