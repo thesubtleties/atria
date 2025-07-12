@@ -107,6 +107,7 @@ export function ChatTabs({
           inputValue={inputValues[publicRoom?.id] || ''}
           onInputChange={(value) => handleInputChange(publicRoom?.id, value)}
           onSendMessage={() => handleSendMessage(publicRoom?.id)}
+          isActive={activeTab === 'public'}
         />
       </Tabs.Panel>
 
@@ -118,6 +119,7 @@ export function ChatTabs({
             inputValue={inputValues[backstageRoom.id] || ''}
             onInputChange={(value) => handleInputChange(backstageRoom.id, value)}
             onSendMessage={() => handleSendMessage(backstageRoom.id)}
+            isActive={activeTab === 'backstage'}
           />
         </Tabs.Panel>
       )}

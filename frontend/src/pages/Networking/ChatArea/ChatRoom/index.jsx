@@ -11,7 +11,8 @@ export function ChatRoom({
   eventId, 
   inputValue, 
   onInputChange, 
-  onSendMessage
+  onSendMessage,
+  isActive
 }) {
   const { data, isLoading } = useGetChatRoomMessagesQuery(
     { chatRoomId: room.id, limit: 100, offset: 0 },
@@ -73,6 +74,7 @@ export function ChatRoom({
       <MessageList 
         room={room}
         messages={messages}
+        isActive={isActive}
       />
       
       <MessageInput 
