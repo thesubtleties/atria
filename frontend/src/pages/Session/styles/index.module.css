@@ -74,7 +74,7 @@
 
 .mainContent {
   width: 100%;
-  padding-right: 340px; /* 320px chat + 20px gap */
+  padding-right: 394px; /* 370px chat + 24px gap */
   display: flex;
   flex-direction: column;
   gap: 0;
