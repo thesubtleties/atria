@@ -171,8 +171,8 @@ def seed_database():
                 db.session.execute(
                     text(
                         """
-                    INSERT INTO chat_rooms (id, event_id, name, description, is_global, created_at)
-                    VALUES (:id, :event_id, :name, :description, :is_global, CURRENT_TIMESTAMP)
+                    INSERT INTO chat_rooms (id, event_id, session_id, name, description, room_type, is_enabled, created_at)
+                    VALUES (:id, :event_id, :session_id, :name, :description, :room_type, :is_enabled, CURRENT_TIMESTAMP)
                     """
                     ),
                     chat_room_data,

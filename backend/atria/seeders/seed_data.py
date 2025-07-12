@@ -394,46 +394,87 @@ def seed_session_speakers():
 
 
 def seed_chat_rooms():
-    return [
+    rooms = [
         # Global chat room for the event
         {
             "id": 1,
             "event_id": 1,
+            "session_id": None,
             "name": "General",
             "description": "General discussion for all attendees",
-            "is_global": True,
+            "room_type": "GLOBAL",
+            "is_enabled": True,
         },
         # Topic-specific chat rooms
         {
             "id": 2,
             "event_id": 1,
+            "session_id": None,
             "name": "Q&A",
             "description": "Ask questions about the event",
-            "is_global": False,
+            "room_type": "GLOBAL",
+            "is_enabled": True,
         },
         {
             "id": 3,
             "event_id": 1,
+            "session_id": None,
             "name": "Networking",
             "description": "Connect with other attendees",
-            "is_global": False,
+            "room_type": "GLOBAL",
+            "is_enabled": True,
         },
         # Technology-specific chat rooms
         {
             "id": 4,
             "event_id": 1,
+            "session_id": None,
             "name": "Frontend",
             "description": "Discuss React, TypeScript, and other frontend technologies",
-            "is_global": False,
+            "room_type": "GLOBAL",
+            "is_enabled": True,
         },
         {
             "id": 5,
             "event_id": 1,
+            "session_id": None,
             "name": "DevOps",
             "description": "Discuss Docker, Kubernetes, and CI/CD",
-            "is_global": False,
+            "room_type": "GLOBAL",
+            "is_enabled": True,
         },
     ]
+    
+    # Add session-specific chat rooms
+    room_id = 6
+    sessions = seed_sessions()
+    
+    for session in sessions:
+        # Public chat room for each session
+        rooms.append({
+            "id": room_id,
+            "event_id": session["event_id"],
+            "session_id": session["id"],
+            "name": f"{session['title']} - Chat",
+            "description": f"Public discussion for {session['title']}",
+            "room_type": "PUBLIC",
+            "is_enabled": True,
+        })
+        room_id += 1
+        
+        # Backstage chat room for each session
+        rooms.append({
+            "id": room_id,
+            "event_id": session["event_id"],
+            "session_id": session["id"],
+            "name": f"{session['title']} - Backstage",
+            "description": "Speaker and organizer coordination",
+            "room_type": "BACKSTAGE",
+            "is_enabled": True,
+        })
+        room_id += 1
+    
+    return rooms
 
 
 def seed_chat_messages():
