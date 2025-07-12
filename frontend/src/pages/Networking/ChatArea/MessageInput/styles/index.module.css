@@ -1,0 +1,12 @@
+.inputArea {
+  padding: var(--mantine-spacing-md);
+  padding-bottom: var(--mantine-spacing-md);
+  border-top: 1px solid var(--mantine-color-gray-3);
+  background-color: var(--mantine-color-white);
+  flex-shrink: 0;
+  min-height: 50px;
+}
+
+.input {
+  width: 100%;
+}
