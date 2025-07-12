@@ -19,7 +19,7 @@ export const SessionPage = () => {
   const navigate = useNavigate();
   const currentUser = useSelector((state) => state.auth.user);
   const [isChatOpen, setIsChatOpen] = useState(true);
-  const [shouldShiftContent, setShouldShiftContent] = useState(false);
+  const [shouldShiftContent, setShouldShiftContent] = useState(true); // Default to true since chat starts open
   const mainContentRef = useRef(null);
 
   const { data: session, isLoading } = useGetSessionQuery(sessionId);
