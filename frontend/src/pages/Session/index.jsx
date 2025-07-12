@@ -31,6 +31,10 @@ export const SessionPage = () => {
 
   // Check if we need to shift content when chat opens
   useEffect(() => {
+    let resizeObserver;
+    let retryCount = 0;
+    const maxRetries = 10;
+    
     const checkSpace = () => {
       if (!mainContentRef.current || !isChatOpen) {
         setShouldShiftContent(false);
@@ -70,11 +74,57 @@ export const SessionPage = () => {
         // const partialShift = chatSpace - totalMargin;
       }
     };
-
-    // Small delay to ensure DOM is ready
-    setTimeout(checkSpace, 50);
+    
+    // Initial check with retry logic for production
+    const initialCheck = () => {
+      if (!isChatOpen) {
+        checkSpace();
+        return;
+      }
+      
+      // Check if chat sidebar actually exists in DOM by looking for the Card component
+      // that is a direct child of the Transition wrapper and has fixed positioning
+      const cards = document.querySelectorAll('.mantine-Card-root');
+      let chatSidebar = null;
+      
+      // Find the card that has position: fixed in its computed style
+      for (const card of cards) {
+        const style = window.getComputedStyle(card);
+        if (style.position === 'fixed' && style.right === '24px') {
+          chatSidebar = card;
+          break;
+        }
+      }
+      
+      // If chat should be open but isn't rendered yet, retry
+      if (!chatSidebar && retryCount < maxRetries) {
+        retryCount++;
+        requestAnimationFrame(initialCheck);
+        return;
+      }
+      
+      checkSpace();
+    };
+    
+    // Watch the container itself for size changes
+    const container = mainContentRef.current?.closest('.mantine-Container-root');
+    if (container) {
+      resizeObserver = new ResizeObserver(() => {
+        checkSpace();
+      });
+      resizeObserver.observe(container);
+    }
+    
+    // Still keep window resize for viewport changes
     window.addEventListener('resize', checkSpace);
-    return () => window.removeEventListener('resize', checkSpace);
+    
+    // Start initial check
+    initialCheck();
+    
+    return () => {
+      resizeObserver?.disconnect();
+      window.removeEventListener('resize', checkSpace);
+    };
   }, [isChatOpen]);
 
   if (isLoading) {
