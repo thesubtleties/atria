@@ -93,6 +93,16 @@ class EventUser(db.Model):
     def social_links(self):
         """Get user's social links"""
         return self.user.social_links
+    
+    @property
+    def company_name(self):
+        """Get user's company name"""
+        return self.user.company_name
+    
+    @property
+    def title(self):
+        """Get user's title"""
+        return self.user.title
 
     def update_speaker_info(self, speaker_bio=None, speaker_title=None):
         """Update speaker bio and title"""

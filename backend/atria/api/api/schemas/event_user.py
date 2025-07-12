@@ -22,6 +22,8 @@ class EventUserSchema(ma.SQLAlchemyAutoSchema):
     sort_name = ma.String(dump_only=True)
     image_url = ma.String(dump_only=True)
     social_links = ma.Dict(dump_only=True)
+    company_name = ma.String(dump_only=True)
+    title = ma.String(dump_only=True)
 
 
 class EventUserDetailSchema(EventUserSchema):

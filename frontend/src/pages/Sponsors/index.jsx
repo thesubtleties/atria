@@ -52,8 +52,8 @@ export const SponsorsPage = () => {
     );
   }
 
-  // Filter to only show active sponsors
-  const activeSponsors = sponsors.filter(sponsor => sponsor.isActive !== false);
+  // Filter to only show active sponsors (handle snake_case from API)
+  const activeSponsors = sponsors.filter(sponsor => sponsor.is_active !== false);
 
   return (
     <Container size="xl" py="xl">
