@@ -3,9 +3,9 @@ import SponsorCard from './SponsorCard';
 import styles from './styles/index.module.css';
 
 export default function SponsorsList({ sponsors, tiers }) {
-  // Group sponsors by tier
+  // Group sponsors by tier (handle snake_case from API)
   const sponsorsByTier = sponsors.reduce((acc, sponsor) => {
-    const tierId = sponsor.tierId || 'other';
+    const tierId = sponsor.tier_id || 'other';
     if (!acc[tierId]) {
       acc[tierId] = [];
     }
@@ -13,8 +13,8 @@ export default function SponsorsList({ sponsors, tiers }) {
     return acc;
   }, {});
 
-  // Sort tiers by order
-  const sortedTiers = tiers.sort((a, b) => a.order - b.order);
+  // Sort tiers by order (create a copy first to avoid mutating read-only array)
+  const sortedTiers = [...tiers].sort((a, b) => a.order - b.order);
 
   // Add "Other" tier at the end if there are sponsors without a tier
   const tiersToDisplay = [
@@ -28,8 +28,10 @@ export default function SponsorsList({ sponsors, tiers }) {
         const tiersSponsors = sponsorsByTier[tier.id];
         if (!tiersSponsors || tiersSponsors.length === 0) return null;
 
-        // Sort sponsors within tier by displayOrder
-        const sortedSponsors = tiersSponsors.sort((a, b) => a.displayOrder - b.displayOrder);
+        // Sort sponsors within tier by display_order (create a copy to avoid mutating)
+        const sortedSponsors = [...tiersSponsors].sort((a, b) => 
+          (a.display_order || 999) - (b.display_order || 999)
+        );
 
         return (
           <div key={tier.id} className={styles.tierSection}>

@@ -14,6 +14,7 @@ from .seed_data import (
     seed_event_users,
     seed_sessions,
     seed_session_speakers,
+    seed_sponsors,
     seed_chat_rooms,
     seed_chat_messages,
     seed_connections,
@@ -32,6 +33,7 @@ def seed_database():
             db.session.execute(text("TRUNCATE TABLE organizations CASCADE"))
             db.session.execute(text("TRUNCATE TABLE events CASCADE"))
             db.session.execute(text("TRUNCATE TABLE sessions CASCADE"))
+            db.session.execute(text("TRUNCATE TABLE sponsors CASCADE"))
             db.session.execute(text("TRUNCATE TABLE chat_rooms CASCADE"))
             db.session.execute(text("TRUNCATE TABLE connections CASCADE"))
             db.session.execute(
@@ -97,6 +99,8 @@ def seed_database():
                     event_data["hero_images"]
                 )
                 event_data["sections"] = json.dumps(event_data["sections"])
+                if "sponsor_tiers" in event_data:
+                    event_data["sponsor_tiers"] = json.dumps(event_data["sponsor_tiers"])
 
                 db.session.execute(
                     text(
@@ -107,7 +111,7 @@ def seed_database():
                             event_type, event_format, is_private,
                             venue_name, venue_address, venue_city, venue_country,
                             start_date, end_date, company_name,
-                            slug, status, branding, sections, created_at
+                            slug, status, branding, sections, sponsor_tiers, created_at
                         )
                         VALUES (
                             :id, :organization_id, :title, :description,
@@ -115,7 +119,7 @@ def seed_database():
                             :event_type, :event_format, :is_private,
                             :venue_name, :venue_address, :venue_city, :venue_country,
                             :start_date, :end_date, :company_name,
-                            :slug, :status, :branding, :sections, CURRENT_TIMESTAMP
+                            :slug, :status, :branding, :sections, :sponsor_tiers, CURRENT_TIMESTAMP
                         )
                         """
                     ),
@@ -142,10 +146,10 @@ def seed_database():
                     text(
                         """
                     INSERT INTO sessions (id, event_id, status, session_type,
-                                        title, description, start_time, end_time,
+                                        title, short_description, description, start_time, end_time,
                                         stream_url, day_number, created_at)
                     VALUES (:id, :event_id, :status, :session_type,
-                           :title, :description, :start_time, :end_time,
+                           :title, :short_description, :description, :start_time, :end_time,
                            :stream_url, :day_number, CURRENT_TIMESTAMP)
                     """
                     ),
@@ -164,6 +168,29 @@ def seed_database():
                     """
                     ),
                     speaker_data,
+                )
+
+            print("Seeding sponsors...")
+            for sponsor_data in seed_sponsors():
+                # Convert JSON fields to strings
+                sponsor_data = dict(sponsor_data)  # Make a copy
+                if "social_links" in sponsor_data:
+                    sponsor_data["social_links"] = json.dumps(sponsor_data["social_links"])
+                if "custom_benefits" in sponsor_data and sponsor_data["custom_benefits"] is not None:
+                    sponsor_data["custom_benefits"] = json.dumps(sponsor_data["custom_benefits"])
+                
+                db.session.execute(
+                    text(
+                        """
+                    INSERT INTO sponsors (id, event_id, name, description, website_url,
+                                        logo_url, tier_id, is_active, featured,
+                                        social_links, created_at)
+                    VALUES (:id, :event_id, :name, :description, :website_url,
+                           :logo_url, :tier_id, :is_active, :featured,
+                           :social_links, CURRENT_TIMESTAMP)
+                    """
+                    ),
+                    sponsor_data,
                 )
 
             print("Seeding chat rooms...")
@@ -257,6 +284,7 @@ def seed_database():
                 ("organizations_id_seq", "organizations"),
                 ("events_id_seq", "events"),
                 ("sessions_id_seq", "sessions"),
+                ("sponsors_id_seq", "sponsors"),
                 ("chat_rooms_id_seq", "chat_rooms"),
                 ("chat_messages_id_seq", "chat_messages"),
                 ("connections_id_seq", "connections"),

@@ -3,16 +3,17 @@ import { IconExternalLink, IconMail, IconPhone, IconBrandTwitter, IconBrandLinke
 import styles from './styles/index.module.css';
 
 export default function SponsorCard({ sponsor }) {
+  // Handle snake_case from API
   const { 
     name, 
     description, 
-    logoUrl, 
-    websiteUrl, 
-    tierName,
-    contactName,
-    contactEmail,
-    contactPhone,
-    socialLinks,
+    logo_url, 
+    website_url, 
+    tier_name,
+    contact_name,
+    contact_email,
+    contact_phone,
+    social_links,
     featured
   } = sponsor;
 
@@ -42,9 +43,9 @@ export default function SponsorCard({ sponsor }) {
       )}
 
       <Card.Section className={styles.logoSection}>
-        {logoUrl ? (
+        {logo_url ? (
           <Image 
-            src={logoUrl} 
+            src={logo_url} 
             alt={`${name} logo`}
             fit="contain"
             className={styles.logo}
@@ -57,7 +58,7 @@ export default function SponsorCard({ sponsor }) {
       </Card.Section>
 
       <Badge color="blue" variant="light" className={styles.tierBadge}>
-        {tierName}
+        {tier_name}
       </Badge>
 
       <Text fw={500} size="lg" mt="md" className={styles.sponsorName}>
@@ -71,8 +72,8 @@ export default function SponsorCard({ sponsor }) {
       )}
 
       <Group justify="space-between" mt="md" className={styles.actions}>
-        {websiteUrl && (
-          <Anchor href={websiteUrl} target="_blank" size="sm">
+        {website_url && (
+          <Anchor href={website_url} target="_blank" size="sm">
             <Group gap={4}>
               <IconExternalLink size={16} />
               Visit Website
@@ -80,9 +81,9 @@ export default function SponsorCard({ sponsor }) {
           </Anchor>
         )}
 
-        {socialLinks && (
+        {social_links && (
           <Group gap={8}>
-            {Object.entries(socialLinks).map(([platform, url]) => {
+            {Object.entries(social_links).map(([platform, url]) => {
               if (!url) return null;
               const Icon = socialIcons[platform];
               return (
@@ -103,21 +104,21 @@ export default function SponsorCard({ sponsor }) {
         )}
       </Group>
 
-      {(contactEmail || contactPhone) && (
+      {(contact_email || contact_phone) && (
         <Group gap="xs" mt="md" className={styles.contact}>
-          {contactEmail && (
-            <Anchor href={`mailto:${contactEmail}`} size="xs" c="dimmed">
+          {contact_email && (
+            <Anchor href={`mailto:${contact_email}`} size="xs" c="dimmed">
               <Group gap={4}>
                 <IconMail size={14} />
-                {contactName || 'Contact'}
+                {contact_name || 'Contact'}
               </Group>
             </Anchor>
           )}
-          {contactPhone && (
-            <Anchor href={`tel:${contactPhone}`} size="xs" c="dimmed">
+          {contact_phone && (
+            <Anchor href={`tel:${contact_phone}`} size="xs" c="dimmed">
               <Group gap={4}>
                 <IconPhone size={14} />
-                {contactPhone}
+                {contact_phone}
               </Group>
             </Anchor>
           )}
