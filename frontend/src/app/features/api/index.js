@@ -14,6 +14,7 @@ export const baseApi = createApi({
     'SessionSpeakers',
     'ChatRoom',
     'ChatMessage',
+    'SessionChatRoom',
     'Attendee',
     'Connection',
     'Thread',

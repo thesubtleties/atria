@@ -1,11 +1,40 @@
 import { useState, useEffect } from 'react';
-import { Card, Text, Stack, ActionIcon, Group, Center, Badge, Transition } from '@mantine/core';
-import { IconMessage, IconX } from '@tabler/icons-react';
+import { Card, ActionIcon, Transition } from '@mantine/core';
+import { IconMessage } from '@tabler/icons-react';
+import { useGetSessionChatRoomsQuery } from '@/app/features/chat/api';
+import { useGetSessionQuery } from '@/app/features/sessions/api';
+import {
+  joinSessionChatRooms,
+  leaveSessionChatRooms,
+} from '@/app/features/networking/socketClient';
+import { SessionChatHeader } from './SessionChatHeader';
+import { ChatTabs } from './ChatTabs';
 import styles from './styles/index.module.css';
 
 export const SessionChat = ({ sessionId, isEnabled = true, onToggle }) => {
   const [isOpen, setIsOpen] = useState(true);
-  
+
+  const sessionIdNum = sessionId ? parseInt(sessionId) : null;
+  const { data: sessionData } = useGetSessionQuery(sessionIdNum);
+  const {
+    data: chatRooms,
+    isLoading,
+    error,
+  } = useGetSessionChatRoomsQuery(sessionIdNum, {
+    skip: !sessionIdNum || !isEnabled,
+  });
+
+  // Join/leave session chat rooms via socket
+  useEffect(() => {
+    if (sessionIdNum && isEnabled && isOpen) {
+      joinSessionChatRooms(sessionIdNum);
+
+      return () => {
+        leaveSessionChatRooms(sessionIdNum);
+      };
+    }
+  }, [sessionIdNum, isEnabled, isOpen]);
+
   useEffect(() => {
     onToggle?.(isOpen);
   }, [isOpen, onToggle]);
@@ -14,72 +43,36 @@ export const SessionChat = ({ sessionId, isEnabled = true, onToggle }) => {
     <>
       {/* Collapsed State - Floating Chat Button */}
       {!isOpen && (
-        <ActionIcon 
+        <ActionIcon
           onClick={() => setIsOpen(true)}
           size="xl"
           radius="xl"
           className={styles.floatingChatButton}
-          style={{
-            position: 'fixed',
-            top: '100px',
-            right: '24px',
-            zIndex: 50
-          }}
         >
           <IconMessage size={24} />
         </ActionIcon>
       )}
 
       {/* Expanded State - Show full chat */}
-      <Transition 
-        mounted={isOpen} 
-        transition="slide-left" 
-        duration={300} 
+      <Transition
+        mounted={isOpen}
+        transition="slide-left"
+        duration={300}
         timingFunction="ease"
       >
         {(styles2) => (
-          <Card 
-            className={styles.chatSidebar} 
-            style={{
-              ...styles2,
-              position: 'fixed',
-              top: '100px',
-              right: '24px',
-              bottom: '100px',
-              width: '320px',
-              zIndex: 50
-            }}
-          >
-            <Group justify="space-between" className={styles.header}>
-              <Group gap="xs">
-                <IconMessage size={18} />
-                <Text size="md" fw={500}>Session Chat</Text>
-                <Badge size="xs" variant="light" color="green">
-                  Coming Soon
-                </Badge>
-              </Group>
-              <ActionIcon 
-                onClick={() => setIsOpen(false)}
-                variant="subtle"
-                size="sm"
-              >
-                <IconX size={16} />
-              </ActionIcon>
-            </Group>
+          <Card className={styles.chatSidebar} style={styles2} p={0}>
+            <SessionChatHeader
+              sessionData={sessionData}
+              onClose={() => setIsOpen(false)}
+            />
 
-            <Stack gap="md" className={styles.chatContent}>
-              <Center className={styles.placeholder}>
-                <Stack align="center" gap="xs">
-                  <IconMessage size={48} stroke={1} color="var(--mantine-color-gray-4)" />
-                  <Text size="sm" color="dimmed" ta="center">
-                    Session chat will be available here during live sessions
-                  </Text>
-                  <Text size="xs" color="dimmed" ta="center">
-                    Participants will be able to ask questions and interact in real-time
-                  </Text>
-                </Stack>
-              </Center>
-            </Stack>
+            <ChatTabs
+              chatRooms={chatRooms}
+              sessionData={sessionData}
+              isLoading={isLoading}
+              error={error}
+            />
           </Card>
         )}
       </Transition>

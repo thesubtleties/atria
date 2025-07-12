@@ -1042,3 +1042,37 @@ export const leaveEventNotifications = (eventId) => {
   console.log(`Leaving event ${eventId} notifications`);
   socket.emit('leave_event', { event_id: eventId });
 };
+
+// ============================================
+// SESSION CHAT ROOM EMITTERS
+// ============================================
+
+// Join all chat rooms for a session
+export const joinSessionChatRooms = (sessionId) => {
+  if (!socket || !socket.connected) {
+    console.warn('Cannot join session chat rooms: Socket not connected');
+    return;
+  }
+
+  const state = store.getState();
+  const isAuthenticated = selectIsAuthenticated(state);
+
+  if (!isAuthenticated) {
+    console.warn('Cannot join session chat rooms: User not authenticated');
+    return;
+  }
+
+  console.log(`Joining chat rooms for session ${sessionId}`);
+  socket.emit('join_session_chat_rooms', { session_id: sessionId });
+};
+
+// Leave all chat rooms for a session
+export const leaveSessionChatRooms = (sessionId) => {
+  if (!socket || !socket.connected) {
+    console.warn('Cannot leave session chat rooms: Socket not connected');
+    return;
+  }
+
+  console.log(`Leaving chat rooms for session ${sessionId}`);
+  socket.emit('leave_session_chat_rooms', { session_id: sessionId });
+};

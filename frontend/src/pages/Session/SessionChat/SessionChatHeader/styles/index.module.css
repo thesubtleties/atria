@@ -1,0 +1,9 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--mantine-spacing-md);
+  border-bottom: 1px solid var(--mantine-color-gray-2);
+  flex-shrink: 0;
+  min-height: 56px;
+}
