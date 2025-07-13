@@ -1,5 +1,16 @@
 import { useState } from 'react';
-import { Container, SimpleGrid, TextInput, Select, Group, Text, Loader, Center, Pagination, Stack } from '@mantine/core';
+import {
+  Container,
+  SimpleGrid,
+  TextInput,
+  Select,
+  Group,
+  Text,
+  Loader,
+  Center,
+  Pagination,
+  Stack,
+} from '@mantine/core';
 import { IconSearch, IconFilter } from '@tabler/icons-react';
 import { useGetEventUsersQuery } from '@/app/features/events/api';
 import { useCreateConnectionMutation } from '@/app/features/networking/api';
@@ -12,47 +23,69 @@ export function AttendeesGrid({ eventId }) {
   const [filterRole, setFilterRole] = useState('all');
   const [page, setPage] = useState(1);
   const perPage = 50;
-  
+
   // Fetch both ADMIN and ORGANIZER when "organizer" is selected
-  const { data: adminData, isLoading: isLoadingAdmins } = useGetEventUsersQuery({
-    eventId: eventId,
-    role: 'ADMIN',
-    page: page,
-    per_page: perPage
-  }, {
-    skip: !eventId || filterRole !== 'organizer'
-  });
-  
-  const { data: organizerData, isLoading: isLoadingOrganizers } = useGetEventUsersQuery({
-    eventId: eventId,
-    role: 'ORGANIZER',
-    page: page,
-    per_page: perPage
-  }, {
-    skip: !eventId || filterRole !== 'organizer'
-  });
-  
-  const { data: regularData, isLoading: isLoadingRegular } = useGetEventUsersQuery({
-    eventId: eventId,
-    role: filterRole === 'all' ? undefined : filterRole === 'organizer' ? undefined : filterRole.toUpperCase(),
-    page: page,
-    per_page: perPage
-  }, {
-    skip: !eventId || filterRole === 'organizer'
-  });
-  
-  // Determine which data to use based on filter
-  const isLoading = filterRole === 'organizer' 
-    ? (isLoadingAdmins || isLoadingOrganizers)
-    : isLoadingRegular;
-  
-  const data = filterRole === 'organizer'
-    ? {
-        event_users: [...(adminData?.event_users || []), ...(organizerData?.event_users || [])],
-        total_items: (adminData?.total_items || 0) + (organizerData?.total_items || 0)
+  const { data: adminData, isLoading: isLoadingAdmins } = useGetEventUsersQuery(
+    {
+      eventId: eventId,
+      role: 'ADMIN',
+      page: page,
+      per_page: perPage,
+    },
+    {
+      skip: !eventId || filterRole !== 'organizer',
+    }
+  );
+
+  const { data: organizerData, isLoading: isLoadingOrganizers } =
+    useGetEventUsersQuery(
+      {
+        eventId: eventId,
+        role: 'ORGANIZER',
+        page: page,
+        per_page: perPage,
+      },
+      {
+        skip: !eventId || filterRole !== 'organizer',
       }
-    : regularData;
-  
+    );
+
+  const { data: regularData, isLoading: isLoadingRegular } =
+    useGetEventUsersQuery(
+      {
+        eventId: eventId,
+        role:
+          filterRole === 'all'
+            ? undefined
+            : filterRole === 'organizer'
+              ? undefined
+              : filterRole.toUpperCase(),
+        page: page,
+        per_page: perPage,
+      },
+      {
+        skip: !eventId || filterRole === 'organizer',
+      }
+    );
+
+  // Determine which data to use based on filter
+  const isLoading =
+    filterRole === 'organizer'
+      ? isLoadingAdmins || isLoadingOrganizers
+      : isLoadingRegular;
+
+  const data =
+    filterRole === 'organizer'
+      ? {
+          event_users: [
+            ...(adminData?.event_users || []),
+            ...(organizerData?.event_users || []),
+          ],
+          total_items:
+            (adminData?.total_items || 0) + (organizerData?.total_items || 0),
+        }
+      : regularData;
+
   const attendees = data?.event_users || [];
   console.log('AttendeesGrid debug:', { eventId, data, attendees, isLoading });
   const [createConnection] = useCreateConnectionMutation();
@@ -60,10 +93,10 @@ export function AttendeesGrid({ eventId }) {
 
   const handleConnect = async (attendee) => {
     try {
-      await createConnection({ 
+      await createConnection({
         recipientId: attendee.user_id,
         icebreakerMessage: `Hi ${attendee.first_name}, I'd like to connect!`,
-        originatingEventId: parseInt(eventId)
+        originatingEventId: parseInt(eventId),
       }).unwrap();
     } catch (error) {
       console.error('Failed to connect:', error);
@@ -75,11 +108,16 @@ export function AttendeesGrid({ eventId }) {
     navigate(`/app/events/${eventId}/messages/${attendee.user_id}`);
   };
 
-  const filteredAttendees = attendees?.filter(attendee => {
-    const matchesSearch = !searchQuery || 
-      attendee.user_name?.toLowerCase().includes(searchQuery?.toLowerCase() || '') ||
-      attendee.speaker_title?.toLowerCase().includes(searchQuery?.toLowerCase() || '');
-    
+  const filteredAttendees = attendees?.filter((attendee) => {
+    const matchesSearch =
+      !searchQuery ||
+      attendee.user_name
+        ?.toLowerCase()
+        .includes(searchQuery?.toLowerCase() || '') ||
+      attendee.speaker_title
+        ?.toLowerCase()
+        .includes(searchQuery?.toLowerCase() || '');
+
     // Role filtering is now handled by the API query
     return matchesSearch;
   });
@@ -127,7 +165,7 @@ export function AttendeesGrid({ eventId }) {
                 { value: 'all', label: 'All Attendees' },
                 { value: 'speaker', label: 'Speakers' },
                 { value: 'organizer', label: 'Organizers' },
-                { value: 'attendee', label: 'Attendees' }
+                { value: 'attendee', label: 'Attendees' },
               ]}
               className={styles.filterSelect}
             />
@@ -139,22 +177,22 @@ export function AttendeesGrid({ eventId }) {
 
         {/* Attendees Grid */}
         <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing="lg">
-          {filteredAttendees?.map(attendee => (
+          {filteredAttendees?.map((attendee) => (
             <PersonCard
               key={attendee.user_id}
               person={{
                 id: attendee.user_id,
                 firstName: attendee.first_name,
                 lastName: attendee.last_name,
-                title: attendee.speaker_title || '',
-                company: '', // TODO: Add company_name to backend schema
-                bio: attendee.speaker_bio || '',
+                title: attendee.title || '',
+                company: attendee.company_name, // TODO: Add company_name to backend schema - need to update so we have combo title for everyone not just speakers.
+                bio: '', // TODO: Add bio
                 avatarUrl: attendee.image_url,
                 linkedin: attendee.social_links?.linkedin,
                 website: attendee.social_links?.website,
                 email: '', // TODO: Add if needed based on privacy
                 connectionStatus: null, // TODO: Implement connections
-                privacySettings: {}
+                privacySettings: {},
               }}
               variant={attendee.is_speaker ? 'speaker' : 'attendee'}
               role={attendee.role}
@@ -173,9 +211,9 @@ export function AttendeesGrid({ eventId }) {
         {/* Pagination */}
         {totalPages > 1 && (
           <Center>
-            <Pagination 
-              value={page} 
-              onChange={setPage} 
+            <Pagination
+              value={page}
+              onChange={setPage}
               total={totalPages}
               size="md"
               withEdges

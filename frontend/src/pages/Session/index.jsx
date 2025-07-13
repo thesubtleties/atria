@@ -89,7 +89,7 @@ export const SessionPage = () => {
     if (document.readyState === 'complete') {
       // Page already loaded, but styles might still be applying
       // Use a small delay to ensure CSS is processed
-      setTimeout(runInitialCheck, 0);
+      setTimeout(runInitialCheck, 10);
     } else {
       // Wait for load event to ensure CSS is applied
       window.addEventListener('load', runInitialCheck);
@@ -126,7 +126,7 @@ export const SessionPage = () => {
     } else {
       // Wait for page load
       window.addEventListener('load', () => {
-        setTimeout(showChat, 0);
+        setTimeout(showChat, 150);
       });
     }
   }, []); // Run once on mount
