@@ -1,6 +1,56 @@
+/* Main grid layout */
+.sessionLayout {
+  display: grid;
+  grid-template-columns: 1fr 370px;
+  gap: 24px;
+  min-height: calc(100vh - var(--mantine-header-height, 0px));
+  transition: grid-template-columns 0.3s ease;
+}
+
+/* When chat is closed, collapse the column smoothly */
+.sessionLayout.chatClosed {
+  grid-template-columns: 1fr 60px;
+  gap: 16px;
+}
+
+/* Main content takes available space */
+.mainContentWrapper {
+  min-width: 0; /* Prevent grid blowout */
+  overflow: hidden;
+}
+
+/* Chat wrapper handles the sidebar */
+.chatWrapper {
+  position: relative;
+  height: calc(100vh - 200px);
+  padding-top: 16px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+}
+
+/* When chat is closed, wrapper becomes narrow */
+.chatClosed .chatWrapper {
+  width: 60px;
+}
+
+.floatingChatButton {
+  background: var(--mantine-color-blue-6);
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
+}
+
+.floatingChatButton:hover {
+  background: var(--mantine-color-blue-7);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
 .pageContainer {
   padding: var(--mantine-spacing-md);
-  min-height: calc(100vh - var(--mantine-header-height, 0px));
 }
 
 .header {
@@ -68,21 +118,11 @@
   100% { opacity: 1; }
 }
 
-.contentWithChat {
-  position: relative;
-}
-
 .mainContent {
   width: 100%;
-  padding-right: 394px; /* 370px chat + 24px gap */
   display: flex;
   flex-direction: column;
-  gap: 0;
-  transition: padding-right 0.3s ease;
-}
-
-.mainContent.chatClosed {
-  padding-right: 0;
+  gap: var(--mantine-spacing-md);
 }
 
 .aboutSection {
@@ -99,9 +139,20 @@
 }
 
 /* Responsive design */
+@media (max-width: 1200px) {
+  .sessionLayout {
+    grid-template-columns: 1fr 320px;
+  }
+}
+
 @media (max-width: 1024px) {
-  .contentWithChat {
-    gap: var(--mantine-spacing-md);
+  /* Hide chat on smaller screens */
+  .sessionLayout {
+    grid-template-columns: 1fr;
+  }
+  
+  .chatWrapper {
+    display: none;
   }
 }
 
