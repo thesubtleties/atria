@@ -39,20 +39,18 @@ export const SessionPage = () => {
   const [updateStatus] = useUpdateSessionStatusMutation();
   const [updateSession] = useUpdateSessionMutation();
 
-  // Check if we need to shift content when chat opens
+  // Single effect to handle all chat initialization and spacing
   useEffect(() => {
-    const checkSpace = () => {
-      if (!mainContentRef.current) return;
+    let initialized = false;
 
-      if (!isChatOpen) {
+    const checkSpace = () => {
+      if (!mainContentRef.current || !isChatOpen) {
         setShouldShiftContent(false);
         return;
       }
 
       // Get the container element
-      const container = mainContentRef.current.closest(
-        '.mantine-Container-root'
-      );
+      const container = mainContentRef.current.closest('.mantine-Container-root');
       if (!container) return;
 
       const containerStyles = window.getComputedStyle(container);
@@ -67,69 +65,54 @@ export const SessionPage = () => {
 
       // Check if we have enough margin space
       if (totalMargin >= chatSpace) {
-        // Enough margin space - no need to shift
         setShouldShiftContent(false);
       } else {
-        // Not enough margin - need to shift content
         setShouldShiftContent(true);
       }
     };
 
-    let loadHandled = false;
+    // Initialize chat with proper timing sequence
+    const initializeChat = () => {
+      if (initialized) return;
+      initialized = true;
 
-    // Function to run initial check
-    const runInitialCheck = () => {
-      if (!loadHandled) {
-        loadHandled = true;
-        checkSpace();
-      }
+      // Step 1: Set chat as open (triggers space calculation)
+      setIsChatOpen(true);
+      
+      // Step 2: Force immediate space check
+      checkSpace();
+      
+      // Step 3: Wait for content shift animation to complete before showing chat
+      // 300ms matches the CSS transition timing for padding-right
+      setTimeout(() => {
+        setChatReady(true);
+      }, 300);
     };
 
-    // Wait for all styles to load before initial check
+    // Start initialization based on page state
     if (document.readyState === 'complete') {
-      // Page already loaded, but styles might still be applying
-      // Use a small delay to ensure CSS is processed
-      setTimeout(runInitialCheck, 10);
+      // For cached/fast loads, wait a bit for CSS
+      setTimeout(initializeChat, 200);
     } else {
-      // Wait for load event to ensure CSS is applied
-      window.addEventListener('load', runInitialCheck);
+      // For first loads, wait for full page load
+      window.addEventListener('load', () => {
+        setTimeout(initializeChat, 100);
+      });
     }
 
-    // Add resize listener for dynamic changes
+    // Handle resize events
     window.addEventListener('resize', checkSpace);
 
-    // Run check when chat toggle changes (after initial load)
-    if (loadHandled) {
+    // Handle manual chat toggle after initialization
+    if (initialized && isChatOpen) {
       checkSpace();
     }
 
     return () => {
       window.removeEventListener('resize', checkSpace);
-      window.removeEventListener('load', runInitialCheck);
+      window.removeEventListener('load', initializeChat);
     };
   }, [isChatOpen]);
-
-  // Auto-open chat after initial render
-  useEffect(() => {
-    const showChat = () => {
-      // First set the chat as open to trigger space calculation
-      setIsChatOpen(true);
-      // Then after a brief delay, actually render the chat
-      setTimeout(() => {
-        setChatReady(true);
-      }, 150);
-    };
-
-    if (document.readyState === 'complete') {
-      // Page loaded, show chat after a brief delay
-      setTimeout(showChat, 150);
-    } else {
-      // Wait for page load
-      window.addEventListener('load', () => {
-        setTimeout(showChat, 150);
-      });
-    }
-  }, []); // Run once on mount
 
   if (isLoading) {
     return <LoadingOverlay visible />;
