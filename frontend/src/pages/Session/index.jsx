@@ -18,8 +18,8 @@ export const SessionPage = () => {
   const { sessionId } = useParams();
   const navigate = useNavigate();
   const currentUser = useSelector((state) => state.auth.user);
-  const [isChatOpen, setIsChatOpen] = useState(true);
-  const [shouldShiftContent, setShouldShiftContent] = useState(true); // Default to true since chat starts open
+  const [isChatOpen, setIsChatOpen] = useState(false); // Start closed, open after render
+  const [shouldShiftContent, setShouldShiftContent] = useState(false); // Start unshifted
   const mainContentRef = useRef(null);
 
   const { data: session, isLoading } = useGetSessionQuery(sessionId);
@@ -96,6 +96,23 @@ export const SessionPage = () => {
       window.removeEventListener('load', runInitialCheck);
     };
   }, [isChatOpen]);
+
+  // Auto-open chat after initial render
+  useEffect(() => {
+    const openChat = () => {
+      setIsChatOpen(true);
+    };
+
+    if (document.readyState === 'complete') {
+      // Page loaded, open after a brief delay for smooth animation
+      setTimeout(openChat, 300);
+    } else {
+      // Wait for page load
+      window.addEventListener('load', () => {
+        setTimeout(openChat, 300);
+      });
+    }
+  }, []); // Run once on mount
 
   if (isLoading) {
     return <LoadingOverlay visible />;
