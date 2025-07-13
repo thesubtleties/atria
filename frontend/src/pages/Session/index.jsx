@@ -7,7 +7,9 @@ import {
   Text,
   Group,
   Badge,
+  ActionIcon,
 } from '@mantine/core';
+import { IconMessage } from '@tabler/icons-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useState, useEffect, useRef } from 'react';
@@ -27,10 +29,7 @@ export const SessionPage = () => {
   const { sessionId } = useParams();
   const navigate = useNavigate();
   const currentUser = useSelector((state) => state.auth.user);
-  const [isChatOpen, setIsChatOpen] = useState(false); // Start closed, open after render
-  const [shouldShiftContent, setShouldShiftContent] = useState(false); // Start unshifted
-  const [chatReady, setChatReady] = useState(false); // Don't render chat until ready
-  const [hasInitialized, setHasInitialized] = useState(false); // Track if we've done initial setup
+  const [isChatOpen, setIsChatOpen] = useState(true); // Start open for CSS approach
   const mainContentRef = useRef(null);
 
   const { data: session, isLoading } = useGetSessionQuery(sessionId);
@@ -40,78 +39,7 @@ export const SessionPage = () => {
   const [updateStatus] = useUpdateSessionStatusMutation();
   const [updateSession] = useUpdateSessionMutation();
 
-  // Single effect to handle all chat initialization and spacing
-  useEffect(() => {
-    const checkSpace = () => {
-      if (!mainContentRef.current) return;
-      
-      if (!isChatOpen) {
-        setShouldShiftContent(false);
-        return;
-      }
-
-      // Get the container element
-      const container = mainContentRef.current.closest('.mantine-Container-root');
-      if (!container) return;
-
-      const containerStyles = window.getComputedStyle(container);
-      const containerMarginLeft = parseFloat(containerStyles.marginLeft) || 0;
-      const containerMarginRight = parseFloat(containerStyles.marginRight) || 0;
-
-      // Calculate total margin space available
-      const totalMargin = containerMarginLeft + containerMarginRight;
-
-      // Chat needs 394px (370px width + 24px gap)
-      const chatSpace = 394;
-
-      // Check if we have enough margin space
-      if (totalMargin >= chatSpace) {
-        setShouldShiftContent(false);
-      } else {
-        setShouldShiftContent(true);
-      }
-    };
-
-    // Only run initialization once
-    if (!hasInitialized) {
-      const initializeChat = () => {
-        setHasInitialized(true);
-        
-        // Step 1: Set chat as open (triggers space calculation)
-        setIsChatOpen(true);
-        
-        // Step 2: Force immediate space check
-        checkSpace();
-        
-        // Step 3: Wait for content shift animation to complete before showing chat
-        // 300ms matches the CSS transition timing for padding-right
-        setTimeout(() => {
-          setChatReady(true);
-        }, 300);
-      };
-
-      // Start initialization based on page state
-      if (document.readyState === 'complete') {
-        // For cached/fast loads, wait a bit for CSS
-        setTimeout(initializeChat, 200);
-      } else {
-        // For first loads, wait for full page load
-        window.addEventListener('load', () => {
-          setTimeout(initializeChat, 100);
-        });
-      }
-    } else {
-      // After initialization, just handle normal toggle behavior
-      checkSpace();
-    }
-
-    // Handle resize events
-    window.addEventListener('resize', checkSpace);
-
-    return () => {
-      window.removeEventListener('resize', checkSpace);
-    };
-  }, [isChatOpen, hasInitialized]);
+  // No timing logic needed for CSS approach!
 
   if (isLoading) {
     return <LoadingOverlay visible />;
@@ -154,36 +82,33 @@ export const SessionPage = () => {
   };
 
   return (
-    <>
-      <Container size="xl" className={styles.pageContainer}>
-        <Stack spacing="xl">
-          {/* Session Header */}
-          <div className={styles.header}>
-            <div>
-              <Title order={1} className={styles.title}>
-                {session.title}
-              </Title>
-              {session.is_live && (
-                <Badge
-                  size="sm"
-                  color="red"
-                  variant="dot"
-                  className={styles.liveBadge}
-                  mt="xs"
-                >
-                  LIVE
-                </Badge>
-              )}
+    <div className={`${styles.sessionLayout} ${!isChatOpen ? styles.chatClosed : ''}`}>
+      {/* Main content area */}
+      <div className={styles.mainContentWrapper}>
+        <Container size="xl" className={styles.pageContainer}>
+          <Stack spacing="xl">
+            {/* Session Header */}
+            <div className={styles.header}>
+              <div>
+                <Title order={1} className={styles.title}>
+                  {session.title}
+                </Title>
+                {session.is_live && (
+                  <Badge
+                    size="sm"
+                    color="red"
+                    variant="dot"
+                    className={styles.liveBadge}
+                    mt="xs"
+                  >
+                    LIVE
+                  </Badge>
+                )}
+              </div>
             </div>
-          </div>
 
-          {/* Main Content with Collapsible Chat */}
-          <div className={styles.contentWithChat}>
             {/* Main Content Area */}
-            <div
-              ref={mainContentRef}
-              className={`${styles.mainContent} ${shouldShiftContent ? '' : styles.chatClosed}`}
-            >
+            <div ref={mainContentRef} className={styles.mainContent}>
               {/* Video Display */}
               <SessionDisplay streamUrl={session.stream_url} />
 
@@ -212,19 +137,30 @@ export const SessionPage = () => {
                 )}
               </div>
             </div>
-          </div>
-        </Stack>
-      </Container>
+          </Stack>
+        </Container>
+      </div>
 
-      {/* Collapsible Chat Sidebar - Fixed position outside Container */}
-      {chatReady && (
-        <SessionChat
-          sessionId={sessionId}
-          isEnabled={true} // TODO: Check if chat is enabled for this session
-          onToggle={setIsChatOpen}
-        />
-      )}
-    </>
+      {/* Chat Sidebar - Part of grid layout */}
+      <div className={styles.chatWrapper}>
+        {isChatOpen ? (
+          <SessionChat
+            sessionId={sessionId}
+            isEnabled={true} // TODO: Check if chat is enabled for this session
+            onToggle={setIsChatOpen}
+          />
+        ) : (
+          <ActionIcon
+            onClick={() => setIsChatOpen(true)}
+            size="xl"
+            radius="xl"
+            className={styles.floatingChatButton}
+          >
+            <IconMessage size={24} />
+          </ActionIcon>
+        )}
+      </div>
+    </div>
   );
 };
 

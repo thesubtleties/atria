@@ -54,28 +54,21 @@ export const SessionChat = ({ sessionId, isEnabled = true, onToggle }) => {
       )}
 
       {/* Expanded State - Show full chat */}
-      <Transition
-        mounted={isOpen}
-        transition="slide-left"
-        duration={300}
-        timingFunction="ease"
-      >
-        {(styles2) => (
-          <Card className={styles.chatSidebar} style={styles2} p={0}>
-            <SessionChatHeader
-              sessionData={sessionData}
-              onClose={() => setIsOpen(false)}
-            />
+      {isOpen && (
+        <Card className={styles.chatSidebar} p={0}>
+          <SessionChatHeader
+            sessionData={sessionData}
+            onClose={() => setIsOpen(false)}
+          />
 
-            <ChatTabs
-              chatRooms={chatRooms}
-              sessionData={sessionData}
-              isLoading={isLoading}
-              error={error}
-            />
-          </Card>
-        )}
-      </Transition>
+          <ChatTabs
+            chatRooms={chatRooms}
+            sessionData={sessionData}
+            isLoading={isLoading}
+            error={error}
+          />
+        </Card>
+      )}
     </>
   );
 };

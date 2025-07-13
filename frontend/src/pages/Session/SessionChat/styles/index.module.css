@@ -1,10 +1,6 @@
 .chatSidebar {
-  position: fixed !important;
-  top: 100px;
-  right: 24px;
-  bottom: 100px;
-  width: 370px;
-  z-index: 50;
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   background: white;
@@ -16,10 +12,9 @@
 }
 
 .floatingChatButton {
-  position: fixed !important;
-  top: 100px;
-  right: 24px;
-  z-index: 50;
+  position: absolute;
+  top: 16px;
+  right: 16px;
   background: var(--mantine-color-blue-6);
   color: white;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
