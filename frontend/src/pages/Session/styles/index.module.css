@@ -25,15 +25,9 @@
   height: calc(100vh - 200px);
   padding-top: 16px;
   overflow: hidden;
-  transition: all 0.3s ease;
   display: flex;
   align-items: flex-start;
-  justify-content: flex-end;
-}
-
-/* When chat is closed, wrapper becomes narrow */
-.chatClosed .chatWrapper {
-  width: 60px;
+  justify-content: center;
 }
 
 .floatingChatButton {
