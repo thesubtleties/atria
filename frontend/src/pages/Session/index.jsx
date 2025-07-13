@@ -1,4 +1,13 @@
-import { Container, LoadingOverlay, Alert, Stack, Title, Text, Group, Badge } from '@mantine/core';
+import {
+  Container,
+  LoadingOverlay,
+  Alert,
+  Stack,
+  Title,
+  Text,
+  Group,
+  Badge,
+} from '@mantine/core';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useState, useEffect, useRef } from 'react';
@@ -20,6 +29,7 @@ export const SessionPage = () => {
   const currentUser = useSelector((state) => state.auth.user);
   const [isChatOpen, setIsChatOpen] = useState(false); // Start closed, open after render
   const [shouldShiftContent, setShouldShiftContent] = useState(false); // Start unshifted
+  const [chatReady, setChatReady] = useState(false); // Don't render chat until ready
   const mainContentRef = useRef(null);
 
   const { data: session, isLoading } = useGetSessionQuery(sessionId);
@@ -33,26 +43,28 @@ export const SessionPage = () => {
   useEffect(() => {
     const checkSpace = () => {
       if (!mainContentRef.current) return;
-      
+
       if (!isChatOpen) {
         setShouldShiftContent(false);
         return;
       }
-      
+
       // Get the container element
-      const container = mainContentRef.current.closest('.mantine-Container-root');
+      const container = mainContentRef.current.closest(
+        '.mantine-Container-root'
+      );
       if (!container) return;
-      
+
       const containerStyles = window.getComputedStyle(container);
       const containerMarginLeft = parseFloat(containerStyles.marginLeft) || 0;
       const containerMarginRight = parseFloat(containerStyles.marginRight) || 0;
-      
+
       // Calculate total margin space available
       const totalMargin = containerMarginLeft + containerMarginRight;
-      
+
       // Chat needs 394px (370px width + 24px gap)
       const chatSpace = 394;
-      
+
       // Check if we have enough margin space
       if (totalMargin >= chatSpace) {
         // Enough margin space - no need to shift
@@ -62,9 +74,9 @@ export const SessionPage = () => {
         setShouldShiftContent(true);
       }
     };
-    
+
     let loadHandled = false;
-    
+
     // Function to run initial check
     const runInitialCheck = () => {
       if (!loadHandled) {
@@ -72,25 +84,25 @@ export const SessionPage = () => {
         checkSpace();
       }
     };
-    
+
     // Wait for all styles to load before initial check
     if (document.readyState === 'complete') {
       // Page already loaded, but styles might still be applying
       // Use a small delay to ensure CSS is processed
-      setTimeout(runInitialCheck, 50);
+      setTimeout(runInitialCheck, 0);
     } else {
       // Wait for load event to ensure CSS is applied
       window.addEventListener('load', runInitialCheck);
     }
-    
+
     // Add resize listener for dynamic changes
     window.addEventListener('resize', checkSpace);
-    
+
     // Run check when chat toggle changes (after initial load)
     if (loadHandled) {
       checkSpace();
     }
-    
+
     return () => {
       window.removeEventListener('resize', checkSpace);
       window.removeEventListener('load', runInitialCheck);
@@ -99,17 +111,22 @@ export const SessionPage = () => {
 
   // Auto-open chat after initial render
   useEffect(() => {
-    const openChat = () => {
+    const showChat = () => {
+      // First set the chat as open to trigger space calculation
       setIsChatOpen(true);
+      // Then after a brief delay, actually render the chat
+      setTimeout(() => {
+        setChatReady(true);
+      }, 150);
     };
 
     if (document.readyState === 'complete') {
-      // Page loaded, open after a brief delay for smooth animation
-      setTimeout(openChat, 300);
+      // Page loaded, show chat after a brief delay
+      setTimeout(showChat, 150);
     } else {
       // Wait for page load
       window.addEventListener('load', () => {
-        setTimeout(openChat, 300);
+        setTimeout(showChat, 0);
       });
     }
   }, []); // Run once on mount
@@ -165,9 +182,9 @@ export const SessionPage = () => {
                 {session.title}
               </Title>
               {session.is_live && (
-                <Badge 
-                  size="sm" 
-                  color="red" 
+                <Badge
+                  size="sm"
+                  color="red"
                   variant="dot"
                   className={styles.liveBadge}
                   mt="xs"
@@ -181,14 +198,13 @@ export const SessionPage = () => {
           {/* Main Content with Collapsible Chat */}
           <div className={styles.contentWithChat}>
             {/* Main Content Area */}
-            <div 
+            <div
               ref={mainContentRef}
-              className={`${styles.mainContent} ${shouldShiftContent ? '' : styles.chatClosed}`}>
+              className={`${styles.mainContent} ${shouldShiftContent ? '' : styles.chatClosed}`}
+            >
               {/* Video Display */}
-              <SessionDisplay
-                streamUrl={session.stream_url}
-              />
-              
+              <SessionDisplay streamUrl={session.stream_url} />
+
               {/* Session Details - Horizontal under video */}
               <SessionDetails
                 session={session}
@@ -196,17 +212,16 @@ export const SessionPage = () => {
                 onStatusChange={handleStatusChange}
                 onUpdate={handleUpdate}
               />
-              
+
               {/* About This Session Section */}
               <div className={styles.aboutSection}>
-                <Title order={3} mb="md">About This Session</Title>
-                
+                <Title order={3} mb="md">
+                  About This Session
+                </Title>
+
                 {/* Speakers */}
-                <SessionSpeakers
-                  sessionId={sessionId}
-                  canEdit={canEdit}
-                />
-                
+                <SessionSpeakers sessionId={sessionId} canEdit={canEdit} />
+
                 {/* Description */}
                 {session.description && (
                   <Text mt="lg" className={styles.description}>
@@ -218,13 +233,15 @@ export const SessionPage = () => {
           </div>
         </Stack>
       </Container>
-      
+
       {/* Collapsible Chat Sidebar - Fixed position outside Container */}
-      <SessionChat 
-        sessionId={sessionId}
-        isEnabled={true} // TODO: Check if chat is enabled for this session
-        onToggle={setIsChatOpen}
-      />
+      {chatReady && (
+        <SessionChat
+          sessionId={sessionId}
+          isEnabled={true} // TODO: Check if chat is enabled for this session
+          onToggle={setIsChatOpen}
+        />
+      )}
     </>
   );
 };
