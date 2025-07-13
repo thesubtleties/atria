@@ -30,6 +30,7 @@ export const SessionPage = () => {
   const [isChatOpen, setIsChatOpen] = useState(false); // Start closed, open after render
   const [shouldShiftContent, setShouldShiftContent] = useState(false); // Start unshifted
   const [chatReady, setChatReady] = useState(false); // Don't render chat until ready
+  const [hasInitialized, setHasInitialized] = useState(false); // Track if we've done initial setup
   const mainContentRef = useRef(null);
 
   const { data: session, isLoading } = useGetSessionQuery(sessionId);
@@ -41,10 +42,10 @@ export const SessionPage = () => {
 
   // Single effect to handle all chat initialization and spacing
   useEffect(() => {
-    let initialized = false;
-
     const checkSpace = () => {
-      if (!mainContentRef.current || !isChatOpen) {
+      if (!mainContentRef.current) return;
+      
+      if (!isChatOpen) {
         setShouldShiftContent(false);
         return;
       }
@@ -71,48 +72,46 @@ export const SessionPage = () => {
       }
     };
 
-    // Initialize chat with proper timing sequence
-    const initializeChat = () => {
-      if (initialized) return;
-      initialized = true;
+    // Only run initialization once
+    if (!hasInitialized) {
+      const initializeChat = () => {
+        setHasInitialized(true);
+        
+        // Step 1: Set chat as open (triggers space calculation)
+        setIsChatOpen(true);
+        
+        // Step 2: Force immediate space check
+        checkSpace();
+        
+        // Step 3: Wait for content shift animation to complete before showing chat
+        // 300ms matches the CSS transition timing for padding-right
+        setTimeout(() => {
+          setChatReady(true);
+        }, 300);
+      };
 
-      // Step 1: Set chat as open (triggers space calculation)
-      setIsChatOpen(true);
-      
-      // Step 2: Force immediate space check
-      checkSpace();
-      
-      // Step 3: Wait for content shift animation to complete before showing chat
-      // 300ms matches the CSS transition timing for padding-right
-      setTimeout(() => {
-        setChatReady(true);
-      }, 300);
-    };
-
-    // Start initialization based on page state
-    if (document.readyState === 'complete') {
-      // For cached/fast loads, wait a bit for CSS
-      setTimeout(initializeChat, 200);
+      // Start initialization based on page state
+      if (document.readyState === 'complete') {
+        // For cached/fast loads, wait a bit for CSS
+        setTimeout(initializeChat, 200);
+      } else {
+        // For first loads, wait for full page load
+        window.addEventListener('load', () => {
+          setTimeout(initializeChat, 100);
+        });
+      }
     } else {
-      // For first loads, wait for full page load
-      window.addEventListener('load', () => {
-        setTimeout(initializeChat, 100);
-      });
+      // After initialization, just handle normal toggle behavior
+      checkSpace();
     }
 
     // Handle resize events
     window.addEventListener('resize', checkSpace);
 
-    // Handle manual chat toggle after initialization
-    if (initialized && isChatOpen) {
-      checkSpace();
-    }
-
     return () => {
       window.removeEventListener('resize', checkSpace);
-      window.removeEventListener('load', initializeChat);
     };
-  }, [isChatOpen]);
+  }, [isChatOpen, hasInitialized]);
 
   if (isLoading) {
     return <LoadingOverlay visible />;
