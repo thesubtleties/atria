@@ -1,12 +1,31 @@
+.chatContainer {
+  width: 370px;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: hidden;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.chatContainer.chatClosed {
+  transform: translateX(370px);
+  opacity: 0;
+}
+
+.chatContainer.chatOpen {
+  transform: translateX(0);
+  opacity: 1;
+}
+
 .chatSidebar {
-  width: 100%;
+  width: 370px;
   height: 100%;
   display: flex;
   flex-direction: column;
   background: white;
   border-radius: var(--mantine-radius-md);
   border: 1px solid var(--mantine-color-gray-2);
-  transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 }

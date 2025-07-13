@@ -54,7 +54,7 @@ export const SessionChat = ({ sessionId, isEnabled = true, onToggle }) => {
       )}
 
       {/* Expanded State - Show full chat */}
-      {isOpen && (
+      <div className={`${styles.chatContainer} ${isOpen ? styles.chatOpen : styles.chatClosed}`}>
         <Card className={styles.chatSidebar} p={0}>
           <SessionChatHeader
             sessionData={sessionData}
@@ -68,7 +68,7 @@ export const SessionChat = ({ sessionId, isEnabled = true, onToggle }) => {
             error={error}
           />
         </Card>
-      )}
+      </div>
     </>
   );
 };
