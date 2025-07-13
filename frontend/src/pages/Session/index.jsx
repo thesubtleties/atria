@@ -45,13 +45,14 @@ export const SessionPage = () => {
       const mainElement = document.querySelector('main');
       if (!mainElement) return;
       
-      const totalWidth = mainElement.offsetWidth;
-      
       // Get the container element
       const container = mainContentRef.current.closest('.mantine-Container-root');
       if (!container) return;
       
-      const containerWidth = container.offsetWidth;
+      // Force style recalculation by reading offsetHeight
+      // This ensures computed styles are up to date
+      container.offsetHeight;
+      
       const containerStyles = window.getComputedStyle(container);
       const containerMarginLeft = parseFloat(containerStyles.marginLeft) || 0;
       const containerMarginRight = parseFloat(containerStyles.marginRight) || 0;
@@ -103,7 +104,14 @@ export const SessionPage = () => {
         return;
       }
       
+      // Found the chat, but in production styles might not be fully computed
+      // Do an immediate check and then one more after next frame
       checkSpace();
+      
+      // Double-check after styles have settled
+      requestAnimationFrame(() => {
+        checkSpace();
+      });
     };
     
     // Watch the container itself for size changes
@@ -120,6 +128,14 @@ export const SessionPage = () => {
     
     // Start initial check
     initialCheck();
+    
+    // Also run a check after a full render cycle in production
+    // This catches cases where styles are applied late
+    if (isChatOpen) {
+      setTimeout(() => {
+        checkSpace();
+      }, 100);
+    }
     
     return () => {
       resizeObserver?.disconnect();
