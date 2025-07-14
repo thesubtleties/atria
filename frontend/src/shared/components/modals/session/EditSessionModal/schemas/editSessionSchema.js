@@ -9,6 +9,12 @@ const SessionType = z.enum([
   'QA',
 ]);
 
+const ChatMode = z.enum([
+  'ENABLED',
+  'BACKSTAGE_ONLY',
+  'DISABLED',
+]);
+
 export const editSessionSchema = z
   .object({
     title: z.string().min(1, 'Title is required'),
@@ -23,6 +29,7 @@ export const editSessionSchema = z
       .string()
       .regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Invalid time format'),
     stream_url: z.string().url().optional().or(z.literal('')),
+    chat_mode: ChatMode.default('ENABLED'),
   })
   .refine(
     (data) => {

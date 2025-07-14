@@ -32,6 +32,12 @@ const SESSION_TYPES = [
   { value: 'QA', label: 'Q&A' },
 ];
 
+const CHAT_MODES = [
+  { value: 'ENABLED', label: 'All Chat Enabled' },
+  { value: 'BACKSTAGE_ONLY', label: 'Backstage Only' },
+  { value: 'DISABLED', label: 'Chat Disabled' },
+];
+
 export const SessionCard = ({ session, eventId, hasConflict }) => {
   const [updateSession] = useUpdateSessionMutation();
   const [deleteSession] = useDeleteSessionMutation();
@@ -44,6 +50,7 @@ export const SessionCard = ({ session, eventId, hasConflict }) => {
   const [startTime, setStartTime] = useState(session.start_time);
   const [endTime, setEndTime] = useState(session.end_time);
   const [streamUrl, setStreamUrl] = useState(session.stream_url || '');
+  const [chatMode, setChatMode] = useState(session.chat_mode || 'ENABLED');
   
   // Validation error states
   const [errors, setErrors] = useState({});
@@ -263,7 +270,21 @@ export const SessionCard = ({ session, eventId, hasConflict }) => {
             }}
             data={SESSION_TYPES}
             size="sm"
-            style={{ width: 200 }}
+            style={{ width: 160 }}
+            styles={{
+              input: { cursor: 'pointer' },
+              rightSection: { pointerEvents: 'none' }
+            }}
+          />
+          <Select
+            value={chatMode}
+            onChange={(value) => {
+              setChatMode(value);
+              handleUpdate({ chat_mode: value });
+            }}
+            data={CHAT_MODES}
+            size="sm"
+            style={{ width: 160 }}
             styles={{
               input: { cursor: 'pointer' },
               rightSection: { pointerEvents: 'none' }
