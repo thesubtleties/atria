@@ -96,6 +96,13 @@ export const sessionsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['SessionSpeakers'],
     }),
+    deleteSession: builder.mutation({
+      query: (id) => ({
+        url: `/sessions/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Sessions'],
+    }),
   }),
 });
 
@@ -111,4 +118,5 @@ export const {
   useUpdateSessionSpeakerMutation,
   useReorderSessionSpeakerMutation,
   useRemoveSessionSpeakerMutation,
+  useDeleteSessionMutation,
 } = sessionsApi;

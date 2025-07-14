@@ -1,0 +1,123 @@
+.container {
+  padding: var(--mantine-spacing-lg) 0;
+}
+
+.sessionCard {
+  background: var(--mantine-color-white);
+  border: 1px solid var(--mantine-color-gray-2);
+  border-radius: var(--mantine-radius-md);
+  padding: var(--mantine-spacing-lg);
+  margin-bottom: var(--mantine-spacing-md);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.sessionCard:hover {
+  border-color: var(--mantine-color-gray-3);
+  box-shadow: var(--mantine-shadow-sm);
+}
+
+.sessionCard.hasConflict {
+  border-color: var(--mantine-color-red-3);
+  background-color: var(--mantine-color-red-0);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--mantine-spacing-sm);
+}
+
+.timeBlock {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--mantine-spacing-md);
+  padding-bottom: var(--mantine-spacing-md);
+  border-bottom: 1px solid var(--mantine-color-gray-2);
+}
+
+.timeInput {
+  width: 120px;
+}
+
+.durationPill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  background-color: var(--mantine-color-gray-1);
+  color: var(--mantine-color-gray-7);
+}
+
+.conflictPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  background-color: var(--mantine-color-red-1);
+  color: var(--mantine-color-red-7);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mantine-spacing-md);
+}
+
+.titleInput {
+  font-size: var(--mantine-font-size-lg);
+  font-weight: 600;
+  border: none;
+  padding: 0;
+  background: transparent;
+  flex: 1;
+  max-width: 75%;
+}
+
+.titleInput:focus {
+  outline: 2px solid var(--mantine-color-blue-5);
+  outline-offset: 2px;
+  border-radius: var(--mantine-radius-sm);
+  padding: 0 var(--mantine-spacing-xs);
+}
+
+.infoBar {
+  display: flex;
+  gap: var(--mantine-spacing-md);
+  flex-wrap: wrap;
+}
+
+.speakersSection {
+  background: var(--mantine-color-gray-0);
+  border-radius: var(--mantine-radius-sm);
+  padding: var(--mantine-spacing-md);
+}
+
+.descriptionTextarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+.actions {
+  margin-top: var(--mantine-spacing-sm);
+  padding-top: var(--mantine-spacing-sm);
+  border-top: 1px solid var(--mantine-color-gray-2);
+}
+
+.emptyState {
+  text-align: center;
+  padding: var(--mantine-spacing-xl) * 3 0;
+  color: var(--mantine-color-gray-6);
+}
+
+.loadingState {
+  text-align: center;
+  padding: var(--mantine-spacing-xl) * 2 0;
+}
+
