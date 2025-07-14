@@ -76,41 +76,44 @@ export function MessageList({ room, messages, isActive }) {
   }, [messages]);
 
   return (
-    <ScrollArea 
-      ref={scrollAreaRef}
-      className={styles.messagesArea}
-      onScrollPositionChange={handleScroll}
-    >
-      <Stack gap="sm" p="md">
-        {room.description && (
-          <Text size="sm" c="dimmed" ta="center" py="xs">
-            {room.description}
-          </Text>
-        )}
-        {/* TODO: Enable when backend supports room presence tracking
-        {data?.active_users !== undefined && (
-          <Group justify="center" gap="xs" mb="sm">
-            <Box className={styles.presenceIndicator} />
-            <Text size="sm" c="dimmed">
-              {data.active_users} {data.active_users === 1 ? 'person is' : 'people are'} here
+    <div className={styles.messageListWrapper}>
+      <ScrollArea 
+        ref={scrollAreaRef}
+        className={styles.messagesArea}
+        onScrollPositionChange={handleScroll}
+        style={{ height: '100%' }}
+      >
+        <Stack gap="sm" p="md">
+          {room.description && (
+            <Text size="sm" c="dimmed" ta="center" py="xs">
+              {room.description}
             </Text>
-          </Group>
-        )}
-        */}
-        {messages.length === 0 ? (
-          <Text size="sm" c="dimmed" ta="center" py="lg">
-            No messages yet. Be the first to say hello!
-          </Text>
-        ) : (
-          messages.map((message) => (
-            <MessageBubble 
-              key={message.id} 
-              message={message} 
-            />
-          ))
-        )}
-        <div ref={messagesEndRef} />
-      </Stack>
-    </ScrollArea>
+          )}
+          {/* TODO: Enable when backend supports room presence tracking
+          {data?.active_users !== undefined && (
+            <Group justify="center" gap="xs" mb="sm">
+              <Box className={styles.presenceIndicator} />
+              <Text size="sm" c="dimmed">
+                {data.active_users} {data.active_users === 1 ? 'person is' : 'people are'} here
+              </Text>
+            </Group>
+          )}
+          */}
+          {messages.length === 0 ? (
+            <Text size="sm" c="dimmed" ta="center" py="lg">
+              No messages yet. Be the first to say hello!
+            </Text>
+          ) : (
+            messages.map((message) => (
+              <MessageBubble 
+                key={message.id} 
+                message={message} 
+              />
+            ))
+          )}
+          <div ref={messagesEndRef} />
+        </Stack>
+      </ScrollArea>
+    </div>
   );
 }
