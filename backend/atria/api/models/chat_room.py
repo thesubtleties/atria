@@ -40,9 +40,9 @@ class ChatRoom(db.Model):
     __table_args__ = (
         # Unique constraint for session + room_type combination
         db.UniqueConstraint('session_id', 'room_type', name='unique_session_room_type'),
-        # Either global/admin (no session) or public/backstage (with session)
+        # Either global/admin/green_room (no session) or public/backstage (with session)
         db.CheckConstraint(
-            "(room_type IN ('global', 'admin') AND session_id IS NULL) OR "
+            "(room_type IN ('global', 'admin', 'green_room') AND session_id IS NULL) OR "
             "(room_type IN ('public', 'backstage') AND session_id IS NOT NULL)",
             name="chat_room_type_session_check"
         ),
