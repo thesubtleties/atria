@@ -1,18 +1,24 @@
 .container {
-  height: calc(100vh - 80px);
+  height: calc(100vh - 80px); /* Account for header */
   display: flex;
   flex-direction: column;
   background-color: #f8f9fa;
+  min-height: 0; /* Important for nested flex containers */
+  overflow: hidden;
 }
 
 .tabs {
   height: 100%;
   display: flex;
   flex-direction: column;
+  min-height: 0; /* Ensures proper flex behavior */
 }
 
 .tabPanel {
   flex: 1;
   overflow: hidden;
   padding: 0;
+  min-height: 0; /* Critical for proper height constraints */
+  display: flex;
+  flex-direction: column;
 }
