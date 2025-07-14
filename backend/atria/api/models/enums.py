@@ -77,7 +77,14 @@ class MessageStatus(str, Enum):
 
 
 class ChatRoomType(str, Enum):
-    GLOBAL = "global"           # Event-wide, all attendees
-    PUBLIC = "public"           # Session-specific, all attendees
-    BACKSTAGE = "backstage"     # Session-specific, speakers/organizers only
-    ADMIN = "admin"             # Event-wide, admins/organizers only
+    GLOBAL = "GLOBAL"           # Event-wide, all attendees
+    PUBLIC = "PUBLIC"           # Session-specific, all attendees
+    BACKSTAGE = "BACKSTAGE"     # Session-specific, speakers/organizers only
+    ADMIN = "ADMIN"             # Event-wide, admins/organizers only
+    GREEN_ROOM = "GREEN_ROOM"   # Event-wide, speakers/admins/organizers only
+
+
+class SessionChatMode(str, Enum):
+    ENABLED = "ENABLED"             # Both PUBLIC and BACKSTAGE chat enabled
+    BACKSTAGE_ONLY = "BACKSTAGE_ONLY"  # Only BACKSTAGE chat enabled
+    DISABLED = "DISABLED"           # No chat rooms enabled
