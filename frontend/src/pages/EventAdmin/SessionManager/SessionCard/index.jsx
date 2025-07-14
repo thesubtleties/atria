@@ -16,9 +16,11 @@ import {
   IconAlertCircle 
 } from '@tabler/icons-react';
 import { useDebouncedValue } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
 import { useUpdateSessionMutation, useDeleteSessionMutation } from '@/app/features/sessions/api';
 import { SessionSpeakers } from '@/pages/Session/SessionSpeakers';
 import { modals } from '@mantine/modals';
+import { validateField, validateTimeOrder } from '../schemas/sessionCardSchema';
 import styles from '../styles/index.module.css';
 
 const SESSION_TYPES = [
@@ -42,6 +44,9 @@ export const SessionCard = ({ session, eventId, hasConflict }) => {
   const [startTime, setStartTime] = useState(session.start_time);
   const [endTime, setEndTime] = useState(session.end_time);
   const [streamUrl, setStreamUrl] = useState(session.stream_url || '');
+  
+  // Validation error states
+  const [errors, setErrors] = useState({});
 
   // Debounce values for auto-save
   const [debouncedTitle] = useDebouncedValue(title, 500);
@@ -58,15 +63,39 @@ export const SessionCard = ({ session, eventId, hasConflict }) => {
       }).unwrap();
     } catch (error) {
       console.error('Failed to update session:', error);
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to update session',
+        color: 'red',
+      });
     }
   }, [session.id, updateSession]);
 
+  // Validate field before updating
+  const validateAndUpdate = useCallback((field, value) => {
+    const validation = validateField(field, value);
+    
+    if (!validation.success) {
+      setErrors(prev => ({ ...prev, [field]: validation.error.errors[0].message }));
+      return false;
+    }
+    
+    // Clear error if validation passes
+    setErrors(prev => {
+      const newErrors = { ...prev };
+      delete newErrors[field];
+      return newErrors;
+    });
+    
+    return true;
+  }, []);
+
   // Update on debounced changes
   useEffect(() => {
-    if (debouncedTitle !== session.title) {
+    if (debouncedTitle !== session.title && validateAndUpdate('title', debouncedTitle)) {
       handleUpdate({ title: debouncedTitle });
     }
-  }, [debouncedTitle, session.title, handleUpdate]);
+  }, [debouncedTitle, session.title, handleUpdate, validateAndUpdate]);
 
   useEffect(() => {
     if (debouncedDescription !== session.description) {
@@ -75,16 +104,16 @@ export const SessionCard = ({ session, eventId, hasConflict }) => {
   }, [debouncedDescription, session.description, handleUpdate]);
 
   useEffect(() => {
-    if (debouncedShortDescription !== session.short_description) {
+    if (debouncedShortDescription !== session.short_description && validateAndUpdate('short_description', debouncedShortDescription)) {
       handleUpdate({ short_description: debouncedShortDescription });
     }
-  }, [debouncedShortDescription, session.short_description, handleUpdate]);
+  }, [debouncedShortDescription, session.short_description, handleUpdate, validateAndUpdate]);
 
   useEffect(() => {
-    if (debouncedStreamUrl !== session.stream_url) {
+    if (debouncedStreamUrl !== session.stream_url && (debouncedStreamUrl === '' || validateAndUpdate('stream_url', debouncedStreamUrl))) {
       handleUpdate({ stream_url: debouncedStreamUrl });
     }
-  }, [debouncedStreamUrl, session.stream_url, handleUpdate]);
+  }, [debouncedStreamUrl, session.stream_url, handleUpdate, validateAndUpdate]);
 
   // Calculate duration
   const calculateDuration = (start, end) => {
@@ -99,13 +128,38 @@ export const SessionCard = ({ session, eventId, hasConflict }) => {
   const handleTimeChange = (field, value) => {
     if (!value) return;
     
-    const updates = { [field]: value };
-    if (field === 'start_time') {
-      setStartTime(value);
-    } else {
-      setEndTime(value);
+    // Validate time format
+    if (!validateAndUpdate(field, value)) {
+      return;
     }
     
+    // Update local state
+    if (field === 'start_time') {
+      setStartTime(value);
+      // Validate time order
+      const timeOrderValidation = validateTimeOrder(value, endTime);
+      if (!timeOrderValidation.success) {
+        setErrors(prev => ({ ...prev, time_order: timeOrderValidation.error.message }));
+        return;
+      }
+    } else {
+      setEndTime(value);
+      // Validate time order
+      const timeOrderValidation = validateTimeOrder(startTime, value);
+      if (!timeOrderValidation.success) {
+        setErrors(prev => ({ ...prev, time_order: timeOrderValidation.error.message }));
+        return;
+      }
+    }
+    
+    // Clear time order error if validation passes
+    setErrors(prev => {
+      const newErrors = { ...prev };
+      delete newErrors.time_order;
+      return newErrors;
+    });
+    
+    const updates = { [field]: value };
     handleUpdate(updates);
   };
 
@@ -140,6 +194,7 @@ export const SessionCard = ({ session, eventId, hasConflict }) => {
           variant="unstyled"
           className={styles.titleInput}
           placeholder="Session Title"
+          error={errors.title}
         />
         
         {/* Actions Menu */}
@@ -169,6 +224,7 @@ export const SessionCard = ({ session, eventId, hasConflict }) => {
             onChange={(event) => handleTimeChange('start_time', event.target.value)}
             format="24"
             className={styles.timeInput}
+            error={errors.start_time}
           />
           <Text size="sm" c="dimmed">to</Text>
           <TimeInput
@@ -176,6 +232,7 @@ export const SessionCard = ({ session, eventId, hasConflict }) => {
             onChange={(event) => handleTimeChange('end_time', event.target.value)}
             format="24"
             className={styles.timeInput}
+            error={errors.end_time || errors.time_order}
           />
         </Group>
         
@@ -218,6 +275,7 @@ export const SessionCard = ({ session, eventId, hasConflict }) => {
             style={{ flex: 1 }}
             value={streamUrl}
             onChange={(e) => setStreamUrl(e.target.value)}
+            error={errors.stream_url}
           />
         </Group>
 
@@ -239,6 +297,7 @@ export const SessionCard = ({ session, eventId, hasConflict }) => {
           minRows={1}
           maxRows={3}
           size="sm"
+          error={errors.short_description}
         />
 
         {/* Full Description */}
