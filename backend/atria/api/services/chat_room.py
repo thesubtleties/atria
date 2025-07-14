@@ -181,12 +181,23 @@ class ChatRoomService:
             return True
             
         elif chat_room.room_type == ChatRoomType.PUBLIC:
-            # All event attendees can access
+            # Check if session has public chat enabled
+            if chat_room.session:
+                from api.models.enums import SessionChatMode
+                if chat_room.session.chat_mode == SessionChatMode.DISABLED:
+                    return False
+                if chat_room.session.chat_mode == SessionChatMode.BACKSTAGE_ONLY:
+                    return False
+            # All event attendees can access if enabled
             return True
             
         elif chat_room.room_type == ChatRoomType.BACKSTAGE:
-            # Only speakers and organizers
+            # Check if session has backstage chat enabled
             if chat_room.session:
+                from api.models.enums import SessionChatMode
+                if chat_room.session.chat_mode == SessionChatMode.DISABLED:
+                    return False
+                # Only speakers and organizers can access backstage
                 is_speaker = chat_room.session.has_speaker(user)
                 is_organizer = user_event_role in [EventUserRole.ADMIN, EventUserRole.ORGANIZER]
                 return is_speaker or is_organizer
@@ -195,6 +206,10 @@ class ChatRoomService:
         elif chat_room.room_type == ChatRoomType.ADMIN:
             # Only event admins/organizers
             return user_event_role in [EventUserRole.ADMIN, EventUserRole.ORGANIZER]
+            
+        elif chat_room.room_type == ChatRoomType.GREEN_ROOM:
+            # Speakers, admins, and organizers can access
+            return user_event_role in [EventUserRole.ADMIN, EventUserRole.ORGANIZER, EventUserRole.SPEAKER]
             
         return False
 
