@@ -252,6 +252,10 @@ class SessionChatRoomList(MethodView):
         # Get the session
         session = Session.query.get_or_404(session_id)
         
+        # Check if chat is enabled for this session
+        if not session.has_chat_enabled:
+            return []
+        
         # Get current user
         user_id = int(get_jwt_identity())
         current_user = User.query.get(user_id)
@@ -264,8 +268,15 @@ class SessionChatRoomList(MethodView):
         # Build query based on permissions
         query = ChatRoom.query.filter_by(session_id=session_id, is_enabled=True)
         
-        # If user is not a speaker or organizer, only show PUBLIC rooms
-        if not is_speaker and not is_organizer:
+        # Apply chat mode restrictions
+        from api.models.enums import SessionChatMode
+        if session.chat_mode == SessionChatMode.BACKSTAGE_ONLY:
+            # Only show backstage room, and only to speakers/organizers
+            if not is_speaker and not is_organizer:
+                return []
+            query = query.filter(ChatRoom.room_type == ChatRoomType.BACKSTAGE)
+        elif not is_speaker and not is_organizer:
+            # Regular attendees only see PUBLIC rooms when chat is ENABLED
             query = query.filter(ChatRoom.room_type == ChatRoomType.PUBLIC)
         
         chat_rooms = query.all()
