@@ -145,10 +145,10 @@ def seed_database():
                 db.session.execute(
                     text(
                         """
-                    INSERT INTO sessions (id, event_id, status, session_type,
+                    INSERT INTO sessions (id, event_id, status, session_type, chat_mode,
                                         title, short_description, description, start_time, end_time,
                                         stream_url, day_number, created_at)
-                    VALUES (:id, :event_id, :status, :session_type,
+                    VALUES (:id, :event_id, :status, :session_type, 'ENABLED',
                            :title, :short_description, :description, :start_time, :end_time,
                            :stream_url, :day_number, CURRENT_TIMESTAMP)
                     """

@@ -905,8 +905,8 @@ def seed_chat_rooms():
             "event_id": 1,
             "session_id": None,
             "name": "Speaker Green Room",
-            "description": "Private space for speakers to coordinate",
-            "room_type": "ADMIN",
+            "description": "Private space for speakers, admins, and organizers to coordinate",
+            "room_type": "GREEN_ROOM",
             "is_enabled": True,
         },
     ]
@@ -1056,7 +1056,7 @@ def seed_chat_messages():
         {
             "id": 18,
             "room_id": 7,  # Speaker Green Room
-            "user_id": 2,  # Sarah Chen
+            "user_id": 2,  # Sarah Chen (Speaker)
             "content": "Is there a clicker available for the keynote presentation?",
         },
         {
