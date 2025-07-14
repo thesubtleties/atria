@@ -39,7 +39,7 @@ export const SessionPage = () => {
   const [updateStatus] = useUpdateSessionStatusMutation();
   const [updateSession] = useUpdateSessionMutation();
 
-  // No timing logic needed for CSS approach!
+  // No timing logic needed for CSS approach
 
   if (isLoading) {
     return <LoadingOverlay visible />;
@@ -82,7 +82,9 @@ export const SessionPage = () => {
   };
 
   return (
-    <div className={`${styles.sessionLayout} ${!isChatOpen ? styles.chatClosed : ''}`}>
+    <div
+      className={`${styles.sessionLayout} ${!isChatOpen ? styles.chatClosed : ''}`}
+    >
       {/* Main content area */}
       <div className={styles.mainContentWrapper}>
         <Container size="xl" className={styles.pageContainer}>

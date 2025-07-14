@@ -1,0 +1,10 @@
+.sessionsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mantine-spacing-md);
+}
+
+.emptyState {
+  text-align: center;
+  padding: calc(var(--mantine-spacing-xl) * 3) 0;
+}

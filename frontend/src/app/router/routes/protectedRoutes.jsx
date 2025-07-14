@@ -19,6 +19,7 @@ import { SponsorsPage } from '../../../pages/Sponsors';
 import Profile from '../../../pages/Profile';
 import Network from '../../../pages/Network';
 import Settings from '../../../pages/Settings';
+import { SessionManager } from '../../../pages/EventAdmin/SessionManager';
 
 // Placeholder component for development
 const PlaceholderComponent = ({ routeName = 'This page' }) => (
@@ -118,7 +119,37 @@ export const protectedRoutes = [
                   },
                   {
                     path: 'admin',
-                    element: getComponent('EventDashboard'),
+                    element: <Outlet />,
+                    children: [
+                      {
+                        path: '',
+                        element: getComponent('EventDashboard'),
+                      },
+                      {
+                        path: 'sessions',
+                        element: <SessionManager />,
+                      },
+                      {
+                        path: 'attendees',
+                        element: <PlaceholderComponent routeName="Attendees Management" />,
+                      },
+                      {
+                        path: 'speakers',
+                        element: <PlaceholderComponent routeName="Speakers Management" />,
+                      },
+                      {
+                        path: 'sponsors',
+                        element: <PlaceholderComponent routeName="Sponsors Management" />,
+                      },
+                      {
+                        path: 'networking',
+                        element: <PlaceholderComponent routeName="Networking Settings" />,
+                      },
+                      {
+                        path: 'settings',
+                        element: <PlaceholderComponent routeName="Event Settings" />,
+                      },
+                    ],
                   },
                   // New session-related routes
                   {
@@ -182,6 +213,40 @@ export const protectedRoutes = [
               {
                 path: 'setup-session',
                 element: <SetupSession />,
+              },
+              {
+                path: 'admin',
+                element: <Outlet />,
+                children: [
+                  {
+                    path: '',
+                    element: getComponent('EventDashboard'),
+                  },
+                  {
+                    path: 'sessions',
+                    element: <SessionManager />,
+                  },
+                  {
+                    path: 'attendees',
+                    element: <PlaceholderComponent routeName="Attendees Management" />,
+                  },
+                  {
+                    path: 'speakers',
+                    element: <PlaceholderComponent routeName="Speakers Management" />,
+                  },
+                  {
+                    path: 'sponsors',
+                    element: <PlaceholderComponent routeName="Sponsors Management" />,
+                  },
+                  {
+                    path: 'networking',
+                    element: <PlaceholderComponent routeName="Networking Settings" />,
+                  },
+                  {
+                    path: 'settings',
+                    element: <PlaceholderComponent routeName="Event Settings" />,
+                  },
+                ],
               },
               {
                 path: '*',
