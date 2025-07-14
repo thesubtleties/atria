@@ -38,6 +38,26 @@ export const SessionPage = () => {
   });
   const [updateStatus] = useUpdateSessionStatusMutation();
   const [updateSession] = useUpdateSessionMutation();
+  
+  // Get current user's role in the event
+  const getCurrentUserEventRole = () => {
+    if (!event || !currentUser) return null;
+    
+    // Check if user is an event organizer/admin
+    const organizer = event.organizers?.find(org => org.id === currentUser.id);
+    if (organizer) return organizer.role;
+    
+    // Check if user is a speaker for this session
+    const isSpeaker = session?.session_speakers?.some(
+      speaker => speaker.user.id === currentUser.id
+    );
+    if (isSpeaker) return 'SPEAKER';
+    
+    // Otherwise they're an attendee
+    return 'ATTENDEE';
+  };
+  
+  const userEventRole = getCurrentUserEventRole();
 
   // No timing logic needed for CSS approach
 
@@ -80,10 +100,30 @@ export const SessionPage = () => {
       console.error('Failed to update session:', error);
     }
   };
+  
+  // Determine if chat should be shown based on chat_mode and user role
+  const shouldShowChat = () => {
+    if (!session?.chat_mode) return true; // Default to showing chat if no mode set
+    
+    const chatMode = session.chat_mode;
+    
+    // If chat is disabled, don't show for anyone
+    if (chatMode === 'DISABLED') return false;
+    
+    // If backstage only, only show for speakers, organizers, and admins
+    if (chatMode === 'BACKSTAGE_ONLY') {
+      return ['ADMIN', 'ORGANIZER', 'SPEAKER'].includes(userEventRole);
+    }
+    
+    // If enabled, show for everyone
+    return true;
+  };
+  
+  const chatEnabled = shouldShowChat();
 
   return (
     <div
-      className={`${styles.sessionLayout} ${!isChatOpen ? styles.chatClosed : ''}`}
+      className={`${chatEnabled ? styles.sessionLayout : styles.sessionLayoutNoChat} ${!isChatOpen ? styles.chatClosed : ''}`}
     >
       {/* Main content area */}
       <div className={styles.mainContentWrapper}>
@@ -144,24 +184,26 @@ export const SessionPage = () => {
       </div>
 
       {/* Chat Sidebar - Part of grid layout */}
-      <div className={styles.chatWrapper}>
-        {isChatOpen ? (
-          <SessionChat
-            sessionId={sessionId}
-            isEnabled={true} // TODO: Check if chat is enabled for this session
-            onToggle={setIsChatOpen}
-          />
-        ) : (
-          <ActionIcon
-            onClick={() => setIsChatOpen(true)}
-            size="xl"
-            radius="xl"
-            className={styles.floatingChatButton}
-          >
-            <IconMessage size={24} />
-          </ActionIcon>
-        )}
-      </div>
+      {chatEnabled && (
+        <div className={styles.chatWrapper}>
+          {isChatOpen ? (
+            <SessionChat
+              sessionId={sessionId}
+              isEnabled={true}
+              onToggle={setIsChatOpen}
+            />
+          ) : (
+            <ActionIcon
+              onClick={() => setIsChatOpen(true)}
+              size="xl"
+              radius="xl"
+              className={styles.floatingChatButton}
+            >
+              <IconMessage size={24} />
+            </ActionIcon>
+          )}
+        </div>
+      )}
     </div>
   );
 };

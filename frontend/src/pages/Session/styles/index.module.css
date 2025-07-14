@@ -7,6 +7,12 @@
   transition: grid-template-columns 0.3s ease;
 }
 
+/* Layout when chat is completely disabled */
+.sessionLayoutNoChat {
+  display: block;
+  min-height: calc(100vh - var(--mantine-header-height, 0px));
+}
+
 /* When chat is closed, collapse the column smoothly */
 .sessionLayout.chatClosed {
   grid-template-columns: 1fr 60px;

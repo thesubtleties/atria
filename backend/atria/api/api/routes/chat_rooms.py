@@ -112,7 +112,8 @@ class ChatRoomList(MethodView):
             event_id=event_id,
             name=room_data["name"],
             description=room_data.get("description", ""),
-            is_global=room_data.get("is_global", False),
+            room_type=ChatRoomType.GLOBAL,  # Default to GLOBAL type
+            is_enabled=True
         )
 
         db.session.add(chat_room)
@@ -167,7 +168,6 @@ class ChatRoomResource(MethodView):
         chat_room.description = room_data.get(
             "description", chat_room.description
         )
-        chat_room.is_global = room_data.get("is_global", chat_room.is_global)
 
         db.session.commit()
 

@@ -266,6 +266,34 @@ class Event(db.Model):
                     is_enabled=True,
                 )
                 db.session.add(room)
+        
+        # Create ADMIN room
+        admin_room = ChatRoom.query.filter_by(
+            event_id=self.id, room_type=ChatRoomType.ADMIN
+        ).first()
+        if not admin_room:
+            admin_room = ChatRoom(
+                event_id=self.id,
+                name="Staff Coordination",
+                description="Private chat for event admins and organizers",
+                room_type=ChatRoomType.ADMIN,
+                is_enabled=True,
+            )
+            db.session.add(admin_room)
+        
+        # Create GREEN_ROOM
+        green_room = ChatRoom.query.filter_by(
+            event_id=self.id, room_type=ChatRoomType.GREEN_ROOM
+        ).first()
+        if not green_room:
+            green_room = ChatRoom(
+                event_id=self.id,
+                name="Speaker Green Room",
+                description="Private chat for speakers, admins, and organizers",
+                room_type=ChatRoomType.GREEN_ROOM,
+                is_enabled=True,
+            )
+            db.session.add(green_room)
 
         db.session.commit()
 

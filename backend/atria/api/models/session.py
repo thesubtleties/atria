@@ -1,5 +1,5 @@
 from api.extensions import db
-from api.models.enums import SessionType, SessionStatus, SessionSpeakerRole
+from api.models.enums import SessionType, SessionStatus, SessionSpeakerRole, SessionChatMode
 from datetime import datetime, timezone, time, date, timedelta
 
 
@@ -14,6 +14,11 @@ class Session(db.Model):
     )
     status = db.Column(db.Enum(SessionStatus), nullable=False)
     session_type = db.Column(db.Enum(SessionType), nullable=False)
+    chat_mode = db.Column(
+        db.Enum(SessionChatMode), 
+        nullable=False, 
+        default=SessionChatMode.ENABLED
+    )
     title = db.Column(db.Text, nullable=False)
     short_description = db.Column(db.String(200))  # For agenda view, max 200 chars
     description = db.Column(db.Text)  # Full description for session detail page
@@ -214,6 +219,21 @@ class Session(db.Model):
         """Get the backstage chat room for this session"""
         from api.models.enums import ChatRoomType
         return next((room for room in self.chat_rooms if room.room_type == ChatRoomType.BACKSTAGE), None)
+    
+    @property
+    def has_chat_enabled(self):
+        """Check if any chat is enabled for this session"""
+        return self.chat_mode != SessionChatMode.DISABLED
+    
+    @property
+    def has_public_chat_enabled(self):
+        """Check if public chat is enabled for this session"""
+        return self.chat_mode == SessionChatMode.ENABLED
+    
+    @property
+    def has_backstage_chat_enabled(self):
+        """Check if backstage chat is enabled for this session"""
+        return self.chat_mode in [SessionChatMode.ENABLED, SessionChatMode.BACKSTAGE_ONLY]
 
     def get_speakers_by_role(self, role: SessionSpeakerRole):
         """Get all speakers with specific role"""

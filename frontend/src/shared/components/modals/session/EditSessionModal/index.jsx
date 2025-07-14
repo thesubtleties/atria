@@ -25,6 +25,12 @@ const SESSION_TYPES = [
   { value: 'QA', label: 'Q&A Session' },
 ];
 
+const CHAT_MODES = [
+  { value: 'ENABLED', label: 'All Chat Enabled (Public & Backstage)' },
+  { value: 'BACKSTAGE_ONLY', label: 'Backstage Chat Only' },
+  { value: 'DISABLED', label: 'Chat Disabled' },
+];
+
 // Helper to get available days based on event dates
 const getEventDays = (event) => {
   if (!event?.start_date || !event?.end_date) return [];
@@ -73,6 +79,7 @@ export const EditSessionModal = ({
           end_time: session.end_time.substring(0, 5), // Updated to be in HH:mm format
           day_number: session.day_number.toString(),
           stream_url: session.stream_url || '',
+          chat_mode: session.chat_mode || 'ENABLED',
         }
       : {
           title: '',
@@ -83,6 +90,7 @@ export const EditSessionModal = ({
           end_time: '10:00',
           day_number: '1',
           stream_url: '',
+          chat_mode: 'ENABLED',
         },
     validate: (values) => {
       console.log('Validation values:', values);
@@ -109,6 +117,7 @@ export const EditSessionModal = ({
         end_time: values.end_time, // Just send HH:mm
         day_number: parseInt(values.day_number, 10),
         stream_url: values.stream_url || '',
+        chat_mode: values.chat_mode,
       };
 
       let result;
@@ -198,6 +207,13 @@ export const EditSessionModal = ({
             label="Stream URL"
             placeholder="Vimeo Stream URL"
             {...form.getInputProps('stream_url')}
+          />
+
+          <Select
+            label="Chat Settings"
+            data={CHAT_MODES}
+            required
+            {...form.getInputProps('chat_mode')}
           />
 
           <Button type="submit" loading={isLoading} fullWidth mt="md">

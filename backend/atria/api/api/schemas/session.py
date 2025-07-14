@@ -1,6 +1,6 @@
 from api.extensions import ma, db
 from api.models import Session
-from api.models.enums import SessionType, SessionStatus, SessionSpeakerRole
+from api.models.enums import SessionType, SessionStatus, SessionSpeakerRole, SessionChatMode
 from marshmallow import validates, validates_schema, ValidationError, validate
 from datetime import time
 
@@ -25,6 +25,12 @@ class SessionSchema(ma.SQLAlchemyAutoSchema):
     is_cancelled = ma.Boolean(dump_only=True)
     is_upcoming = ma.Boolean(dump_only=True)
     is_in_progress = ma.Boolean(dump_only=True)
+    
+    # Chat properties
+    chat_mode = ma.Enum(SessionChatMode)
+    has_chat_enabled = ma.Boolean(dump_only=True)
+    has_public_chat_enabled = ma.Boolean(dump_only=True)
+    has_backstage_chat_enabled = ma.Boolean(dump_only=True)
 
 
 class SessionDetailSchema(SessionSchema):
@@ -61,6 +67,7 @@ class SessionCreateSchema(ma.Schema):
     end_time = ma.Time(required=True)
     stream_url = ma.String()
     day_number = ma.Integer(required=True)
+    chat_mode = ma.Enum(SessionChatMode, load_default=SessionChatMode.ENABLED)
 
     @validates("title")
     def validate_title(self, value, **kwargs):
@@ -95,6 +102,7 @@ class SessionUpdateSchema(ma.Schema):
     end_time = ma.Time()
     stream_url = ma.String()
     day_number = ma.Integer()
+    chat_mode = ma.Enum(SessionChatMode)
 
 
 class SessionTimesUpdateSchema(ma.Schema):
