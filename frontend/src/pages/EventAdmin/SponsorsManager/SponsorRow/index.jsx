@@ -98,7 +98,7 @@ const SponsorRow = ({
           <IconGripVertical size={16} />
         </ActionIcon>
       </Table.Td>
-      <Table.Td>
+      <Table.Td style={{ textAlign: 'center' }}>
         {sponsor.logo_url ? (
           <Image
             src={sponsor.logo_url}
@@ -106,9 +106,10 @@ const SponsorRow = ({
             width={40}
             height={40}
             fit="contain"
+            style={{ display: 'inline-block' }}
           />
         ) : (
-          <Box className={styles.logoPlaceholder} />
+          <Box className={styles.logoPlaceholder} style={{ margin: '0 auto' }} />
         )}
       </Table.Td>
       <Table.Td>
@@ -119,13 +120,8 @@ const SponsorRow = ({
           </Text>
         )}
       </Table.Td>
-      <Table.Td>
-        {sponsor.tier_name && (
-          <Badge variant="light">{sponsor.tier_name}</Badge>
-        )}
-      </Table.Td>
-      <Table.Td>
-        <Box style={{ minWidth: '100px' }}>
+      <Table.Td style={{ textAlign: 'center' }}>
+        <Box style={{ minWidth: '100px', display: 'inline-block' }}>
           <Switch
             checked={sponsor.is_active}
             onChange={handleToggleActive}
@@ -133,7 +129,7 @@ const SponsorRow = ({
           />
         </Box>
       </Table.Td>
-      <Table.Td>
+      <Table.Td style={{ textAlign: 'center' }}>
         <ActionIcon
           variant={sponsor.featured ? 'filled' : 'subtle'}
           color="yellow"
@@ -146,7 +142,7 @@ const SponsorRow = ({
           )}
         </ActionIcon>
       </Table.Td>
-      <Table.Td>
+      <Table.Td style={{ textAlign: 'center' }}>
         <Menu position="bottom-end">
           <Menu.Target>
             <ActionIcon variant="subtle">

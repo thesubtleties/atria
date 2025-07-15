@@ -26,13 +26,8 @@ class SponsorService:
         from sqlalchemy.orm import joinedload
         query = query.options(joinedload(Sponsor.event))
         
-        # Order by display_order, then by tier_order (via computed property won't work in SQL)
-        # So we'll sort in memory after fetching
+        # Just return the sponsors without sorting - let frontend handle display order
         sponsors = query.all()
-        
-        # Sort by display order, then by tier order
-        # Handle None values in tier_order by treating them as 999
-        sponsors.sort(key=lambda s: (s.display_order or 999, s.tier_order or 999, s.id))
         
         if schema:
             return schema.dump(sponsors, many=True)
@@ -103,31 +98,6 @@ class SponsorService:
         db.session.delete(sponsor)
         db.session.commit()
 
-    @staticmethod
-    def reorder_sponsors(event_id: int, sponsor_orders: List[Dict[str, int]]):
-        """Reorder sponsors by updating display_order
-        
-        Args:
-            event_id: Event ID
-            sponsor_orders: List of dicts with sponsor_id and display_order
-        """
-        # Verify event exists
-        event = Event.query.get_or_404(event_id)
-        
-        # Get all sponsors for this event
-        sponsors = {s.id: s for s in Sponsor.query.filter_by(event_id=event_id).all()}
-        
-        # Update display orders
-        for order_data in sponsor_orders:
-            sponsor_id = order_data.get("sponsor_id")
-            display_order = order_data.get("display_order")
-            
-            if sponsor_id in sponsors:
-                sponsors[sponsor_id].display_order = display_order
-        
-        db.session.commit()
-        
-        return list(sponsors.values())
 
     @staticmethod
     def toggle_sponsor_active(sponsor_id: int):
@@ -160,9 +130,7 @@ class SponsorService:
             featured=True
         ).all()
         
-        # Sort by display order
-        sponsors.sort(key=lambda s: (s.display_order or 999, s.tier_order or 999, s.id))
-        
+        # Return without sorting - let frontend handle display order
         return sponsors
 
     @staticmethod

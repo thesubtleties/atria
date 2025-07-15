@@ -10,7 +10,6 @@ from api.api.schemas.sponsor import (
     SponsorUpdateSchema,
     SponsorListSchema,
     SponsorTierSchema,
-    SponsorReorderSchema,
 )
 from api.commons.decorators import (
     event_member_required,
@@ -62,9 +61,6 @@ class SponsorList(MethodView):
                 event_id, bool(active_only), SponsorListSchema()
             )
         except Exception as e:
-            print(f"[SPONSORS ERROR] Failed to get sponsors: {str(e)}")
-            import traceback
-            traceback.print_exc()
             return {"message": f"Failed to get sponsors: {str(e)}"}, 500
 
     @blp.arguments(SponsorCreateSchema)
@@ -144,9 +140,6 @@ class SponsorDetail(MethodView):
             updated_sponsor = SponsorService.update_sponsor(sponsor_id, sponsor_data)
             return SponsorDetailSchema().dump(updated_sponsor)
         except Exception as e:
-            print(f"[SPONSORS ERROR] Failed to update sponsor: {str(e)}")
-            import traceback
-            traceback.print_exc()
             # Return error with proper status code
             return {"message": f"Failed to update sponsor: {str(e)}"}, 500
 
@@ -182,9 +175,6 @@ class SponsorDetail(MethodView):
             SponsorService.delete_sponsor(sponsor_id)
             return "", 204
         except Exception as e:
-            print(f"[SPONSORS ERROR] Failed to delete sponsor: {str(e)}")
-            import traceback
-            traceback.print_exc()
             return {"message": f"Failed to delete sponsor: {str(e)}"}, 500
 
 
@@ -273,24 +263,6 @@ class SponsorToggleFeatured(MethodView):
         # Return minimal response since frontend will refetch the list
         return {"success": True, "id": sponsor_id}, 200
 
-
-@blp.route("/events/<int:event_id>/sponsors/reorder")
-class SponsorReorder(MethodView):
-    @blp.arguments(SponsorReorderSchema)
-    @blp.response(200)
-    @blp.doc(
-        summary="Reorder sponsors",
-        description="Update display order for multiple sponsors",
-        responses={
-            403: {"description": "Not authorized"},
-        },
-    )
-    @jwt_required()
-    @event_organizer_required()
-    def post(self, data, event_id):
-        """Reorder sponsors"""
-        sponsors = SponsorService.reorder_sponsors(event_id, data["sponsor_orders"])
-        return SponsorListSchema().dump(sponsors, many=True)
 
 
 @blp.route("/events/<int:event_id>/sponsor-tiers")

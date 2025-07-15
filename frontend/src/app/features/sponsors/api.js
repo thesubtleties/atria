@@ -81,14 +81,6 @@ export const sponsorsApi = baseApi.injectEndpoints({
       ],
     }),
 
-    reorderSponsors: builder.mutation({
-      query: ({ eventId, sponsorOrders }) => ({
-        url: `/events/${eventId}/sponsors/reorder`,
-        method: 'POST',
-        body: { sponsor_orders: sponsorOrders },
-      }),
-      invalidatesTags: [{ type: 'Sponsor', id: 'LIST' }],
-    }),
 
     getSponsorTiers: builder.query({
       query: ({ eventId }) => ({
@@ -117,7 +109,6 @@ export const {
   useDeleteSponsorMutation,
   useToggleSponsorActiveMutation,
   useToggleSponsorFeaturedMutation,
-  useReorderSponsorsMutation,
   useGetSponsorTiersQuery,
   useUpdateSponsorTiersMutation,
 } = sponsorsApi;
