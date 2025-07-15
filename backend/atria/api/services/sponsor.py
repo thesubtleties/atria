@@ -16,18 +16,23 @@ class SponsorService:
         # Verify event exists
         event = Event.query.get_or_404(event_id)
 
-        # Build query
+        # Build query with event relationship loaded
         query = Sponsor.query.filter_by(event_id=event_id)
         
         if active_only:
             query = query.filter_by(is_active=True)
+        
+        # Load with event relationship to avoid N+1 queries
+        from sqlalchemy.orm import joinedload
+        query = query.options(joinedload(Sponsor.event))
         
         # Order by display_order, then by tier_order (via computed property won't work in SQL)
         # So we'll sort in memory after fetching
         sponsors = query.all()
         
         # Sort by display order, then by tier order
-        sponsors.sort(key=lambda s: (s.display_order, s.tier_order, s.id))
+        # Handle None values in tier_order by treating them as 999
+        sponsors.sort(key=lambda s: (s.display_order or 999, s.tier_order or 999, s.id))
         
         if schema:
             return schema.dump(sponsors, many=True)
@@ -55,8 +60,9 @@ class SponsorService:
             if sponsor_data["tier_id"] not in tier_ids:
                 raise ValueError(f"Invalid tier_id: {sponsor_data['tier_id']}")
         
-        # Create sponsor
-        sponsor = Sponsor(event_id=event_id, **sponsor_data)
+        # Create sponsor - filter out datetime fields that should be managed by DB
+        allowed_data = {k: v for k, v in sponsor_data.items() if k not in ("created_at", "updated_at")}
+        sponsor = Sponsor(event_id=event_id, **allowed_data)
         
         db.session.add(sponsor)
         db.session.commit()
@@ -79,6 +85,9 @@ class SponsorService:
         
         # Update other fields
         for key, value in sponsor_data.items():
+            # Skip datetime fields - they're managed by the database
+            if key in ("created_at", "updated_at"):
+                continue
             if hasattr(sponsor, key):
                 setattr(sponsor, key, value)
         
@@ -127,6 +136,7 @@ class SponsorService:
         sponsor.is_active = not sponsor.is_active
         
         db.session.commit()
+        db.session.refresh(sponsor)  # Refresh to ensure relationships are loaded
         
         return sponsor
 
@@ -137,6 +147,7 @@ class SponsorService:
         sponsor.featured = not sponsor.featured
         
         db.session.commit()
+        db.session.refresh(sponsor)  # Refresh to ensure relationships are loaded
         
         return sponsor
 
@@ -150,7 +161,7 @@ class SponsorService:
         ).all()
         
         # Sort by display order
-        sponsors.sort(key=lambda s: (s.display_order, s.tier_order, s.id))
+        sponsors.sort(key=lambda s: (s.display_order or 999, s.tier_order or 999, s.id))
         
         return sponsors
 

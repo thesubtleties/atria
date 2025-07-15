@@ -11,6 +11,8 @@ class SponsorSchema(ma.SQLAlchemyAutoSchema):
         sqla_session = db.session
         include_fk = True
         name = "SponsorBase"
+        # Exclude datetime fields to avoid serialization issues
+        exclude = ("created_at", "updated_at")
 
     # Computed Properties
     tier_name = ma.String(dump_only=True)
@@ -28,7 +30,7 @@ class SponsorDetailSchema(SponsorSchema):
     event = ma.Nested(
         "EventSchema",
         only=("id", "title", "slug", "sponsor_tiers"),
-        dump_only=True,
+        dump_only=True
     )
 
 
@@ -81,11 +83,44 @@ class SponsorCreateSchema(ma.Schema):
                 )
 
 
-class SponsorUpdateSchema(SponsorCreateSchema):
-    """Schema for updating sponsors"""
-
-    # All fields are optional for updates
+class SponsorUpdateSchema(ma.Schema):
+    """Schema for updating sponsors - all fields optional and nullable"""
+    
+    # Name is optional but can't be null if provided
     name = ma.String(required=False)
+    
+    # All other fields can be null to clear them
+    description = ma.String(allow_none=True)
+    website_url = ma.String(allow_none=True) 
+    logo_url = ma.String(allow_none=True)
+    contact_name = ma.String(allow_none=True)
+    contact_email = ma.Email(allow_none=True)
+    contact_phone = ma.String(allow_none=True)
+    tier_id = ma.String(allow_none=True)
+    custom_benefits = ma.Dict(allow_none=True)
+    display_order = ma.Integer(allow_none=True)
+    is_active = ma.Boolean(allow_none=True)
+    featured = ma.Boolean(allow_none=True)
+    social_links = ma.Dict(allow_none=True)
+    
+    @validates("website_url")
+    def validate_website_url(self, value, **kwargs):
+        """Validate website URL format only if not None/empty"""
+        if value and value.strip() and not value.startswith(("http://", "https://")):
+            raise ValidationError("Website URL must start with http:// or https://")
+    
+    @validates("social_links")
+    def validate_social_links(self, value, **kwargs):
+        """Validate social media links only if provided"""
+        if not value:
+            return
+            
+        valid_platforms = {"twitter", "linkedin", "facebook", "instagram"}
+        for platform, url in value.items():
+            if platform not in valid_platforms:
+                raise ValidationError(f"Invalid social platform: {platform}")
+            if url and url.strip() and not url.startswith(("http://", "https://")):
+                raise ValidationError(f"{platform} URL must start with http:// or https://")
 
 
 class SponsorListSchema(ma.Schema):
