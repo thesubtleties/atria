@@ -20,6 +20,7 @@ import Profile from '../../../pages/Profile';
 import Network from '../../../pages/Network';
 import Settings from '../../../pages/Settings';
 import { SessionManager } from '../../../pages/EventAdmin/SessionManager';
+import SponsorsManager from '../../../pages/EventAdmin/SponsorsManager';
 
 // Placeholder component for development
 const PlaceholderComponent = ({ routeName = 'This page' }) => (
@@ -139,7 +140,7 @@ export const protectedRoutes = [
                       },
                       {
                         path: 'sponsors',
-                        element: <PlaceholderComponent routeName="Sponsors Management" />,
+                        element: <SponsorsManager />,
                       },
                       {
                         path: 'networking',
@@ -236,7 +237,7 @@ export const protectedRoutes = [
                   },
                   {
                     path: 'sponsors',
-                    element: <PlaceholderComponent routeName="Sponsors Management" />,
+                    element: <SponsorsManager />,
                   },
                   {
                     path: 'networking',

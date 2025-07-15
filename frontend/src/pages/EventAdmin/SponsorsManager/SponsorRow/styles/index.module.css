@@ -1,0 +1,16 @@
+.dragging {
+  opacity: 0.5;
+  background-color: var(--mantine-color-blue-0);
+}
+
+.dragOver {
+  background-color: var(--mantine-color-blue-1);
+  box-shadow: 0 -2px 0 var(--mantine-color-blue-5);
+}
+
+.logoPlaceholder {
+  width: 40px;
+  height: 40px;
+  background-color: var(--mantine-color-gray-2);
+  border-radius: 4px;
+}

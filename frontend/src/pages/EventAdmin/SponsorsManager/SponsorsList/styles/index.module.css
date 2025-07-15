@@ -1,0 +1,7 @@
+.emptyState {
+  padding: 4rem 2rem;
+  text-align: center;
+  background-color: var(--mantine-color-gray-0);
+  border-radius: 8px;
+  margin-top: 2rem;
+}
