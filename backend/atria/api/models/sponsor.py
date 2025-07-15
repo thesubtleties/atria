@@ -31,8 +31,8 @@ class Sponsor(db.Model):
 
     # Display settings
     display_order = db.Column(
-        db.Integer, default=999
-    )  # Override tier order if needed
+        db.Float, nullable=True
+    )  # Fractional indexing for smooth reordering
     is_active = db.Column(db.Boolean, default=True)
     featured = db.Column(db.Boolean, default=False)  # Highlight sponsor
 

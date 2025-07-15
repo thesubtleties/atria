@@ -183,10 +183,10 @@ def seed_database():
                     text(
                         """
                     INSERT INTO sponsors (id, event_id, name, description, website_url,
-                                        logo_url, tier_id, is_active, featured,
+                                        logo_url, tier_id, display_order, is_active, featured,
                                         social_links, created_at)
                     VALUES (:id, :event_id, :name, :description, :website_url,
-                           :logo_url, :tier_id, :is_active, :featured,
+                           :logo_url, :tier_id, :display_order, :is_active, :featured,
                            :social_links, CURRENT_TIMESTAMP)
                     """
                     ),

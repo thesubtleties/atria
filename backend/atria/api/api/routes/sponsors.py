@@ -10,7 +10,6 @@ from api.api.schemas.sponsor import (
     SponsorUpdateSchema,
     SponsorListSchema,
     SponsorTierSchema,
-    SponsorReorderSchema,
 )
 from api.commons.decorators import (
     event_member_required,
@@ -54,11 +53,15 @@ class SponsorList(MethodView):
     )
     def get(self, event_id):
         """Get event's sponsors - requires event membership"""
-        active_only = request.args.get("active_only", True, type=bool)
-        
-        return SponsorService.get_event_sponsors(
-            event_id, active_only, SponsorListSchema()
-        )
+        try:
+            # Frontend sends 0 or 1 which works with type=int
+            active_only = request.args.get("active_only", 1, type=int)
+            
+            return SponsorService.get_event_sponsors(
+                event_id, bool(active_only), SponsorListSchema()
+            )
+        except Exception as e:
+            return {"message": f"Failed to get sponsors: {str(e)}"}, 500
 
     @blp.arguments(SponsorCreateSchema)
     @blp.response(201, SponsorDetailSchema)
@@ -115,19 +118,30 @@ class SponsorDetail(MethodView):
         },
     )
     @jwt_required()
-    @event_organizer_required()
     def patch(self, sponsor_data, sponsor_id):
         """Update sponsor information"""
-        # Get sponsor to check event_id for decorator
-        sponsor = SponsorService.get_sponsor(sponsor_id)
-        kwargs = {"event_id": sponsor.event_id}
-        
-        # Check authorization
-        if not self._check_event_organizer_auth(kwargs):
-            return {"message": "Not authorized to update this sponsor"}, 403
-        
-        updated_sponsor = SponsorService.update_sponsor(sponsor_id, sponsor_data)
-        return SponsorDetailSchema().dump(updated_sponsor)
+        try:
+            # Get sponsor to check event_id for authorization
+            sponsor = SponsorService.get_sponsor(sponsor_id)
+            
+            # Manual auth check
+            from flask_jwt_extended import get_jwt_identity
+            from api.models import User, Event
+            from api.models.enums import EventUserRole
+            
+            current_user_id = int(get_jwt_identity())
+            current_user = User.query.get_or_404(current_user_id)
+            event = Event.query.get_or_404(sponsor.event_id)
+            
+            user_role = event.get_user_role(current_user)
+            if user_role not in [EventUserRole.ADMIN, EventUserRole.ORGANIZER]:
+                return {"message": "Not authorized to update this sponsor"}, 403
+            
+            updated_sponsor = SponsorService.update_sponsor(sponsor_id, sponsor_data)
+            return SponsorDetailSchema().dump(updated_sponsor)
+        except Exception as e:
+            # Return error with proper status code
+            return {"message": f"Failed to update sponsor: {str(e)}"}, 500
 
     @blp.response(204)
     @blp.doc(
@@ -139,32 +153,30 @@ class SponsorDetail(MethodView):
         },
     )
     @jwt_required()
-    @event_organizer_required()
     def delete(self, sponsor_id):
         """Delete a sponsor"""
-        # Get sponsor to check event_id for decorator
-        sponsor = SponsorService.get_sponsor(sponsor_id)
-        kwargs = {"event_id": sponsor.event_id}
-        
-        # Check authorization
-        if not self._check_event_organizer_auth(kwargs):
-            return {"message": "Not authorized to delete this sponsor"}, 403
-        
-        SponsorService.delete_sponsor(sponsor_id)
-        return "", 204
+        try:
+            # Get sponsor to check authorization
+            sponsor = SponsorService.get_sponsor(sponsor_id)
+            
+            # Manual auth check
+            from flask_jwt_extended import get_jwt_identity
+            from api.models import User, Event
+            from api.models.enums import EventUserRole
+            
+            current_user_id = int(get_jwt_identity())
+            current_user = User.query.get_or_404(current_user_id)
+            event = Event.query.get_or_404(sponsor.event_id)
+            
+            user_role = event.get_user_role(current_user)
+            if user_role not in [EventUserRole.ADMIN, EventUserRole.ORGANIZER]:
+                return {"message": "Not authorized to delete this sponsor"}, 403
+            
+            SponsorService.delete_sponsor(sponsor_id)
+            return "", 204
+        except Exception as e:
+            return {"message": f"Failed to delete sponsor: {str(e)}"}, 500
 
-    def _check_event_organizer_auth(self, kwargs):
-        """Helper to check event organizer authorization"""
-        from flask_jwt_extended import get_jwt_identity
-        from api.models import User, Event
-        from api.models.enums import EventUserRole
-        
-        current_user_id = int(get_jwt_identity())
-        current_user = User.query.get_or_404(current_user_id)
-        event = Event.query.get_or_404(kwargs["event_id"])
-        
-        user_role = event.get_user_role(current_user)
-        return user_role in [EventUserRole.ADMIN, EventUserRole.ORGANIZER]
 
 
 @blp.route("/events/<int:event_id>/sponsors/featured")
@@ -184,7 +196,8 @@ class FeaturedSponsorsList(MethodView):
 
 @blp.route("/sponsors/<int:sponsor_id>/toggle-active")
 class SponsorToggleActive(MethodView):
-    @blp.response(200, SponsorDetailSchema)
+    @jwt_required()
+    @blp.response(200)
     @blp.doc(
         summary="Toggle sponsor active status",
         description="Toggle whether a sponsor is active or inactive",
@@ -193,7 +206,6 @@ class SponsorToggleActive(MethodView):
             404: {"description": "Sponsor not found"},
         },
     )
-    @jwt_required()
     def post(self, sponsor_id):
         """Toggle sponsor active status"""
         # Get sponsor to check authorization
@@ -213,12 +225,14 @@ class SponsorToggleActive(MethodView):
             return {"message": "Not authorized to update this sponsor"}, 403
         
         updated_sponsor = SponsorService.toggle_sponsor_active(sponsor_id)
-        return SponsorDetailSchema().dump(updated_sponsor)
+        # Return minimal response since frontend will refetch the list
+        return {"success": True, "id": sponsor_id}, 200
 
 
 @blp.route("/sponsors/<int:sponsor_id>/toggle-featured")
 class SponsorToggleFeatured(MethodView):
-    @blp.response(200, SponsorDetailSchema)
+    @jwt_required()
+    @blp.response(200)
     @blp.doc(
         summary="Toggle sponsor featured status",
         description="Toggle whether a sponsor is featured",
@@ -227,7 +241,6 @@ class SponsorToggleFeatured(MethodView):
             404: {"description": "Sponsor not found"},
         },
     )
-    @jwt_required()
     def post(self, sponsor_id):
         """Toggle sponsor featured status"""
         # Get sponsor to check authorization
@@ -247,26 +260,9 @@ class SponsorToggleFeatured(MethodView):
             return {"message": "Not authorized to update this sponsor"}, 403
         
         updated_sponsor = SponsorService.toggle_sponsor_featured(sponsor_id)
-        return SponsorDetailSchema().dump(updated_sponsor)
+        # Return minimal response since frontend will refetch the list
+        return {"success": True, "id": sponsor_id}, 200
 
-
-@blp.route("/events/<int:event_id>/sponsors/reorder")
-class SponsorReorder(MethodView):
-    @blp.arguments(SponsorReorderSchema)
-    @blp.response(200)
-    @blp.doc(
-        summary="Reorder sponsors",
-        description="Update display order for multiple sponsors",
-        responses={
-            403: {"description": "Not authorized"},
-        },
-    )
-    @jwt_required()
-    @event_organizer_required()
-    def post(self, data, event_id):
-        """Reorder sponsors"""
-        sponsors = SponsorService.reorder_sponsors(event_id, data["sponsor_orders"])
-        return SponsorListSchema().dump(sponsors, many=True)
 
 
 @blp.route("/events/<int:event_id>/sponsor-tiers")
