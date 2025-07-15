@@ -118,11 +118,11 @@ const SponsorsList = ({ sponsors, eventId }) => {
     
     if (adjustedSponsors.length === 0) {
       // First sponsor in this tier
-      newDisplayOrder = 1.0;
+      newDisplayOrder = 10.0;
     } else if (targetSponsorIndex === 0) {
       // Inserting at the beginning
       const firstSponsor = adjustedSponsors[0];
-      const firstOrder = firstSponsor.display_order || 1.0;
+      const firstOrder = firstSponsor.display_order || 10.0;
       // Ensure we never go below 0.1 to avoid getting too close to 0
       newDisplayOrder = Math.max(0.1, firstOrder / 2);
     } else if (targetSponsorIndex >= adjustedSponsors.length) {
