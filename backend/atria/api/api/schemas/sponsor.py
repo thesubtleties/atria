@@ -52,7 +52,7 @@ class SponsorCreateSchema(ma.Schema):
     custom_benefits = ma.Dict(allow_none=True)
 
     # Display settings
-    display_order = ma.Integer(load_default=999)
+    display_order = ma.Float(allow_none=True)
     is_active = ma.Boolean(load_default=True)
     featured = ma.Boolean(load_default=False)
 
@@ -98,7 +98,7 @@ class SponsorUpdateSchema(ma.Schema):
     contact_phone = ma.String(allow_none=True)
     tier_id = ma.String(allow_none=True)
     custom_benefits = ma.Dict(allow_none=True)
-    display_order = ma.Integer(allow_none=True)
+    display_order = ma.Float(allow_none=True)
     is_active = ma.Boolean(allow_none=True)
     featured = ma.Boolean(allow_none=True)
     social_links = ma.Dict(allow_none=True)
@@ -133,7 +133,7 @@ class SponsorListSchema(ma.Schema):
     tier_id = ma.String()
     tier_name = ma.String()
     tier_order = ma.Integer()
-    display_order = ma.Integer()
+    display_order = ma.Float()
     featured = ma.Boolean()
     is_active = ma.Boolean()
 
@@ -146,13 +146,3 @@ class SponsorTierSchema(ma.Schema):
     order = ma.Integer(required=True)
 
 
-class SponsorOrderItemSchema(ma.Schema):
-    """Schema for individual sponsor order item"""
-    sponsor_id = ma.Integer(required=True)
-    display_order = ma.Integer(required=True)
-
-
-class SponsorReorderSchema(ma.Schema):
-    """Schema for reordering sponsors"""
-    
-    sponsor_orders = ma.List(ma.Nested(SponsorOrderItemSchema), required=True)
