@@ -3,8 +3,9 @@ import { baseApi } from '../api';
 export const sponsorsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getSponsors: builder.query({
-      query: ({ eventId }) => ({
+      query: ({ eventId, activeOnly = true }) => ({
         url: `/events/${eventId}/sponsors`,
+        params: { active_only: activeOnly ? 1 : 0 },
       }),
       providesTags: (result, error, { eventId }) =>
         result
@@ -81,10 +82,10 @@ export const sponsorsApi = baseApi.injectEndpoints({
     }),
 
     reorderSponsors: builder.mutation({
-      query: ({ eventId, sponsorIds }) => ({
+      query: ({ eventId, sponsorOrders }) => ({
         url: `/events/${eventId}/sponsors/reorder`,
         method: 'POST',
-        body: { sponsorIds },
+        body: { sponsor_orders: sponsorOrders },
       }),
       invalidatesTags: [{ type: 'Sponsor', id: 'LIST' }],
     }),
@@ -100,7 +101,7 @@ export const sponsorsApi = baseApi.injectEndpoints({
       query: ({ eventId, tiers }) => ({
         url: `/events/${eventId}/sponsor-tiers`,
         method: 'PUT',
-        body: { sponsorTiers: tiers },
+        body: tiers,
       }),
       invalidatesTags: ['SponsorTiers', { type: 'Sponsor', id: 'LIST' }],
     }),
