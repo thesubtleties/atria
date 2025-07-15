@@ -24,7 +24,7 @@ import { useUploadImageMutation } from '../../../../app/features/uploads/api';
 import { validateField, validateSocialLink, sponsorSchema } from '../schemas/sponsorSchema';
 import styles from './styles/index.module.css';
 
-const SponsorModal = ({ opened, onClose, eventId, mode, sponsor }) => {
+const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }) => {
   const [logoFile, setLogoFile] = useState(null);
   const [logoPreview, setLogoPreview] = useState(null);
   const [errors, setErrors] = useState({});
@@ -176,9 +176,25 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor }) => {
       };
 
       if (mode === 'create') {
+        // Calculate display_order for new sponsor
+        let newDisplayOrder = 10.0;
+        if (formData.tierId && sponsors.length > 0) {
+          // Find the highest display_order in the selected tier
+          const tierSponsors = sponsors.filter(s => s.tier_id === formData.tierId);
+          if (tierSponsors.length > 0) {
+            const maxOrder = Math.max(...tierSponsors.map(s => s.display_order || 0));
+            newDisplayOrder = maxOrder + 10.0;
+          }
+        } else if (sponsors.length > 0) {
+          // No tier selected, just get the highest overall
+          const maxOrder = Math.max(...sponsors.map(s => s.display_order || 0));
+          newDisplayOrder = maxOrder + 10.0;
+        }
+        
         await createSponsor({
           eventId,
           ...dataToSend,
+          display_order: newDisplayOrder,
         }).unwrap();
       } else {
         await updateSponsor({

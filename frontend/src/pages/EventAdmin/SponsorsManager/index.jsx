@@ -18,17 +18,8 @@ const SponsorsManager = () => {
     activeOnly: false 
   });
 
-  // Debug logging
-  console.log('SponsorsManager Debug:', {
-    eventId,
-    sponsors,
-    isLoading,
-    error,
-    sponsorsCount: sponsors.length
-  });
 
   if (error) {
-    console.error('Sponsors API Error:', error);
     return (
       <Box className={styles.container}>
         <Group justify="space-between" mb="xl">
@@ -74,6 +65,7 @@ const SponsorsManager = () => {
         onClose={() => setCreateModalOpen(false)}
         eventId={parseInt(eventId)}
         mode="create"
+        sponsors={sponsors}
       />
 
       <TierManagementModal

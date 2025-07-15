@@ -5,3 +5,20 @@
   border-radius: 8px;
   margin-top: 2rem;
 }
+
+.tierSection {
+  margin-bottom: 2rem;
+}
+
+.tierSection:last-child {
+  margin-bottom: 0;
+}
+
+.tierHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--mantine-color-gray-3);
+}
