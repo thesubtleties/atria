@@ -72,13 +72,33 @@
   justify-content: center;
 }
 
-.adminTab {
-  color: var(--mantine-color-red-7);
+.tabContent {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.adminTab[data-active="true"] {
-  border-bottom-color: var(--mantine-color-red-6);
-  color: var(--mantine-color-red-7);
+/* Modern squared role badges matching PersonCard styling */
+.roomTypeLabel {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+}
+
+.adminLabel {
+  background-color: var(--mantine-color-grape-1);
+  color: var(--mantine-color-grape-7);
+}
+
+.speakerLabel {
+  background-color: var(--mantine-color-blue-1);
+  color: var(--mantine-color-blue-7);
 }
 
 .restricted {

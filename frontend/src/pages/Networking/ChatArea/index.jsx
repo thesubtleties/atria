@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Tabs, Text, Stack, Loader, Center, Badge } from '@mantine/core';
-import { IconHash, IconLock, IconGlobe } from '@tabler/icons-react';
+import { IconHash, IconLock, IconGlobe, IconMicrophone } from '@tabler/icons-react';
 import { useGetChatRoomsQuery, useSendMessageMutation } from '@/app/features/chat/api';
 import { joinEventNotifications, leaveEventNotifications } from '@/app/features/networking/socketClient';
 import { ChatRoom } from './ChatRoom';
@@ -79,16 +79,37 @@ export function ChatArea({ eventId }) {
     );
   }
 
-  // Check if room requires admin role
-  const isAdminRoom = (room) => {
-    return room.room_type === 'ADMIN';
+  // Get icon for room type
+  const getRoomIcon = (roomType) => {
+    switch (roomType) {
+      case 'GLOBAL':
+        return <IconGlobe size={16} />;
+      case 'ADMIN':
+        return <IconLock size={16} />;
+      case 'GREEN_ROOM':
+        return <IconMicrophone size={16} />;
+      default:
+        return <IconHash size={16} />;
+    }
+  };
+
+  // Get room type label and styling
+  const getRoomTypeLabel = (room) => {
+    switch (room.room_type) {
+      case 'ADMIN':
+        return { label: 'Admin', className: styles.adminLabel };
+      case 'GREEN_ROOM':
+        return { label: 'Speakers', className: styles.speakerLabel };
+      default:
+        return null;
+    }
   };
 
   // Check if user can access room
   const canAccessRoom = (room) => {
-    if (!isAdminRoom(room)) return true;
-    // TODO: Check user's event role once we have that data
-    return true; // For now, allow all
+    // For now, allow all rooms that are returned from the API
+    // The backend already filters based on permissions
+    return true;
   };
 
   return (
@@ -103,22 +124,20 @@ export function ChatArea({ eventId }) {
             <Tabs.Tab 
               key={room.id} 
               value={room.id.toString()}
-              leftSection={
-                room.room_type === 'GLOBAL' ? 
-                  <IconGlobe size={16} /> : 
-                  room.room_type === 'ADMIN' ? 
-                    <IconLock size={16} /> : 
-                    <IconHash size={16} />
-              }
-              className={isAdminRoom(room) ? styles.adminTab : undefined}
+              leftSection={getRoomIcon(room.room_type)}
               disabled={!canAccessRoom(room)}
             >
-              {room.name}
-              {isAdminRoom(room) && (
-                <Badge size="xs" color="red" ml={4}>
-                  Admin
-                </Badge>
-              )}
+              <span className={styles.tabContent}>
+                {room.name}
+                {(() => {
+                  const typeLabel = getRoomTypeLabel(room);
+                  return typeLabel ? (
+                    <span className={`${styles.roomTypeLabel} ${typeLabel.className}`}>
+                      {typeLabel.label}
+                    </span>
+                  ) : null;
+                })()}
+              </span>
             </Tabs.Tab>
           ))}
         </Tabs.List>
