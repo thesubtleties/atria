@@ -1,5 +1,6 @@
-import { Card, Text, Group, Badge, ActionIcon, Anchor, Image } from '@mantine/core';
+import { Card, Text, Group, Badge, ActionIcon, Anchor } from '@mantine/core';
 import { IconExternalLink, IconMail, IconPhone, IconBrandTwitter, IconBrandLinkedin, IconBrandFacebook, IconBrandInstagram } from '@tabler/icons-react';
+import PrivateImage from '../../../../shared/components/PrivateImage';
 import styles from './styles/index.module.css';
 
 export default function SponsorCard({ sponsor }) {
@@ -44,11 +45,16 @@ export default function SponsorCard({ sponsor }) {
 
       <Card.Section className={styles.logoSection}>
         {logo_url ? (
-          <Image 
-            src={logo_url} 
+          <PrivateImage 
+            objectKey={logo_url} 
             alt={`${name} logo`}
             fit="contain"
             className={styles.logo}
+            placeholder={
+              <div className={styles.placeholderLogo}>
+                <Text size="xl" fw={700} c="dimmed">{name.charAt(0)}</Text>
+              </div>
+            }
           />
         ) : (
           <div className={styles.placeholderLogo}>
