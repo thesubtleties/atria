@@ -101,15 +101,19 @@ const SponsorRow = ({
       </Table.Td>
       <Table.Td style={{ textAlign: 'center' }}>
         {sponsor.logo_url ? (
-          <PrivateImage
-            objectKey={sponsor.logo_url}
-            alt={sponsor.name}
-            width={40}
-            height={40}
-            fit="contain"
-            style={{ display: 'inline-block' }}
-            placeholder={<Box className={styles.logoPlaceholder} style={{ margin: '0 auto' }} />}
-          />
+          <>
+            <PrivateImage
+              objectKey={sponsor.logo_url}
+              alt={sponsor.name}
+              width={40}
+              height={40}
+              fit="contain"
+              style={{ display: 'inline-block' }}
+              placeholder={<Box className={styles.logoPlaceholder} style={{ margin: '0 auto' }} />}
+            />
+            {/* Temporary debug info */}
+            <Text size="xs" c="dimmed">{sponsor.logo_url}</Text>
+          </>
         ) : (
           <Box className={styles.logoPlaceholder} style={{ margin: '0 auto' }} />
         )}
