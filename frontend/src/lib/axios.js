@@ -16,6 +16,12 @@ axiosClient.interceptors.request.use(
     // No need to manually add token - cookies are sent automatically
     // Ensure cookies are included
     config.withCredentials = true;
+    
+    // If data is FormData, delete the Content-Type header to let browser set it
+    if (config.data instanceof FormData) {
+      delete config.headers['Content-Type'];
+    }
+    
     return config;
   },
   (error) => Promise.reject(error)
