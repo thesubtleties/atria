@@ -17,12 +17,6 @@ export default function SponsorCard({ sponsor }) {
     social_links,
     featured
   } = sponsor;
-  
-  // Debug with console.error
-  if (sponsor.name === 'MOZILLA TEST') {
-    console.error('MOZILLA TEST sponsor data:', sponsor);
-    console.error('MOZILLA TEST logo_url:', logo_url);
-  }
 
   const socialIcons = {
     twitter: IconBrandTwitter,
