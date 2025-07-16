@@ -17,6 +17,10 @@ export default function SponsorCard({ sponsor }) {
     social_links,
     featured
   } = sponsor;
+  
+  // Debug logging
+  console.log('SponsorCard sponsor data:', sponsor);
+  console.log('SponsorCard logo_url:', logo_url);
 
   const socialIcons = {
     twitter: IconBrandTwitter,
