@@ -147,7 +147,7 @@ class PrivateContentResource(MethodView):
         current_user = User.query.get_or_404(current_user_id)
         event = Event.query.get_or_404(event_id)
         
-        if not event.is_user_in_event(current_user):
+        if not event.get_user_role(current_user):
             return {"message": "Not authorized to access this content"}, 403
         
         # Verify file exists
