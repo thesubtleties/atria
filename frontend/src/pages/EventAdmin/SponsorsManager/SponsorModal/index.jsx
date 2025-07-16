@@ -22,11 +22,13 @@ import {
 } from '../../../../app/features/sponsors/api';
 import { useUploadImageMutation } from '../../../../app/features/uploads/api';
 import { validateField, validateSocialLink, sponsorSchema } from '../schemas/sponsorSchema';
+import PrivateImage from '../../../../shared/components/PrivateImage';
 import styles from './styles/index.module.css';
 
 const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }) => {
   const [logoFile, setLogoFile] = useState(null);
   const [logoPreview, setLogoPreview] = useState(null);
+  const [existingLogoKey, setExistingLogoKey] = useState(null);
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     name: '',
@@ -66,7 +68,8 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }
           instagram: '',
         },
       });
-      setLogoPreview(sponsor.logo_url);
+      setExistingLogoKey(sponsor.logo_url);
+      setLogoPreview(null);
     }
   }, [mode, sponsor]);
 
@@ -159,7 +162,7 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }
           context: 'sponsor_logo',
           eventId,
         }).unwrap();
-        logoUrl = uploadResult.url;
+        logoUrl = uploadResult.object_key;
       }
 
       // Convert empty strings to null and map field names
@@ -243,6 +246,7 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }
     });
     setLogoFile(null);
     setLogoPreview(null);
+    setExistingLogoKey(null);
   };
 
   const handleLogoSelect = (file) => {
@@ -316,12 +320,12 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }
             >
               {(props) => (
                 <Button {...props} variant="outline" leftSection={<IconUpload size={16} />}>
-                  Upload Logo
+                  {existingLogoKey || logoPreview ? 'Change Logo' : 'Upload Logo'}
                 </Button>
               )}
             </FileButton>
           </Box>
-          {logoPreview && (
+          {logoPreview ? (
             <Image
               src={logoPreview}
               alt="Logo preview"
@@ -329,7 +333,15 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }
               height={100}
               fit="contain"
             />
-          )}
+          ) : existingLogoKey ? (
+            <PrivateImage
+              objectKey={existingLogoKey}
+              alt="Current logo"
+              width={100}
+              height={100}
+              fit="contain"
+            />
+          ) : null}
         </Group>
 
         <Text fw={500} size="lg" mt="md">Contact Information</Text>
