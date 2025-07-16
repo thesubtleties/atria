@@ -7,7 +7,7 @@ from enum import Enum
 
 from minio import Minio
 from minio.error import S3Error
-from PIL import Image
+from PIL import Image, ImageOps
 from werkzeug.datastructures import FileStorage
 
 
@@ -24,6 +24,14 @@ class StorageService:
     
     ALLOWED_IMAGE_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif', 'webp'}
     MAX_IMAGE_SIZE = 5 * 1024 * 1024  # 5MB
+    
+    # Max dimensions by context
+    MAX_DIMENSIONS = {
+        'avatar': 600,
+        'sponsor_logo': 800,
+        'event_logo': 800,
+        'event_banner': 1600,
+    }
     
     # Storage paths by context
     STORAGE_PATHS = {
@@ -111,6 +119,57 @@ class StorageService:
         
         return True, None
     
+    def _optimize_image(self, image: Image.Image, context: str) -> Tuple[BytesIO, str]:
+        """Optimize image for web delivery."""
+        # Fix orientation based on EXIF data
+        image = ImageOps.exif_transpose(image)
+        
+        # Get max dimensions for context
+        max_dimension = self.MAX_DIMENSIONS.get(context, 1200)
+        
+        # Resize if needed (maintaining aspect ratio)
+        if image.width > max_dimension or image.height > max_dimension:
+            image.thumbnail((max_dimension, max_dimension), Image.Resampling.LANCZOS)
+        
+        # Determine if image has transparency
+        has_transparency = image.mode in ('RGBA', 'LA') or (
+            image.mode == 'P' and 'transparency' in image.info
+        )
+        
+        output = BytesIO()
+        
+        # Try WebP first (best compression)
+        try:
+            if has_transparency and context in ['sponsor_logo', 'avatar']:
+                # Use lossless WebP for logos/avatars with transparency
+                image.save(output, format='WEBP', lossless=True, quality=100)
+            else:
+                # Use lossy WebP for everything else
+                if image.mode == 'RGBA' and context not in ['sponsor_logo', 'avatar']:
+                    # Convert RGBA to RGB for non-logo/avatar images
+                    background = Image.new('RGB', image.size, (255, 255, 255))
+                    background.paste(image, mask=image.split()[3])
+                    image = background
+                image.save(output, format='WEBP', quality=85, method=6)
+            format_ext = 'webp'
+        except Exception:
+            # Fallback to PNG for transparency or JPEG for non-transparent
+            output = BytesIO()  # Reset buffer
+            if has_transparency:
+                image.save(output, format='PNG', optimize=True)
+                format_ext = 'png'
+            else:
+                if image.mode == 'RGBA':
+                    # Convert RGBA to RGB for JPEG
+                    background = Image.new('RGB', image.size, (255, 255, 255))
+                    background.paste(image, mask=image.split()[3])
+                    image = background
+                image.save(output, format='JPEG', quality=85, optimize=True, progressive=True)
+                format_ext = 'jpg'
+        
+        output.seek(0)
+        return output, format_ext
+    
     def _get_storage_config(self, context: str, **kwargs) -> Tuple[str, str]:
         """Get bucket and path for a given storage context."""
         if context not in self.STORAGE_PATHS:
@@ -138,10 +197,7 @@ class StorageService:
         Returns:
             Dictionary with object_key and url
         """
-        if not self._connected:
-            raise Exception("Storage service not connected")
-            
-        # Validate the image
+        # Validate the image first
         is_valid, error = self._validate_image(file)
         if not is_valid:
             raise ValueError(error)
@@ -149,20 +205,43 @@ class StorageService:
         # Get bucket and path
         bucket, path = self._get_storage_config(context, **kwargs)
         
-        # Generate unique filename
-        ext = file.filename.lower().split('.')[-1]
-        filename = f"{uuid.uuid4()}.{ext}"
+        # Open image and optimize it (this works even without MinIO)
+        image = Image.open(file)
+        optimized_buffer, format_ext = self._optimize_image(image, context)
+        
+        # Generate unique filename with optimized extension
+        filename = f"{uuid.uuid4()}.{format_ext}"
         object_name = f"{path}/{filename}"
         
+        if not self._connected:
+            # Development mode - just log what would happen
+            optimized_size = optimized_buffer.getbuffer().nbytes
+            original_size = file.tell()
+            print(f"[DEV MODE] Would upload optimized {context}:")
+            print(f"  Original: {file.filename} ({original_size:,} bytes)")
+            print(f"  Optimized: {filename} ({optimized_size:,} bytes)")
+            print(f"  Compression: {(1 - optimized_size/original_size)*100:.1f}% reduction")
+            print(f"  Path: {bucket}/{object_name}")
+            
+            # Return mock response for development
+            return {
+                'object_key': object_name,
+                'bucket': bucket,
+                'url': None,
+                'context': context
+            }
+        
         try:
-            # Upload to MinIO
-            file_data = file.read()
+            # Get size of optimized image
+            optimized_size = optimized_buffer.getbuffer().nbytes
+            
+            # Upload optimized image to MinIO
             self.client.put_object(
                 bucket,
                 object_name,
-                BytesIO(file_data),
-                len(file_data),
-                content_type=file.content_type or f"image/{ext}"
+                optimized_buffer,
+                optimized_size,
+                content_type=f"image/{format_ext}"
             )
             
             # Return appropriate URL based on bucket type
