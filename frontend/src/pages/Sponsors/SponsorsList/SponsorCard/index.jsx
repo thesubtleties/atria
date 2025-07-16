@@ -18,9 +18,11 @@ export default function SponsorCard({ sponsor }) {
     featured
   } = sponsor;
   
-  // Debug logging
-  console.log('SponsorCard sponsor data:', sponsor);
-  console.log('SponsorCard logo_url:', logo_url);
+  // Debug with console.error
+  if (sponsor.name === 'MOZILLA TEST') {
+    console.error('MOZILLA TEST sponsor data:', sponsor);
+    console.error('MOZILLA TEST logo_url:', logo_url);
+  }
 
   const socialIcons = {
     twitter: IconBrandTwitter,

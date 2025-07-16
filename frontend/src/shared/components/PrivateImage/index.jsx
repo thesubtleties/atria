@@ -13,8 +13,10 @@ const PrivateImage = ({
 }) => {
   const [imageUrl, setImageUrl] = useState(null);
   
-  // Debug logging
-  console.log('PrivateImage received objectKey:', objectKey);
+  // Debug with console.error
+  if (!objectKey) {
+    console.error('PrivateImage received undefined/empty objectKey, props:', { objectKey, alt });
+  }
   
   const { data, isLoading, error } = useGetPrivateContentQuery(objectKey, {
     skip: !objectKey,
