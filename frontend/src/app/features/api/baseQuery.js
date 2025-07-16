@@ -1,12 +1,12 @@
 import axiosInstance from '@/lib/axios';
 
-export const axiosBaseQuery = async ({ url, method = 'GET', body, params }) => {
-  console.log('RTK Query - Full request:', { url, method, body, params });
+export const axiosBaseQuery = async ({ url, method = 'GET', body, data, params }) => {
+  console.log('RTK Query - Full request:', { url, method, body, data, params });
   try {
     const result = await axiosInstance({
       url,
       method,
-      data: body,
+      data: data || body,
       params,
     });
     console.log('RTK Query - Success response:', result.data);
