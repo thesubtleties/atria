@@ -49,6 +49,8 @@ def configure_extensions(app):
                 "http://localhost:8080",
             ],
             supports_credentials=True,
+            methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+            allow_headers=["Content-Type", "Authorization"],
         )
         socketio.init_app(
             app,
@@ -64,6 +66,8 @@ def configure_extensions(app):
             app,
             origins=["https://atria.sbtl.dev", "https://www.atria.sbtl.dev"],
             supports_credentials=True,
+            methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+            allow_headers=["Content-Type", "Authorization"],
         )
         socketio.init_app(
             app,
