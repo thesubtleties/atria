@@ -12,6 +12,68 @@ export const chatApi = baseApi.injectEndpoints({
       providesTags: ['ChatRoom'],
     }),
 
+    // Get admin chat rooms (non-session)
+    getEventAdminChatRooms: builder.query({
+      query: (eventId) => ({
+        url: `/events/${eventId}/chat-rooms/admin`,
+        method: 'GET',
+      }),
+      providesTags: ['ChatRoom', 'AdminChatRoom'],
+    }),
+
+    // Create chat room
+    createChatRoom: builder.mutation({
+      query: ({ eventId, ...data }) => ({
+        url: `/events/${eventId}/chat-rooms`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['ChatRoom', 'AdminChatRoom'],
+    }),
+
+    // Update chat room
+    updateChatRoom: builder.mutation({
+      query: ({ roomId, ...data }) => ({
+        url: `/chat-rooms/${roomId}`,
+        method: 'PUT',
+        body: data,
+      }),
+      invalidatesTags: (result, error, { roomId }) => [
+        { type: 'ChatRoom', id: roomId },
+        'AdminChatRoom',
+      ],
+    }),
+
+    // Delete chat room
+    deleteChatRoom: builder.mutation({
+      query: (roomId) => ({
+        url: `/chat-rooms/${roomId}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['ChatRoom', 'AdminChatRoom'],
+    }),
+
+    // Toggle enable/disable
+    toggleChatRoom: builder.mutation({
+      query: (roomId) => ({
+        url: `/chat-rooms/${roomId}/toggle`,
+        method: 'PATCH',
+      }),
+      invalidatesTags: (result, error, roomId) => [
+        { type: 'ChatRoom', id: roomId },
+        'AdminChatRoom',
+      ],
+    }),
+
+    // Disable all public rooms
+    disableAllPublicRooms: builder.mutation({
+      query: (eventId) => ({
+        url: `/events/${eventId}/chat-rooms/disable-all-public`,
+        method: 'POST',
+      }),
+      invalidatesTags: ['ChatRoom', 'AdminChatRoom'],
+    }),
+
     // Get messages for a specific chat room
     getChatRoomMessages: builder.query({
       query: ({ chatRoomId, limit = 50, offset = 0 }) => ({
@@ -62,6 +124,12 @@ export const chatApi = baseApi.injectEndpoints({
 
 export const {
   useGetChatRoomsQuery,
+  useGetEventAdminChatRoomsQuery,
+  useCreateChatRoomMutation,
+  useUpdateChatRoomMutation,
+  useDeleteChatRoomMutation,
+  useToggleChatRoomMutation,
+  useDisableAllPublicRoomsMutation,
   useGetChatRoomMessagesQuery,
   useSendMessageMutation,
   useJoinChatRoomMutation,

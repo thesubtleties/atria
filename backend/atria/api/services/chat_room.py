@@ -15,18 +15,42 @@ class ChatRoomService:
         return query.all()
 
     @staticmethod
-    def create_chat_room(event_id, room_data):
-        """Create a new chat room for an event"""
+    def create_event_chat_room(event_id, room_data, user_id):
+        """Create a new event-level chat room"""
+        from api.models.enums import ChatRoomType
+        
+        # Validate room type
+        room_type_str = room_data.get("room_type", "GLOBAL")
+        try:
+            room_type = ChatRoomType(room_type_str)
+        except ValueError:
+            raise ValueError(f"Invalid room type: {room_type_str}")
+        
+        if room_type not in [ChatRoomType.GLOBAL, ChatRoomType.ADMIN, ChatRoomType.GREEN_ROOM]:
+            raise ValueError("Invalid room type for event chat room")
+        
+        # Check for duplicate names
+        existing = ChatRoom.query.filter_by(
+            event_id=event_id,
+            name=room_data["name"],
+            session_id=None
+        ).first()
+        if existing:
+            raise ValueError("A chat room with this name already exists")
+        
+        # Create room
         chat_room = ChatRoom(
             event_id=event_id,
             name=room_data["name"],
             description=room_data.get("description", ""),
-            is_global=room_data.get("is_global", False),
+            room_type=room_type,
+            is_enabled=room_data.get("is_enabled", False),
+            session_id=None  # Explicitly set to None for event rooms
         )
-
+        
         db.session.add(chat_room)
         db.session.commit()
-
+        
         return chat_room
 
     @staticmethod
@@ -45,11 +69,24 @@ class ChatRoomService:
         if user_role not in [EventUserRole.ADMIN, EventUserRole.ORGANIZER]:
             raise ValueError("Must be admin or organizer to update chat rooms")
 
-        chat_room.name = room_data["name"]
-        chat_room.description = room_data.get(
-            "description", chat_room.description
-        )
-        chat_room.is_global = room_data.get("is_global", chat_room.is_global)
+        # Update allowed fields
+        if "name" in room_data:
+            # Check for duplicate names if name is changing
+            if room_data["name"] != chat_room.name:
+                existing = ChatRoom.query.filter_by(
+                    event_id=chat_room.event_id,
+                    name=room_data["name"],
+                    session_id=None
+                ).filter(ChatRoom.id != room_id).first()
+                if existing:
+                    raise ValueError("A chat room with this name already exists")
+            chat_room.name = room_data["name"]
+            
+        if "description" in room_data:
+            chat_room.description = room_data["description"]
+            
+        if "is_enabled" in room_data:
+            chat_room.is_enabled = room_data["is_enabled"]
 
         db.session.commit()
 
@@ -145,7 +182,6 @@ class ChatRoomService:
             "session_id": room.session_id,
             "name": room.name,
             "description": room.description,
-            "is_global": room.is_global,
             "room_type": room.room_type.value if room.room_type else None,
             "is_enabled": room.is_enabled,
             "created_at": room.created_at.isoformat(),
@@ -233,3 +269,50 @@ class ChatRoomService:
             )
 
         return formatted_messages
+    
+    @staticmethod
+    def toggle_chat_room(room_id, user_id):
+        """Toggle chat room enabled status"""
+        chat_room = ChatRoom.query.get_or_404(room_id)
+        chat_room.is_enabled = not chat_room.is_enabled
+        db.session.commit()
+        return chat_room
+    
+    @staticmethod
+    def disable_all_public_rooms(event_id, user_id):
+        """Disable all GLOBAL chat rooms for an event"""
+        from api.models.enums import ChatRoomType
+        
+        # Only disable GLOBAL rooms, not ADMIN or GREEN_ROOM
+        updated = ChatRoom.query.filter_by(
+            event_id=event_id,
+            room_type=ChatRoomType.GLOBAL,
+            is_enabled=True,
+            session_id=None
+        ).update({"is_enabled": False})
+        
+        db.session.commit()
+        return {"disabled_count": updated}
+    
+    @staticmethod
+    def get_event_admin_chat_rooms(event_id):
+        """Get all event-level chat rooms with admin metadata"""
+        rooms = ChatRoom.query.filter_by(
+            event_id=event_id,
+            session_id=None
+        ).order_by(
+            ChatRoom.room_type,
+            ChatRoom.name
+        ).all()
+        
+        # Add metadata for each room
+        for room in rooms:
+            room.message_count = ChatMessage.query.filter_by(room_id=room.id).count()
+            # TODO: Add participant count and last activity logic when we have user tracking
+            room.participant_count = 0
+            last_message = ChatMessage.query.filter_by(room_id=room.id).order_by(
+                ChatMessage.created_at.desc()
+            ).first()
+            room.last_activity = last_message.created_at if last_message else room.created_at
+        
+        return rooms
