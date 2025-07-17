@@ -4,22 +4,33 @@ Atria is a comprehensive event management platform that enables organizers to cr
 
 ## 🚀 Features
 
+### Security & Authentication
+
+- HttpOnly cookie authentication for enhanced security
+- JWT tokens with automatic refresh
+- Role-based access control (RBAC)
+- Hybrid auth approach: cookies for HTTP, tokens for WebSocket
+
 ### Event Management
 
 - Create and manage events with detailed information
-- Session scheduling and management
-- Speaker assignment and management
+- Session scheduling with drag-and-drop speaker ordering
+- Session chat rooms (PUBLIC and BACKSTAGE)
+- Session type badges and visual organization
 
 ### Networking
 
-- Real-time chat rooms for event attendees
+- Real-time chat rooms with tabbed interface
 - Direct messaging between attendees
-- Connection management for attendees
+- Attendee profiles with privacy controls
+- Connection management system (in development)
 
 ### Administration
 
 - User management with role-based permissions
-- Invitation system for event attendees
+- SessionManager for bulk editing
+- Inline editing with auto-save
+- Time conflict detection
 - Batch user operations (CSV import, mass updates)
 
 ### Organization
@@ -27,6 +38,13 @@ Atria is a comprehensive event management platform that enables organizers to cr
 - Organization management
 - Multi-organization support
 - Organization-specific event management
+
+### Sponsors
+
+- Multi-tier sponsor system
+- Logo upload with image optimization (80-90% size reduction)
+- Drag-and-drop reordering
+- Social links and contact information
 
 ## 🛠️ Technology Stack
 
@@ -191,14 +209,17 @@ If you modify this software, you may update the attribution to reflect your chan
 ## Phase 1: Networking Integration (In Progress)
 Building core networking and communication features
 
-### Chat (In Progress)
+### Chat (Mostly Complete)
 Public chat functionality for events
 
-- [x] Backend
-- [x] Networking area chat rooms
-- [ ] Individual session chat room
+- [x] Backend implementation
+- [x] Networking area chat rooms with tabbed interface
+- [x] Individual session chat rooms (PUBLIC and BACKSTAGE)
+- [x] Real-time messaging with Socket.IO
+- [x] Frontend chat UI with MessageList and MessageInput components
 - [ ] Moderation/muting capabilities
 - [ ] Public chat notifications
+- [ ] Typing indicators
 
 ### Direct Messaging (In Progress)
 Private messaging between users
@@ -213,20 +234,26 @@ Private messaging between users
 - [ ] Emoji support
 - [ ] Admin connection options
 
-### Connection Management (Planned)
+### Connection Management (In Progress)
 Manage connections with other attendees
 
-- [ ] Attendee directory
-- [ ] Attendee cards/base profiles
+- [x] Attendee directory with role-based filtering
+- [x] Attendee cards/base profiles (PersonCard component)
+- [x] Privacy controls for attendee visibility
+- [ ] Connection request functionality (placeholder exists)
+- [ ] Accept/decline connection flows
 
 ## Phase 2: Personal Pages (Planned)
 User profiles and personal networking features
 
-### Profile Management (Planned)
+### Profile Management (Mostly Complete)
 User profile creation and management
 
-- [ ] Create/update profile page
-- [ ] Profile image upload/emoji generator
+- [x] Create/update profile page with view/edit modes
+- [x] Professional info (company, title, bio)
+- [x] Social links integration
+- [x] Profile image upload with MinIO storage
+- [ ] Emoji generator alternative
 - [ ] Cards for connections
 
 ### Connection Features (Planned)
@@ -259,34 +286,51 @@ Attendee management features
 ## Phase 4: Sessions/Session Management (Planned)
 Enhanced session organization and features
 
-### Session Content (Planned)
+### Session Content (Complete)
 Session content and details
 
-- [ ] Cleaner session page with details
-- [ ] Speakers area with social links
-- [ ] Speaker ordering capability
+- [x] Cleaner session page with streamlined UI
+- [x] Speakers area with social links
+- [x] Speaker ordering capability with drag-and-drop
+- [x] Session type badges (color-coded)
+- [x] Collapsible chat sidebar
+- [ ] Short description for agenda view
 
-### Session Features (Planned)
+### Session Features (Partially Complete)
 Interactive session capabilities
 
-- [ ] Per-session chat option
-- [ ] Session tracking
+- [x] Per-session chat rooms (PUBLIC and BACKSTAGE types)
+- [x] Auto-created chat rooms for new sessions
+- [x] SessionChatMode for granular control
+- [ ] Session tracking/attendance
 - [ ] Event timer for video preparation
 
-### Updated Streaming Integration (Planned)
+### Updated Streaming Integration (In Progress)
 Video streaming capabilities
 
-- [ ] Basic streaming integration
-- [ ] Vimeo, DaCast and other embeds
+- [x] Basic streaming integration framework
+- [ ] Vimeo embed support
+- [ ] DaCast embed support
+- [ ] Other streaming platform embeds
 
-## Phase 5: Admin Features (Planned)
+## Phase 5: Admin Features (In Progress)
 Administrative tools for event management
+
+### Session Management (Complete)
+Advanced session administration tools
+
+- [x] SessionManager component for bulk operations
+- [x] Inline editing with auto-save
+- [x] Zod validation for form inputs
+- [x] Time conflict detection
+- [x] Drag-and-drop speaker reordering
 
 ### Chat Administration (Planned)
 Chat room management tools
 
-- [ ] Add/change chat rooms
+- [ ] Add/change chat rooms dynamically
 - [ ] Set time on chat room open/close
+- [ ] Moderation tools
 
 ### Event Settings (Planned)
 Event configuration options
@@ -298,18 +342,24 @@ Event configuration options
 ## Phase 6: Sponsors (Planned)
 Sponsor management and integration
 
-### Sponsor Management (Planned)
+### Sponsor Management (Complete)
 Core sponsor functionality
 
-- [x] Sponsors page
+- [x] Sponsors page with full CRUD operations
+- [x] Sponsor levels with custom names and tiers
+- [x] Drag-and-drop reordering with fractional indexing
+- [x] Logo upload with WebP optimization (80-90% size reduction)
+- [x] Contact info and social links
+- [x] Active/featured toggles
 - [ ] Per-session sponsorship area
-- [x] Sponsor levels with custom names
 - [ ] Sponsor level descriptions
 
-### Sponsor Integration (Planned)
+### Sponsor Integration (Partially Complete)
 Sponsor visibility features
 
-- [ ] Sponsor imagery management
+- [x] Sponsor imagery management with MinIO storage
+- [x] PrivateImage component for secure display
+- [x] Image optimization and EXIF orientation fixes
 - [ ] Sponsored chat rooms with timed opening
 - [ ] Chat page sponsorship options
 - [ ] Topical sponsorship for chat rooms
