@@ -11,6 +11,8 @@ from api.api.schemas import (
     ChatRoomSchema,
     ChatRoomDetailSchema,
     ChatRoomCreateSchema,
+    ChatRoomUpdateSchema,
+    ChatRoomAdminSchema,
     ChatMessageSchema,
     ChatMessageCreateSchema,
 )
@@ -120,18 +122,18 @@ class ChatRoomList(MethodView):
     @event_organizer_required()
     def post(self, room_data, event_id):
         """Create new chat room"""
-        chat_room = ChatRoom(
-            event_id=event_id,
-            name=room_data["name"],
-            description=room_data.get("description", ""),
-            room_type=ChatRoomType.GLOBAL,  # Default to GLOBAL type
-            is_enabled=True
-        )
-
-        db.session.add(chat_room)
-        db.session.commit()
-
-        return chat_room, 201
+        user_id = int(get_jwt_identity())
+        
+        try:
+            chat_room = ChatRoomService.create_event_chat_room(event_id, room_data, user_id)
+            
+            # Emit socket event for real-time updates
+            from api.api.sockets.chat_notifications import emit_chat_room_created
+            emit_chat_room_created(chat_room, event_id)
+            
+            return chat_room, 201
+        except ValueError as e:
+            return {"message": str(e)}, 400
 
 
 @blp.route("/chat-rooms/<int:room_id>")
@@ -151,7 +153,7 @@ class ChatRoomResource(MethodView):
         chat_room = ChatRoom.query.get_or_404(room_id)
         return chat_room
 
-    @blp.arguments(ChatRoomCreateSchema)
+    @blp.arguments(ChatRoomUpdateSchema)
     @blp.response(200, ChatRoomDetailSchema)
     @blp.doc(
         summary="Update chat room",
@@ -165,25 +167,17 @@ class ChatRoomResource(MethodView):
     def put(self, room_data, room_id):
         """Update chat room"""
         user_id = int(get_jwt_identity())
-        current_user = User.query.get_or_404(user_id)
-
-        chat_room = ChatRoom.query.get_or_404(room_id)
-        event = Event.query.get_or_404(chat_room.event_id)
-
-        user_role = event.get_user_role(current_user)
-        if user_role not in [EventUserRole.ADMIN, EventUserRole.ORGANIZER]:
-            return {
-                "message": "Must be admin or organizer to update chat rooms"
-            }, 403
-
-        chat_room.name = room_data["name"]
-        chat_room.description = room_data.get(
-            "description", chat_room.description
-        )
-
-        db.session.commit()
-
-        return chat_room
+        
+        try:
+            chat_room = ChatRoomService.update_chat_room(room_id, room_data, user_id)
+            
+            # Emit socket event
+            from api.api.sockets.chat_notifications import emit_chat_room_updated
+            emit_chat_room_updated(chat_room)
+            
+            return chat_room
+        except ValueError as e:
+            return {"message": str(e)}, 403
 
     @blp.response(204)
     @blp.doc(
@@ -197,19 +191,17 @@ class ChatRoomResource(MethodView):
     def delete(self, room_id):
         """Delete chat room"""
         user_id = int(get_jwt_identity())
-        current_user = User.query.get_or_404(user_id)
-
-        chat_room = ChatRoom.query.get_or_404(room_id)
-        event = Event.query.get_or_404(chat_room.event_id)
-
-        user_role = event.get_user_role(current_user)
-        if user_role != EventUserRole.ADMIN:
-            return {"message": "Must be admin to delete chat rooms"}, 403
-
-        db.session.delete(chat_room)
-        db.session.commit()
-
-        return ""
+        
+        try:
+            event_id = ChatRoomService.delete_chat_room(room_id, user_id)
+            
+            # Emit socket event
+            from api.api.sockets.chat_notifications import emit_chat_room_deleted
+            emit_chat_room_deleted(room_id, event_id)
+            
+            return "", 204
+        except ValueError as e:
+            return {"message": str(e)}, 403
 
 
 @blp.route("/chat-rooms/<int:room_id>/messages")
@@ -277,3 +269,84 @@ class ChatMessageList(MethodView):
         emit_new_chat_message(message, room_id)
 
         return message, 201
+
+
+@blp.route("/chat-rooms/<int:room_id>/toggle")
+class ChatRoomToggle(MethodView):
+    @jwt_required()
+    @blp.response(200, ChatRoomDetailSchema)
+    @blp.doc(
+        summary="Toggle chat room enabled status",
+        description="Toggle a chat room's enabled/disabled state",
+        responses={
+            403: {"description": "Not authorized to toggle this chat room"},
+            404: {"description": "Chat room not found"},
+        },
+    )
+    def patch(self, room_id):
+        """Toggle chat room enabled status"""
+        user_id = int(get_jwt_identity())
+        current_user = User.query.get_or_404(user_id)
+        
+        chat_room = ChatRoom.query.get_or_404(room_id)
+        event = Event.query.get_or_404(chat_room.event_id)
+        
+        # Check permissions
+        user_role = event.get_user_role(current_user)
+        if user_role not in [EventUserRole.ADMIN, EventUserRole.ORGANIZER]:
+            return {"message": "Must be admin or organizer to toggle chat rooms"}, 403
+        
+        chat_room = ChatRoomService.toggle_chat_room(room_id, user_id)
+        
+        # Emit socket event
+        from api.api.sockets.chat_notifications import emit_chat_room_updated
+        emit_chat_room_updated(chat_room)
+        
+        return chat_room
+
+
+@blp.route("/events/<int:event_id>/chat-rooms/admin")
+class EventAdminChatRooms(MethodView):
+    @blp.response(200)
+    @blp.doc(
+        summary="Get admin view of chat rooms",
+        description="Get all event-level chat rooms with admin metadata",
+        responses={
+            403: {"description": "Not authorized to access admin view"},
+            404: {"description": "Event not found"},
+        },
+    )
+    @jwt_required()
+    @event_organizer_required()
+    def get(self, event_id):
+        """Get admin view of chat rooms"""
+        rooms = ChatRoomService.get_event_admin_chat_rooms(event_id)
+        schema = ChatRoomAdminSchema(many=True)
+        return {"chat_rooms": schema.dump(rooms)}
+
+
+@blp.route("/events/<int:event_id>/chat-rooms/disable-all-public")
+class DisableAllPublicRooms(MethodView):
+    @blp.response(200)
+    @blp.doc(
+        summary="Disable all public chat rooms",
+        description="Disable all GLOBAL type chat rooms for the event",
+        responses={
+            403: {"description": "Not authorized to disable chat rooms"},
+            404: {"description": "Event not found"},
+        },
+    )
+    @jwt_required()
+    @event_organizer_required()
+    def post(self, event_id):
+        """Disable all public chat rooms"""
+        user_id = int(get_jwt_identity())
+        
+        result = ChatRoomService.disable_all_public_rooms(event_id, user_id)
+        
+        # Emit socket event for rooms that were disabled
+        if result["disabled_count"] > 0:
+            from api.api.sockets.chat_notifications import emit_bulk_chat_rooms_updated
+            emit_bulk_chat_rooms_updated(event_id, {"is_enabled": False})
+        
+        return result

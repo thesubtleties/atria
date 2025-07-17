@@ -106,3 +106,18 @@ def emit_user_left_room(user_id, room_id):
         {"user_id": user_id, "room_id": room_id},
         room=f"room_{room_id}"
     )
+
+
+def emit_bulk_chat_rooms_updated(event_id, updates):
+    """
+    Notify event participants about bulk chat room updates.
+    
+    Args:
+        event_id: ID of the event
+        updates: Dictionary of updates applied to rooms
+    """
+    socketio.emit(
+        "bulk_chat_rooms_updated",
+        {"event_id": event_id, "updates": updates},
+        room=f"event_{event_id}"
+    )

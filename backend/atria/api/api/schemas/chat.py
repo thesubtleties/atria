@@ -34,6 +34,8 @@ class ChatRoomCreateSchema(ma.Schema):
 
     name = ma.String(required=True)
     description = ma.String()
+    room_type = ma.Enum(ChatRoomType)
+    is_enabled = ma.Boolean()
 
 
 class ChatMessageSchema(ma.SQLAlchemyAutoSchema):
@@ -68,3 +70,25 @@ class SessionChatRoomSchema(ChatRoomSchema):
     
     class Meta(ChatRoomSchema.Meta):
         name = "SessionChatRoom"
+
+
+class ChatRoomUpdateSchema(ma.Schema):
+    """Schema for updating chat rooms"""
+    
+    class Meta:
+        name = "ChatRoomUpdate"
+    
+    name = ma.String()
+    description = ma.String()
+    is_enabled = ma.Boolean()
+
+
+class ChatRoomAdminSchema(ChatRoomDetailSchema):
+    """Extended schema for admin view with metadata"""
+    
+    message_count = ma.Integer(dump_only=True)
+    participant_count = ma.Integer(dump_only=True)
+    last_activity = ma.DateTime(dump_only=True)
+    
+    class Meta(ChatRoomDetailSchema.Meta):
+        name = "ChatRoomAdmin"
