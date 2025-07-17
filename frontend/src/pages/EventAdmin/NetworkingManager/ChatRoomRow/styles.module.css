@@ -1,0 +1,35 @@
+.row {
+  transition: background-color 0.2s ease;
+}
+
+.row:hover {
+  background-color: var(--mantine-color-gray-0);
+}
+
+/* Modern squared badge style */
+.roomTypeBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Room type colors */
+.global {
+  background-color: var(--mantine-color-blue-1);
+  color: var(--mantine-color-blue-7);
+}
+
+.admin {
+  background-color: var(--mantine-color-violet-1);
+  color: var(--mantine-color-violet-7);
+}
+
+.greenRoom {
+  background-color: var(--mantine-color-teal-1);
+  color: var(--mantine-color-teal-7);
+}
