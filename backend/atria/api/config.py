@@ -71,3 +71,13 @@ APISPEC_SPEC = {
         }
     },
 }
+
+# Email settings
+SMTP2GO_API_KEY = os.getenv("SMTP2GO_API_KEY")
+MAIL_DEFAULT_SENDER = os.getenv("MAIL_DEFAULT_SENDER", "noreply@atria.app")
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
+
+# Celery settings (for future use)
+USE_CELERY = os.getenv("USE_CELERY", "false").lower() == "true"
+CELERY_BROKER_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+CELERY_RESULT_BACKEND = os.getenv("REDIS_URL", "redis://localhost:6379/0")

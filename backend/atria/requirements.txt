@@ -30,6 +30,7 @@ psycopg2-binary
 python-dotenv
 passlib
 python-slugify
+requests
 
 # Object Storage
 minio
