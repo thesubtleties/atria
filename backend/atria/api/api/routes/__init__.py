@@ -3,6 +3,7 @@ from flask_smorest import Blueprint
 from .users import blp as users_blp
 from .events import blp as events_blp
 from .event_users import blp as event_users_blp
+from .event_invitations import blp as event_invitations_blp
 from .organizations import blp as organizations_blp
 from .organization_users import blp as organization_users_blp
 from .sessions import blp as sessions_blp
@@ -20,6 +21,7 @@ __all__ = [
     # Event blueprints
     "events_blp",
     "event_users_blp",
+    "event_invitations_blp",
     # Organization blueprints
     "organizations_blp",
     "organization_users_blp",
@@ -55,6 +57,7 @@ def register_blueprints(api):
     # Events
     api.register_blueprint(events_blp)
     api.register_blueprint(event_users_blp)
+    api.register_blueprint(event_invitations_blp)
 
     # Sessions
     api.register_blueprint(sessions_blp)
