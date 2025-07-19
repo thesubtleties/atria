@@ -270,12 +270,12 @@ class EventUserService:
         return event_user
     
     @staticmethod
-    def get_pending_invitations(event_id):
-        """Get all pending invitations for an event"""
+    def get_pending_invitations_query(event_id):
+        """Get query for pending invitations for an event"""
         return EventInvitation.query.filter_by(
             event_id=event_id,
             status=InvitationStatus.PENDING
-        ).all()
+        ).order_by(EventInvitation.created_at.desc())
     
     @staticmethod
     def cancel_invitation(invitation_id):

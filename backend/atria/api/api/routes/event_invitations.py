@@ -12,6 +12,7 @@ from api.api.schemas import (
 from api.commons.pagination import (
     PAGINATION_PARAMETERS,
     get_pagination_schema,
+    paginate,
 )
 from api.commons.decorators import (
     event_organizer_required,
@@ -54,8 +55,8 @@ class EventInvitationList(MethodView):
     @event_organizer_required()
     def get(self, event_id):
         """Get pending invitations for event"""
-        invitations = EventUserService.get_pending_invitations(event_id)
-        return {"items": invitations, "total": len(invitations)}
+        query = EventUserService.get_pending_invitations_query(event_id)
+        return paginate(query, EventInvitationDetailSchema(many=True), collection_name="invitations")
 
     @blp.arguments(EventInvitationCreateSchema)
     @blp.response(201, EventInvitationDetailSchema)
