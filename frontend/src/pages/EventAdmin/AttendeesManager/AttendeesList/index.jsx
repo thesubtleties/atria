@@ -1,4 +1,4 @@
-import { Table, Checkbox, Group, Text, ActionIcon, UnstyledButton } from '@mantine/core';
+import { Table, Group, Text, ActionIcon, UnstyledButton } from '@mantine/core';
 import { IconChevronUp, IconChevronDown } from '@tabler/icons-react';
 import AttendeeRow from '../AttendeeRow';
 import styles from './styles.module.css';
@@ -6,32 +6,11 @@ import styles from './styles.module.css';
 const AttendeesList = ({
   attendees,
   currentUserRole,
-  selectedUsers,
-  onSelectUsers,
   onUpdateRole,
   onSort,
   sortBy,
   sortOrder,
 }) => {
-  const handleSelectAll = (checked) => {
-    if (checked) {
-      onSelectUsers(attendees.map((a) => a.user_id));
-    } else {
-      onSelectUsers([]);
-    }
-  };
-
-  const handleSelectUser = (userId, checked) => {
-    if (checked) {
-      onSelectUsers([...selectedUsers, userId]);
-    } else {
-      onSelectUsers(selectedUsers.filter((id) => id !== userId));
-    }
-  };
-
-  const isAllSelected = attendees.length > 0 && selectedUsers.length === attendees.length;
-  const isIndeterminate = selectedUsers.length > 0 && selectedUsers.length < attendees.length;
-
   const SortHeader = ({ field, children }) => (
     <UnstyledButton
       onClick={() => onSort(field)}
@@ -70,30 +49,23 @@ const AttendeesList = ({
       <Table horizontalSpacing="md" verticalSpacing="sm" striped highlightOnHover>
         <Table.Thead>
           <Table.Tr>
-            <Table.Th width={40}>
-              <Checkbox
-                checked={isAllSelected}
-                indeterminate={isIndeterminate}
-                onChange={(e) => handleSelectAll(e.currentTarget.checked)}
-              />
-            </Table.Th>
             <Table.Th>
               <SortHeader field="name">Name</SortHeader>
             </Table.Th>
             <Table.Th>
               <SortHeader field="email">Email</SortHeader>
             </Table.Th>
-            <Table.Th>
+            <Table.Th style={{ textAlign: 'center' }}>
               <SortHeader field="role">Role</SortHeader>
             </Table.Th>
             <Table.Th>
               <SortHeader field="company">Company</SortHeader>
             </Table.Th>
             <Table.Th>Title</Table.Th>
-            <Table.Th>
-              <SortHeader field="joinDate">Joined</SortHeader>
+            <Table.Th style={{ textAlign: 'center' }}>
+              <SortHeader field="joinDate">Joined Event</SortHeader>
             </Table.Th>
-            <Table.Th width={100}>Actions</Table.Th>
+            <Table.Th width={100} style={{ textAlign: 'center' }}>Actions</Table.Th>
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
@@ -101,8 +73,6 @@ const AttendeesList = ({
             <AttendeeRow
               key={attendee.user_id}
               attendee={attendee}
-              isSelected={selectedUsers.includes(attendee.user_id)}
-              onSelect={(checked) => handleSelectUser(attendee.user_id, checked)}
               onUpdateRole={onUpdateRole}
               currentUserRole={currentUserRole}
             />

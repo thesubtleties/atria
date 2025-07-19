@@ -1,4 +1,4 @@
-import { Table, Checkbox, Group, Text, Badge, Avatar, Menu, ActionIcon } from '@mantine/core';
+import { Table, Group, Text, Badge, Avatar, Menu, ActionIcon } from '@mantine/core';
 import {
   IconDots,
   IconUserCircle,
@@ -15,8 +15,6 @@ import styles from './styles.module.css';
 
 const AttendeeRow = ({
   attendee,
-  isSelected,
-  onSelect,
   onUpdateRole,
   currentUserRole,
 }) => {
@@ -63,12 +61,6 @@ const AttendeeRow = ({
   return (
     <Table.Tr>
       <Table.Td>
-        <Checkbox
-          checked={isSelected}
-          onChange={(e) => onSelect(e.currentTarget.checked)}
-        />
-      </Table.Td>
-      <Table.Td>
         <Group gap="sm">
           <Avatar
             src={attendee.image_url}
@@ -90,7 +82,7 @@ const AttendeeRow = ({
           {attendee.email}
         </Text>
       </Table.Td>
-      <Table.Td>
+      <Table.Td style={{ textAlign: 'center' }}>
         <Badge
           size="md"
           radius="sm"
@@ -107,12 +99,12 @@ const AttendeeRow = ({
       <Table.Td>
         <Text size="sm">{attendee.title || '-'}</Text>
       </Table.Td>
-      <Table.Td>
+      <Table.Td style={{ textAlign: 'center' }}>
         <Text size="sm" c="dimmed">
           {formatDate(attendee.created_at)}
         </Text>
       </Table.Td>
-      <Table.Td>
+      <Table.Td style={{ textAlign: 'center' }}>
         <Menu 
           shadow="md" 
           width={200} 

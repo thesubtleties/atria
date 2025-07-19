@@ -29,7 +29,7 @@ import {
 } from '../../../app/features/eventInvitations/api';
 import { 
   useGetEventQuery,
-  useGetEventUsersQuery,
+  useGetEventUsersAdminQuery,
 } from '../../../app/features/events/api';
 import AttendeesList from './AttendeesList';
 import PendingInvitations from './PendingInvitations';
@@ -53,7 +53,6 @@ const AttendeesManager = () => {
   };
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
   const [roleUpdateModal, setRoleUpdateModal] = useState({ open: false, user: null });
-  const [selectedUsers, setSelectedUsers] = useState([]);
   const [filters, setFilters] = useState({
     search: '',
     role: 'ALL',
@@ -65,14 +64,14 @@ const AttendeesManager = () => {
   const { data: eventData } = useGetEventQuery(eventId);
   const currentUserRole = eventData?.user_role || 'ATTENDEE';
 
-  // Fetch attendees with pagination
+  // Fetch attendees with pagination (using admin endpoint for email/full name access)
   const [page, setPage] = useState(1);
   const {
     data: attendeesData,
     isLoading: isLoadingAttendees,
     error: attendeesError,
     refetch: refetchAttendees,
-  } = useGetEventUsersQuery({
+  } = useGetEventUsersAdminQuery({
     eventId,
     page,
     per_page: 50,
@@ -126,17 +125,6 @@ const AttendeesManager = () => {
     });
   };
 
-  const handleBulkRoleUpdate = () => {
-    if (selectedUsers.length === 0) {
-      notifications.show({
-        title: 'No Selection',
-        message: 'Please select users to update',
-        color: 'yellow',
-      });
-      return;
-    }
-    // TODO: Open bulk role update modal
-  };
 
   const filteredAttendees = attendeesData?.event_users?.filter((user) => {
     if (!filters.search) return true;
@@ -209,19 +197,19 @@ const AttendeesManager = () => {
         <div>
           <Title order={2}>Attendees Management</Title>
           <Group mt="xs" gap="xs">
-            <Badge size="lg" variant="light">
+            <Badge size="lg" variant="light" radius="sm">
               {roleCounts.total || 0} Total
             </Badge>
-            <Badge size="lg" variant="light" color="red">
+            <Badge size="lg" variant="light" color="red" radius="sm">
               {roleCounts.ADMIN || 0} Admins
             </Badge>
-            <Badge size="lg" variant="light" color="orange">
+            <Badge size="lg" variant="light" color="orange" radius="sm">
               {roleCounts.ORGANIZER || 0} Organizers
             </Badge>
-            <Badge size="lg" variant="light" color="blue">
+            <Badge size="lg" variant="light" color="blue" radius="sm">
               {roleCounts.SPEAKER || 0} Speakers
             </Badge>
-            <Badge size="lg" variant="light" color="gray">
+            <Badge size="lg" variant="light" color="gray" radius="sm">
               {roleCounts.ATTENDEE || 0} Attendees
             </Badge>
           </Group>
@@ -290,36 +278,13 @@ const AttendeesManager = () => {
             />
           </Group>
 
-          {selectedUsers.length > 0 && (
-            <Group mb="md">
-              <Text size="sm" c="dimmed">
-                {selectedUsers.length} selected
-              </Text>
-              <Button
-                size="xs"
-                variant="light"
-                onClick={handleBulkRoleUpdate}
-              >
-                Update Roles
-              </Button>
-              <Button
-                size="xs"
-                variant="light"
-                color="red"
-                onClick={() => setSelectedUsers([])}
-              >
-                Clear Selection
-              </Button>
-            </Group>
-          )}
-
           <LoadingOverlay visible={isLoadingAttendees} />
           <AttendeesList
             attendees={sortedAttendees}
             currentUserRole={currentUserRole}
-            selectedUsers={selectedUsers}
-            onSelectUsers={setSelectedUsers}
-            onUpdateRole={(user) => setRoleUpdateModal({ open: true, user })}
+            onUpdateRole={(user) => {
+              setRoleUpdateModal({ open: true, user });
+            }}
             onSort={handleSort}
             sortBy={filters.sortBy}
             sortOrder={filters.sortOrder}
