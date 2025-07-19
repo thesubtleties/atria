@@ -89,6 +89,13 @@ export const eventsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['EventUsers'],
     }),
+    removeEventUser: builder.mutation({
+      query: ({ eventId, userId }) => ({
+        url: `/events/${eventId}/users/${userId}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['EventUsers'],
+    }),
   }),
 });
 
@@ -104,4 +111,5 @@ export const {
   useUpdateEventSpeakerInfoMutation,
   useDeleteEventMutation,
   useAddOrCreateEventUserMutation,
+  useRemoveEventUserMutation,
 } = eventsApi;

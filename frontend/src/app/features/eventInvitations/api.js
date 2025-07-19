@@ -4,9 +4,9 @@ export const eventInvitationsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // Get pending invitations for an event
     getEventInvitations: builder.query({
-      query: ({ eventId, page = 1, per_page = 50 }) => ({
+      query: ({ eventId, page = 1, perPage = 50 }) => ({
         url: `/events/${eventId}/invitations`,
-        params: { page, per_page },
+        params: { page, per_page: perPage },
       }),
       providesTags: ['EventInvitations'],
     }),
@@ -42,8 +42,8 @@ export const eventInvitationsApi = baseApi.injectEndpoints({
     }),
 
     // Cancel invitation
-    cancelInvitation: builder.mutation({
-      query: ({ invitationId }) => ({
+    cancelEventInvitation: builder.mutation({
+      query: (invitationId) => ({
         url: `/invitations/${invitationId}`,
         method: 'DELETE',
       }),
@@ -57,5 +57,5 @@ export const {
   useSendEventInvitationMutation,
   useSendBulkEventInvitationsMutation,
   useAcceptInvitationMutation,
-  useCancelInvitationMutation,
+  useCancelEventInvitationMutation,
 } = eventInvitationsApi;
