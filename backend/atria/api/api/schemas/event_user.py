@@ -76,3 +76,14 @@ class EventSpeakerInfoUpdateSchema(ma.Schema):
     def validate_has_fields(self, data, **kwargs):
         if not data.get("speaker_bio") and not data.get("speaker_title"):
             raise ValidationError("Must provide either bio or title to update")
+
+
+class EventUserAdminSchema(EventUserSchema):
+    """Admin view of EventUser with sensitive information"""
+
+    class Meta(EventUserSchema.Meta):
+        name = "EventUserAdmin"
+
+    # Include sensitive fields only for admins/organizers
+    email = ma.String(dump_only=True)
+    full_name = ma.String(dump_only=True)

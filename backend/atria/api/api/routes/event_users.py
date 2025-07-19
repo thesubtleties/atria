@@ -10,6 +10,7 @@ from api.api.schemas import (
     EventUserUpdateSchema,
     EventSpeakerInfoUpdateSchema,
     AddUserToEventSchema,
+    EventUserAdminSchema,
 )
 from api.commons.pagination import (
     PAGINATION_PARAMETERS,
@@ -175,6 +176,45 @@ class EventUserDetail(MethodView):
             return EventUserService.remove_user_from_event(event_id, user_id)
         except ValueError as e:
             abort(400, message=str(e))
+
+
+@blp.route("/events/<int:event_id>/users/admin")
+class EventUserAdminList(MethodView):
+    @blp.response(200)
+    @blp.doc(
+        summary="List event users with admin details",
+        description="Get all users with sensitive information (admin/organizer only)",
+        parameters=[
+            {
+                "in": "path",
+                "name": "event_id",
+                "schema": {"type": "integer"},
+                "required": True,
+                "description": "Event ID",
+            },
+            {
+                "in": "query",
+                "name": "role",
+                "schema": {"type": "string"},
+                "description": "Filter by role (optional)",
+                "enum": [role.value for role in EventUserRole],
+            },
+            *PAGINATION_PARAMETERS,
+        ],
+        responses={
+            200: get_pagination_schema("event_users", "EventUserAdmin"),
+            403: {"description": "Not authorized to view admin details"},
+            404: {"description": "Event not found"},
+        },
+    )
+    @jwt_required()
+    @event_organizer_required()
+    def get(self, event_id):
+        """Get list of event users with admin details"""
+        role = request.args.get("role")
+        return EventUserService.get_event_users(
+            event_id, role, EventUserAdminSchema(many=True)
+        )
 
 
 @blp.route("/events/<int:event_id>/users/<int:user_id>/speaker-info")

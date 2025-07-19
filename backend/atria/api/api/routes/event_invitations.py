@@ -222,7 +222,6 @@ class InvitationDetail(MethodView):
         },
     )
     @jwt_required()
-    @event_admin_required()
     def delete(self, invitation_id):
         """Cancel invitation"""
         try:

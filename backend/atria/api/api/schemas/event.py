@@ -24,6 +24,7 @@ class EventSchema(ma.SQLAlchemyAutoSchema):
     first_session_time = ma.String(dump_only=True)
     last_session_time = ma.String(dump_only=True)
     event_hours = ma.Dict(dump_only=True)
+    user_role = ma.String(dump_only=True)  # Current user's role in the event
 
 
 # Detailed Schema - Used for GET /events/<id> with all relationships

@@ -285,6 +285,15 @@ class EventUserService:
         if invitation.status != InvitationStatus.PENDING:
             raise ValueError("Can only cancel pending invitations")
         
+        # Check authorization - user must be admin/organizer of the event
+        current_user_id = int(get_jwt_identity())
+        current_user = User.query.get_or_404(current_user_id)
+        event = Event.query.get_or_404(invitation.event_id)
+        user_role = event.get_user_role(current_user)
+        
+        if user_role not in [EventUserRole.ADMIN, EventUserRole.ORGANIZER]:
+            raise ValueError("Must be admin or organizer to cancel invitations")
+        
         invitation.status = InvitationStatus.CANCELLED
         db.session.commit()
         

@@ -36,6 +36,7 @@ from api.api.schemas.event_user import (
     EventUserCreateSchema,
     EventUserUpdateSchema,
     EventSpeakerInfoUpdateSchema,
+    EventUserAdminSchema,
 )
 from api.api.schemas.event_invitation import (
     EventInvitationSchema,
@@ -134,6 +135,7 @@ __all__ = [
     "EventUserCreateSchema",
     "EventUserUpdateSchema",
     "EventSpeakerInfoUpdateSchema",
+    "EventUserAdminSchema",
     "EventInvitationSchema",
     "EventInvitationDetailSchema",
     "EventInvitationCreateSchema",
