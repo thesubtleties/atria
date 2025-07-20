@@ -24,6 +24,7 @@ import SponsorsManager from '../../../pages/EventAdmin/SponsorsManager';
 import NetworkingManager from '../../../pages/EventAdmin/NetworkingManager';
 import AttendeesManager from '../../../pages/EventAdmin/AttendeesManager';
 import SpeakersManager from '../../../pages/EventAdmin/SpeakersManager';
+import EventSettings from '../../../pages/EventAdmin/EventSettings';
 
 // Placeholder component for development
 const PlaceholderComponent = ({ routeName = 'This page' }) => (
@@ -151,7 +152,7 @@ export const protectedRoutes = [
                       },
                       {
                         path: 'settings',
-                        element: <PlaceholderComponent routeName="Event Settings" />,
+                        element: <EventSettings />,
                       },
                     ],
                   },
@@ -248,7 +249,7 @@ export const protectedRoutes = [
                   },
                   {
                     path: 'settings',
-                    element: <PlaceholderComponent routeName="Event Settings" />,
+                    element: <EventSettings />,
                   },
                 ],
               },
