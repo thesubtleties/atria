@@ -87,3 +87,5 @@ class EventUserAdminSchema(EventUserSchema):
     # Include sensitive fields only for admins/organizers
     email = ma.String(dump_only=True)
     full_name = ma.String(dump_only=True)
+    session_count = ma.Integer(dump_only=True)
+    sessions = ma.List(ma.Dict(), dump_only=True)
