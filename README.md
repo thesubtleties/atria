@@ -265,23 +265,28 @@ Connection management capabilities
 - [ ] Accept/decline connection requests
 - [ ] Speaker connection preferences
 
-## Phase 3: Attendee Management (Planned)
+## Phase 3: Attendee Management (In Progress)
 Tools for managing event attendees
 
-### Invitation System (Planned)
+### Invitation System (Partially Complete)
 Attendee invitation functionality
 
-- [ ] Invite attendee via email
-- [ ] Invitation status tracking
-- [ ] Existing account handling
+- [x] Invite attendee via email
+- [x] Invitation status tracking
+- [x] Existing account handling
+- [x] Resend invitations
+- [x] Cancel pending invitations
 - [ ] CSV/mass invite options
 
-### Attendee Controls (Planned)
+### Attendee Controls (Mostly Complete)
 Attendee management features
 
+- [x] Role management (Admin, Organizer, Speaker, Attendee)
+- [x] Search and filter attendees
+- [x] View attendee details and join dates
+- [x] Pagination for large attendee lists
 - [ ] Ability for attendees to leave event
 - [ ] Event archiving
-- [ ] Role assignment upon invitation
 
 ## Phase 4: Sessions/Session Management (Planned)
 Enhanced session organization and features
@@ -338,6 +343,16 @@ Event configuration options
 - [ ] Theme options
 - [ ] Highlight and front page customization
 - [ ] Comprehensive event settings page
+
+### Attendee & Speaker Management (Complete)
+Admin tools for managing participants
+
+- [x] Attendees Management page with role controls
+- [x] Speakers Management page with bio/title overrides
+- [x] Session count tracking for speakers
+- [x] Invitation system with email integration
+- [ ] CSV export functionality
+- [ ] Multiple role support (admin who is also speaker)
 
 ## Phase 6: Sponsors (Planned)
 Sponsor management and integration
