@@ -1,0 +1,23 @@
+.section {
+  padding: 1.5rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.imagePreview {
+  width: 150px;
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f9fa;
+  border-radius: 4px;
+}
+
+.bannerPreview {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #f8f9fa;
+}
