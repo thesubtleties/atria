@@ -60,6 +60,7 @@ class SessionSpeakerRole(str, Enum):
 
 class EventFormat(str, Enum):
     VIRTUAL = "virtual"
+    IN_PERSON = "in_person"
     HYBRID = "hybrid"
 
 
