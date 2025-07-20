@@ -57,6 +57,14 @@ export const eventsApi = baseApi.injectEndpoints({
       }),
       providesTags: ['EventUsers'],
     }),
+    // Admin view with sensitive information
+    getEventUsersAdmin: builder.query({
+      query: ({ eventId, role, page = 1, per_page = 50 }) => ({
+        url: `/events/${eventId}/users/admin`,
+        params: { role, page, per_page },
+      }),
+      providesTags: ['EventUsers'],
+    }),
     addEventUser: builder.mutation({
       query: ({ eventId, ...userData }) => ({
         url: `/events/${eventId}/users`,
@@ -89,6 +97,13 @@ export const eventsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['EventUsers'],
     }),
+    removeEventUser: builder.mutation({
+      query: ({ eventId, userId }) => ({
+        url: `/events/${eventId}/users/${userId}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['EventUsers'],
+    }),
   }),
 });
 
@@ -99,9 +114,11 @@ export const {
   useUpdateEventMutation,
   useUpdateEventBrandingMutation,
   useGetEventUsersQuery,
+  useGetEventUsersAdminQuery,
   useAddEventUserMutation,
   useUpdateEventUserMutation,
   useUpdateEventSpeakerInfoMutation,
   useDeleteEventMutation,
   useAddOrCreateEventUserMutation,
+  useRemoveEventUserMutation,
 } = eventsApi;

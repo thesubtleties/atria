@@ -28,7 +28,19 @@ class EventService:
     @staticmethod
     def get_event(event_id):
         """Get event details by ID"""
-        return Event.query.get_or_404(event_id)
+        from flask_jwt_extended import get_jwt_identity
+        from api.models import User
+        
+        event = Event.query.get_or_404(event_id)
+        
+        # Add current user's role in the event
+        current_user_id = int(get_jwt_identity())
+        current_user = User.query.get(current_user_id)
+        if current_user:
+            role = event.get_user_role(current_user)
+            event.user_role = role.value if role else None
+        
+        return event
 
     @staticmethod
     def update_event(event_id, update_data):

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}New connection request{% endblock %}
+
+{% block header_subtitle %}
+<p style="margin: 10px 0 0 0; opacity: 0.9;">Networking Request</p>
+{% endblock %}
+
+{% block content %}
+<h2>{{ requester_name }} wants to connect with you!</h2>
+
+<div class="info-box">
+    <h3 style="margin-top: 0;">About {{ requester_name }}</h3>
+    <ul style="margin-bottom: 0;">
+        <li><strong>Name:</strong> {{ requester_name }}</li>
+        {% if requester_title %}
+        <li><strong>Title:</strong> {{ requester_title }}</li>
+        {% endif %}
+        {% if requester_company %}
+        <li><strong>Company:</strong> {{ requester_company }}</li>
+        {% endif %}
+        {% if event_title %}
+        <li><strong>Event:</strong> {{ event_title }}</li>
+        {% endif %}
+    </ul>
+</div>
+
+<h3>Their message to you:</h3>
+<div style="background-color: #f8f9fa; padding: 20px; border-radius: 5px; font-style: italic;">
+    "{{ icebreaker_message }}"
+</div>
+
+<p>Would you like to connect? Once connected, you'll be able to chat directly with each other.</p>
+
+<div style="text-align: center;">
+    <a href="{{ accept_url }}" class="button">View Request</a>
+</div>
+
+<p class="text-muted" style="font-size: 14px;">
+    You can accept or decline this request by logging into your Atria account.
+</p>
+{% endblock %}

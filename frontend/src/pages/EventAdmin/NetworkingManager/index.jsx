@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Button, Title, Group, Stack, Alert } from '@mantine/core';
+import { Button, Container, Title, Group, Stack, Alert } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { 
@@ -48,7 +48,7 @@ const NetworkingManager = () => {
   };
 
   return (
-    <div className={styles.container}>
+    <Container size="xl" className={styles.container}>
       <Group justify="space-between" mb="lg">
         <Title order={2}>Networking & Chat Management</Title>
         <Group>
@@ -93,7 +93,7 @@ const NetworkingManager = () => {
         room={modalState.room}
         eventId={eventId}
       />
-    </div>
+    </Container>
   );
 };
 

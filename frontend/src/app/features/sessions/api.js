@@ -71,7 +71,7 @@ export const sessionsApi = baseApi.injectEndpoints({
         method: 'POST',
         body: speakerData,
       }),
-      invalidatesTags: ['SessionSpeakers'],
+      invalidatesTags: ['SessionSpeakers', 'EventUsers'],
     }),
     updateSessionSpeaker: builder.mutation({
       query: ({ sessionId, userId, ...updates }) => ({
@@ -94,7 +94,7 @@ export const sessionsApi = baseApi.injectEndpoints({
         url: `/sessions/${sessionId}/speakers/${userId}`,
         method: 'DELETE',
       }),
-      invalidatesTags: ['SessionSpeakers'],
+      invalidatesTags: ['SessionSpeakers', 'EventUsers'],
     }),
     deleteSession: builder.mutation({
       query: (id) => ({

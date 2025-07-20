@@ -1,0 +1,35 @@
+.container {
+  padding: 0;
+}
+
+.tableContainer {
+  border: 1px solid var(--mantine-color-gray-3);
+  border-radius: var(--mantine-radius-md);
+  overflow: hidden;
+}
+
+.tableContainer table {
+  margin: 0;
+}
+
+.emptyState {
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+.sortHeader {
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.1s;
+  padding: 0.25rem 0.5rem;
+  margin: -0.25rem -0.5rem;
+  border-radius: var(--mantine-radius-sm);
+}
+
+.sortHeader:hover {
+  background-color: var(--mantine-color-gray-1);
+}
+
+.speakerBadge {
+  font-weight: 500;
+}

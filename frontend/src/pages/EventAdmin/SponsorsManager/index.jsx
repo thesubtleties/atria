@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, Group, Title, LoadingOverlay, Text } from '@mantine/core';
+import { Box, Button, Container, Group, Title, LoadingOverlay, Text } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
 import { useParams } from 'react-router-dom';
 import { useGetSponsorsQuery } from '../../../app/features/sponsors/api';
@@ -21,7 +21,7 @@ const SponsorsManager = () => {
 
   if (error) {
     return (
-      <Box className={styles.container}>
+      <Container size="xl" className={styles.container}>
         <Group justify="space-between" mb="xl">
           <Title order={2}>Sponsors Management</Title>
         </Group>
@@ -29,12 +29,12 @@ const SponsorsManager = () => {
           <Text c="red">Error loading sponsors: {error.data?.message || 'Unknown error'}</Text>
           <Button mt="md" onClick={() => refetch()}>Retry</Button>
         </Box>
-      </Box>
+      </Container>
     );
   }
 
   return (
-    <Box className={styles.container}>
+    <Container size="xl" className={styles.container}>
       <Group justify="space-between" mb="xl">
         <Title order={2}>Sponsors Management</Title>
         <Group>
@@ -73,7 +73,7 @@ const SponsorsManager = () => {
         onClose={() => setTierModalOpen(false)}
         eventId={parseInt(eventId)}
       />
-    </Box>
+    </Container>
   );
 };
 

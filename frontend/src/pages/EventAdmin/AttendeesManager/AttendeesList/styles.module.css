@@ -1,0 +1,23 @@
+.tableContainer {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.emptyState {
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.sortHeader {
+  color: inherit;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  transition: color 0.1s ease;
+}
+
+.sortHeader:hover {
+  color: var(--mantine-color-blue-6);
+}

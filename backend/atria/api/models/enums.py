@@ -88,3 +88,11 @@ class SessionChatMode(str, Enum):
     ENABLED = "ENABLED"             # Both PUBLIC and BACKSTAGE chat enabled
     BACKSTAGE_ONLY = "BACKSTAGE_ONLY"  # Only BACKSTAGE chat enabled
     DISABLED = "DISABLED"           # No chat rooms enabled
+
+
+class InvitationStatus(str, Enum):
+    PENDING = "pending"
+    ACCEPTED = "accepted"
+    EXPIRED = "expired"
+    DECLINED = "declined"
+    CANCELLED = "cancelled"
