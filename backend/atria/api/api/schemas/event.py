@@ -1,6 +1,6 @@
 from api.extensions import ma, db
 from api.models import Event
-from api.models.enums import EventType, EventStatus, EventUserRole
+from api.models.enums import EventType, EventStatus, EventUserRole, EventFormat
 from marshmallow import validates, ValidationError, validates_schema
 from datetime import datetime, timezone
 
@@ -137,6 +137,24 @@ class EventUpdateSchema(ma.Schema):
     company_name = ma.String()
     status = ma.Enum(EventStatus)
     branding = ma.Dict()
+    
+    # Venue and format fields
+    event_format = ma.Enum(EventFormat)
+    is_private = ma.Boolean()
+    venue_name = ma.String(allow_none=True)
+    venue_address = ma.String(allow_none=True)
+    venue_city = ma.String(allow_none=True)
+    venue_country = ma.String(allow_none=True)
+    
+    # Hero section
+    hero_description = ma.String(allow_none=True)
+    hero_images = ma.Dict(allow_none=True)  # {desktop: url, mobile: url}
+    
+    # Content sections
+    sections = ma.Dict(allow_none=True)  # {welcome: {...}, highlights: [...], faqs: [...]}
+    
+    # Networking
+    icebreakers = ma.List(ma.String(), allow_none=True)
 
     @validates_schema
     def validate_dates(self, data, **kwargs):
@@ -144,6 +162,15 @@ class EventUpdateSchema(ma.Schema):
         if "start_date" in data and "end_date" in data:
             if data["end_date"] < data["start_date"]:
                 raise ValidationError("End date cannot be before start date")
+                
+    @validates_schema
+    def validate_venue(self, data, **kwargs):
+        """Validate venue requirements based on event format"""
+        if "event_format" in data:
+            if data["event_format"] in ["in_person", "hybrid"]:
+                # Check if venue details are provided
+                if not data.get("venue_name") or not data.get("venue_city") or not data.get("venue_country"):
+                    raise ValidationError("Venue details are required for in-person and hybrid events")
 
 
 # Branding Update Schema - Used for PATCH /events/<id>/branding
