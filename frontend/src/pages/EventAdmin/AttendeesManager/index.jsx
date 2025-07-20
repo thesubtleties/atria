@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import {
   Box,
   Button,
+  Container,
   Group,
   Title,
   TextInput,
@@ -180,19 +181,19 @@ const AttendeesManager = () => {
 
   if (attendeesError) {
     return (
-      <Box className={styles.container}>
+      <Container size="xl" className={styles.container}>
         <Text color="red" align="center">
           Error loading attendees: {attendeesError.message}
         </Text>
         <Button onClick={refetchAttendees} mt="md">
           Retry
         </Button>
-      </Box>
+      </Container>
     );
   }
 
   return (
-    <Box className={styles.container}>
+    <Container size="xl" className={styles.container}>
       <Group justify="space-between" mb="xl">
         <div>
           <Title order={2}>Attendees Management</Title>
@@ -336,7 +337,7 @@ const AttendeesManager = () => {
         currentUserRole={currentUserRole}
         onSuccess={refetchAttendees}
       />
-    </Box>
+    </Container>
   );
 };
 
