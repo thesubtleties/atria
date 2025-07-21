@@ -182,8 +182,7 @@ class EventBrandingSchema(ma.Schema):
 
     primary_color = ma.String()
     secondary_color = ma.String()
-    logo_url = ma.URL(allow_none=True)
-    banner_url = ma.URL(allow_none=True)
+    logo_url = ma.String(allow_none=True)  # Now stores object_key, not URL
 
     @validates("primary_color")
     def validate_color(self, value, **kwargs):
