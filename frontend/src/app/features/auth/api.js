@@ -81,9 +81,13 @@ export const authApi = baseApi.injectEndpoints({
           dispatch(setUser(null));
           // Reset API state
           dispatch(baseApi.util.resetApiState());
+          // Dispatch logout action to reset entire Redux state
+          dispatch({ type: 'auth/logout' });
         } catch (error) {
           // Even if logout fails, we clear local state
           dispatch(setUser(null));
+          dispatch(baseApi.util.resetApiState());
+          dispatch({ type: 'auth/logout' });
         }
       },
       invalidatesTags: ['Auth'],
