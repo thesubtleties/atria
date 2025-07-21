@@ -5,7 +5,6 @@ import {
   IconInfoCircle, 
   IconMapPin, 
   IconPalette, 
-  IconPhoto, 
   IconFileText,
   IconUsers 
 } from '@tabler/icons-react';
@@ -13,7 +12,6 @@ import { useGetEventQuery } from '@/app/features/events/api';
 import BasicInfoSection from './BasicInfoSection';
 import VenueSection from './VenueSection';
 import BrandingSection from './BrandingSection';
-import HeroSection from './HeroSection';
 import ContentSections from './ContentSections';
 import NetworkingSection from './NetworkingSection';
 import styles from './styles/index.module.css';
@@ -68,13 +66,7 @@ const EventSettings = () => {
             value="branding" 
             leftSection={<IconPalette size={16} />}
           >
-            Branding
-          </Tabs.Tab>
-          <Tabs.Tab 
-            value="hero" 
-            leftSection={<IconPhoto size={16} />}
-          >
-            Hero Section
+            Branding & Hero
           </Tabs.Tab>
           <Tabs.Tab 
             value="content" 
@@ -101,10 +93,6 @@ const EventSettings = () => {
 
           <Tabs.Panel value="branding">
             <BrandingSection event={event} eventId={parseInt(eventId)} />
-          </Tabs.Panel>
-
-          <Tabs.Panel value="hero">
-            <HeroSection event={event} eventId={parseInt(eventId)} />
           </Tabs.Panel>
 
           <Tabs.Panel value="content">
