@@ -39,7 +39,6 @@ export const eventBrandingSchema = z.object({
   primary_color: z.string().regex(/^#[0-9A-F]{6}$/i, 'Must be a valid hex color'),
   secondary_color: z.string().regex(/^#[0-9A-F]{6}$/i, 'Must be a valid hex color'),
   logo_url: z.string().url().nullable().optional(),
-  banner_url: z.string().url().nullable().optional(),
 });
 
 export const heroSectionSchema = z.object({

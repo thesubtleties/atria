@@ -21,3 +21,11 @@
   border-radius: 4px;
   background: #f8f9fa;
 }
+
+.heroImagePreview {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #f8f9fa;
+  max-height: 400px;
+}
