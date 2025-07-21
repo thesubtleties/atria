@@ -1,0 +1,29 @@
+.section {
+  padding: 1.5rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.dragHandle {
+  cursor: move;
+  color: #868e96;
+  transition: color 0.2s ease;
+}
+
+.dragHandle:hover {
+  color: #495057;
+}
+
+.icebreaker {
+  transition: background-color 0.2s ease;
+}
+
+.icebreaker:hover {
+  background-color: #f8f9fa;
+}
+
+.dragOver {
+  background-color: #e3f2fd;
+  border-color: #2196f3;
+}
