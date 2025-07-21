@@ -119,7 +119,7 @@ export function PersonCard({
           
           {showActions && currentUser?.id !== person.id && (
             <div className={styles.actionButtonWrapper}>
-              {connectionStatus === 'connected' ? (
+              {connectionStatus === 'connected' || connectionStatus === 'accepted' || connectionStatus === 'ACCEPTED' ? (
                 <Button
                   size="xs"
                   variant="light"
@@ -133,7 +133,7 @@ export function PersonCard({
                 >
                   Message
                 </Button>
-              ) : connectionStatus === 'pending' ? (
+              ) : connectionStatus === 'pending' || connectionStatus === 'PENDING' ? (
                 <Button
                   size="xs"
                   variant="light"

@@ -97,7 +97,8 @@ class EventUserList(MethodView):
     def get(self, event_id):
         """Get list of event users"""
         role = request.args.get("role")
-        return EventUserService.get_event_users(
+        # Use the new method that includes connection status
+        return EventUserService.get_event_users_with_connection_status(
             event_id, role, EventUserSchema(many=True)
         )
 
