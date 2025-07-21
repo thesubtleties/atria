@@ -43,13 +43,14 @@ export const SessionPage = () => {
   const getCurrentUserEventRole = () => {
     if (!event || !currentUser) return null;
     
-    // Check if user is an event organizer/admin
-    const organizer = event.organizers?.find(org => org.id === currentUser.id);
-    if (organizer) return organizer.role;
+    // Check if user is an event organizer/admin using user_role
+    if (event.user_role === 'ADMIN' || event.user_role === 'ORGANIZER') {
+      return event.user_role;
+    }
     
     // Check if user is a speaker for this session
     const isSpeaker = session?.session_speakers?.some(
-      speaker => speaker.user.id === currentUser.id
+      speaker => speaker?.user?.id === currentUser.id
     );
     if (isSpeaker) return 'SPEAKER';
     
