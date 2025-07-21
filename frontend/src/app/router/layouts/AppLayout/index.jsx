@@ -31,7 +31,8 @@ export const AppLayout = () => {
   const { data: event } = useGetEventQuery(eventId, {
     skip: !eventId, // Skip the query if eventId is undefined
   });
-  const isAdmin = event?.organizers?.some((org) => org.role === 'ADMIN');
+  // Check if current user has ADMIN or ORGANIZER role in this event
+  const isAdmin = event?.user_role === 'ADMIN' || event?.user_role === 'ORGANIZER';
 
   const showEventNav = Boolean(eventId);
 
