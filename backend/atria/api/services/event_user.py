@@ -1,6 +1,6 @@
 from api.extensions import db
-from api.models import Event, User, EventUser, Session, SessionSpeaker, EventInvitation
-from api.models.enums import EventUserRole, InvitationStatus
+from api.models import Event, User, EventUser, Session, SessionSpeaker, EventInvitation, Connection
+from api.models.enums import EventUserRole, InvitationStatus, ConnectionStatus
 from api.commons.pagination import paginate
 from api.services.email import email_service
 from flask_jwt_extended import get_jwt_identity
@@ -52,6 +52,57 @@ class EventUserService:
             query = query.filter_by(role=role)
 
         return paginate(query, schema, collection_name="event_users")
+    
+    @staticmethod
+    def get_event_users_with_connection_status(event_id, role=None, schema=None):
+        """Get list of event users with connection status relative to current user"""
+        current_user_id = get_jwt_identity()
+        
+        # Get base query
+        query = EventUser.query.filter_by(event_id=event_id)
+        
+        if role:
+            query = query.filter_by(role=role)
+        
+        # Get paginated results first
+        paginated_result = paginate(query, schema, collection_name="event_users")
+        
+        # Add connection status to each user
+        if current_user_id:
+            current_user_id = int(current_user_id)
+            for event_user in paginated_result['event_users']:
+                user_id = event_user.get('user_id')
+                if user_id and user_id != current_user_id:
+                    # Check for existing connection
+                    connection = Connection.query.filter(
+                        (
+                            (Connection.requester_id == current_user_id) &
+                            (Connection.recipient_id == user_id)
+                        ) | (
+                            (Connection.requester_id == user_id) &
+                            (Connection.recipient_id == current_user_id)
+                        )
+                    ).first()
+                    
+                    if connection:
+                        event_user['connection_status'] = connection.status.value
+                        event_user['connection_id'] = connection.id
+                        # Determine if current user sent or received the request
+                        if connection.requester_id == current_user_id:
+                            event_user['connection_direction'] = 'sent'
+                        else:
+                            event_user['connection_direction'] = 'received'
+                    else:
+                        event_user['connection_status'] = None
+                        event_user['connection_id'] = None
+                        event_user['connection_direction'] = None
+                else:
+                    # It's the current user or user_id is None
+                    event_user['connection_status'] = None
+                    event_user['connection_id'] = None
+                    event_user['connection_direction'] = None
+        
+        return paginated_result
 
     @staticmethod
     def add_user_to_event(event_id, data):

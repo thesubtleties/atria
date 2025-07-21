@@ -24,6 +24,11 @@ class EventUserSchema(ma.SQLAlchemyAutoSchema):
     social_links = ma.Dict(dump_only=True)
     company_name = ma.String(dump_only=True)
     title = ma.String(dump_only=True)
+    
+    # Connection status fields (added dynamically by service)
+    connection_status = ma.String(dump_only=True, allow_none=True)
+    connection_id = ma.Integer(dump_only=True, allow_none=True)
+    connection_direction = ma.String(dump_only=True, allow_none=True)
 
 
 class EventUserDetailSchema(EventUserSchema):
