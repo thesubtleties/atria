@@ -269,7 +269,7 @@ export const networkingApi = baseApi.injectEndpoints({
           originating_event_id: originatingEventId,
         },
       }),
-      invalidatesTags: ['Connection'],
+      invalidatesTags: ['Connection', 'EventUsers'],
     }),
 
     // Get user connections
@@ -294,7 +294,7 @@ export const networkingApi = baseApi.injectEndpoints({
         method: 'PUT',
         body: { status },
       }),
-      invalidatesTags: ['Connection', 'Thread'],
+      invalidatesTags: ['Connection', 'Thread', 'EventUsers'],
     }),
 
     // Get connections within an event
