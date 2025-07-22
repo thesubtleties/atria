@@ -1,0 +1,54 @@
+/* Base button styles */
+.btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-block;
+  font-family: inherit;
+  outline: none;
+  position: relative;
+  text-align: center;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Primary button variant */
+.btn-primary {
+  background: #8B5CF6;
+  color: white;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #7C3AED;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2);
+}
+
+/* Secondary button variant */
+.btn-secondary {
+  background: rgba(139, 92, 246, 0.08);
+  color: #8B5CF6;
+  border: 1px solid rgba(139, 92, 246, 0.15);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: rgba(139, 92, 246, 0.12);
+}
+
+.btn-secondary:active:not(:disabled) {
+  background: rgba(139, 92, 246, 0.15);
+}
