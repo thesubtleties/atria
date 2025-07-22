@@ -1,1 +1,20 @@
-/* Network styles - placeholder for future implementation */
+.container {
+  padding: 2rem 0;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+}
+
+.controls {
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+}
+
+.searchInput {
+  flex: 1;
+  max-width: 400px;
+}
