@@ -6,6 +6,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.menuButton:hover {
+  background: rgba(139, 92, 246, 0.08);
 }
 
 .menuIcon {

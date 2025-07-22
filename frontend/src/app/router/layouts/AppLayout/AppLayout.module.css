@@ -5,7 +5,15 @@
   flex-direction: column;
 }
 
+.layout :global(.mantine-AppShell-header) {
+  background: transparent;
+  border: none;
+  padding: 0;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
 .main {
   flex: 1;
-  background-color: var(--mantine-color-gray-0);
+  background-color: #FBFAFF;
 }

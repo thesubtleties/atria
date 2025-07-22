@@ -86,7 +86,7 @@ export const AppLayout = () => {
   return (
     <AppShell
       className={styles.layout}
-      header={{ height: 82 }}
+      header={{ height: 60 }}
       navbar={
         showEventNav
           ? {

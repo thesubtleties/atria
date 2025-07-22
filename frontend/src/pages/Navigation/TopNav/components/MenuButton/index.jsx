@@ -7,6 +7,7 @@ import {
   IconUser,
   IconUsers,
   IconSettings,
+  IconLayoutDashboard,
 } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { useLogoutMutation } from '@/app/features/auth/api'; // Adjust import path as needed
@@ -52,8 +53,10 @@ export const MenuButton = () => {
             root: {
               padding: '8px',
               height: '40px',
+              borderRadius: '6px',
+              transition: 'background-color 0.2s ease',
               '&:hover': {
-                backgroundColor: 'transparent',
+                backgroundColor: 'rgba(139, 92, 246, 0.08)',
               },
             },
           }}
@@ -69,6 +72,15 @@ export const MenuButton = () => {
 
       <Menu.Dropdown>
         <Menu.Label>Navigation</Menu.Label>
+
+        <Menu.Item
+          leftSection={
+            <IconLayoutDashboard style={{ width: rem(14), height: rem(14) }} />
+          }
+          onClick={() => navigate('/app/dashboard')}
+        >
+          Dashboard
+        </Menu.Item>
 
         <Menu.Item
           leftSection={
