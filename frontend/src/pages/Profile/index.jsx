@@ -1,29 +1,30 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Container,
   Stack,
-  Title,
-  Paper,
   Group,
-  Button,
-  Text,
-  Avatar,
   TextInput,
-  Textarea,
   LoadingOverlay,
   Alert,
 } from '@mantine/core';
-import { IconEdit, IconCheck, IconX } from '@tabler/icons-react';
+import { IconCheck, IconX } from '@tabler/icons-react';
 import { useSelector } from 'react-redux';
 import { useGetUserQuery, useUpdateUserMutation } from '@/app/features/users/api';
 import { useForm, zodResolver } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { profileSchema } from './schemas/profileSchema';
+import { ProfileHero } from './ProfileHero';
+import { ProfessionalInfo } from './ProfessionalInfo';
+import { SocialLinks } from './SocialLinks';
+import { ActivityOverview } from './ActivityOverview';
+import { AboutSection } from './AboutSection';
+import { Button } from '@/shared/components/buttons';
 import styles from './styles/index.module.css';
 
 export const ProfilePage = () => {
   const currentUser = useSelector((state) => state.auth.user);
   const [isEditing, setIsEditing] = useState(false);
+  const parallaxRef = useRef(null);
   
   const { data: userProfile, isLoading, error } = useGetUserQuery(currentUser?.id, {
     skip: !currentUser?.id,
@@ -64,6 +65,24 @@ export const ProfilePage = () => {
       });
     }
   }, [userProfile]);
+
+  // Parallax effect for background shapes
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!parallaxRef.current) return;
+      
+      const scrolled = window.pageYOffset;
+      const parallax = scrolled * 0.3;
+      
+      const shapes = parallaxRef.current.querySelectorAll('.bg-shape-1, .bg-shape-2');
+      shapes.forEach((shape, index) => {
+        shape.style.transform = `translateY(${parallax * (index + 1) * 0.1}px) rotate(${parallax * 0.05}deg)`;
+      });
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
   
   const handleSave = async (values) => {
     try {
@@ -104,6 +123,24 @@ export const ProfilePage = () => {
     }
     setIsEditing(false);
   };
+
+  const handleEditClick = () => {
+    if (userProfile) {
+      form.setValues({
+        first_name: userProfile.first_name || '',
+        last_name: userProfile.last_name || '',
+        company_name: userProfile.company_name || '',
+        title: userProfile.title || '',
+        bio: userProfile.bio || '',
+        social_links: {
+          linkedin: userProfile.social_links?.linkedin || '',
+          twitter: userProfile.social_links?.twitter || '',
+          website: userProfile.social_links?.website || '',
+        },
+      });
+    }
+    setIsEditing(true);
+  };
   
   if (isLoading) {
     return <LoadingOverlay visible />;
@@ -111,7 +148,7 @@ export const ProfilePage = () => {
   
   if (error) {
     return (
-      <Container size="xl" className={styles.container}>
+      <Container size="xl" className={styles.profileContainer}>
         <Alert color="red" title="Error">
           Failed to load profile
         </Alert>
@@ -119,279 +156,139 @@ export const ProfilePage = () => {
     );
   }
   
+  // Prepare user data with form values when editing
+  const displayUser = isEditing ? {
+    ...userProfile,
+    full_name: `${form.values.first_name} ${form.values.last_name}`.trim() || userProfile?.full_name,
+    title: form.values.title,
+    company_name: form.values.company_name,
+  } : userProfile;
+  
   return (
-    <Container size="xl" className={styles.container}>
-      <Stack spacing="xl">
-        {/* Header */}
-        <Group position="apart">
-          <Title order={1} className={styles.title}>
-            My Profile
-          </Title>
-          {!isEditing && (
-            <Button
-              leftIcon={<IconEdit size={16} />}
-              onClick={() => {
-                // Populate form with current values when entering edit mode
-                if (userProfile) {
-                  form.setValues({
-                    first_name: userProfile.first_name || '',
-                    last_name: userProfile.last_name || '',
-                    company_name: userProfile.company_name || '',
-                    title: userProfile.title || '',
-                    bio: userProfile.bio || '',
-                    social_links: {
-                      linkedin: userProfile.social_links?.linkedin || '',
-                      twitter: userProfile.social_links?.twitter || '',
-                      website: userProfile.social_links?.website || '',
-                    },
-                  });
-                }
-                setIsEditing(true);
-              }}
-              variant="subtle"
-            >
-              Edit Profile
-            </Button>
-          )}
-        </Group>
-        
-        {/* Profile Content */}
-        <Paper shadow="sm" p="xl" className={styles.profileCard}>
-          <form onSubmit={form.onSubmit(handleSave)}>
-            <Stack spacing="lg">
-              {/* Avatar and Basic Info */}
-              <Group spacing="xl" align="flex-start">
-                <Avatar
-                  src={userProfile?.image_url}
-                  size={120}
-                  radius="md"
-                  className={styles.avatar}
-                />
-                
-                <Stack spacing="sm" style={{ flex: 1 }}>
-                  {isEditing ? (
-                    <>
-                      <Group grow>
-                        <TextInput
-                          label="First Name"
-                          {...form.getInputProps('first_name')}
-                          required
-                        />
-                        <TextInput
-                          label="Last Name"
-                          {...form.getInputProps('last_name')}
-                          required
-                        />
-                      </Group>
-                      <TextInput
-                        label="Email"
-                        value={userProfile?.email}
-                        disabled
-                        description="Email cannot be changed"
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <Title order={2} className={styles.name}>
-                        {userProfile?.full_name}
-                      </Title>
-                      <Text color="dimmed" size="sm">
-                        {userProfile?.email}
-                      </Text>
-                    </>
-                  )}
-                </Stack>
-              </Group>
-              
-              {/* Professional Info */}
-              <Stack spacing="md">
-                <Title order={4} className={styles.sectionTitle}>
-                  Professional Information
-                </Title>
-                
-                {isEditing ? (
-                  <>
+    <main className={styles.profileContainer} ref={parallaxRef}>
+      {/* Background Shapes */}
+      <div className={`${styles.bgShape1} bg-shape-1`} />
+      <div className={`${styles.bgShape2} bg-shape-2`} />
+      
+      {/* Profile Hero */}
+      <ProfileHero 
+        user={displayUser} 
+        onEditClick={handleEditClick}
+        isOwnProfile={true}
+      />
+      
+      {/* Content Grid */}
+      <div className={styles.profileGrid}>
+        {/* Left Column */}
+        <div>
+          {/* Professional Info */}
+          {isEditing ? (
+            <section className={styles.profileSection}>
+              <h2 className={styles.sectionTitle}>Professional Information</h2>
+              <form onSubmit={form.onSubmit(handleSave)}>
+                <Stack spacing="md">
+                  <Group grow>
                     <TextInput
-                      label="Job Title"
-                      placeholder="e.g., Software Engineer"
-                      {...form.getInputProps('title')}
+                      label="First Name"
+                      {...form.getInputProps('first_name')}
+                      required
                     />
                     <TextInput
-                      label="Company"
-                      placeholder="e.g., Acme Corp"
-                      {...form.getInputProps('company_name')}
+                      label="Last Name"
+                      {...form.getInputProps('last_name')}
+                      required
                     />
-                  </>
-                ) : (
-                  <div className={styles.infoGroup}>
-                    {userProfile?.title && (
-                      <div className={styles.infoItem}>
-                        <span className={styles.infoLabel}>Title</span>
-                        <span className={styles.infoValue}>{userProfile.title}</span>
-                      </div>
-                    )}
-                    {userProfile?.company_name && (
-                      <div className={styles.infoItem}>
-                        <span className={styles.infoLabel}>Company</span>
-                        <span className={styles.infoValue}>{userProfile.company_name}</span>
-                      </div>
-                    )}
-                    {!userProfile?.title && !userProfile?.company_name && (
-                      <Text color="dimmed" size="sm">
-                        No professional information added
-                      </Text>
-                    )}
-                  </div>
-                )}
-              </Stack>
-              
-              {/* Bio */}
-              <Stack spacing="md">
-                <Title order={4} className={styles.sectionTitle}>
-                  About Me
-                </Title>
-                
-                {isEditing ? (
-                  <Textarea
-                    placeholder="Tell us about yourself..."
-                    minRows={4}
-                    {...form.getInputProps('bio')}
+                  </Group>
+                  <TextInput
+                    label="Email"
+                    value={userProfile?.email}
+                    disabled
+                    description="Email cannot be changed"
                   />
-                ) : (
-                  <Text className={styles.bio}>
-                    {userProfile?.bio || (
-                      <Text component="span" color="dimmed" size="sm">
-                        No bio added
-                      </Text>
-                    )}
-                  </Text>
-                )}
+                  <TextInput
+                    label="Job Title"
+                    placeholder="e.g., Software Engineer"
+                    {...form.getInputProps('title')}
+                  />
+                  <TextInput
+                    label="Company"
+                    placeholder="e.g., Acme Corp"
+                    {...form.getInputProps('company_name')}
+                  />
+                </Stack>
+              </form>
+            </section>
+          ) : (
+            <ProfessionalInfo user={userProfile} />
+          )}
+          
+          {/* Social Links */}
+          {isEditing ? (
+            <section className={`${styles.profileSection} ${styles.sectionMarginTop}`}>
+              <h2 className={styles.sectionTitle}>Social Links</h2>
+              <Stack spacing="sm">
+                <TextInput
+                  label="LinkedIn"
+                  placeholder="https://linkedin.com/in/username"
+                  {...form.getInputProps('social_links.linkedin')}
+                />
+                <TextInput
+                  label="Twitter"
+                  placeholder="https://twitter.com/username"
+                  {...form.getInputProps('social_links.twitter')}
+                />
+                <TextInput
+                  label="Website"
+                  placeholder="https://example.com"
+                  {...form.getInputProps('social_links.website')}
+                />
               </Stack>
-              
-              {/* Social Links */}
-              <Stack spacing="md">
-                <Title order={4} className={styles.sectionTitle}>
-                  Social Links
-                </Title>
-                
-                {isEditing ? (
-                  <Stack spacing="sm">
-                    <TextInput
-                      label="LinkedIn"
-                      placeholder="https://linkedin.com/in/username"
-                      {...form.getInputProps('social_links.linkedin')}
-                    />
-                    <TextInput
-                      label="Twitter"
-                      placeholder="https://twitter.com/username"
-                      {...form.getInputProps('social_links.twitter')}
-                    />
-                    <TextInput
-                      label="Website"
-                      placeholder="https://example.com"
-                      {...form.getInputProps('social_links.website')}
-                    />
-                  </Stack>
-                ) : (
-                  <div className={styles.infoGroup}>
-                    {userProfile?.social_links?.linkedin && (
-                      <div className={styles.infoItem}>
-                        <span className={styles.infoLabel}>LinkedIn</span>
-                        <a
-                          href={userProfile.social_links.linkedin}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={styles.link}
-                        >
-                          {userProfile.social_links.linkedin}
-                        </a>
-                      </div>
-                    )}
-                    {userProfile?.social_links?.twitter && (
-                      <div className={styles.infoItem}>
-                        <span className={styles.infoLabel}>Twitter</span>
-                        <a
-                          href={userProfile.social_links.twitter}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={styles.link}
-                        >
-                          {userProfile.social_links.twitter}
-                        </a>
-                      </div>
-                    )}
-                    {userProfile?.social_links?.website && (
-                      <div className={styles.infoItem}>
-                        <span className={styles.infoLabel}>Website</span>
-                        <a
-                          href={userProfile.social_links.website}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={styles.link}
-                        >
-                          {userProfile.social_links.website}
-                        </a>
-                      </div>
-                    )}
-                    {!userProfile?.social_links?.linkedin &&
-                      !userProfile?.social_links?.twitter &&
-                      !userProfile?.social_links?.website && (
-                        <Text color="dimmed" size="sm">
-                          No social links added
-                        </Text>
-                      )}
-                  </div>
-                )}
-              </Stack>
-              
-              {/* Action Buttons */}
-              {isEditing && (
-                <Group position="right" mt="xl">
-                  <Button
-                    variant="subtle"
-                    color="gray"
-                    onClick={handleCancel}
-                    leftIcon={<IconX size={16} />}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    type="submit"
-                    loading={isUpdating}
-                    leftIcon={<IconCheck size={16} />}
-                  >
-                    Save Changes
-                  </Button>
-                </Group>
-              )}
-            </Stack>
-          </form>
-        </Paper>
+            </section>
+          ) : (
+            <SocialLinks socialLinks={userProfile?.social_links} />
+          )}
+        </div>
         
-        {/* Account Information */}
-        <Paper shadow="sm" p="xl" className={styles.accountCard}>
-          <Stack spacing="md">
-            <Title order={4} className={styles.sectionTitle}>
-              Account Information
-            </Title>
-            <div className={styles.infoGroup}>
-              <div className={styles.infoItem}>
-                <span className={styles.infoLabel}>Member Since</span>
-                <span className={styles.infoValue}>
-                  {new Date(userProfile?.created_at).toLocaleDateString()}
-                </span>
-              </div>
-              <div className={styles.infoItem}>
-                <span className={styles.infoLabel}>Account Status</span>
-                <Text component="span" color={userProfile?.is_active ? 'green' : 'red'} weight={500}>
-                  {userProfile?.is_active ? 'Active' : 'Inactive'}
-                </Text>
-              </div>
+        {/* Right Column */}
+        <div>
+          {/* Activity Overview */}
+          <ActivityOverview userId={currentUser?.id} />
+          
+          {/* About */}
+          <AboutSection 
+            bio={userProfile?.bio}
+            isEditing={isEditing}
+            value={form.values.bio}
+            onChange={(value) => form.setFieldValue('bio', value)}
+          />
+        </div>
+      </div>
+      
+      {/* Edit Mode Action Buttons */}
+      {isEditing && (
+        <div className={styles.editActions}>
+          <form onSubmit={form.onSubmit(handleSave)} className={styles.editForm}>
+            <div className={styles.editButtonGroup}>
+              <Button
+                variant="subtle"
+                onClick={handleCancel}
+              >
+                <IconX size={16} />
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="primary"
+                disabled={isUpdating}
+              >
+                <IconCheck size={16} />
+                Save Changes
+              </Button>
             </div>
-          </Stack>
-        </Paper>
-      </Stack>
-    </Container>
+          </form>
+        </div>
+      )}
+    </main>
   );
 };
 
