@@ -11,11 +11,13 @@ from api.api.schemas import (
     SessionSchema,
     UserCheckResponseSchema,
 )
+from api.api.schemas.dashboard import DashboardResponseSchema
 from api.commons.pagination import (
     PAGINATION_PARAMETERS,
     get_pagination_schema,
 )
 from api.services.user import UserService
+from api.services.dashboard import DashboardService
 
 from api.models.enums import EventUserRole
 
@@ -133,6 +135,33 @@ class UserSessionsResource(MethodView):
         return UserService.get_user_speaking_sessions(
             user_id, SessionSchema(many=True)
         )
+
+
+@blp.route("/<int:user_id>/dashboard")
+class UserDashboardResource(MethodView):
+    @blp.response(200, DashboardResponseSchema)
+    @blp.doc(
+        summary="Get user dashboard",
+        description="Get dashboard data for a user including stats, organizations, events, and connections",
+        responses={
+            403: {"description": "Not authorized to view this dashboard"},
+            404: {"description": "User not found"},
+        },
+    )
+    @jwt_required()
+    def get(self, user_id):
+        """Get user dashboard data"""
+        current_user_id = int(get_jwt_identity())
+        
+        # Users can only view their own dashboard
+        if current_user_id != user_id:
+            abort(403, message="Not authorized to view this dashboard")
+        
+        dashboard_data = DashboardService.get_user_dashboard(user_id)
+        if not dashboard_data:
+            abort(404, message="User not found")
+            
+        return dashboard_data
 
 
 @blp.route("/debug")
