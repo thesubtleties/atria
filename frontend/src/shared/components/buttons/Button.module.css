@@ -52,3 +52,19 @@
 .btn-secondary:active:not(:disabled) {
   background: rgba(139, 92, 246, 0.15);
 }
+
+/* Subtle button variant */
+.btn-subtle {
+  background: transparent;
+  color: #6B7280;
+  border: 1px solid transparent;
+}
+
+.btn-subtle:hover:not(:disabled) {
+  background: rgba(107, 114, 128, 0.08);
+  color: #374151;
+}
+
+.btn-subtle:active:not(:disabled) {
+  background: rgba(107, 114, 128, 0.12);
+}
