@@ -89,7 +89,12 @@ export function ConnectionRow({ connection }) {
       
       <Table.Td>
         {connection.originating_event ? (
-          <Badge variant="light" size="sm">
+          <Badge 
+            variant="light" 
+            size="md"
+            radius="sm"
+            color="blue"
+          >
             {connection.originating_event.title}
           </Badge>
         ) : (

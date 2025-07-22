@@ -45,7 +45,12 @@ export default function NetworkPage() {
             Manage your professional connections across all events
           </Text>
         </div>
-        <Badge size="lg" variant="filled">
+        <Badge 
+          size="lg" 
+          variant="filled"
+          radius="sm"
+          color="blue"
+        >
           {data?.total_items || 0} connections
         </Badge>
       </div>

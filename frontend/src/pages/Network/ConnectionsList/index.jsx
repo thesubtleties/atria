@@ -35,7 +35,7 @@ export function ConnectionsList({ connections, isLoading, error, pagination, onP
             <Table.Tr>
               <Table.Th>Name</Table.Th>
               <Table.Th>Title & Company</Table.Th>
-              <Table.Th>Connected Via</Table.Th>
+              <Table.Th>Connected At</Table.Th>
               <Table.Th>Links</Table.Th>
               <Table.Th>Email</Table.Th>
               <Table.Th>Connected</Table.Th>
