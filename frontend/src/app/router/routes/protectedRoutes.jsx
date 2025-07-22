@@ -19,6 +19,7 @@ import { SponsorsPage } from '../../../pages/Sponsors';
 import Profile from '../../../pages/Profile';
 import Network from '../../../pages/Network';
 import Settings from '../../../pages/Settings';
+import { Dashboard } from '../../../pages/Dashboard';
 import { SessionManager } from '../../../pages/EventAdmin/SessionManager';
 import SponsorsManager from '../../../pages/EventAdmin/SponsorsManager';
 import NetworkingManager from '../../../pages/EventAdmin/NetworkingManager';
@@ -77,6 +78,10 @@ export const protectedRoutes = [
       {
         index: true,
         element: <NewUserCheck />,
+      },
+      {
+        path: 'dashboard',
+        element: <Dashboard />,
       },
       {
         path: 'profile',
