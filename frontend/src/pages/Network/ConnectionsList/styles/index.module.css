@@ -1,0 +1,19 @@
+.table {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.table thead tr {
+  background-color: var(--mantine-color-gray-0);
+}
+
+.table th {
+  font-weight: 600;
+  color: var(--mantine-color-gray-7);
+  padding: 1rem;
+}
+
+.pagination {
+  margin-top: 2rem;
+}

@@ -22,6 +22,7 @@ class ConnectionSchema(ma.SQLAlchemyAutoSchema):
             "image_url",
             "company_name",
             "title",
+            "social_links",
         ),
         dump_only=True,
     )
@@ -34,6 +35,7 @@ class ConnectionSchema(ma.SQLAlchemyAutoSchema):
             "image_url",
             "company_name",
             "title",
+            "social_links",
         ),
         dump_only=True,
     )
