@@ -6,8 +6,11 @@
 }
 
 .title {
-  font-size: 3rem;
-  font-weight: 600;
+  font-family: 'M Plus 2', system-ui, -apple-system, sans-serif;
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: #8B5CF6;
+  letter-spacing: -0.02em;
   margin: 0;
 }
 

@@ -5,7 +5,7 @@
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(139, 92, 246, 0.08);
-  padding: 1rem 2rem;
+  padding: 1rem 0;
   z-index: 100;
 }
 
@@ -16,6 +16,7 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  padding: 0 2rem;
 }
 
 .navLeft {
@@ -45,4 +46,39 @@
 
 .atriaTitle:hover {
   opacity: 0.8;
+}
+
+/* Burger menu wrapper */
+.burgerWrapper {
+  position: fixed;
+  left: 2rem;
+  z-index: 101;
+}
+
+/* Special case for navbar with burger in event */
+.navbarWithBurger .navContent {
+  max-width: none;  /* Remove max-width constraint */
+  padding: 0 2rem;
+}
+
+
+/* Style the burger button to be purple */
+.burgerWrapper :global(.mantine-Burger) {
+  color: #8B5CF6;
+}
+
+/* Media query for mobile */
+@media (max-width: 768px) {
+  .navContent {
+    padding: 0 1rem;
+  }
+  
+  .burgerWrapper {
+    left: 1rem;
+  }
+  
+  .navbarWithBurger .navContent {
+    max-width: none;  /* Remove max-width constraint on mobile too */
+    padding: 0 1rem;
+  }
 }
