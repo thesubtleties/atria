@@ -108,12 +108,16 @@ export const AppLayout = () => {
                   onClick={toggleMobile}
                   hiddenFrom="sm"
                   size="sm"
+                  color={mobileOpened ? "#8B5CF6" : "#FFD93D"}
+                  transitionDuration={200}
                 />
                 <Burger
                   opened={desktopOpened}
                   onClick={toggleDesktop}
                   visibleFrom="sm"
                   size="sm"
+                  color={desktopOpened ? "#8B5CF6" : "#FFD93D"}
+                  transitionDuration={200}
                 />
               </>
             )
