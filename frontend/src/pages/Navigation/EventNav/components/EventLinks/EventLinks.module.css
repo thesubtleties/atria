@@ -13,6 +13,12 @@
   font-weight: 500;
   transition: all 0.2s ease;
   border: 1px solid transparent;
+  background: transparent;
+}
+
+/* Remove any default Mantine backgrounds */
+.container :global(.mantine-NavLink-root[data-variant]) {
+  background: transparent;
 }
 
 .container :global(.mantine-NavLink-root):hover {
