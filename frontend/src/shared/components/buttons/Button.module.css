@@ -8,7 +8,10 @@
   cursor: pointer;
   transition: all 0.2s ease;
   text-decoration: none;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   font-family: inherit;
   outline: none;
   position: relative;

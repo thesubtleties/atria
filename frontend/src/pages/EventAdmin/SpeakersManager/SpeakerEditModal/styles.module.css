@@ -1,0 +1,84 @@
+/* Modal Content Styling */
+.modalContent {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 0;
+}
+
+/* Modal Header */
+.modalHeader {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1E293B;
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.04);
+}
+
+/* User Info Section */
+.userInfo {
+  background: rgba(139, 92, 246, 0.04);
+  padding: 1rem;
+  border-radius: 6px;
+  border: 1px solid rgba(139, 92, 246, 0.08);
+}
+
+/* Alert Styling */
+.infoAlert {
+  background: rgba(139, 92, 246, 0.04);
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  border-radius: 6px;
+}
+
+.grayAlert {
+  background: rgba(107, 114, 128, 0.04);
+  border: 1px solid rgba(107, 114, 128, 0.1);
+  border-radius: 6px;
+}
+
+/* Form Elements */
+.formInput input,
+.formTextarea textarea {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  transition: all 0.2s ease;
+}
+
+.formInput input:focus,
+.formTextarea textarea:focus {
+  border-color: rgba(139, 92, 246, 0.3);
+  background: rgba(255, 255, 255, 0.8);
+}
+
+/* Avatar Styling */
+.userAvatar {
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Button Group */
+.buttonGroup {
+  padding: 1.5rem;
+  border-top: 1px solid rgba(139, 92, 246, 0.04);
+  margin-top: 1.5rem;
+  background: rgba(251, 250, 255, 0.5);
+}
+
+/* Override Mantine Modal Styles */
+:global(.mantine-Modal-content) {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.08);
+}
+
+:global(.mantine-Modal-header) {
+  background: transparent;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.04);
+}
+
+:global(.mantine-Modal-overlay) {
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(4px);
+}

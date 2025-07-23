@@ -87,6 +87,7 @@ const SpeakerRow = ({
             alt={speaker.full_name}
             radius="xl"
             size="md"
+            className={styles.userAvatar}
           >
             {speaker.first_name?.[0]}{speaker.last_name?.[0]}
           </Avatar>
@@ -157,22 +158,23 @@ const SpeakerRow = ({
           >
             <Badge 
               variant="light" 
-              color="blue" 
+              color="green" 
               radius="sm" 
+              className={styles.sessionBadge}
               style={{ cursor: 'pointer' }}
             >
               {speaker.session_count}
             </Badge>
           </Tooltip>
         ) : (
-          <Badge variant="light" color="gray" radius="sm">
+          <Badge variant="light" color="gray" radius="sm" className={`${styles.sessionBadge} ${styles.unassigned}`}>
             0
           </Badge>
         )}
       </Table.Td>
       <Table.Td>
         <Tooltip label={displayBio} multiline maw={300}>
-          <Text size="sm" c="dimmed" lineClamp={2}>
+          <Text size="sm" lineClamp={2} className={styles.bioText}>
             {truncateBio(displayBio)}
           </Text>
         </Tooltip>
@@ -184,7 +186,7 @@ const SpeakerRow = ({
           position="bottom-end"
         >
           <Menu.Target>
-            <ActionIcon variant="subtle" color="gray">
+            <ActionIcon variant="subtle" color="gray" className={styles.actionButton}>
               <IconDots size={16} />
             </ActionIcon>
           </Menu.Target>
