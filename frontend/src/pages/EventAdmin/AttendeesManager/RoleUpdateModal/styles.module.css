@@ -1,0 +1,103 @@
+/* Modal Content Styling */
+.modalContent {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Modal Header */
+.modalHeader {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1E293B;
+  padding: 1.5rem 1.5rem 0;
+}
+
+/* User Info Section */
+.userInfo {
+  background: rgba(139, 92, 246, 0.04);
+  padding: 1rem;
+  border-radius: 6px;
+  border: 1px solid rgba(139, 92, 246, 0.08);
+}
+
+.userName {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1E293B;
+  margin: 0;
+}
+
+.userEmail {
+  font-size: 0.875rem;
+  color: #64748B;
+  margin: 0.25rem 0 0 0;
+}
+
+/* Form Elements */
+.formSelect input {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  transition: all 0.2s ease;
+}
+
+.formSelect input:focus {
+  border-color: rgba(139, 92, 246, 0.3);
+  background: rgba(255, 255, 255, 0.8);
+}
+
+/* Alert Styling */
+.warningAlert {
+  background: rgba(245, 158, 11, 0.04);
+  border: 1px solid rgba(245, 158, 11, 0.1);
+  border-radius: 6px;
+}
+
+.infoAlert {
+  background: rgba(139, 92, 246, 0.04);
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  border-radius: 6px;
+}
+
+.dangerAlert {
+  background: rgba(220, 38, 38, 0.04);
+  border: 1px solid rgba(220, 38, 38, 0.1);
+  border-radius: 6px;
+}
+
+/* Role Privileges List */
+.privilegesList {
+  margin: 0.5rem 0;
+}
+
+.privilegesList li {
+  color: #475569;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+/* Button Group */
+.buttonGroup {
+  padding: 0 1.5rem 1.5rem;
+  border-top: 1px solid rgba(139, 92, 246, 0.04);
+  margin-top: 1.5rem;
+}
+
+/* Override Mantine Modal Styles */
+:global(.mantine-Modal-content) {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.08);
+}
+
+:global(.mantine-Modal-header) {
+  background: transparent;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.04);
+}
+
+:global(.mantine-Modal-overlay) {
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(4px);
+}

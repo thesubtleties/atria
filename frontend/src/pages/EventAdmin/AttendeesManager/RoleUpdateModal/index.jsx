@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
-import { Modal, Select, Button, Group, Stack, Text, Alert, List } from '@mantine/core';
+import { Modal, Select, Group, Stack, Text, Alert, List } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { IconAlertCircle, IconCheck } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { roleUpdateSchema, getRoleDisplayName, canChangeRole } from '../schemas/attendeeSchemas';
 import { useUpdateEventUserMutation } from '../../../../app/features/events/api';
+import { Button } from '../../../../shared/components/buttons';
+import styles from './styles.module.css';
 
 const RoleUpdateModal = ({ opened, onClose, user, eventId, currentUserRole, onSuccess }) => {
   const [updateUser, { isLoading }] = useUpdateEventUserMutation();
@@ -66,24 +68,28 @@ const RoleUpdateModal = ({ opened, onClose, user, eventId, currentUserRole, onSu
       onClose={onClose}
       title="Update User Role"
       size="md"
+      classNames={{
+        content: styles.modalContent,
+        header: styles.modalHeader,
+      }}
     >
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Stack>
-          <div>
-            <Text size="sm" c="dimmed">User</Text>
-            <Text fw={500}>{user.full_name}</Text>
-            <Text size="sm" c="dimmed">{user.email}</Text>
+          <div className={styles.userInfo}>
+            <h3 className={styles.userName}>{user.full_name}</h3>
+            <p className={styles.userEmail}>{user.email}</p>
           </div>
 
           <Select
             label="New Role"
             data={roleOptions}
             required
+            className={styles.formSelect}
             {...form.getInputProps('role')}
           />
 
           {currentUserRole === 'ORGANIZER' && (
-            <Alert icon={<IconAlertCircle size={16} />} color="yellow">
+            <Alert icon={<IconAlertCircle size={16} />} className={styles.warningAlert}>
               <Text size="sm">
                 As an organizer, you can only assign roles lower than your own.
                 You cannot create other organizers or admins.
@@ -92,7 +98,7 @@ const RoleUpdateModal = ({ opened, onClose, user, eventId, currentUserRole, onSu
           )}
 
           {form.values.role === 'SPEAKER' && user.role !== 'SPEAKER' && (
-            <Alert icon={<IconAlertCircle size={16} />} color="blue">
+            <Alert icon={<IconAlertCircle size={16} />} className={styles.infoAlert}>
               <Stack gap="xs">
                 <Text size="sm" fw={500}>
                   Speaker Role Privileges:
@@ -101,6 +107,7 @@ const RoleUpdateModal = ({ opened, onClose, user, eventId, currentUserRole, onSu
                   size="sm" 
                   spacing="xs"
                   icon={<IconCheck size={16} stroke={3} />}
+                  className={styles.privilegesList}
                   styles={{
                     itemIcon: { marginTop: 2 }
                   }}
@@ -114,7 +121,7 @@ const RoleUpdateModal = ({ opened, onClose, user, eventId, currentUserRole, onSu
           )}
 
           {form.values.role === 'ORGANIZER' && user.role !== 'ORGANIZER' && (
-            <Alert icon={<IconAlertCircle size={16} />} color="orange">
+            <Alert icon={<IconAlertCircle size={16} />} className={styles.warningAlert}>
               <Stack gap="xs">
                 <Text size="sm" fw={500}>
                   Organizer Role Permissions:
@@ -123,6 +130,7 @@ const RoleUpdateModal = ({ opened, onClose, user, eventId, currentUserRole, onSu
                   size="sm" 
                   spacing="xs"
                   icon={<IconCheck size={16} stroke={3} />}
+                  className={styles.privilegesList}
                   styles={{
                     itemIcon: { marginTop: 2 }
                   }}
@@ -141,7 +149,7 @@ const RoleUpdateModal = ({ opened, onClose, user, eventId, currentUserRole, onSu
           )}
 
           {form.values.role === 'ADMIN' && (
-            <Alert icon={<IconAlertCircle size={16} />} color="red">
+            <Alert icon={<IconAlertCircle size={16} />} className={styles.dangerAlert}>
               <Text size="sm" fw={500}>
                 Warning: Admin users have full control over the event, including
                 the ability to delete it. Only grant this role to trusted users.
@@ -149,12 +157,12 @@ const RoleUpdateModal = ({ opened, onClose, user, eventId, currentUserRole, onSu
             </Alert>
           )}
 
-          <Group justify="flex-end" mt="md">
-            <Button variant="light" onClick={onClose}>
+          <Group justify="flex-end" mt="md" className={styles.buttonGroup}>
+            <Button variant="secondary" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit" loading={isLoading}>
-              Update Role
+            <Button type="submit" variant="primary" disabled={isLoading}>
+              {isLoading ? 'Updating...' : 'Update Role'}
             </Button>
           </Group>
         </Stack>
