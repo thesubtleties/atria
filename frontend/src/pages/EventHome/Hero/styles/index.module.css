@@ -1,10 +1,13 @@
 /* pages/EventHome/Hero/styles/index.module.css */
 .hero {
-  width: 100%;
+  width: calc(100% + 2rem);
   position: relative;
   height: 500px;
   overflow: hidden;
   margin-bottom: 3rem;
+  margin-left: -1rem;
+  margin-right: -1rem;
+  z-index: 1;
 }
 
 .heroBackground {

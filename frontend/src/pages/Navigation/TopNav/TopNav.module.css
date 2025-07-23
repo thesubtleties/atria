@@ -1,10 +1,10 @@
 .navbar {
   width: 100%;
   height: 100%;
-  background: rgba(251, 250, 255, 0.9);
+  background: rgba(106, 45, 204, 0.808);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(139, 92, 246, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   padding: 1rem 0;
   z-index: 100;
 }
@@ -34,10 +34,14 @@
 }
 
 .atriaTitle {
-  font-family: 'M Plus 2', system-ui, -apple-system, sans-serif;
+  font-family:
+    'M Plus 2',
+    system-ui,
+    -apple-system,
+    sans-serif;
   font-size: 1.5rem;
   font-weight: 300;
-  color: #8B5CF6;
+  color: #ffffff;
   letter-spacing: -0.02em;
   text-decoration: none;
   cursor: pointer;
@@ -45,7 +49,7 @@
 }
 
 .atriaTitle:hover {
-  opacity: 0.8;
+  opacity: 0.9;
 }
 
 /* Burger menu wrapper */
@@ -57,14 +61,13 @@
 
 /* Special case for navbar with burger in event */
 .navbarWithBurger .navContent {
-  max-width: none;  /* Remove max-width constraint */
+  max-width: none; /* Remove max-width constraint */
   padding: 0 2rem;
 }
 
-
-/* Style the burger button to be purple */
+/* Style the burger button to be white */
 .burgerWrapper :global(.mantine-Burger) {
-  color: #8B5CF6;
+  color: #ffffff;
 }
 
 /* Media query for mobile */
@@ -72,13 +75,13 @@
   .navContent {
     padding: 0 1rem;
   }
-  
+
   .burgerWrapper {
     left: 1rem;
   }
-  
+
   .navbarWithBurger .navContent {
-    max-width: none;  /* Remove max-width constraint on mobile too */
+    max-width: none; /* Remove max-width constraint on mobile too */
     padding: 0 1rem;
   }
 }

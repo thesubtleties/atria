@@ -38,9 +38,10 @@ export const EventHome = () => {
       <div className={styles.bgShape1} />
       <div className={styles.bgShape2} />
 
-      <div className={styles.contentWrapper}>
-        <Hero title={title} description={hero_description} images={hero_images} />
+      {/* Hero outside contentWrapper for full-width */}
+      <Hero title={title} description={hero_description} images={hero_images} />
 
+      <div className={styles.contentWrapper}>
         {sections?.welcome && (
           <Welcome
             title={sections.welcome.title}

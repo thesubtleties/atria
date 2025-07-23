@@ -3,6 +3,10 @@
   position: relative;
   min-height: 100vh;
   background: rgba(251, 250, 255, 1);
+  margin: -1rem;  /* Counteract AppShell padding */
+  padding: 1rem;
+  padding-top: 0;
+  overflow-x: hidden;
 }
 
 /* Background Organic Shapes */

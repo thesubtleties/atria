@@ -5,13 +5,17 @@
   -webkit-backdrop-filter: blur(20px);
   box-shadow: 2px 0 8px rgba(139, 92, 246, 0.05);
   height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 /* Override Mantine AppShell.Navbar styles */
 :global(.mantine-AppShell-navbar) {
   border-right: none !important;
-  background: rgba(251, 250, 255, 0.9) !important;
-  padding-top: 0 !important;
+  background: transparent !important;
+  padding: 0 !important;
   top: 60px !important; /* Align with header height */
 }
 
