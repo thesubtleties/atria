@@ -1,11 +1,7 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
-  Box,
-  Button,
-  Container,
   Group,
-  Title,
   TextInput,
   Select,
   LoadingOverlay,
@@ -32,11 +28,11 @@ import {
   useGetEventQuery,
   useGetEventUsersAdminQuery,
 } from '../../../app/features/events/api';
+import { Button } from '../../../shared/components/buttons';
 import AttendeesList from './AttendeesList';
 import PendingInvitations from './PendingInvitations';
 import InviteModal from './InviteModal';
 import RoleUpdateModal from './RoleUpdateModal';
-import { attendeeFilterSchema } from './schemas/attendeeSchemas';
 import styles from './styles/index.module.css';
 
 const AttendeesManager = () => {
@@ -181,163 +177,194 @@ const AttendeesManager = () => {
 
   if (attendeesError) {
     return (
-      <Container size="xl" className={styles.container}>
-        <Text color="red" align="center">
-          Error loading attendees: {attendeesError.message}
-        </Text>
-        <Button onClick={refetchAttendees} mt="md">
-          Retry
-        </Button>
-      </Container>
+      <div className={styles.container}>
+        <div className={styles.bgShape1} />
+        <div className={styles.bgShape2} />
+        
+        <div className={styles.contentWrapper}>
+          <section className={styles.mainContent}>
+            <div style={{ textAlign: 'center', padding: '3rem' }}>
+              <Text c="red" size="lg" mb="md">
+                Error loading attendees: {attendeesError.message}
+              </Text>
+              <Button 
+                variant="primary"
+                onClick={refetchAttendees}
+              >
+                Retry
+              </Button>
+            </div>
+          </section>
+        </div>
+      </div>
     );
   }
 
   return (
-    <Container size="xl" className={styles.container}>
-      <Group justify="space-between" mb="xl">
-        <div>
-          <Title order={2}>Attendees Management</Title>
-          <Group mt="xs" gap="xs">
-            <Badge size="lg" variant="light" radius="sm">
-              {roleCounts.total || 0} Total
-            </Badge>
-            <Badge size="lg" variant="light" color="red" radius="sm">
-              {roleCounts.ADMIN || 0} Admins
-            </Badge>
-            <Badge size="lg" variant="light" color="orange" radius="sm">
-              {roleCounts.ORGANIZER || 0} Organizers
-            </Badge>
-            <Badge size="lg" variant="light" color="blue" radius="sm">
-              {roleCounts.SPEAKER || 0} Speakers
-            </Badge>
-            <Badge size="lg" variant="light" color="gray" radius="sm">
-              {roleCounts.ATTENDEE || 0} Attendees
-            </Badge>
-          </Group>
-        </div>
-        <Group>
-          <Menu shadow="md" width={200}>
-            <Menu.Target>
-              <ActionIcon variant="subtle" size="lg">
-                <IconDots size={20} />
-              </ActionIcon>
-            </Menu.Target>
-            <Menu.Dropdown>
-              <Menu.Item
-                leftSection={<IconDownload size={16} />}
-                onClick={handleExport}
+    <div className={styles.container}>
+      {/* Background Shapes */}
+      <div className={styles.bgShape1} />
+      <div className={styles.bgShape2} />
+
+      <div className={styles.contentWrapper}>
+        {/* Header Section */}
+        <section className={styles.headerSection}>
+          <Group justify="space-between" align="flex-start">
+            <div>
+              <h2 className={styles.pageTitle}>Attendees Management</h2>
+              <div className={styles.badgeGroup}>
+                <Badge className={styles.statsBadge} size="lg" variant="light" radius="sm">
+                  {roleCounts.total || 0} Total
+                </Badge>
+                <Badge size="lg" variant="light" color="red" radius="sm">
+                  {roleCounts.ADMIN || 0} Admins
+                </Badge>
+                <Badge size="lg" variant="light" color="orange" radius="sm">
+                  {roleCounts.ORGANIZER || 0} Organizers
+                </Badge>
+                <Badge size="lg" variant="light" color="blue" radius="sm">
+                  {roleCounts.SPEAKER || 0} Speakers
+                </Badge>
+                <Badge size="lg" variant="light" color="gray" radius="sm">
+                  {roleCounts.ATTENDEE || 0} Attendees
+                </Badge>
+              </div>
+            </div>
+            <Group>
+              <Menu shadow="md" width={200}>
+                <Menu.Target>
+                  <ActionIcon className={styles.actionIcon} variant="subtle" size="lg">
+                    <IconDots size={20} />
+                  </ActionIcon>
+                </Menu.Target>
+                <Menu.Dropdown className={styles.menuDropdown}>
+                  <Menu.Item
+                    className={styles.menuItem}
+                    leftSection={<IconDownload size={16} />}
+                    onClick={handleExport}
+                  >
+                    Export to CSV
+                  </Menu.Item>
+                  <Menu.Item
+                    className={styles.menuItem}
+                    leftSection={<IconUpload size={16} />}
+                    onClick={handleImport}
+                  >
+                    Import from CSV
+                  </Menu.Item>
+                </Menu.Dropdown>
+              </Menu>
+              <Button
+                variant="primary"
+                onClick={() => setInviteModalOpen(true)}
               >
-                Export to CSV
-              </Menu.Item>
-              <Menu.Item
-                leftSection={<IconUpload size={16} />}
-                onClick={handleImport}
-              >
-                Import from CSV
-              </Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
-          <Button
-            leftSection={<IconPlus size={18} />}
-            onClick={() => setInviteModalOpen(true)}
-          >
-            Invite Attendees
-          </Button>
-        </Group>
-      </Group>
-
-      <Tabs value={activeTab} onChange={handleTabChange}>
-        <Tabs.List mb="xl">
-          <Tabs.Tab value="attendees">
-            Attendees ({roleCounts.total || 0})
-          </Tabs.Tab>
-          <Tabs.Tab value="invitations">
-            Pending Invitations ({invitationsData?.total_items || 0})
-          </Tabs.Tab>
-        </Tabs.List>
-
-        <Tabs.Panel value="attendees">
-          <Group mb="md" grow>
-            <TextInput
-              placeholder="Search by name, email, or company..."
-              leftSection={<IconSearch size={16} />}
-              value={filters.search}
-              onChange={(e) => handleSearch(e.target.value)}
-            />
-            <Select
-              placeholder="Filter by role"
-              leftSection={<IconFilter size={16} />}
-              value={filters.role}
-              onChange={handleRoleFilter}
-              data={[
-                { value: 'ALL', label: 'All Roles' },
-                { value: 'ADMIN', label: 'Admins' },
-                { value: 'ORGANIZER', label: 'Organizers' },
-                { value: 'SPEAKER', label: 'Speakers' },
-                { value: 'ATTENDEE', label: 'Attendees' },
-              ]}
-            />
+                <IconPlus size={18} style={{ marginRight: '0.5rem' }} />
+                Invite Attendees
+              </Button>
+            </Group>
           </Group>
+        </section>
 
-          <LoadingOverlay visible={isLoadingAttendees} />
-          <AttendeesList
-            attendees={sortedAttendees}
-            currentUserRole={currentUserRole}
-            onUpdateRole={(user) => {
-              setRoleUpdateModal({ open: true, user });
-            }}
-            onSort={handleSort}
-            sortBy={filters.sortBy}
-            sortOrder={filters.sortOrder}
-          />
-          {attendeesData?.total_pages > 1 && (
-            <Group justify="center" mt="xl">
-              <Pagination
-                value={page}
-                onChange={setPage}
-                total={attendeesData.total_pages}
+        {/* Main Content Section */}
+        <section className={styles.mainContent}>
+          <Tabs value={activeTab} onChange={handleTabChange}>
+            <Tabs.List className={styles.tabsList}>
+              <Tabs.Tab value="attendees">
+                Attendees ({roleCounts.total || 0})
+              </Tabs.Tab>
+              <Tabs.Tab value="invitations">
+                Pending Invitations ({invitationsData?.total_items || 0})
+              </Tabs.Tab>
+            </Tabs.List>
+
+            <Tabs.Panel value="attendees">
+              <div className={styles.searchFilterContainer}>
+                <TextInput
+                  className={styles.searchInput}
+                  placeholder="Search by name, email, or company..."
+                  leftSection={<IconSearch size={16} />}
+                  value={filters.search}
+                  onChange={(e) => handleSearch(e.target.value)}
+                  size="md"
+                />
+                <Select
+                  className={styles.filterSelect}
+                  placeholder="Filter by role"
+                  leftSection={<IconFilter size={16} />}
+                  value={filters.role}
+                  onChange={handleRoleFilter}
+                  size="md"
+                  data={[
+                    { value: 'ALL', label: 'All Roles' },
+                    { value: 'ADMIN', label: 'Admins' },
+                    { value: 'ORGANIZER', label: 'Organizers' },
+                    { value: 'SPEAKER', label: 'Speakers' },
+                    { value: 'ATTENDEE', label: 'Attendees' },
+                  ]}
+                />
+              </div>
+
+              <LoadingOverlay visible={isLoadingAttendees} />
+              <AttendeesList
+                attendees={sortedAttendees}
+                currentUserRole={currentUserRole}
+                onUpdateRole={(user) => {
+                  setRoleUpdateModal({ open: true, user });
+                }}
+                onSort={handleSort}
+                sortBy={filters.sortBy}
+                sortOrder={filters.sortOrder}
               />
-            </Group>
-          )}
-        </Tabs.Panel>
+              {attendeesData?.total_pages > 1 && (
+                <Group justify="center" mt="xl">
+                  <Pagination
+                    value={page}
+                    onChange={setPage}
+                    total={attendeesData.total_pages}
+                  />
+                </Group>
+              )}
+            </Tabs.Panel>
 
-        <Tabs.Panel value="invitations">
-          <LoadingOverlay visible={isLoadingInvitations} />
-          <PendingInvitations
-            invitations={invitationsData?.invitations || []}
-            onRefresh={refetchInvitations}
-          />
-          {invitationsData?.total_pages > 1 && (
-            <Group justify="center" mt="xl">
-              <Pagination
-                value={invitationsPage}
-                onChange={setInvitationsPage}
-                total={invitationsData.total_pages}
+            <Tabs.Panel value="invitations">
+              <LoadingOverlay visible={isLoadingInvitations} />
+              <PendingInvitations
+                invitations={invitationsData?.invitations || []}
+                onRefresh={refetchInvitations}
               />
-            </Group>
-          )}
-        </Tabs.Panel>
-      </Tabs>
+              {invitationsData?.total_pages > 1 && (
+                <Group justify="center" mt="xl">
+                  <Pagination
+                    value={invitationsPage}
+                    onChange={setInvitationsPage}
+                    total={invitationsData.total_pages}
+                  />
+                </Group>
+              )}
+            </Tabs.Panel>
+          </Tabs>
+        </section>
 
-      <InviteModal
-        opened={inviteModalOpen}
-        onClose={() => setInviteModalOpen(false)}
-        eventId={eventId}
-        onSuccess={() => {
-          refetchInvitations();
-          setActiveTab('invitations');
-        }}
-      />
+        <InviteModal
+          opened={inviteModalOpen}
+          onClose={() => setInviteModalOpen(false)}
+          eventId={eventId}
+          onSuccess={() => {
+            refetchInvitations();
+            setActiveTab('invitations');
+          }}
+        />
 
-      <RoleUpdateModal
-        opened={roleUpdateModal.open}
-        onClose={() => setRoleUpdateModal({ open: false, user: null })}
-        user={roleUpdateModal.user}
-        eventId={eventId}
-        currentUserRole={currentUserRole}
-        onSuccess={refetchAttendees}
-      />
-    </Container>
+        <RoleUpdateModal
+          opened={roleUpdateModal.open}
+          onClose={() => setRoleUpdateModal({ open: false, user: null })}
+          user={roleUpdateModal.user}
+          eventId={eventId}
+          currentUserRole={currentUserRole}
+          onSuccess={refetchAttendees}
+        />
+      </div>
+    </div>
   );
 };
 
