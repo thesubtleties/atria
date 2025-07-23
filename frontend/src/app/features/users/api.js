@@ -36,6 +36,19 @@ export const usersApi = baseApi.injectEndpoints({
       }),
       providesTags: ['Sessions'],
     }),
+    getUserDashboard: builder.query({
+      query: (userId) => ({
+        url: `/users/${userId}/dashboard`,
+      }),
+      providesTags: (result, error, userId) => [
+        { type: 'Dashboard', id: userId },
+        'Organizations',
+        'Events',
+        'Connections'
+      ],
+      // Cache for 5 minutes
+      keepUnusedDataFor: 300,
+    }),
   }),
 });
 
@@ -45,4 +58,5 @@ export const {
   useUpdateUserMutation,
   useGetUserEventsQuery,
   useGetUserSpeakingSessionsQuery,
+  useGetUserDashboardQuery,
 } = usersApi;

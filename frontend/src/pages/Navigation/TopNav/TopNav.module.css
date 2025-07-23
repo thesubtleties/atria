@@ -1,16 +1,22 @@
 .navbar {
   width: 100%;
-  height: 5rem;
+  height: 100%;
+  background: rgba(106, 45, 204, 0.808);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1rem 0;
+  z-index: 100;
+}
+
+.navContent {
+  max-width: 1400px;
+  margin: 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
   padding: 0 2rem;
-  background-color: #ffffff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1000;
 }
 
 .navLeft {
@@ -24,4 +30,58 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
+  gap: 1rem;
+}
+
+.atriaTitle {
+  font-family:
+    'M Plus 2',
+    system-ui,
+    -apple-system,
+    sans-serif;
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.atriaTitle:hover {
+  opacity: 0.9;
+}
+
+/* Burger menu wrapper */
+.burgerWrapper {
+  position: fixed;
+  left: 2rem;
+  z-index: 101;
+}
+
+/* Special case for navbar with burger in event */
+.navbarWithBurger .navContent {
+  max-width: none; /* Remove max-width constraint */
+  padding: 0 2rem;
+}
+
+/* Style the burger button to be white */
+.burgerWrapper :global(.mantine-Burger) {
+  color: #ffffff;
+}
+
+/* Media query for mobile */
+@media (max-width: 768px) {
+  .navContent {
+    padding: 0 1rem;
+  }
+
+  .burgerWrapper {
+    left: 1rem;
+  }
+
+  .navbarWithBurger .navContent {
+    max-width: none; /* Remove max-width constraint on mobile too */
+    padding: 0 1rem;
+  }
 }

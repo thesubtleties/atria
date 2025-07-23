@@ -87,13 +87,13 @@ export function ConnectionRow({ connection }) {
         </div>
       </Table.Td>
       
-      <Table.Td>
+      <Table.Td style={{ textAlign: 'center' }}>
         {connection.originating_event ? (
           <Badge 
             variant="light" 
             size="md"
             radius="sm"
-            color="blue"
+            color="gray"
           >
             {connection.originating_event.title}
           </Badge>
@@ -103,7 +103,7 @@ export function ConnectionRow({ connection }) {
       </Table.Td>
       
       <Table.Td>
-        <Group gap="xs">
+        <Group gap="xs" justify="center">
           {otherUser.social_links?.linkedin && (
             <ActionIcon
               size="sm"
@@ -143,7 +143,7 @@ export function ConnectionRow({ connection }) {
         )}
       </Table.Td>
       
-      <Table.Td>
+      <Table.Td style={{ textAlign: 'center' }}>
         <Text size="sm" c="dimmed">
           {formatDate(connection.created_at)}
         </Text>
@@ -153,7 +153,8 @@ export function ConnectionRow({ connection }) {
         <Group justify="center">
           <Button
             size="xs"
-            variant="light"
+            variant="filled"
+            color="violet"
             leftSection={<IconMessageCircle size={14} />}
             onClick={handleMessage}
             loading={isMessaging || isCreatingThread}

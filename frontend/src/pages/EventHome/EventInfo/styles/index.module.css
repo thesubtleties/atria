@@ -1,7 +1,7 @@
 /* pages/EventHome/EventInfo/styles/index.module.css */
 .eventInfo {
-  padding: 2rem 1rem;
-  background-color: var(--mantine-color-gray-0);
+  padding: 0 2rem;
+  margin-bottom: 3rem;
 }
 
 .container {
@@ -12,7 +12,70 @@
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1rem;
+  gap: 1.5rem;
+}
+
+.infoCard {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+  padding: 2rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.02);
+}
+
+.infoCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.04);
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.iconWrapper {
+  background: rgba(139, 92, 246, 0.08);
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.icon {
+  color: #8B5CF6;
+}
+
+.cardContent {
+  flex: 1;
+}
+
+.cardTitle {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #94A3B8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 0.5rem 0;
+}
+
+.cardText {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1E293B;
+  margin: 0 0 0.25rem 0;
+  line-height: 1.4;
+}
+
+.cardSubtext {
+  font-size: 0.95rem;
+  color: #64748B;
+  margin: 0;
+  line-height: 1.4;
 }
 
 @media (max-width: 768px) {

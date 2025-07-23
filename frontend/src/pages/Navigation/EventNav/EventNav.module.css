@@ -1,3 +1,31 @@
 .container {
-  padding: var(--mantine-spacing-md);
+  padding: 1.5rem;
+  background: rgba(251, 250, 255, 0.9);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 2px 0 8px rgba(139, 92, 246, 0.05);
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* Override Mantine AppShell.Navbar styles */
+:global(.mantine-AppShell-navbar) {
+  border-right: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  top: 60px !important; /* Align with header height */
+}
+
+.header {
+  padding: 0 1rem;
+}
+
+.header :global(.mantine-Text-root) {
+  color: #8B5CF6;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.875rem;
 }

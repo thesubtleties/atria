@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Container, Title, TextInput, Group, Badge, Text } from '@mantine/core';
+import { TextInput } from '@mantine/core';
 import { IconSearch } from '@tabler/icons-react';
 import { useGetConnectionsQuery } from '@/app/features/networking/api';
 import { useSelector } from 'react-redux';
@@ -37,41 +37,47 @@ export default function NetworkPage() {
   }) || [];
 
   return (
-    <Container size="xl" className={styles.container}>
-      <div className={styles.header}>
-        <div>
-          <Title order={2}>My Network</Title>
-          <Text c="dimmed" size="sm">
-            Manage your professional connections across all events
-          </Text>
+    <div className={styles.pageContainer}>
+      {/* Background Shapes */}
+      <div className={styles.bgShape1} />
+      <div className={styles.bgShape2} />
+
+      {/* Page Header */}
+      <section className={styles.pageHeader}>
+        <h1 className={styles.pageTitle}>My Network</h1>
+        <p className={styles.pageSubtitle}>
+          Manage your professional connections across all events
+        </p>
+      </section>
+
+      {/* Main Content */}
+      <section className={styles.contentSection}>
+        <div className={styles.sectionHeader}>
+          <h2 className={styles.sectionTitle}>Connections</h2>
+          <div className={styles.connectionCount}>
+            {data?.total_items || 0} total
+          </div>
         </div>
-        <Badge 
-          size="lg" 
-          variant="filled"
-          radius="sm"
-          color="blue"
-        >
-          {data?.total_items || 0} connections
-        </Badge>
-      </div>
 
-      <Group className={styles.controls}>
-        <TextInput
-          placeholder="Search by name, company, title, or event..."
-          leftSection={<IconSearch size={16} />}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className={styles.searchInput}
+        <div className={styles.searchWrapper}>
+          <TextInput
+            placeholder="Search by name, company, title, or event..."
+            leftSection={<IconSearch size={16} />}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className={styles.searchInput}
+            size="md"
+          />
+        </div>
+
+        <ConnectionsList
+          connections={filteredConnections}
+          isLoading={isLoading}
+          error={error}
+          pagination={data?.pagination}
+          onPageChange={setPage}
         />
-      </Group>
-
-      <ConnectionsList
-        connections={filteredConnections}
-        isLoading={isLoading}
-        error={error}
-        pagination={data?.pagination}
-        onPageChange={setPage}
-      />
-    </Container>
+      </section>
+    </div>
   );
 }

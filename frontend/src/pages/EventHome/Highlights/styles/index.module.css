@@ -1,19 +1,18 @@
 /* pages/EventHome/Highlights/styles/index.module.css */
 .highlights {
-  padding: 4rem 1rem;
-  background-color: var(--background-alt, #f8f9fa);
+  padding: 0 2rem;
+  margin-bottom: 3rem;
 }
 
 .container {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   gap: 2rem;
-  padding: 1rem;
 }
 
 @media (max-width: 768px) {

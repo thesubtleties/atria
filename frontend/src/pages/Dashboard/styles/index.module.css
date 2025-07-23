@@ -1,0 +1,125 @@
+/* Dashboard container */
+.dashboard {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+  position: relative;
+  min-height: 100vh;
+}
+
+/* Background Organic Shapes */
+.bgShape1 {
+  position: absolute;
+  width: 300px;
+  height: 250px;
+  background: linear-gradient(45deg, #F59E0B, #EAB308);
+  border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
+  top: 100px;
+  right: -100px;
+  opacity: 0.05;
+  animation: float 12s ease-in-out infinite;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.bgShape2 {
+  position: absolute;
+  width: 400px;
+  height: 300px;
+  background: linear-gradient(135deg, #EC4899, #F472B6);
+  border-radius: 74% 26% 47% 53% / 68% 46% 54% 32%;
+  bottom: 200px;
+  left: -150px;
+  opacity: 0.06;
+  animation: float 15s ease-in-out infinite reverse;
+  z-index: 1;
+  pointer-events: none;
+}
+
+@keyframes float {
+  0%, 100% { 
+    transform: translateY(0px) rotate(0deg) scale(1); 
+  }
+  33% { 
+    transform: translateY(-20px) rotate(2deg) scale(1.02); 
+  }
+  66% { 
+    transform: translateY(15px) rotate(-1deg) scale(0.98); 
+  }
+}
+
+/* Dashboard Grid */
+.dashboardGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  position: relative;
+  z-index: 10;
+  margin-top: 2rem;
+}
+
+/* Dashboard Sections */
+.dashboardSection {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 8px;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
+  position: relative;
+  z-index: 10;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1E293B;
+  margin: 0;
+}
+
+/* Full Width Sections */
+.fullWidth {
+  grid-column: 1 / -1;
+}
+
+/* Error Container */
+.errorContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .dashboardGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 1rem;
+  }
+  
+  .dashboardSection {
+    padding: 1.5rem;
+  }
+  
+  .sectionTitle {
+    font-size: 1.25rem;
+  }
+  
+  .bgShape1,
+  .bgShape2 {
+    display: none;
+  }
+}

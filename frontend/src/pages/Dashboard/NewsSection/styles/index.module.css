@@ -1,0 +1,159 @@
+.dashboardSection {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  border-radius: 8px;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1E293B;
+  margin: 0;
+}
+
+.newsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.newsItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.06);
+  transition: all 0.2s ease;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+}
+
+.newsItem:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.platformUpdateItem {
+  background: #FAFAFF;
+  border: 1px solid #F1F0FF;
+}
+
+.platformUpdateItem:hover {
+  background: #F5F4FF;
+}
+
+.productLaunchItem {
+  background: #FAFFFA;
+  border: 1px solid #F0FFF0;
+}
+
+.productLaunchItem:hover {
+  background: #F4FFF4;
+}
+
+.featureReleaseItem {
+  background: #FFFEFA;
+  border: 1px solid #FFF8F0;
+}
+
+.featureReleaseItem:hover {
+  background: #FFFCF4;
+}
+
+.securityItem {
+  background: #FFFAFA;
+  border: 1px solid #FFF0F0;
+}
+
+.securityItem:hover {
+  background: #FFF4F4;
+}
+
+.newsDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-top: 0.5rem;
+  flex-shrink: 0;
+}
+
+.newsDot.new {
+  background: #10B981;
+}
+
+.newsDot.recent {
+  background: #F59E0B;
+}
+
+.newsDot.older {
+  background: #94A3B8;
+}
+
+.newsContent {
+  flex: 1;
+}
+
+.newsTitle {
+  font-weight: 600;
+  color: #1E293B;
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+}
+
+.newsDescription {
+  color: #64748B;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  margin-bottom: 0.5rem;
+}
+
+.newsMeta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.8rem;
+  color: #94A3B8;
+}
+
+.newsTag {
+  padding: 0.125rem 0.5rem;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.newsTag.platformUpdate {
+  background: rgba(139, 92, 246, 0.15);
+  color: #7C3AED;
+}
+
+.newsTag.productLaunch {
+  background: rgba(34, 197, 94, 0.15);
+  color: #059669;
+}
+
+.newsTag.featureRelease {
+  background: rgba(245, 158, 11, 0.15);
+  color: #D97706;
+}
+
+.newsTag.security {
+  background: rgba(239, 68, 68, 0.15);
+  color: #DC2626;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 2rem;
+  color: #64748B;
+}

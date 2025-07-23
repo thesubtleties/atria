@@ -1,26 +1,36 @@
 /* pages/EventHome/Welcome/styles/index.module.css */
 .welcome {
-  padding: 4rem 1rem;
-  background-color: var(--background-color, #ffffff);
+  padding: 0 2rem;
+  margin-bottom: 3rem;
 }
 
 .container {
-  max-width: 800px;
+  max-width: 1000px;
   margin: 0 auto;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 8px;
+  padding: 3rem;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
   text-align: center;
 }
 
 .title {
-  font-size: 2rem;
-  font-weight: bold;
+  font-size: 2.5rem;
+  font-weight: 300;
   margin-bottom: 1.5rem;
-  color: var(--text-primary, #1a1a1a);
+  color: #8B5CF6;
+  letter-spacing: -0.02em;
 }
 
 .content {
-  font-size: 1.125rem;
-  line-height: 1.7;
-  color: var(--text-secondary, #4a4a4a);
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #64748B;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 @media (max-width: 768px) {

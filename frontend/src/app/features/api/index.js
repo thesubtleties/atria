@@ -17,10 +17,12 @@ export const baseApi = createApi({
     'SessionChatRoom',
     'Attendee',
     'Connection',
+    'Connections',
     'Thread',
     'DirectMessage',
     'Sponsor',
     'SponsorTiers',
+    'Dashboard',
   ],
   endpoints: () => ({}),
 });

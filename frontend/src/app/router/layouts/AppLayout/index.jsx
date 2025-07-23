@@ -86,7 +86,7 @@ export const AppLayout = () => {
   return (
     <AppShell
       className={styles.layout}
-      header={{ height: 82 }}
+      header={{ height: 60 }}
       navbar={
         showEventNav
           ? {
@@ -108,12 +108,16 @@ export const AppLayout = () => {
                   onClick={toggleMobile}
                   hiddenFrom="sm"
                   size="sm"
+                  color="#FFD666"
+                  transitionDuration={200}
                 />
                 <Burger
                   opened={desktopOpened}
                   onClick={toggleDesktop}
                   visibleFrom="sm"
                   size="sm"
+                  color="#FFD666"
+                  transitionDuration={200}
                 />
               </>
             )
@@ -122,7 +126,7 @@ export const AppLayout = () => {
       </AppShell.Header>
 
       {showEventNav && (
-        <AppShell.Navbar p="md">
+        <AppShell.Navbar>
           <EventNav eventId={eventId} isAdmin={isAdmin} />
         </AppShell.Navbar>
       )}

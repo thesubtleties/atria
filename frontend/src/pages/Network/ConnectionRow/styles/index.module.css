@@ -1,20 +1,16 @@
-.row {
-  transition: background-color 0.2s ease;
-}
-
-.row:hover {
-  background-color: var(--mantine-color-gray-0);
-}
-
 .row td {
   padding: 1rem;
+  color: #1E293B;
+  font-size: 0.9rem;
 }
 
 .emailLink {
-  color: var(--mantine-color-blue-6);
+  color: #8B5CF6;
   text-decoration: none;
+  transition: opacity 0.2s ease;
 }
 
 .emailLink:hover {
+  opacity: 0.8;
   text-decoration: underline;
 }
