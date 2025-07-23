@@ -11,28 +11,28 @@
 /* Background Organic Shapes */
 .bgShape1 {
   position: absolute;
-  width: 350px;
-  height: 350px;
-  background: linear-gradient(45deg, #8B5CF6, #A855F7);
-  border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
-  top: 150px;
-  right: -150px;
-  opacity: 0.04;
-  animation: float 15s ease-in-out infinite;
+  width: 280px;
+  height: 320px;
+  background: linear-gradient(135deg, #EC4899, #F472B6);
+  border-radius: 42% 58% 70% 30% / 45% 30% 70% 55%;
+  top: 200px;
+  right: -120px;
+  opacity: 0.05;
+  animation: float 20s ease-in-out infinite;
   z-index: 1;
   pointer-events: none;
 }
 
 .bgShape2 {
   position: absolute;
-  width: 250px;
-  height: 200px;
-  background: linear-gradient(135deg, #FFD666, #F59E0B);
-  border-radius: 74% 26% 47% 53% / 68% 46% 54% 32%;
-  bottom: 100px;
-  left: -100px;
-  opacity: 0.05;
-  animation: float 18s ease-in-out infinite reverse;
+  width: 300px;
+  height: 250px;
+  background: linear-gradient(45deg, #06B6D4, #0891B2);
+  border-radius: 30% 70% 53% 47% / 26% 46% 54% 74%;
+  bottom: 150px;
+  left: -130px;
+  opacity: 0.04;
+  animation: float 25s ease-in-out infinite reverse;
   z-index: 1;
   pointer-events: none;
 }
