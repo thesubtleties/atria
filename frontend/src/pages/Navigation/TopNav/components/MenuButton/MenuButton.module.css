@@ -1,20 +1,44 @@
 .menuButton {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 8px;
+  position: relative;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
-  transition: background-color 0.2s ease;
 }
 
-.menuButton:hover {
-  background: rgba(255, 255, 255, 0.1);
+.menuButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, rgba(139, 92, 246, 0.1), rgba(168, 85, 247, 0.1));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: 6px;
+}
+
+.menuButton:hover::before {
+  opacity: 1;
 }
 
 .menuIcon {
-  font-size: 1.5rem;
-  color: #FFFFFF;
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 1px 2px rgba(139, 92, 246, 0.1));
+  display: block;
+}
+
+.logoutItem {
+  color: #DC2626 !important;
+}
+
+.logoutItem svg {
+  color: #DC2626 !important;
+}
+
+.logoutItem:hover {
+  background-color: rgba(220, 38, 38, 0.08) !important;
+  color: #B91C1C !important;
 }
