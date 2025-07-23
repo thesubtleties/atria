@@ -108,7 +108,7 @@ export const AppLayout = () => {
                   onClick={toggleMobile}
                   hiddenFrom="sm"
                   size="sm"
-                  color={mobileOpened ? "#8B5CF6" : "#FFD93D"}
+                  color={mobileOpened ? "#8B5CF6" : "#FFD666"}
                   transitionDuration={200}
                 />
                 <Burger
@@ -116,7 +116,7 @@ export const AppLayout = () => {
                   onClick={toggleDesktop}
                   visibleFrom="sm"
                   size="sm"
-                  color={desktopOpened ? "#8B5CF6" : "#FFD93D"}
+                  color={desktopOpened ? "#8B5CF6" : "#FFD666"}
                   transitionDuration={200}
                 />
               </>

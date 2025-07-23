@@ -1,17 +1,38 @@
 .table {
-  background: white;
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 6px;
   overflow: hidden;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.03);
 }
 
 .table thead tr {
-  background-color: var(--mantine-color-gray-0);
+  background: rgba(139, 92, 246, 0.04);
+  border-bottom: 1px solid rgba(139, 92, 246, 0.08);
 }
 
 .table th {
-  font-weight: 600;
-  color: var(--mantine-color-gray-7);
+  font-weight: 500;
+  color: #64748B;
   padding: 1rem;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.table tbody tr {
+  border-bottom: 1px solid rgba(139, 92, 246, 0.04);
+  transition: background-color 0.2s ease;
+}
+
+.table tbody tr:hover {
+  background: rgba(139, 92, 246, 0.02);
+}
+
+.table tbody tr:last-child {
+  border-bottom: none;
 }
 
 .pagination {
