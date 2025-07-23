@@ -4,7 +4,6 @@ import {
   TextInput,
   Select,
   Textarea,
-  Button,
   Group,
   Stack,
   Tabs,
@@ -20,6 +19,8 @@ import {
   useSendEventInvitationMutation,
   useSendBulkEventInvitationsMutation,
 } from '../../../../app/features/eventInvitations/api';
+import { Button } from '../../../../shared/components/buttons';
+import styles from './styles.module.css';
 
 const InviteModal = ({ opened, onClose, eventId, onSuccess }) => {
   const [activeTab, setActiveTab] = useState('single');
@@ -173,24 +174,37 @@ const InviteModal = ({ opened, onClose, eventId, onSuccess }) => {
       onClose={handleClose}
       title="Invite Attendees"
       size="lg"
+      classNames={{
+        content: styles.modalContent,
+        header: styles.modalHeader,
+      }}
     >
-      <Tabs value={activeTab} onChange={setActiveTab}>
-        <Tabs.List>
-          <Tabs.Tab value="single" leftSection={<IconUserPlus size={16} />}>
+      <Tabs value={activeTab} onChange={setActiveTab} className={styles.tabsContainer}>
+        <Tabs.List className={styles.tabsList}>
+          <Tabs.Tab 
+            value="single" 
+            leftSection={<IconUserPlus size={16} />}
+            className={styles.tab}
+          >
             Single Invitation
           </Tabs.Tab>
-          <Tabs.Tab value="bulk" leftSection={<IconUsers size={16} />}>
+          <Tabs.Tab 
+            value="bulk" 
+            leftSection={<IconUsers size={16} />}
+            className={styles.tab}
+          >
             Bulk Invitations
           </Tabs.Tab>
         </Tabs.List>
 
-        <Tabs.Panel value="single" pt="xl">
+        <Tabs.Panel value="single" className={styles.tabPanel}>
           <form onSubmit={singleForm.onSubmit(handleSingleSubmit)}>
-            <Stack>
+            <Stack spacing="md">
               <TextInput
                 label="Email Address"
                 placeholder="attendee@example.com"
                 required
+                className={styles.formInput}
                 {...singleForm.getInputProps('email')}
               />
 
@@ -198,6 +212,7 @@ const InviteModal = ({ opened, onClose, eventId, onSuccess }) => {
                 label="Role"
                 data={roleOptions}
                 required
+                className={styles.formSelect}
                 {...singleForm.getInputProps('role')}
               />
 
@@ -205,30 +220,31 @@ const InviteModal = ({ opened, onClose, eventId, onSuccess }) => {
                 label="Personal Message"
                 placeholder="Add a personal message to the invitation (optional)"
                 rows={3}
+                className={styles.formTextarea}
                 {...singleForm.getInputProps('message')}
               />
 
-              <Alert icon={<IconAlertCircle size={16} />} color="blue">
+              <Alert icon={<IconAlertCircle size={16} />} className={styles.infoAlert}>
                 <Text size="sm">
                   The recipient will receive an email invitation to join your event.
                   If they don't have an account, they'll be prompted to create one.
                 </Text>
               </Alert>
 
-              <Group justify="flex-end" mt="md">
-                <Button variant="light" onClick={handleClose}>
-                  Cancel
-                </Button>
-                <Button type="submit" loading={isSending}>
-                  Send Invitation
-                </Button>
-              </Group>
             </Stack>
+            <Group justify="flex-end" className={styles.buttonGroup}>
+              <Button variant="secondary" onClick={handleClose}>
+                Cancel
+              </Button>
+              <Button type="submit" variant="primary" disabled={isSending}>
+                {isSending ? 'Sending...' : 'Send Invitation'}
+              </Button>
+            </Group>
           </form>
         </Tabs.Panel>
 
-        <Tabs.Panel value="bulk" pt="xl">
-          <Stack>
+        <Tabs.Panel value="bulk" className={styles.tabPanel}>
+          <Stack spacing="md">
             <Textarea
               label="Email Addresses"
               placeholder="Enter email addresses separated by commas, semicolons, or new lines"
@@ -237,6 +253,7 @@ const InviteModal = ({ opened, onClose, eventId, onSuccess }) => {
               value={bulkEmails}
               onChange={(e) => setBulkEmails(e.target.value)}
               required
+              className={styles.formTextarea}
             />
 
             <Select
@@ -244,6 +261,7 @@ const InviteModal = ({ opened, onClose, eventId, onSuccess }) => {
               description="All invitees will be assigned this role"
               data={roleOptions}
               required
+              className={styles.formSelect}
               {...bulkForm.getInputProps('role')}
             />
 
@@ -251,25 +269,26 @@ const InviteModal = ({ opened, onClose, eventId, onSuccess }) => {
               label="Personal Message"
               placeholder="Add a personal message to all invitations (optional)"
               rows={3}
+              className={styles.formTextarea}
               {...bulkForm.getInputProps('message')}
             />
 
-            <Alert icon={<IconAlertCircle size={16} />} color="blue">
+            <Alert icon={<IconAlertCircle size={16} />} className={styles.infoAlert}>
               <Text size="sm">
                 You can invite up to 100 people at once. Each person will receive
                 an individual invitation email.
               </Text>
             </Alert>
 
-            <Group justify="flex-end" mt="md">
-              <Button variant="light" onClick={handleClose}>
-                Cancel
-              </Button>
-              <Button onClick={handleBulkSubmit} loading={isSendingBulk}>
-                Send Invitations
-              </Button>
-            </Group>
           </Stack>
+          <Group justify="flex-end" className={styles.buttonGroup}>
+            <Button variant="secondary" onClick={handleClose}>
+              Cancel
+            </Button>
+            <Button onClick={handleBulkSubmit} variant="primary" disabled={isSendingBulk}>
+              {isSendingBulk ? 'Sending...' : 'Send Invitations'}
+            </Button>
+          </Group>
         </Tabs.Panel>
       </Tabs>
     </Modal>

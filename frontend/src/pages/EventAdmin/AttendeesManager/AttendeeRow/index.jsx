@@ -111,12 +111,13 @@ const AttendeeRow = ({
           position="bottom-end"
         >
           <Menu.Target>
-            <ActionIcon variant="subtle" color="gray">
+            <ActionIcon variant="subtle" color="gray" className={styles.actionIcon}>
               <IconDots size={16} />
             </ActionIcon>
           </Menu.Target>
-          <Menu.Dropdown>
+          <Menu.Dropdown className={styles.menuDropdown}>
             <Menu.Item
+              className={styles.menuItem}
               leftSection={<IconUserCircle size={16} />}
               onClick={() => navigate(`/app/users/${attendee.user_id}`)}
             >
@@ -126,6 +127,7 @@ const AttendeeRow = ({
             {canManageUser && (
               <>
                 <Menu.Item
+                  className={styles.menuItem}
                   leftSection={<IconEdit size={16} />}
                   onClick={() => onUpdateRole(attendee)}
                 >
@@ -134,6 +136,7 @@ const AttendeeRow = ({
                 
                 {attendee.role === 'SPEAKER' && (
                   <Menu.Item
+                    className={styles.menuItem}
                     leftSection={<IconMicrophone size={16} />}
                     onClick={() => navigate(`/app/events/${attendee.event_id}/admin/speakers`)}
                   >
@@ -144,8 +147,8 @@ const AttendeeRow = ({
                 <Menu.Divider />
                 
                 <Menu.Item
+                  className={styles.menuItemDanger}
                   leftSection={<IconTrash size={16} />}
-                  color="red"
                   onClick={handleRemove}
                 >
                   Remove from Event
@@ -154,6 +157,7 @@ const AttendeeRow = ({
             )}
             
             <Menu.Item
+              className={styles.menuItem}
               leftSection={<IconMessage size={16} />}
               onClick={() => {
                 // TODO: Implement direct message
