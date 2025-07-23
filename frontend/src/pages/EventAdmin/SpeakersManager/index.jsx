@@ -1,11 +1,7 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
-  Box,
-  Button,
-  Container,
   Group,
-  Title,
   TextInput,
   LoadingOverlay,
   Badge,
@@ -26,6 +22,7 @@ import {
   useGetEventQuery,
   useGetEventUsersAdminQuery,
 } from '@/app/features/events/api';
+import { Button } from '../../../shared/components/buttons';
 import SpeakersList from './SpeakersList';
 import SpeakerEditModal from './SpeakerEditModal';
 import AddSpeakerModal from './AddSpeakerModal';
@@ -93,111 +90,139 @@ const SpeakersManager = () => {
 
   if (error) {
     return (
-      <Container size="xl" className={styles.container}>
-        <Text color="red" align="center">
-          Error loading speakers: {error.message}
-        </Text>
-        <Button onClick={refetch} mt="md">
-          Retry
-        </Button>
-      </Container>
+      <div className={styles.container}>
+        <div className={styles.bgShape1} />
+        <div className={styles.bgShape2} />
+        
+        <div className={styles.contentWrapper}>
+          <section className={styles.mainContent}>
+            <div style={{ textAlign: 'center', padding: '3rem' }}>
+              <Text c="red" size="lg" mb="md">
+                Error loading speakers: {error.message}
+              </Text>
+              <Button 
+                variant="primary"
+                onClick={refetch}
+              >
+                Retry
+              </Button>
+            </div>
+          </section>
+        </div>
+      </div>
     );
   }
 
   return (
-    <Container size="xl" className={styles.container}>
-      <Group justify="space-between" mb="xl">
-        <div>
-          <Title order={2}>Speakers Management</Title>
-          <Group mt="xs" gap="xs">
-            <Badge size="lg" variant="light" radius="sm" color="blue">
-              {speakerCounts.total} Total Speakers
-            </Badge>
-            <Badge size="lg" variant="light" radius="sm" color="green">
-              {speakerCounts.withSessions} Assigned
-            </Badge>
-            <Badge size="lg" variant="light" radius="sm" color="gray">
-              {speakerCounts.withoutSessions} Unassigned
-            </Badge>
+    <div className={styles.container}>
+      {/* Background Shapes */}
+      <div className={styles.bgShape1} />
+      <div className={styles.bgShape2} />
+
+      <div className={styles.contentWrapper}>
+        {/* Header Section */}
+        <section className={styles.headerSection}>
+          <Group justify="space-between" align="flex-start">
+            <div>
+              <h2 className={styles.pageTitle}>Speakers Management</h2>
+              <div className={styles.badgeGroup}>
+                <Badge className={styles.statsBadge} size="lg" variant="light" radius="sm">
+                  {speakerCounts.total} Total
+                </Badge>
+                <Badge size="lg" variant="light" color="green" radius="sm">
+                  {speakerCounts.withSessions} Assigned
+                </Badge>
+                <Badge size="lg" variant="light" color="gray" radius="sm">
+                  {speakerCounts.withoutSessions} Unassigned
+                </Badge>
+              </div>
+            </div>
+            <Group>
+              <Menu shadow="md" width={200}>
+                <Menu.Target>
+                  <ActionIcon className={styles.actionIcon} variant="subtle" size="lg">
+                    <IconDots size={20} />
+                  </ActionIcon>
+                </Menu.Target>
+                <Menu.Dropdown className={styles.menuDropdown}>
+                  <Menu.Item
+                    className={styles.menuItem}
+                    leftSection={<IconDownload size={16} />}
+                    onClick={handleExport}
+                  >
+                    Export to CSV
+                  </Menu.Item>
+                  <Menu.Item
+                    className={styles.menuItem}
+                    leftSection={<IconRefresh size={16} />}
+                    onClick={refetch}
+                  >
+                    Refresh List
+                  </Menu.Item>
+                </Menu.Dropdown>
+              </Menu>
+              <Button
+                variant="primary"
+                onClick={handleAddSpeaker}
+              >
+                <IconPlus size={18} />
+                Add Speaker
+              </Button>
+            </Group>
           </Group>
-        </div>
-        <Group>
-          <Menu shadow="md" width={200}>
-            <Menu.Target>
-              <ActionIcon variant="subtle" size="lg">
-                <IconDots size={20} />
-              </ActionIcon>
-            </Menu.Target>
-            <Menu.Dropdown>
-              <Menu.Item
-                leftSection={<IconDownload size={16} />}
-                onClick={handleExport}
-              >
-                Export to CSV
-              </Menu.Item>
-              <Menu.Item
-                leftSection={<IconRefresh size={16} />}
-                onClick={refetch}
-              >
-                Refresh List
-              </Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
-          <Button
-            leftSection={<IconPlus size={18} />}
-            onClick={handleAddSpeaker}
-          >
-            Add Speaker
-          </Button>
-        </Group>
-      </Group>
+        </section>
 
-      <Group mb="md">
-        <TextInput
-          placeholder="Search speakers by name, email, company, or title..."
-          leftSection={<IconSearch size={16} />}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          style={{ flex: 1 }}
-        />
-      </Group>
+        {/* Main Content Section */}
+        <section className={styles.mainContent}>
+          <div className={styles.searchContainer}>
+            <TextInput
+              className={styles.searchInput}
+              placeholder="Search speakers by name, email, company, or title..."
+              leftSection={<IconSearch size={16} />}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              size="md"
+            />
+          </div>
 
-      <LoadingOverlay visible={isLoading} />
-      <SpeakersList
-        speakers={filteredSpeakers}
-        currentUserRole={currentUserRole}
-        onEditSpeaker={handleEditSpeaker}
-        organizationId={eventData?.organization_id}
-      />
-      
-      {speakersData?.total_pages > 1 && (
-        <Group justify="center" mt="xl">
-          <Pagination
-            value={page}
-            onChange={setPage}
-            total={speakersData.total_pages}
+          <LoadingOverlay visible={isLoading} />
+          <SpeakersList
+            speakers={filteredSpeakers}
+            currentUserRole={currentUserRole}
+            onEditSpeaker={handleEditSpeaker}
+            organizationId={eventData?.organization_id}
           />
-        </Group>
-      )}
+          
+          {speakersData?.total_pages > 1 && (
+            <Group justify="center" mt="xl">
+              <Pagination
+                value={page}
+                onChange={setPage}
+                total={speakersData.total_pages}
+              />
+            </Group>
+          )}
+        </section>
 
-      <SpeakerEditModal
-        opened={editModalData.open}
-        onClose={() => setEditModalData({ open: false, speaker: null })}
-        speaker={editModalData.speaker}
-        eventId={eventId}
-        onSuccess={refetch}
-      />
+        <SpeakerEditModal
+          opened={editModalData.open}
+          onClose={() => setEditModalData({ open: false, speaker: null })}
+          speaker={editModalData.speaker}
+          eventId={eventId}
+          onSuccess={refetch}
+        />
 
-      <AddSpeakerModal
-        opened={addModalOpen}
-        onClose={() => setAddModalOpen(false)}
-        eventId={eventId}
-        onSuccess={() => {
-          refetch();
-          setAddModalOpen(false);
-        }}
-      />
-    </Container>
+        <AddSpeakerModal
+          opened={addModalOpen}
+          onClose={() => setAddModalOpen(false)}
+          eventId={eventId}
+          onSuccess={() => {
+            refetch();
+            setAddModalOpen(false);
+          }}
+        />
+      </div>
+    </div>
   );
 };
 

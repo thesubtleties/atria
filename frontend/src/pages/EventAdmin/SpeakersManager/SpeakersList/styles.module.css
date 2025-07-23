@@ -1,27 +1,73 @@
+/* Table Container - Glass Card Style */
 .tableContainer {
-  border: 1px solid var(--mantine-color-gray-3);
-  border-radius: var(--mantine-radius-md);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 6px;
   overflow: hidden;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.03);
 }
 
-.tableContainer table {
-  margin: 0;
+/* Table Header */
+.tableContainer thead tr {
+  background: rgba(139, 92, 246, 0.04);
+  border-bottom: 1px solid rgba(139, 92, 246, 0.08);
 }
 
+.tableContainer th {
+  font-weight: 500;
+  color: #64748B;
+  padding: 1rem;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Table Body */
+.tableContainer tbody tr {
+  border-bottom: 1px solid rgba(139, 92, 246, 0.04);
+  transition: background-color 0.2s ease;
+}
+
+.tableContainer tbody tr:hover {
+  background: rgba(139, 92, 246, 0.02);
+}
+
+.tableContainer tbody tr:last-child {
+  border-bottom: none;
+}
+
+.tableContainer td {
+  padding: 1rem;
+  color: #1E293B;
+  font-size: 0.9rem;
+}
+
+/* Empty State */
 .emptyState {
-  padding: 3rem 2rem;
+  padding: 4rem 2rem;
   text-align: center;
+  color: #64748B;
 }
 
+/* Sort Header */
 .sortHeader {
+  color: inherit;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition: all 0.2s ease;
+  font-weight: 500;
   cursor: pointer;
   user-select: none;
-  transition: background-color 0.1s;
   padding: 0.25rem 0.5rem;
   margin: -0.25rem -0.5rem;
-  border-radius: var(--mantine-radius-sm);
+  border-radius: 4px;
 }
 
 .sortHeader:hover {
-  background-color: var(--mantine-color-gray-1);
+  color: #8B5CF6;
+  background: rgba(139, 92, 246, 0.02);
 }

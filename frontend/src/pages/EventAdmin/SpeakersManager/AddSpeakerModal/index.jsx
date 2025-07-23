@@ -1,11 +1,13 @@
 import { useState } from 'react';
-import { Modal, Select, Button, Group, Stack, Text, Alert, Loader, Box } from '@mantine/core';
+import { Modal, Select, Group, Stack, Text, Alert, Loader, Box } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { 
   useGetEventUsersAdminQuery,
   useUpdateEventUserMutation,
 } from '@/app/features/events/api';
 import { IconInfoCircle, IconUserPlus } from '@tabler/icons-react';
+import { Button } from '../../../../shared/components/buttons';
+import styles from './styles.module.css';
 
 const AddSpeakerModal = ({ opened, onClose, eventId, onSuccess }) => {
   const [selectedUserId, setSelectedUserId] = useState(null);
@@ -76,9 +78,13 @@ const AddSpeakerModal = ({ opened, onClose, eventId, onSuccess }) => {
       onClose={handleClose}
       title="Add Speaker"
       size="md"
+      classNames={{
+        content: styles.modalContent,
+        header: styles.modalHeader,
+      }}
     >
-      <Stack>
-        <Alert icon={<IconInfoCircle size={16} />} color="blue">
+      <Stack p="lg">
+        <Alert icon={<IconInfoCircle size={16} />} color="blue" className={styles.infoAlert}>
           <Text size="sm">
             Select an existing attendee or organizer to make them a speaker.
             You can customize their speaker title and bio after adding them.
@@ -91,7 +97,7 @@ const AddSpeakerModal = ({ opened, onClose, eventId, onSuccess }) => {
             <Text size="sm" c="dimmed" mt="md">Loading attendees...</Text>
           </Box>
         ) : availableUsers.length === 0 ? (
-          <Alert color="yellow">
+          <Alert color="yellow" className={styles.warningAlert}>
             <Text size="sm">
               No non-speaker attendees found. Invite more people to your event first.
             </Text>
@@ -108,6 +114,10 @@ const AddSpeakerModal = ({ opened, onClose, eventId, onSuccess }) => {
               nothingFoundMessage="No users found"
               required
               leftSection={<IconUserPlus size={16} />}
+              className={styles.selectInput}
+              classNames={{
+                dropdown: styles.selectDropdown,
+              }}
               renderOption={({ option }) => (
                 <Group justify="space-between" wrap="nowrap">
                   <div>
@@ -117,22 +127,24 @@ const AddSpeakerModal = ({ opened, onClose, eventId, onSuccess }) => {
                 </Group>
               )}
             />
-
-            <Group justify="flex-end" mt="md">
-              <Button variant="light" onClick={handleClose}>
-                Cancel
-              </Button>
-              <Button 
-                onClick={handleSubmit} 
-                loading={isUpdating}
-                disabled={!selectedUserId}
-              >
-                Add as Speaker
-              </Button>
-            </Group>
           </>
         )}
       </Stack>
+      
+      {availableUsers.length > 0 && !isLoading && (
+        <Group justify="flex-end" className={styles.buttonGroup}>
+          <Button variant="secondary" onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button 
+            variant="primary"
+            onClick={handleSubmit} 
+            disabled={!selectedUserId || isUpdating}
+          >
+            {isUpdating ? 'Adding...' : 'Add as Speaker'}
+          </Button>
+        </Group>
+      )}
     </Modal>
   );
 };

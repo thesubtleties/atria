@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
-import { Modal, TextInput, Textarea, Button, Group, Stack, Text, Avatar, Alert } from '@mantine/core';
+import { Modal, TextInput, Textarea, Group, Stack, Text, Avatar, Alert } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { speakerInfoSchema } from '../schemas/speakerSchemas';
 import { useUpdateEventSpeakerInfoMutation } from '@/app/features/events/api';
+import { Button } from '../../../../shared/components/buttons';
+import styles from './styles.module.css';
 
 const SpeakerEditModal = ({ opened, onClose, speaker, eventId, onSuccess }) => {
   const [updateSpeakerInfo, { isLoading }] = useUpdateEventSpeakerInfoMutation();
@@ -62,15 +64,20 @@ const SpeakerEditModal = ({ opened, onClose, speaker, eventId, onSuccess }) => {
       onClose={onClose}
       title="Edit Speaker Information"
       size="lg"
+      classNames={{
+        content: styles.modalContent,
+        header: styles.modalHeader,
+      }}
     >
       <form onSubmit={form.onSubmit(handleSubmit)}>
-        <Stack>
-          <Group>
+        <Stack p="lg">
+          <Group className={styles.userInfo}>
             <Avatar
               src={speaker.image_url}
               alt={speaker.full_name}
               radius="xl"
               size="lg"
+              className={styles.userAvatar}
             >
               {speaker.first_name?.[0]}{speaker.last_name?.[0]}
             </Avatar>
@@ -80,7 +87,7 @@ const SpeakerEditModal = ({ opened, onClose, speaker, eventId, onSuccess }) => {
             </div>
           </Group>
 
-          <Alert icon={<IconInfoCircle size={16} />} color="blue">
+          <Alert icon={<IconInfoCircle size={16} />} color="blue" className={styles.infoAlert}>
             <Text size="sm">
               These fields override the speaker's profile information for this event only.
               Leave blank to use their default profile information.
@@ -91,6 +98,7 @@ const SpeakerEditModal = ({ opened, onClose, speaker, eventId, onSuccess }) => {
             label="Speaker Title"
             placeholder={speaker.title || "Enter speaker's title for this event"}
             description="How they should be introduced at this event"
+            className={styles.formInput}
             {...form.getInputProps('speaker_title')}
           />
 
@@ -99,11 +107,12 @@ const SpeakerEditModal = ({ opened, onClose, speaker, eventId, onSuccess }) => {
             placeholder={speaker.bio || "Enter speaker's bio for this event"}
             description="Biography to display on the speakers page"
             rows={6}
+            className={styles.formTextarea}
             {...form.getInputProps('speaker_bio')}
           />
 
           {(speaker.title || speaker.bio) && (
-            <Alert color="gray" variant="light">
+            <Alert color="gray" variant="light" className={styles.grayAlert}>
               <Stack gap="xs">
                 <Text size="sm" fw={500}>Profile Information:</Text>
                 {speaker.title && (
@@ -119,16 +128,20 @@ const SpeakerEditModal = ({ opened, onClose, speaker, eventId, onSuccess }) => {
               </Stack>
             </Alert>
           )}
-
-          <Group justify="flex-end" mt="md">
-            <Button variant="light" onClick={onClose}>
-              Cancel
-            </Button>
-            <Button type="submit" loading={isLoading}>
-              Save Changes
-            </Button>
-          </Group>
         </Stack>
+
+        <Group justify="flex-end" className={styles.buttonGroup}>
+          <Button variant="secondary" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button 
+            variant="primary" 
+            type="submit" 
+            disabled={isLoading}
+          >
+            {isLoading ? 'Saving...' : 'Save Changes'}
+          </Button>
+        </Group>
       </form>
     </Modal>
   );
