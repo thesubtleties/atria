@@ -1,5 +1,44 @@
 .container {
   display: flex;
   flex-direction: column;
-  gap: var(--mantine-spacing-xs);
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+/* Admin section title */
+.container :global(.mantine-Text-root) {
+  color: #8B5CF6;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0 1rem;
+  font-size: 0.875rem;
+}
+
+/* Divider styling */
+.container :global(.mantine-Divider-root) {
+  border-color: rgba(139, 92, 246, 0.08);
+}
+
+/* Admin NavLink styling */
+.container :global(.mantine-NavLink-root) {
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  color: #64748B;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.container :global(.mantine-NavLink-root):hover {
+  background: rgba(139, 92, 246, 0.04);
+  color: #8B5CF6;
+  text-decoration: none;
+}
+
+.container :global(.mantine-NavLink-root[data-active]) {
+  background: rgba(139, 92, 246, 0.08);
+  color: #8B5CF6;
+  border: 1px solid rgba(139, 92, 246, 0.15);
+  font-weight: 600;
 }
