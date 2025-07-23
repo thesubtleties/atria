@@ -34,32 +34,38 @@ export const EventHome = () => {
 
   return (
     <div className={styles.container}>
-      <Hero title={title} description={hero_description} images={hero_images} />
+      {/* Background Shapes */}
+      <div className={styles.bgShape1} />
+      <div className={styles.bgShape2} />
 
-      {sections?.welcome && (
-        <Welcome
-          title={sections.welcome.title}
-          content={sections.welcome.content}
+      <div className={styles.contentWrapper}>
+        <Hero title={title} description={hero_description} images={hero_images} />
+
+        {sections?.welcome && (
+          <Welcome
+            title={sections.welcome.title}
+            content={sections.welcome.content}
+          />
+        )}
+
+        {sections?.highlights && <Highlights highlights={sections.highlights} />}
+
+        <EventInfo
+          format={event_format}
+          venue={{
+            name: venue_name,
+            address: venue_address,
+            city: venue_city,
+            country: venue_country,
+          }}
+          dates={{
+            start: start_date,
+            end: end_date,
+          }}
         />
-      )}
 
-      {sections?.highlights && <Highlights highlights={sections.highlights} />}
-
-      <EventInfo
-        format={event_format}
-        venue={{
-          name: venue_name,
-          address: venue_address,
-          city: venue_city,
-          country: venue_country,
-        }}
-        dates={{
-          start: start_date,
-          end: end_date,
-        }}
-      />
-
-      {sections?.faqs && <FAQ faqs={sections.faqs} />}
+        {sections?.faqs && <FAQ faqs={sections.faqs} />}
+      </div>
     </div>
   );
 };

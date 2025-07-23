@@ -2,7 +2,9 @@
 .hero {
   width: 100%;
   position: relative;
-  height: 400px; /* Or we could make it viewport based */
+  height: 500px;
+  overflow: hidden;
+  margin-bottom: 3rem;
 }
 
 .heroBackground {
@@ -23,27 +25,43 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7));
+  background: linear-gradient(
+    to bottom,
+    rgba(139, 92, 246, 0.3),
+    rgba(139, 92, 246, 0.5)
+  );
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
 }
 
 .heroContent {
   position: relative;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 60px 20px;
-  color: white;
+  padding: 80px 2rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  z-index: 2;
 }
 
 .title {
-  font-size: 3rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
+  font-size: 4rem;
+  font-weight: 300;
+  margin-bottom: 1.5rem;
+  color: white;
+  letter-spacing: -0.02em;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
 }
 
 .description {
   font-size: 1.5rem;
-  max-width: 600px;
-  line-height: 1.5;
+  max-width: 800px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 400;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.2);
 }
 
 /* Media query for mobile image */

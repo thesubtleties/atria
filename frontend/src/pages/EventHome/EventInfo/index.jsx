@@ -1,5 +1,4 @@
 // pages/EventHome/EventInfo/index.jsx
-import { Group, Text, Card } from '@mantine/core';
 import {
   IconCalendar,
   IconMapPin,
@@ -12,53 +11,62 @@ export default function EventInfo({ format, venue, dates }) {
     <section className={styles.eventInfo}>
       <div className={styles.container}>
         <div className={styles.grid}>
-          <Card shadow="sm" padding="lg" radius="md">
-            <Group align="center" mb="md">
-              <IconDeviceLaptop
-                size={24}
-                color="var(--mantine-color-violet-6)"
-              />
-              <Text fw={500} size="lg">
-                Event Format
-              </Text>
-            </Group>
-            <Text c="dimmed">
-              {format === 'HYBRID'
-                ? 'In-person & Virtual Event'
-                : 'Virtual Event'}
-            </Text>
-          </Card>
+          <div className={styles.infoCard}>
+            <div className={styles.iconWrapper}>
+              <IconCalendar size={28} className={styles.icon} />
+            </div>
+            <div className={styles.cardContent}>
+              <h3 className={styles.cardTitle}>When</h3>
+              <p className={styles.cardText}>
+                {new Date(dates.start).toLocaleDateString('en-US', {
+                  month: 'long',
+                  day: 'numeric',
+                  year: 'numeric'
+                })}
+              </p>
+              {dates.end !== dates.start && (
+                <p className={styles.cardSubtext}>
+                  to {new Date(dates.end).toLocaleDateString('en-US', {
+                    month: 'long',
+                    day: 'numeric',
+                    year: 'numeric'
+                  })}
+                </p>
+              )}
+            </div>
+          </div>
 
           {venue.name && (
-            <Card shadow="sm" padding="lg" radius="md">
-              <Group align="center" mb="md">
-                <IconMapPin size={24} color="var(--mantine-color-violet-6)" />
-                <Text fw={500} size="lg">
-                  Location
-                </Text>
-              </Group>
-              <Text fw={500}>{venue.name}</Text>
-              <Text c="dimmed" size="sm">
-                {venue.address}
-              </Text>
-              <Text c="dimmed" size="sm">
-                {venue.city}, {venue.country}
-              </Text>
-            </Card>
+            <div className={styles.infoCard}>
+              <div className={styles.iconWrapper}>
+                <IconMapPin size={28} className={styles.icon} />
+              </div>
+              <div className={styles.cardContent}>
+                <h3 className={styles.cardTitle}>Where</h3>
+                <p className={styles.cardText}>{venue.name}</p>
+                <p className={styles.cardSubtext}>
+                  {venue.city}, {venue.country}
+                </p>
+              </div>
+            </div>
           )}
 
-          <Card shadow="sm" padding="lg" radius="md">
-            <Group align="center" mb="md">
-              <IconCalendar size={24} color="var(--mantine-color-violet-6)" />
-              <Text fw={500} size="lg">
-                Event Dates
-              </Text>
-            </Group>
-            <Text>
-              {new Date(dates.start).toLocaleDateString()} -{' '}
-              {new Date(dates.end).toLocaleDateString()}
-            </Text>
-          </Card>
+          <div className={styles.infoCard}>
+            <div className={styles.iconWrapper}>
+              <IconDeviceLaptop size={28} className={styles.icon} />
+            </div>
+            <div className={styles.cardContent}>
+              <h3 className={styles.cardTitle}>Format</h3>
+              <p className={styles.cardText}>
+                {format === 'HYBRID' ? 'Hybrid Event' : 'Virtual Event'}
+              </p>
+              <p className={styles.cardSubtext}>
+                {format === 'HYBRID' 
+                  ? 'Join in-person or online' 
+                  : 'Join from anywhere'}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </section>

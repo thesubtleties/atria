@@ -1,21 +1,20 @@
 // pages/EventHome/FAQ/index.jsx
-import { Title, Container } from '@mantine/core';
 import FAQItem from './FAQItem';
 import styles from './styles/index.module.css';
 
 export default function FAQ({ faqs }) {
   return (
     <section className={styles.faq}>
-      <Container size="md">
-        <Title order={2} ta="center" mb="xl">
+      <div className={styles.container}>
+        <h2 className={styles.title}>
           Frequently Asked Questions
-        </Title>
+        </h2>
         <div className={styles.faqList}>
           {faqs.map((faq, index) => (
             <FAQItem key={index} question={faq.question} answer={faq.answer} />
           ))}
         </div>
-      </Container>
+      </div>
     </section>
   );
 }
