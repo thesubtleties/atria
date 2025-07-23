@@ -4,6 +4,15 @@
 
 .tierSection {
   margin-bottom: 3rem;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 12px;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
+  position: relative;
+  z-index: 10;
 }
 
 .tierSection:last-child {
@@ -12,26 +21,33 @@
 
 .tierHeader {
   margin-bottom: 1.5rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid var(--mantine-color-gray-3);
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
 }
 
 .tierTitle {
-  font-size: 1.75rem;
+  font-size: 1.5rem;
   font-weight: 600;
-  color: var(--mantine-color-gray-9);
+  color: #1E293B;
+  letter-spacing: -0.02em;
 }
 
 .sponsorGrid {
-  margin-top: 1rem;
+  margin-top: 1.5rem;
 }
 
 .noSponsors {
   padding: 4rem 2rem;
   text-align: center;
-  background-color: var(--mantine-color-gray-0);
-  border-radius: 8px;
-  border: 1px dashed var(--mantine-color-gray-3);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 12px;
+  border: 1px solid rgba(139, 92, 246, 0.08);
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
 }
 
 @media (max-width: 768px) {

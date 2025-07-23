@@ -1,5 +1,5 @@
-import { SimpleGrid, Title, Text, Group, Container } from '@mantine/core';
-import SponsorCard from './SponsorCard';
+import { SimpleGrid, Title, Text, Container } from '@mantine/core';
+import SponsorCard from '@/shared/components/SponsorCard';
 import styles from './styles/index.module.css';
 
 export default function SponsorsList({ sponsors, tiers }) {
@@ -35,18 +35,15 @@ export default function SponsorsList({ sponsors, tiers }) {
 
         return (
           <div key={tier.id} className={styles.tierSection}>
-            <Group className={styles.tierHeader}>
+            <div className={styles.tierHeader}>
               <Title order={2} className={styles.tierTitle}>
                 {tier.name}
               </Title>
-              <Text c="dimmed" size="sm">
-                ({sortedSponsors.length} {sortedSponsors.length === 1 ? 'sponsor' : 'sponsors'})
-              </Text>
-            </Group>
+            </div>
 
             <SimpleGrid
-              cols={{ base: 1, sm: 2, md: 3, lg: 4 }}
-              spacing="lg"
+              cols={{ base: 1, sm: 2, md: 3 }}
+              spacing="xl"
               className={styles.sponsorGrid}
             >
               {sortedSponsors.map((sponsor) => (
