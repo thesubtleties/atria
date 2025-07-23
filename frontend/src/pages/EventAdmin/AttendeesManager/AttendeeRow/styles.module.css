@@ -1,5 +1,89 @@
+/* Role Badge */
 .roleBadge {
-  border-radius: 4px;
+  border-radius: 6px;
   font-weight: 500;
-  text-transform: capitalize;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.75rem;
+}
+
+/* User Info Group */
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.userName {
+  font-weight: 500;
+  color: #1E293B;
+}
+
+.userEmail {
+  color: #64748B;
+  font-size: 0.875rem;
+}
+
+/* Company Info */
+.companyInfo {
+  color: #64748B;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.companyName {
+  font-weight: 500;
+  color: #475569;
+}
+
+.companyTitle {
+  color: #64748B;
+}
+
+/* Date Text */
+.dateText {
+  color: #94A3B8;
+  font-size: 0.875rem;
+}
+
+/* Menu Dropdown Styling */
+.menuDropdown {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.08);
+  border-radius: 6px;
+}
+
+.menuItem {
+  color: #475569;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.menuItem:hover {
+  background: rgba(139, 92, 246, 0.04);
+  color: #8B5CF6;
+}
+
+.menuItemDanger {
+  color: #DC2626;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.menuItemDanger:hover {
+  background: rgba(220, 38, 38, 0.04);
+  color: #DC2626;
+}
+
+/* Action Icon Styling */
+.actionIcon {
+  transition: all 0.2s ease;
+}
+
+.actionIcon:hover {
+  background: rgba(139, 92, 246, 0.08);
 }
