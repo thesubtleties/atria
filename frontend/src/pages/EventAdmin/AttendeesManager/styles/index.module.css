@@ -1,11 +1,9 @@
-/* Page Container */
+/* Page Container - Full viewport */
 .container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 2rem;
-  position: relative;
   min-height: 100vh;
   background: rgba(251, 250, 255, 1);
+  position: relative;
+  overflow: hidden; /* Prevent scroll from shapes */
 }
 
 /* Background Organic Shapes */
@@ -53,6 +51,9 @@
 .contentWrapper {
   position: relative;
   z-index: 10;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
 }
 
 /* Glass Section for Header */
@@ -193,7 +194,7 @@
 
 /* Responsive */
 @media (max-width: 1024px) {
-  .container {
+  .contentWrapper {
     padding: 1.5rem;
   }
 
@@ -203,7 +204,7 @@
 }
 
 @media (max-width: 768px) {
-  .container {
+  .contentWrapper {
     padding: 1rem;
   }
 

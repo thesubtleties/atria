@@ -258,7 +258,7 @@ const AttendeesManager = () => {
                 variant="primary"
                 onClick={() => setInviteModalOpen(true)}
               >
-                <IconPlus size={18} style={{ marginRight: '0.5rem' }} />
+                <IconPlus size={18} />
                 Invite Attendees
               </Button>
             </Group>
