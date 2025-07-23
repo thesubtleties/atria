@@ -3,6 +3,7 @@ import { Title, Text, LoadingOverlay, Alert, Container } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { useGetSponsorsQuery, useGetSponsorTiersQuery } from '../../app/features/sponsors/api';
 import SponsorsList from './SponsorsList';
+import styles from './Sponsors.module.css';
 
 export const SponsorsPage = () => {
   const { eventId } = useParams();
@@ -39,16 +40,27 @@ export const SponsorsPage = () => {
   }
 
   if (isLoading) {
-    return <LoadingOverlay visible={true} overlayProps={{ radius: "sm", blur: 2 }} />;
+    return (
+      <div className={styles.loadingContainer}>
+        <LoadingOverlay visible={true} overlayProps={{ radius: "sm", blur: 2 }} />
+      </div>
+    );
   }
 
   if (sponsorsError) {
     return (
-      <Container size="xl" py="xl">
-        <Alert icon={<IconInfoCircle size="1rem" />} title="Error" color="red">
-          Failed to load sponsors. Please try again later.
-        </Alert>
-      </Container>
+      <div className={styles.pageContainer}>
+        <div className={styles.errorContainer}>
+          <Alert 
+            icon={<IconInfoCircle size="1rem" />} 
+            title="Error" 
+            color="red"
+            className={styles.errorAlert}
+          >
+            Failed to load sponsors. Please try again later.
+          </Alert>
+        </div>
+      </div>
     );
   }
 
@@ -56,16 +68,25 @@ export const SponsorsPage = () => {
   const activeSponsors = sponsors.filter(sponsor => sponsor.is_active !== false);
 
   return (
-    <Container size="xl" py="xl">
-      <Title order={1} mb="xs" ta="center">Sponsors</Title>
-      {activeSponsors.length > 0 && (
-        <Text c="dimmed" mb="xl" ta="center">
-          Thank you to all our sponsors who make this event possible!
-        </Text>
-      )}
+    <div className={styles.pageContainer}>
+      {/* Background shapes */}
+      <div className={styles.bgShape1} />
+      <div className={styles.bgShape2} />
+      <div className={styles.bgShape3} />
       
-      <SponsorsList sponsors={activeSponsors} tiers={tiers} />
-    </Container>
+      <Container size="xl" className={styles.contentWrapper}>
+        <div className={styles.header}>
+          <h1 className={styles.pageTitle}>Our Sponsors</h1>
+          {activeSponsors.length > 0 && (
+            <p className={styles.pageSubtitle}>
+              Thank you to all our sponsors who make this event possible
+            </p>
+          )}
+        </div>
+        
+        <SponsorsList sponsors={activeSponsors} tiers={tiers} />
+      </Container>
+    </div>
   );
 };
 
