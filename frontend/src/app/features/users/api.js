@@ -21,7 +21,10 @@ export const usersApi = baseApi.injectEndpoints({
         method: 'PUT',
         body: updates,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'Users', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'Users', id },
+        { type: 'Dashboard', id }
+      ],
     }),
     getUserEvents: builder.query({
       query: ({ userId, role, page = 1, per_page = 50 }) => ({
