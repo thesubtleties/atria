@@ -1,10 +1,10 @@
 import React from 'react';
 import { Avatar, Group, Stack, Text } from '@mantine/core';
-import { IconEdit, IconShare } from '@tabler/icons-react';
+import { IconEdit, IconShare, IconRefresh } from '@tabler/icons-react';
 import { Button } from '@/shared/components/buttons';
 import styles from './styles/index.module.css';
 
-export const ProfileHero = ({ user, onEditClick, isOwnProfile = true }) => {
+export const ProfileHero = ({ user, onEditClick, isOwnProfile = true, isEditing = false, onAvatarReroll }) => {
   if (!user) return null;
 
   const getInitials = (name) => {
@@ -24,15 +24,28 @@ export const ProfileHero = ({ user, onEditClick, isOwnProfile = true }) => {
   return (
     <section className={styles.profileHero}>
       <div className={styles.profileHeroContent}>
-        <Avatar
-          src={user.image_url}
-          alt={user.full_name || user.email}
-          size={120}
-          radius={8}
-          className={styles.profileAvatarLarge}
-        >
-          {getInitials(user.full_name || user.email)}
-        </Avatar>
+        <div className={styles.avatarContainer}>
+          <Avatar
+            src={user.image_url}
+            alt={user.full_name || user.email}
+            size={120}
+            radius={8}
+            className={styles.profileAvatarLarge}
+          >
+            {getInitials(user.full_name || user.email)}
+          </Avatar>
+          {isEditing && onAvatarReroll && (
+            <Button
+              variant="subtle"
+              size="sm"
+              onClick={onAvatarReroll}
+              className={styles.rerollButton}
+            >
+              <IconRefresh size={16} />
+              Reroll Avatar
+            </Button>
+          )}
+        </div>
         
         <div className={styles.profileInfo}>
           <h1 className={styles.profileName}>{user.full_name || 'Unnamed User'}</h1>
