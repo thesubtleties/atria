@@ -56,7 +56,7 @@ class SponsorList(MethodView):
         try:
             # Frontend sends 0 or 1 which works with type=int
             active_only = request.args.get("active_only", 1, type=int)
-            
+
             return SponsorService.get_event_sponsors(
                 event_id, bool(active_only), SponsorListSchema()
             )
@@ -92,18 +92,18 @@ class SponsorDetail(MethodView):
     def get(self, sponsor_id):
         """Get sponsor details - requires event membership"""
         sponsor = SponsorService.get_sponsor(sponsor_id)
-        
+
         # Check if user is a member of the sponsor's event
         from flask_jwt_extended import get_jwt_identity
         from api.models import User, Event
-        
+
         current_user_id = int(get_jwt_identity())
         current_user = User.query.get_or_404(current_user_id)
         event = Event.query.get_or_404(sponsor.event_id)
-        
+
         if not event.get_user_role(current_user):
             return {"message": "Not authorized to view this sponsor"}, 403
-            
+
         return SponsorDetailSchema().dump(sponsor)
 
     @blp.arguments(SponsorUpdateSchema)
@@ -123,21 +123,25 @@ class SponsorDetail(MethodView):
         try:
             # Get sponsor to check event_id for authorization
             sponsor = SponsorService.get_sponsor(sponsor_id)
-            
+
             # Manual auth check
             from flask_jwt_extended import get_jwt_identity
             from api.models import User, Event
             from api.models.enums import EventUserRole
-            
+
             current_user_id = int(get_jwt_identity())
             current_user = User.query.get_or_404(current_user_id)
             event = Event.query.get_or_404(sponsor.event_id)
-            
+
             user_role = event.get_user_role(current_user)
             if user_role not in [EventUserRole.ADMIN, EventUserRole.ORGANIZER]:
-                return {"message": "Not authorized to update this sponsor"}, 403
-            
-            updated_sponsor = SponsorService.update_sponsor(sponsor_id, sponsor_data)
+                return {
+                    "message": "Not authorized to update this sponsor"
+                }, 403
+
+            updated_sponsor = SponsorService.update_sponsor(
+                sponsor_id, sponsor_data
+            )
             return SponsorDetailSchema().dump(updated_sponsor)
         except Exception as e:
             # Return error with proper status code
@@ -158,25 +162,26 @@ class SponsorDetail(MethodView):
         try:
             # Get sponsor to check authorization
             sponsor = SponsorService.get_sponsor(sponsor_id)
-            
+
             # Manual auth check
             from flask_jwt_extended import get_jwt_identity
             from api.models import User, Event
             from api.models.enums import EventUserRole
-            
+
             current_user_id = int(get_jwt_identity())
             current_user = User.query.get_or_404(current_user_id)
             event = Event.query.get_or_404(sponsor.event_id)
-            
+
             user_role = event.get_user_role(current_user)
             if user_role not in [EventUserRole.ADMIN, EventUserRole.ORGANIZER]:
-                return {"message": "Not authorized to delete this sponsor"}, 403
-            
+                return {
+                    "message": "Not authorized to delete this sponsor"
+                }, 403
+
             SponsorService.delete_sponsor(sponsor_id)
             return "", 204
         except Exception as e:
             return {"message": f"Failed to delete sponsor: {str(e)}"}, 500
-
 
 
 @blp.route("/events/<int:event_id>/sponsors/featured")
@@ -210,20 +215,20 @@ class SponsorToggleActive(MethodView):
         """Toggle sponsor active status"""
         # Get sponsor to check authorization
         sponsor = SponsorService.get_sponsor(sponsor_id)
-        
+
         # Manual auth check
         from flask_jwt_extended import get_jwt_identity
         from api.models import User, Event
         from api.models.enums import EventUserRole
-        
+
         current_user_id = int(get_jwt_identity())
         current_user = User.query.get_or_404(current_user_id)
         event = Event.query.get_or_404(sponsor.event_id)
-        
+
         user_role = event.get_user_role(current_user)
         if user_role not in [EventUserRole.ADMIN, EventUserRole.ORGANIZER]:
             return {"message": "Not authorized to update this sponsor"}, 403
-        
+
         updated_sponsor = SponsorService.toggle_sponsor_active(sponsor_id)
         # Return minimal response since frontend will refetch the list
         return {"success": True, "id": sponsor_id}, 200
@@ -245,24 +250,23 @@ class SponsorToggleFeatured(MethodView):
         """Toggle sponsor featured status"""
         # Get sponsor to check authorization
         sponsor = SponsorService.get_sponsor(sponsor_id)
-        
+
         # Manual auth check
         from flask_jwt_extended import get_jwt_identity
         from api.models import User, Event
         from api.models.enums import EventUserRole
-        
+
         current_user_id = int(get_jwt_identity())
         current_user = User.query.get_or_404(current_user_id)
         event = Event.query.get_or_404(sponsor.event_id)
-        
+
         user_role = event.get_user_role(current_user)
         if user_role not in [EventUserRole.ADMIN, EventUserRole.ORGANIZER]:
             return {"message": "Not authorized to update this sponsor"}, 403
-        
+
         updated_sponsor = SponsorService.toggle_sponsor_featured(sponsor_id)
         # Return minimal response since frontend will refetch the list
         return {"success": True, "id": sponsor_id}, 200
-
 
 
 @blp.route("/events/<int:event_id>/sponsor-tiers")
@@ -277,11 +281,11 @@ class SponsorTiers(MethodView):
     def get(self, event_id):
         """Get sponsor tiers"""
         from api.models import Event
-        
+
         event = Event.query.get_or_404(event_id)
         return SponsorTierSchema().dump(event.sponsor_tiers or [], many=True)
 
-    @blp.arguments(SponsorTierSchema)
+    @blp.arguments(SponsorTierSchema(many=True))
     @blp.response(200)
     @blp.doc(
         summary="Update sponsor tiers",
