@@ -1,69 +1,9 @@
-/* Page container - Full viewport */
-.container {
-  min-height: 100vh;
-  background: rgba(251, 250, 255, 1);
-  position: relative;
-  overflow: hidden;
-}
-
-/* Content wrapper - Constrains content width */
-.contentWrapper {
-  position: relative;
-  z-index: 10;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 2rem;
-}
-
-/* Background shapes */
-.bgShape1 {
-  position: absolute;
-  width: 400px;
-  height: 400px;
-  background: linear-gradient(45deg, #8B5CF6, #A855F7);
-  border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
-  top: 100px;
-  right: -200px;
-  opacity: 0.04;
-  animation: float 15s ease-in-out infinite;
-  z-index: 1;
-  pointer-events: none;
-}
-
-.bgShape2 {
-  position: absolute;
-  width: 350px;
-  height: 350px;
-  background: linear-gradient(135deg, #FFD93D, #F59E0B);
-  border-radius: 43% 57% 44% 56% / 62% 48% 52% 38%;
-  bottom: 150px;
-  left: -150px;
-  opacity: 0.03;
-  animation: float 20s ease-in-out infinite reverse;
-  z-index: 1;
-  pointer-events: none;
-}
-
-/* Glass sections */
+/* Glass sections - additional styling to complement parent */
 .glassSection {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 8px;
-  padding: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
-  position: relative;
-  z-index: 10;
+  /* Parent already provides the glass effect, we just add any extra styling */
 }
 
-/* Section titles */
-.sectionTitle {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #1E293B;
-  margin-bottom: 2rem;
-}
+/* Section titles - removed since using parent styles */
 
 .subsectionTitle {
   font-size: 1.1rem;
@@ -197,48 +137,9 @@
 }
 
 /* Animation */
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px) rotate(0deg) scale(1);
-  }
-  33% {
-    transform: translateY(-20px) rotate(2deg) scale(1.02);
-  }
-  66% {
-    transform: translateY(15px) rotate(-1deg) scale(0.98);
-  }
-}
 
 /* Responsive adjustments */
-@media (max-width: 1024px) {
-  .contentWrapper {
-    padding: 1.5rem;
-  }
-
-  .glassSection {
-    padding: 1.5rem;
-  }
-}
-
 @media (max-width: 768px) {
-  .contentWrapper {
-    padding: 1rem;
-  }
-
-  .glassSection {
-    padding: 1rem;
-  }
-  
-  /* Hide decorative shapes on mobile */
-  .bgShape1,
-  .bgShape2 {
-    display: none;
-  }
-
-  .sectionTitle {
-    font-size: 1.25rem;
-  }
-
   .subsectionTitle {
     font-size: 1rem;
   }

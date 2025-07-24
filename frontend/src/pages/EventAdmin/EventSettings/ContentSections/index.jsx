@@ -27,6 +27,7 @@ import { Button } from '@/shared/components/buttons';
 import { useUpdateEventMutation } from '@/app/features/events/api';
 import { highlightSchema, faqSchema } from '../schemas/eventSettingsSchemas';
 import styles from './styles.module.css';
+import parentStyles from '../styles/index.module.css';
 
 // Draggable Highlight Card Component
 const DraggableHighlight = ({ id, highlight, onEdit, onDelete }) => {
@@ -431,16 +432,13 @@ const ContentSections = ({ event, eventId }) => {
 
   return (
     <>
-      <div className={styles.container}>
-        {/* Background Shapes */}
-        <div className={styles.bgShape1} />
-        <div className={styles.bgShape2} />
+      <div className={`${parentStyles.section} ${styles.glassSection}`}>
+        <h3 className={parentStyles.sectionTitle}>Content Sections</h3>
+        <Text c="dimmed" size="sm" mb="xl">
+          Customize highlights, FAQs, and welcome messages for your event
+        </Text>
         
-        <div className={styles.contentWrapper}>
-          <section className={styles.glassSection}>
-            <Title order={3} className={styles.sectionTitle}>Content Sections</Title>
-            
-            <Stack spacing="xl">
+        <Stack spacing="xl">
               {/* Welcome Section */}
               <div className={styles.welcomeSection}>
                 <Title order={4} className={styles.subsectionTitle}>Welcome Section</Title>
@@ -558,8 +556,6 @@ const ContentSections = ({ event, eventId }) => {
                 </Group>
               )}
             </Stack>
-          </section>
-        </div>
       </div>
 
       {/* Highlight Modal */}

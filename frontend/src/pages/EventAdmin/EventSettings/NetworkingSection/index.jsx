@@ -25,6 +25,7 @@ import { Button } from '@/shared/components/buttons';
 import { useUpdateEventMutation } from '@/app/features/events/api';
 import { icebreakersSchema } from '../schemas/eventSettingsSchemas';
 import styles from './styles.module.css';
+import parentStyles from '../styles/index.module.css';
 
 // Draggable Icebreaker Card Component
 const DraggableIcebreaker = ({ id, message, icebreakerId, onEdit, onDelete, canDelete }) => {
@@ -248,16 +249,13 @@ const NetworkingSection = ({ event, eventId }) => {
 
   return (
     <>
-      <div className={styles.container}>
-        {/* Background Shapes */}
-        <div className={styles.bgShape1} />
-        <div className={styles.bgShape2} />
+      <div className={`${parentStyles.section} ${styles.glassSection}`}>
+        <h3 className={parentStyles.sectionTitle}>Networking Settings</h3>
+        <Text c="dimmed" size="sm" mb="xl">
+          Configure icebreaker messages to help attendees start conversations
+        </Text>
         
-        <div className={styles.contentWrapper}>
-          <section className={styles.glassSection}>
-            <Title order={3} className={styles.sectionTitle}>Networking Settings</Title>
-            
-            <Stack spacing="lg">
+        <Stack spacing="lg">
               <div>
                 <Group justify="space-between" mb="md">
                   <div>
@@ -331,8 +329,6 @@ const NetworkingSection = ({ event, eventId }) => {
                 </Group>
               )}
             </Stack>
-          </section>
-        </div>
       </div>
 
       {/* Icebreaker Modal */}
