@@ -100,9 +100,10 @@
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-radius: 8px;
-  padding: 2rem;
+  padding: 0;
   border: 1px solid rgba(255, 255, 255, 0.8);
   box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
+  overflow: hidden;
 }
 
 /* Search and Filter Container */
@@ -161,14 +162,48 @@
   background: rgba(139, 92, 246, 0.08);
 }
 
+/* Tab Container */
+.tabsContainer {
+  width: 100%;
+}
+
 /* Tab Styling */
 .tabsList {
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(139, 92, 246, 0.04);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(139, 92, 246, 0.08);
-  border-radius: 6px;
-  padding: 4px;
-  margin-bottom: 2rem;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.08);
+  padding: 0;
+  margin: 0;
+  display: flex;
+  width: 100%;
+}
+
+.tab {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  transition: all 0.2s ease;
+  color: #64748B;
+  font-weight: 500;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  position: relative;
+}
+
+.tab:hover {
+  color: #8B5CF6;
+  background: rgba(139, 92, 246, 0.02);
+}
+
+.tab[data-active] {
+  color: #8B5CF6;
+  border-bottom-color: #8B5CF6;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* Tab Panel */
+.tabPanel {
+  padding: 1.5rem;
 }
 
 /* Menu Dropdown Styling */

@@ -19,6 +19,8 @@ import {
   IconUpload,
   IconFilter,
   IconDots,
+  IconUsers,
+  IconMail,
 } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import {
@@ -267,17 +269,25 @@ const AttendeesManager = () => {
 
         {/* Main Content Section */}
         <section className={styles.mainContent}>
-          <Tabs value={activeTab} onChange={handleTabChange}>
+          <Tabs value={activeTab} onChange={handleTabChange} className={styles.tabsContainer}>
             <Tabs.List className={styles.tabsList}>
-              <Tabs.Tab value="attendees">
+              <Tabs.Tab 
+                value="attendees" 
+                className={styles.tab}
+                leftSection={<IconUsers size={16} />}
+              >
                 Attendees ({roleCounts.total || 0})
               </Tabs.Tab>
-              <Tabs.Tab value="invitations">
+              <Tabs.Tab 
+                value="invitations" 
+                className={styles.tab}
+                leftSection={<IconMail size={16} />}
+              >
                 Pending Invitations ({invitationsData?.total_items || 0})
               </Tabs.Tab>
             </Tabs.List>
 
-            <Tabs.Panel value="attendees">
+            <Tabs.Panel value="attendees" className={styles.tabPanel}>
               <div className={styles.searchFilterContainer}>
                 <TextInput
                   className={styles.searchInput}
@@ -326,7 +336,7 @@ const AttendeesManager = () => {
               )}
             </Tabs.Panel>
 
-            <Tabs.Panel value="invitations">
+            <Tabs.Panel value="invitations" className={styles.tabPanel}>
               <LoadingOverlay visible={isLoadingInvitations} />
               <PendingInvitations
                 invitations={invitationsData?.invitations || []}
