@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Modal, Select, Group, Stack, Text, Alert, List } from '@mantine/core';
+import { Modal, Select, Stack, Text, Alert, List } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { IconAlertCircle, IconCheck } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
@@ -157,14 +157,14 @@ const RoleUpdateModal = ({ opened, onClose, user, eventId, currentUserRole, onSu
             </Alert>
           )}
 
-          <Group justify="flex-end" mt="md" className={styles.buttonGroup}>
-            <Button variant="secondary" onClick={onClose}>
+          <div className={styles.buttonGroup}>
+            <Button variant="subtle" onClick={onClose}>
               Cancel
             </Button>
             <Button type="submit" variant="primary" disabled={isLoading}>
               {isLoading ? 'Updating...' : 'Update Role'}
             </Button>
-          </Group>
+          </div>
         </Stack>
       </form>
     </Modal>

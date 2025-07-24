@@ -8,13 +8,13 @@ import {
   Select,
   Text,
   Group,
-  Button,
   FileButton,
   Image,
   Box,
 } from '@mantine/core';
 import { IconUpload } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
+import { Button } from '../../../../shared/components/buttons';
 import {
   useCreateSponsorMutation,
   useUpdateSponsorMutation,
@@ -266,8 +266,12 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }
       onClose={handleClose}
       title={mode === 'edit' ? 'Edit Sponsor' : 'Add New Sponsor'}
       size="lg"
+      classNames={{
+        content: styles.modalContent,
+        header: styles.modalHeader,
+      }}
     >
-      <Stack>
+      <Stack spacing="md" p="lg">
         <Grid>
           <Grid.Col span={8}>
             <TextInput
@@ -276,6 +280,7 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }
               required
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              classNames={{ input: styles.formInput }}
             />
           </Grid.Col>
           <Grid.Col span={4}>
@@ -290,6 +295,7 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }
               onChange={(value) => handleFieldChange('tierId', value)}
               clearable
               error={errors.tierId}
+              classNames={{ input: styles.formSelect }}
             />
           </Grid.Col>
         </Grid>
@@ -301,6 +307,7 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }
           value={formData.description}
           onChange={(e) => handleFieldChange('description', e.target.value)}
           error={errors.description}
+          classNames={{ input: styles.formTextarea }}
         />
 
         <TextInput
@@ -309,17 +316,19 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }
           value={formData.websiteUrl}
           onChange={(e) => handleFieldChange('websiteUrl', e.target.value)}
           error={errors.websiteUrl}
+          classNames={{ input: styles.formInput }}
         />
 
-        <Group>
-          <Box>
-            <Text size="sm" fw={500} mb="xs">Logo</Text>
+        <Group className={styles.logoSection}>
+          <Box className={styles.logoUpload}>
+            <Text className={styles.logoLabel}>Logo</Text>
             <FileButton
               onChange={handleLogoSelect}
               accept="image/png,image/jpeg,image/gif,image/webp"
             >
               {(props) => (
-                <Button {...props} variant="outline" leftSection={<IconUpload size={16} />}>
+                <Button {...props} variant="secondary">
+                  <IconUpload size={16} />
                   {existingLogoKey || logoPreview ? 'Change Logo' : 'Upload Logo'}
                 </Button>
               )}
@@ -332,6 +341,7 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }
               width={100}
               height={100}
               fit="contain"
+              className={styles.logoPreview}
             />
           ) : existingLogoKey ? (
             <PrivateImage
@@ -340,11 +350,12 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }
               width={100}
               height={100}
               fit="contain"
+              className={styles.logoPreview}
             />
           ) : null}
         </Group>
 
-        <Text fw={500} size="lg" mt="md">Contact Information</Text>
+        <Text className={styles.sectionTitle}>Contact Information</Text>
         
         <Grid>
           <Grid.Col span={4}>
@@ -354,6 +365,7 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }
               value={formData.contactName}
               onChange={(e) => handleFieldChange('contactName', e.target.value)}
               error={errors.contactName}
+              classNames={{ input: styles.formInput }}
             />
           </Grid.Col>
           <Grid.Col span={4}>
@@ -363,6 +375,7 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }
               value={formData.contactEmail}
               onChange={(e) => handleFieldChange('contactEmail', e.target.value)}
               error={errors.contactEmail}
+              classNames={{ input: styles.formInput }}
             />
           </Grid.Col>
           <Grid.Col span={4}>
@@ -372,11 +385,12 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }
               value={formData.contactPhone}
               onChange={(e) => handleFieldChange('contactPhone', e.target.value)}
               error={errors.contactPhone}
+              classNames={{ input: styles.formInput }}
             />
           </Grid.Col>
         </Grid>
 
-        <Text fw={500} size="lg" mt="md">Social Media Links</Text>
+        <Text className={styles.sectionTitle}>Social Media Links</Text>
 
         <Grid>
           <Grid.Col span={6}>
@@ -386,6 +400,7 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }
               value={formData.socialLinks.twitter}
               onChange={(e) => handleSocialLinkChange('twitter', e.target.value)}
               error={errors.social_twitter}
+              classNames={{ input: styles.formInput }}
             />
           </Grid.Col>
           <Grid.Col span={6}>
@@ -395,6 +410,7 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }
               value={formData.socialLinks.linkedin}
               onChange={(e) => handleSocialLinkChange('linkedin', e.target.value)}
               error={errors.social_linkedin}
+              classNames={{ input: styles.formInput }}
             />
           </Grid.Col>
           <Grid.Col span={6}>
@@ -404,6 +420,7 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }
               value={formData.socialLinks.facebook}
               onChange={(e) => handleSocialLinkChange('facebook', e.target.value)}
               error={errors.social_facebook}
+              classNames={{ input: styles.formInput }}
             />
           </Grid.Col>
           <Grid.Col span={6}>
@@ -413,21 +430,23 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }
               value={formData.socialLinks.instagram}
               onChange={(e) => handleSocialLinkChange('instagram', e.target.value)}
               error={errors.social_instagram}
+              classNames={{ input: styles.formInput }}
             />
           </Grid.Col>
         </Grid>
 
-        <Group justify="flex-end" mt="xl">
-          <Button variant="outline" onClick={handleClose}>
+        <div className={styles.buttonGroup}>
+          <Button variant="subtle" onClick={handleClose}>
             Cancel
           </Button>
           <Button
+            variant="primary"
             onClick={handleSubmit}
             loading={isCreating || isUpdating}
           >
             {mode === 'edit' ? 'Update' : 'Create'} Sponsor
           </Button>
-        </Group>
+        </div>
       </Stack>
     </Modal>
   );

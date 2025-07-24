@@ -4,17 +4,15 @@ import {
   TextInput,
   Select,
   Textarea,
-  Group,
   Stack,
   Tabs,
   Text,
   Alert,
-  Checkbox,
 } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { IconAlertCircle, IconUsers, IconUserPlus } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
-import { invitationSchema, bulkInvitationSchema, getRoleDisplayName } from '../schemas/attendeeSchemas';
+import { invitationSchema, getRoleDisplayName } from '../schemas/attendeeSchemas';
 import {
   useSendEventInvitationMutation,
   useSendBulkEventInvitationsMutation,
@@ -232,14 +230,14 @@ const InviteModal = ({ opened, onClose, eventId, onSuccess }) => {
               </Alert>
 
             </Stack>
-            <Group justify="flex-end" className={styles.buttonGroup}>
-              <Button variant="secondary" onClick={handleClose}>
+            <div className={styles.buttonGroup}>
+              <Button variant="subtle" onClick={handleClose}>
                 Cancel
               </Button>
               <Button type="submit" variant="primary" disabled={isSending}>
                 {isSending ? 'Sending...' : 'Send Invitation'}
               </Button>
-            </Group>
+            </div>
           </form>
         </Tabs.Panel>
 
@@ -281,14 +279,14 @@ const InviteModal = ({ opened, onClose, eventId, onSuccess }) => {
             </Alert>
 
           </Stack>
-          <Group justify="flex-end" className={styles.buttonGroup}>
-            <Button variant="secondary" onClick={handleClose}>
+          <div className={styles.buttonGroup}>
+            <Button variant="subtle" onClick={handleClose}>
               Cancel
             </Button>
             <Button onClick={handleBulkSubmit} variant="primary" disabled={isSendingBulk}>
               {isSendingBulk ? 'Sending...' : 'Send Invitations'}
             </Button>
-          </Group>
+          </div>
         </Tabs.Panel>
       </Tabs>
     </Modal>

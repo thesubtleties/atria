@@ -8,10 +8,11 @@ import {
   Alert,
 } from '@mantine/core';
 import { IconCheck, IconX } from '@tabler/icons-react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useGetUserQuery, useUpdateUserMutation } from '@/app/features/users/api';
 import { useForm, zodResolver } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
+import { updateUserProfile } from '@/app/store/authSlice';
 import { profileSchema } from './schemas/profileSchema';
 import { ProfileHero } from './ProfileHero';
 import { ProfessionalInfo } from './ProfessionalInfo';
@@ -22,8 +23,10 @@ import { Button } from '@/shared/components/buttons';
 import styles from './styles/index.module.css';
 
 export const ProfilePage = () => {
+  const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.auth.user);
   const [isEditing, setIsEditing] = useState(false);
+  const [tempImageUrl, setTempImageUrl] = useState(null);
   const parallaxRef = useRef(null);
   
   const { data: userProfile, isLoading, error } = useGetUserQuery(currentUser?.id, {
@@ -39,6 +42,7 @@ export const ProfilePage = () => {
       company_name: '',
       title: '',
       bio: '',
+      image_url: '',
       social_links: {
         linkedin: '',
         twitter: '',
@@ -57,6 +61,7 @@ export const ProfilePage = () => {
         company_name: userProfile.company_name || '',
         title: userProfile.title || '',
         bio: userProfile.bio || '',
+        image_url: userProfile.image_url || '',
         social_links: {
           linkedin: userProfile.social_links?.linkedin || '',
           twitter: userProfile.social_links?.twitter || '',
@@ -90,12 +95,20 @@ export const ProfilePage = () => {
         id: currentUser.id,
         ...values,
       }).unwrap();
+      
+      // Update the auth store with the new user data
+      dispatch(updateUserProfile({
+        ...values,
+        full_name: `${values.first_name} ${values.last_name}`.trim(),
+      }));
+      
       notifications.show({
         title: 'Success',
         message: 'Profile updated successfully',
         color: 'green',
       });
       setIsEditing(false);
+      setTempImageUrl(null);
     } catch (error) {
       notifications.show({
         title: 'Error',
@@ -114,6 +127,7 @@ export const ProfilePage = () => {
         company_name: userProfile.company_name || '',
         title: userProfile.title || '',
         bio: userProfile.bio || '',
+        image_url: userProfile.image_url || '',
         social_links: {
           linkedin: userProfile.social_links?.linkedin || '',
           twitter: userProfile.social_links?.twitter || '',
@@ -121,6 +135,7 @@ export const ProfilePage = () => {
         },
       });
     }
+    setTempImageUrl(null);
     setIsEditing(false);
   };
 
@@ -132,6 +147,7 @@ export const ProfilePage = () => {
         company_name: userProfile.company_name || '',
         title: userProfile.title || '',
         bio: userProfile.bio || '',
+        image_url: userProfile.image_url || '',
         social_links: {
           linkedin: userProfile.social_links?.linkedin || '',
           twitter: userProfile.social_links?.twitter || '',
@@ -140,6 +156,24 @@ export const ProfilePage = () => {
       });
     }
     setIsEditing(true);
+  };
+
+  // Generate random seed for DiceBear avatar
+  const generateRandomSeed = () => {
+    const length = Math.floor(Math.random() * 6) + 8; // 8-13 characters
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let seed = '';
+    for (let i = 0; i < length; i++) {
+      seed += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return seed;
+  };
+
+  const handleAvatarReroll = () => {
+    const newSeed = generateRandomSeed();
+    const newAvatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${newSeed}`;
+    setTempImageUrl(newAvatarUrl);
+    form.setFieldValue('image_url', newAvatarUrl);
   };
   
   if (isLoading) {
@@ -162,6 +196,7 @@ export const ProfilePage = () => {
     full_name: `${form.values.first_name} ${form.values.last_name}`.trim() || userProfile?.full_name,
     title: form.values.title,
     company_name: form.values.company_name,
+    image_url: tempImageUrl || form.values.image_url || userProfile?.image_url,
   } : userProfile;
   
   return (
@@ -175,6 +210,8 @@ export const ProfilePage = () => {
         user={displayUser} 
         onEditClick={handleEditClick}
         isOwnProfile={true}
+        isEditing={isEditing}
+        onAvatarReroll={handleAvatarReroll}
       />
       
       {/* Content Grid */}

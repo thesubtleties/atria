@@ -143,14 +143,27 @@ const SponsorCard = ({
                 root: styles.statusSwitch,
                 label: styles.switchLabel
               }}
+              styles={{
+                track: {
+                  backgroundColor: sponsor.is_active ? '#8B5CF6' : '#E2E8F0',
+                  borderColor: sponsor.is_active ? '#8B5CF6' : '#E2E8F0',
+                },
+                thumb: {
+                  border: '2px solid white',
+                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                }
+              }}
             />
           </div>
 
           <ActionIcon
             variant={sponsor.featured ? 'filled' : 'subtle'}
-            color="yellow"
             onClick={handleToggleFeatured}
             className={styles.featuredButton}
+            style={{
+              backgroundColor: sponsor.featured ? '#FFD666' : undefined,
+              color: sponsor.featured ? 'white' : '#FFD666',
+            }}
           >
             {sponsor.featured ? (
               <IconStarFilled size={18} />

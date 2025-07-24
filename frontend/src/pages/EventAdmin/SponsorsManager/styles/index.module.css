@@ -95,6 +95,16 @@
   border: 1px solid rgba(139, 92, 246, 0.15);
 }
 
+.tierBadge {
+  background: rgba(139, 92, 246, 0.08);
+  color: #8B5CF6;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border: 1px solid rgba(139, 92, 246, 0.15);
+}
+
 /* Main Content Glass Section */
 .mainContent {
   background: rgba(255, 255, 255, 0.7);

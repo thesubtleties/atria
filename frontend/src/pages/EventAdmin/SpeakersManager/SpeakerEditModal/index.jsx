@@ -130,8 +130,8 @@ const SpeakerEditModal = ({ opened, onClose, speaker, eventId, onSuccess }) => {
           )}
         </Stack>
 
-        <Group justify="flex-end" className={styles.buttonGroup}>
-          <Button variant="secondary" onClick={onClose}>
+        <div className={styles.buttonGroup}>
+          <Button variant="subtle" onClick={onClose}>
             Cancel
           </Button>
           <Button 
@@ -141,7 +141,7 @@ const SpeakerEditModal = ({ opened, onClose, speaker, eventId, onSuccess }) => {
           >
             {isLoading ? 'Saving...' : 'Save Changes'}
           </Button>
-        </Group>
+        </div>
       </form>
     </Modal>
   );

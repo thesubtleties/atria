@@ -1,1 +1,82 @@
-/* SponsorModal specific styles if needed */
+/* Modal Content - Glassmorphism */
+.modalContent {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 0;
+}
+
+/* Modal Header */
+.modalHeader {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1E293B;
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.04);
+}
+
+/* Section Titles */
+.sectionTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1E293B;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+/* Form Inputs */
+.formInput input,
+.formSelect input,
+.formTextarea textarea {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  transition: all 0.2s ease;
+}
+
+.formInput input:focus,
+.formSelect input:focus,
+.formTextarea textarea:focus {
+  border-color: rgba(139, 92, 246, 0.3);
+  background: rgba(255, 255, 255, 0.8);
+}
+
+/* Button Group at Modal Bottom */
+.buttonGroup {
+  padding: 1.5rem;
+  border-top: 1px solid rgba(139, 92, 246, 0.04);
+  margin-top: 1.5rem;
+  margin-bottom: -1.5rem;
+  margin-left: -1.5rem;
+  margin-right: -1.5rem;
+  background: rgba(251, 250, 255, 0.5);
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  width: calc(100% + 3rem);
+}
+
+/* Logo Section */
+.logoSection {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.logoUpload {
+  display: flex;
+  flex-direction: column;
+}
+
+.logoLabel {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #1E293B;
+  margin-bottom: 0.5rem;
+}
+
+.logoPreview {
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  border-radius: 6px;
+  padding: 0.25rem;
+  background: rgba(255, 255, 255, 0.5);
+}
