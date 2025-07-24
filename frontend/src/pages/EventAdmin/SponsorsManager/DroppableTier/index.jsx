@@ -22,6 +22,7 @@ const DroppableTier = ({ id, tier, children }) => {
           size="lg" 
           variant="light" 
           color="grape"
+          radius="sm"
           className={styles.tierBadge}
         >
           {tier.sponsors.length} sponsor{tier.sponsors.length !== 1 ? 's' : ''}

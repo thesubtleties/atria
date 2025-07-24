@@ -82,6 +82,7 @@
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
+  max-width: 600px; /* Limit width to prevent excessive horizontal spread */
 }
 
 /* Updated Badge Styles */
