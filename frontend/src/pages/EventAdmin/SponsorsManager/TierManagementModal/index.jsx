@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Modal,
-  Stack,
-  Grid,
-  TextInput,
-  ActionIcon,
-  Text,
-} from '@mantine/core';
+import { Modal, Stack, Grid, TextInput, ActionIcon, Text } from '@mantine/core';
 import { IconTrash, IconPlus } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { Button } from '../../../../shared/components/buttons';
@@ -25,27 +18,32 @@ const TierManagementModal = ({ opened, onClose, eventId }) => {
 
   useEffect(() => {
     if (opened) {
-      setTierFormData(sponsorTiers.length > 0 ? [...sponsorTiers] : [
-        { id: 'platinum', name: 'Platinum', order: 1 },
-        { id: 'gold', name: 'Gold', order: 2 },
-        { id: 'silver', name: 'Silver', order: 3 },
-        { id: 'bronze', name: 'Bronze', order: 4 },
-      ]);
+      setTierFormData(
+        sponsorTiers.length > 0
+          ? sponsorTiers.map((tier) => ({ ...tier })) // Deep copy each tier object
+          : [
+              { id: 'platinum', name: 'Platinum', order: 1 },
+              { id: 'gold', name: 'Gold', order: 2 },
+              { id: 'silver', name: 'Silver', order: 3 },
+              { id: 'bronze', name: 'Bronze', order: 4 },
+            ]
+      );
     }
   }, [opened, sponsorTiers]);
 
   const handleUpdateTiers = async () => {
     // Validate all tiers
     const validation = tierArraySchema.safeParse(tierFormData);
-    
+    console.log(tierFormData);
+
     if (!validation.success) {
       const newErrors = {};
-      validation.error.errors.forEach(err => {
+      validation.error.errors.forEach((err) => {
         const path = err.path.join('.');
         newErrors[path] = err.message;
       });
       setErrors(newErrors);
-      
+
       notifications.show({
         title: 'Validation Error',
         message: 'Please fix the errors in the tier configuration',
@@ -53,7 +51,7 @@ const TierManagementModal = ({ opened, onClose, eventId }) => {
       });
       return;
     }
-    
+
     try {
       await updateSponsorTiers({
         eventId,
@@ -80,20 +78,22 @@ const TierManagementModal = ({ opened, onClose, eventId }) => {
     const newTiers = [...tierFormData];
     newTiers[index][field] = value;
     setTierFormData(newTiers);
-    
+
     // Validate the specific tier
     const validation = tierSchema.safeParse(newTiers[index]);
     const errorKey = `${index}.${field}`;
-    
+
     if (!validation.success) {
-      const fieldError = validation.error.errors.find(err => err.path.includes(field));
+      const fieldError = validation.error.errors.find((err) =>
+        err.path.includes(field)
+      );
       if (fieldError) {
         setErrors({ ...errors, [errorKey]: fieldError.message });
       }
     } else {
       const newErrors = { ...errors };
       // Clear all errors for this tier
-      Object.keys(newErrors).forEach(key => {
+      Object.keys(newErrors).forEach((key) => {
         if (key.startsWith(`${index}.`)) {
           delete newErrors[key];
         }
@@ -109,11 +109,11 @@ const TierManagementModal = ({ opened, onClose, eventId }) => {
   const addTier = () => {
     setTierFormData([
       ...tierFormData,
-      { 
-        id: '', 
-        name: '', 
-        order: tierFormData.length + 1 
-      }
+      {
+        id: '',
+        name: '',
+        order: tierFormData.length + 1,
+      },
     ]);
   };
 
@@ -122,7 +122,7 @@ const TierManagementModal = ({ opened, onClose, eventId }) => {
       opened={opened}
       onClose={onClose}
       title="Manage Sponsor Tiers"
-      size="md"
+      size="lg"
       classNames={{
         content: styles.modalContent,
         header: styles.modalHeader,
@@ -130,30 +130,42 @@ const TierManagementModal = ({ opened, onClose, eventId }) => {
     >
       <Stack spacing="md" p="lg">
         <Text className={styles.description}>
-          Define the sponsorship tiers for your event. Sponsors will be grouped and sorted by these tiers.
+          Define the sponsorship tiers for your event. Sponsors will be grouped
+          and sorted by these tiers.
         </Text>
 
-        <Text size="xs" c="dimmed" mb="xs">
+        <Text size="xs" c="dimmed" ta="center" mb="xs">
           Tier IDs should be lowercase with no spaces (e.g., "platinum", "gold", "silver")
         </Text>
-        
+
         {/* Header row */}
         <Grid align="center" gutter="sm" className={styles.tierHeader}>
-          <Grid.Col span={2}>
-            <Text size="sm" fw={500} ta="center">Order</Text>
+          <Grid.Col span={1}>
+            <Text size="sm" fw={500} ta="center">
+              Order
+            </Text>
           </Grid.Col>
           <Grid.Col span={4}>
-            <Text size="sm" fw={500} ta="center">Tier ID</Text>
+            <Text size="sm" fw={500} ta="center">
+              Tier ID
+            </Text>
           </Grid.Col>
-          <Grid.Col span={5}>
-            <Text size="sm" fw={500} ta="center">Display Name</Text>
+          <Grid.Col span={6}>
+            <Text size="sm" fw={500} ta="center">
+              Display Name
+            </Text>
           </Grid.Col>
           <Grid.Col span={1}></Grid.Col>
         </Grid>
-        
+
         {tierFormData.map((tier, index) => (
-          <Grid key={index} align="center" gutter="sm" className={styles.tierGrid}>
-            <Grid.Col span={2}>
+          <Grid
+            key={index}
+            align="center"
+            gutter="sm"
+            className={styles.tierGrid}
+          >
+            <Grid.Col span={1}>
               <Text size="lg" fw={600} c="dimmed" ta="center">
                 {tier.order}
               </Text>
@@ -167,7 +179,7 @@ const TierManagementModal = ({ opened, onClose, eventId }) => {
                 classNames={{ input: styles.formInput }}
               />
             </Grid.Col>
-            <Grid.Col span={5}>
+            <Grid.Col span={6}>
               <TextInput
                 value={tier.name}
                 onChange={(e) => updateTier(index, 'name', e.target.value)}
