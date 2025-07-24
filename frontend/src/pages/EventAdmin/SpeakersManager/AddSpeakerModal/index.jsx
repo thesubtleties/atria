@@ -132,8 +132,8 @@ const AddSpeakerModal = ({ opened, onClose, eventId, onSuccess }) => {
       </Stack>
       
       {availableUsers.length > 0 && !isLoading && (
-        <Group justify="flex-end" className={styles.buttonGroup}>
-          <Button variant="secondary" onClick={handleClose}>
+        <div className={styles.buttonGroup}>
+          <Button variant="subtle" onClick={handleClose}>
             Cancel
           </Button>
           <Button 
@@ -143,7 +143,7 @@ const AddSpeakerModal = ({ opened, onClose, eventId, onSuccess }) => {
           >
             {isUpdating ? 'Adding...' : 'Add as Speaker'}
           </Button>
-        </Group>
+        </div>
       )}
     </Modal>
   );

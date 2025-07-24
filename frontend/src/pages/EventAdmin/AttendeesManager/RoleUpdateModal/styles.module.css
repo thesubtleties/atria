@@ -78,9 +78,13 @@
 
 /* Button Group */
 .buttonGroup {
-  padding: 0 1.5rem 1.5rem;
+  padding: 1.5rem;
   border-top: 1px solid rgba(139, 92, 246, 0.04);
   margin-top: 1.5rem;
+  background: rgba(251, 250, 255, 0.5);
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
 }
 
 /* Override Mantine Modal Styles */
