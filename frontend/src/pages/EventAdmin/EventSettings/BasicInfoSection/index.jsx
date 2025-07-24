@@ -4,18 +4,18 @@ import {
   Textarea, 
   Select, 
   Stack, 
-  Group, 
-  Button,
-  Paper,
-  Title,
+  Group,
   Text
 } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { DateInput } from '@mantine/dates';
 import { notifications } from '@mantine/notifications';
+import { IconCheck, IconX } from '@tabler/icons-react';
 import { useUpdateEventMutation } from '@/app/features/events/api';
 import { eventUpdateSchema } from '../schemas/eventSettingsSchemas';
+import { Button } from '@/shared/components/buttons';
 import styles from './styles.module.css';
+import parentStyles from '../styles/index.module.css';
 
 const BasicInfoSection = ({ event, eventId }) => {
   const [updateEvent, { isLoading }] = useUpdateEventMutation();
@@ -89,8 +89,11 @@ const BasicInfoSection = ({ event, eventId }) => {
   };
 
   return (
-    <Paper className={styles.section}>
-      <Title order={3} mb="lg">Basic Information</Title>
+    <div className={`${parentStyles.section} ${styles.glassSection}`}>
+      <h3 className={parentStyles.sectionTitle}>Basic Information</h3>
+      <Text c="dimmed" size="sm" mb="xl">
+        Update your event's core details and configuration
+      </Text>
       
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Stack spacing="md">
@@ -98,6 +101,10 @@ const BasicInfoSection = ({ event, eventId }) => {
             label="Event Title"
             placeholder="Enter event title"
             required
+            classNames={{
+              input: styles.formInput,
+              label: styles.formLabel
+            }}
             {...form.getInputProps('title')}
           />
 
@@ -105,6 +112,10 @@ const BasicInfoSection = ({ event, eventId }) => {
             label="Description"
             placeholder="Enter event description"
             minRows={3}
+            classNames={{
+              input: styles.formInput,
+              label: styles.formLabel
+            }}
             {...form.getInputProps('description')}
           />
 
@@ -116,6 +127,10 @@ const BasicInfoSection = ({ event, eventId }) => {
                 { value: 'SINGLE_SESSION', label: 'Single Session' },
               ]}
               required
+              classNames={{
+                input: styles.formInput,
+                label: styles.formLabel
+              }}
               {...form.getInputProps('event_type')}
             />
 
@@ -127,6 +142,10 @@ const BasicInfoSection = ({ event, eventId }) => {
                 { value: 'ARCHIVED', label: 'Archived' },
               ]}
               required
+              classNames={{
+                input: styles.formInput,
+                label: styles.formLabel
+              }}
               {...form.getInputProps('status')}
             />
           </Group>
@@ -136,6 +155,10 @@ const BasicInfoSection = ({ event, eventId }) => {
               label="Start Date"
               placeholder="Select start date"
               required
+              classNames={{
+                input: styles.formInput,
+                label: styles.formLabel
+              }}
               {...form.getInputProps('start_date')}
             />
 
@@ -143,6 +166,10 @@ const BasicInfoSection = ({ event, eventId }) => {
               label="End Date"
               placeholder="Select end date"
               required
+              classNames={{
+                input: styles.formInput,
+                label: styles.formLabel
+              }}
               {...form.getInputProps('end_date')}
             />
           </Group>
@@ -151,22 +178,32 @@ const BasicInfoSection = ({ event, eventId }) => {
             label="Company Name"
             placeholder="Enter company name"
             required
+            classNames={{
+              input: styles.formInput,
+              label: styles.formLabel
+            }}
             {...form.getInputProps('company_name')}
           />
 
           {hasChanges && (
-            <Group justify="flex-end" mt="xl">
-              <Button variant="outline" onClick={handleReset}>
+            <Group justify="flex-end" className={parentStyles.formActions}>
+              <Button variant="subtle" onClick={handleReset}>
+                <IconX size={16} />
                 Cancel
               </Button>
-              <Button type="submit" loading={isLoading}>
+              <Button 
+                type="submit" 
+                variant="primary"
+                loading={isLoading}
+              >
+                <IconCheck size={16} />
                 Save Changes
               </Button>
             </Group>
           )}
         </Stack>
       </form>
-    </Paper>
+    </div>
   );
 };
 

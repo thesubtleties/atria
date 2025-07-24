@@ -4,20 +4,19 @@ import {
   TextInput, 
   Textarea, 
   Stack, 
-  Group, 
-  Button,
-  Paper,
-  Title,
+  Group,
   Switch,
   Text,
   Alert
 } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
-import { IconInfoCircle } from '@tabler/icons-react';
+import { IconInfoCircle, IconCheck, IconX } from '@tabler/icons-react';
 import { useUpdateEventMutation } from '@/app/features/events/api';
 import { eventFormatSchema } from '../schemas/eventSettingsSchemas';
+import { Button } from '@/shared/components/buttons';
 import styles from './styles.module.css';
+import parentStyles from '../styles/index.module.css';
 
 const VenueSection = ({ event, eventId }) => {
   const [updateEvent, { isLoading }] = useUpdateEventMutation();
@@ -95,8 +94,11 @@ const VenueSection = ({ event, eventId }) => {
   };
 
   return (
-    <Paper className={styles.section}>
-      <Title order={3} mb="lg">Event Format & Venue</Title>
+    <div className={`${parentStyles.section} ${styles.glassSection}`}>
+      <h3 className={parentStyles.sectionTitle}>Event Format & Venue</h3>
+      <Text c="dimmed" size="sm" mb="xl">
+        Configure how attendees will participate in your event
+      </Text>
       
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Stack spacing="md">
@@ -109,35 +111,53 @@ const VenueSection = ({ event, eventId }) => {
                 { value: 'HYBRID', label: 'Hybrid' },
               ]}
               required
+              classNames={{
+                input: styles.formInput,
+                label: styles.formLabel
+              }}
               {...form.getInputProps('event_format')}
             />
 
-            <div>
-              <Text size="sm" fw={500} mb="xs">
+            <div className={styles.privacySection}>
+              <Text className={styles.formLabel}>
                 Privacy Settings
               </Text>
-              <Switch
-                label="Private Event"
-                description="Only invited users can join"
-                {...form.getInputProps('is_private', { type: 'checkbox' })}
-              />
+              <div className={styles.switchWrapper}>
+                <Switch
+                  label="Private Event"
+                  description="Only invited users can join"
+                  classNames={{
+                    track: styles.switchTrack,
+                    label: styles.switchLabel,
+                    description: styles.switchDescription
+                  }}
+                  {...form.getInputProps('is_private', { type: 'checkbox' })}
+                />
+              </div>
             </div>
           </Group>
 
           {form.values.event_format === 'VIRTUAL' && (
-            <Alert icon={<IconInfoCircle size={16} />} color="blue">
+            <Alert 
+              icon={<IconInfoCircle size={16} />} 
+              className={styles.infoAlert}
+            >
               Virtual events don't require venue information. Attendees will join online.
             </Alert>
           )}
 
           {showVenueFields && (
             <>
-              <Title order={4} mt="md">Venue Information</Title>
+              <h4 className={styles.subsectionTitle}>Venue Information</h4>
               
               <TextInput
                 label="Venue Name"
                 placeholder="Enter venue name"
                 required
+                classNames={{
+                  input: styles.formInput,
+                  label: styles.formLabel
+                }}
                 {...form.getInputProps('venue_name')}
               />
 
@@ -145,6 +165,10 @@ const VenueSection = ({ event, eventId }) => {
                 label="Venue Address"
                 placeholder="Enter full address"
                 minRows={2}
+                classNames={{
+                  input: styles.formInput,
+                  label: styles.formLabel
+                }}
                 {...form.getInputProps('venue_address')}
               />
 
@@ -153,6 +177,10 @@ const VenueSection = ({ event, eventId }) => {
                   label="City"
                   placeholder="Enter city"
                   required
+                  classNames={{
+                    input: styles.formInput,
+                    label: styles.formLabel
+                  }}
                   {...form.getInputProps('venue_city')}
                 />
 
@@ -160,6 +188,10 @@ const VenueSection = ({ event, eventId }) => {
                   label="Country"
                   placeholder="Enter country"
                   required
+                  classNames={{
+                    input: styles.formInput,
+                    label: styles.formLabel
+                  }}
                   {...form.getInputProps('venue_country')}
                 />
               </Group>
@@ -167,18 +199,24 @@ const VenueSection = ({ event, eventId }) => {
           )}
 
           {hasChanges && (
-            <Group justify="flex-end" mt="xl">
-              <Button variant="outline" onClick={handleReset}>
+            <Group justify="flex-end" className={parentStyles.formActions}>
+              <Button variant="subtle" onClick={handleReset}>
+                <IconX size={16} />
                 Cancel
               </Button>
-              <Button type="submit" loading={isLoading}>
+              <Button 
+                type="submit" 
+                variant="primary"
+                loading={isLoading}
+              >
+                <IconCheck size={16} />
                 Save Changes
               </Button>
             </Group>
           )}
         </Stack>
       </form>
-    </Paper>
+    </div>
   );
 };
 

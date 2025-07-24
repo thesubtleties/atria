@@ -2,25 +2,24 @@ import { useState, useEffect } from 'react';
 import { 
   ColorInput, 
   Stack, 
-  Group, 
-  Button,
-  Paper,
-  Title,
+  Group,
   Text,
   FileInput,
   Box,
-  Card,
   Tabs,
-  Textarea
+  Textarea,
+  Divider
 } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
-import { IconUpload, IconX, IconDeviceDesktop, IconDeviceMobile } from '@tabler/icons-react';
+import { IconUpload, IconX, IconDeviceDesktop, IconDeviceMobile, IconCheck } from '@tabler/icons-react';
 import { useUpdateEventBrandingMutation, useUpdateEventMutation } from '@/app/features/events/api';
 import { useUploadImageMutation } from '@/app/features/uploads/api';
 import { eventBrandingSchema } from '../schemas/eventSettingsSchemas';
 import PrivateImage from '@/shared/components/PrivateImage';
+import { Button } from '@/shared/components/buttons';
 import styles from './styles.module.css';
+import parentStyles from '../styles/index.module.css';
 
 const BrandingSection = ({ event, eventId }) => {
   const [updateBranding, { isLoading: isUpdatingBranding }] = useUpdateEventBrandingMutation();
@@ -32,8 +31,8 @@ const BrandingSection = ({ event, eventId }) => {
 
   const form = useForm({
     initialValues: {
-      primary_color: event?.branding?.primary_color || '#000000',
-      secondary_color: event?.branding?.secondary_color || '#ffffff',
+      primary_color: event?.branding?.primary_color || '#8B5CF6',
+      secondary_color: event?.branding?.secondary_color || '#F59E0B',
       logo_url: event?.branding?.logo_url || null,
     },
     resolver: zodResolver(eventBrandingSchema),
@@ -168,8 +167,8 @@ const BrandingSection = ({ event, eventId }) => {
 
   const handleReset = () => {
     form.setValues({
-      primary_color: event?.branding?.primary_color || '#000000',
-      secondary_color: event?.branding?.secondary_color || '#ffffff',
+      primary_color: event?.branding?.primary_color || '#8B5CF6',
+      secondary_color: event?.branding?.secondary_color || '#F59E0B',
       logo_url: event?.branding?.logo_url || null,
     });
     setHasChanges(false);
@@ -185,35 +184,49 @@ const BrandingSection = ({ event, eventId }) => {
   };
 
   return (
-    <Paper className={styles.section}>
-      <Title order={3} mb="lg">Event Branding</Title>
-      
-      <form onSubmit={form.onSubmit(handleSubmit)}>
-        <Stack spacing="lg">
-          <Group grow>
-            <ColorInput
-              label="Primary Color"
-              description="Main brand color for the event"
-              format="hex"
-              swatches={['#25262b', '#868e96', '#fa5252', '#e64980', '#be4bdb', '#7950f2', '#4c6ef5', '#228be6', '#15aabf', '#12b886', '#40c057', '#82c91e', '#fab005', '#fd7e14']}
-              {...form.getInputProps('primary_color')}
-            />
+    <div className={parentStyles.section}>
+      {/* Branding Section */}
+      <div className={styles.brandingSection}>
+        <h3 className={parentStyles.sectionTitle}>Event Branding</h3>
+        <Text c="dimmed" size="sm" mb="xl">
+          Customize your event's visual identity
+        </Text>
+        
+        <form onSubmit={form.onSubmit(handleSubmit)}>
+          <Stack spacing="lg">
+            <Group grow>
+              <ColorInput
+                label="Primary Color"
+                description="Main brand color for the event"
+                format="hex"
+                swatches={['#8B5CF6', '#7C3AED', '#6D28D9', '#5B21B6', '#4C1D95', '#F59E0B', '#EAB308', '#CA8A04', '#A16207', '#854D0E']}
+                classNames={{
+                  input: styles.colorInput,
+                  label: styles.formLabel,
+                  description: styles.formDescription
+                }}
+                {...form.getInputProps('primary_color')}
+              />
 
-            <ColorInput
-              label="Secondary Color"
-              description="Accent color for the event"
-              format="hex"
-              swatches={['#25262b', '#868e96', '#fa5252', '#e64980', '#be4bdb', '#7950f2', '#4c6ef5', '#228be6', '#15aabf', '#12b886', '#40c057', '#82c91e', '#fab005', '#fd7e14']}
-              {...form.getInputProps('secondary_color')}
-            />
-          </Group>
+              <ColorInput
+                label="Secondary Color"
+                description="Accent color for the event"
+                format="hex"
+                swatches={['#F59E0B', '#FB923C', '#F97316', '#EA580C', '#DC2626', '#8B5CF6', '#A855F7', '#A78BFA', '#818CF8', '#6366F1']}
+                classNames={{
+                  input: styles.colorInput,
+                  label: styles.formLabel,
+                  description: styles.formDescription
+                }}
+                {...form.getInputProps('secondary_color')}
+              />
+            </Group>
 
-          <Stack spacing="md">
-            <Title order={4}>Event Logo</Title>
-            {form.values.logo_url ? (
-              <Card withBorder p="md">
-                <Group>
-                  <Box className={styles.imagePreview}>
+            <div className={styles.logoSection}>
+              <h4 className={styles.subsectionTitle}>Event Logo</h4>
+              {form.values.logo_url ? (
+                <div className={styles.imagePreviewCard}>
+                  <Box className={styles.imagePreviewWrapper}>
                     <PrivateImage
                       objectKey={form.values.logo_url}
                       alt="Event logo"
@@ -222,156 +235,203 @@ const BrandingSection = ({ event, eventId }) => {
                     />
                   </Box>
                   <Button
-                    variant="light"
+                    variant="subtle"
                     color="red"
-                    leftSection={<IconX size={16} />}
+                    size="sm"
                     onClick={() => handleRemoveImage('logo_url')}
                   >
+                    <IconX size={16} />
                     Remove Logo
                   </Button>
-                </Group>
-              </Card>
-            ) : (
-              <FileInput
-                label="Upload Logo"
-                description="Recommended: 200x200px, PNG or JPG"
-                placeholder="Click to upload logo"
-                accept="image/*"
-                leftSection={<IconUpload size={16} />}
-                onChange={(file) => handleFileUpload(file, 'logo_url')}
-                disabled={isUploading}
-              />
+                </div>
+              ) : (
+                <FileInput
+                  label="Upload Logo"
+                  description="Recommended: 200x200px, PNG or JPG"
+                  placeholder="Click to upload logo"
+                  accept="image/*"
+                  leftSection={<IconUpload size={16} />}
+                  onChange={(file) => handleFileUpload(file, 'logo_url')}
+                  disabled={isUploading}
+                  classNames={{
+                    input: styles.formInput,
+                    label: styles.formLabel,
+                    description: styles.formDescription
+                  }}
+                />
+              )}
+            </div>
+
+            {hasChanges && (
+              <Group justify="flex-end" className={parentStyles.formActions}>
+                <Button variant="subtle" onClick={handleReset}>
+                  <IconX size={16} />
+                  Cancel
+                </Button>
+                <Button 
+                  type="submit" 
+                  variant="primary"
+                  loading={isUpdatingBranding}
+                >
+                  <IconCheck size={16} />
+                  Save Branding
+                </Button>
+              </Group>
             )}
           </Stack>
+        </form>
+      </div>
 
-          {hasChanges && (
-            <Group justify="flex-end" mt="xl">
-              <Button variant="outline" onClick={handleReset}>
-                Cancel
-              </Button>
-              <Button type="submit" loading={isUpdatingBranding}>
-                Save Branding
-              </Button>
-            </Group>
-          )}
-        </Stack>
-      </form>
+      <Divider my="xl" className={styles.sectionDivider} />
 
       {/* Hero Section */}
-      <form onSubmit={heroForm.onSubmit(handleHeroSubmit)}>
-        <Stack spacing="lg" mt="xl">
-          <Title order={4}>Hero Section</Title>
-          <Text c="dimmed" size="sm">
-            The hero section appears at the top of your event page
-          </Text>
-          
-          <Textarea
-            label="Hero Description"
-            description="A compelling description that appears in the hero section"
-            placeholder="Join us for an amazing event..."
-            minRows={4}
-            {...heroForm.getInputProps('hero_description')}
-          />
+      <div className={styles.heroSection}>
+        <h3 className={parentStyles.sectionTitle}>Hero Section</h3>
+        <Text c="dimmed" size="sm" mb="xl">
+          The hero section appears at the top of your event page
+        </Text>
+        
+        <form onSubmit={heroForm.onSubmit(handleHeroSubmit)}>
+          <Stack spacing="lg">
+            <Textarea
+              label="Hero Description"
+              description="A compelling description that appears in the hero section"
+              placeholder="Join us for an amazing event..."
+              minRows={4}
+              classNames={{
+                input: styles.formInput,
+                label: styles.formLabel,
+                description: styles.formDescription
+              }}
+              {...heroForm.getInputProps('hero_description')}
+            />
 
-          <Stack spacing="md">
-            <Title order={5}>Hero Images</Title>
-            <Text c="dimmed" size="sm">
-              Upload different images for desktop and mobile views
-            </Text>
+            <div>
+              <h4 className={styles.subsectionTitle}>Hero Images</h4>
+              <Text c="dimmed" size="sm" mb="md">
+                Upload different images for desktop and mobile views
+              </Text>
 
-            <Tabs value={activeTab} onChange={setActiveTab}>
-              <Tabs.List>
-                <Tabs.Tab value="desktop" leftSection={<IconDeviceDesktop size={16} />}>
-                  Desktop Image
-                </Tabs.Tab>
-                <Tabs.Tab value="mobile" leftSection={<IconDeviceMobile size={16} />}>
-                  Mobile Image
-                </Tabs.Tab>
-              </Tabs.List>
+              <Tabs 
+                value={activeTab} 
+                onChange={setActiveTab}
+                classNames={{
+                  root: styles.heroTabs,
+                  list: styles.heroTabsList,
+                  tab: styles.heroTab
+                }}
+              >
+                <Tabs.List>
+                  <Tabs.Tab value="desktop" leftSection={<IconDeviceDesktop size={16} />}>
+                    Desktop Image
+                  </Tabs.Tab>
+                  <Tabs.Tab value="mobile" leftSection={<IconDeviceMobile size={16} />}>
+                    Mobile Image
+                  </Tabs.Tab>
+                </Tabs.List>
 
-              <Tabs.Panel value="desktop" pt="md">
-                {heroForm.values.desktop_image ? (
-                  <Card withBorder p="md">
-                    <Box className={styles.heroImagePreview}>
-                      <PrivateImage
-                        objectKey={heroForm.values.desktop_image}
-                        alt="Desktop hero image"
-                        fit="cover"
-                        height={300}
-                      />
-                    </Box>
-                    <Button
-                      variant="light"
-                      color="red"
-                      leftSection={<IconX size={16} />}
-                      onClick={() => handleRemoveImage('desktop_image')}
-                      mt="md"
-                    >
-                      Remove Desktop Image
-                    </Button>
-                  </Card>
-                ) : (
-                  <FileInput
-                    label="Upload Desktop Hero Image"
-                    description="Recommended: 1920x600px, PNG or JPG"
-                    placeholder="Click to upload desktop hero image"
-                    accept="image/*"
-                    leftSection={<IconUpload size={16} />}
-                    onChange={(file) => handleFileUpload(file, 'desktop_image')}
-                    disabled={isUploading}
-                  />
-                )}
-              </Tabs.Panel>
+                <Tabs.Panel value="desktop" className={styles.heroTabPanel}>
+                  {heroForm.values.desktop_image ? (
+                    <div className={styles.heroImagePreviewCard}>
+                      <Box className={styles.heroImagePreviewWrapper}>
+                        <PrivateImage
+                          objectKey={heroForm.values.desktop_image}
+                          alt="Desktop hero image"
+                          fit="cover"
+                          height={300}
+                        />
+                      </Box>
+                      <Button
+                        variant="subtle"
+                        color="red"
+                        size="sm"
+                        onClick={() => handleRemoveImage('desktop_image')}
+                        mt="md"
+                      >
+                        <IconX size={16} />
+                        Remove Desktop Image
+                      </Button>
+                    </div>
+                  ) : (
+                    <FileInput
+                      label="Upload Desktop Hero Image"
+                      description="Recommended: 1920x600px, PNG or JPG"
+                      placeholder="Click to upload desktop hero image"
+                      accept="image/*"
+                      leftSection={<IconUpload size={16} />}
+                      onChange={(file) => handleFileUpload(file, 'desktop_image')}
+                      disabled={isUploading}
+                      classNames={{
+                        input: styles.formInput,
+                        label: styles.formLabel,
+                        description: styles.formDescription
+                      }}
+                    />
+                  )}
+                </Tabs.Panel>
 
-              <Tabs.Panel value="mobile" pt="md">
-                {heroForm.values.mobile_image ? (
-                  <Card withBorder p="md">
-                    <Box className={styles.heroImagePreview}>
-                      <PrivateImage
-                        objectKey={heroForm.values.mobile_image}
-                        alt="Mobile hero image"
-                        fit="cover"
-                        height={300}
-                      />
-                    </Box>
-                    <Button
-                      variant="light"
-                      color="red"
-                      leftSection={<IconX size={16} />}
-                      onClick={() => handleRemoveImage('mobile_image')}
-                      mt="md"
-                    >
-                      Remove Mobile Image
-                    </Button>
-                  </Card>
-                ) : (
-                  <FileInput
-                    label="Upload Mobile Hero Image"
-                    description="Recommended: 800x400px, PNG or JPG"
-                    placeholder="Click to upload mobile hero image"
-                    accept="image/*"
-                    leftSection={<IconUpload size={16} />}
-                    onChange={(file) => handleFileUpload(file, 'mobile_image')}
-                    disabled={isUploading}
-                  />
-                )}
-              </Tabs.Panel>
-            </Tabs>
+                <Tabs.Panel value="mobile" className={styles.heroTabPanel}>
+                  {heroForm.values.mobile_image ? (
+                    <div className={styles.heroImagePreviewCard}>
+                      <Box className={styles.heroImagePreviewWrapper}>
+                        <PrivateImage
+                          objectKey={heroForm.values.mobile_image}
+                          alt="Mobile hero image"
+                          fit="cover"
+                          height={300}
+                        />
+                      </Box>
+                      <Button
+                        variant="subtle"
+                        color="red"
+                        size="sm"
+                        onClick={() => handleRemoveImage('mobile_image')}
+                        mt="md"
+                      >
+                        <IconX size={16} />
+                        Remove Mobile Image
+                      </Button>
+                    </div>
+                  ) : (
+                    <FileInput
+                      label="Upload Mobile Hero Image"
+                      description="Recommended: 800x400px, PNG or JPG"
+                      placeholder="Click to upload mobile hero image"
+                      accept="image/*"
+                      leftSection={<IconUpload size={16} />}
+                      onChange={(file) => handleFileUpload(file, 'mobile_image')}
+                      disabled={isUploading}
+                      classNames={{
+                        input: styles.formInput,
+                        label: styles.formLabel,
+                        description: styles.formDescription
+                      }}
+                    />
+                  )}
+                </Tabs.Panel>
+              </Tabs>
+            </div>
+
+            {hasHeroChanges && (
+              <Group justify="flex-end" className={parentStyles.formActions}>
+                <Button variant="subtle" onClick={handleHeroReset}>
+                  <IconX size={16} />
+                  Cancel
+                </Button>
+                <Button 
+                  type="submit" 
+                  variant="primary"
+                  loading={isUpdatingHero}
+                >
+                  <IconCheck size={16} />
+                  Save Hero Section
+                </Button>
+              </Group>
+            )}
           </Stack>
-
-          {hasHeroChanges && (
-            <Group justify="flex-end" mt="xl">
-              <Button variant="outline" onClick={handleHeroReset}>
-                Cancel
-              </Button>
-              <Button type="submit" loading={isUpdatingHero}>
-                Save Hero Section
-              </Button>
-            </Group>
-          )}
-        </Stack>
-      </form>
-    </Paper>
+        </form>
+      </div>
+    </div>
   );
 };
 

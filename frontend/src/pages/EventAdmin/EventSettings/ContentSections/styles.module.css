@@ -1,21 +1,169 @@
-.section {
-  padding: 1.5rem;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+/* Glass sections - additional styling to complement parent */
+.glassSection {
+  /* Parent already provides the glass effect, we just add any extra styling */
 }
 
+/* Section titles - removed since using parent styles */
+
+.subsectionTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1E293B;
+  margin-bottom: 1rem;
+}
+
+/* Welcome section */
+.welcomeSection {
+  background: rgba(139, 92, 246, 0.02);
+  padding: 1.5rem;
+  border-radius: 6px;
+  border: 1px solid rgba(139, 92, 246, 0.04);
+}
+
+/* Form inputs */
+.formInput,
+.formTextarea,
+.formSelect {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  transition: all 0.2s ease;
+}
+
+.formInput:focus,
+.formTextarea:focus,
+.formSelect:focus {
+  border-color: rgba(139, 92, 246, 0.3);
+  background: rgba(255, 255, 255, 0.8);
+}
+
+/* Divider */
+.divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(139, 92, 246, 0.1), transparent);
+  margin: 2rem 0;
+}
+
+/* Draggable list container */
+.draggableList {
+  position: relative;
+  min-height: 80px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  padding: 0.5rem;
+  border: 2px dashed transparent;
+  transition: all 0.2s ease;
+}
+
+/* Empty state */
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 70px;
+  color: #94A3B8;
+  font-size: 0.9rem;
+  font-weight: 500;
+  background: rgba(248, 250, 252, 0.5);
+  border-radius: 6px;
+  border: 2px dashed rgba(148, 163, 184, 0.3);
+}
+
+/* Draggable cards */
+.draggableCard {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.03);
+  transition: all 0.2s ease;
+}
+
+.draggableCard:last-child {
+  margin-bottom: 0;
+}
+
+.draggableCard:hover {
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.06);
+  transform: translateY(-1px);
+}
+
+.draggableCard.dragging {
+  opacity: 0.5;
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.12);
+  transform: scale(1.02);
+}
+
+/* Drag handle */
 .dragHandle {
   cursor: move;
-  color: #868e96;
+  color: #94A3B8;
   transition: color 0.2s ease;
+  flex-shrink: 0;
 }
 
 .dragHandle:hover {
-  color: #495057;
+  color: #64748B;
 }
 
-.dragOver {
-  background-color: #e3f2fd;
-  border-color: #2196f3;
+/* Icons */
+.highlightIcon {
+  color: #FFD93D;
+  flex-shrink: 0;
+}
+
+.faqIcon {
+  color: #8B5CF6;
+  flex-shrink: 0;
+}
+
+/* Modal styles */
+.modalContent {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.08);
+}
+
+.modalHeader {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1E293B;
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.04);
+}
+
+/* Animation */
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .subsectionTitle {
+    font-size: 1rem;
+  }
+
+  .draggableCard {
+    padding: 0.75rem;
+  }
+}
+
+/* Global overrides for Mantine Modal */
+:global(.mantine-Modal-content) {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.08);
+}
+
+:global(.mantine-Modal-header) {
+  background: transparent;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.04);
+}
+
+:global(.mantine-Modal-overlay) {
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(4px);
 }

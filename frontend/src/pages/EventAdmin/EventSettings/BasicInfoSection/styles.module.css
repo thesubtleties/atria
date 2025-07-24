@@ -1,6 +1,67 @@
-.section {
-  padding: 1.5rem;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+/* Glass Section Override - Inherits from parent styles */
+.glassSection {
+  position: relative;
+}
+
+/* Form Label Styling */
+.formLabel {
+  color: #1E293B;
+  font-weight: 500;
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+}
+
+/* Form Input Styling */
+.formInput {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+}
+
+.formInput:focus {
+  border-color: rgba(139, 92, 246, 0.3);
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.05);
+}
+
+/* Select Dropdown Styling */
+.formInput[data-combobox-input] {
+  cursor: pointer;
+}
+
+/* Date Input Calendar Icon */
+.formInput[type="button"] {
+  cursor: pointer;
+}
+
+/* Status-specific styling */
+.statusDraft {
+  background: rgba(107, 114, 128, 0.08);
+  color: #6B7280;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.statusPublished {
+  background: rgba(34, 197, 94, 0.08);
+  color: #16A34A;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.statusArchived {
+  background: rgba(239, 68, 68, 0.08);
+  color: #EF4444;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  display: inline-block;
 }
