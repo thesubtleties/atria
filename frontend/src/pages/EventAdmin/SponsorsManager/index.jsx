@@ -84,13 +84,13 @@ const SponsorsManager = () => {
             <div>
               <h2 className={styles.pageTitle}>Sponsors Management</h2>
               <div className={styles.badgeGroup}>
-                <Badge className={styles.statsBadge} size="lg" variant="light" radius="sm">
+                <Badge className={styles.statsBadge} size="lg" variant="light">
                   {tierCounts.total || 0} Total
                 </Badge>
                 {Object.entries(tierCounts).map(([tier, count]) => {
                   if (tier === 'total') return null;
                   return (
-                    <Badge key={tier} size="lg" variant="light" color="grape" radius="sm">
+                    <Badge key={tier} className={styles.tierBadge} size="lg" variant="light" color="grape">
                       {count} {tier}
                     </Badge>
                   );

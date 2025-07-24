@@ -4,19 +4,18 @@ import {
   Stack,
   Grid,
   TextInput,
-  NumberInput,
-  Button,
-  Group,
   ActionIcon,
   Text,
 } from '@mantine/core';
 import { IconTrash, IconPlus } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
+import { Button } from '../../../../shared/components/buttons';
 import {
   useGetSponsorTiersQuery,
   useUpdateSponsorTiersMutation,
 } from '../../../../app/features/sponsors/api';
 import { tierSchema, tierArraySchema } from '../schemas/sponsorSchema';
+import styles from './styles/index.module.css';
 
 const TierManagementModal = ({ opened, onClose, eventId }) => {
   const [tierFormData, setTierFormData] = useState([]);
@@ -124,40 +123,57 @@ const TierManagementModal = ({ opened, onClose, eventId }) => {
       onClose={onClose}
       title="Manage Sponsor Tiers"
       size="md"
+      classNames={{
+        content: styles.modalContent,
+        header: styles.modalHeader,
+      }}
     >
-      <Stack>
-        <Text size="sm" c="dimmed">
+      <Stack spacing="md" p="lg">
+        <Text className={styles.description}>
           Define the sponsorship tiers for your event. Sponsors will be grouped and sorted by these tiers.
         </Text>
 
+        <Text size="xs" c="dimmed" mb="xs">
+          Tier IDs should be lowercase with no spaces (e.g., "platinum", "gold", "silver")
+        </Text>
+        
+        {/* Header row */}
+        <Grid align="center" gutter="sm" className={styles.tierHeader}>
+          <Grid.Col span={2}>
+            <Text size="sm" fw={500} ta="center">Order</Text>
+          </Grid.Col>
+          <Grid.Col span={4}>
+            <Text size="sm" fw={500} ta="center">Tier ID</Text>
+          </Grid.Col>
+          <Grid.Col span={5}>
+            <Text size="sm" fw={500} ta="center">Display Name</Text>
+          </Grid.Col>
+          <Grid.Col span={1}></Grid.Col>
+        </Grid>
+        
         {tierFormData.map((tier, index) => (
-          <Grid key={index} align="center" gutter="sm">
+          <Grid key={index} align="center" gutter="sm" className={styles.tierGrid}>
             <Grid.Col span={2}>
-              <NumberInput
-                label={index === 0 ? "Order" : undefined}
-                value={tier.order}
-                onChange={(value) => updateTier(index, 'order', value)}
-                min={1}
-                error={errors[`${index}.order`]}
-              />
+              <Text size="lg" fw={600} c="dimmed" ta="center">
+                {tier.order}
+              </Text>
             </Grid.Col>
             <Grid.Col span={4}>
               <TextInput
-                label={index === 0 ? "Tier ID" : undefined}
                 value={tier.id}
                 onChange={(e) => updateTier(index, 'id', e.target.value)}
                 placeholder="tier-id"
-                description={index === 0 ? "Lowercase, no spaces" : undefined}
                 error={errors[`${index}.id`]}
+                classNames={{ input: styles.formInput }}
               />
             </Grid.Col>
             <Grid.Col span={5}>
               <TextInput
-                label={index === 0 ? "Display Name" : undefined}
                 value={tier.name}
                 onChange={(e) => updateTier(index, 'name', e.target.value)}
                 placeholder="Tier Name"
                 error={errors[`${index}.name`]}
+                classNames={{ input: styles.formInput }}
               />
             </Grid.Col>
             <Grid.Col span={1}>
@@ -165,7 +181,7 @@ const TierManagementModal = ({ opened, onClose, eventId }) => {
                 color="red"
                 variant="subtle"
                 onClick={() => deleteTier(index)}
-                style={{ marginTop: index === 0 ? '1.5rem' : 0 }}
+                className={styles.deleteButton}
               >
                 <IconTrash size={16} />
               </ActionIcon>
@@ -174,22 +190,23 @@ const TierManagementModal = ({ opened, onClose, eventId }) => {
         ))}
 
         <Button
-          variant="outline"
-          leftSection={<IconPlus size={16} />}
+          variant="subtle"
           onClick={addTier}
           fullWidth
+          className={styles.addTierButton}
         >
+          <IconPlus size={16} />
           Add Tier
         </Button>
 
-        <Group justify="flex-end" mt="xl">
-          <Button variant="outline" onClick={onClose}>
+        <div className={styles.buttonGroup}>
+          <Button variant="subtle" onClick={onClose}>
             Cancel
           </Button>
-          <Button onClick={handleUpdateTiers}>
+          <Button variant="primary" onClick={handleUpdateTiers}>
             Save Tiers
           </Button>
-        </Group>
+        </div>
       </Stack>
     </Modal>
   );

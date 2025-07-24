@@ -1,1 +1,114 @@
-/* TierManagementModal specific styles if needed */
+/* Modal Content - Glassmorphism */
+.modalContent {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 0;
+}
+
+/* Modal Header */
+.modalHeader {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1E293B;
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.04);
+}
+
+/* Form Inputs */
+.formInput input {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  transition: all 0.2s ease;
+}
+
+.formInput input:focus {
+  border-color: rgba(139, 92, 246, 0.3);
+  background: rgba(255, 255, 255, 0.8);
+}
+
+/* Order text styling */
+.orderText {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #64748B;
+  text-align: center;
+}
+
+/* Description Text */
+.description {
+  color: #64748B;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+/* Tier Header */
+.tierHeader {
+  padding: 0.75rem;
+  padding-right: 1.5rem;
+  background: rgba(139, 92, 246, 0.06);
+  border-radius: 6px 6px 0 0;
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  margin-bottom: -1px;
+}
+
+/* Tier Grid */
+.tierGrid {
+  padding: 0.75rem;
+  padding-right: 1.5rem;
+  background: rgba(139, 92, 246, 0.02);
+  border: 1px solid rgba(139, 92, 246, 0.06);
+  border-top: none;
+  transition: all 0.2s ease;
+}
+
+.tierGrid:first-of-type {
+  border-top: 1px solid rgba(139, 92, 246, 0.06);
+}
+
+.tierGrid:last-of-type {
+  border-radius: 0 0 6px 6px;
+}
+
+.tierGrid:hover {
+  background: rgba(139, 92, 246, 0.04);
+  border-color: rgba(139, 92, 246, 0.1);
+}
+
+/* Delete Button */
+.deleteButton {
+  transition: all 0.2s ease;
+}
+
+.deleteButton:hover {
+  background: rgba(220, 38, 38, 0.08);
+  color: #DC2626;
+}
+
+/* Add Tier Button */
+.addTierButton {
+  border: 1px dashed rgba(139, 92, 246, 0.3);
+  color: #8B5CF6;
+  background: transparent;
+  transition: all 0.2s ease;
+}
+
+.addTierButton:hover {
+  background: rgba(139, 92, 246, 0.04);
+  border-color: rgba(139, 92, 246, 0.4);
+}
+
+/* Button Group at Modal Bottom */
+.buttonGroup {
+  padding: 1.5rem;
+  border-top: 1px solid rgba(139, 92, 246, 0.04);
+  margin-top: 1.5rem;
+  margin-bottom: -1.5rem;
+  margin-left: -1.5rem;
+  margin-right: -1.5rem;
+  background: rgba(251, 250, 255, 0.5);
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  width: calc(100% + 3rem);
+}
