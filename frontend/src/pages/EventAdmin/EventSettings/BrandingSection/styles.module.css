@@ -1,31 +1,196 @@
-.section {
-  padding: 1.5rem;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+/* Form Sections */
+.brandingSection {
+  position: relative;
 }
 
-.imagePreview {
+.heroSection {
+  position: relative;
+}
+
+/* Form Label Styling */
+.formLabel {
+  color: #1E293B;
+  font-weight: 500;
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+}
+
+.formDescription {
+  color: #64748B;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+/* Form Input Styling */
+.formInput {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+}
+
+.formInput:focus {
+  border-color: rgba(139, 92, 246, 0.3);
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.05);
+}
+
+/* Color Input Styling */
+.colorInput {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  transition: all 0.2s ease;
+}
+
+.colorInput:focus {
+  border-color: rgba(139, 92, 246, 0.3);
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.05);
+}
+
+/* Subsection Title */
+.subsectionTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1E293B;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.08);
+}
+
+/* Logo Section */
+.logoSection {
+  margin-top: 1.5rem;
+}
+
+/* Image Preview Cards */
+.imagePreviewCard {
+  background: rgba(139, 92, 246, 0.02);
+  border: 1px solid rgba(139, 92, 246, 0.08);
+  border-radius: 6px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.imagePreviewWrapper {
   width: 150px;
   height: 150px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f8f9fa;
-  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 6px;
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  overflow: hidden;
 }
 
-.bannerPreview {
-  width: 100%;
-  overflow: hidden;
-  border-radius: 4px;
-  background: #f8f9fa;
+/* Hero Image Preview */
+.heroImagePreviewCard {
+  background: rgba(139, 92, 246, 0.02);
+  border: 1px solid rgba(139, 92, 246, 0.08);
+  border-radius: 6px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.heroImagePreview {
+.heroImagePreviewWrapper {
   width: 100%;
+  max-width: 600px;
   overflow: hidden;
-  border-radius: 4px;
-  background: #f8f9fa;
-  max-height: 400px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(139, 92, 246, 0.1);
+}
+
+/* Section Divider */
+.sectionDivider {
+  border-color: rgba(139, 92, 246, 0.08);
+  margin: 2.5rem 0;
+}
+
+/* Hero Tabs Styling */
+.heroTabs {
+  margin-top: 1rem;
+}
+
+.heroTabsList {
+  background: rgba(139, 92, 246, 0.04);
+  backdrop-filter: blur(10px);
+  border-radius: 6px;
+  padding: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.heroTab {
+  padding: 0.75rem 1.25rem;
+  transition: all 0.2s ease;
+  color: #64748B;
+  font-weight: 500;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  border-radius: 4px 4px 0 0;
+  font-size: 0.9rem;
+  position: relative;
+}
+
+.heroTab:hover {
+  color: #8B5CF6;
+  background: rgba(139, 92, 246, 0.06);
+}
+
+.heroTab[data-active] {
+  color: #8B5CF6;
+  border-bottom-color: #8B5CF6;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.heroTabPanel {
+  padding-top: 1rem;
+}
+
+/* Upload Placeholders */
+.uploadPlaceholder {
+  background: rgba(139, 92, 246, 0.04);
+  border: 2px dashed rgba(139, 92, 246, 0.2);
+  border-radius: 6px;
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.uploadPlaceholder:hover {
+  background: rgba(139, 92, 246, 0.06);
+  border-color: rgba(139, 92, 246, 0.3);
+}
+
+/* Color Swatches */
+.colorSwatchWrapper {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .imagePreviewWrapper {
+    width: 120px;
+    height: 120px;
+  }
+
+  .heroImagePreviewWrapper {
+    max-width: 100%;
+  }
+
+  .heroTab {
+    font-size: 0.85rem;
+    padding: 0.5rem 1rem;
+  }
 }

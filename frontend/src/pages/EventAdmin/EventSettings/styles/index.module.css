@@ -1,26 +1,309 @@
+/* Page Container - Full viewport */
 .container {
-  padding: 2rem 0;
   min-height: 100vh;
+  background: rgba(251, 250, 255, 1);
+  position: relative;
+  overflow: hidden; /* Prevent scroll from shapes */
 }
 
-.section {
-  background: white;
+/* Background Organic Shapes */
+.bgShape1 {
+  position: absolute;
+  width: 350px;
+  height: 350px;
+  background: linear-gradient(135deg, #8B5CF6, #A855F7);
+  border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
+  top: 120px;
+  right: -175px;
+  opacity: 0.04;
+  animation: float 20s ease-in-out infinite;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.bgShape2 {
+  position: absolute;
+  width: 300px;
+  height: 320px;
+  background: linear-gradient(45deg, #F59E0B, #FFD93D);
+  border-radius: 42% 58% 70% 30% / 45% 30% 70% 55%;
+  bottom: 150px;
+  left: -150px;
+  opacity: 0.03;
+  animation: float 25s ease-in-out infinite reverse;
+  z-index: 1;
+  pointer-events: none;
+}
+
+@keyframes float {
+  0%, 100% { 
+    transform: translateY(0px) rotate(0deg) scale(1); 
+  }
+  33% { 
+    transform: translateY(-20px) rotate(2deg) scale(1.02); 
+  }
+  66% { 
+    transform: translateY(15px) rotate(-1deg) scale(0.98); 
+  }
+}
+
+/* Main Content Wrapper */
+.contentWrapper {
+  position: relative;
+  z-index: 10;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Glass Section for Header */
+.headerSection {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-radius: 8px;
-  padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
+  margin-bottom: 2rem;
+}
+
+/* Page Title Styling */
+.pageTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1E293B;
+  margin: 0 0 0.5rem 0;
+}
+
+.pageSubtitle {
+  color: #64748B;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* Main Content Glass Section */
+.mainContent {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 8px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
+  overflow: hidden;
+}
+
+/* Tab Container */
+.tabsContainer {
+  width: 100%;
+}
+
+/* Tab Styling */
+.tabsList {
+  background: rgba(139, 92, 246, 0.04);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(139, 92, 246, 0.08);
+  padding: 0;
+  margin: 0;
+  display: flex;
+  width: 100%;
+}
+
+.tab {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  transition: all 0.2s ease;
+  color: #64748B;
+  font-weight: 500;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  position: relative;
+  font-size: 0.9rem;
+}
+
+.tab:hover {
+  color: #8B5CF6;
+  background: rgba(139, 92, 246, 0.02);
+}
+
+.tab[data-active] {
+  color: #8B5CF6;
+  border-bottom-color: #8B5CF6;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* Tab Panel */
+.tabPanel {
+  padding: 2rem;
+}
+
+/* Form Actions - For section buttons */
+.formActions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(139, 92, 246, 0.04);
+}
+
+/* Section Styles - Used by child components */
+.section {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 6px;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.03);
 }
 
 .sectionTitle {
   font-size: 1.25rem;
   font-weight: 600;
-  margin-bottom: 1rem;
+  color: #1E293B;
+  margin-bottom: 1.5rem;
 }
 
-.formActions {
-  display: flex;
+/* Form Input Overrides */
+.section input,
+.section textarea,
+.section select {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  transition: all 0.2s ease;
+}
+
+.section input:focus,
+.section textarea:focus,
+.section select:focus {
+  border-color: rgba(139, 92, 246, 0.3);
+  background: rgba(255, 255, 255, 0.8);
+}
+
+/* Button Styles */
+.primaryButton {
+  background: #8B5CF6;
+  color: white;
+  border: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2);
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+}
+
+.primaryButton:hover {
+  background: #7C3AED;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+}
+
+.secondaryButton {
+  background: rgba(139, 92, 246, 0.08);
+  color: #8B5CF6;
+  border: 1px solid rgba(139, 92, 246, 0.15);
+  font-weight: 500;
+  transition: all 0.2s ease;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+}
+
+.secondaryButton:hover {
+  background: rgba(139, 92, 246, 0.12);
+  border-color: rgba(139, 92, 246, 0.25);
+}
+
+/* Status Badge */
+.statusBadge {
+  background: rgba(139, 92, 246, 0.08);
+  color: #8B5CF6;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border: 1px solid rgba(139, 92, 246, 0.15);
+  display: inline-flex;
+  align-items: center;
   gap: 0.5rem;
-  justify-content: flex-end;
-  margin-top: 1.5rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid #e9ecef;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .contentWrapper {
+    padding: 1.5rem;
+  }
+
+  .tabPanel {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .contentWrapper {
+    padding: 1rem;
+  }
+
+  .headerSection {
+    padding: 1.5rem;
+  }
+
+  .tabPanel {
+    padding: 1rem;
+  }
+
+  .pageTitle {
+    font-size: 1.25rem;
+  }
+
+  .tab {
+    font-size: 0.85rem;
+    padding: 0.75rem 1rem;
+  }
+
+  /* Hide decorative shapes on mobile */
+  .bgShape1,
+  .bgShape2 {
+    display: none;
+  }
+
+  /* Stack form actions on mobile */
+  .formActions {
+    flex-direction: column-reverse;
+  }
+
+  .formActions button {
+    width: 100%;
+  }
+}
+
+/* Loading State */
+.loadingOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+/* Utility Classes */
+.mt-lg {
+  margin-top: 2rem;
+}
+
+.mb-lg {
+  margin-bottom: 2rem;
+}
+
+.text-muted {
+  color: #64748B;
+}
+
+.text-small {
+  font-size: 0.875rem;
 }
