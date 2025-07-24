@@ -1,193 +1,195 @@
-import React, { useState, useRef, useMemo } from 'react';
-import { Table, Text, Box, Title, Stack } from '@mantine/core';
+import React, { useState, useMemo, useEffect } from 'react';
+import { Text, Box } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
+import { DragDropProvider } from '@dnd-kit/react';
+import { move } from '@dnd-kit/helpers';
 import { useUpdateSponsorMutation } from '../../../../app/features/sponsors/api';
-import SponsorRow from '../SponsorRow';
+import SponsorCard from '../SponsorCard';
+import DroppableTier from '../DroppableTier';
 import SponsorModal from '../SponsorModal';
 import styles from './styles/index.module.css';
 
 const SponsorsList = ({ sponsors, eventId }) => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedSponsor, setSelectedSponsor] = useState(null);
-  const [draggedSponsor, setDraggedSponsor] = useState(null);
-  const [dragOverIndex, setDragOverIndex] = useState(null);
-  const [dragOverTier, setDragOverTier] = useState(null);
-  const draggedOverRef = useRef(null);
   const [updateSponsor] = useUpdateSponsorMutation();
+  const [localItems, setLocalItems] = useState({});
 
-  // Group sponsors by tier with proper sorting
-  const sponsorsByTier = useMemo(() => {
-    // First, sort all sponsors by tier_order then display_order
+  // Initialize local items from sponsors
+  useEffect(() => {
+    const grouped = {};
     const sortedSponsors = [...sponsors].sort((a, b) => {
       const tierDiff = (a.tier_order || 999) - (b.tier_order || 999);
       if (tierDiff !== 0) return tierDiff;
       
-      // Handle null display_order by treating as very large number
       const aOrder = a.display_order !== null ? a.display_order : 999;
       const bOrder = b.display_order !== null ? b.display_order : 999;
       return aOrder - bOrder;
     });
 
-    // Then group by tier
-    const grouped = {};
     sortedSponsors.forEach((sponsor) => {
       const tierKey = sponsor.tier_id || 'no-tier';
       if (!grouped[tierKey]) {
-        grouped[tierKey] = {
+        grouped[tierKey] = [];
+      }
+      grouped[tierKey].push(sponsor.id);
+    });
+    
+    setLocalItems(grouped);
+  }, [sponsors]);
+
+  // Create lookups
+  const tierInfo = useMemo(() => {
+    const info = {};
+    sponsors.forEach((sponsor) => {
+      const tierKey = sponsor.tier_id || 'no-tier';
+      if (!info[tierKey]) {
+        info[tierKey] = {
           id: sponsor.tier_id,
           name: sponsor.tier_name || 'No Tier',
           tier_order: sponsor.tier_order || 999,
-          sponsors: []
         };
       }
-      grouped[tierKey].sponsors.push(sponsor);
     });
-    
-    // Sort tiers by tier_order
-    return Object.values(grouped).sort((a, b) => {
-      return a.tier_order - b.tier_order;
-    });
+    return info;
   }, [sponsors]);
 
-  // Get global index for a sponsor
-  const getGlobalIndex = (tierIndex, sponsorIndex) => {
-    let globalIndex = 0;
-    for (let i = 0; i < tierIndex; i++) {
-      globalIndex += sponsorsByTier[i].sponsors.length;
-    }
-    return globalIndex + sponsorIndex;
+  const sponsorLookup = useMemo(() => {
+    const lookup = {};
+    sponsors.forEach((sponsor) => {
+      lookup[sponsor.id] = sponsor;
+    });
+    return lookup;
+  }, [sponsors]);
+
+  const handleDragOver = (event) => {
+    // Use the move helper to update local state during drag
+    setLocalItems((items) => move(items, event));
   };
 
-
-  const handleDragStart = (e, sponsor, tierIndex, sponsorIndex) => {
-    const globalIndex = getGlobalIndex(tierIndex, sponsorIndex);
-    setDraggedSponsor({ sponsor, globalIndex, tierIndex, sponsorIndex });
-    e.dataTransfer.effectAllowed = 'move';
-    setTimeout(() => {
-      e.target.style.opacity = '0.5';
-    }, 0);
-  };
-
-  const handleDragEnd = (e) => {
-    e.target.style.opacity = '1';
-    setDraggedSponsor(null);
-    setDragOverIndex(null);
-    setDragOverTier(null);
-  };
-
-  const handleDragOver = (e, tierIndex, sponsorIndex) => {
-    e.preventDefault();
-    if (!draggedSponsor) return;
+  const handleDragEnd = async (event) => {
+    console.log('Drag end event:', event);
+    const { operation } = event;
     
-    e.dataTransfer.dropEffect = 'move';
+    if (!operation) return;
     
-    const globalIndex = getGlobalIndex(tierIndex, sponsorIndex);
-    if (dragOverIndex !== globalIndex || dragOverTier !== tierIndex) {
-      setDragOverIndex(globalIndex);
-      setDragOverTier(tierIndex);
-      draggedOverRef.current = globalIndex;
-    }
-  };
-
-  const handleDrop = async (e, targetTierIndex, targetSponsorIndex) => {
-    e.preventDefault();
-    setDragOverIndex(null);
-    setDragOverTier(null);
+    const { source, target } = operation;
+    
+    // Extract the sponsor ID and tier information
+    const draggedSponsorId = source.id;
+    const draggedSponsor = sponsorLookup[draggedSponsorId];
     
     if (!draggedSponsor) {
+      console.error('Could not find sponsor with id:', draggedSponsorId);
       return;
     }
 
-    const { sponsor, tierIndex: sourceTierIndex, sponsorIndex: sourceSponsorIndex } = draggedSponsor;
-    const targetTier = sponsorsByTier[targetTierIndex];
-    const targetTierSponsors = targetTier.sponsors;
+    // Find which tier the sponsor is now in
+    let newTierId = null;
+    let newIndex = 0;
     
-    // Don't do anything if dropping in the same position
-    if (sourceTierIndex === targetTierIndex && sourceSponsorIndex === targetSponsorIndex) {
+    for (const [tierId, sponsorIds] of Object.entries(localItems)) {
+      const index = sponsorIds.indexOf(draggedSponsorId);
+      if (index !== -1) {
+        newTierId = tierId;
+        newIndex = index;
+        break;
+      }
+    }
+
+    if (newTierId === null) {
+      console.error('Could not find sponsor in any tier after drag');
       return;
     }
 
-    // Calculate the new display_order using fractional indexing
+    // Calculate new display_order based on position
     let newDisplayOrder;
+    const tierSponsors = localItems[newTierId] || [];
     
-    // Create a temporary array without the dragged item if moving within same tier
-    let adjustedSponsors = targetTierSponsors;
-    if (sourceTierIndex === targetTierIndex) {
-      adjustedSponsors = targetTierSponsors.filter((_, idx) => idx !== sourceSponsorIndex);
-    }
-    
-    if (adjustedSponsors.length === 0) {
-      // First sponsor in this tier
-      newDisplayOrder = 10.0;
-    } else if (targetSponsorIndex === 0) {
-      // Inserting at the beginning
-      const firstSponsor = adjustedSponsors[0];
-      const firstOrder = firstSponsor.display_order || 10.0;
-      // Ensure we never go below 0.1 to avoid getting too close to 0
-      newDisplayOrder = Math.max(0.1, firstOrder / 2);
-    } else if (targetSponsorIndex >= adjustedSponsors.length) {
-      // Inserting at the end
-      const lastSponsor = adjustedSponsors[adjustedSponsors.length - 1];
-      newDisplayOrder = (lastSponsor.display_order || adjustedSponsors.length) + 1.0;
+    if (newIndex === 0) {
+      // Moving to the beginning
+      const firstSponsor = tierSponsors.length > 1 ? sponsorLookup[tierSponsors[1]] : null;
+      newDisplayOrder = firstSponsor ? (firstSponsor.display_order || 10) / 2 : 1;
+    } else if (newIndex === tierSponsors.length - 1) {
+      // Moving to the end
+      const prevSponsor = sponsorLookup[tierSponsors[newIndex - 1]];
+      newDisplayOrder = prevSponsor ? (prevSponsor.display_order || newIndex) + 1 : newIndex + 1;
     } else {
-      // Inserting between two sponsors
-      // Adjust targetSponsorIndex if we removed an item before it
-      let adjustedTargetIndex = targetSponsorIndex;
-      if (sourceTierIndex === targetTierIndex && sourceSponsorIndex < targetSponsorIndex) {
-        adjustedTargetIndex--;
+      // Moving between two sponsors
+      const prevSponsor = sponsorLookup[tierSponsors[newIndex - 1]];
+      const nextSponsor = sponsorLookup[tierSponsors[newIndex + 1]];
+      
+      if (prevSponsor && nextSponsor) {
+        const prevOrder = prevSponsor.display_order || newIndex;
+        const nextOrder = nextSponsor.display_order || newIndex + 2;
+        newDisplayOrder = (prevOrder + nextOrder) / 2;
+      } else {
+        newDisplayOrder = newIndex + 1;
       }
-      
-      const prevIndex = adjustedTargetIndex - 1;
-      const nextIndex = adjustedTargetIndex;
-      
-      const prevSponsor = adjustedSponsors[prevIndex];
-      const nextSponsor = adjustedSponsors[nextIndex];
-      
-      if (!prevSponsor || !nextSponsor) {
-        console.error('Invalid sponsor indices:', { 
-          prevIndex, 
-          nextIndex, 
-          adjustedTargetIndex,
-          adjustedSponsors: adjustedSponsors.map(s => s.name),
-          targetSponsorIndex,
-          sourceSponsorIndex
-        });
-        return;
-      }
-      
-      const prevOrder = prevSponsor.display_order || prevIndex + 1;
-      const nextOrder = nextSponsor.display_order || nextIndex + 1;
-      newDisplayOrder = (prevOrder + nextOrder) / 2;
     }
 
-    // Check if we're moving to a different tier
-    const tierChanged = sourceTierIndex !== targetTierIndex;
+    // Check if tier changed
+    const oldTierId = draggedSponsor.tier_id || 'no-tier';
+    const tierChanged = oldTierId.toString() !== newTierId.toString();
+
+    console.log('Tier change check:', {
+      oldTierId,
+      newTierId,
+      tierChanged,
+      draggedSponsor
+    });
 
     try {
-      // Update the sponsor with new display_order and optionally new tier
       const updateData = {
-        sponsorId: sponsor.id,
+        sponsorId: draggedSponsorId,
         display_order: newDisplayOrder,
       };
-      
-      if (tierChanged && targetTier.id) {
-        updateData.tier_id = targetTier.id;
-      }
-      
-      await updateSponsor(updateData).unwrap();
-      
+
+      // If moving to a different tier
       if (tierChanged) {
+        // Make sure we're passing the correct tier_id format
+        if (newTierId === 'no-tier') {
+          updateData.tier_id = null;
+        } else {
+          // Parse as integer only if it's a valid number
+          const parsedTierId = parseInt(newTierId);
+          updateData.tier_id = isNaN(parsedTierId) ? newTierId : parsedTierId;
+        }
+      }
+
+      console.log('Updating sponsor with data:', updateData);
+      await updateSponsor(updateData).unwrap();
+
+      if (tierChanged) {
+        const sourceTierName = tierInfo[oldTierId]?.name || 'No Tier';
+        const targetTierName = tierInfo[newTierId]?.name || 'No Tier';
         notifications.show({
           title: 'Success',
-          message: `Moved ${sponsor.name} to ${targetTier.name}`,
+          message: `Moved ${draggedSponsor.name} from ${sourceTierName} to ${targetTierName}`,
           color: 'green',
         });
       }
     } catch (error) {
+      console.error('Error updating sponsor:', error);
       notifications.show({
         title: 'Error',
-        message: 'Failed to reorder sponsor',
+        message: error.data?.message || 'Failed to reorder sponsor',
         color: 'red',
+      });
+      
+      // Revert the local state on error
+      setLocalItems((items) => {
+        const newItems = { ...items };
+        // Remove from current position
+        Object.keys(newItems).forEach(key => {
+          newItems[key] = newItems[key].filter(id => id !== draggedSponsorId);
+        });
+        // Add back to original position
+        if (!newItems[oldTierId]) {
+          newItems[oldTierId] = [];
+        }
+        newItems[oldTierId].push(draggedSponsorId);
+        return newItems;
       });
     }
   };
@@ -207,53 +209,50 @@ const SponsorsList = ({ sponsors, eventId }) => {
     );
   }
 
+  // Sort tier keys by tier_order
+  const sortedTierKeys = Object.keys(localItems).sort((a, b) => {
+    const aTier = tierInfo[a];
+    const bTier = tierInfo[b];
+    return (aTier?.tier_order || 999) - (bTier?.tier_order || 999);
+  });
+
   return (
     <>
-      <Stack spacing="xl">
-        {sponsorsByTier.map((tier, tierIndex) => (
-          <Box key={tier.id || 'no-tier'} className={styles.tierSection}>
-            <Box className={styles.tierHeader}>
-              <Title order={4} c="dimmed">
-                {tier.name}
-              </Title>
-              <Text size="sm" c="dimmed">
-                ({tier.sponsors.length} sponsor{tier.sponsors.length !== 1 ? 's' : ''})
-              </Text>
-            </Box>
-            <Table style={{ tableLayout: 'fixed' }}>
-              <Table.Thead>
-                <Table.Tr>
-                  <Table.Th style={{ width: '30px' }} />
-                  <Table.Th style={{ width: '70px', textAlign: 'center' }}>Logo</Table.Th>
-                  <Table.Th>Name</Table.Th>
-                  <Table.Th style={{ width: '90px', textAlign: 'center' }}>Status</Table.Th>
-                  <Table.Th style={{ width: '70px', textAlign: 'center' }}>Featured</Table.Th>
-                  <Table.Th style={{ width: '70px', textAlign: 'center' }}>Actions</Table.Th>
-                </Table.Tr>
-              </Table.Thead>
-              <Table.Tbody>
-                {tier.sponsors.map((sponsor, sponsorIndex) => {
-                  const globalIndex = getGlobalIndex(tierIndex, sponsorIndex);
+      <DragDropProvider onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
+        <div className={styles.sponsorsList}>
+          {sortedTierKeys.map((tierId) => {
+            const tierSponsors = localItems[tierId] || [];
+            const tier = tierInfo[tierId];
+            
+            return (
+              <DroppableTier
+                key={tierId}
+                id={tierId}
+                tier={{
+                  ...tier,
+                  sponsors: tierSponsors.map(id => sponsorLookup[id]).filter(Boolean)
+                }}
+              >
+                {tierSponsors.map((sponsorId, index) => {
+                  const sponsor = sponsorLookup[sponsorId];
+                  if (!sponsor) return null;
+                  
                   return (
-                    <SponsorRow
-                      key={sponsor.id}
+                    <SponsorCard
+                      key={sponsorId}
+                      id={sponsorId}
                       sponsor={sponsor}
-                      index={globalIndex}
+                      tierId={tierId}
+                      index={index}
                       onEdit={handleEditClick}
-                      onDragStart={(e) => handleDragStart(e, sponsor, tierIndex, sponsorIndex)}
-                      onDragEnd={handleDragEnd}
-                      onDragOver={(e) => handleDragOver(e, tierIndex, sponsorIndex)}
-                      onDrop={(e) => handleDrop(e, tierIndex, sponsorIndex)}
-                      isDragging={draggedSponsor?.sponsor.id === sponsor.id}
-                      isDragOver={dragOverIndex === globalIndex && draggedSponsor?.globalIndex !== globalIndex}
                     />
                   );
                 })}
-              </Table.Tbody>
-            </Table>
-          </Box>
-        ))}
-      </Stack>
+              </DroppableTier>
+            );
+          })}
+        </div>
+      </DragDropProvider>
 
       {editModalOpen && (
         <SponsorModal

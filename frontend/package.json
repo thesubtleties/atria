@@ -13,6 +13,8 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@dnd-kit/helpers": "^0.1.20",
+    "@dnd-kit/react": "^0.1.20",
     "@emotion/react": "^11.14.0",
     "@hookform/resolvers": "^3.10.0",
     "@mantine/carousel": "^7.16.0",

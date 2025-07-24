@@ -2,11 +2,9 @@ import React from 'react';
 import {
   Table,
   Text,
-  Badge,
   ActionIcon,
   Switch,
   Menu,
-  Image,
   Box,
 } from '@mantine/core';
 import {
@@ -18,6 +16,8 @@ import {
   IconStarFilled,
 } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import {
   useDeleteSponsorMutation,
   useToggleSponsorActiveMutation,
@@ -28,18 +28,32 @@ import styles from './styles/index.module.css';
 
 const SponsorRow = ({ 
   sponsor, 
-  index,
   onEdit,
-  onDragStart,
-  onDragEnd,
-  onDragOver,
-  onDrop,
   isDragging,
-  isDragOver
+  isOverlay
 }) => {
   const [deleteSponsor] = useDeleteSponsorMutation();
   const [toggleActive] = useToggleSponsorActiveMutation();
   const [toggleFeatured] = useToggleSponsorFeaturedMutation();
+
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+  } = useSortable({ 
+    id: sponsor.id,
+    disabled: isOverlay
+  });
+
+  const style = isOverlay 
+    ? {} 
+    : {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.5 : 1,
+      };
 
   const handleDelete = async () => {
     if (window.confirm('Are you sure you want to delete this sponsor?')) {
@@ -86,20 +100,22 @@ const SponsorRow = ({
 
   return (
     <Table.Tr
-      draggable
-      onDragStart={(e) => onDragStart(e, sponsor, index)}
-      onDragEnd={onDragEnd}
-      onDragOver={(e) => onDragOver(e, index)}
-      onDrop={(e) => onDrop(e, index)}
-      className={`${isDragging ? styles.dragging : ''} ${isDragOver ? styles.dragOver : ''}`}
-      style={{ cursor: 'move' }}
+      ref={setNodeRef}
+      style={style}
+      className={`${styles.sponsorRow} ${isDragging ? styles.dragging : ''}`}
     >
-      <Table.Td>
-        <ActionIcon variant="subtle" size="sm" style={{ cursor: 'grab' }}>
+      <Table.Td className={styles.dragHandleCell}>
+        <ActionIcon 
+          variant="subtle" 
+          size="sm" 
+          className={styles.dragHandle}
+          {...attributes}
+          {...listeners}
+        >
           <IconGripVertical size={16} />
         </ActionIcon>
       </Table.Td>
-      <Table.Td style={{ textAlign: 'center' }}>
+      <Table.Td className={styles.logoCell}>
         {sponsor.logo_url ? (
           <PrivateImage
             objectKey={sponsor.logo_url}
@@ -107,35 +123,42 @@ const SponsorRow = ({
             width={40}
             height={40}
             fit="contain"
-            style={{ display: 'inline-block' }}
-            placeholder={<Box className={styles.logoPlaceholder} style={{ margin: '0 auto' }} />}
+            className={styles.logo}
+            placeholder={<Box className={styles.logoPlaceholder} />}
           />
         ) : (
-          <Box className={styles.logoPlaceholder} style={{ margin: '0 auto' }} />
+          <Box className={styles.logoPlaceholder} />
         )}
       </Table.Td>
       <Table.Td>
-        <Text fw={500}>{sponsor.name}</Text>
+        <Text fw={500} className={styles.sponsorName}>{sponsor.name}</Text>
         {sponsor.website_url && (
-          <Text size="sm" c="dimmed">
+          <Text size="sm" c="dimmed" className={styles.sponsorUrl}>
             {sponsor.website_url}
           </Text>
         )}
       </Table.Td>
-      <Table.Td style={{ textAlign: 'center' }}>
-        <Box style={{ minWidth: '100px', display: 'inline-block' }}>
+      <Table.Td className={styles.statusCell}>
+        <div className={styles.switchWrapper}>
           <Switch
             checked={sponsor.is_active}
             onChange={handleToggleActive}
             label={sponsor.is_active ? 'Active' : 'Inactive'}
+            disabled={isOverlay}
+            classNames={{
+              root: styles.statusSwitch,
+              label: styles.switchLabel
+            }}
           />
-        </Box>
+        </div>
       </Table.Td>
-      <Table.Td style={{ textAlign: 'center' }}>
+      <Table.Td className={styles.featuredCell}>
         <ActionIcon
           variant={sponsor.featured ? 'filled' : 'subtle'}
           color="yellow"
           onClick={handleToggleFeatured}
+          disabled={isOverlay}
+          className={styles.featuredButton}
         >
           {sponsor.featured ? (
             <IconStarFilled size={16} />
@@ -144,21 +167,23 @@ const SponsorRow = ({
           )}
         </ActionIcon>
       </Table.Td>
-      <Table.Td style={{ textAlign: 'center' }}>
+      <Table.Td className={styles.actionsCell}>
         <Menu position="bottom-end">
           <Menu.Target>
-            <ActionIcon variant="subtle">
+            <ActionIcon variant="subtle" className={styles.actionButton}>
               <IconDots size={16} />
             </ActionIcon>
           </Menu.Target>
-          <Menu.Dropdown>
+          <Menu.Dropdown className={styles.menuDropdown}>
             <Menu.Item
+              className={styles.menuItem}
               leftSection={<IconEdit size={14} />}
               onClick={() => onEdit(sponsor)}
             >
               Edit
             </Menu.Item>
             <Menu.Item
+              className={`${styles.menuItem} ${styles.menuItemDanger}`}
               leftSection={<IconTrash size={14} />}
               color="red"
               onClick={handleDelete}
