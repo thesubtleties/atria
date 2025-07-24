@@ -229,11 +229,20 @@ const NetworkingSection = ({ event, eventId }) => {
 
   const handleReset = () => {
     // Re-add stable IDs when resetting
+    const timestamp = Date.now();
     const resetIcebreakers = (event?.icebreakers || []).map((message, index) => ({
       message,
-      _id: `ice-${Date.now()}-${index}`
+      _id: `ice-${timestamp}-${index}`
     }));
     setIcebreakers(resetIcebreakers);
+    
+    // Reset the local drag state with new IDs
+    const resetIds = resetIcebreakers.map(ice => ice._id);
+    setLocalIcebreakers({ default: resetIds });
+    
+    // Reset the ID counter
+    setNextIcebreakerId(resetIcebreakers.length + 1);
+    
     setHasChanges(false);
   };
 
@@ -329,7 +338,7 @@ const NetworkingSection = ({ event, eventId }) => {
       {/* Icebreaker Modal */}
       <Modal
         opened={modalState.open}
-        onClose={() => setModalState({ open: false, mode: 'create', index: null })}
+        onClose={() => setModalState({ open: false, mode: 'create', id: null })}
         title={modalState.mode === 'create' ? 'Add Icebreaker Message' : 'Edit Icebreaker Message'}
         size="lg"
         classNames={{
@@ -351,7 +360,7 @@ const NetworkingSection = ({ event, eventId }) => {
             <Group justify="flex-end">
               <Button
                 variant="subtle"
-                onClick={() => setModalState({ open: false, mode: 'create', index: null })}
+                onClick={() => setModalState({ open: false, mode: 'create', id: null })}
               >
                 Cancel
               </Button>

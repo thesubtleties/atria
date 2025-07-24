@@ -404,16 +404,28 @@ const ContentSections = ({ event, eventId }) => {
       welcome_content: event?.sections?.welcome?.content || '',
     });
     // Re-add stable IDs when resetting
+    const timestamp = Date.now();
     const resetHighlights = (event?.sections?.highlights || []).map((highlight, index) => ({
       ...highlight,
-      _id: `h-${Date.now()}-${index}`
+      _id: `h-${timestamp}-${index}`
     }));
     const resetFaqs = (event?.sections?.faqs || []).map((faq, index) => ({
       ...faq,
-      _id: `f-${Date.now()}-${index}`
+      _id: `f-${timestamp}-${index}`
     }));
     setHighlights(resetHighlights);
     setFaqs(resetFaqs);
+    
+    // Reset the local drag state with new IDs
+    const resetHighlightIds = resetHighlights.map(h => h._id);
+    const resetFaqIds = resetFaqs.map(f => f._id);
+    setLocalHighlights({ default: resetHighlightIds });
+    setLocalFaqs({ default: resetFaqIds });
+    
+    // Reset the ID counters
+    setNextHighlightId(resetHighlights.length + 1);
+    setNextFaqId(resetFaqs.length + 1);
+    
     setHasChanges(false);
   };
 
