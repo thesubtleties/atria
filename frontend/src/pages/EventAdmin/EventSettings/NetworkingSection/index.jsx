@@ -1,13 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { 
   Textarea, 
   Stack, 
   Group, 
-  Button,
-  Paper,
   Title,
   Text,
-  Card,
   ActionIcon,
   Badge,
   Modal
@@ -21,19 +18,84 @@ import {
   IconGripVertical,
   IconMessageCircle
 } from '@tabler/icons-react';
+import { DragDropProvider } from '@dnd-kit/react';
+import { move } from '@dnd-kit/helpers';
+import { useSortable } from '@dnd-kit/react/sortable';
+import { Button } from '@/shared/components/buttons';
 import { useUpdateEventMutation } from '@/app/features/events/api';
 import { icebreakersSchema } from '../schemas/eventSettingsSchemas';
 import styles from './styles.module.css';
 
+// Draggable Icebreaker Card Component
+const DraggableIcebreaker = ({ id, message, icebreakerId, onEdit, onDelete, canDelete }) => {
+  const { ref, isDragging } = useSortable({ 
+    id,
+    type: 'icebreaker',
+    accept: ['icebreaker'],
+  });
+
+  return (
+    <div
+      ref={ref}
+      className={`${styles.draggableCard} ${isDragging ? styles.dragging : ''}`}
+      style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+    >
+      <Group justify="space-between" align="flex-start">
+        <Group align="flex-start" style={{ flex: 1 }}>
+          <ActionIcon 
+            variant="subtle" 
+            size="sm" 
+            className={styles.dragHandle}
+            style={{ cursor: 'grab' }}
+          >
+            <IconGripVertical size={16} />
+          </ActionIcon>
+          <IconMessageCircle size={20} className={styles.messageIcon} />
+          <Text size="sm" style={{ flex: 1 }}>
+            {message}
+          </Text>
+        </Group>
+        <Group gap="xs">
+          <ActionIcon
+            variant="subtle"
+            onClick={() => onEdit(icebreakerId)}
+          >
+            <IconEdit size={16} />
+          </ActionIcon>
+          <ActionIcon
+            variant="subtle"
+            color="red"
+            onClick={() => onDelete(icebreakerId)}
+            disabled={!canDelete}
+          >
+            <IconTrash size={16} />
+          </ActionIcon>
+        </Group>
+      </Group>
+    </div>
+  );
+};
+
 const NetworkingSection = ({ event, eventId }) => {
   const [updateEvent, { isLoading }] = useUpdateEventMutation();
   const [hasChanges, setHasChanges] = useState(false);
-  const [icebreakers, setIcebreakers] = useState(event?.icebreakers || []);
-  const [modalState, setModalState] = useState({ open: false, mode: 'create', index: null });
   
-  // Drag state
-  const [draggedIcebreaker, setDraggedIcebreaker] = useState(null);
-  const [dragOverIndex, setDragOverIndex] = useState(null);
+  // State for icebreakers with stable IDs
+  const [icebreakers, setIcebreakers] = useState(() => {
+    const initialIcebreakers = event?.icebreakers || [];
+    return initialIcebreakers.map((message, index) => ({
+      message,
+      _id: `ice-${Date.now()}-${index}` // Stable ID
+    }));
+  });
+  
+  const [modalState, setModalState] = useState({ open: false, mode: 'create', id: null });
+  
+  // Local state for drag and drop
+  const [localIcebreakers, setLocalIcebreakers] = useState({});
+  
+  // ID generation counter
+  const [nextIcebreakerId, setNextIcebreakerId] = useState(1);
 
   const form = useForm({
     initialValues: {
@@ -42,34 +104,60 @@ const NetworkingSection = ({ event, eventId }) => {
     resolver: zodResolver(icebreakersSchema),
   });
 
+  // Create lookup map
+  const icebreakerLookup = useMemo(() => {
+    const lookup = {};
+    icebreakers.forEach(icebreaker => {
+      lookup[icebreaker._id] = icebreaker;
+    });
+    return lookup;
+  }, [icebreakers]);
+
+  // Initialize local items for drag and drop (only on mount or when items added/removed)
+  useEffect(() => {
+    const icebreakerIds = icebreakers.map(ice => ice._id);
+    setLocalIcebreakers({ default: icebreakerIds });
+  }, [icebreakers.length]); // Only re-run when count changes
+
   // Track changes
   useEffect(() => {
-    const changed = JSON.stringify(icebreakers) !== JSON.stringify(event?.icebreakers || []);
+    // Compare without _id field
+    const icebreakersMessages = icebreakers.map(ice => ice.message);
+    const changed = JSON.stringify(icebreakersMessages) !== JSON.stringify(event?.icebreakers || []);
     setHasChanges(changed);
   }, [icebreakers, event]);
 
   const handleAddIcebreaker = () => {
     form.reset();
-    setModalState({ open: true, mode: 'create', index: null });
+    setModalState({ open: true, mode: 'create', id: null });
   };
 
-  const handleEditIcebreaker = (index) => {
-    form.setValues({ message: icebreakers[index] });
-    setModalState({ open: true, mode: 'edit', index });
+  const handleEditIcebreaker = (icebreakerId) => {
+    const icebreaker = icebreakerLookup[icebreakerId];
+    if (icebreaker) {
+      form.setValues({ message: icebreaker.message });
+      setModalState({ open: true, mode: 'edit', id: icebreakerId });
+    }
   };
 
   const handleSaveIcebreaker = (values) => {
     if (modalState.mode === 'create') {
-      setIcebreakers([...icebreakers, values.message]);
+      const newIcebreaker = {
+        message: values.message,
+        _id: `ice-${Date.now()}-${nextIcebreakerId}`
+      };
+      setIcebreakers([...icebreakers, newIcebreaker]);
+      setNextIcebreakerId(nextIcebreakerId + 1);
     } else {
-      const updated = [...icebreakers];
-      updated[modalState.index] = values.message;
+      const updated = icebreakers.map(ice => 
+        ice._id === modalState.id ? { ...ice, message: values.message } : ice
+      );
       setIcebreakers(updated);
     }
-    setModalState({ open: false, mode: 'create', index: null });
+    setModalState({ open: false, mode: 'create', id: null });
   };
 
-  const handleDeleteIcebreaker = (index) => {
+  const handleDeleteIcebreaker = (icebreakerId) => {
     if (icebreakers.length <= 1) {
       notifications.show({
         title: 'Warning',
@@ -78,46 +166,30 @@ const NetworkingSection = ({ event, eventId }) => {
       });
       return;
     }
-    setIcebreakers(icebreakers.filter((_, i) => i !== index));
+    setIcebreakers(icebreakers.filter(ice => ice._id !== icebreakerId));
   };
 
   // Drag handlers
-  const handleDragStart = (e, index) => {
-    setDraggedIcebreaker({ index, message: icebreakers[index] });
-    e.dataTransfer.effectAllowed = 'move';
-    setTimeout(() => {
-      e.target.style.opacity = '0.5';
-    }, 0);
+  const handleDragOver = (event) => {
+    setLocalIcebreakers((items) => move(items, event));
   };
 
-  const handleDragEnd = (e) => {
-    e.target.style.opacity = '1';
-    setDraggedIcebreaker(null);
-    setDragOverIndex(null);
-  };
+  const handleDragEnd = (event) => {
+    const { operation } = event;
+    if (!operation) return;
 
-  const handleDragOver = (e, index) => {
-    e.preventDefault();
-    if (!draggedIcebreaker) return;
+    const draggedId = operation.source.id;
+    const draggedIcebreaker = icebreakerLookup[draggedId];
     
-    e.dataTransfer.dropEffect = 'move';
-    
-    if (dragOverIndex !== index) {
-      setDragOverIndex(index);
-    }
-  };
-
-  const handleDrop = (e, targetIndex) => {
-    e.preventDefault();
-    setDragOverIndex(null);
-    
-    if (!draggedIcebreaker || draggedIcebreaker.index === targetIndex) {
+    if (!draggedIcebreaker) {
+      console.error('Could not find icebreaker with id:', draggedId);
       return;
     }
 
-    const newIcebreakers = [...icebreakers];
-    const [removed] = newIcebreakers.splice(draggedIcebreaker.index, 1);
-    newIcebreakers.splice(targetIndex, 0, removed);
+    // Find new position based on the current order in localIcebreakers
+    const newOrder = localIcebreakers.default || [];
+    const newIcebreakers = newOrder.map(id => icebreakerLookup[id]).filter(Boolean);
+    
     setIcebreakers(newIcebreakers);
   };
 
@@ -132,9 +204,12 @@ const NetworkingSection = ({ event, eventId }) => {
     }
 
     try {
+      // Strip _id fields before sending to API
+      const icebreakersForApi = icebreakers.map(ice => ice.message);
+      
       await updateEvent({
         id: eventId,
-        icebreakers,
+        icebreakers: icebreakersForApi,
       }).unwrap();
 
       notifications.show({
@@ -153,113 +228,103 @@ const NetworkingSection = ({ event, eventId }) => {
   };
 
   const handleReset = () => {
-    setIcebreakers(event?.icebreakers || []);
+    // Re-add stable IDs when resetting
+    const resetIcebreakers = (event?.icebreakers || []).map((message, index) => ({
+      message,
+      _id: `ice-${Date.now()}-${index}`
+    }));
+    setIcebreakers(resetIcebreakers);
     setHasChanges(false);
   };
 
   return (
     <>
-      <Paper className={styles.section}>
-        <Title order={3} mb="lg">Networking Settings</Title>
+      <div className={styles.container}>
+        {/* Background Shapes */}
+        <div className={styles.bgShape1} />
+        <div className={styles.bgShape2} />
         
-        <Stack spacing="lg">
-          <div>
-            <Group justify="space-between" mb="md">
+        <div className={styles.contentWrapper}>
+          <section className={styles.glassSection}>
+            <Title order={3} className={styles.sectionTitle}>Networking Settings</Title>
+            
+            <Stack spacing="lg">
               <div>
-                <Title order={4}>Icebreaker Messages</Title>
-                <Text size="sm" c="dimmed" mt="xs">
-                  Pre-written messages attendees can use to start conversations
-                </Text>
-              </div>
-              <Button
-                size="sm"
-                leftSection={<IconPlus size={16} />}
-                onClick={handleAddIcebreaker}
-              >
-                Add Message
-              </Button>
-            </Group>
-
-            <Stack>
-              {icebreakers.length === 0 ? (
-                <Text c="dimmed" ta="center" py="md">
-                  No icebreaker messages added yet
-                </Text>
-              ) : (
-                icebreakers.map((message, index) => (
-                  <Card
-                    key={index}
-                    withBorder
-                    p="sm"
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, index)}
-                    onDragEnd={handleDragEnd}
-                    onDragOver={(e) => handleDragOver(e, index)}
-                    onDrop={(e) => handleDrop(e, index)}
-                    className={`${styles.icebreaker} ${
-                      dragOverIndex === index && draggedIcebreaker?.index !== index
-                        ? styles.dragOver
-                        : ''
-                    }`}
-                    style={{
-                      cursor: 'move',
-                      opacity: draggedIcebreaker?.index === index ? 0.5 : 1,
-                    }}
+                <Group justify="space-between" mb="md">
+                  <div>
+                    <Title order={4} className={styles.subsectionTitle}>Icebreaker Messages</Title>
+                    <Text size="sm" c="dimmed" mt="xs">
+                      Pre-written messages attendees can use to start conversations
+                    </Text>
+                  </div>
+                  <Button
+                    variant="primary"
+                    onClick={handleAddIcebreaker}
                   >
-                    <Group justify="space-between" align="flex-start">
-                      <Group align="flex-start" style={{ flex: 1 }}>
-                        <IconGripVertical size={18} className={styles.dragHandle} />
-                        <IconMessageCircle size={20} />
-                        <Text size="sm" style={{ flex: 1 }}>
-                          {message}
+                    <IconPlus size={16} />
+                    Add Message
+                  </Button>
+                </Group>
+
+                <DragDropProvider onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
+                  <div className={styles.draggableList}>
+                    {icebreakers.length === 0 ? (
+                      <div className={styles.emptyState}>
+                        <Text c="dimmed" ta="center">
+                          No icebreaker messages added yet
                         </Text>
-                      </Group>
-                      <Group gap="xs">
-                        <ActionIcon
-                          variant="subtle"
-                          onClick={() => handleEditIcebreaker(index)}
-                        >
-                          <IconEdit size={16} />
-                        </ActionIcon>
-                        <ActionIcon
-                          variant="subtle"
-                          color="red"
-                          onClick={() => handleDeleteIcebreaker(index)}
-                          disabled={icebreakers.length <= 1}
-                        >
-                          <IconTrash size={16} />
-                        </ActionIcon>
-                      </Group>
-                    </Group>
-                  </Card>
-                ))
+                      </div>
+                    ) : (
+                      localIcebreakers.default?.map((id) => {
+                        const icebreaker = icebreakerLookup[id];
+                        if (!icebreaker) return null;
+                        
+                        return (
+                          <DraggableIcebreaker
+                            key={id}
+                            id={id}
+                            message={icebreaker.message}
+                            icebreakerId={id}
+                            onEdit={handleEditIcebreaker}
+                            onDelete={handleDeleteIcebreaker}
+                            canDelete={icebreakers.length > 1}
+                          />
+                        );
+                      })
+                    )}
+                  </div>
+                </DragDropProvider>
+
+                <Group justify="space-between" mt="md">
+                  <Badge 
+                    variant="light" 
+                    size="lg"
+                    className={styles.countBadge}
+                  >
+                    {icebreakers.length} icebreaker{icebreakers.length !== 1 ? 's' : ''}
+                  </Badge>
+                  {icebreakers.length < 1 && (
+                    <Text size="sm" c="red">
+                      At least one icebreaker message is required
+                    </Text>
+                  )}
+                </Group>
+              </div>
+
+              {hasChanges && (
+                <Group justify="flex-end" mt="xl">
+                  <Button variant="subtle" onClick={handleReset}>
+                    Cancel
+                  </Button>
+                  <Button variant="primary" onClick={handleSubmit} disabled={isLoading}>
+                    Save Changes
+                  </Button>
+                </Group>
               )}
             </Stack>
-
-            <Group justify="space-between" mt="md">
-              <Badge variant="light">
-                {icebreakers.length} icebreaker{icebreakers.length !== 1 ? 's' : ''}
-              </Badge>
-              {icebreakers.length < 1 && (
-                <Text size="sm" c="red">
-                  At least one icebreaker message is required
-                </Text>
-              )}
-            </Group>
-          </div>
-
-          {hasChanges && (
-            <Group justify="flex-end" mt="xl">
-              <Button variant="outline" onClick={handleReset}>
-                Cancel
-              </Button>
-              <Button onClick={handleSubmit} loading={isLoading}>
-                Save Changes
-              </Button>
-            </Group>
-          )}
-        </Stack>
-      </Paper>
+          </section>
+        </div>
+      </div>
 
       {/* Icebreaker Modal */}
       <Modal
@@ -267,6 +332,10 @@ const NetworkingSection = ({ event, eventId }) => {
         onClose={() => setModalState({ open: false, mode: 'create', index: null })}
         title={modalState.mode === 'create' ? 'Add Icebreaker Message' : 'Edit Icebreaker Message'}
         size="lg"
+        classNames={{
+          content: styles.modalContent,
+          header: styles.modalHeader,
+        }}
       >
         <form onSubmit={form.onSubmit(handleSaveIcebreaker)}>
           <Stack>
@@ -276,16 +345,17 @@ const NetworkingSection = ({ event, eventId }) => {
               placeholder="Hi! I noticed we're both interested in similar sessions. Would you like to connect?"
               minRows={3}
               required
+              classNames={{ input: styles.formTextarea }}
               {...form.getInputProps('message')}
             />
             <Group justify="flex-end">
               <Button
-                variant="outline"
+                variant="subtle"
                 onClick={() => setModalState({ open: false, mode: 'create', index: null })}
               >
                 Cancel
               </Button>
-              <Button type="submit">
+              <Button variant="primary" type="submit">
                 {modalState.mode === 'create' ? 'Add' : 'Update'}
               </Button>
             </Group>
