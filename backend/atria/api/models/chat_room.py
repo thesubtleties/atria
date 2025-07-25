@@ -22,6 +22,9 @@ class ChatRoom(db.Model):
     description = db.Column(db.String(500))
     room_type = db.Column(db.Enum(ChatRoomType), nullable=False)
     is_enabled = db.Column(db.Boolean, default=True, nullable=False)
+    display_order = db.Column(
+        db.Float, nullable=False, default=1.0
+    )  # Fractional indexing for smooth reordering
     created_at = db.Column(
         db.DateTime(timezone=True), server_default=db.func.current_timestamp()
     )

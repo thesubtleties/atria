@@ -9,7 +9,10 @@ class ChatRoomService:
     @staticmethod
     def get_event_chat_rooms(event_id, schema=None):
         """Get all chat rooms for an event with pagination"""
-        query = ChatRoom.query.filter_by(event_id=event_id)
+        query = ChatRoom.query.filter_by(event_id=event_id).order_by(
+            ChatRoom.room_type,
+            ChatRoom.display_order
+        )
         if schema:
             return paginate(query, schema, collection_name="chat_rooms")
         return query.all()
@@ -38,6 +41,9 @@ class ChatRoomService:
         if existing:
             raise ValueError("A chat room with this name already exists")
         
+        # Get next display order for this room type
+        next_order = ChatRoomService.get_next_display_order(event_id, room_type)
+        
         # Create room
         chat_room = ChatRoom(
             event_id=event_id,
@@ -45,6 +51,7 @@ class ChatRoomService:
             description=room_data.get("description", ""),
             room_type=room_type,
             is_enabled=room_data.get("is_enabled", False),
+            display_order=next_order,
             session_id=None  # Explicitly set to None for event rooms
         )
         
@@ -87,6 +94,9 @@ class ChatRoomService:
             
         if "is_enabled" in room_data:
             chat_room.is_enabled = room_data["is_enabled"]
+            
+        if "display_order" in room_data:
+            chat_room.display_order = room_data["display_order"]
 
         db.session.commit()
 
@@ -174,6 +184,22 @@ class ChatRoomService:
         }
 
     @staticmethod
+    def get_next_display_order(event_id, room_type):
+        """Get the next display order for a new chat room"""
+        # Get the highest display order for this room type
+        last_room = ChatRoom.query.filter_by(
+            event_id=event_id,
+            room_type=room_type,
+            session_id=None
+        ).order_by(ChatRoom.display_order.desc()).first()
+        
+        if last_room:
+            return last_room.display_order + 10.0
+        else:
+            # Start at 10 for the first room of this type
+            return 10.0
+    
+    @staticmethod
     def format_room_for_response(room):
         """Format a chat room for API/socket response"""
         return {
@@ -184,6 +210,7 @@ class ChatRoomService:
             "description": room.description,
             "room_type": room.room_type.value if room.room_type else None,
             "is_enabled": room.is_enabled,
+            "display_order": room.display_order,
             "created_at": room.created_at.isoformat(),
         }
 
@@ -302,7 +329,7 @@ class ChatRoomService:
             session_id=None
         ).order_by(
             ChatRoom.room_type,
-            ChatRoom.name
+            ChatRoom.display_order
         ).all()
         
         # Add metadata for each room
