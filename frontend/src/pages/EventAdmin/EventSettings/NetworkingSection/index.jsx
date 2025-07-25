@@ -306,6 +306,7 @@ const NetworkingSection = ({ event, eventId }) => {
                   <Badge 
                     variant="light" 
                     size="lg"
+                    radius="sm"
                     className={styles.countBadge}
                   >
                     {icebreakers.length} icebreaker{icebreakers.length !== 1 ? 's' : ''}
