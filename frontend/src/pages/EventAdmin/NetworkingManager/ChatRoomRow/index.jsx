@@ -9,7 +9,7 @@ import {
 } from '@/app/features/chat/api';
 import styles from './styles.module.css';
 
-const ChatRoomRow = ({ room, color, onEdit }) => {
+const ChatRoomRow = ({ room, color, onEdit, isTableRow }) => {
   const navigate = useNavigate();
   const [toggleRoom] = useToggleChatRoomMutation();
   const [deleteRoom] = useDeleteChatRoomMutation();
@@ -63,23 +63,9 @@ const ChatRoomRow = ({ room, color, onEdit }) => {
   const hasRecentActivity = room.last_activity && 
     new Date(room.last_activity) > new Date(Date.now() - 3600000); // Within last hour
 
-  // Format room type display
-  const roomTypeDisplay = room.room_type === 'GREEN_ROOM' ? 'GREEN' : room.room_type;
-  
-  // Get CSS class for room type
-  const roomTypeClass = {
-    GLOBAL: 'global',
-    ADMIN: 'admin',
-    GREEN_ROOM: 'greenRoom',
-  }[room.room_type] || '';
-
-  return (
-    <Table.Tr>
-      <Table.Td>
-        <div className={`${styles.roomTypeBadge} ${styles[roomTypeClass]}`}>
-          {roomTypeDisplay}
-        </div>
-      </Table.Td>
+  // If isTableRow is true, render just the cells (parent provides the row wrapper)
+  const content = (
+    <>
       <Table.Td>
         <Text fw={500}>{room.name}</Text>
       </Table.Td>
@@ -100,13 +86,15 @@ const ChatRoomRow = ({ room, color, onEdit }) => {
           <Text size="sm">{room.participant_count || 0}</Text>
         )}
       </Table.Td>
-      <Table.Td style={{ textAlign: 'center' }}>
-        <Switch
-          checked={room.is_enabled}
-          onChange={(event) => handleToggle(event.currentTarget.checked)}
-          disabled={isToggling}
-          color={color}
-        />
+      <Table.Td>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <Switch
+            checked={room.is_enabled}
+            onChange={(event) => handleToggle(event.currentTarget.checked)}
+            disabled={isToggling}
+            color={color}
+          />
+        </div>
       </Table.Td>
       <Table.Td style={{ textAlign: 'center' }}>
         <Menu position="bottom-end" withArrow>
@@ -139,8 +127,16 @@ const ChatRoomRow = ({ room, color, onEdit }) => {
           </Menu.Dropdown>
         </Menu>
       </Table.Td>
-    </Table.Tr>
+    </>
   );
+
+  // If isTableRow, return just the cells (parent provides the row)
+  if (isTableRow) {
+    return content;
+  }
+
+  // Otherwise, wrap in a table row
+  return <Table.Tr>{content}</Table.Tr>;
 };
 
 export default ChatRoomRow;

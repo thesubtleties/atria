@@ -1,17 +1,159 @@
 .emptyState {
   padding: 60px 20px;
   text-align: center;
-  background: var(--mantine-color-gray-0);
+  background: rgba(139, 92, 246, 0.04);
   border-radius: 8px;
-  border: 2px dashed var(--mantine-color-gray-3);
+  border: 2px dashed rgba(139, 92, 246, 0.2);
+  color: #64748B;
+}
+
+.roomsList {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
 .typeSection {
-  margin-bottom: 2rem;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 2px 10px rgba(139, 92, 246, 0.02);
 }
 
 .typeHeader {
   margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--mantine-color-gray-2);
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.08);
+}
+
+.typeHeader h4 {
+  margin: 0 0 0.25rem 0;
+  color: #1E293B;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.typeHeader p {
+  margin: 0;
+  color: #64748B;
+  font-size: 0.875rem;
+}
+
+/* Table Styling */
+.typeSection table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.typeSection thead {
+  background: rgba(139, 92, 246, 0.04);
+}
+
+.typeSection th {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 500;
+  color: #475569;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.08);
+}
+
+.typeSection th:first-child {
+  border-top-left-radius: 6px;
+}
+
+.typeSection th:last-child {
+  border-top-right-radius: 6px;
+}
+
+/* Draggable row styles */
+.draggableRow {
+  transition: all 0.2s ease;
+  position: relative;
+  background: white;
+  cursor: grab !important;
+}
+
+.draggableRow td {
+  cursor: grab !important;
+}
+
+.draggableRow:hover {
+  background: rgba(139, 92, 246, 0.02);
+}
+
+.draggableRow.dragging {
+  opacity: 0.5;
+  background: rgba(139, 92, 246, 0.04);
+  cursor: grabbing !important;
+}
+
+.draggableRow.dragging td {
+  cursor: grabbing !important;
+}
+
+/* Reset cursor for interactive elements */
+.draggableRow button,
+.draggableRow input,
+.draggableRow a,
+.draggableRow [role="switch"],
+.draggableRow [role="button"] {
+  cursor: pointer !important;
+}
+
+/* Drag handle cell */
+.dragHandleCell {
+  width: 40px;
+  padding: 0.5rem;
+}
+
+.dragHandle {
+  cursor: grab !important;
+  color: #94A3B8;
+  transition: color 0.2s ease;
+}
+
+.dragHandle:hover {
+  cursor: grab !important;
+  color: #64748B;
+  background: rgba(139, 92, 246, 0.04);
+}
+
+/* Drag overlay for table rows */
+.dragOverlay {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.12);
+  padding: 0.75rem;
+  min-width: 400px;
+}
+
+/* Responsive Table */
+@media (max-width: 768px) {
+  .typeSection {
+    padding: 1rem;
+  }
+  
+  .typeSection th {
+    padding: 0.5rem;
+    font-size: 0.75rem;
+  }
+  
+  /* Hide description column on mobile */
+  .typeSection th:nth-child(3),
+  .typeSection td:nth-child(3) {
+    display: none;
+  }
+  
+  /* Hide drag handle on mobile */
+  .dragHandleCell,
+  .typeSection th:first-child {
+    display: none;
+  }
 }
