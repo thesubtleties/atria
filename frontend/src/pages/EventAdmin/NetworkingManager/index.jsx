@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Button, Container, Title, Group, Stack, Alert } from '@mantine/core';
+import { Group, Alert } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
+import { Button } from '@/shared/components/buttons';
 import { 
   useGetEventAdminChatRoomsQuery,
   useDisableAllPublicRoomsMutation 
@@ -48,52 +49,63 @@ const NetworkingManager = () => {
   };
 
   return (
-    <Container size="xl" className={styles.container}>
-      <Group justify="space-between" mb="lg">
-        <Title order={2}>Networking & Chat Management</Title>
-        <Group>
-          <Button
-            variant="outline"
-            color="red"
-            onClick={handleDisableAllPublic}
-            loading={isDisablingAll}
-          >
-            Disable All Public Rooms
-          </Button>
-          <Button
-            leftSection={<IconPlus size={16} />}
-            onClick={() =>
-              setModalState({ open: true, mode: 'create', room: null })
-            }
-          >
-            Add Chat Room
-          </Button>
-        </Group>
-      </Group>
+    <div className={styles.container}>
+      {/* Background Shapes */}
+      <div className={styles.bgShape1} />
+      <div className={styles.bgShape2} />
 
-      {error && (
-        <Alert color="red" mb="lg">
-          Failed to load chat rooms. Please try again.
-        </Alert>
-      )}
+      <div className={styles.contentWrapper}>
+        {/* Header Section */}
+        <section className={styles.headerSection}>
+          <Group justify="space-between" align="flex-start">
+            <h2 className={styles.pageTitle}>Networking & Chat Management</h2>
+            <Group className={styles.buttonGroup}>
+              <Button
+                variant="danger"
+                onClick={handleDisableAllPublic}
+                disabled={isDisablingAll}
+              >
+                Disable All Public Rooms
+              </Button>
+              <Button
+                variant="primary"
+                onClick={() =>
+                  setModalState({ open: true, mode: 'create', room: null })
+                }
+              >
+                <IconPlus size={18} />
+                Add Chat Room
+              </Button>
+            </Group>
+          </Group>
+        </section>
 
-      <ChatRoomsList
-        chatRooms={chatRooms}
-        eventId={eventId}
-        isLoading={isLoading}
-        onEdit={(room) => setModalState({ open: true, mode: 'edit', room })}
-      />
+        {/* Main Content Section */}
+        <section className={styles.mainContent}>
+          {error && (
+            <Alert color="red" mb="lg">
+              Failed to load chat rooms. Please try again.
+            </Alert>
+          )}
 
-      <ChatRoomModal
-        opened={modalState.open}
-        onClose={() =>
-          setModalState({ open: false, mode: 'create', room: null })
-        }
-        mode={modalState.mode}
-        room={modalState.room}
-        eventId={eventId}
-      />
-    </Container>
+          <ChatRoomsList
+            chatRooms={chatRooms}
+            isLoading={isLoading}
+            onEdit={(room) => setModalState({ open: true, mode: 'edit', room })}
+          />
+        </section>
+
+        <ChatRoomModal
+          opened={modalState.open}
+          onClose={() =>
+            setModalState({ open: false, mode: 'create', room: null })
+          }
+          mode={modalState.mode}
+          room={modalState.room}
+          eventId={eventId}
+        />
+      </div>
+    </div>
   );
 };
 

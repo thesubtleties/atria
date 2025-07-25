@@ -1,6 +1,133 @@
+/* Page Container - Full viewport */
 .container {
-  width: 100%;
-  max-width: 1200px;
+  min-height: 100vh;
+  background: rgba(251, 250, 255, 1);
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Background Organic Shapes */
+.bgShape1 {
+  position: absolute;
+  width: 350px;
+  height: 350px;
+  background: linear-gradient(135deg, #8B5CF6, #A855F7);
+  border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
+  top: 120px;
+  right: -175px;
+  opacity: 0.04;
+  animation: float 20s ease-in-out infinite;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.bgShape2 {
+  position: absolute;
+  width: 320px;
+  height: 340px;
+  background: linear-gradient(45deg, #06B6D4, #67E8F9);
+  border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
+  bottom: 150px;
+  left: -160px;
+  opacity: 0.03;
+  animation: float 25s ease-in-out infinite reverse;
+  z-index: 1;
+  pointer-events: none;
+}
+
+@keyframes float {
+  0%, 100% { 
+    transform: translateY(0px) rotate(0deg) scale(1); 
+  }
+  33% { 
+    transform: translateY(-20px) rotate(2deg) scale(1.02); 
+  }
+  66% { 
+    transform: translateY(15px) rotate(-1deg) scale(0.98); 
+  }
+}
+
+/* Main Content Wrapper */
+.contentWrapper {
+  position: relative;
+  z-index: 10;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 2rem;
+}
+
+/* Glass Section for Header */
+.headerSection {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 8px;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
+  margin-bottom: 2rem;
+}
+
+/* Page Title Styling */
+.pageTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1E293B;
+  margin: 0;
+}
+
+/* Main Content Glass Section */
+.mainContent {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 8px;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
+  position: relative;
+  min-height: 400px;
+}
+
+/* Button Group Styling */
+.buttonGroup {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .contentWrapper {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .contentWrapper {
+    padding: 1rem;
+  }
+
+  .headerSection,
+  .mainContent {
+    padding: 1.5rem;
+  }
+
+  .pageTitle {
+    font-size: 1.25rem;
+  }
+
+  .bgShape1,
+  .bgShape2 {
+    display: none;
+  }
+  
+  .buttonGroup {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .buttonGroup > * {
+    width: 100%;
+  }
 }
