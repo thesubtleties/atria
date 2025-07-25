@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Modal, TextInput, Textarea, Select, Switch, Button, Group, Stack } from '@mantine/core';
+import { Modal, TextInput, Textarea, Select, Switch, Stack } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
+import { Button } from '@/shared/components/buttons';
 import { 
   useCreateChatRoomMutation, 
   useUpdateChatRoomMutation 
 } from '@/app/features/chat/api';
 import { chatRoomSchema } from '../schemas/chatRoomSchema';
+import styles from './styles/index.module.css';
 
 const ChatRoomModal = ({ opened, onClose, mode, room, eventId }) => {
   const [createChatRoom, { isLoading: isCreating }] = useCreateChatRoomMutation();
@@ -103,8 +105,12 @@ const ChatRoomModal = ({ opened, onClose, mode, room, eventId }) => {
       onClose={onClose}
       title={mode === 'create' ? 'Create Chat Room' : 'Edit Chat Room'}
       size="md"
+      classNames={{
+        content: styles.modalContent,
+        header: styles.modalHeader,
+      }}
     >
-      <Stack>
+      <Stack spacing="md" p="lg">
         <TextInput
           label="Room Name"
           placeholder="Enter room name"
@@ -112,6 +118,10 @@ const ChatRoomModal = ({ opened, onClose, mode, room, eventId }) => {
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           error={errors.name}
           required
+          classNames={{
+            input: styles.formInput,
+            label: styles.formLabel,
+          }}
         />
 
         <Textarea
@@ -121,6 +131,10 @@ const ChatRoomModal = ({ opened, onClose, mode, room, eventId }) => {
           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           error={errors.description}
           rows={3}
+          classNames={{
+            input: styles.formTextarea,
+            label: styles.formLabel,
+          }}
         />
 
         <Select
@@ -132,26 +146,33 @@ const ChatRoomModal = ({ opened, onClose, mode, room, eventId }) => {
           error={errors.roomType}
           required
           disabled={mode === 'edit'} // Can't change room type after creation
+          classNames={{
+            input: styles.formSelect,
+            label: styles.formLabel,
+          }}
         />
 
-        <Switch
-          label="Enable room immediately"
-          description="If disabled, the room won't be visible to users until you enable it"
-          checked={formData.isEnabled}
-          onChange={(e) => setFormData({ ...formData, isEnabled: e.currentTarget.checked })}
-        />
+        <div className={styles.switchWrapper}>
+          <Switch
+            label="Enable room immediately"
+            description="If disabled, the room won't be visible to users until you enable it"
+            checked={formData.isEnabled}
+            onChange={(e) => setFormData({ ...formData, isEnabled: e.currentTarget.checked })}
+          />
+        </div>
 
-        <Group justify="flex-end" mt="md">
+        <div className={styles.buttonGroup}>
           <Button variant="subtle" onClick={onClose}>
             Cancel
           </Button>
           <Button 
+            variant="primary"
             onClick={handleSubmit} 
-            loading={isCreating || isUpdating}
+            disabled={isCreating || isUpdating}
           >
             {mode === 'create' ? 'Create' : 'Update'}
           </Button>
-        </Group>
+        </div>
       </Stack>
     </Modal>
   );
