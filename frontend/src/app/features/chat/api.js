@@ -65,6 +65,16 @@ export const chatApi = baseApi.injectEndpoints({
       ],
     }),
 
+    // Reorder chat room
+    reorderChatRoom: builder.mutation({
+      query: ({ roomId, display_order }) => ({
+        url: `/chat-rooms/${roomId}/reorder`,
+        method: 'PUT',
+        body: { display_order },
+      }),
+      invalidatesTags: ['ChatRoom', 'AdminChatRoom'],
+    }),
+
     // Disable all public rooms
     disableAllPublicRooms: builder.mutation({
       query: (eventId) => ({
@@ -129,6 +139,7 @@ export const {
   useUpdateChatRoomMutation,
   useDeleteChatRoomMutation,
   useToggleChatRoomMutation,
+  useReorderChatRoomMutation,
   useDisableAllPublicRoomsMutation,
   useGetChatRoomMessagesQuery,
   useSendMessageMutation,
