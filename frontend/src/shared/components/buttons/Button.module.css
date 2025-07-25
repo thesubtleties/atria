@@ -71,3 +71,19 @@
 .btn-subtle:active:not(:disabled) {
   background: rgba(107, 114, 128, 0.12);
 }
+
+/* Danger button variant */
+.btn-danger {
+  background: rgba(220, 38, 38, 0.08);
+  color: #DC2626;
+  border: 1px solid rgba(220, 38, 38, 0.15);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: rgba(220, 38, 38, 0.12);
+  border-color: rgba(220, 38, 38, 0.25);
+}
+
+.btn-danger:active:not(:disabled) {
+  background: rgba(220, 38, 38, 0.15);
+}

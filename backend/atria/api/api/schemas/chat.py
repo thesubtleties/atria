@@ -81,6 +81,7 @@ class ChatRoomUpdateSchema(ma.Schema):
     name = ma.String()
     description = ma.String()
     is_enabled = ma.Boolean()
+    display_order = ma.Float()
 
 
 class ChatRoomAdminSchema(ChatRoomDetailSchema):

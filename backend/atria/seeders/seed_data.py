@@ -851,6 +851,7 @@ def seed_chat_rooms():
             "description": "General discussion for all attendees",
             "room_type": "GLOBAL",
             "is_enabled": True,
+            "display_order": 10.0,
         },
         # Topic-specific chat rooms
         {
@@ -861,6 +862,7 @@ def seed_chat_rooms():
             "description": "Ask questions about the event",
             "room_type": "GLOBAL",
             "is_enabled": True,
+            "display_order": 20.0,
         },
         {
             "id": 3,
@@ -870,6 +872,7 @@ def seed_chat_rooms():
             "description": "Connect with other attendees",
             "room_type": "GLOBAL",
             "is_enabled": True,
+            "display_order": 30.0,
         },
         # Technology-specific chat rooms
         {
@@ -880,6 +883,7 @@ def seed_chat_rooms():
             "description": "Discuss React, TypeScript, and other frontend technologies",
             "room_type": "GLOBAL",
             "is_enabled": True,
+            "display_order": 40.0,
         },
         {
             "id": 5,
@@ -889,6 +893,7 @@ def seed_chat_rooms():
             "description": "Discuss Docker, Kubernetes, and CI/CD",
             "room_type": "GLOBAL",
             "is_enabled": True,
+            "display_order": 50.0,
         },
         # Admin-only chat rooms
         {
@@ -899,6 +904,7 @@ def seed_chat_rooms():
             "description": "Private room for event staff and organizers",
             "room_type": "ADMIN",
             "is_enabled": True,
+            "display_order": 10.0,
         },
         {
             "id": 7,
@@ -908,6 +914,7 @@ def seed_chat_rooms():
             "description": "Private space for speakers, admins, and organizers to coordinate",
             "room_type": "GREEN_ROOM",
             "is_enabled": True,
+            "display_order": 10.0,
         },
     ]
     
@@ -915,7 +922,7 @@ def seed_chat_rooms():
     room_id = 8
     sessions = seed_sessions()
     
-    for session in sessions:
+    for i, session in enumerate(sessions):
         # Public chat room for each session
         rooms.append({
             "id": room_id,
@@ -925,6 +932,7 @@ def seed_chat_rooms():
             "description": f"Public discussion for {session['title']}",
             "room_type": "PUBLIC",
             "is_enabled": True,
+            "display_order": (i + 1) * 10.0,
         })
         room_id += 1
         
@@ -937,6 +945,7 @@ def seed_chat_rooms():
             "description": "Speaker and organizer coordination",
             "room_type": "BACKSTAGE",
             "is_enabled": True,
+            "display_order": (i + 1) * 10.0,
         })
         room_id += 1
     

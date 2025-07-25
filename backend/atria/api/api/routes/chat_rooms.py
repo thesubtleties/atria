@@ -1,10 +1,10 @@
 # api/api/routes/chat_rooms.py
 from flask.views import MethodView
-from flask_smorest import Blueprint
+from flask_smorest import Blueprint, abort
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask import request
 
-from api.extensions import db
+from api.extensions import db, ma
 from api.models import ChatRoom, ChatMessage, Event, User
 from api.models.enums import EventUserRole, ChatRoomType
 from api.api.schemas import (
@@ -28,6 +28,11 @@ from api.commons.pagination import (
     get_pagination_schema,
 )
 from api.services.chat_room import ChatRoomService
+
+
+class ChatRoomReorderSchema(ma.Schema):
+    """Schema for reordering chat room"""
+    display_order = ma.Float(required=True)
 
 blp = Blueprint(
     "chat_rooms",
@@ -133,7 +138,7 @@ class ChatRoomList(MethodView):
             
             return chat_room, 201
         except ValueError as e:
-            return {"message": str(e)}, 400
+            abort(400, message=str(e))
 
 
 @blp.route("/chat-rooms/<int:room_id>")
@@ -177,7 +182,7 @@ class ChatRoomResource(MethodView):
             
             return chat_room
         except ValueError as e:
-            return {"message": str(e)}, 403
+            abort(403, message=str(e))
 
     @blp.response(204)
     @blp.doc(
@@ -201,7 +206,7 @@ class ChatRoomResource(MethodView):
             
             return "", 204
         except ValueError as e:
-            return {"message": str(e)}, 403
+            abort(403, message=str(e))
 
 
 @blp.route("/chat-rooms/<int:room_id>/messages")
@@ -294,7 +299,7 @@ class ChatRoomToggle(MethodView):
         # Check permissions
         user_role = event.get_user_role(current_user)
         if user_role not in [EventUserRole.ADMIN, EventUserRole.ORGANIZER]:
-            return {"message": "Must be admin or organizer to toggle chat rooms"}, 403
+            abort(403, message="Must be admin or organizer to toggle chat rooms")
         
         chat_room = ChatRoomService.toggle_chat_room(room_id, user_id)
         
@@ -350,3 +355,37 @@ class DisableAllPublicRooms(MethodView):
             emit_bulk_chat_rooms_updated(event_id, {"is_enabled": False})
         
         return result
+
+
+@blp.route("/chat-rooms/<int:room_id>/reorder")
+class ChatRoomReorder(MethodView):
+    @blp.arguments(ChatRoomReorderSchema)
+    @blp.response(200, ChatRoomDetailSchema)
+    @blp.doc(
+        summary="Reorder chat room",
+        description="Update the display order of a chat room",
+        responses={
+            400: {"description": "Invalid display order"},
+            403: {"description": "Not authorized to reorder chat rooms"},
+            404: {"description": "Chat room not found"},
+        },
+    )
+    @jwt_required()
+    def put(self, order_data, room_id):
+        """Reorder chat room"""
+        user_id = int(get_jwt_identity())
+        
+        try:
+            chat_room = ChatRoomService.update_chat_room(
+                room_id, 
+                {"display_order": order_data["display_order"]}, 
+                user_id
+            )
+            
+            # Emit socket event
+            from api.api.sockets.chat_notifications import emit_chat_room_updated
+            emit_chat_room_updated(chat_room)
+            
+            return chat_room
+        except ValueError as e:
+            abort(403, message=str(e))

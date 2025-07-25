@@ -3,33 +3,38 @@
 }
 
 .row:hover {
-  background-color: var(--mantine-color-gray-0);
+  background-color: rgba(139, 92, 246, 0.02);
 }
 
-/* Modern squared badge style */
+/* Modern squared badge style with glassmorphic touch */
 .roomTypeBadge {
   display: inline-flex;
   align-items: center;
   padding: 4px 12px;
-  border-radius: 4px;
-  font-size: 12px;
+  border-radius: 6px;
+  font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  backdrop-filter: blur(10px);
+  border: 1px solid;
 }
 
 /* Room type colors */
 .global {
-  background-color: var(--mantine-color-blue-1);
-  color: var(--mantine-color-blue-7);
+  background-color: rgba(59, 130, 246, 0.08);
+  color: #3B82F6;
+  border-color: rgba(59, 130, 246, 0.15);
 }
 
 .admin {
-  background-color: var(--mantine-color-violet-1);
-  color: var(--mantine-color-violet-7);
+  background-color: rgba(139, 92, 246, 0.08);
+  color: #8B5CF6;
+  border-color: rgba(139, 92, 246, 0.15);
 }
 
 .greenRoom {
-  background-color: var(--mantine-color-teal-1);
-  color: var(--mantine-color-teal-7);
+  background-color: rgba(20, 184, 166, 0.08);
+  color: #14B8A6;
+  border-color: rgba(20, 184, 166, 0.15);
 }
