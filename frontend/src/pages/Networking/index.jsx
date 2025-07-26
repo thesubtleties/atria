@@ -1,4 +1,4 @@
-import { Tabs, Badge, Text } from '@mantine/core';
+import { Tabs, Badge, Container } from '@mantine/core';
 import { IconMessages, IconUsers, IconUserPlus } from '@tabler/icons-react';
 import { useParams } from 'react-router-dom';
 import { ChatArea } from './ChatArea';
@@ -24,13 +24,13 @@ export function Networking() {
       <div className={styles.bgShape1} />
       <div className={styles.bgShape2} />
       
-      <div className={styles.contentWrapper}>
+      <Container size="xl" className={styles.contentWrapper}>
         {/* Header Section */}
         <section className={styles.headerSection}>
           <h1 className={styles.pageTitle}>Networking</h1>
-          <Text c="dimmed" size="sm" className={styles.pageSubtitle}>
+          <p className={styles.pageSubtitle}>
             Connect with attendees, chat in rooms, and manage connection requests
-          </Text>
+          </p>
         </section>
 
         {/* Main Content Section */}
@@ -80,7 +80,7 @@ export function Networking() {
             </Tabs.Panel>
           </Tabs>
         </section>
-      </div>
+      </Container>
     </div>
   );
 }
