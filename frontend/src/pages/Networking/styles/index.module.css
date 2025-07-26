@@ -1,6 +1,6 @@
 /* Page Container - Full viewport */
 .container {
-  min-height: 100vh;
+  height: calc(100vh - 100px);
   background: rgba(251, 250, 255, 1);
   position: relative;
   overflow: hidden;
@@ -53,39 +53,37 @@
 .contentWrapper {
   position: relative;
   z-index: 10;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 2rem;
+  padding: 2rem 0;
   width: 100%;
   flex: 1;
   display: flex;
   flex-direction: column;
   min-height: 0; /* Important for nested flex */
+  height: 100%;
+  overflow: hidden;
 }
 
-/* Glass Section for Header */
+/* Header Section */
 .headerSection {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 8px;
-  padding: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
-  margin-bottom: 2rem;
+  text-align: center;
+  margin-bottom: 3rem;
+  position: relative;
+  z-index: 10;
 }
 
-/* Page Title Styling */
+/* Page Title Styling - Matches Speakers/Sponsors */
 .pageTitle {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #1E293B;
+  font-size: 2.5rem;
+  font-weight: 300;
+  color: #8B5CF6;
+  letter-spacing: -0.02em;
   margin: 0 0 0.5rem 0;
 }
 
 .pageSubtitle {
+  font-size: 1.1rem;
   color: #64748B;
-  font-size: 0.9rem;
+  font-weight: 400;
   margin: 0;
 }
 
@@ -100,18 +98,88 @@
   box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
   overflow: hidden;
   flex: 1;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
   min-height: 0;
 }
 
-/* Tab Container */
-.tabsContainer {
-  width: 100%;
+/* Custom Tabs Container */
+.customTabsContainer {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
   height: 100%;
+  overflow: hidden;
+}
+
+/* Custom Tab List */
+.customTabsList {
+  background: rgba(139, 92, 246, 0.04);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(139, 92, 246, 0.08);
+  padding: 0;
+  margin: 0;
   display: flex;
-  flex-direction: column;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+/* Custom Tab Button */
+.customTab {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  transition: all 0.2s ease;
+  color: #64748B;
+  font-weight: 500;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  position: relative;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: inherit;
+}
+
+.customTab:hover {
+  color: #8B5CF6;
+  background: rgba(139, 92, 246, 0.02);
+}
+
+.customTabActive {
+  color: #8B5CF6;
+  border-bottom-color: #8B5CF6;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* Custom Tab Panel */
+.customTabPanel {
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
   min-height: 0;
+  padding: 0;
+}
+
+/* All direct children of customTabPanel should fill height */
+.customTabPanel > * {
+  height: 100%;
+  min-height: 0;
+}
+
+/* Custom Badge */
+.customBadge {
+  margin-left: 0.5rem;
+}
+
+/* Chat Wrapper - Forces proper height */
+.chatWrapper {
+  height: 100%;
+  display: grid;
+  grid-template-rows: 1fr;
+  overflow: hidden;
 }
 
 /* Tab Styling */
@@ -179,28 +247,17 @@
 }
 
 /* Responsive Design */
-@media (max-width: 1024px) {
-  .contentWrapper {
-    padding: 1.5rem;
-  }
-
-  .headerSection {
-    padding: 1.5rem;
-  }
-}
-
 @media (max-width: 768px) {
-  .contentWrapper {
-    padding: 1rem;
-  }
-
   .headerSection {
-    padding: 1.5rem;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
   }
 
   .pageTitle {
-    font-size: 1.25rem;
+    font-size: 2rem;
+  }
+  
+  .pageSubtitle {
+    font-size: 1rem;
   }
 
   .tab {

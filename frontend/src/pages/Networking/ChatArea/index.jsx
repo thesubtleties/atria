@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Tabs, Text, Stack, Loader, Center, Badge } from '@mantine/core';
+import { Text, Stack, Loader, Center } from '@mantine/core';
 import { IconHash, IconLock, IconGlobe, IconMicrophone } from '@tabler/icons-react';
 import { useGetChatRoomsQuery, useSendMessageMutation } from '@/app/features/chat/api';
 import { joinEventNotifications, leaveEventNotifications } from '@/app/features/networking/socketClient';
@@ -127,63 +127,63 @@ export function ChatArea({ eventId }) {
 
   return (
     <div className={styles.container}>
-      <Tabs 
-        value={activeRoom?.toString()} 
-        onChange={(value) => setActiveRoom(parseInt(value))}
-        className={styles.tabs}
-      >
-        <Tabs.List className={styles.tabsList}>
-          {rooms.map(room => (
-            <Tabs.Tab 
-              key={room.id} 
-              value={room.id.toString()}
-              className={styles.tab}
-              leftSection={getRoomIcon(room.room_type)}
-              disabled={!canAccessRoom(room)}
-            >
-              <span className={styles.tabContent}>
-                {room.name}
-                {room.room_type !== 'GLOBAL' && (() => {
-                  const typeLabel = getRoomTypeLabel(room);
-                  return typeLabel ? (
-                    <span className={`${styles.roomTypeLabel} ${typeLabel.className}`}>
-                      {typeLabel.label}
-                    </span>
-                  ) : null;
-                })()}
-              </span>
-            </Tabs.Tab>
-          ))}
-        </Tabs.List>
+      <div className={styles.customTabs}>
+        {/* Custom room tabs */}
+        <div className={styles.roomTabsList}>
+          {rooms.map(room => {
+            const typeLabel = getRoomTypeLabel(room);
+            const isActive = activeRoom === room.id;
+            
+            return (
+              <button
+                key={room.id}
+                className={`${styles.roomTab} ${isActive ? styles.roomTabActive : ''}`}
+                onClick={() => setActiveRoom(room.id)}
+                disabled={!canAccessRoom(room)}
+              >
+                {getRoomIcon(room.room_type)}
+                <span>{room.name}</span>
+                {room.room_type !== 'GLOBAL' && typeLabel && (
+                  <span className={`${styles.roomTypeLabel} ${typeLabel.className}`}>
+                    {typeLabel.label}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
 
-        {rooms.map(room => (
-          <Tabs.Panel 
-            key={room.id} 
-            value={room.id.toString()} 
-            className={styles.tabPanel}
-          >
-            {canAccessRoom(room) ? (
-              <ChatRoom 
-                room={room} 
-                eventId={eventId}
-                inputValue={inputValues[room.id] || ''}
-                onInputChange={(value) => setInputValues(prev => ({ 
-                  ...prev, 
-                  [room.id]: value 
-                }))}
-                onSendMessage={() => handleSendMessage(room.id)}
-              />
-            ) : (
-              <Center className={styles.restricted}>
-                <Stack align="center" spacing="sm">
-                  <IconLock size={48} />
-                  <Text>This chat room is restricted to administrators</Text>
-                </Stack>
-              </Center>
-            )}
-          </Tabs.Panel>
-        ))}
-      </Tabs>
+        {/* Chat content area */}
+        <div className={styles.chatContent}>
+          {rooms.map(room => {
+            if (activeRoom !== room.id) return null;
+            
+            return (
+              <div key={room.id} className={styles.chatPanel}>
+                {canAccessRoom(room) ? (
+                  <ChatRoom 
+                    room={room} 
+                    eventId={eventId}
+                    inputValue={inputValues[room.id] || ''}
+                    onInputChange={(value) => setInputValues(prev => ({ 
+                      ...prev, 
+                      [room.id]: value 
+                    }))}
+                    onSendMessage={() => handleSendMessage(room.id)}
+                  />
+                ) : (
+                  <Center className={styles.restricted}>
+                    <Stack align="center" spacing="sm">
+                      <IconLock size={48} />
+                      <Text>This chat room is restricted to administrators</Text>
+                    </Stack>
+                  </Center>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }

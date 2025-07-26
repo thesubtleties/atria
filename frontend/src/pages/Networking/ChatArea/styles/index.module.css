@@ -1,16 +1,16 @@
 .container {
   height: 100%;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
   min-height: 0;
   padding: 0;
 }
 
-/* Main tabs container */
-.tabs {
+/* Custom tabs container */
+.customTabs {
   height: 100%;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
   min-height: 0;
   background: rgba(255, 255, 255, 0.5);
   backdrop-filter: blur(10px);
@@ -21,8 +21,8 @@
   overflow: hidden;
 }
 
-/* Chat room tabs list */
-.tabsList {
+/* Room tabs list */
+.roomTabsList {
   background: rgba(139, 92, 246, 0.02);
   backdrop-filter: blur(5px);
   border-bottom: 1px solid rgba(139, 92, 246, 0.08);
@@ -33,8 +33,8 @@
   flex-wrap: wrap;
 }
 
-/* Individual tab styling */
-.tab {
+/* Room tab button */
+.roomTab {
   padding: 0.5rem 0.75rem;
   font-size: 0.85rem;
   color: #64748B;
@@ -43,15 +43,25 @@
   border-radius: 4px;
   background: transparent;
   border: 1px solid transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: inherit;
 }
 
-.tab:hover {
+.roomTab:hover {
   color: #8B5CF6;
   background: rgba(139, 92, 246, 0.04);
   border-color: rgba(139, 92, 246, 0.1);
 }
 
-.tab[data-active] {
+.roomTab:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.roomTabActive {
   color: #8B5CF6;
   background: rgba(255, 255, 255, 0.9);
   border-color: rgba(139, 92, 246, 0.15);
@@ -93,21 +103,20 @@
   border-color: rgba(6, 182, 212, 0.2);
 }
 
-/* Tab panel for chat content */
-.tabPanel {
-  flex: 1;
+/* Chat content area */
+.chatContent {
   overflow: hidden;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
   min-height: 0;
+  height: 100%;
 }
 
-/* Chat container within tab panel */
-.chatContainer {
+/* Chat panel within content */
+.chatPanel {
   height: 100%;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
   min-height: 0;
 }
 

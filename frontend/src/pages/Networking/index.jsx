@@ -1,4 +1,5 @@
-import { Tabs, Badge, Text } from '@mantine/core';
+import { useState } from 'react';
+import { Badge, Container } from '@mantine/core';
 import { IconMessages, IconUsers, IconUserPlus } from '@tabler/icons-react';
 import { useParams } from 'react-router-dom';
 import { ChatArea } from './ChatArea';
@@ -9,6 +10,7 @@ import styles from './styles/index.module.css';
 
 export function Networking() {
   const { eventId } = useParams();
+  const [activeTab, setActiveTab] = useState('chat');
   
   // Get pending connections count for badge
   const { data: pendingData } = useGetPendingConnectionsQuery({
@@ -24,63 +26,61 @@ export function Networking() {
       <div className={styles.bgShape1} />
       <div className={styles.bgShape2} />
       
-      <div className={styles.contentWrapper}>
+      <Container size="xl" className={styles.contentWrapper}>
         {/* Header Section */}
         <section className={styles.headerSection}>
           <h1 className={styles.pageTitle}>Networking</h1>
-          <Text c="dimmed" size="sm" className={styles.pageSubtitle}>
+          <p className={styles.pageSubtitle}>
             Connect with attendees, chat in rooms, and manage connection requests
-          </Text>
+          </p>
         </section>
 
         {/* Main Content Section */}
         <section className={styles.mainContent}>
-          <Tabs defaultValue="chat" className={styles.tabsContainer}>
-            <Tabs.List className={styles.tabsList}>
-              <Tabs.Tab 
-                value="chat" 
-                className={styles.tab}
-                leftSection={<IconMessages size={18} />}
+          <div className={styles.customTabsContainer}>
+            {/* Custom Tab List */}
+            <div className={styles.customTabsList}>
+              <button 
+                className={`${styles.customTab} ${activeTab === 'chat' ? styles.customTabActive : ''}`}
+                onClick={() => setActiveTab('chat')}
               >
-                Chat
-              </Tabs.Tab>
-              <Tabs.Tab 
-                value="attendees" 
-                className={styles.tab}
-                leftSection={<IconUsers size={18} />}
+                <IconMessages size={18} />
+                <span>Chat</span>
+              </button>
+              <button 
+                className={`${styles.customTab} ${activeTab === 'attendees' ? styles.customTabActive : ''}`}
+                onClick={() => setActiveTab('attendees')}
               >
-                Attendees
-              </Tabs.Tab>
-              <Tabs.Tab
-                value="requests"
-                className={styles.tab}
-                leftSection={<IconUserPlus size={18} />}
-                rightSection={
-                  pendingCount > 0 ? (
-                    <Badge size="xs" variant="light">
-                      {pendingCount}
-                    </Badge>
-                  ) : null
-                }
+                <IconUsers size={18} />
+                <span>Attendees</span>
+              </button>
+              <button
+                className={`${styles.customTab} ${activeTab === 'requests' ? styles.customTabActive : ''}`}
+                onClick={() => setActiveTab('requests')}
               >
-                Requests
-              </Tabs.Tab>
-            </Tabs.List>
+                <IconUserPlus size={18} />
+                <span>Requests</span>
+                {pendingCount > 0 && (
+                  <Badge size="xs" variant="light" className={styles.customBadge}>
+                    {pendingCount}
+                  </Badge>
+                )}
+              </button>
+            </div>
 
-            <Tabs.Panel value="chat" className={styles.tabPanel}>
-              <ChatArea eventId={eventId} />
-            </Tabs.Panel>
-
-            <Tabs.Panel value="attendees" className={styles.tabPanel}>
-              <AttendeesGrid eventId={eventId} />
-            </Tabs.Panel>
-
-            <Tabs.Panel value="requests" className={styles.tabPanel}>
-              <RequestsList eventId={eventId} />
-            </Tabs.Panel>
-          </Tabs>
+            {/* Custom Tab Panels */}
+            <div className={styles.customTabPanel}>
+              {activeTab === 'chat' && (
+                <div className={styles.chatWrapper}>
+                  <ChatArea eventId={eventId} />
+                </div>
+              )}
+              {activeTab === 'attendees' && <AttendeesGrid eventId={eventId} />}
+              {activeTab === 'requests' && <RequestsList eventId={eventId} />}
+            </div>
+          </div>
         </section>
-      </div>
+      </Container>
     </div>
   );
 }
