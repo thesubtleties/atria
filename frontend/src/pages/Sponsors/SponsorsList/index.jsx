@@ -1,4 +1,4 @@
-import { SimpleGrid, Title, Text, Container } from '@mantine/core';
+import { SimpleGrid, Title, Text } from '@mantine/core';
 import SponsorCard from '@/shared/components/SponsorCard';
 import styles from './styles/index.module.css';
 
@@ -23,7 +23,7 @@ export default function SponsorsList({ sponsors, tiers }) {
   ];
 
   return (
-    <Container size="xl" className={styles.container}>
+    <div className={styles.container}>
       {tiersToDisplay.map((tier) => {
         const tiersSponsors = sponsorsByTier[tier.id];
         if (!tiersSponsors || tiersSponsors.length === 0) return null;
@@ -61,6 +61,6 @@ export default function SponsorsList({ sponsors, tiers }) {
           </Text>
         </div>
       )}
-    </Container>
+    </div>
   );
 }
