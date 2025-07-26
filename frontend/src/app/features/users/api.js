@@ -23,7 +23,8 @@ export const usersApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: (result, error, { id }) => [
         { type: 'Users', id },
-        { type: 'Dashboard', id }
+        { type: 'Dashboard', id },
+        'EventUsers'  // Invalidate attendee lists to show updated profile
       ],
     }),
     getUserEvents: builder.query({
