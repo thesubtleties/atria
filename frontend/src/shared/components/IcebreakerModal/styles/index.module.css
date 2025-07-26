@@ -1,51 +1,132 @@
-.modal {
-  /* Modal customizations if needed */
+/* Modal Content - Glassmorphism */
+.modalContent {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.08);
 }
 
-.recipientInfo {
-  padding: var(--mantine-spacing-sm);
-  background-color: var(--mantine-color-gray-0);
-  border-radius: var(--mantine-radius-sm);
-  
-  @media (prefers-color-scheme: dark) {
-    background-color: var(--mantine-color-dark-6);
-  }
+/* Modal Header */
+.modalHeader {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1E293B;
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.04);
 }
 
+/* Recipient Section */
+.recipientSection {
+  background: rgba(139, 92, 246, 0.04);
+  padding: 1rem;
+  border-radius: 6px;
+  border: 1px solid rgba(139, 92, 246, 0.08);
+}
+
+/* Instruction Text */
+.instructionText {
+  color: #64748B;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+/* Info Alert */
+.infoAlert {
+  background: rgba(139, 92, 246, 0.04);
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  border-radius: 6px;
+}
+
+/* Icebreaker List Container */
 .icebreakerList {
-  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 0.25rem;
 }
 
+/* Scrollbar Styling */
+.icebreakerList::-webkit-scrollbar {
+  width: 6px;
+}
+
+.icebreakerList::-webkit-scrollbar-track {
+  background: rgba(139, 92, 246, 0.04);
+  border-radius: 3px;
+}
+
+.icebreakerList::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.2);
+  border-radius: 3px;
+}
+
+.icebreakerList::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 92, 246, 0.3);
+}
+
+/* Icebreaker Option */
 .icebreakerOption {
-  padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
-  border: 1px solid var(--mantine-color-gray-3);
-  border-radius: var(--mantine-radius-sm);
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
-  
-  @media (prefers-color-scheme: dark) {
-    border-color: var(--mantine-color-dark-4);
-  }
+  outline: none;
 }
 
 .icebreakerOption:hover {
-  background-color: var(--mantine-color-blue-0);
-  border-color: var(--mantine-color-blue-2);
-  
-  @media (prefers-color-scheme: dark) {
-    background-color: var(--mantine-color-dark-5);
-    border-color: var(--mantine-color-blue-8);
-  }
+  background: rgba(255, 255, 255, 0.8);
+  border-color: rgba(139, 92, 246, 0.2);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.08);
+}
+
+.icebreakerOption:focus-visible {
+  outline: 2px solid rgba(139, 92, 246, 0.5);
+  outline-offset: 2px;
 }
 
 .icebreakerOption.selected {
-  background-color: var(--mantine-color-blue-0);
-  border-color: var(--mantine-color-blue-5);
-  box-shadow: 0 0 0 2px var(--mantine-color-blue-2);
+  background: rgba(139, 92, 246, 0.08);
+  border-color: rgba(139, 92, 246, 0.3);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+}
+
+.icebreakerOption.selected:hover {
+  background: rgba(139, 92, 246, 0.12);
+  transform: none;
+}
+
+/* Button Group at Modal Bottom */
+.buttonGroup {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .modalContent {
+    padding: 0;
+  }
   
-  @media (prefers-color-scheme: dark) {
-    background-color: var(--mantine-color-dark-5);
-    border-color: var(--mantine-color-blue-7);
-    box-shadow: 0 0 0 2px var(--mantine-color-blue-9);
+  .modalHeader {
+    padding: 1rem;
+    font-size: 1.125rem;
+  }
+  
+  .recipientSection {
+    padding: 0.75rem;
+  }
+  
+  .icebreakerList {
+    max-height: 250px;
   }
 }

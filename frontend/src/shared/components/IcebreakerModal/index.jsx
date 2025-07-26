@@ -3,11 +3,12 @@ import {
   Modal,
   Stack,
   Text,
-  Button,
   Group,
   Avatar,
+  Alert,
 } from '@mantine/core';
-import { IconSend } from '@tabler/icons-react';
+import { IconSend, IconInfoCircle } from '@tabler/icons-react';
+import { Button } from '@/shared/components/buttons';
 import styles from './styles/index.module.css';
 
 export function IcebreakerModal({
@@ -39,36 +40,49 @@ export function IcebreakerModal({
       opened={opened}
       onClose={handleClose}
       title="Send Connection Request"
-      size="lg"
-      className={styles.modal}
+      size="md"
+      classNames={{
+        content: styles.modalContent,
+        header: styles.modalHeader,
+      }}
     >
-      <Stack spacing="md">
+      <Stack spacing="md" p="lg">
         {/* Recipient info */}
-        <Group spacing="sm" className={styles.recipientInfo}>
-          <Avatar src={recipient?.avatarUrl} radius="xl" size="md">
-            {recipient?.firstName?.[0]?.toUpperCase() || '?'}
-          </Avatar>
-          <div>
-            <Text size="sm" weight={600}>
-              {recipient?.firstName} {recipient?.lastName}
-            </Text>
-            {recipient?.title && (
-              <Text size="xs" c="dimmed">
-                {recipient.title}
+        <div className={styles.recipientSection}>
+          <Group spacing="sm">
+            <Avatar src={recipient?.avatarUrl} radius="xl" size="md">
+              {recipient?.firstName?.[0]?.toUpperCase() || '?'}
+            </Avatar>
+            <div>
+              <Text size="sm" weight={600}>
+                {recipient?.firstName} {recipient?.lastName}
               </Text>
-            )}
-          </div>
-        </Group>
-
-        <Text size="sm" c="dimmed">
-          {eventIcebreakers.length > 0 
-            ? 'Choose an icebreaker to start the conversation:'
-            : 'No icebreakers available for this event.'
-          }
-        </Text>
+              {recipient?.title && (
+                <Text size="xs" c="dimmed">
+                  {recipient.title}
+                </Text>
+              )}
+            </div>
+          </Group>
+        </div>
 
         {eventIcebreakers.length > 0 ? (
-          <Stack spacing="xs" className={styles.icebreakerList}>
+          <Text size="sm" c="dimmed" className={styles.instructionText}>
+            Choose an icebreaker to start the conversation:
+          </Text>
+        ) : (
+          <Alert 
+            icon={<IconInfoCircle size={20} />}
+            color="blue"
+            variant="light"
+            className={styles.infoAlert}
+          >
+            No icebreakers available for this event. Event organizers haven't set up icebreakers yet.
+          </Alert>
+        )}
+
+        {eventIcebreakers.length > 0 ? (
+          <div className={styles.icebreakerList}>
             {eventIcebreakers.map((icebreaker, index) => (
               <div
                 key={index}
@@ -76,30 +90,34 @@ export function IcebreakerModal({
                   selectedIcebreaker === icebreaker ? styles.selected : ''
                 }`}
                 onClick={() => setSelectedIcebreaker(icebreaker)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    setSelectedIcebreaker(icebreaker);
+                  }
+                }}
               >
                 <Text size="sm">{icebreaker}</Text>
               </div>
             ))}
-          </Stack>
-        ) : (
-          <Text size="sm" c="dimmed" ta="center" py="xl">
-            Event organizers haven't set up icebreakers yet.
-          </Text>
-        )}
+          </div>
+        ) : null}
 
-        <Group position="right" mt="md">
-          <Button variant="default" onClick={handleClose} disabled={isLoading}>
+        <div className={styles.buttonGroup}>
+          <Button variant="subtle" onClick={handleClose} disabled={isLoading}>
             Cancel
           </Button>
           <Button
-            leftIcon={<IconSend size={16} />}
+            variant="primary"
             onClick={handleSend}
             disabled={!canSend || eventIcebreakers.length === 0}
             loading={isLoading}
+            leftIcon={<IconSend size={16} />}
           >
             Send Request
           </Button>
-        </Group>
+        </div>
       </Stack>
     </Modal>
   );
