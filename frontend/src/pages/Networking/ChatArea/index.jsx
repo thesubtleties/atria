@@ -19,9 +19,21 @@ export function ChatArea({ eventId }) {
   });
   const [sendMessage] = useSendMessageMutation();
 
-  // Extract chat rooms from paginated response
-  // Rooms are already sorted by room_type and display_order from the API
-  const rooms = chatRooms?.chat_rooms || [];
+  // Extract chat rooms from paginated response and sort them
+  const rawRooms = chatRooms?.chat_rooms || [];
+  
+  // Sort rooms: GLOBAL (general) first, then GREEN_ROOM (speakers), then ADMIN
+  const rooms = [...rawRooms].sort((a, b) => {
+    // Define the order of room types
+    const typeOrder = { 'GLOBAL': 1, 'GREEN_ROOM': 2, 'ADMIN': 3 };
+    
+    // First sort by room type
+    const typeCompare = (typeOrder[a.room_type] || 999) - (typeOrder[b.room_type] || 999);
+    if (typeCompare !== 0) return typeCompare;
+    
+    // Then sort by display_order within the same type
+    return a.display_order - b.display_order;
+  });
   
   console.log('ChatArea API response:', { eventId, chatRooms, rooms, isLoading, error });
 
