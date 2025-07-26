@@ -2,14 +2,13 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  min-height: 400px;
   overflow: hidden;
+  min-height: 0; /* Allow flex shrinking */
 }
 
 .messagesArea {
   height: 100%;
-  background-color: var(--mantine-color-gray-0);
-  border-radius: var(--mantine-radius-md);
+  background: transparent;
   overflow: hidden;
 }
 

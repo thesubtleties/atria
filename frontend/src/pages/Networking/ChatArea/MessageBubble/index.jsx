@@ -1,5 +1,5 @@
 import { Group, Text, Avatar } from '@mantine/core';
-import styles from './styles/index.module.css';
+import styles from '../styles/index.module.css';
 
 export function MessageBubble({ message }) {
   // Handle both snake_case (from backend) and camelCase (from local state)
@@ -24,16 +24,16 @@ export function MessageBubble({ message }) {
         size="sm" 
         radius="xl"
         src={messageUser?.image_url || messageUser?.imageUrl}
-        className={styles.avatar}
+        style={{ flexShrink: 0 }}
       >
         {!messageUser?.image_url && !messageUser?.imageUrl && initial}
       </Avatar>
       <div className={styles.messageContent}>
         <Group gap="xs">
-          <Text size="sm" fw={600}>
+          <Text size="sm" fw={600} c="#1E293B">
             {fullName}
           </Text>
-          <Text size="xs" c="dimmed">
+          <Text size="xs" c="#94A3B8">
             {time}
           </Text>
         </Group>

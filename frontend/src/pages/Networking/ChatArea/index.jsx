@@ -19,8 +19,21 @@ export function ChatArea({ eventId }) {
   });
   const [sendMessage] = useSendMessageMutation();
 
-  // Extract chat rooms from paginated response
-  const rooms = chatRooms?.chat_rooms || [];
+  // Extract chat rooms from paginated response and sort them
+  const rawRooms = chatRooms?.chat_rooms || [];
+  
+  // Sort rooms: GLOBAL (general) first, then GREEN_ROOM (speakers), then ADMIN
+  const rooms = [...rawRooms].sort((a, b) => {
+    // Define the order of room types
+    const typeOrder = { 'GLOBAL': 1, 'GREEN_ROOM': 2, 'ADMIN': 3 };
+    
+    // First sort by room type
+    const typeCompare = (typeOrder[a.room_type] || 999) - (typeOrder[b.room_type] || 999);
+    if (typeCompare !== 0) return typeCompare;
+    
+    // Then sort by display_order within the same type
+    return a.display_order - b.display_order;
+  });
   
   console.log('ChatArea API response:', { eventId, chatRooms, rooms, isLoading, error });
 
@@ -124,12 +137,13 @@ export function ChatArea({ eventId }) {
             <Tabs.Tab 
               key={room.id} 
               value={room.id.toString()}
+              className={styles.tab}
               leftSection={getRoomIcon(room.room_type)}
               disabled={!canAccessRoom(room)}
             >
               <span className={styles.tabContent}>
                 {room.name}
-                {(() => {
+                {room.room_type !== 'GLOBAL' && (() => {
                   const typeLabel = getRoomTypeLabel(room);
                   return typeLabel ? (
                     <span className={`${styles.roomTypeLabel} ${typeLabel.className}`}>

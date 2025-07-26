@@ -1,13 +1,9 @@
 import { useState } from 'react';
 import {
-  Container,
-  Stack,
-  Title,
   Text,
   Loader,
   Center,
   Pagination,
-  SimpleGrid,
   Alert,
 } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
@@ -34,11 +30,13 @@ export function RequestsList({ eventId }) {
 
   if (error) {
     return (
-      <Container size="xl" py="xl">
-        <Alert icon={<IconInfoCircle size={16} />} color="red" title="Error">
-          Failed to load connection requests. Please try again later.
-        </Alert>
-      </Container>
+      <div className={styles.container}>
+        <div className={styles.errorState}>
+          <Alert icon={<IconInfoCircle size={16} />} color="red" title="Error">
+            Failed to load connection requests. Please try again later.
+          </Alert>
+        </div>
+      </div>
     );
   }
 
@@ -46,41 +44,44 @@ export function RequestsList({ eventId }) {
   const totalPages = data ? Math.ceil(data.total_items / perPage) : 1;
 
   return (
-    <Container size="xl" py="xl">
-      <Stack spacing="lg">
-        <div>
-          <Title order={3} mb="xs">
-            Connection Requests
-          </Title>
-          <Text size="sm" c="dimmed">
-            {data?.total_items || 0} pending {data?.total_items === 1 ? 'request' : 'requests'}
-          </Text>
-        </div>
+    <div className={styles.container}>
+      {/* Header */}
+      <div className={styles.header}>
+        <h3 className={styles.title}>
+          Connection Requests
+        </h3>
+        <Text className={styles.subtitle}>
+          {data?.total_items || 0} pending {data?.total_items === 1 ? 'request' : 'requests'}
+        </Text>
+      </div>
 
+      {/* Content */}
+      <div className={styles.content}>
         {requests.length === 0 ? (
-          <Center py="xl">
+          <div className={styles.emptyState}>
             <Text c="dimmed">No pending connection requests</Text>
-          </Center>
+          </div>
         ) : (
-          <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="lg">
+          <div className={styles.requestGrid}>
             {requests.map((request) => (
               <RequestCard key={request.id} request={request} eventId={eventId} />
             ))}
-          </SimpleGrid>
+          </div>
         )}
+      </div>
 
-        {totalPages > 1 && (
-          <Center>
-            <Pagination
-              value={page}
-              onChange={setPage}
-              total={totalPages}
-              size="md"
-              withEdges
-            />
-          </Center>
-        )}
-      </Stack>
-    </Container>
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className={styles.paginationContainer}>
+          <Pagination
+            value={page}
+            onChange={setPage}
+            total={totalPages}
+            size="md"
+            withEdges
+          />
+        </div>
+      )}
+    </div>
   );
 }
