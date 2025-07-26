@@ -1,4 +1,4 @@
-import { Tabs, Badge } from '@mantine/core';
+import { Tabs, Badge, Text } from '@mantine/core';
 import { IconMessages, IconUsers, IconUserPlus } from '@tabler/icons-react';
 import { useParams } from 'react-router-dom';
 import { ChatArea } from './ChatArea';
@@ -20,41 +20,67 @@ export function Networking() {
 
   return (
     <div className={styles.container}>
-      <Tabs defaultValue="chat" className={styles.tabs}>
-        <Tabs.List>
-          <Tabs.Tab value="chat" leftSection={<IconMessages size={20} />}>
-            Chat
-          </Tabs.Tab>
-          <Tabs.Tab value="attendees" leftSection={<IconUsers size={20} />}>
-            Attendees
-          </Tabs.Tab>
-          <Tabs.Tab
-            value="requests"
-            leftSection={<IconUserPlus size={20} />}
-            rightSection={
-              pendingCount > 0 ? (
-                <Badge size="sm" color="red" variant="filled">
-                  {pendingCount}
-                </Badge>
-              ) : null
-            }
-          >
-            Requests
-          </Tabs.Tab>
-        </Tabs.List>
+      {/* Background Shapes */}
+      <div className={styles.bgShape1} />
+      <div className={styles.bgShape2} />
+      
+      <div className={styles.contentWrapper}>
+        {/* Header Section */}
+        <section className={styles.headerSection}>
+          <h1 className={styles.pageTitle}>Networking</h1>
+          <Text c="dimmed" size="sm" className={styles.pageSubtitle}>
+            Connect with attendees, chat in rooms, and manage connection requests
+          </Text>
+        </section>
 
-        <Tabs.Panel value="chat" className={styles.tabPanel}>
-          <ChatArea eventId={eventId} />
-        </Tabs.Panel>
+        {/* Main Content Section */}
+        <section className={styles.mainContent}>
+          <Tabs defaultValue="chat" className={styles.tabsContainer}>
+            <Tabs.List className={styles.tabsList}>
+              <Tabs.Tab 
+                value="chat" 
+                className={styles.tab}
+                leftSection={<IconMessages size={18} />}
+              >
+                Chat
+              </Tabs.Tab>
+              <Tabs.Tab 
+                value="attendees" 
+                className={styles.tab}
+                leftSection={<IconUsers size={18} />}
+              >
+                Attendees
+              </Tabs.Tab>
+              <Tabs.Tab
+                value="requests"
+                className={styles.tab}
+                leftSection={<IconUserPlus size={18} />}
+                rightSection={
+                  pendingCount > 0 ? (
+                    <Badge size="xs" variant="light">
+                      {pendingCount}
+                    </Badge>
+                  ) : null
+                }
+              >
+                Requests
+              </Tabs.Tab>
+            </Tabs.List>
 
-        <Tabs.Panel value="attendees" className={styles.tabPanel}>
-          <AttendeesGrid eventId={eventId} />
-        </Tabs.Panel>
+            <Tabs.Panel value="chat" className={styles.tabPanel}>
+              <ChatArea eventId={eventId} />
+            </Tabs.Panel>
 
-        <Tabs.Panel value="requests" className={styles.tabPanel}>
-          <RequestsList eventId={eventId} />
-        </Tabs.Panel>
-      </Tabs>
+            <Tabs.Panel value="attendees" className={styles.tabPanel}>
+              <AttendeesGrid eventId={eventId} />
+            </Tabs.Panel>
+
+            <Tabs.Panel value="requests" className={styles.tabPanel}>
+              <RequestsList eventId={eventId} />
+            </Tabs.Panel>
+          </Tabs>
+        </section>
+      </div>
     </div>
   );
 }

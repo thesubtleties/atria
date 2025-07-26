@@ -20,6 +20,7 @@ export function ChatArea({ eventId }) {
   const [sendMessage] = useSendMessageMutation();
 
   // Extract chat rooms from paginated response
+  // Rooms are already sorted by room_type and display_order from the API
   const rooms = chatRooms?.chat_rooms || [];
   
   console.log('ChatArea API response:', { eventId, chatRooms, rooms, isLoading, error });
@@ -124,12 +125,13 @@ export function ChatArea({ eventId }) {
             <Tabs.Tab 
               key={room.id} 
               value={room.id.toString()}
+              className={styles.tab}
               leftSection={getRoomIcon(room.room_type)}
               disabled={!canAccessRoom(room)}
             >
               <span className={styles.tabContent}>
                 {room.name}
-                {(() => {
+                {room.room_type !== 'GLOBAL' && (() => {
                   const typeLabel = getRoomTypeLabel(room);
                   return typeLabel ? (
                     <span className={`${styles.roomTypeLabel} ${typeLabel.className}`}>

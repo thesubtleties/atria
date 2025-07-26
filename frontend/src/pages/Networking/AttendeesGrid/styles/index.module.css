@@ -1,8 +1,40 @@
-.header {
-  padding-bottom: var(--mantine-spacing-md);
-  border-bottom: 1px solid #e9ecef;
+/* Main container with glass effect */
+.container {
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.03);
+  padding: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
+/* Header section with filters */
+.header {
+  background: rgba(139, 92, 246, 0.02);
+  backdrop-filter: blur(5px);
+  border-bottom: 1px solid rgba(139, 92, 246, 0.08);
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.filterGroup {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Search and filter inputs */
 .searchInput {
   width: 300px;
 }
@@ -11,16 +43,98 @@
   width: 200px;
 }
 
+/* Glass input styling */
+.searchInput :global(.mantine-TextInput-input),
+.filterSelect :global(.mantine-Select-input) {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  transition: all 0.2s ease;
+}
+
+.searchInput :global(.mantine-TextInput-input:focus),
+.filterSelect :global(.mantine-Select-input:focus) {
+  border-color: rgba(139, 92, 246, 0.3);
+  background: rgba(255, 255, 255, 0.8);
+}
+
+/* Total count text */
+.totalCount {
+  font-size: 0.875rem;
+  color: #64748B;
+  font-weight: 500;
+}
+
+/* Grid container */
+.gridContainer {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+/* Attendee grid */
+.attendeeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+/* Loading state */
 .loader {
-  min-height: 400px;
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #64748B;
 }
 
+/* Empty state */
+.emptyState {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  color: #64748B;
+  text-align: center;
+}
+
+/* Pagination container */
+.paginationContainer {
+  padding: 1.5rem;
+  border-top: 1px solid rgba(139, 92, 246, 0.06);
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Responsive design */
 @media (max-width: 768px) {
+  .header {
+    padding: 1rem;
+  }
+
+  .filterGroup {
+    width: 100%;
+  }
+
   .searchInput,
   .filterSelect {
     width: 100%;
+  }
+
+  .gridContainer {
+    padding: 1rem;
+  }
+
+  .attendeeGrid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .paginationContainer {
+    padding: 1rem;
   }
 }

@@ -1,16 +1,24 @@
 .card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.03);
+  padding: 1.5rem;
   height: 100%;
   display: flex;
   flex-direction: column;
   transition: all 0.2s ease;
   cursor: pointer;
   position: relative;
-  overflow: visible;
+  overflow: hidden;
 }
 
 .card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.06);
+  background: rgba(255, 255, 255, 0.85);
 }
 
 .header {
@@ -21,43 +29,43 @@
 }
 
 .avatar {
-  border: 2px solid #e9ecef;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.05);
 }
 
 .badge {
   margin-top: 4px;
 }
 
-/* Modern squared role badges */
+/* Role badge styled like sponsor tier indicator */
 .roleBadge {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 12px;
-  border-radius: 4px;
-  font-size: 12px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0.25rem 1rem;
+  border-bottom-left-radius: 8px;
+  font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  position: absolute;
-  top: 12px;
-  right: 12px;
+  letter-spacing: 0.05em;
+  z-index: 2;
 }
 
-/* Role colors matching session types */
+/* Role colors matching sponsor tier style */
 .admin,
 .organizer {
-  background-color: var(--mantine-color-grape-1);
-  color: var(--mantine-color-grape-7);
+  background: rgba(168, 85, 247, 0.08);
+  color: #8B5CF6;
 }
 
 .speaker {
-  background-color: var(--mantine-color-blue-1);
-  color: var(--mantine-color-blue-7);
+  background: rgba(6, 182, 212, 0.08);
+  color: #0891B2;
 }
 
 .attendee {
-  background-color: var(--mantine-color-gray-1);
-  color: var(--mantine-color-gray-7);
+  background: rgba(100, 116, 139, 0.08);
+  color: #64748B;
 }
 
 .content {
@@ -67,29 +75,34 @@
 }
 
 .name {
-  color: #212529;
+  color: #1E293B;
   line-height: 1.2;
+  font-weight: 600;
 }
 
 .title {
   line-height: 1.3;
+  color: #64748B;
+  font-size: 0.875rem;
 }
 
 .bio {
-  color: #495057;
+  color: #64748B;
   line-height: 1.5;
   flex: 1;
+  font-size: 0.875rem;
 }
 
 .socials {
   margin-top: auto; /* Push to bottom */
-  padding-top: var(--mantine-spacing-xs);
-  border-top: 1px solid #e9ecef;
+  padding-top: var(--mantine-spacing-sm);
+  border-top: 1px solid rgba(139, 92, 246, 0.06);
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  height: 32px; /* Fixed height to match button height + alignment */
+  min-height: 36px; /* Match icon height */
+  gap: 0.5rem;
 }
 
 .actions {
@@ -114,17 +127,126 @@
   align-items: center;
 }
 
-.actionButton {
-  padding: 4px 12px;
-  height: 28px;
-  border-radius: 4px;
-  font-size: 12px;
+/* Connect Button - Primary Action Style */
+.connectButton {
+  padding: 6px 16px;
+  height: 32px;
+  border-radius: 6px;
+  font-size: 13px;
   font-weight: 500;
   transition: all 0.2s ease;
-  margin: 0; /* Ensure no margin */
+  margin: 0;
+  background: rgba(139, 92, 246, 0.08);
+  border: 1px solid rgba(139, 92, 246, 0.15);
+  color: #8B5CF6;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.connectButton:hover:not(:disabled) {
+  background: rgba(139, 92, 246, 0.12);
+  border-color: rgba(139, 92, 246, 0.25);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.15);
+}
+
+.connectButton:active:not(:disabled) {
+  transform: translateY(0);
+  background: rgba(139, 92, 246, 0.15);
+}
+
+/* Message Button - Already Connected */
+.messageButton {
+  padding: 6px 16px;
+  height: 32px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  margin: 0;
+  background: #8B5CF6;
+  color: white;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2);
+}
+
+.messageButton:hover:not(:disabled) {
+  background: #7C3AED;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+}
+
+.messageButton:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2);
+}
+
+/* Pending Button - Glassmorphic Style */
+.pendingButton {
+  padding: 6px 16px;
+  height: 32px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  margin: 0;
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.15);
+  color: #F59E0B;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+/* Generic action button fallback */
+.actionButton {
+  padding: 6px 16px;
+  height: 32px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  margin: 0;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
 }
 
 .actionButton:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.15);
+  background: rgba(255, 255, 255, 0.8);
+}
+
+/* Social media icon styling */
+.socials :global(.mantine-ActionIcon-root) {
+  color: #64748B;
+  transition: all 0.2s ease;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+}
+
+.socials :global(.mantine-ActionIcon-root:hover) {
+  color: #8B5CF6;
+  background: rgba(139, 92, 246, 0.05);
+  transform: translateY(-1px);
+}
+
+/* LinkedIn specific hover color */
+.linkedinIcon {
+  display: inline-flex;
+}
+
+.linkedinIcon :global(.mantine-ActionIcon-root:hover) {
+  color: #0077B5;
+  background: transparent;
+  transform: scale(1.1);
+}
+
+/* Larger icon size */
+.socials :global(.mantine-ActionIcon-root svg) {
+  width: 20px;
+  height: 20px;
 }

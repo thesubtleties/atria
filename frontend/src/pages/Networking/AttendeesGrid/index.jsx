@@ -1,15 +1,11 @@
 import { useState } from 'react';
 import {
-  Container,
-  SimpleGrid,
   TextInput,
   Select,
-  Group,
   Text,
   Loader,
   Center,
   Pagination,
-  Stack,
 } from '@mantine/core';
 import { IconSearch, IconFilter } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
@@ -218,11 +214,10 @@ export function AttendeesGrid({ eventId }) {
   };
 
   return (
-    <Container size="xl" py="xl">
-      <Stack spacing="lg">
-        {/* Header with filters */}
-        <Group position="apart" className={styles.header}>
-          <Group gap="md">
+    <div className={styles.container}>
+      {/* Header with filters */}
+      <div className={styles.header}>
+        <div className={styles.filterGroup}>
             <TextInput
               placeholder="Search attendees..."
               leftSection={<IconSearch size={18} />}
@@ -243,14 +238,15 @@ export function AttendeesGrid({ eventId }) {
               ]}
               className={styles.filterSelect}
             />
-          </Group>
-          <Text size="sm" c="dimmed">
-            {data?.total_items || 0} total attendees
-          </Text>
-        </Group>
+        </div>
+        <Text className={styles.totalCount}>
+          {data?.total_items || 0} total attendees
+        </Text>
+      </div>
 
-        {/* Attendees Grid */}
-        <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing="lg">
+      {/* Grid Container */}
+      <div className={styles.gridContainer}>
+        <div className={styles.attendeeGrid}>
           {filteredAttendees?.map((attendee) => (
             <PersonCard
               key={attendee.user_id}
@@ -274,27 +270,27 @@ export function AttendeesGrid({ eventId }) {
               onMessage={() => handleMessage(attendee)}
             />
           ))}
-        </SimpleGrid>
+        </div>
 
         {filteredAttendees?.length === 0 && !isLoading && (
-          <Center py="xl">
+          <div className={styles.emptyState}>
             <Text c="dimmed">No attendees found matching your criteria</Text>
-          </Center>
+          </div>
         )}
+      </div>
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <Center>
-            <Pagination
-              value={page}
-              onChange={setPage}
-              total={totalPages}
-              size="md"
-              withEdges
-            />
-          </Center>
-        )}
-      </Stack>
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className={styles.paginationContainer}>
+          <Pagination
+            value={page}
+            onChange={setPage}
+            total={totalPages}
+            size="md"
+            withEdges
+          />
+        </div>
+      )}
 
       {/* Icebreaker Modal */}
       <IcebreakerModal
@@ -308,6 +304,6 @@ export function AttendeesGrid({ eventId }) {
         onSend={handleSendConnectionRequest}
         isLoading={isCreatingConnection}
       />
-    </Container>
+    </div>
   );
 }

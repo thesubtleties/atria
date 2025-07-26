@@ -5,9 +5,8 @@ import {
   Group,
   Avatar,
   Text,
-  Button,
   ActionIcon,
-  Badge,
+  Loader,
 } from '@mantine/core';
 import { IconCheck, IconX, IconBrandLinkedin, IconWorld } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
@@ -95,27 +94,22 @@ export function RequestCard({ request, eventId }) {
           </Avatar>
           
           <div style={{ flex: 1 }}>
-            <Text size="lg" weight={600}>
+            <Text size="lg" weight={600} className={styles.name}>
               {requester.full_name}
             </Text>
             {requester.title && (
-              <Text size="sm" c="dimmed">
+              <Text size="sm" className={styles.title}>
                 {requester.title}
               </Text>
             )}
             {requester.company_name && (
-              <Text size="sm" c="dimmed">
+              <Text size="sm" className={styles.company}>
                 {requester.company_name}
               </Text>
             )}
           </div>
         </Group>
 
-        {request.originating_event && (
-          <Badge variant="light" size="sm">
-            From: {request.originating_event.title}
-          </Badge>
-        )}
 
         <Card.Section className={styles.messageSection} px="lg" py="sm">
           <Text size="sm" style={{ fontStyle: 'italic' }}>
@@ -124,59 +118,68 @@ export function RequestCard({ request, eventId }) {
         </Card.Section>
 
         <Group justify="space-between" align="center">
-          <Group gap="xs">
+          <Group gap="xs" className={styles.socialLinks}>
             {requester.social_links?.linkedin && (
-              <ActionIcon
-                size="sm"
-                variant="subtle"
-                component="a"
-                href={requester.social_links.linkedin}
-                target="_blank"
-                aria-label="LinkedIn"
-              >
-                <IconBrandLinkedin size={16} />
-              </ActionIcon>
+              <span className={styles.linkedinIcon}>
+                <ActionIcon
+                  size="lg"
+                  variant="subtle"
+                  component="a"
+                  href={requester.social_links.linkedin}
+                  target="_blank"
+                  aria-label="LinkedIn"
+                >
+                  <IconBrandLinkedin size={20} />
+                </ActionIcon>
+              </span>
             )}
             {requester.social_links?.website && (
               <ActionIcon
-                size="sm"
+                size="lg"
                 variant="subtle"
                 component="a"
                 href={requester.social_links.website}
                 target="_blank"
                 aria-label="Website"
               >
-                <IconWorld size={16} />
+                <IconWorld size={20} />
               </ActionIcon>
             )}
           </Group>
 
           <Group gap="xs">
-            <Button
-              size="sm"
-              color="green"
-              leftIcon={<IconCheck size={16} />}
+            <button
               onClick={handleAccept}
-              loading={isAccepting}
               disabled={isLoading || isRejecting}
+              className={styles.acceptButton}
             >
-              Accept
-            </Button>
-            <Button
-              size="sm"
-              variant="subtle"
-              color="gray"
-              leftIcon={<IconX size={16} />}
+              {isAccepting ? (
+                <Loader size="xs" color="#16A34A" />
+              ) : (
+                <>
+                  <IconCheck size={16} />
+                  Accept
+                </>
+              )}
+            </button>
+            <button
               onClick={handleReject}
-              loading={isRejecting}
               disabled={isLoading || isAccepting}
+              className={styles.declineButton}
             >
-              Decline
-            </Button>
+              {isRejecting ? (
+                <Loader size="xs" color="#64748B" />
+              ) : (
+                <>
+                  <IconX size={16} />
+                  Decline
+                </>
+              )}
+            </button>
           </Group>
         </Group>
 
-        <Text size="xs" c="dimmed" ta="right">
+        <Text size="xs" ta="right" className={styles.timestamp}>
           Received {new Date(request.created_at).toLocaleDateString()}
         </Text>
       </Stack>

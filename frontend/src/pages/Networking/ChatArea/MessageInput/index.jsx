@@ -1,6 +1,6 @@
 import { TextInput, ActionIcon } from '@mantine/core';
 import { IconSend } from '@tabler/icons-react';
-import styles from './styles/index.module.css';
+import styles from '../styles/index.module.css';
 
 export function MessageInput({ roomName, value, onChange, onSend }) {
   const handleKeyDown = (e) => {

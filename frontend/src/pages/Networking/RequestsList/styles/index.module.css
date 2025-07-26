@@ -1,3 +1,108 @@
+/* Main container with glass effect */
+.container {
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.03);
+  padding: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Header section */
+.header {
+  background: rgba(139, 92, 246, 0.02);
+  backdrop-filter: blur(5px);
+  border-bottom: 1px solid rgba(139, 92, 246, 0.08);
+  padding: 1.5rem;
+  flex-shrink: 0;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1E293B;
+  margin: 0 0 0.25rem 0;
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: #64748B;
+  margin: 0;
+}
+
+/* Content area */
+.content {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+/* Request grid */
+.requestGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1rem;
+}
+
+/* Loading state */
 .loader {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748B;
   min-height: 400px;
+}
+
+/* Empty state */
+.emptyState {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  color: #64748B;
+  text-align: center;
+}
+
+/* Error state */
+.errorState {
+  padding: 2rem;
+}
+
+/* Pagination container */
+.paginationContainer {
+  padding: 1.5rem;
+  border-top: 1px solid rgba(139, 92, 246, 0.06);
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .header {
+    padding: 1rem;
+  }
+
+  .content {
+    padding: 1rem;
+  }
+
+  .requestGrid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .paginationContainer {
+    padding: 1rem;
+  }
 }

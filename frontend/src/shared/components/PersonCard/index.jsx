@@ -1,4 +1,4 @@
-import { Card, Text, Avatar, Group, Badge, Button, ActionIcon, Stack } from '@mantine/core';
+import { Text, Avatar, Group, Button, ActionIcon, Stack } from '@mantine/core';
 import { IconBrandLinkedin, IconWorld, IconMail, IconMessageCircle, IconUserPlus } from '@tabler/icons-react';
 import { useSelector } from 'react-redux';
 import styles from './styles/index.module.css';
@@ -35,7 +35,7 @@ export function PersonCard({
   const showSocials = privacySettings.showSocials ?? true;
 
   return (
-    <Card className={styles.card} padding="lg" radius="md" withBorder>
+    <div className={styles.card}>
       <div className={styles.header}>
         <Avatar 
           src={avatarUrl} 
@@ -59,13 +59,13 @@ export function PersonCard({
         </Text>
         
         {title && (
-          <Text size="sm" color="dimmed" className={styles.title}>
+          <Text size="sm" c="dimmed" className={styles.title}>
             {title}
           </Text>
         )}
         
         {showCompany && company && (
-          <Text size="sm" color="dimmed">
+          <Text size="sm" c="dimmed">
             {company}
           </Text>
         )}
@@ -80,38 +80,40 @@ export function PersonCard({
           {showSocials && (
             <>
               {linkedin && (
-                <ActionIcon 
-                  size="sm" 
-                  variant="subtle" 
-                  component="a" 
-                  href={linkedin} 
-                  target="_blank"
-                  aria-label="LinkedIn"
-                >
-                  <IconBrandLinkedin size={16} />
-                </ActionIcon>
+                <div className={styles.linkedinIcon}>
+                  <ActionIcon 
+                    size="md" 
+                    variant="subtle" 
+                    component="a" 
+                    href={linkedin} 
+                    target="_blank"
+                    aria-label="LinkedIn"
+                  >
+                    <IconBrandLinkedin size={20} />
+                  </ActionIcon>
+                </div>
               )}
               {website && (
                 <ActionIcon 
-                  size="sm" 
+                  size="md" 
                   variant="subtle" 
                   component="a" 
                   href={website} 
                   target="_blank"
                   aria-label="Website"
                 >
-                  <IconWorld size={16} />
+                  <IconWorld size={20} />
                 </ActionIcon>
               )}
               {showEmail && email && (
                 <ActionIcon 
-                  size="sm" 
+                  size="md" 
                   variant="subtle" 
                   component="a" 
                   href={`mailto:${email}`}
                   aria-label="Email"
                 >
-                  <IconMail size={16} />
+                  <IconMail size={20} />
                 </ActionIcon>
               )}
             </>
@@ -122,14 +124,14 @@ export function PersonCard({
               {connectionStatus === 'connected' || connectionStatus === 'accepted' || connectionStatus === 'ACCEPTED' ? (
                 <Button
                   size="xs"
-                  variant="light"
-                  color="blue"
-                  leftIcon={<IconMessageCircle size={14} />}
+                  variant="filled"
+                  color="violet"
+                  leftIcon={<IconMessageCircle size={16} />}
                   onClick={(e) => {
                     e.stopPropagation();
                     onMessage?.(person);
                   }}
-                  className={styles.actionButton}
+                  className={styles.messageButton}
                 >
                   Message
                 </Button>
@@ -139,7 +141,7 @@ export function PersonCard({
                   variant="light"
                   color="yellow"
                   disabled
-                  className={styles.actionButton}
+                  className={styles.pendingButton}
                 >
                   Pending
                 </Button>
@@ -147,13 +149,13 @@ export function PersonCard({
                 <Button
                   size="xs"
                   variant="light"
-                  color="blue"
-                  leftIcon={<IconUserPlus size={14} />}
+                  color="violet"
+                  leftIcon={<IconUserPlus size={16} />}
                   onClick={(e) => {
                     e.stopPropagation();
                     onConnect?.(person);
                   }}
-                  className={styles.actionButton}
+                  className={styles.connectButton}
                 >
                   Connect
                 </Button>
@@ -162,6 +164,6 @@ export function PersonCard({
           )}
         </Group>
       </Stack>
-    </Card>
+    </div>
   );
 }

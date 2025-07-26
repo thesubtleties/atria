@@ -1,21 +1,143 @@
+/* Request card with glass effect */
 .card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.03);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: visible;
+  height: 100%;
 }
 
 .card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.06);
+  background: rgba(255, 255, 255, 0.85);
 }
 
+/* Avatar styling */
 .avatar {
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.05);
   flex-shrink: 0;
 }
 
+/* Message section */
 .messageSection {
-  background-color: var(--mantine-color-gray-0);
-  border-radius: var(--mantine-radius-sm);
-  
-  @media (prefers-color-scheme: dark) {
-    background-color: var(--mantine-color-dark-6);
-  }
+  background: rgba(139, 92, 246, 0.02);
+  backdrop-filter: blur(5px);
+  border-top: 1px solid rgba(139, 92, 246, 0.06);
+  border-bottom: 1px solid rgba(139, 92, 246, 0.06);
+  margin: 0 -1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0;
+}
+
+/* Social media icons */
+.socialLinks :global(.mantine-ActionIcon-root) {
+  color: #64748B;
+  transition: all 0.2s ease;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+}
+
+.socialLinks :global(.mantine-ActionIcon-root:hover) {
+  color: #8B5CF6;
+  background: rgba(139, 92, 246, 0.05);
+  transform: translateY(-1px);
+}
+
+/* LinkedIn specific hover color */
+.linkedinIcon {
+  display: inline-flex;
+}
+
+.linkedinIcon :global(.mantine-ActionIcon-root:hover) {
+  color: #0077B5;
+  background: transparent;
+  transform: scale(1.1);
+}
+
+/* Larger icon size */
+.socialLinks :global(.mantine-ActionIcon-root svg) {
+  width: 20px;
+  height: 20px;
+}
+
+/* Action buttons - Subtle glassmorphic style */
+.acceptButton,
+.declineButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+  font-family: inherit;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.acceptButton {
+  background: rgba(139, 92, 246, 0.08);
+  color: #8B5CF6;
+  border: 1px solid rgba(139, 92, 246, 0.15);
+}
+
+.acceptButton:hover:not(:disabled) {
+  background: rgba(139, 92, 246, 0.12);
+  border-color: rgba(139, 92, 246, 0.2);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.1);
+}
+
+.acceptButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.declineButton {
+  background: rgba(255, 255, 255, 0.5);
+  color: #64748B;
+  border: 1px solid rgba(100, 116, 139, 0.1);
+}
+
+.declineButton:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(100, 116, 139, 0.15);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(100, 116, 139, 0.05);
+}
+
+.declineButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+/* Typography adjustments */
+.name {
+  color: #1E293B;
+  font-weight: 600;
+}
+
+.title,
+.company {
+  color: #64748B;
+  font-size: 0.875rem;
+}
+
+.timestamp {
+  color: #94A3B8;
+  font-size: 0.75rem;
 }
