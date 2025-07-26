@@ -9,10 +9,13 @@ import {
 } from '@mantine/core';
 import { IconSearch, IconFilter } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
-import { useGetEventUsersQuery, useGetEventQuery } from '@/app/features/events/api';
-import { 
+import {
+  useGetEventUsersQuery,
+  useGetEventQuery,
+} from '@/app/features/events/api';
+import {
   useCreateConnectionMutation,
-  useCreateDirectMessageThreadMutation 
+  useCreateDirectMessageThreadMutation,
 } from '@/app/features/networking/api';
 import { PersonCard } from '@/shared/components/PersonCard';
 import { IcebreakerModal } from '@/shared/components/IcebreakerModal';
@@ -27,7 +30,7 @@ export function AttendeesGrid({ eventId }) {
   const [modalOpened, setModalOpened] = useState(false);
   const [selectedAttendee, setSelectedAttendee] = useState(null);
   const perPage = 50;
-  
+
   // Fetch event data for icebreakers
   const { data: eventData } = useGetEventQuery(eventId, { skip: !eventId });
 
@@ -66,7 +69,7 @@ export function AttendeesGrid({ eventId }) {
             ? undefined
             : filterRole === 'organizer'
               ? undefined
-              : filterRole.toUpperCase(),
+              : filterRole?.toUpperCase(),
         page: page,
         per_page: perPage,
       },
@@ -97,19 +100,20 @@ export function AttendeesGrid({ eventId }) {
   console.log('AttendeesGrid debug:', { eventId, data, attendees, isLoading });
   console.log('Event data:', eventData);
   console.log('Event icebreakers:', eventData?.icebreakers);
-  
+
   // Debug connection statuses
   if (attendees.length > 0) {
     console.log('Connection statuses for all attendees:');
-    attendees.forEach(a => {
+    attendees.forEach((a) => {
       console.log(`${a.first_name} ${a.last_name} (ID: ${a.user_id}):`, {
         connection_status: a.connection_status,
         connection_id: a.connection_id,
-        connection_direction: a.connection_direction
+        connection_direction: a.connection_direction,
       });
     });
   }
-  const [createConnection, { isLoading: isCreatingConnection }] = useCreateConnectionMutation();
+  const [createConnection, { isLoading: isCreatingConnection }] =
+    useCreateConnectionMutation();
   const [createThread] = useCreateDirectMessageThreadMutation();
   const dispatch = useDispatch();
 
@@ -157,10 +161,10 @@ export function AttendeesGrid({ eventId }) {
     try {
       // Create or get thread with this user
       const result = await createThread(attendee.user_id).unwrap();
-      
+
       // Open the thread in the chat sidebar
       dispatch(openThread(result.thread_id || result.id));
-      
+
       // Optionally navigate to a dedicated messaging page
       // For now, just open the sidebar which should show the conversation
       notifications.show({
@@ -218,26 +222,26 @@ export function AttendeesGrid({ eventId }) {
       {/* Header with filters */}
       <div className={styles.header}>
         <div className={styles.filterGroup}>
-            <TextInput
-              placeholder="Search attendees..."
-              leftSection={<IconSearch size={18} />}
-              value={searchQuery}
-              onChange={handleSearchChange}
-              className={styles.searchInput}
-            />
-            <Select
-              placeholder="Filter by role"
-              leftSection={<IconFilter size={18} />}
-              value={filterRole}
-              onChange={handleFilterChange}
-              data={[
-                { value: 'all', label: 'All Attendees' },
-                { value: 'speaker', label: 'Speakers' },
-                { value: 'organizer', label: 'Organizers' },
-                { value: 'attendee', label: 'Attendees' },
-              ]}
-              className={styles.filterSelect}
-            />
+          <TextInput
+            placeholder="Search attendees..."
+            leftSection={<IconSearch size={18} />}
+            value={searchQuery}
+            onChange={handleSearchChange}
+            className={styles.searchInput}
+          />
+          <Select
+            placeholder="Filter by role"
+            leftSection={<IconFilter size={18} />}
+            value={filterRole}
+            onChange={handleFilterChange}
+            data={[
+              { value: 'all', label: 'All Attendees' },
+              { value: 'speaker', label: 'Speakers' },
+              { value: 'organizer', label: 'Organizers' },
+              { value: 'attendee', label: 'Attendees' },
+            ]}
+            className={styles.filterSelect}
+          />
         </div>
         <Text className={styles.totalCount}>
           {data?.total_items || 0} total attendees
