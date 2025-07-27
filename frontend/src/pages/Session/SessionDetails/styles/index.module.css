@@ -1,7 +1,7 @@
 /* pages/Session/SessionDetails/styles/index.module.css */
 .detailsSection {
   background: transparent;
-  padding: 1rem 0;
+  padding: 0.5rem 0; /* Reduced from 1rem to tighten vertical space */
   margin-top: 0;
 }
 
