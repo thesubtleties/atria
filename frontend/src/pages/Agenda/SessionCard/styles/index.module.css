@@ -117,15 +117,15 @@
 .sessionCard:hover .expandedContent {
   max-height: 750px;
   opacity: 1;
-  padding: 12px 20px 20px 20px;
+  padding: 8px 20px 12px 20px;
   border-top: 1px solid rgba(139, 92, 246, 0.1);
 }
 
 .description {
   font-size: 13px;
   color: #475569;
-  margin: 8px 0 0 0;
-  line-height: 1.5;
+  margin: 4px 0 0 0;
+  line-height: 1.4;
   position: relative;
   z-index: 2;
 }
@@ -133,7 +133,7 @@
 /* Role group styles */
 .roleGroup {
   margin-top: 0px;
-  padding-top: 16px;
+  padding-top: 10px;
   border-top: 1px solid rgba(139, 92, 246, 0.1);
   width: 100%;
   position: relative;
@@ -142,14 +142,14 @@
 
 .roleGroup:first-child {
   border-top: none;
-  padding-top: 8px;
+  padding-top: 4px;
 }
 
 .roleTitle {
-  font-size: 12px;
+  font-size: 11px;
   text-transform: uppercase;
   color: #8b5cf6;
-  margin: 0 0 10px 0;
+  margin: 0 0 6px 0;
   font-weight: 700;
   letter-spacing: 0.8px;
 }
@@ -158,7 +158,7 @@
 .speakers {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 10px;
   margin-top: 0;
   position: relative;
   z-index: 2;
@@ -167,7 +167,7 @@
 .roleGroup .speakersRow {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 12px;
   width: 100%;
 }
 
@@ -176,9 +176,9 @@
   display: flex;
   align-items: center;
   position: relative;
-  padding-right: 16px;
+  padding-right: 12px;
   flex: 0 1 auto;
-  margin-bottom: 12px;
+  margin-bottom: 6px;
   max-width: fit-content;
 }
 
@@ -197,9 +197,9 @@
 
 /* Avatar styles */
 .avatarWrapper {
-  width: 36px;
-  height: 36px;
-  margin-right: 12px;
+  width: 32px;
+  height: 32px;
+  margin-right: 10px;
   flex-shrink: 0;
   position: relative;
 }
@@ -221,7 +221,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 600;
   box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2);
 }
@@ -231,12 +231,12 @@
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
   min-width: 0;
 }
 
 .speakerName {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: #1e293b;
   line-height: 1.2;
@@ -246,9 +246,9 @@
 }
 
 .speakerTitle {
-  font-size: 13px;
+  font-size: 12px;
   color: #64748b;
-  line-height: 1.3;
+  line-height: 1.2;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -258,7 +258,7 @@
 .socialLinks {
   display: flex;
   gap: 4px;
-  margin-top: 2px;
+  margin-top: 1px;
 }
 
 .socialLink {
@@ -300,6 +300,6 @@
   }
   
   .sessionCard:hover .expandedContent {
-    padding: 16px;
+    padding: 8px 16px 12px 16px;
   }
 }
