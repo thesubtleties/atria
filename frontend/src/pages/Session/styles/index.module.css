@@ -70,13 +70,13 @@
   grid-template-columns: 1fr 370px;
   gap: 24px;
   min-height: calc(100vh - 80px);
-  transition: grid-template-columns 0.3s ease;
+  transition: grid-template-columns 0.3s cubic-bezier(0.4, 0, 0.2, 1), gap 0.3s ease;
 }
 
-/* When chat is closed, collapse the column smoothly */
+/* When chat is closed, shrink the column to 0 */
 .layoutGrid.chatClosed {
-  grid-template-columns: 1fr 60px;
-  gap: 16px;
+  grid-template-columns: 1fr 0;
+  gap: 0;
 }
 
 /* Main Content Wrapper */
@@ -272,20 +272,28 @@
   align-items: flex-start;
   justify-content: flex-start; /* Align to start so chat stays in place */
   width: 100%;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* Hide chat wrapper when closed but keep in layout for animation */
+.layoutGrid.chatClosed .chatWrapper {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 /* Chat animation is handled by the SessionChat component itself */
 
 /* Floating Chat Button */
 .floatingChatButton {
-  position: absolute;
-  top: 16px;
-  right: 6px; /* Reduced from 16px to fit in 60px column */
+  position: fixed; /* Fixed position to float over content */
+  top: 100px; /* Below header */
+  right: 2rem;
   background: #8B5CF6;
   color: white;
-  width: 48px; /* Reduced from 56px to fit better */
-  height: 48px;
-  border-radius: 24px;
+  width: 56px; /* Back to original size since not constrained */
+  height: 56px;
+  border-radius: 28px;
   border: none;
   display: flex;
   align-items: center;
@@ -293,7 +301,7 @@
   box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
   transition: all 0.2s ease;
   cursor: pointer;
-  z-index: 10;
+  z-index: 100; /* High z-index to float above everything */
 }
 
 .floatingChatButton:hover {
@@ -309,7 +317,7 @@
   }
   
   .layoutGrid.chatClosed {
-    grid-template-columns: 1fr 60px;
+    grid-template-columns: 1fr 0;
   }
   
   .videoContainer {
@@ -323,7 +331,7 @@
   }
   
   .layoutGrid.chatClosed {
-    grid-template-columns: 1fr 60px;
+    grid-template-columns: 1fr 0;
   }
   
   .videoContainer {

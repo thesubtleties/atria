@@ -185,17 +185,19 @@ export const SessionPage = () => {
               isOpen={isChatOpen}
               onToggle={setIsChatOpen}
             />
-            {!isChatOpen && (
-              <button
-                onClick={() => setIsChatOpen(true)}
-                className={styles.floatingChatButton}
-              >
-                <IconMessage size={24} />
-              </button>
-            )}
           </div>
         )}
       </div>
+      
+      {/* Floating chat button - outside grid */}
+      {chatEnabled && !isChatOpen && (
+        <button
+          onClick={() => setIsChatOpen(true)}
+          className={styles.floatingChatButton}
+        >
+          <IconMessage size={24} />
+        </button>
+      )}
     </div>
   );
 };
