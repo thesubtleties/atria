@@ -1,8 +1,15 @@
 .chatContainer {
-  width: 100%;
+  width: 370px; /* Fixed width, not percentage */
   height: 100%;
-  position: relative;
+  position: absolute; /* Position absolute to escape grid constraints */
+  right: 0;
   overflow: hidden;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.chatContainer.chatClosed {
+  transform: translateX(100%);
+  opacity: 0;
 }
 
 .chatSidebar {

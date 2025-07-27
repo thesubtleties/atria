@@ -11,8 +11,8 @@ import { SessionChatHeader } from './SessionChatHeader';
 import { ChatTabs } from './ChatTabs';
 import styles from './styles/index.module.css';
 
-export const SessionChat = ({ sessionId, isEnabled = true, onToggle }) => {
-  const [isOpen, setIsOpen] = useState(true);
+export const SessionChat = ({ sessionId, isEnabled = true, isOpen = true, onToggle }) => {
+  const [internalOpen, setInternalOpen] = useState(true);
 
   const sessionIdNum = sessionId ? parseInt(sessionId) : null;
   const { data: sessionData } = useGetSessionQuery(sessionIdNum);
@@ -35,17 +35,12 @@ export const SessionChat = ({ sessionId, isEnabled = true, onToggle }) => {
     }
   }, [sessionIdNum, isEnabled, isOpen]);
 
-  useEffect(() => {
-    onToggle?.(isOpen);
-  }, [isOpen, onToggle]);
-
   return (
-    <div className={styles.chatContainer}>
+    <div className={`${styles.chatContainer} ${!isOpen ? styles.chatClosed : ''}`}>
       <Card className={styles.chatSidebar} p={0}>
         <SessionChatHeader
           sessionData={sessionData}
           onClose={() => {
-            setIsOpen(false);
             onToggle?.(false);
           }}
         />

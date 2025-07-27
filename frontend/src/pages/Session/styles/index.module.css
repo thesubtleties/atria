@@ -270,14 +270,20 @@
   overflow: hidden;
   display: flex;
   align-items: flex-start;
-  justify-content: center;
+  justify-content: flex-start; /* Align to start so chat stays in place */
+  width: 100%;
 }
+
+/* Chat animation is handled by the SessionChat component itself */
 
 /* Floating Chat Button */
 .floatingChatButton {
+  position: absolute;
+  top: 16px;
+  right: 6px; /* Reduced from 16px to fit in 60px column */
   background: #8B5CF6;
   color: white;
-  width: 48px;
+  width: 48px; /* Reduced from 56px to fit better */
   height: 48px;
   border-radius: 24px;
   border: none;
@@ -287,6 +293,7 @@
   box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
   transition: all 0.2s ease;
   cursor: pointer;
+  z-index: 10;
 }
 
 .floatingChatButton:hover {

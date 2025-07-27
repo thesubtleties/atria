@@ -179,13 +179,13 @@ export const SessionPage = () => {
         {/* Chat Sidebar - part of grid */}
         {chatEnabled && (
           <div className={styles.chatWrapper}>
-            {isChatOpen ? (
-              <SessionChat
-                sessionId={sessionId}
-                isEnabled={true}
-                onToggle={setIsChatOpen}
-              />
-            ) : (
+            <SessionChat
+              sessionId={sessionId}
+              isEnabled={true}
+              isOpen={isChatOpen}
+              onToggle={setIsChatOpen}
+            />
+            {!isChatOpen && (
               <button
                 onClick={() => setIsChatOpen(true)}
                 className={styles.floatingChatButton}
