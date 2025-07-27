@@ -117,14 +117,14 @@
 .sessionCard:hover .expandedContent {
   max-height: 750px;
   opacity: 1;
-  padding: 20px;
+  padding: 12px 20px 20px 20px;
   border-top: 1px solid rgba(139, 92, 246, 0.1);
 }
 
 .description {
   font-size: 14px;
   color: #475569;
-  margin: 16px 0;
+  margin: 8px 0 16px 0;
   line-height: 1.5;
   position: relative;
   z-index: 2;
