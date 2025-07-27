@@ -91,31 +91,32 @@
   gap: 3rem; /* Gap between sections like sponsors page */
 }
 
-/* Section 1 - Video Section with opaque white glass (outer wrapper) */
+/* Section 1 - Video Section (transparent wrapper - video floats on background) */
 .videoSection {
-  background: rgba(255, 255, 255, 0.8); /* More opaque white glass */
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: transparent; /* Remove white glass - let background show through */
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   border-radius: 12px;
   padding: 2rem; /* Standard padding */
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
+  border: none;
+  box-shadow: none;
   position: relative;
   z-index: 10;
 }
 
-/* Inner video container - white glass effect matching design guide */
+/* Inner video container - stronger glass effect for floating appearance */
 .videoContainer {
-  background: rgba(255, 255, 255, 0.85); /* White glass background */
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.9); /* Stronger white glass background */
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-radius: 10px;
   overflow: hidden;
   position: relative;
   width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.9);
   box-shadow: 
-    -4px 0 12px rgba(139, 92, 246, 0.03), /* Subtle left shadow */
-    4px 0 12px rgba(139, 92, 246, 0.03);  /* Subtle right shadow */
+    0 4px 20px rgba(139, 92, 246, 0.06), /* Enhanced shadow for floating effect */
+    0 2px 8px rgba(0, 0, 0, 0.04);       /* Subtle dark shadow for depth */
 }
 
 /* Section header within video container */
@@ -124,7 +125,9 @@
   align-items: center;
   justify-content: space-between;
   padding: 1.5rem 2rem;
-  background: rgba(255, 255, 255, 0.9); /* White glass slightly more opaque */
+  background: rgba(255, 255, 255, 0.9); /* White glass for floating effect */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(139, 92, 246, 0.08);
 }
 
@@ -141,7 +144,9 @@
 /* Video footer for session details */
 .videoFooter {
   padding: 0.75rem 2rem; /* Reduced from 1.5rem to tighten vertical space */
-  background: rgba(255, 255, 255, 0.9); /* White glass matching header */
+  background: rgba(255, 255, 255, 0.9); /* White glass for floating effect */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border-top: 1px solid rgba(139, 92, 246, 0.08);
 }
 
@@ -359,7 +364,9 @@
   }
   
   .videoContainer {
-    box-shadow: none; /* Remove side shadows on mobile */
+    box-shadow: 
+      0 2px 12px rgba(139, 92, 246, 0.05), /* Reduced shadow on mobile */
+      0 1px 4px rgba(0, 0, 0, 0.03);
   }
   
   .sectionHeader,
