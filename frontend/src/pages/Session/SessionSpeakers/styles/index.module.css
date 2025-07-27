@@ -11,10 +11,12 @@
 
 .addButton {
   transition: all 0.2s ease;
+  color: var(--mantine-color-grape-6);
 }
 
 .addButton:hover {
-  background: var(--mantine-color-gray-1);
+  background: rgba(139, 92, 246, 0.08);
+  color: var(--mantine-color-grape-7);
 }
 
 .speakersGrid {
@@ -29,11 +31,17 @@
 }
 
 .speakerWrapper[draggable="true"] {
-  cursor: move;
+  cursor: grab;
 }
 
 .speakerWrapper[draggable="true"]:hover {
   transform: scale(1.02);
+}
+
+.dragging {
+  opacity: 0.5 !important;
+  transform: scale(0.98);
+  cursor: grabbing !important;
 }
 
 .dragOver {

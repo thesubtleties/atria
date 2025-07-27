@@ -1,6 +1,6 @@
 // pages/Session/SessionSpeakers/SpeakerCard/index.jsx
 import { Card, Text, Group, Avatar, ActionIcon } from '@mantine/core';
-import { IconPencil, IconTrash } from '@tabler/icons-react';
+import { IconTrash } from '@tabler/icons-react';
 import styles from './styles/index.module.css';
 
 export const SpeakerCard = ({ speaker, canEdit, onRemove }) => {

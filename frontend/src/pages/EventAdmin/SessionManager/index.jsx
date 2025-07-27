@@ -1,11 +1,26 @@
 import { useState } from 'react';
-import { Container, Button, Group, Title, Stack } from '@mantine/core';
-import { IconPlus } from '@tabler/icons-react';
+import { 
+  Group, 
+  Text, 
+  LoadingOverlay, 
+  Badge, 
+  ActionIcon, 
+  Menu 
+} from '@mantine/core';
+import { 
+  IconPlus, 
+  IconDots, 
+  IconDownload, 
+  IconUpload,
+  IconCalendar
+} from '@tabler/icons-react';
 import { useParams } from 'react-router-dom';
+import { notifications } from '@mantine/notifications';
 import { useGetEventQuery } from '@/app/features/events/api';
 import { useGetSessionsQuery } from '@/app/features/sessions/api';
 import { DateNavigation } from '@/pages/Agenda/DateNavigation';
 import { EditSessionModal } from '@/shared/components/modals/session/EditSessionModal';
+import { Button } from '@/shared/components/buttons';
 import { SessionList } from './SessionList';
 import styles from './styles/index.module.css';
 
@@ -14,14 +29,14 @@ export const SessionManager = () => {
   const [currentDay, setCurrentDay] = useState(1);
   const [showCreateModal, setShowCreateModal] = useState(false);
 
-  const { data: event, isLoading: eventLoading } = useGetEventQuery(
+  const { data: event, isLoading: eventLoading, error: eventError, refetch: refetchEvent } = useGetEventQuery(
     parseInt(eventId),
     {
       skip: !eventId,
     }
   );
 
-  const { data: sessionsData, isLoading: sessionsLoading } = useGetSessionsQuery(
+  const { data: sessionsData, isLoading: sessionsLoading, refetch: refetchSessions } = useGetSessionsQuery(
     {
       eventId: parseInt(eventId),
       dayNumber: currentDay,
@@ -32,44 +47,190 @@ export const SessionManager = () => {
     }
   );
 
-  if (eventLoading || sessionsLoading) {
-    return <div>Loading...</div>;
+  const sessions = sessionsData?.sessions || [];
+
+  // Calculate session stats
+  const sessionStats = sessions.reduce((acc, session) => {
+    acc.total = (acc.total || 0) + 1;
+    
+    // Count sessions with overlaps
+    const hasOverlap = sessions.some((other) => {
+      if (session.id === other.id) return false;
+      
+      const start1 = session.start_time.split(':').map(Number);
+      const end1 = session.end_time.split(':').map(Number);
+      const start2 = other.start_time.split(':').map(Number);
+      const end2 = other.end_time.split(':').map(Number);
+      
+      const startMinutes1 = start1[0] * 60 + start1[1];
+      const endMinutes1 = end1[0] * 60 + end1[1];
+      const startMinutes2 = start2[0] * 60 + start2[1];
+      const endMinutes2 = end2[0] * 60 + end2[1];
+      
+      return (startMinutes1 < endMinutes2 && endMinutes1 > startMinutes2);
+    });
+    
+    if (hasOverlap) {
+      acc.overlapping = (acc.overlapping || 0) + 1;
+    }
+    
+    // Count unique speakers
+    const speakers = new Set();
+    sessions.forEach(s => {
+      if (s.speakers) {
+        s.speakers.forEach(speaker => speakers.add(speaker.user_id));
+      }
+    });
+    acc.speakers = speakers.size;
+    
+    return acc;
+  }, { total: 0, overlapping: 0, speakers: 0 });
+
+  const handleExport = () => {
+    // TODO: Implement CSV export
+    notifications.show({
+      title: 'Export Started',
+      message: 'Preparing sessions list for download...',
+      color: 'blue',
+    });
+  };
+
+  const handleImport = () => {
+    // TODO: Implement CSV import
+    notifications.show({
+      title: 'Import',
+      message: 'CSV import feature coming soon',
+      color: 'yellow',
+    });
+  };
+
+  if (eventError) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.bgShape1} />
+        <div className={styles.bgShape2} />
+        
+        <div className={styles.contentWrapper}>
+          <section className={styles.mainContent}>
+            <div style={{ textAlign: 'center', padding: '3rem' }}>
+              <Text c="red" size="lg" mb="md">
+                Error loading event information
+              </Text>
+              <Button 
+                variant="primary"
+                onClick={refetchEvent}
+              >
+                Retry
+              </Button>
+            </div>
+          </section>
+        </div>
+      </div>
+    );
   }
 
   if (!event?.start_date || !event?.day_count) {
-    return <div>Event information not available</div>;
+    return (
+      <div className={styles.container}>
+        <div className={styles.bgShape1} />
+        <div className={styles.bgShape2} />
+        
+        <div className={styles.contentWrapper}>
+          <section className={styles.mainContent}>
+            <div style={{ textAlign: 'center', padding: '3rem' }}>
+              <Text size="lg" c="dimmed">
+                Event information not available
+              </Text>
+            </div>
+          </section>
+        </div>
+      </div>
+    );
   }
 
-  const sessions = sessionsData?.sessions || [];
-
   return (
-    <Container size="xl" className={styles.container}>
-      <Stack spacing="xl" style={{ width: '100%' }}>
-        {/* Header with New Session button */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-          <Title order={2}>Session Manager</Title>
-          <Button
-            leftIcon={<IconPlus size={16} />}
-            onClick={() => setShowCreateModal(true)}
-          >
-            New Session
-          </Button>
-        </div>
+    <div className={styles.container}>
+      {/* Background Shapes */}
+      <div className={styles.bgShape1} />
+      <div className={styles.bgShape2} />
 
-        {/* Date Navigation */}
-        <DateNavigation
-          startDate={event.start_date}
-          dayCount={event.day_count}
-          currentDay={currentDay}
-          onDateChange={setCurrentDay}
-        />
+      <div className={styles.contentWrapper}>
+        {/* Header Section */}
+        <section className={styles.headerSection}>
+          <Group justify="space-between" align="flex-start">
+            <div>
+              <h2 className={styles.pageTitle}>Session Manager</h2>
+              <div className={styles.badgeGroup}>
+                <Badge className={styles.statsBadge} size="lg" variant="light" radius="sm">
+                  {sessionStats.total} Sessions
+                </Badge>
+                <Badge size="lg" variant="light" color="blue" radius="sm" leftSection={<IconCalendar size={14} />}>
+                  Day {currentDay}
+                </Badge>
+                {sessionStats.overlapping > 0 && (
+                  <Badge size="lg" variant="light" color="yellow" radius="sm">
+                    {sessionStats.overlapping} Overlapping
+                  </Badge>
+                )}
+                <Badge size="lg" variant="light" color="grape" radius="sm">
+                  {sessionStats.speakers} Speakers
+                </Badge>
+              </div>
+            </div>
+            <Group>
+              <Menu shadow="md" width={200}>
+                <Menu.Target>
+                  <ActionIcon className={styles.actionIcon} variant="subtle" size="lg">
+                    <IconDots size={20} />
+                  </ActionIcon>
+                </Menu.Target>
+                <Menu.Dropdown className={styles.menuDropdown}>
+                  <Menu.Item
+                    className={styles.menuItem}
+                    leftSection={<IconDownload size={16} />}
+                    onClick={handleExport}
+                  >
+                    Export to CSV
+                  </Menu.Item>
+                  <Menu.Item
+                    className={styles.menuItem}
+                    leftSection={<IconUpload size={16} />}
+                    onClick={handleImport}
+                  >
+                    Import from CSV
+                  </Menu.Item>
+                </Menu.Dropdown>
+              </Menu>
+              <Button
+                variant="primary"
+                onClick={() => setShowCreateModal(true)}
+              >
+                <IconPlus size={18} />
+                New Session
+              </Button>
+            </Group>
+          </Group>
+        </section>
 
-        {/* Sessions List */}
-        <SessionList 
-          sessions={sessions} 
-          currentDay={currentDay}
-          eventId={eventId}
-        />
+        {/* Main Content Section */}
+        <section className={styles.mainContent}>
+          <LoadingOverlay visible={eventLoading || sessionsLoading} />
+          
+          {/* Date Navigation */}
+          <DateNavigation
+            startDate={event.start_date}
+            dayCount={event.day_count}
+            currentDay={currentDay}
+            onDateChange={setCurrentDay}
+          />
+
+          {/* Sessions List */}
+          <SessionList 
+            sessions={sessions} 
+            currentDay={currentDay}
+            eventId={eventId}
+          />
+        </section>
 
         {/* Create Session Modal */}
         <EditSessionModal
@@ -82,7 +243,7 @@ export const SessionManager = () => {
             // Sessions will refresh automatically via RTK Query invalidation
           }}
         />
-      </Stack>
-    </Container>
+      </div>
+    </div>
   );
 };

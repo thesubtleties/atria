@@ -251,7 +251,7 @@ export const SessionCard = ({ session, eventId, hasConflict }) => {
           {hasConflict && (
             <div className={styles.conflictPill}>
               <IconAlertCircle size={12} />
-              Time Conflict
+              Overlaps
             </div>
           )}
         </Group>

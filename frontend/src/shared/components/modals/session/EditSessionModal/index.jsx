@@ -1,11 +1,12 @@
 import {
   TextInput,
-  Button,
   Stack,
   Modal,
   Textarea,
   Select,
   Group,
+  Text,
+  Box,
 } from '@mantine/core';
 import { TimeInput } from '@mantine/dates';
 import { useForm, zodResolver } from '@mantine/form';
@@ -14,7 +15,9 @@ import {
   useUpdateSessionMutation,
 } from '@/app/features/sessions/api';
 import { useGetEventQuery } from '@/app/features/events/api';
+import { Button } from '@/shared/components/buttons';
 import { editSessionSchema } from './schemas/editSessionSchema';
+import styles from './styles/index.module.css';
 
 const SESSION_TYPES = [
   { value: 'KEYNOTE', label: 'Keynote' },
@@ -145,53 +148,71 @@ export const EditSessionModal = ({
     <Modal
       opened={opened}
       onClose={onClose}
-      title={isEditing ? 'Edit Session' : 'Create Session'}
+      title={isEditing ? 'Edit Session' : 'Create New Session'}
       centered
-      size="md"
+      size="lg"
+      classNames={{
+        content: styles.modalContent,
+        header: styles.modalHeader,
+      }}
     >
       <form onSubmit={form.onSubmit(handleSubmit)}>
-        <Stack gap="md">
+        <Stack spacing="md" p="lg">
+          <Text className={styles.sectionTitle}>Basic Information</Text>
+          
           <TextInput
-            label="Title"
-            placeholder="Session Title"
+            label="Session Title"
+            placeholder="Enter a descriptive title for your session"
             required
+            classNames={{ input: styles.formInput }}
             {...form.getInputProps('title')}
           />
 
           <Textarea
-            label="Short Description (for agenda)"
+            label="Short Description"
             placeholder="Brief description for the agenda view (max 200 characters)"
+            description="This will appear in the event agenda"
             minRows={2}
             maxLength={200}
+            classNames={{ input: styles.formTextarea }}
             {...form.getInputProps('short_description')}
           />
 
           <Textarea
             label="Full Description"
-            placeholder="Detailed description for the session page"
+            placeholder="Provide a detailed description for attendees"
+            description="This will appear on the session detail page"
             minRows={4}
+            classNames={{ input: styles.formTextarea }}
             {...form.getInputProps('description')}
           />
 
+          <Text className={styles.sectionTitle}>Session Details</Text>
+          
           <Select
             label="Session Type"
+            placeholder="Select the type of session"
             data={SESSION_TYPES}
             required
+            classNames={{ input: styles.formSelect }}
             {...form.getInputProps('session_type')}
           />
 
           <Select
             label="Event Day"
+            placeholder="Select which day this session occurs"
             data={availableDays}
             required
+            classNames={{ input: styles.formSelect }}
             {...form.getInputProps('day_number')}
           />
 
-          <Group grow>
+          <Group grow className={styles.timeInputGroup}>
             <TimeInput
               label="Start Time"
               required
               format="24"
+              classNames={{ input: styles.formTimeInput }}
               {...form.getInputProps('start_time')}
             />
 
@@ -199,32 +220,44 @@ export const EditSessionModal = ({
               label="End Time"
               required
               format="24"
+              classNames={{ input: styles.formTimeInput }}
               {...form.getInputProps('end_time')}
             />
           </Group>
 
+          <Text className={styles.sectionTitle}>Streaming & Chat</Text>
+          
           <TextInput
             label="Stream URL"
-            placeholder="Vimeo Stream URL"
+            placeholder="https://vimeo.com/..."
+            description="Optional: Add a Vimeo URL for virtual streaming"
+            classNames={{ input: styles.formInput }}
             {...form.getInputProps('stream_url')}
           />
 
           <Select
             label="Chat Settings"
+            placeholder="Choose chat availability"
             data={CHAT_MODES}
             required
+            classNames={{ input: styles.formSelect }}
             {...form.getInputProps('chat_mode')}
           />
 
-          <Button type="submit" loading={isLoading} fullWidth mt="md">
-            {isLoading
-              ? isEditing
-                ? 'Saving...'
-                : 'Creating...'
-              : isEditing
-                ? 'Save Changes'
-                : 'Create Session'}
-          </Button>
+          <div className={styles.buttonGroup}>
+            <Button variant="subtle" onClick={onClose} disabled={isLoading}>
+              Cancel
+            </Button>
+            <Button type="submit" variant="primary" loading={isLoading}>
+              {isLoading
+                ? isEditing
+                  ? 'Saving...'
+                  : 'Creating...'
+                : isEditing
+                  ? 'Save Changes'
+                  : 'Create Session'}
+            </Button>
+          </div>
         </Stack>
       </form>
     </Modal>
