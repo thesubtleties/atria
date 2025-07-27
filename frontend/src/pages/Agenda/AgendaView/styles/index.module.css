@@ -6,12 +6,28 @@
   padding: 0 16px;
 }
 
+.glassmorphicWrapper {
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 
+    0 4px 30px rgba(139, 92, 246, 0.1),
+    inset 0 1px 1px rgba(255, 255, 255, 0.6);
+  padding: 24px;
+  position: relative;
+  overflow: visible;
+}
+
 .agendaGrid {
   display: flex;
   flex-direction: column;
   gap: 16px;
   width: 100%;
   overflow: visible;
+  position: relative;
+  padding-bottom: 200px; /* Space for expanded cards */
 }
 
 .sessionRow {
@@ -20,10 +36,12 @@
   width: 100%;
   overflow: visible;
 }
+
 /* Add this to prevent cards from collapsing */
 .sessionRow > * {
   flex-shrink: 0;
 }
+
 /* Make items in row take equal width */
 .sessionRow > * {
   flex: 1;

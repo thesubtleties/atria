@@ -40,6 +40,11 @@ export const AgendaPage = () => {
 
   return (
     <div className={styles.container}>
+      {/* Animated background shapes */}
+      <div className={styles.animatedShape1} />
+      <div className={styles.animatedShape2} />
+      <div className={styles.animatedShape3} />
+      
       <DateNavigation
         startDate={event.start_date}
         dayCount={event.day_count}

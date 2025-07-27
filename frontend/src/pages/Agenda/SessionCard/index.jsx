@@ -67,12 +67,11 @@ export const SessionCard = ({
         <div className={styles.time}>
           {formatTime(start_time)} - {formatTime(end_time)}
         </div>
+        {short_description && <p className={styles.description}>{short_description}</p>}
       </div>
 
-      <div className={styles.expandedContent}>
-        {short_description && <p className={styles.description}>{short_description}</p>}
-
-        {speakers?.length > 0 && (
+      {speakers?.length > 0 && (
+        <div className={styles.expandedContent}>
           <div className={styles.speakers}>
             {Object.entries(speakersByRole).map(([role, roleSpeakers]) => (
               <div key={role} className={styles.roleGroup}>
@@ -176,8 +175,8 @@ export const SessionCard = ({
               </div>
             ))}
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </Link>
   );
 };
