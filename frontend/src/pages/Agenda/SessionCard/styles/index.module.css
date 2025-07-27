@@ -122,9 +122,9 @@
 }
 
 .description {
-  font-size: 14px;
+  font-size: 13px;
   color: #475569;
-  margin: 8px 0 16px 0;
+  margin: 8px 0 0 0;
   line-height: 1.5;
   position: relative;
   z-index: 2;
@@ -142,7 +142,7 @@
 
 .roleGroup:first-child {
   border-top: none;
-  padding-top: 0;
+  padding-top: 8px;
 }
 
 .roleTitle {
@@ -159,7 +159,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  margin-top: 12px;
+  margin-top: 0;
   position: relative;
   z-index: 2;
 }
