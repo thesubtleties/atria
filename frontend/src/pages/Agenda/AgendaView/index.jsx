@@ -9,36 +9,38 @@ export const AgendaView = ({ sessions, isOrgView, orgId, eventId }) => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.agendaGrid}>
-        {rows.map((row, rowIndex) => {
-          const rowTop = getSessionTop(row[0]);
+      <div className={styles.glassmorphicWrapper}>
+        <div className={styles.agendaGrid}>
+          {rows.map((row, rowIndex) => {
+            const rowTop = getSessionTop(row[0]);
 
-          return (
-            <div
-              key={rowIndex}
-              className={styles.sessionRow}
-              style={{
-                top: rowTop,
-              }}
-            >
-              {row.map((session) => (
-                <SessionCard
-                  key={session.id}
-                  {...session}
-                  isOrgView={isOrgView}
-                  orgId={orgId}
-                  eventId={eventId}
-                  style={{
-                    width: isKeynote(session)
-                      ? '100%'
-                      : getSessionWidth(rowIndex),
-                    height: getSessionHeight(session),
-                  }}
-                />
-              ))}
-            </div>
-          );
-        })}
+            return (
+              <div
+                key={rowIndex}
+                className={styles.sessionRow}
+                style={{
+                  top: rowTop,
+                }}
+              >
+                {row.map((session) => (
+                  <SessionCard
+                    key={session.id}
+                    {...session}
+                    isOrgView={isOrgView}
+                    orgId={orgId}
+                    eventId={eventId}
+                    style={{
+                      width: isKeynote(session)
+                        ? '100%'
+                        : getSessionWidth(rowIndex),
+                      height: getSessionHeight(session),
+                    }}
+                  />
+                ))}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
