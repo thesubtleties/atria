@@ -9,9 +9,42 @@
 
 .tabsList {
   flex-shrink: 0;
-  padding-left: var(--mantine-spacing-md);
-  padding-right: var(--mantine-spacing-md);
-  padding-top: var(--mantine-spacing-sm);
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.7); /* White glass to match header */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  gap: 0.5rem;
+}
+
+/* Style tab buttons similar to ChatRoomsList */
+.tabsList :global(.mantine-Tabs-tab) {
+  padding: 0.5rem 1rem;
+  color: #64748B;
+  font-weight: 500;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+  background: transparent;
+}
+
+.tabsList :global(.mantine-Tabs-tab):hover {
+  background: rgba(139, 92, 246, 0.04);
+  color: #8B5CF6;
+  border-color: rgba(139, 92, 246, 0.08);
+}
+
+.tabsList :global(.mantine-Tabs-tab[data-active]) {
+  background: rgba(255, 255, 255, 0.9);
+  color: #8B5CF6;
+  border: 1px solid rgba(139, 92, 246, 0.15);
+  box-shadow: 0 1px 4px rgba(139, 92, 246, 0.08);
+  font-weight: 600;
+}
+
+/* Remove default Mantine tab indicator */
+.tabs :global(.mantine-Tabs-tabsList::before) {
+  display: none;
 }
 
 .tabPanel {

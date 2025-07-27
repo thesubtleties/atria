@@ -1,18 +1,13 @@
 import {
-  Container,
   LoadingOverlay,
   Alert,
-  Stack,
   Title,
   Text,
-  Group,
-  Badge,
-  ActionIcon,
 } from '@mantine/core';
 import { IconMessage } from '@tabler/icons-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import {
   useGetSessionQuery,
   useUpdateSessionStatusMutation,
@@ -29,8 +24,7 @@ export const SessionPage = () => {
   const { sessionId } = useParams();
   const navigate = useNavigate();
   const currentUser = useSelector((state) => state.auth.user);
-  const [isChatOpen, setIsChatOpen] = useState(true); // Start open for CSS approach
-  const mainContentRef = useRef(null);
+  const [isChatOpen, setIsChatOpen] = useState(true); // Start open by default
 
   const { data: session, isLoading } = useGetSessionQuery(sessionId);
   const { data: event } = useGetEventQuery(session?.event_id, {
@@ -123,87 +117,86 @@ export const SessionPage = () => {
   const chatEnabled = shouldShowChat();
 
   return (
-    <div
-      className={`${chatEnabled ? styles.sessionLayout : styles.sessionLayoutNoChat} ${!isChatOpen ? styles.chatClosed : ''}`}
-    >
-      {/* Main content area */}
-      <div className={styles.mainContentWrapper}>
-        <Container size="xl" className={styles.pageContainer}>
-          <Stack spacing="xl">
-            {/* Session Header */}
-            <div className={styles.header}>
-              <div>
-                <Title order={1} className={styles.title}>
+    <div className={styles.container}>
+      {/* Background Shapes */}
+      <div className={styles.bgShape1} />
+      <div className={styles.bgShape2} />
+      <div className={styles.bgShape3} />
+      
+      {/* Grid Layout Container */}
+      <div className={`${styles.layoutGrid} ${chatEnabled && !isChatOpen ? styles.chatClosed : ''}`}>
+        {/* Content Wrapper */}
+        <div className={styles.contentWrapper}>
+          {/* Section 1 - Video Section (wrapped video player) */}
+          <section className={styles.videoSection}>
+            {/* Inner video container - dark glass layer */}
+            <div className={styles.videoContainer}>
+              {/* Title at the TOP of this container */}
+              <div className={styles.sectionHeader}>
+                <Title className={styles.title}>
                   {session.title}
                 </Title>
                 {session.is_live && (
-                  <Badge
-                    size="sm"
-                    color="red"
-                    variant="dot"
-                    className={styles.liveBadge}
-                    mt="xs"
-                  >
+                  <div className={styles.liveBadge}>
                     LIVE
-                  </Badge>
+                  </div>
                 )}
               </div>
-            </div>
 
-            {/* Main Content Area */}
-            <div ref={mainContentRef} className={styles.mainContent}>
               {/* Video Display */}
-              <SessionDisplay streamUrl={session.stream_url} />
+              <div className={styles.videoWrapper}>
+                <SessionDisplay streamUrl={session.stream_url} />
+              </div>
 
-              {/* Session Details - Horizontal under video */}
-              <SessionDetails
-                session={session}
-                canEdit={canEdit}
-                onStatusChange={handleStatusChange}
-                onUpdate={handleUpdate}
-              />
-
-              {/* About This Session Section */}
-              <div className={styles.aboutSection}>
-                <Title order={3} mb="md">
-                  About This Session
-                </Title>
-
-                {/* Speakers */}
-                <SessionSpeakers sessionId={sessionId} canEdit={canEdit} />
-
-                {/* Description */}
-                {session.description && (
-                  <Text mt="lg" className={styles.description}>
-                    {session.description}
-                  </Text>
-                )}
+              {/* Session Details - Under video within same container */}
+              <div className={styles.videoFooter}>
+                <SessionDetails
+                  session={session}
+                  canEdit={canEdit}
+                  onStatusChange={handleStatusChange}
+                  onUpdate={handleUpdate}
+                />
               </div>
             </div>
-          </Stack>
-        </Container>
-      </div>
+          </section>
 
-      {/* Chat Sidebar - Part of grid layout */}
-      {chatEnabled && (
-        <div className={styles.chatWrapper}>
-          {isChatOpen ? (
+          {/* Section 2 - About Section (separate glass container) */}
+          <section className={styles.aboutSection}>
+            <h2 className={styles.sectionTitle}>About This Session</h2>
+
+            {/* Speakers */}
+            <SessionSpeakers sessionId={sessionId} canEdit={canEdit} />
+
+            {/* Description */}
+            {session.description && (
+              <Text className={styles.description}>
+                {session.description}
+              </Text>
+            )}
+          </section>
+        </div>
+
+        {/* Chat Sidebar - part of grid */}
+        {chatEnabled && (
+          <div className={styles.chatWrapper}>
             <SessionChat
               sessionId={sessionId}
               isEnabled={true}
+              isOpen={isChatOpen}
               onToggle={setIsChatOpen}
             />
-          ) : (
-            <ActionIcon
-              onClick={() => setIsChatOpen(true)}
-              size="xl"
-              radius="xl"
-              className={styles.floatingChatButton}
-            >
-              <IconMessage size={24} />
-            </ActionIcon>
-          )}
-        </div>
+          </div>
+        )}
+      </div>
+      
+      {/* Floating chat button - outside grid */}
+      {chatEnabled && !isChatOpen && (
+        <button
+          onClick={() => setIsChatOpen(true)}
+          className={styles.floatingChatButton}
+        >
+          <IconMessage size={24} />
+        </button>
       )}
     </div>
   );

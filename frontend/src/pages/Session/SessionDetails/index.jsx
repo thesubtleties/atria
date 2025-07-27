@@ -47,16 +47,16 @@ export const SessionDetails = ({ session, canEdit }) => {
       <Group gap="xl" className={styles.detailsGrid}>
         {/* Date */}
         <Group gap="xs" align="center">
-          <IconCalendar size={16} stroke={1.5} color="var(--mantine-color-gray-6)" />
-          <Text size="sm">{getSessionDate()}</Text>
+          <IconCalendar size={16} stroke={1.5} color="#8B5CF6" />
+          <Text size="sm" c="dimmed">{getSessionDate()}</Text>
         </Group>
 
         <Divider orientation="vertical" />
 
         {/* Time */}
         <Group gap="xs" align="center">
-          <IconClock size={16} stroke={1.5} color="var(--mantine-color-gray-6)" />
-          <Text size="sm">
+          <IconClock size={16} stroke={1.5} color="#8B5CF6" />
+          <Text size="sm" c="dimmed">
             {formatTime(session.start_time)} - {formatTime(session.end_time)}
           </Text>
           <Text size="xs" c="dimmed">

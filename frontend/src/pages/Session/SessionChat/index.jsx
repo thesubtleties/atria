@@ -11,8 +11,8 @@ import { SessionChatHeader } from './SessionChatHeader';
 import { ChatTabs } from './ChatTabs';
 import styles from './styles/index.module.css';
 
-export const SessionChat = ({ sessionId, isEnabled = true, onToggle }) => {
-  const [isOpen, setIsOpen] = useState(true);
+export const SessionChat = ({ sessionId, isEnabled = true, isOpen = true, onToggle }) => {
+  const [internalOpen, setInternalOpen] = useState(true);
 
   const sessionIdNum = sessionId ? parseInt(sessionId) : null;
   const { data: sessionData } = useGetSessionQuery(sessionIdNum);
@@ -35,40 +35,23 @@ export const SessionChat = ({ sessionId, isEnabled = true, onToggle }) => {
     }
   }, [sessionIdNum, isEnabled, isOpen]);
 
-  useEffect(() => {
-    onToggle?.(isOpen);
-  }, [isOpen, onToggle]);
-
   return (
-    <>
-      {/* Collapsed State - Floating Chat Button */}
-      {!isOpen && (
-        <ActionIcon
-          onClick={() => setIsOpen(true)}
-          size="xl"
-          radius="xl"
-          className={styles.floatingChatButton}
-        >
-          <IconMessage size={24} />
-        </ActionIcon>
-      )}
+    <div className={`${styles.chatContainer} ${!isOpen ? styles.chatClosed : ''}`}>
+      <Card className={styles.chatSidebar} p={0}>
+        <SessionChatHeader
+          sessionData={sessionData}
+          onClose={() => {
+            onToggle?.(false);
+          }}
+        />
 
-      {/* Expanded State - Show full chat */}
-      <div className={`${styles.chatContainer} ${isOpen ? styles.chatOpen : styles.chatClosed}`}>
-        <Card className={styles.chatSidebar} p={0}>
-          <SessionChatHeader
-            sessionData={sessionData}
-            onClose={() => setIsOpen(false)}
-          />
-
-          <ChatTabs
-            chatRooms={chatRooms}
-            sessionData={sessionData}
-            isLoading={isLoading}
-            error={error}
-          />
-        </Card>
-      </div>
-    </>
+        <ChatTabs
+          chatRooms={chatRooms}
+          sessionData={sessionData}
+          isLoading={isLoading}
+          error={error}
+        />
+      </Card>
+    </div>
   );
 };
