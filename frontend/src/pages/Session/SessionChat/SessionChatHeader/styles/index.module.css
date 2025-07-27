@@ -2,8 +2,22 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--mantine-spacing-md);
-  border-bottom: 1px solid var(--mantine-color-gray-2);
+  padding: 1rem 1.5rem;
+  background: rgba(255, 255, 255, 0.7); /* White glass, slightly more opaque for header */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
   flex-shrink: 0;
-  min-height: 56px;
+  min-height: 60px;
+}
+
+/* Style close button to match EventNav patterns */
+.header :global(.mantine-ActionIcon-root) {
+  color: #64748B;
+  transition: all 0.2s ease;
+}
+
+.header :global(.mantine-ActionIcon-root):hover {
+  color: #8B5CF6;
+  background: rgba(139, 92, 246, 0.04);
 }

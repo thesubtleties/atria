@@ -40,35 +40,23 @@ export const SessionChat = ({ sessionId, isEnabled = true, onToggle }) => {
   }, [isOpen, onToggle]);
 
   return (
-    <>
-      {/* Collapsed State - Floating Chat Button */}
-      {!isOpen && (
-        <ActionIcon
-          onClick={() => setIsOpen(true)}
-          size="xl"
-          radius="xl"
-          className={styles.floatingChatButton}
-        >
-          <IconMessage size={24} />
-        </ActionIcon>
-      )}
+    <div className={styles.chatContainer}>
+      <Card className={styles.chatSidebar} p={0}>
+        <SessionChatHeader
+          sessionData={sessionData}
+          onClose={() => {
+            setIsOpen(false);
+            onToggle?.(false);
+          }}
+        />
 
-      {/* Expanded State - Show full chat */}
-      <div className={`${styles.chatContainer} ${isOpen ? styles.chatOpen : styles.chatClosed}`}>
-        <Card className={styles.chatSidebar} p={0}>
-          <SessionChatHeader
-            sessionData={sessionData}
-            onClose={() => setIsOpen(false)}
-          />
-
-          <ChatTabs
-            chatRooms={chatRooms}
-            sessionData={sessionData}
-            isLoading={isLoading}
-            error={error}
-          />
-        </Card>
-      </div>
-    </>
+        <ChatTabs
+          chatRooms={chatRooms}
+          sessionData={sessionData}
+          isLoading={isLoading}
+          error={error}
+        />
+      </Card>
+    </div>
   );
 };

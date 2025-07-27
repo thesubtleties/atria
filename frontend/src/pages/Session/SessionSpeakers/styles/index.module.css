@@ -11,12 +11,12 @@
 
 .addButton {
   transition: all 0.2s ease;
-  color: var(--mantine-color-grape-6);
+  color: #8B5CF6;
 }
 
 .addButton:hover {
   background: rgba(139, 92, 246, 0.08);
-  color: var(--mantine-color-grape-7);
+  color: #7C3AED;
 }
 
 .speakersGrid {

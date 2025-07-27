@@ -1,33 +1,31 @@
 .chatContainer {
-  width: 370px;
+  width: 100%;
   height: 100%;
-  position: absolute;
-  left: 0;
-  top: 0;
+  position: relative;
   overflow: hidden;
-  transition: transform 0.3s ease, opacity 0.3s ease;
-}
-
-.chatContainer.chatClosed {
-  transform: translateX(370px);
-  opacity: 0;
-}
-
-.chatContainer.chatOpen {
-  transform: translateX(0);
-  opacity: 1;
 }
 
 .chatSidebar {
-  width: 370px;
+  width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: white;
-  border-radius: var(--mantine-radius-md);
-  border: 1px solid var(--mantine-color-gray-2);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.6) !important; /* White glass with more transparency for slide-in */
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
   overflow: hidden;
+}
+
+/* Override Mantine Card default styles */
+.chatSidebar[data-with-border] {
+  border: 1px solid rgba(255, 255, 255, 0.8) !important;
+}
+
+.chatSidebar:global(.mantine-Card-root) {
+  background: rgba(255, 255, 255, 0.6) !important;
 }
 
 .floatingChatButton {

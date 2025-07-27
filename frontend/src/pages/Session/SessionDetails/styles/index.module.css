@@ -1,9 +1,13 @@
 /* pages/Session/SessionDetails/styles/index.module.css */
 .detailsSection {
-  background: var(--mantine-color-gray-0);
-  border-radius: var(--mantine-radius-sm);
-  padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
-  margin-top: var(--mantine-spacing-sm);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 6px;
+  padding: 1rem 1.5rem;
+  margin-top: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.03);
 }
 
 .detailsGrid {
@@ -15,14 +19,15 @@
 .typeTag {
   display: inline-flex;
   align-items: center;
-  padding: 3px 10px;
-  border-radius: 4px;
-  font-size: 11px;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  background-color: var(--mantine-color-gray-1);
-  color: var(--mantine-color-gray-7);
+  letter-spacing: 0.05em;
+  background: rgba(139, 92, 246, 0.08);
+  color: #8B5CF6;
+  border: 1px solid rgba(139, 92, 246, 0.15);
 }
 
 /* Session type colors matching the main page */

@@ -80,7 +80,7 @@ export function ChatTabs({
         >
           Chat
           {publicRoom?.message_count > 0 && (
-            <Badge size="xs" variant="filled" color="gray" ml="xs">
+            <Badge size="xs" variant="light" color="violet" ml="xs">
               {publicRoom.message_count}
             </Badge>
           )}
@@ -92,7 +92,7 @@ export function ChatTabs({
           >
             Backstage
             {backstageRoom.message_count > 0 && (
-              <Badge size="xs" variant="filled" color="blue" ml="xs">
+              <Badge size="xs" variant="light" color="violet" ml="xs">
                 {backstageRoom.message_count}
               </Badge>
             )}
