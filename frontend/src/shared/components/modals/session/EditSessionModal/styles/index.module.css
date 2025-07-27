@@ -1,3 +1,108 @@
-.form {
-  margin-top: var(--mantine-spacing-md);
+/* Modal Content - Glassmorphism */
+.modalContent {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.08);
 }
+
+/* Modal Header */
+.modalHeader {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1E293B;
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.04);
+}
+
+
+/* Section Titles */
+.sectionTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #8B5CF6;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.08);
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.sectionTitle:first-of-type {
+  margin-top: 0;
+}
+
+/* Form Inputs */
+.formInput input,
+.formSelect input,
+.formTextarea textarea,
+.formTimeInput input {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  transition: all 0.2s ease;
+}
+
+.formInput input:focus,
+.formSelect input:focus,
+.formTextarea textarea:focus,
+.formTimeInput input:focus {
+  border-color: rgba(139, 92, 246, 0.3);
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.05);
+}
+
+
+/* Input Labels */
+.inputLabel {
+  font-weight: 500;
+  color: #475569;
+  margin-bottom: 0.5rem;
+}
+
+/* Helper Text */
+.helperText {
+  font-size: 0.875rem;
+  color: #64748B;
+  margin-top: 0.25rem;
+}
+
+/* Button Group at Modal Bottom */
+.buttonGroup {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+}
+
+/* Time Input Group */
+.timeInputGroup {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .modalContent {
+    padding: 0;
+  }
+  
+  .modalHeader {
+    padding: 1rem;
+    font-size: 1.125rem;
+  }
+  
+  .buttonGroup {
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+  }
+  
+  .timeInputGroup {
+    grid-template-columns: 1fr;
+  }
+}
+

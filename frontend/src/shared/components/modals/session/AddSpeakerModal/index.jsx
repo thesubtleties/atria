@@ -1,5 +1,5 @@
 // shared/components/modals/session/AddSpeakerModal/index.jsx
-import { Select, Button, Stack, Modal, Alert } from '@mantine/core';
+import { Select, Stack, Modal, Alert } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { 
   useAddSessionSpeakerMutation, 
@@ -7,6 +7,7 @@ import {
   useGetSessionSpeakersQuery 
 } from '@/app/features/sessions/api';
 import { useGetEventUsersQuery } from '@/app/features/events/api';
+import { Button } from '@/shared/components/buttons';
 import { useMemo } from 'react';
 import { SPEAKER_ROLES, SPEAKER_ROLE_OPTIONS } from '@/shared/constants/speakerRoles';
 import styles from './styles/index.module.css';
@@ -74,11 +75,15 @@ export const AddSpeakerModal = ({ sessionId, opened, onClose }) => {
       title="Add Speaker to Session"
       centered
       size="sm"
+      classNames={{
+        content: styles.modalContent,
+        header: styles.modalHeader,
+      }}
     >
-      <form onSubmit={form.onSubmit(handleSubmit)} className={styles.form}>
-        <Stack gap="md">
+      <form onSubmit={form.onSubmit(handleSubmit)}>
+        <Stack spacing="md" p="lg">
           {availableSpeakers.length === 0 ? (
-            <Alert color="yellow" variant="light">
+            <Alert color="blue" variant="light" className={styles.infoAlert}>
               No available speakers found. All event speakers have been assigned to this session, 
               or there are no speakers registered for this event.
             </Alert>
@@ -90,6 +95,7 @@ export const AddSpeakerModal = ({ sessionId, opened, onClose }) => {
                 data={availableSpeakers}
                 required
                 searchable
+                classNames={{ input: styles.formSelect }}
                 {...form.getInputProps('user_id')}
                 disabled={isLoading}
               />
@@ -97,18 +103,24 @@ export const AddSpeakerModal = ({ sessionId, opened, onClose }) => {
               <Select
                 label="Speaker Role"
                 data={SPEAKER_ROLE_OPTIONS}
+                classNames={{ input: styles.formSelect }}
                 {...form.getInputProps('role')}
                 disabled={isLoading}
               />
 
-              <Button 
-                type="submit" 
-                loading={isLoading} 
-                fullWidth
-                disabled={!form.values.user_id}
-              >
-                {isLoading ? 'Adding...' : 'Add Speaker'}
-              </Button>
+              <div className={styles.buttonGroup}>
+                <Button variant="subtle" onClick={onClose} disabled={isLoading}>
+                  Cancel
+                </Button>
+                <Button 
+                  type="submit" 
+                  variant="primary"
+                  loading={isLoading} 
+                  disabled={!form.values.user_id}
+                >
+                  {isLoading ? 'Adding...' : 'Add Speaker'}
+                </Button>
+              </div>
             </>
           )}
         </Stack>
