@@ -161,20 +161,17 @@ export const SessionManager = () => {
             <div>
               <h2 className={styles.pageTitle}>Session Manager</h2>
               <div className={styles.badgeGroup}>
-                <Badge className={styles.statsBadge} size="lg" variant="light" radius="sm">
-                  {sessionStats.total} Sessions
-                </Badge>
                 <Badge size="lg" variant="light" color="blue" radius="sm" leftSection={<IconCalendar size={14} />}>
                   Day {currentDay}
+                </Badge>
+                <Badge className={styles.statsBadge} size="lg" variant="light" radius="sm">
+                  {sessionStats.total} Sessions
                 </Badge>
                 {sessionStats.overlapping > 0 && (
                   <Badge size="lg" variant="light" color="yellow" radius="sm">
                     {sessionStats.overlapping} Overlapping
                   </Badge>
                 )}
-                <Badge size="lg" variant="light" color="grape" radius="sm">
-                  {sessionStats.speakers} Speakers
-                </Badge>
               </div>
             </div>
             <Group>
