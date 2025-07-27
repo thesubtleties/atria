@@ -127,34 +127,42 @@ export const SessionPage = () => {
       <div className={`${styles.layoutGrid} ${chatEnabled && !isChatOpen ? styles.chatClosed : ''}`}>
         {/* Content Wrapper */}
         <div className={styles.contentWrapper}>
-        {/* Header Section */}
-        <section className={styles.headerSection}>
-          <Title className={styles.title}>
-            {session.title}
-          </Title>
-          {session.is_live && (
-            <div className={styles.liveBadge}>
-              LIVE
+          {/* Section 1 - Video Section (wrapped video player) */}
+          <section className={styles.videoSection}>
+            {/* Inner video container - dark glass layer */}
+            <div className={styles.videoContainer}>
+              {/* Title at the TOP of this container */}
+              <div className={styles.sectionHeader}>
+                <Title className={styles.title}>
+                  {session.title}
+                </Title>
+                {session.is_live && (
+                  <div className={styles.liveBadge}>
+                    LIVE
+                  </div>
+                )}
+              </div>
+
+              {/* Video Display */}
+              <div className={styles.videoWrapper}>
+                <SessionDisplay streamUrl={session.stream_url} />
+              </div>
+
+              {/* Session Details - Under video within same container */}
+              <div className={styles.videoFooter}>
+                <SessionDetails
+                  session={session}
+                  canEdit={canEdit}
+                  onStatusChange={handleStatusChange}
+                  onUpdate={handleUpdate}
+                />
+              </div>
             </div>
-          )}
-        </section>
+          </section>
 
-        {/* Main Content Section */}
-        <section className={styles.mainContent}>
-          {/* Video Display */}
-          <SessionDisplay streamUrl={session.stream_url} />
-
-          {/* Session Details - Horizontal under video */}
-          <SessionDetails
-            session={session}
-            canEdit={canEdit}
-            onStatusChange={handleStatusChange}
-            onUpdate={handleUpdate}
-          />
-
-          {/* About This Session Section */}
-          <div className={styles.aboutSection}>
-            <h3>About This Session</h3>
+          {/* Section 2 - About Section (separate glass container) */}
+          <section className={styles.aboutSection}>
+            <h2 className={styles.sectionTitle}>About This Session</h2>
 
             {/* Speakers */}
             <SessionSpeakers sessionId={sessionId} canEdit={canEdit} />
@@ -165,8 +173,7 @@ export const SessionPage = () => {
                 {session.description}
               </Text>
             )}
-          </div>
-        </section>
+          </section>
         </div>
 
         {/* Chat Sidebar - part of grid */}

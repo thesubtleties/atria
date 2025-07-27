@@ -1,22 +1,10 @@
 /* pages/Session/SessionDisplay/styles/index.module.css */
-.displayCard {
-  width: 100%;
-  padding: 0;
-  background: transparent;
-  border: none;
-  box-shadow: none;
-}
-
 .displayContainer {
   width: 100%;
-  background: rgba(30, 41, 59, 0.95);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 8px;
+  background: #000;
   overflow: hidden;
   min-height: 480px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.08);
+  /* No border radius or border - video should fill completely */
 }
 
 .videoContainer {
