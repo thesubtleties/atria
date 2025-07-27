@@ -114,9 +114,7 @@
   position: relative;
   width: 100%;
   border: 1px solid rgba(255, 255, 255, 0.9);
-  box-shadow: 
-    0 4px 20px rgba(139, 92, 246, 0.06), /* Enhanced shadow for floating effect */
-    0 2px 8px rgba(0, 0, 0, 0.04);       /* Subtle dark shadow for depth */
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08); /* Subtle shadow for cinematic floating effect */
 }
 
 /* Section header within video container */
@@ -135,7 +133,7 @@
 .videoWrapper {
   width: 100%;
   position: relative;
-  background: #000; /* Solid black for video area */
+  background: rgba(255, 255, 255, 0.9); /* Changed from black to match white glass */
   /* Remove any padding to make video fill the space */
   padding: 0;
   margin: 0;
@@ -364,9 +362,7 @@
   }
   
   .videoContainer {
-    box-shadow: 
-      0 2px 12px rgba(139, 92, 246, 0.05), /* Reduced shadow on mobile */
-      0 1px 4px rgba(0, 0, 0, 0.03);
+    /* Removed box-shadow on mobile as well */
   }
   
   .sectionHeader,
