@@ -41,20 +41,21 @@ export const MenuButton = () => {
           borderRadius: rem(8),
           border: '1px solid rgba(255, 255, 255, 0.95)',
           boxShadow: '0 8px 32px rgba(139, 92, 246, 0.08)',
-          padding: rem(8),
-          minWidth: rem(220),
+          padding: rem(6),
+          minWidth: rem(200),
         },
         arrow: {
           border: '1px solid rgba(255, 255, 255, 0.95)',
           background: 'rgba(255, 255, 255, 0.9)',
         },
         item: {
-          fontSize: rem(14),
-          padding: `${rem(10)} ${rem(12)}`,
+          fontSize: rem(13),
+          padding: `${rem(8)} ${rem(10)}`,
           borderRadius: rem(6),
           color: '#1E293B',
           fontWeight: 500,
           transition: 'all 0.2s ease',
+          lineHeight: 1.4,
           '&[data-hovered]': {
             backgroundColor: 'rgba(139, 92, 246, 0.08)',
             color: '#8B5CF6',
@@ -62,16 +63,16 @@ export const MenuButton = () => {
           },
         },
         label: {
-          fontSize: rem(12),
+          fontSize: rem(11),
           fontWeight: 600,
           color: '#94A3B8',
           textTransform: 'uppercase',
           letterSpacing: '0.05em',
-          padding: `${rem(8)} ${rem(12)}`,
+          padding: `${rem(6)} ${rem(10)}`,
         },
         divider: {
           borderColor: 'rgba(139, 92, 246, 0.08)',
-          margin: `${rem(8)} 0`,
+          margin: `${rem(6)} 0`,
         },
       })}
     >
@@ -137,7 +138,7 @@ export const MenuButton = () => {
         <Menu.Item
           leftSection={
             <IconLayoutDashboard
-              style={{ width: rem(16), height: rem(16), color: '#8B5CF6' }}
+              style={{ width: rem(14), height: rem(14), color: '#8B5CF6' }}
             />
           }
           onClick={() => navigate('/app/dashboard')}
@@ -148,7 +149,7 @@ export const MenuButton = () => {
         <Menu.Item
           leftSection={
             <IconUser
-              style={{ width: rem(16), height: rem(16), color: '#8B5CF6' }}
+              style={{ width: rem(14), height: rem(14), color: '#8B5CF6' }}
             />
           }
           onClick={() => navigate('/app/profile')}
@@ -159,7 +160,7 @@ export const MenuButton = () => {
         <Menu.Item
           leftSection={
             <IconUsers
-              style={{ width: rem(16), height: rem(16), color: '#8B5CF6' }}
+              style={{ width: rem(14), height: rem(14), color: '#8B5CF6' }}
             />
           }
           onClick={() => navigate('/app/network')}
@@ -170,7 +171,7 @@ export const MenuButton = () => {
         <Menu.Item
           leftSection={
             <IconBuilding
-              style={{ width: rem(16), height: rem(16), color: '#8B5CF6' }}
+              style={{ width: rem(14), height: rem(14), color: '#8B5CF6' }}
             />
           }
           onClick={() => navigate('/app/organizations')}
@@ -181,7 +182,7 @@ export const MenuButton = () => {
         <Menu.Item
           leftSection={
             <IconCalendarEvent
-              style={{ width: rem(16), height: rem(16), color: '#8B5CF6' }}
+              style={{ width: rem(14), height: rem(14), color: '#8B5CF6' }}
             />
           }
           onClick={() => navigate('/app/events')}
@@ -192,7 +193,7 @@ export const MenuButton = () => {
         <Menu.Item
           leftSection={
             <IconSettings
-              style={{ width: rem(16), height: rem(16), color: '#8B5CF6' }}
+              style={{ width: rem(14), height: rem(14), color: '#8B5CF6' }}
             />
           }
           onClick={() => navigate('/app/settings')}
@@ -205,7 +206,7 @@ export const MenuButton = () => {
         <Menu.Item
           className={styles.logoutItem}
           leftSection={
-            <IconLogout style={{ width: rem(16), height: rem(16) }} />
+            <IconLogout style={{ width: rem(14), height: rem(14) }} />
           }
           onClick={handleLogout}
         >
