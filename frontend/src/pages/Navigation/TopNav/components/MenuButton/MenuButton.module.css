@@ -4,6 +4,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  /* Fix for CSS reset affecting button size */
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  min-height: 40px !important;
+  padding: 8px !important;
 }
 
 .menuButton::before {

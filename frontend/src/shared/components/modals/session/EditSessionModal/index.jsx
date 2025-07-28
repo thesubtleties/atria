@@ -174,7 +174,7 @@ export const EditSessionModal = ({
             description="This will appear in the event agenda"
             minRows={2}
             maxLength={200}
-            classNames={{ input: styles.formTextarea }}
+            classNames={{ input: styles.shortDescriptionTextarea }}
             {...form.getInputProps('short_description')}
           />
 
