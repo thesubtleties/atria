@@ -3,19 +3,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 24px;
+  gap: 12px;
+  margin-bottom: 3rem;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  padding: 1.5rem;
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  box-shadow: 
-    0 4px 20px rgba(139, 92, 246, 0.08),
-    inset 0 1px 1px rgba(255, 255, 255, 0.8);
-  transition: all 0.3s ease;
+  padding: 0;
   position: relative;
   z-index: 2;
   width: 100%;
@@ -37,17 +28,18 @@
 }
 
 .currentDate {
-  font-size: 20px;
-  font-weight: 500;
+  font-size: 28px;
+  font-weight: 300;
   min-width: 240px;
   text-align: center;
-  color: #1E293B;
+  color: #8B5CF6;
+  letter-spacing: -0.02em;
 }
 
 .navButton {
   padding: 8px;
-  border: 1px solid rgba(139, 92, 246, 0.2);
-  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid transparent;
+  background: transparent;
   cursor: pointer;
   font-size: 16px;
   color: #8B5CF6;
@@ -58,29 +50,21 @@
   align-items: center;
   justify-content: center;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.05);
 }
 
 .navButton:hover:not(:disabled) {
-  background: rgba(139, 92, 246, 0.1);
+  background: rgba(139, 92, 246, 0.08);
   color: #7C3AED;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(139, 92, 246, 0.15);
-  border-color: rgba(139, 92, 246, 0.3);
 }
 
 .navButton:active:not(:disabled) {
-  transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(139, 92, 246, 0.1);
+  background: rgba(139, 92, 246, 0.12);
 }
 
 .navButton:disabled {
   color: rgba(0, 0, 0, 0.3);
-  border-color: rgba(0, 0, 0, 0.05);
   cursor: not-allowed;
-  background: rgba(0, 0, 0, 0.02);
+  opacity: 0.5;
 }
 
 .icon {
