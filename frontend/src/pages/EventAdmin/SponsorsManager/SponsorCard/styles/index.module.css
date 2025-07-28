@@ -49,10 +49,15 @@
 /* Logo */
 .logoContainer {
   flex-shrink: 0;
+  width: 50px;
+  height: 50px;
+  flex-shrink: 0;
 }
 
 .logo {
   display: block;
+  width: 50px !important;
+  height: 50px !important;
   object-fit: contain;
   border-radius: 4px;
 }
@@ -163,9 +168,14 @@
     display: none;
   }
   
-  .logoPlaceholder,
-  .logo {
+  .logoContainer {
     width: 40px;
     height: 40px;
+  }
+  
+  .logoPlaceholder,
+  .logo {
+    width: 40px !important;
+    height: 40px !important;
   }
 }
