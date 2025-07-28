@@ -19,7 +19,7 @@
 
 /* Animated background shapes */
 .animatedShape1 {
-  position: absolute;
+  position: fixed;
   width: 350px;
   height: 350px;
   background: linear-gradient(135deg, #16a34a, #10b981);
@@ -33,7 +33,7 @@
 }
 
 .animatedShape2 {
-  position: absolute;
+  position: fixed;
   width: 400px;
   height: 420px;
   background: linear-gradient(45deg, #8b5cf6, #a855f7);
@@ -47,7 +47,7 @@
 }
 
 .animatedShape3 {
-  position: absolute;
+  position: fixed;
   width: 300px;
   height: 300px;
   background: linear-gradient(225deg, #df562c, #f86e2e);
