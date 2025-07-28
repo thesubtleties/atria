@@ -67,6 +67,13 @@ svg {
   height: auto;
 }
 
+/* Preserve explicit image sizing for logos and Mantine Image components */
+img[width][height],
+[class*="mantine-Image"] img,
+.logo {
+  max-width: none !important;
+}
+
 /* Preserve inline display for icons */
 button svg,
 a svg,
