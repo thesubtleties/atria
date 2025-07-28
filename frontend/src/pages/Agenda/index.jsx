@@ -39,24 +39,26 @@ export const AgendaPage = () => {
   }
 
   return (
-    <div className={styles.container}>
+    <div className={styles.pageContainer}>
       {/* Animated background shapes */}
       <div className={styles.animatedShape1} />
       <div className={styles.animatedShape2} />
       <div className={styles.animatedShape3} />
       
-      <DateNavigation
-        startDate={event.start_date}
-        dayCount={event.day_count}
-        currentDay={currentDay}
-        onDateChange={setCurrentDay}
-      />
-      <AgendaView
-        sessions={sessionsData?.sessions || []}
-        isOrgView={isOrgView}
-        orgId={orgId}
-        eventId={eventId}
-      />
+      <div className={styles.contentWrapper}>
+        <DateNavigation
+          startDate={event.start_date}
+          dayCount={event.day_count}
+          currentDay={currentDay}
+          onDateChange={setCurrentDay}
+        />
+        <AgendaView
+          sessions={sessionsData?.sessions || []}
+          isOrgView={isOrgView}
+          orgId={orgId}
+          eventId={eventId}
+        />
+      </div>
     </div>
   );
 };

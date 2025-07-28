@@ -1,59 +1,68 @@
 /* pages/Agenda/styles/index.module.css */
-.container {
+.pageContainer {
+  min-height: 100vh;
+  background: rgba(251, 250, 255, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.contentWrapper {
+  position: relative;
+  z-index: 10;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
   display: flex;
   flex-direction: column;
   gap: 24px;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 24px;
-  position: relative;
-  min-height: 100vh;
-  overflow: hidden;
 }
 
 /* Animated background shapes */
 .animatedShape1 {
-  position: fixed;
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.4) 0%, transparent 70%);
-  border-radius: 50%;
-  top: -200px;
-  right: -200px;
-  filter: blur(60px);
+  position: absolute;
+  width: 350px;
+  height: 350px;
+  background: linear-gradient(135deg, #16a34a, #10b981);
+  border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
+  top: -120px;
+  right: -100px;
+  opacity: 0.05;
   animation: float1 20s infinite ease-in-out;
-  z-index: -1;
+  z-index: 0;
+  pointer-events: none;
 }
 
 .animatedShape2 {
-  position: fixed;
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(168, 85, 247, 0.3) 0%, transparent 70%);
-  border-radius: 50%;
-  bottom: -150px;
-  left: -150px;
-  filter: blur(80px);
+  position: absolute;
+  width: 400px;
+  height: 420px;
+  background: linear-gradient(45deg, #8b5cf6, #a855f7);
+  border-radius: 30% 70% 53% 47% / 26% 46% 54% 74%;
+  bottom: -180px;
+  left: -120px;
+  opacity: 0.04;
   animation: float2 25s infinite ease-in-out;
-  z-index: -1;
+  z-index: 0;
+  pointer-events: none;
 }
 
 .animatedShape3 {
-  position: fixed;
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, rgba(196, 181, 253, 0.3) 0%, transparent 70%);
-  border-radius: 50%;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  filter: blur(70px);
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  background: linear-gradient(225deg, #df562c, #f86e2e);
+  border-radius: 45% 55% 62% 38% / 53% 51% 49% 47%;
+  top: 40%;
+  right: 15%;
+  opacity: 0.03;
   animation: float3 30s infinite ease-in-out;
-  z-index: -1;
+  z-index: 0;
+  pointer-events: none;
 }
 
 @keyframes float1 {
-  0%, 100% {
+  0%,
+  100% {
     transform: translate(0, 0) scale(1);
   }
   33% {
@@ -65,7 +74,8 @@
 }
 
 @keyframes float2 {
-  0%, 100% {
+  0%,
+  100% {
     transform: translate(0, 0) scale(1);
   }
   25% {
@@ -80,7 +90,8 @@
 }
 
 @keyframes float3 {
-  0%, 100% {
+  0%,
+  100% {
     transform: translate(-50%, -50%) scale(1);
   }
   20% {
