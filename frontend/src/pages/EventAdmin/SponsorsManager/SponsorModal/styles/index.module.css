@@ -10,7 +10,7 @@
 .modalHeader {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #1E293B;
+  color: #1e293b;
   padding: 1.5rem;
   border-bottom: 1px solid rgba(139, 92, 246, 0.04);
 }
@@ -18,8 +18,8 @@
 /* Section Titles */
 .sectionTitle {
   font-size: 1.1rem;
-  font-weight: 600;
-  color: #1E293B;
+  font-weight: 600 !important;
+  color: #1e293b;
   margin-top: 1.5rem;
   margin-bottom: 0.75rem;
 }
@@ -69,8 +69,8 @@
 
 .logoLabel {
   font-size: 0.875rem;
-  font-weight: 500;
-  color: #1E293B;
+  font-weight: 500 !important;
+  color: #1e293b;
   margin-bottom: 0.5rem;
 }
 
