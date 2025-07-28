@@ -8,10 +8,10 @@
 
 /* Background Organic Shapes */
 .bgShape1 {
-  position: absolute;
+  position: fixed;
   width: 320px;
   height: 320px;
-  background: linear-gradient(135deg, #8B5CF6, #A855F7);
+  background: linear-gradient(135deg, #8b5cf6, #a855f7);
   border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
   top: 100px;
   right: -160px;
@@ -22,10 +22,10 @@
 }
 
 .bgShape2 {
-  position: absolute;
+  position: fixed;
   width: 280px;
   height: 300px;
-  background: linear-gradient(45deg, #F59E0B, #FCD34D);
+  background: linear-gradient(45deg, #f59e0b, #fcd34d);
   border-radius: 30% 70% 53% 47% / 26% 46% 54% 74%;
   bottom: 200px;
   left: -140px;
@@ -36,14 +36,15 @@
 }
 
 @keyframes float {
-  0%, 100% { 
-    transform: translateY(0px) rotate(0deg) scale(1); 
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
   }
-  33% { 
-    transform: translateY(-20px) rotate(2deg) scale(1.02); 
+  33% {
+    transform: translateY(-20px) rotate(2deg) scale(1.02);
   }
-  66% { 
-    transform: translateY(15px) rotate(-1deg) scale(0.98); 
+  66% {
+    transform: translateY(15px) rotate(-1deg) scale(0.98);
   }
 }
 
@@ -72,7 +73,7 @@
 .pageTitle {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #1E293B;
+  color: #1e293b;
   margin: 0 0 0.75rem 0;
 }
 
@@ -133,17 +134,16 @@
   .bgShape2 {
     display: none;
   }
-  
+
   .contentWrapper {
     padding: 1rem;
   }
-  
+
   .headerSection,
   .mainContent {
     padding: 1.5rem;
   }
 }
-
 
 .sessionCard {
   background: var(--mantine-color-white);
@@ -151,7 +151,9 @@
   border-radius: var(--mantine-radius-md);
   padding: var(--mantine-spacing-lg);
   margin-bottom: var(--mantine-spacing-md);
-  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  transition:
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .sessionCard:hover {
@@ -183,7 +185,6 @@
 .timeInput {
   width: 120px;
 }
-
 
 .durationPill {
   display: inline-flex;
@@ -264,4 +265,3 @@
   text-align: center;
   padding: var(--mantine-spacing-xl) * 2 0;
 }
-

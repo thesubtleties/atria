@@ -9,10 +9,10 @@
 
 /* Background Organic Shapes */
 .bgShape1 {
-  position: absolute;
+  position: fixed;
   width: 300px;
   height: 250px;
-  background: linear-gradient(45deg, #F59E0B, #EAB308);
+  background: linear-gradient(45deg, #f59e0b, #eab308);
   border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
   top: 100px;
   right: -100px;
@@ -23,10 +23,10 @@
 }
 
 .bgShape2 {
-  position: absolute;
+  position: fixed;
   width: 400px;
   height: 300px;
-  background: linear-gradient(135deg, #EC4899, #F472B6);
+  background: linear-gradient(135deg, #ec4899, #f472b6);
   border-radius: 74% 26% 47% 53% / 68% 46% 54% 32%;
   bottom: 200px;
   left: -150px;
@@ -37,14 +37,15 @@
 }
 
 @keyframes float {
-  0%, 100% { 
-    transform: translateY(0px) rotate(0deg) scale(1); 
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
   }
-  33% { 
-    transform: translateY(-20px) rotate(2deg) scale(1.02); 
+  33% {
+    transform: translateY(-20px) rotate(2deg) scale(1.02);
   }
-  66% { 
-    transform: translateY(15px) rotate(-1deg) scale(0.98); 
+  66% {
+    transform: translateY(15px) rotate(-1deg) scale(0.98);
   }
 }
 
@@ -81,7 +82,7 @@
 .sectionTitle {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #1E293B;
+  color: #1e293b;
   margin: 0;
 }
 
@@ -109,15 +110,15 @@
   .dashboard {
     padding: 1rem;
   }
-  
+
   .dashboardSection {
     padding: 1.5rem;
   }
-  
+
   .sectionTitle {
     font-size: 1.25rem;
   }
-  
+
   .bgShape1,
   .bgShape2 {
     display: none;

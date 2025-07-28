@@ -8,10 +8,10 @@
 
 /* Background Organic Shapes */
 .bgShape1 {
-  position: absolute;
+  position: fixed;
   width: 350px;
   height: 350px;
-  background: linear-gradient(135deg, #8B5CF6, #A855F7);
+  background: linear-gradient(135deg, #8b5cf6, #a855f7);
   border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
   top: 120px;
   right: -175px;
@@ -22,10 +22,10 @@
 }
 
 .bgShape2 {
-  position: absolute;
+  position: fixed;
   width: 320px;
   height: 340px;
-  background: linear-gradient(45deg, #06B6D4, #67E8F9);
+  background: linear-gradient(45deg, #06b6d4, #67e8f9);
   border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
   bottom: 150px;
   left: -160px;
@@ -36,14 +36,15 @@
 }
 
 @keyframes float {
-  0%, 100% { 
-    transform: translateY(0px) rotate(0deg) scale(1); 
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
   }
-  33% { 
-    transform: translateY(-20px) rotate(2deg) scale(1.02); 
+  33% {
+    transform: translateY(-20px) rotate(2deg) scale(1.02);
   }
-  66% { 
-    transform: translateY(15px) rotate(-1deg) scale(0.98); 
+  66% {
+    transform: translateY(15px) rotate(-1deg) scale(0.98);
   }
 }
 
@@ -72,7 +73,7 @@
 .pageTitle {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #1E293B;
+  color: #1e293b;
   margin: 0;
 }
 
@@ -121,12 +122,12 @@
   .bgShape2 {
     display: none;
   }
-  
+
   .buttonGroup {
     flex-direction: column;
     width: 100%;
   }
-  
+
   .buttonGroup > * {
     width: 100%;
   }

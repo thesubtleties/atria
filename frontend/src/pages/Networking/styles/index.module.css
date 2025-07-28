@@ -10,10 +10,10 @@
 
 /* Background Organic Shapes */
 .bgShape1 {
-  position: absolute;
+  position: fixed;
   width: 400px;
   height: 400px;
-  background: linear-gradient(135deg, #8B5CF6, #A855F7);
+  background: linear-gradient(135deg, #8b5cf6, #a855f7);
   border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
   top: 200px;
   right: -200px;
@@ -24,10 +24,10 @@
 }
 
 .bgShape2 {
-  position: absolute;
+  position: fixed;
   width: 350px;
   height: 370px;
-  background: linear-gradient(45deg, #06B6D4, #0891B2);
+  background: linear-gradient(45deg, #06b6d4, #0891b2);
   border-radius: 42% 58% 70% 30% / 45% 30% 70% 55%;
   bottom: 100px;
   left: -175px;
@@ -38,14 +38,15 @@
 }
 
 @keyframes float {
-  0%, 100% { 
-    transform: translateY(0px) rotate(0deg) scale(1); 
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
   }
-  33% { 
-    transform: translateY(-20px) rotate(2deg) scale(1.02); 
+  33% {
+    transform: translateY(-20px) rotate(2deg) scale(1.02);
   }
-  66% { 
-    transform: translateY(15px) rotate(-1deg) scale(0.98); 
+  66% {
+    transform: translateY(15px) rotate(-1deg) scale(0.98);
   }
 }
 
@@ -75,14 +76,14 @@
 .pageTitle {
   font-size: 2.5rem;
   font-weight: 300;
-  color: #8B5CF6;
+  color: #8b5cf6;
   letter-spacing: -0.02em;
   margin: 0 0 0.5rem 0;
 }
 
 .pageSubtitle {
   font-size: 1.1rem;
-  color: #64748B;
+  color: #64748b;
   font-weight: 400;
   margin: 0;
 }
@@ -128,7 +129,7 @@
   flex: 1;
   padding: 1rem 1.5rem;
   transition: all 0.2s ease;
-  color: #64748B;
+  color: #64748b;
   font-weight: 500;
   border: none;
   border-bottom: 2px solid transparent;
@@ -144,13 +145,13 @@
 }
 
 .customTab:hover {
-  color: #8B5CF6;
+  color: #8b5cf6;
   background: rgba(139, 92, 246, 0.02);
 }
 
 .customTabActive {
-  color: #8B5CF6;
-  border-bottom-color: #8B5CF6;
+  color: #8b5cf6;
+  border-bottom-color: #8b5cf6;
   background: rgba(255, 255, 255, 0.5);
 }
 
@@ -198,7 +199,7 @@
   flex: 1;
   padding: 1rem 1.5rem;
   transition: all 0.2s ease;
-  color: #64748B;
+  color: #64748b;
   font-weight: 500;
   border: none;
   border-bottom: 2px solid transparent;
@@ -208,13 +209,13 @@
 }
 
 .tab:hover {
-  color: #8B5CF6;
+  color: #8b5cf6;
   background: rgba(139, 92, 246, 0.02);
 }
 
 .tab[data-active] {
-  color: #8B5CF6;
-  border-bottom-color: #8B5CF6;
+  color: #8b5cf6;
+  border-bottom-color: #8b5cf6;
   background: rgba(255, 255, 255, 0.5);
 }
 
@@ -236,7 +237,7 @@
   font-size: 11px;
   font-weight: 500;
   background: rgba(139, 92, 246, 0.1);
-  color: #8B5CF6;
+  color: #8b5cf6;
   border: 1px solid rgba(139, 92, 246, 0.15);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
@@ -255,7 +256,7 @@
   .pageTitle {
     font-size: 2rem;
   }
-  
+
   .pageSubtitle {
     font-size: 1rem;
   }
@@ -301,5 +302,5 @@
   align-items: center;
   justify-content: center;
   padding: 3rem;
-  color: #64748B;
+  color: #64748b;
 }

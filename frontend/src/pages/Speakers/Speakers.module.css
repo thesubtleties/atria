@@ -21,24 +21,24 @@
 .pageTitle {
   font-size: 2.5rem;
   font-weight: 300;
-  color: #8B5CF6;
+  color: #8b5cf6;
   letter-spacing: -0.02em;
   margin: 0 0 0.5rem 0;
 }
 
 .pageSubtitle {
   font-size: 1.1rem;
-  color: #64748B;
+  color: #64748b;
   font-weight: 400;
   margin: 0;
 }
 
 /* Background shapes */
 .bgShape1 {
-  position: absolute;
+  position: fixed;
   width: 450px;
   height: 450px;
-  background: linear-gradient(135deg, #8B5CF6, #A855F7);
+  background: linear-gradient(135deg, #8b5cf6, #a855f7);
   border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
   top: -150px;
   left: -200px;
@@ -48,10 +48,10 @@
 }
 
 .bgShape2 {
-  position: absolute;
+  position: fixed;
   width: 400px;
   height: 400px;
-  background: linear-gradient(225deg, #EC4899, #F472B6);
+  background: linear-gradient(225deg, #ec4899, #f472b6);
   border-radius: 41% 59% 41% 59% / 41% 51% 49% 59%;
   bottom: -180px;
   right: -150px;
@@ -61,10 +61,10 @@
 }
 
 .bgShape3 {
-  position: absolute;
+  position: fixed;
   width: 350px;
   height: 350px;
-  background: linear-gradient(45deg, #06B6D4, #0EA5E9);
+  background: linear-gradient(45deg, #06b6d4, #0ea5e9);
   border-radius: 51% 49% 52% 48% / 42% 58% 42% 58%;
   top: 40%;
   right: 10%;
@@ -74,7 +74,8 @@
 }
 
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0px) rotate(0deg) scale(1);
   }
   33% {
@@ -96,7 +97,7 @@
 
 .loadingText {
   font-size: 1.1rem;
-  color: #8B5CF6;
+  color: #8b5cf6;
   font-weight: 500;
 }
 
@@ -119,11 +120,11 @@
   .pageTitle {
     font-size: 2rem;
   }
-  
+
   .pageSubtitle {
     font-size: 1rem;
   }
-  
+
   .bgShape1,
   .bgShape2,
   .bgShape3 {
