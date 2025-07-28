@@ -10,11 +10,11 @@
 
 /* Background Organic Shapes */
 .bgShape1 {
-  position: absolute;
+  position: fixed;
   width: 280px;
   height: 320px;
-  background: linear-gradient(135deg, #EC4899, #F472B6);
-  border-radius: 42% 58% 70% 30% / 45% 30% 70% 55%;
+  background: linear-gradient(135deg, #ec4899, #f472b6);
+  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
   top: 200px;
   right: -120px;
   opacity: 0.05;
@@ -24,11 +24,11 @@
 }
 
 .bgShape2 {
-  position: absolute;
+  position: fixed;
   width: 300px;
   height: 250px;
-  background: linear-gradient(45deg, #06B6D4, #0891B2);
-  border-radius: 30% 70% 53% 47% / 26% 46% 54% 74%;
+  background: linear-gradient(45deg, #06b6d4, #0891b2);
+  border-radius: 70% 30% 70% 30% / 60% 40% 60% 40%;
   bottom: 150px;
   left: -130px;
   opacity: 0.04;
@@ -38,14 +38,15 @@
 }
 
 @keyframes float {
-  0%, 100% { 
-    transform: translateY(0px) rotate(0deg) scale(1); 
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
   }
-  33% { 
-    transform: translateY(-20px) rotate(2deg) scale(1.02); 
+  33% {
+    transform: translateY(-20px) rotate(2deg) scale(1.02);
   }
-  66% { 
-    transform: translateY(15px) rotate(-1deg) scale(0.98); 
+  66% {
+    transform: translateY(15px) rotate(-1deg) scale(0.98);
   }
 }
 
@@ -59,14 +60,14 @@
 .pageTitle {
   font-size: 2.5rem;
   font-weight: 300;
-  color: #8B5CF6;
+  color: #8b5cf6;
   letter-spacing: -0.02em;
   margin: 0 0 0.5rem 0;
 }
 
 .pageSubtitle {
   font-size: 1rem;
-  color: #64748B;
+  color: #64748b;
   margin: 0;
 }
 
@@ -94,13 +95,13 @@
 .sectionTitle {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #1E293B;
+  color: #1e293b;
   margin: 0;
 }
 
 .connectionCount {
   background: rgba(139, 92, 246, 0.08);
-  color: #8B5CF6;
+  color: #8b5cf6;
   padding: 0.5rem 1rem;
   border-radius: 6px;
   font-size: 0.9rem;
@@ -139,25 +140,25 @@
   .pageContainer {
     padding: 1rem;
   }
-  
+
   .contentSection {
     padding: 1.5rem;
   }
-  
+
   .pageTitle {
     font-size: 2rem;
   }
-  
+
   .sectionTitle {
     font-size: 1.25rem;
   }
-  
+
   .sectionHeader {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
   }
-  
+
   .bgShape1,
   .bgShape2 {
     display: none;

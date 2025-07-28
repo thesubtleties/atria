@@ -9,10 +9,10 @@
 
 /* Background Organic Shapes */
 .bgShape1 {
-  position: absolute;
+  position: fixed;
   width: 350px;
   height: 350px;
-  background: linear-gradient(45deg, #8B5CF6, #A855F7);
+  background: linear-gradient(45deg, #8b5cf6, #a855f7);
   border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
   top: 150px;
   right: -150px;
@@ -22,10 +22,10 @@
 }
 
 .bgShape2 {
-  position: absolute;
+  position: fixed;
   width: 300px;
   height: 300px;
-  background: linear-gradient(135deg, #F59E0B, #EAB308);
+  background: linear-gradient(135deg, #f59e0b, #eab308);
   border-radius: 74% 26% 47% 53% / 68% 46% 54% 32%;
   bottom: 100px;
   left: -100px;
@@ -35,7 +35,8 @@
 }
 
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0px) rotate(0deg) scale(1);
   }
   33% {
@@ -74,7 +75,7 @@
 .sectionTitle {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #1E293B;
+  color: #1e293b;
   margin-bottom: 1.5rem;
 }
 
@@ -111,14 +112,14 @@
 
 /* Button Styles */
 .btnPrimary {
-  background: #8B5CF6;
+  background: #8b5cf6;
   color: white;
   border: none;
   transition: all 0.2s ease;
 }
 
 .btnPrimary:hover {
-  background: #7C3AED;
+  background: #7c3aed;
   transform: translateY(-1px);
 }
 
@@ -133,11 +134,11 @@
   .profileContainer {
     padding: 1rem;
   }
-  
+
   .profileSection {
     padding: 1.5rem;
   }
-  
+
   .bgShape1,
   .bgShape2 {
     display: none;

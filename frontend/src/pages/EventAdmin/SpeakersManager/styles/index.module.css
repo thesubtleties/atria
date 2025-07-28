@@ -8,10 +8,10 @@
 
 /* Background Organic Shapes */
 .bgShape1 {
-  position: absolute;
+  position: fixed;
   width: 350px;
   height: 350px;
-  background: linear-gradient(135deg, #16A34A, #10B981);
+  background: linear-gradient(135deg, #16a34a, #10b981);
   border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
   top: 120px;
   right: -175px;
@@ -22,10 +22,10 @@
 }
 
 .bgShape2 {
-  position: absolute;
+  position: fixed;
   width: 300px;
   height: 320px;
-  background: linear-gradient(45deg, #8B5CF6, #A855F7);
+  background: linear-gradient(45deg, #8b5cf6, #a855f7);
   border-radius: 30% 70% 53% 47% / 26% 46% 54% 74%;
   bottom: 150px;
   left: -150px;
@@ -36,14 +36,15 @@
 }
 
 @keyframes float {
-  0%, 100% { 
-    transform: translateY(0px) rotate(0deg) scale(1); 
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
   }
-  33% { 
-    transform: translateY(-20px) rotate(2deg) scale(1.02); 
+  33% {
+    transform: translateY(-20px) rotate(2deg) scale(1.02);
   }
-  66% { 
-    transform: translateY(15px) rotate(-1deg) scale(0.98); 
+  66% {
+    transform: translateY(15px) rotate(-1deg) scale(0.98);
   }
 }
 
@@ -72,7 +73,7 @@
 .pageTitle {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #1E293B;
+  color: #1e293b;
   margin: 0 0 0.75rem 0;
 }
 
@@ -86,7 +87,7 @@
 /* Updated Badge Styles */
 .statsBadge {
   background: rgba(139, 92, 246, 0.08);
-  color: #8B5CF6;
+  color: #8b5cf6;
   padding: 0.5rem 1rem;
   border-radius: 6px;
   font-size: 0.9rem;
@@ -150,7 +151,7 @@
 
 .menuItem:hover {
   background: rgba(139, 92, 246, 0.04);
-  color: #8B5CF6;
+  color: #8b5cf6;
 }
 
 /* Table Container - Moved from SpeakersList but kept for reference */
@@ -168,7 +169,7 @@
 .emptyState {
   padding: 4rem 2rem;
   text-align: center;
-  color: #64748B;
+  color: #64748b;
 }
 
 /* Sort Header */
@@ -188,7 +189,7 @@
 }
 
 .sortHeader:hover {
-  color: #8B5CF6;
+  color: #8b5cf6;
   background: rgba(139, 92, 246, 0.04);
 }
 
