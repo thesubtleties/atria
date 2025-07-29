@@ -58,8 +58,8 @@
 
 /* Section Styles (shared by edit mode) */
 .profileSection {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
   border-radius: 8px;
   padding: 2rem;
   border: 1px solid rgba(255, 255, 255, 0.8);
@@ -83,8 +83,8 @@
 .editActions {
   position: sticky;
   bottom: 2rem;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
   border-radius: 8px;
   padding: 1rem 2rem;
   margin-top: 2rem;

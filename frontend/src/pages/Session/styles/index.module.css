@@ -106,9 +106,9 @@
 
 /* Inner video container - stronger glass effect for floating appearance */
 .videoContainer {
-  background: rgba(255, 255, 255, 0.9); /* Stronger white glass background */
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.8); /* Stronger white glass background */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border-radius: 10px;
   overflow: hidden;
   position: relative;
@@ -123,7 +123,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 1.5rem 2rem;
-  background: rgba(255, 255, 255, 0.9); /* White glass for floating effect */
+  background: rgba(255, 255, 255, 0.8); /* White glass for floating effect */
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(139, 92, 246, 0.08);
@@ -133,7 +133,7 @@
 .videoWrapper {
   width: 100%;
   position: relative;
-  background: rgba(255, 255, 255, 0.9); /* Changed from black to match white glass */
+  background: rgba(255, 255, 255, 0.8); /* Changed from black to match white glass */
   /* Remove any padding to make video fill the space */
   padding: 0;
   margin: 0;
@@ -142,7 +142,7 @@
 /* Video footer for session details */
 .videoFooter {
   padding: 0.75rem 2rem; /* Reduced from 1.5rem to tighten vertical space */
-  background: rgba(255, 255, 255, 0.9); /* White glass for floating effect */
+  background: rgba(255, 255, 255, 0.8); /* White glass for floating effect */
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-top: 1px solid rgba(139, 92, 246, 0.08);
@@ -243,8 +243,8 @@
 /* Section 2 - About Section (separate glass container) */
 .aboutSection {
   background: rgba(255, 255, 255, 0.8); /* Opaque white glass matching video section */
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   padding: 2rem;
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.8);

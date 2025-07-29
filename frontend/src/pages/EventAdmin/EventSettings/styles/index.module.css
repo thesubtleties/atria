@@ -59,9 +59,9 @@
 
 /* Glass Section for Header */
 .headerSection {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border-radius: 8px;
   padding: 2rem;
   border: 1px solid rgba(255, 255, 255, 0.8);
@@ -85,9 +85,9 @@
 
 /* Main Content Glass Section */
 .mainContent {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border-radius: 8px;
   padding: 0;
   border: 1px solid rgba(255, 255, 255, 0.8);
@@ -132,7 +132,7 @@
 .tab[data-active] {
   color: #8b5cf6;
   border-bottom-color: #8b5cf6;
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.8);
 }
 
 /* Tab Panel */
@@ -172,7 +172,7 @@
 .section input,
 .section textarea,
 .section select {
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.8);
   border: 1px solid rgba(139, 92, 246, 0.1);
   transition: all 0.2s ease;
 }

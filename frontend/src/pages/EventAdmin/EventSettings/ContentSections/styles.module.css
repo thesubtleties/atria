@@ -24,7 +24,7 @@
 .formInput,
 .formTextarea,
 .formSelect {
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 1);
   border: 1px solid rgba(139, 92, 246, 0.1);
   transition: all 0.2s ease;
 }
@@ -33,7 +33,7 @@
 .formTextarea:focus,
 .formSelect:focus {
   border-color: rgba(139, 92, 246, 0.3);
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 1);
 }
 
 /* Divider */
@@ -70,7 +70,7 @@
 
 /* Draggable cards */
 .draggableCard {
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 1);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.9);
@@ -121,9 +121,9 @@
 
 /* Modal styles */
 .modalContent {
-  background: rgba(255, 255, 255, 0.95) !important;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 1) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.8);
   box-shadow: 0 8px 32px rgba(139, 92, 246, 0.08);
 }
@@ -151,9 +151,9 @@
 
 /* Global overrides for Mantine Modal */
 :global(.mantine-Modal-content) {
-  background: rgba(255, 255, 255, 0.95) !important;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 1) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.8);
   box-shadow: 0 8px 32px rgba(139, 92, 246, 0.08);
 }

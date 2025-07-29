@@ -1,6 +1,6 @@
 .profileSection {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
   border-radius: 8px;
   padding: 2rem;
   border: 1px solid rgba(255, 255, 255, 0.8);
@@ -33,7 +33,7 @@
 }
 
 .activityCard:hover {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.8);
   box-shadow: 0 4px 12px rgba(139, 92, 246, 0.06);
 }
 
