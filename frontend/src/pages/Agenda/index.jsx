@@ -1,17 +1,21 @@
 // pages/Agenda/index.jsx
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams, useLocation, useSearchParams } from 'react-router-dom';
 import { useGetEventQuery } from '../../app/features/events/api';
 import { useGetSessionsQuery } from '../../app/features/sessions/api';
 import { DateNavigation } from './DateNavigation';
 import { AgendaView } from './AgendaView';
-import { useState } from 'react';
+import { useEffect } from 'react';
 import styles from './styles/index.module.css';
 
 export const AgendaPage = () => {
   const { eventId, orgId } = useParams();
   const location = useLocation();
   const isOrgView = location.pathname.includes('/organizations/');
-  const [currentDay, setCurrentDay] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
+  
+  // Get current day from URL params, default to 1
+  const dayParam = parseInt(searchParams.get('day') || '1');
+  const currentDay = isNaN(dayParam) || dayParam < 1 ? 1 : dayParam;
 
   const { data: event, isLoading: eventLoading } = useGetEventQuery(
     parseInt(eventId),
@@ -29,6 +33,13 @@ export const AgendaPage = () => {
         skip: !eventId,
       }
     );
+
+  // Validate and correct day parameter if it exceeds event's day count
+  useEffect(() => {
+    if (event?.day_count && currentDay > event.day_count) {
+      setSearchParams({ day: '1' });
+    }
+  }, [event?.day_count, currentDay, setSearchParams]);
 
   if (eventLoading || sessionsLoading) {
     return <div>Loading...</div>;
@@ -50,7 +61,7 @@ export const AgendaPage = () => {
           startDate={event.start_date}
           dayCount={event.day_count}
           currentDay={currentDay}
-          onDateChange={setCurrentDay}
+          onDateChange={(day) => setSearchParams({ day: day.toString() })}
         />
         <AgendaView
           sessions={sessionsData?.sessions || []}
