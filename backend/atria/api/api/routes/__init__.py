@@ -6,6 +6,7 @@ from .event_users import blp as event_users_blp
 from .event_invitations import blp as event_invitations_blp
 from .organizations import blp as organizations_blp
 from .organization_users import blp as organization_users_blp
+from .organization_invitations import blp as organization_invitations_blp
 from .sessions import blp as sessions_blp
 from .session_speakers import blp as session_speakers_blp
 from .auth import blp as auth_blp
@@ -25,6 +26,7 @@ __all__ = [
     # Organization blueprints
     "organizations_blp",
     "organization_users_blp",
+    "organization_invitations_blp",
     # Session blueprints
     "sessions_blp",
     "session_speakers_blp",
@@ -53,6 +55,7 @@ def register_blueprints(api):
     # Organizations
     api.register_blueprint(organizations_blp)
     api.register_blueprint(organization_users_blp)
+    api.register_blueprint(organization_invitations_blp)
 
     # Events
     api.register_blueprint(events_blp)

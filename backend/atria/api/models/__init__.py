@@ -23,6 +23,7 @@ from api.models.user_encryption_key import UserEncryptionKey
 from api.models.user_key_backup import UserKeyBackup
 from api.models.sponsor import Sponsor
 from api.models.event_invitation import EventInvitation
+from api.models.organization_invitation import OrganizationInvitation
 
 __all__ = [
     "User",
@@ -43,4 +44,5 @@ __all__ = [
     "UserKeyBackup",
     "Sponsor",
     "EventInvitation",
+    "OrganizationInvitation",
 ]

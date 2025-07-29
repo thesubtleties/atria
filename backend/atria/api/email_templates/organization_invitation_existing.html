@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}You're invited to join {{ organization_name }}{% endblock %}
+
+{% block header_subtitle %}
+<p style="margin: 10px 0 0 0; opacity: 0.9;">Organization Invitation</p>
+{% endblock %}
+
+{% block content %}
+<h2>You're invited to join {{ organization_name }}!</h2>
+
+<p>Hi there,</p>
+
+<p>{{ inviter_name }} has invited you to join <strong>{{ organization_name }}</strong> as a <strong>{{ role }}</strong>.</p>
+
+<div class="info-box">
+    <h3 style="margin-top: 0;">Organization Details</h3>
+    <ul style="margin-bottom: 0;">
+        <li><strong>Organization:</strong> {{ organization_name }}</li>
+        <li><strong>Your Role:</strong> {{ role }}</li>
+    </ul>
+</div>
+
+<p>As a member of {{ organization_name }}, you'll be able to:</p>
+<ul>
+    <li>Create and manage events</li>
+    <li>Collaborate with other organization members</li>
+    <li>Access organization-wide resources and tools</li>
+</ul>
+
+<p>Since you already have an Atria account, you can accept this invitation with just one click!</p>
+
+<div style="text-align: center;">
+    <a href="{{ invitation_url }}" class="button">Accept Invitation</a>
+</div>
+
+<p class="text-muted" style="font-size: 14px;">
+    This invitation will expire in 7 days. If you don't want to join this organization, 
+    you can safely ignore this email.
+</p>
+{% endblock %}
