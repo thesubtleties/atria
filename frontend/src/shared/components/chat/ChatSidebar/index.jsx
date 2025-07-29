@@ -104,14 +104,6 @@ function ChatSidebar() {
       {/* Expanded Content */}
       {sidebarExpanded && (
         <>
-          {/* Search */}
-          <div className={styles.search}>
-            <input
-              type="text"
-              placeholder="Search messages"
-              className={styles.searchInput}
-            />
-          </div>
 
           {/* Always show tabs, but adapt based on context */}
           <Tabs
