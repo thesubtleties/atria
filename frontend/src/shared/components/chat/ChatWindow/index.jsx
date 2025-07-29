@@ -142,6 +142,9 @@ function ChatWindow({ threadId }) {
         <Group gap="xs">
           <ActionIcon
             size="xs"
+            variant="subtle"
+            color="gray"
+            className={styles.headerAction}
             onClick={(e) => {
               e.stopPropagation();
               handleMaximize();
@@ -155,6 +158,9 @@ function ChatWindow({ threadId }) {
           </ActionIcon>
           <ActionIcon
             size="xs"
+            variant="subtle"
+            color="gray"
+            className={styles.headerAction}
             onClick={(e) => {
               e.stopPropagation();
               handleClose();
@@ -195,11 +201,12 @@ function ChatWindow({ threadId }) {
           rows={1}
         />
         <ActionIcon
-          color="blue"
-          variant="filled"
+          color="gray"
+          variant="light"
           radius="xl"
           onClick={handleSendMessage}
           disabled={!messageInput.trim()}
+          className={styles.sendButton}
         >
           <IconSend size={16} />
         </ActionIcon>

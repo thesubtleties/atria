@@ -92,7 +92,7 @@ function ChatSidebar() {
             Messaging
           </Text>
         </Group>
-        <ActionIcon size="sm" variant="subtle">
+        <ActionIcon size="sm" variant="subtle" color="gray" className={styles.headerToggle}>
           {sidebarExpanded ? (
             <IconChevronDown size={16} />
           ) : (
@@ -104,14 +104,6 @@ function ChatSidebar() {
       {/* Expanded Content */}
       {sidebarExpanded && (
         <>
-          {/* Search */}
-          <div className={styles.search}>
-            <input
-              type="text"
-              placeholder="Search messages"
-              className={styles.searchInput}
-            />
-          </div>
 
           {/* Always show tabs, but adapt based on context */}
           <Tabs
