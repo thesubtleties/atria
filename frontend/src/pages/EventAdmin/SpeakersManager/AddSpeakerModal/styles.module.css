@@ -1,8 +1,8 @@
 /* Modal Content Styling */
 .modalContent {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   padding: 0;
 }
 
@@ -30,21 +30,21 @@
 
 /* Form Elements */
 .selectInput input {
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 1);
   border: 1px solid rgba(139, 92, 246, 0.1);
   transition: all 0.2s ease;
 }
 
 .selectInput input:focus {
   border-color: rgba(139, 92, 246, 0.3);
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 1);
 }
 
 /* Dropdown Styling */
 .selectDropdown {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.8);
   box-shadow: 0 4px 20px rgba(139, 92, 246, 0.08);
   border-radius: 6px;
@@ -63,9 +63,9 @@
 
 /* Override Mantine Modal Styles */
 :global(.mantine-Modal-content) {
-  background: rgba(255, 255, 255, 0.95) !important;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 1) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.8);
   box-shadow: 0 8px 32px rgba(139, 92, 246, 0.08);
 }

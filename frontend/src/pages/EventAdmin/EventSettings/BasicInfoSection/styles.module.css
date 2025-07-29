@@ -13,7 +13,7 @@
 
 /* Form Input Styling */
 .formInput {
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.8);
   border: 1px solid rgba(139, 92, 246, 0.1);
   transition: all 0.2s ease;
   font-size: 0.95rem;

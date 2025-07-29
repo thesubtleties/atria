@@ -20,7 +20,7 @@
 
 /* Featured card special styling */
 .featured {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.8);
   box-shadow: 0 2px 8px rgba(245, 158, 11, 0.04) !important;
 }
 

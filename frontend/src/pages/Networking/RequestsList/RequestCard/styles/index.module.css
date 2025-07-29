@@ -107,13 +107,13 @@
 }
 
 .declineButton {
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.8);
   color: #64748B;
   border: 1px solid rgba(100, 116, 139, 0.1);
 }
 
 .declineButton:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.8);
   border-color: rgba(100, 116, 139, 0.15);
   transform: translateY(-1px);
   box-shadow: 0 2px 8px rgba(100, 116, 139, 0.05);

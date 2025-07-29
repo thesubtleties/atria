@@ -1,6 +1,6 @@
 /* Sponsor Card */
 .sponsorCard {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(139, 92, 246, 0.08);
@@ -12,7 +12,7 @@
 }
 
 .sponsorCard:hover {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.8);
   box-shadow: 0 4px 12px rgba(139, 92, 246, 0.06);
   border-color: rgba(139, 92, 246, 0.12);
 }
@@ -129,9 +129,9 @@
 
 /* Menu Dropdown */
 .menuDropdown {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.8);
   box-shadow: 0 4px 20px rgba(139, 92, 246, 0.08);
   border-radius: 6px;

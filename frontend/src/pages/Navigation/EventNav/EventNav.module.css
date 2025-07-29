@@ -1,8 +1,8 @@
 .container {
   padding: 1.5rem;
-  background: rgba(251, 250, 255, 0.9);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(251, 250, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   box-shadow: 2px 0 8px rgba(139, 92, 246, 0.05);
   height: 100%;
   width: 100%;
@@ -24,7 +24,7 @@
 }
 
 .header :global(.mantine-Text-root) {
-  color: #8B5CF6;
+  color: #8b5cf6;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   font-size: 0.875rem;

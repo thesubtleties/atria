@@ -9,9 +9,9 @@
 /* Optional: Group speakers by role/type */
 .speakerSection {
   margin-bottom: 3rem;
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border-radius: 12px;
   padding: 2rem;
   border: 1px solid rgba(255, 255, 255, 0.8);
@@ -38,9 +38,9 @@
 .noSpeakers {
   padding: 4rem 2rem;
   text-align: center;
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border-radius: 12px;
   border: 1px solid rgba(139, 92, 246, 0.08);
   box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
