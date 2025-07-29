@@ -92,7 +92,7 @@ function ChatSidebar() {
             Messaging
           </Text>
         </Group>
-        <ActionIcon size="sm" variant="subtle">
+        <ActionIcon size="sm" variant="subtle" color="gray" className={styles.headerToggle}>
           {sidebarExpanded ? (
             <IconChevronDown size={16} />
           ) : (

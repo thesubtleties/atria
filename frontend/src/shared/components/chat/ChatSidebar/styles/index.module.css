@@ -8,7 +8,10 @@
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: -2px 0 20px rgba(139, 92, 246, 0.04);
+  box-shadow: 
+    -2px 0 20px rgba(139, 92, 246, 0.04),
+    -4px 0 24px rgba(0, 0, 0, 0.06),
+    0 2px 8px rgba(0, 0, 0, 0.04);
   z-index: 1000;
   display: flex;
   flex-direction: column;
@@ -36,6 +39,16 @@
 
 .header:hover {
   background: rgba(255, 255, 255, 0.7);
+}
+
+/* Header toggle button styling */
+.headerToggle {
+  transition: all 0.2s ease;
+}
+
+.headerToggle:hover {
+  background: rgba(139, 92, 246, 0.08) !important;
+  color: #8b5cf6 !important;
 }
 
 
