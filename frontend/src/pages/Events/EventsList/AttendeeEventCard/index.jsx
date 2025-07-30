@@ -26,9 +26,9 @@ export const AttendeeEventCard = ({ event, status }) => {
   const getStatusColor = () => {
     switch (status) {
       case 'live':
-        return 'green';
+        return 'red';
       case 'upcoming':
-        return 'blue';
+        return 'green';
       case 'past':
         return 'gray';
       default:
@@ -49,6 +49,7 @@ export const AttendeeEventCard = ({ event, status }) => {
           variant="light"
           color={getStatusColor()}
           className={styles.statusBadge}
+          data-status={status}
           leftSection={status === 'live' ? <IconClock size={14} /> : null}
         >
           {getStatusBadgeLabel()}
@@ -56,6 +57,7 @@ export const AttendeeEventCard = ({ event, status }) => {
         <Badge
           variant="subtle"
           className={styles.typeBadge}
+          data-type={event.event_type?.toLowerCase()}
         >
           {event.event_type === 'CONFERENCE' ? 'Conference' : 'Single Session'}
         </Badge>

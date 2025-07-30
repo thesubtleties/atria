@@ -45,18 +45,63 @@
   gap: 0.75rem;
 }
 
+/* Status Badge - Consistent squared corners */
 .statusBadge {
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  text-transform: uppercase !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.05em !important;
+  font-size: 0.7rem !important;
+  padding: 0.25rem 0.625rem !important;
+  border-radius: 4px !important;
+  border: 1px solid transparent !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.25rem !important;
 }
 
+/* Status Badge Variants */
+.statusBadge[data-status="live"] {
+  background: rgba(239, 68, 68, 0.08) !important;
+  color: #ef4444 !important;
+  border-color: rgba(239, 68, 68, 0.12) !important;
+}
+
+.statusBadge[data-status="upcoming"] {
+  background: rgba(34, 197, 94, 0.08) !important;
+  color: #22c55e !important;
+  border-color: rgba(34, 197, 94, 0.12) !important;
+}
+
+.statusBadge[data-status="past"] {
+  background: rgba(107, 114, 128, 0.08) !important;
+  color: #6b7280 !important;
+  border-color: rgba(107, 114, 128, 0.12) !important;
+}
+
+/* Type Badge - Consistent squared corners */
 .typeBadge {
-  font-size: 0.75rem;
-  color: #64748b;
-  background: rgba(139, 92, 246, 0.06);
-  border: 1px solid rgba(139, 92, 246, 0.1);
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  padding: 0.25rem 0.625rem !important;
+  border-radius: 4px !important;
+  background: rgba(139, 92, 246, 0.04) !important;
+  color: #8b5cf6 !important;
+  border: 1px solid rgba(139, 92, 246, 0.08) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+/* Type Badge Variants */
+.typeBadge[data-type="conference"] {
+  background: rgba(139, 92, 246, 0.06) !important;
+  color: #8b5cf6 !important;
+  border-color: rgba(139, 92, 246, 0.1) !important;
+}
+
+.typeBadge[data-type="single_session"] {
+  background: rgba(20, 184, 166, 0.06) !important;
+  color: #14b8a6 !important;
+  border-color: rgba(20, 184, 166, 0.1) !important;
 }
 
 /* Card Content */
