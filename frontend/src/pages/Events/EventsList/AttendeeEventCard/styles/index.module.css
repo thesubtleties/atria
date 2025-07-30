@@ -99,9 +99,9 @@
 }
 
 .typeBadge[data-type="single_session"] {
-  background: rgba(20, 184, 166, 0.06) !important;
-  color: #14b8a6 !important;
-  border-color: rgba(20, 184, 166, 0.1) !important;
+  background: rgba(8, 145, 178, 0.1) !important;
+  color: #0891B2 !important;
+  border-color: rgba(8, 145, 178, 0.2) !important;
 }
 
 /* Card Content */
