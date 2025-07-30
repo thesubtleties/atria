@@ -1,0 +1,1 @@
+export { AttendeeEventCard } from './index.jsx';
