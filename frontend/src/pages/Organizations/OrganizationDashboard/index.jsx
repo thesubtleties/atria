@@ -22,7 +22,7 @@ const OrganizationDashboard = () => {
         message: 'Failed to load organization details',
         color: 'red',
       });
-      navigate('/app/organizations');
+      navigate('/app/dashboard');
     }
   }, [error, navigate]);
 
@@ -61,6 +61,7 @@ const OrganizationDashboard = () => {
         {/* Events Section */}
         <EventsSection
           orgId={orgId}
+          currentUserRole={organization.current_user_role}
         />
       </div>
     </div>

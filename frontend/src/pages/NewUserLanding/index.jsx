@@ -22,12 +22,8 @@ export const NewUserCheck = () => {
     return null;
   }
 
-  if (organizations.length > 0) {
-    return <Navigate to="/app/organizations" replace />;
-  }
-
-  if (events.length > 0 && !organizations.length) {
-    return <Navigate to="/app/events" replace />;
+  if (organizations.length > 0 || events.length > 0) {
+    return <Navigate to="/app/dashboard" replace />;
   }
 
   return <NewUserLanding />;

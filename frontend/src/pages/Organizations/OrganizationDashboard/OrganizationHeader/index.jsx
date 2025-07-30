@@ -4,7 +4,6 @@ import { IconEdit, IconCheck, IconX, IconSettings, IconBuilding, IconUsers } fro
 import { useUpdateOrganizationMutation } from '../../../../app/features/organizations/api';
 import { notifications } from '@mantine/notifications';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '../../../../shared/components/buttons';
 import styles from './styles/index.module.css';
 
 const OrganizationHeader = ({ organization, currentUserRole }) => {
@@ -131,26 +130,21 @@ const OrganizationHeader = ({ organization, currentUserRole }) => {
 
         <div className={styles.headerActions}>
           {canViewSettings && (
-            <Button
+            <ActionIcon
+              size="lg"
               variant="subtle"
-              leftIcon={<IconSettings size={18} />}
               onClick={() => navigate(`/app/organizations/${organization.id}/settings`)}
+              className={styles.settingsButton}
+              title="Organization Settings"
             >
-              Settings
-            </Button>
+              <IconSettings size={22} />
+            </ActionIcon>
           )}
-          
-          <Button
-            variant="primary"
-            onClick={() => navigate(`/app/organizations/${organization.id}/events`)}
-          >
-            View Events
-          </Button>
         </div>
       </div>
 
       {organization.description && (
-        <Text className={styles.description} size="sm" color="dimmed">
+        <Text className={styles.description} size="sm" c="dimmed">
           {organization.description}
         </Text>
       )}

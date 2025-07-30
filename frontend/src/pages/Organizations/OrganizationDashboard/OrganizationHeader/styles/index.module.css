@@ -137,6 +137,17 @@
   align-items: center;
 }
 
+/* Settings Button */
+.settingsButton {
+  color: #94a3b8 !important;
+  transition: all 0.2s ease;
+}
+
+.settingsButton:hover {
+  color: #8b5cf6 !important;
+  background: rgba(139, 92, 246, 0.08) !important;
+}
+
 /* Description */
 .description {
   margin-top: 1rem;

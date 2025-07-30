@@ -1,14 +1,19 @@
 import { useState, useMemo } from 'react';
 import { Tabs, Badge, Center, Text, LoadingOverlay } from '@mantine/core';
-import { IconFileText, IconGlobe, IconArchive, IconCalendar } from '@tabler/icons-react';
+import { IconFileText, IconGlobe, IconArchive, IconCalendar, IconPlus } from '@tabler/icons-react';
 import { useGetEventsQuery } from '../../../../app/features/events/api';
+import { Button } from '../../../../shared/components/buttons';
+import { EventModal } from '../../../../shared/components/modals/event/EventModal';
 import EventCard from './EventCard';
 import styles from './styles/index.module.css';
 
-const EventsSection = ({ orgId }) => {
+const EventsSection = ({ orgId, currentUserRole }) => {
   const [activeTab, setActiveTab] = useState('published');
   const [page, setPage] = useState(1);
+  const [eventModalOpened, setEventModalOpened] = useState(false);
   const perPage = 12;
+  
+  const canCreateEvent = currentUserRole === 'OWNER' || currentUserRole === 'ADMIN';
 
   const { data, isLoading, error } = useGetEventsQuery({
     orgId,
@@ -84,6 +89,15 @@ const EventsSection = ({ orgId }) => {
     <section className={styles.eventsSection}>
       <div className={styles.sectionHeader}>
         <h2 className={styles.sectionTitle}>Organization Events</h2>
+        {canCreateEvent && (
+          <Button
+            variant="primary"
+            leftIcon={<IconPlus size={18} />}
+            onClick={() => setEventModalOpened(true)}
+          >
+            Add Event
+          </Button>
+        )}
       </div>
 
       <Tabs 
@@ -143,6 +157,13 @@ const EventsSection = ({ orgId }) => {
           )}
         </Tabs.Panel>
       </Tabs>
+      
+      <EventModal
+        orgId={orgId}
+        opened={eventModalOpened}
+        onClose={() => setEventModalOpened(false)}
+        allowConferences={true}
+      />
     </section>
   );
 };

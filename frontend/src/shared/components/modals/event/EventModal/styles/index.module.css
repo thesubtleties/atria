@@ -1,27 +1,127 @@
-.form {
-  padding: 1rem 0;
+/* Modal Content - Glassmorphism */
+.modalContent {
+  background: rgba(255, 255, 255, 1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.08);
 }
 
-.form > div {
-  gap: 1.25rem;
+/* Modal Header */
+.modalHeader {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.04);
 }
 
-.form input:disabled {
-  opacity: 0.7;
+
+/* Form Inputs */
+.formInput input,
+.formSelect input,
+.formTextarea textarea {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
+}
+
+.formInput input:hover:not(:disabled),
+.formSelect input:hover:not(:disabled),
+.formTextarea textarea:hover:not(:disabled) {
+  border-color: rgba(139, 92, 246, 0.2);
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.formInput input:focus,
+.formSelect input:focus,
+.formTextarea textarea:focus {
+  border-color: rgba(139, 92, 246, 0.3);
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.05);
+}
+
+/* Disabled state */
+.formInput input:disabled,
+.formSelect input:disabled,
+.formTextarea textarea:disabled {
+  opacity: 0.6;
   cursor: not-allowed;
+  background: rgba(248, 250, 252, 0.5);
 }
 
-.form {
-  animation: fadeIn 0.2s ease;
+/* Textarea specific */
+.formTextarea {
+  min-height: 8em !important;
+  resize: vertical;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
+/* Select dropdown arrow */
+.formSelect [data-mantine-combobox-target] {
+  color: #8b5cf6;
+}
+
+
+/* Error Message */
+.errorMessage {
+  color: #dc2626;
+  font-size: 0.875rem;
+  text-align: center;
+  padding: 0.5rem;
+  background: rgba(220, 38, 38, 0.05);
+  border-radius: 4px;
+  margin-top: 0.5rem;
+}
+
+/* Button Group at Modal Bottom */
+.buttonGroup {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+}
+
+
+
+/* Override Mantine Modal Styles for Glassmorphism */
+:global(.mantine-Modal-overlay) {
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+:global(.mantine-Modal-content) {
+  overflow: visible;
+}
+
+:global(.mantine-Modal-close) {
+  color: #64748b;
+  transition: all 0.2s ease;
+}
+
+:global(.mantine-Modal-close:hover) {
+  color: #8b5cf6;
+  background: rgba(139, 92, 246, 0.08);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .modalContent {
+    padding: 0;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  .modalHeader {
+    padding: 1rem;
+    font-size: 1.125rem;
+  }
+
+  .buttonGroup {
+    margin-top: 1rem;
+    padding-top: 0.75rem;
   }
 }
+

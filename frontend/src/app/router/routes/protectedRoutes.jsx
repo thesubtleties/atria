@@ -4,9 +4,7 @@ import { AuthGuard } from '../guards/AuthGuard';
 import { AppLayout } from '../layouts/AppLayout';
 import { NewUserCheck } from '../../../pages/NewUserLanding';
 import { CreateOrganization } from '../../../pages/Organizations/CreateOrganization';
-import { OrganizationsList } from '../../../pages/Organizations/OrganizationsList';
 import { EventsList } from '../../../pages/Events/EventsList';
-import { OrganizationEvents } from '../../../pages/Events/OrganizationEvents';
 import { SetupSession } from '../../../pages/Session/SetupSession';
 import { SessionPage } from '../../../pages/Session';
 import { AgendaPage } from '../../../pages/Agenda';
@@ -101,10 +99,6 @@ export const protectedRoutes = [
         element: <Outlet />,
         children: [
           {
-            path: '',
-            element: <OrganizationsList />,
-          },
-          {
             path: 'new',
             element: <CreateOrganization />,
           },
@@ -115,10 +109,6 @@ export const protectedRoutes = [
               {
                 path: '',
                 element: <OrganizationDashboard />,
-              },
-              {
-                path: 'events',
-                element: <OrganizationEvents />,
               },
               {
                 path: 'events/:eventId',
