@@ -1,0 +1,183 @@
+/* Invitations List */
+.invitationsList {
+  width: 100%;
+}
+
+/* Table Container */
+.tableContainer {
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(139, 92, 246, 0.08);
+}
+
+/* Invitations Table */
+.invitationsTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.invitationsTable thead {
+  background: rgba(139, 92, 246, 0.04);
+  border-bottom: 1px solid rgba(139, 92, 246, 0.08);
+}
+
+.invitationsTable th {
+  padding: 1rem 1.5rem;
+  text-align: left;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.invitationsTable tbody tr {
+  border-bottom: 1px solid rgba(139, 92, 246, 0.04);
+  transition: background-color 0.2s ease;
+}
+
+.invitationsTable tbody tr:hover {
+  background: rgba(139, 92, 246, 0.02);
+}
+
+.invitationsTable tbody tr:last-child {
+  border-bottom: none;
+}
+
+/* Invitation Row */
+.invitationRow td {
+  padding: 1rem 1.5rem;
+  vertical-align: middle;
+}
+
+/* Center Column & Cell */
+.centerColumn {
+  text-align: center !important;
+}
+
+.centerCell {
+  text-align: center !important;
+}
+
+/* Role Badge */
+.roleBadge {
+  text-transform: uppercase !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.05em !important;
+  font-size: 0.75rem !important;
+  padding: 0.375rem 0.75rem !important;
+  border-radius: 4px !important;
+  background: rgba(139, 92, 246, 0.08) !important;
+  color: #8b5cf6 !important;
+  border: 1px solid rgba(139, 92, 246, 0.12) !important;
+}
+
+/* Role Badge color variants */
+.roleBadge[data-role="OWNER"] {
+  background: rgba(139, 92, 246, 0.08) !important;
+  color: #8b5cf6 !important;
+  border-color: rgba(139, 92, 246, 0.12) !important;
+}
+
+.roleBadge[data-role="ADMIN"] {
+  background: rgba(236, 72, 153, 0.08) !important;
+  color: #ec4899 !important;
+  border-color: rgba(236, 72, 153, 0.12) !important;
+}
+
+.roleBadge[data-role="MEMBER"] {
+  background: rgba(59, 130, 246, 0.08) !important;
+  color: #3b82f6 !important;
+  border-color: rgba(59, 130, 246, 0.12) !important;
+}
+
+/* Status Badge */
+.statusBadge {
+  font-weight: 600 !important;
+  font-size: 0.75rem !important;
+  padding: 0.25rem 0.625rem !important;
+  border-radius: 4px !important;
+  text-transform: capitalize !important;
+  border: 1px solid transparent !important;
+}
+
+.statusBadge[data-status="active"] {
+  background: rgba(34, 197, 94, 0.08) !important;
+  color: #16a34a !important;
+  border-color: rgba(34, 197, 94, 0.12) !important;
+}
+
+.statusBadge[data-status="expired"] {
+  background: rgba(239, 68, 68, 0.08) !important;
+  color: #ef4444 !important;
+  border-color: rgba(239, 68, 68, 0.12) !important;
+}
+
+/* Action Buttons */
+.actionButton {
+  color: #94a3b8 !important;
+  transition: all 0.2s ease;
+}
+
+.actionButton:hover {
+  color: #8b5cf6 !important;
+  background: rgba(139, 92, 246, 0.08) !important;
+}
+
+.cancelActionButton {
+  color: #94a3b8 !important;
+  transition: all 0.2s ease;
+}
+
+.cancelActionButton:hover {
+  color: #ef4444 !important;
+  background: rgba(239, 68, 68, 0.08) !important;
+}
+
+/* Empty State */
+.emptyState {
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.emptyContent {
+  text-align: center;
+  padding: 2rem;
+}
+
+/* Pagination */
+.paginationWrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(139, 92, 246, 0.08);
+}
+
+.pagination {
+  --mantine-color-primary: #8b5cf6;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .tableContainer {
+    overflow-x: auto;
+  }
+
+  .invitationsTable {
+    min-width: 700px;
+  }
+
+  .invitationsTable th,
+  .invitationsTable td {
+    padding: 0.75rem 1rem;
+  }
+
+  .invitationsTable th:last-child,
+  .invitationsTable td:last-child {
+    text-align: right;
+  }
+}

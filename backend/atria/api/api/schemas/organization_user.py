@@ -23,6 +23,7 @@ class OrganizationUserSchema(ma.SQLAlchemyAutoSchema):
     sort_name = ma.String(dump_only=True)
     image_url = ma.String(dump_only=True)
     social_links = ma.Dict(dump_only=True)
+    email = ma.String(dump_only=True)
 
     # # User field
     # image_url = ma.String(attribute="user.image_url") # attribute is used to access nested fields - in case we have circular imports
@@ -72,7 +73,6 @@ class OrganizationUserNestedSchema(ma.SQLAlchemyAutoSchema):
         exclude = (
             "organization",
             "organization_id",
-            "created_at",
             "user_id",
         )  # Add user_id to exclude
 
@@ -81,6 +81,10 @@ class OrganizationUserNestedSchema(ma.SQLAlchemyAutoSchema):
     full_name = ma.String(attribute="user.full_name")
     email = ma.String(attribute="user.email")
     role = ma.Enum(OrganizationUserRole)  # Include role directly
+    
+    # Include additional fields from base schema
+    user_name = ma.String(dump_only=True)
+    user_email = ma.String(attribute="user.email", dump_only=True)
 
 
 class AddUserToOrgSchema(ma.Schema):

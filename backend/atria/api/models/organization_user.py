@@ -94,3 +94,8 @@ class OrganizationUser(db.Model):
     def social_links(self):
         """Get user's social links"""
         return self.user.social_links
+    
+    @property
+    def email(self):
+        """Get user's email"""
+        return self.user.email

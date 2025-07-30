@@ -45,6 +45,13 @@ from api.api.schemas.event_invitation import (
     BulkEventInvitationCreateSchema,
     EventInvitationAcceptSchema,
 )
+from api.api.schemas.organization_invitation import (
+    OrganizationInvitationSchema,
+    OrganizationInvitationDetailSchema,
+    OrganizationInvitationCreateSchema,
+    BulkOrganizationInvitationCreateSchema,
+    OrganizationInvitationAcceptSchema,
+)
 from api.api.schemas.organization_user import (
     OrganizationUserSchema,
     OrganizationUserDetailSchema,
@@ -141,6 +148,11 @@ __all__ = [
     "EventInvitationCreateSchema",
     "BulkEventInvitationCreateSchema",
     "EventInvitationAcceptSchema",
+    "OrganizationInvitationSchema",
+    "OrganizationInvitationDetailSchema",
+    "OrganizationInvitationCreateSchema",
+    "BulkOrganizationInvitationCreateSchema",
+    "OrganizationInvitationAcceptSchema",
     "OrganizationUserSchema",
     "OrganizationUserDetailSchema",
     "OrganizationUserCreateSchema",

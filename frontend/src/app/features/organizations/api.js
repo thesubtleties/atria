@@ -78,6 +78,54 @@ export const organizationsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['OrganizationUsers'],
     }),
+    // Organization Invitations endpoints
+    getOrganizationInvitations: builder.query({
+      query: ({ orgId, page = 1, per_page = 50 }) => ({
+        url: `/organizations/${orgId}/invitations`,
+        params: { page, per_page },
+      }),
+      providesTags: ['OrganizationInvitations'],
+    }),
+    sendOrganizationInvitation: builder.mutation({
+      query: ({ orgId, ...invitationData }) => ({
+        url: `/organizations/${orgId}/invitations`,
+        method: 'POST',
+        body: invitationData,
+      }),
+      invalidatesTags: ['OrganizationInvitations'],
+    }),
+    bulkSendOrganizationInvitations: builder.mutation({
+      query: ({ orgId, invitations }) => ({
+        url: `/organizations/${orgId}/invitations/bulk`,
+        method: 'POST',
+        body: { invitations },
+      }),
+      invalidatesTags: ['OrganizationInvitations'],
+    }),
+    getOrganizationInvitationByToken: builder.query({
+      query: (token) => `/invitations/organization/${token}`,
+    }),
+    acceptOrganizationInvitation: builder.mutation({
+      query: (token) => ({
+        url: `/invitations/organization/${token}/accept`,
+        method: 'POST',
+        body: {},
+      }),
+      invalidatesTags: ['Organizations', 'OrganizationUsers'],
+    }),
+    declineOrganizationInvitation: builder.mutation({
+      query: (token) => ({
+        url: `/invitations/organization/${token}/decline`,
+        method: 'POST',
+      }),
+    }),
+    cancelOrganizationInvitation: builder.mutation({
+      query: ({ orgId, invitationId }) => ({
+        url: `/organizations/${orgId}/invitations/${invitationId}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['OrganizationInvitations'],
+    }),
   }),
 });
 
@@ -91,4 +139,11 @@ export const {
   useAddOrganizationUserMutation,
   useUpdateOrganizationUserMutation,
   useRemoveOrganizationUserMutation,
+  useGetOrganizationInvitationsQuery,
+  useSendOrganizationInvitationMutation,
+  useBulkSendOrganizationInvitationsMutation,
+  useGetOrganizationInvitationByTokenQuery,
+  useAcceptOrganizationInvitationMutation,
+  useDeclineOrganizationInvitationMutation,
+  useCancelOrganizationInvitationMutation,
 } = organizationsApi;

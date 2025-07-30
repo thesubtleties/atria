@@ -148,6 +148,30 @@ class EmailService:
         
         self.backend.send(email, subject, template, context)
     
+    def send_organization_invitation(
+        self,
+        email: str,
+        organization: 'Organization',
+        role: str,
+        invitation_token: str,
+        inviter: 'User',
+        has_account: bool = False
+    ) -> None:
+        """Send organization invitation email"""
+        context = {
+            'organization_name': organization.name,
+            'role': role.replace('_', ' ').title(),
+            'invitation_url': f"{current_app.config.get('FRONTEND_URL', 'http://localhost:3000')}/invitations/organization/{invitation_token}",
+            'inviter_name': inviter.full_name,
+            'has_account': has_account,
+            'current_year': datetime.utcnow().year
+        }
+        
+        template = 'organization_invitation_existing.html' if has_account else 'organization_invitation_new.html'
+        subject = f"You're invited to join {organization.name}"
+        
+        self.backend.send(email, subject, template, context)
+    
     def send_connection_request(
         self,
         requester: 'User',

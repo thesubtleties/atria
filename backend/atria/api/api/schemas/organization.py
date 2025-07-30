@@ -49,6 +49,7 @@ class OrganizationDetailSchema(OrganizationSchema):
     member_count = ma.Integer(dump_only=True)
     owner_count = ma.Integer(dump_only=True)
     user_is_admin_or_owner = ma.Boolean(dump_only=True)
+    current_user_role = ma.Method("get_current_user_role", dump_only=True)
 
     users = ma.Nested(
         "api.api.schemas.organization_user.OrganizationUserNestedSchema",
@@ -62,6 +63,19 @@ class OrganizationDetailSchema(OrganizationSchema):
         many=True,
         dump_only=True,
     )
+
+    def get_current_user_role(self, obj):
+        """Get the current user's role in the organization"""
+        from flask_jwt_extended import get_jwt_identity
+        
+        try:
+            current_user_id = int(get_jwt_identity())
+            user = User.query.get(current_user_id)
+            if user and obj.has_user(user):
+                return obj.get_user_role(user).value
+        except Exception:
+            pass
+        return None
 
 
 # Creation Schema - Used for POST /organizations
