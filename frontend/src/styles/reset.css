@@ -88,6 +88,19 @@ a svg,
   max-width: none !important;
 }
 
+/* Fix Mantine Select/Menu checkmarks */
+.mantine-Select-item svg,
+.mantine-Menu-item svg,
+.mantine-MultiSelect-item svg,
+.mantine-Autocomplete-item svg,
+[data-combobox-option] svg {
+  display: inline-block !important;
+  width: 1em !important;
+  height: 1em !important;
+  max-width: none !important;
+  vertical-align: middle !important;
+}
+
 /* Inherit fonts for inputs and buttons */
 input, button,
 textarea, select {
