@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Stack, Grid, TextInput, ActionIcon, Text } from '@mantine/core';
+import { Modal, Stack, Grid, TextInput, ActionIcon, Text, ColorInput } from '@mantine/core';
 import { IconTrash, IconPlus } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { Button } from '../../../../shared/components/buttons';
@@ -22,10 +22,10 @@ const TierManagementModal = ({ opened, onClose, eventId }) => {
         sponsorTiers.length > 0
           ? sponsorTiers.map((tier) => ({ ...tier })) // Deep copy each tier object
           : [
-              { id: 'platinum', name: 'Platinum', order: 1 },
-              { id: 'gold', name: 'Gold', order: 2 },
-              { id: 'silver', name: 'Silver', order: 3 },
-              { id: 'bronze', name: 'Bronze', order: 4 },
+              { id: 'platinum', name: 'Platinum', order: 1, color: '#E5E4E2' },
+              { id: 'gold', name: 'Gold', order: 2, color: '#DEAE4A' },
+              { id: 'silver', name: 'Silver', order: 3, color: '#C7D3DB' },
+              { id: 'bronze', name: 'Bronze', order: 4, color: '#BB8F4C' },
             ]
       );
     }
@@ -113,6 +113,7 @@ const TierManagementModal = ({ opened, onClose, eventId }) => {
         id: '',
         name: '',
         order: tierFormData.length + 1,
+        color: '#6B7280', // Default gray color
       },
     ]);
   };
@@ -145,14 +146,19 @@ const TierManagementModal = ({ opened, onClose, eventId }) => {
               Order
             </Text>
           </Grid.Col>
-          <Grid.Col span={4}>
+          <Grid.Col span={3}>
             <Text size="sm" fw={500} ta="center">
               Tier ID
             </Text>
           </Grid.Col>
-          <Grid.Col span={6}>
+          <Grid.Col span={4}>
             <Text size="sm" fw={500} ta="center">
               Display Name
+            </Text>
+          </Grid.Col>
+          <Grid.Col span={3}>
+            <Text size="sm" fw={500} ta="center">
+              Color
             </Text>
           </Grid.Col>
           <Grid.Col span={1}></Grid.Col>
@@ -170,7 +176,7 @@ const TierManagementModal = ({ opened, onClose, eventId }) => {
                 {tier.order}
               </Text>
             </Grid.Col>
-            <Grid.Col span={4}>
+            <Grid.Col span={3}>
               <TextInput
                 value={tier.id}
                 onChange={(e) => updateTier(index, 'id', e.target.value)}
@@ -179,13 +185,24 @@ const TierManagementModal = ({ opened, onClose, eventId }) => {
                 classNames={{ input: styles.formInput }}
               />
             </Grid.Col>
-            <Grid.Col span={6}>
+            <Grid.Col span={4}>
               <TextInput
                 value={tier.name}
                 onChange={(e) => updateTier(index, 'name', e.target.value)}
                 placeholder="Tier Name"
                 error={errors[`${index}.name`]}
                 classNames={{ input: styles.formInput }}
+              />
+            </Grid.Col>
+            <Grid.Col span={3}>
+              <ColorInput
+                value={tier.color}
+                onChange={(value) => updateTier(index, 'color', value)}
+                placeholder="#000000"
+                error={errors[`${index}.color`]}
+                classNames={{ input: styles.formInput }}
+                format="hex"
+                swatches={['#E5E4E2', '#DEAE4A', '#C7D3DB', '#BB8F4C', '#8B5CF6', '#10B981', '#0891B2', '#6366F1']}
               />
             </Grid.Col>
             <Grid.Col span={1}>

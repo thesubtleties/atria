@@ -69,6 +69,9 @@ export const tierSchema = z.object({
     .regex(/^[a-z0-9\-]+$/, 'Tier ID must be lowercase alphanumeric with dashes'),
   name: z.string().min(1, 'Tier name is required').max(100, 'Tier name too long'),
   order: z.number().int().positive('Order must be a positive number'),
+  color: z.string()
+    .min(1, 'Color is required')
+    .regex(/^#[0-9A-Fa-f]{6}$/, 'Color must be a valid hex color (e.g., #FF0000)'),
 });
 
 export const tierArraySchema = z.array(tierSchema).min(1, 'At least one tier is required');
