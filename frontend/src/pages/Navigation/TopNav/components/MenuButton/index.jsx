@@ -2,7 +2,6 @@
 import { Menu, Button, rem, Image } from '@mantine/core';
 import {
   IconLogout,
-  IconBuilding,
   IconCalendarEvent,
   IconUser,
   IconUsers,
@@ -166,17 +165,6 @@ export const MenuButton = () => {
           onClick={() => navigate('/app/network')}
         >
           Network
-        </Menu.Item>
-
-        <Menu.Item
-          leftSection={
-            <IconBuilding
-              style={{ width: rem(14), height: rem(14), color: '#8B5CF6' }}
-            />
-          }
-          onClick={() => navigate('/app/organizations')}
-        >
-          Organizations
         </Menu.Item>
 
         <Menu.Item

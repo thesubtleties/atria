@@ -22,7 +22,7 @@ const OrganizationDashboard = () => {
         message: 'Failed to load organization details',
         color: 'red',
       });
-      navigate('/app/organizations');
+      navigate('/app/dashboard');
     }
   }, [error, navigate]);
 

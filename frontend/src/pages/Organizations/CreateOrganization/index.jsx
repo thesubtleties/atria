@@ -18,8 +18,8 @@ export const CreateOrganization = () => {
 
   const handleSubmit = async (values) => {
     try {
-      await createOrg(values).unwrap();
-      navigate('/app/organizations', { replace: true });
+      const newOrg = await createOrg(values).unwrap();
+      navigate(`/app/organizations/${newOrg.id}`, { replace: true });
     } catch (error) {
       // Handle error
       console.error('Failed to create organization:', error);
