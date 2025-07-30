@@ -1,6 +1,5 @@
 import {
   TextInput,
-  Button,
   Stack,
   Modal,
   Select,
@@ -13,6 +12,7 @@ import {
   useUpdateEventMutation,
   useGetEventQuery,
 } from '@/app/features/events/api';
+import { Button } from '@/shared/components/buttons';
 import { eventSchema, eventUpdateSchema } from './schemas/eventSchema';
 import { useEffect } from 'react';
 import styles from './styles/index.module.css';
@@ -118,15 +118,20 @@ export const EventModal = ({
       centered
       title={isEditing ? 'Edit Event' : 'Create Event'}
       size="md"
+      classNames={{
+        content: styles.modalContent,
+        header: styles.modalHeader,
+      }}
     >
-      <form onSubmit={form.onSubmit(handleSubmit)} className={styles.form}>
-        <Stack gap="md">
+      <form onSubmit={form.onSubmit(handleSubmit)}>
+        <Stack spacing="md" p="lg">
           <TextInput
             label="Event Title"
             placeholder="Enter event title"
             required
             {...form.getInputProps('title')}
             disabled={isLoading}
+            classNames={{ input: styles.formInput }}
           />
 
           <Textarea
@@ -134,6 +139,8 @@ export const EventModal = ({
             placeholder="Enter event description"
             {...form.getInputProps('description')}
             disabled={isLoading}
+            minRows={4}
+            classNames={{ input: styles.formTextarea }}
           />
 
           {allowConferences && (
@@ -148,6 +155,7 @@ export const EventModal = ({
                   ? 'Event type cannot be modified once sessions are created'
                   : undefined
               }
+              classNames={{ input: styles.formSelect }}
             />
           )}
 
@@ -162,6 +170,7 @@ export const EventModal = ({
                 ? 'Start date cannot be modified once sessions are created'
                 : undefined
             }
+            classNames={{ input: styles.formInput }}
           />
 
           <TextInput
@@ -182,6 +191,7 @@ export const EventModal = ({
                   ? 'End date cannot be modified once sessions are created'
                   : undefined
             }
+            classNames={{ input: styles.formInput }}
           />
 
           <TextInput
@@ -190,23 +200,29 @@ export const EventModal = ({
             required
             {...form.getInputProps('company_name')}
             disabled={isLoading}
+            classNames={{ input: styles.formInput }}
           />
 
-          <Button type="submit" loading={isLoading} fullWidth>
-            {isLoading
-              ? isEditing
-                ? 'Updating...'
-                : 'Creating...'
-              : isEditing
-                ? 'Update Event'
-                : 'Create Event'}
-          </Button>
-
           {form.errors._schema && (
-            <Text c="red" size="sm" align="center">
+            <Text c="red" size="sm" className={styles.errorMessage}>
               {form.errors._schema}
             </Text>
           )}
+
+          <div className={styles.buttonGroup}>
+            <Button variant="subtle" onClick={onClose} disabled={isLoading}>
+              Cancel
+            </Button>
+            <Button type="submit" variant="primary" disabled={isLoading}>
+              {isLoading
+                ? isEditing
+                  ? 'Updating...'
+                  : 'Creating...'
+                : isEditing
+                  ? 'Update Event'
+                  : 'Create Event'}
+            </Button>
+          </div>
         </Stack>
       </form>
     </Modal>

@@ -61,6 +61,7 @@ const OrganizationDashboard = () => {
         {/* Events Section */}
         <EventsSection
           orgId={orgId}
+          currentUserRole={organization.current_user_role}
         />
       </div>
     </div>
