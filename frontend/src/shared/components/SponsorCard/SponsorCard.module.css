@@ -29,31 +29,34 @@
   background: rgba(255, 255, 255, 1);
 }
 
-/* Tier indicator - subtle corner ribbon */
+/* Tier indicator - subtle corner ribbon with gradient */
 .tierIndicator {
   position: absolute;
   top: 0;
   right: 0;
-  background: rgba(139, 92, 246, 0.08);
-  padding: 0.25rem 1rem;
+  padding: 0.375rem 0.875rem;
   border-bottom-left-radius: 8px;
+  border-top-right-radius: 8px; /* Match card's border radius */
   z-index: 2;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform-origin: top right;
 }
 
-.featured .tierIndicator {
-  background: rgba(245, 158, 11, 0.08);
+/* Add hover effect to tier indicator when card is hovered */
+.card:hover .tierIndicator {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.3);
 }
 
 .tierText {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 600;
-  color: #8B5CF6;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.featured .tierText {
-  color: #F59E0B;
+  letter-spacing: 0.5px;
+  position: relative;
+  z-index: 1;
+  color: inherit;
 }
 
 /* Logo section */
