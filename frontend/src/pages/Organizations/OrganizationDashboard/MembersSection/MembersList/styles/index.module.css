@@ -1,0 +1,98 @@
+/* Members List */
+.membersList {
+  width: 100%;
+}
+
+/* Table Container */
+.tableContainer {
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(139, 92, 246, 0.08);
+}
+
+/* Members Table */
+.membersTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.membersTable thead {
+  background: rgba(139, 92, 246, 0.04);
+  border-bottom: 1px solid rgba(139, 92, 246, 0.08);
+}
+
+.membersTable th {
+  padding: 1rem 1.5rem;
+  text-align: left;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.membersTable tbody tr {
+  border-bottom: 1px solid rgba(139, 92, 246, 0.04);
+  transition: background-color 0.2s ease;
+}
+
+.membersTable tbody tr:hover {
+  background: rgba(139, 92, 246, 0.02);
+}
+
+.membersTable tbody tr:last-child {
+  border-bottom: none;
+}
+
+/* Center Column */
+.centerColumn {
+  text-align: center !important;
+}
+
+/* Empty State */
+.emptyState {
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.emptyContent {
+  text-align: center;
+  padding: 2rem;
+}
+
+/* Pagination */
+.paginationWrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(139, 92, 246, 0.08);
+}
+
+.pagination {
+  --mantine-color-primary: #8b5cf6;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .tableContainer {
+    overflow-x: auto;
+  }
+
+  .membersTable {
+    min-width: 600px;
+  }
+
+  .membersTable th,
+  .membersTable td {
+    padding: 0.75rem 1rem;
+  }
+
+  .membersTable th:last-child,
+  .membersTable td:last-child {
+    text-align: right;
+  }
+}

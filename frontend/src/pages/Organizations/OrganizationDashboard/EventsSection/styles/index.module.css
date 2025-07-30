@@ -1,0 +1,129 @@
+.eventsSection {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 8px;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
+  position: relative;
+  z-index: 10;
+  margin-top: 2rem;
+}
+
+.sectionHeader {
+  margin-bottom: 1.5rem;
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+}
+
+/* Tabs Container */
+.tabsContainer {
+  width: 100%;
+}
+
+.tabsList {
+  background: rgba(139, 92, 246, 0.04);
+  backdrop-filter: blur(10px);
+  border-radius: 6px;
+  padding: 4px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  gap: 4px;
+}
+
+.tab {
+  padding: 0.75rem 1.25rem;
+  transition: all 0.2s ease;
+  color: #64748b;
+  font-weight: 500;
+  border: none;
+  background: transparent;
+  border-radius: 4px;
+  position: relative;
+}
+
+.tab:hover {
+  color: #8b5cf6;
+  background: rgba(139, 92, 246, 0.06);
+}
+
+.tab[data-active] {
+  color: #8b5cf6;
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.08);
+}
+
+.countBadge {
+  margin-left: 0.5rem;
+}
+
+/* Tab Panel */
+.tabPanel {
+  padding: 0;
+}
+
+/* Events Grid */
+.eventsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Empty State */
+.emptyState {
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.emptyContent {
+  text-align: center;
+  padding: 2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .eventsSection {
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .sectionTitle {
+    font-size: 1.25rem;
+  }
+
+  .eventsGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .tab {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .eventsSection {
+    padding: 1rem;
+  }
+
+  .sectionHeader {
+    margin-bottom: 1rem;
+  }
+
+  .tabsList {
+    padding: 0.125rem;
+  }
+
+  .tab {
+    padding: 0.375rem 0.5rem;
+  }
+}

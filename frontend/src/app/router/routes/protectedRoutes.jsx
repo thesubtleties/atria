@@ -20,6 +20,7 @@ import Profile from '../../../pages/Profile';
 import Network from '../../../pages/Network';
 import Settings from '../../../pages/Settings';
 import { Dashboard } from '../../../pages/Dashboard';
+import OrganizationDashboard from '../../../pages/Organizations/OrganizationDashboard';
 import { SessionManager } from '../../../pages/EventAdmin/SessionManager';
 import SponsorsManager from '../../../pages/EventAdmin/SponsorsManager';
 import NetworkingManager from '../../../pages/EventAdmin/NetworkingManager';
@@ -48,7 +49,7 @@ const PlaceholderComponent = ({ routeName = 'This page' }) => (
 
 const COMPONENTS_READY = {
   OrganizationsPage: false,
-  OrganizationDashboard: false,
+  OrganizationDashboard: true,
   EventsListView: false,
   EventAgenda: false,
   EventDashboard: false,
@@ -113,7 +114,7 @@ export const protectedRoutes = [
             children: [
               {
                 path: '',
-                element: getComponent('OrganizationDashboard'),
+                element: <OrganizationDashboard />,
               },
               {
                 path: 'events',

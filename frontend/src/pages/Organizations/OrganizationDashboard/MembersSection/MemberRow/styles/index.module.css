@@ -1,0 +1,76 @@
+/* Member Row */
+.memberRow td {
+  padding: 1rem 1.5rem;
+  vertical-align: middle;
+}
+
+/* Avatar */
+.avatar {
+  background: linear-gradient(135deg, #8b5cf6, #a855f7);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  font-weight: 600;
+}
+
+/* Member Info */
+.memberName {
+  color: #1e293b;
+}
+
+/* Center Cell */
+.centerCell {
+  text-align: center !important;
+}
+
+/* Role Badge */
+.roleBadge {
+  text-transform: uppercase !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.05em !important;
+  font-size: 0.75rem !important;
+  padding: 0.375rem 0.75rem !important;
+  border-radius: 4px !important;
+  background: rgba(139, 92, 246, 0.08) !important;
+  color: #8b5cf6 !important;
+  border: 1px solid rgba(139, 92, 246, 0.12) !important;
+}
+
+/* Badge color variants */
+.roleBadge[data-role="OWNER"] {
+  background: rgba(139, 92, 246, 0.08) !important;
+  color: #8b5cf6 !important;
+  border-color: rgba(139, 92, 246, 0.12) !important;
+}
+
+.roleBadge[data-role="ADMIN"] {
+  background: rgba(236, 72, 153, 0.08) !important;
+  color: #ec4899 !important;
+  border-color: rgba(236, 72, 153, 0.12) !important;
+}
+
+.roleBadge[data-role="MEMBER"] {
+  background: rgba(59, 130, 246, 0.08) !important;
+  color: #3b82f6 !important;
+  border-color: rgba(59, 130, 246, 0.12) !important;
+}
+
+/* Action Button */
+.actionButton {
+  color: #94a3b8 !important;
+  transition: all 0.2s ease;
+}
+
+.actionButton:hover {
+  color: #8b5cf6 !important;
+  background: rgba(139, 92, 246, 0.08) !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .memberRow td {
+    padding: 0.75rem 1rem;
+  }
+
+  .actionButton {
+    opacity: 1;
+  }
+}

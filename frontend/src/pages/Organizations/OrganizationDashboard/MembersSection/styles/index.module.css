@@ -1,0 +1,141 @@
+/* Members Section */
+.membersSection {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 8px;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
+  position: relative;
+  z-index: 10;
+}
+
+/* Section Header */
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+}
+
+/* Tabs Container */
+.tabsContainer {
+  width: 100%;
+}
+
+/* Tabs List */
+.tabsList {
+  background: rgba(139, 92, 246, 0.04);
+  backdrop-filter: blur(10px);
+  border-radius: 6px;
+  padding: 4px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  gap: 4px;
+}
+
+.tab {
+  padding: 0.75rem 1.25rem;
+  transition: all 0.2s ease;
+  color: #64748b;
+  font-weight: 500;
+  border: none;
+  background: transparent;
+  border-radius: 4px;
+  position: relative;
+}
+
+.tab:hover {
+  color: #8b5cf6;
+  background: rgba(139, 92, 246, 0.06);
+}
+
+.tab[data-active] {
+  color: #8b5cf6;
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.08);
+}
+
+/* Filter Bar */
+.filterBar {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.searchInput {
+  flex: 1;
+  min-width: 250px;
+}
+
+.searchInput input {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  transition: all 0.2s ease;
+}
+
+.searchInput input:focus {
+  border-color: rgba(139, 92, 246, 0.3);
+  background: rgba(255, 255, 255, 1);
+}
+
+.roleFilter {
+  width: 180px;
+}
+
+.roleFilter input {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  transition: all 0.2s ease;
+}
+
+.roleFilter input:focus {
+  border-color: rgba(139, 92, 246, 0.3);
+  background: rgba(255, 255, 255, 1);
+}
+
+/* Tab Panel */
+.tabPanel {
+  min-height: 400px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .membersSection {
+    padding: 1.5rem;
+  }
+
+  .sectionHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .filterBar {
+    flex-direction: column;
+  }
+
+  .searchInput,
+  .roleFilter {
+    width: 100%;
+  }
+
+  .tabsList {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+  }
+
+  .tab {
+    white-space: nowrap;
+  }
+}

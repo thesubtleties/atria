@@ -1,0 +1,116 @@
+/* Modal Content Styling */
+.modalContent {
+  background: rgba(255, 255, 255, 1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 0;
+}
+
+/* Modal Header */
+.modalHeader {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1E293B;
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.04);
+}
+
+/* Tabs Container */
+.tabsContainer {
+  width: 100%;
+}
+
+/* Tabs Styling */
+.tabsList {
+  background: rgba(139, 92, 246, 0.04);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(139, 92, 246, 0.08);
+  padding: 0;
+  margin: 0;
+  display: flex;
+  width: 100%;
+}
+
+.tab {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  transition: all 0.2s ease;
+  color: #64748B;
+  font-weight: 500;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  position: relative;
+}
+
+.tab:hover {
+  color: #8B5CF6;
+  background: rgba(139, 92, 246, 0.02);
+}
+
+.tab[data-active] {
+  color: #8B5CF6;
+  border-bottom-color: #8B5CF6;
+  background: rgba(255, 255, 255, 1);
+}
+
+/* Tab Panel */
+.tabPanel {
+  padding: 1.5rem;
+}
+
+/* Form Elements */
+.formInput input,
+.formSelect input,
+.formTextarea textarea {
+  background: rgba(255, 255, 255, 1);
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  transition: all 0.2s ease;
+}
+
+.formInput input:focus,
+.formSelect input:focus,
+.formTextarea textarea:focus {
+  border-color: rgba(139, 92, 246, 0.3);
+  background: rgba(255, 255, 255, 1);
+}
+
+/* Alert Styling */
+.infoAlert {
+  background: rgba(139, 92, 246, 0.04);
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  border-radius: 6px;
+}
+
+/* Button Group */
+.buttonGroup {
+  padding: 1.5rem;
+  border-top: 1px solid rgba(139, 92, 246, 0.04);
+  margin-top: 1.5rem;
+  background: rgba(251, 250, 255, 0.5);
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-left: -1.5rem;
+  margin-right: -1.5rem;
+  margin-bottom: -1.5rem;
+}
+
+/* Override Mantine Modal Styles */
+:global(.mantine-Modal-content) {
+  background: rgba(255, 255, 255, 1) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.08);
+}
+
+:global(.mantine-Modal-header) {
+  background: transparent;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.04);
+}
+
+:global(.mantine-Modal-overlay) {
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(4px);
+}
