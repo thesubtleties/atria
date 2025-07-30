@@ -1,5 +1,5 @@
 // src/app/router/routes/protectedRoutes.js
-import { Outlet } from 'react-router-dom';
+import { Outlet, Navigate } from 'react-router-dom';
 import { AuthGuard } from '../guards/AuthGuard';
 import { AppLayout } from '../layouts/AppLayout';
 import { NewUserCheck } from '../../../pages/NewUserLanding';
@@ -98,6 +98,10 @@ export const protectedRoutes = [
         path: 'organizations',
         element: <Outlet />,
         children: [
+          {
+            index: true,
+            element: <Navigate to="/app/dashboard" replace />,
+          },
           {
             path: 'new',
             element: <CreateOrganization />,

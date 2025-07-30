@@ -21,38 +21,17 @@ export const useNavigationTitle = () => {
   });
 
   const getTitle = () => {
-    // Simple routes - no API calls needed
-    switch (location.pathname) {
-      case ROUTES.ORGANIZATIONS:
-        return { text: 'Organizations' };
-      case ROUTES.EVENTS:
-        return { text: 'Events' };
-      case ROUTES.EVENTS_JOIN:
-        return { text: 'Join Event' };
+    // Only show titles for event-related pages
+    if (location.pathname === ROUTES.EVENTS_JOIN) {
+      return { text: 'Join Event' };
     }
 
-    // Only check org/event routes if we need the data
-    if (needsOrgData && organization) {
-      if (location.pathname === ROUTES.ORGANIZATION(orgId)) {
-        return { text: organization.name };
-      }
-
-      if (location.pathname === ROUTES.ORGANIZATION_EVENTS(orgId)) {
-        return { text: `${organization.name}` };
-      }
-    }
-
+    // Only show event title when inside an event
     if (needsEventData && event) {
-      // Fix: Make sure we're returning both the event title and subtitle
-      if (needsOrgData) {
-        return {
-          text: event.title, // Make sure this matches event object property (title or name)
-          subtitle: 'Organizer View',
-        };
-      }
-      return { text: event.title }; // make sure this matches event object property
+      return { text: event.title };
     }
 
+    // Don't show any titles for organization pages, dashboard, or other pages
     return null;
   };
 
