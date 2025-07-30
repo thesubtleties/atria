@@ -1,20 +1,13 @@
 import { useLocation, useParams } from 'react-router-dom';
-import { useGetOrganizationQuery } from '@/app/features/organizations/api';
 import { useGetEventQuery } from '@/app/features/events/api';
 import { ROUTES } from '../constants/routes';
 
 // src/pages/Navigation/hooks/useNavigationTitle.js
 export const useNavigationTitle = () => {
   const location = useLocation();
-  const { orgId, eventId } = useParams();
+  const { eventId } = useParams();
 
-  const needsOrgData = location.pathname.includes(`/organizations/${orgId}`);
   const needsEventData = location.pathname.includes(`/events/${eventId}`);
-
-  const { data: organization, isLoading: isLoadingOrg } =
-    useGetOrganizationQuery(orgId, {
-      skip: !needsOrgData || !orgId,
-    });
 
   const { data: event, isLoading: isLoadingEvent } = useGetEventQuery(eventId, {
     skip: !needsEventData || !eventId,
@@ -37,7 +30,6 @@ export const useNavigationTitle = () => {
 
   return {
     titleData: getTitle(),
-    isLoading:
-      (needsOrgData && isLoadingOrg) || (needsEventData && isLoadingEvent),
+    isLoading: needsEventData && isLoadingEvent,
   };
 };
