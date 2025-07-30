@@ -84,11 +84,11 @@ class Event(db.Model):
         db.JSON,
         nullable=True,
         default=[
-            {"id": "platinum", "name": "Platinum Sponsor", "order": 1},
-            {"id": "gold", "name": "Gold Sponsor", "order": 2},
-            {"id": "silver", "name": "Silver Sponsor", "order": 3},
-            {"id": "bronze", "name": "Bronze Sponsor", "order": 4},
-            {"id": "community", "name": "Community Partner", "order": 5},
+            {"id": "platinum", "name": "Platinum Sponsor", "order": 1, "color": "#E5E4E2"},
+            {"id": "gold", "name": "Gold Sponsor", "order": 2, "color": "#DEAE4A"},
+            {"id": "silver", "name": "Silver Sponsor", "order": 3, "color": "#C7D3DB"},
+            {"id": "bronze", "name": "Bronze Sponsor", "order": 4, "color": "#BB8F4C"},
+            {"id": "community", "name": "Community Partner", "order": 5, "color": "#8B5CF6"},
         ],
     )
 

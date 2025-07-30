@@ -140,8 +140,8 @@ class SponsorService:
         
         # Validate tier structure
         for tier in tiers:
-            if not all(k in tier for k in ["id", "name", "order"]):
-                raise ValueError("Each tier must have id, name, and order")
+            if not all(k in tier for k in ["id", "name", "order", "color"]):
+                raise ValueError("Each tier must have id, name, order, and color")
         
         # Update tiers
         event.sponsor_tiers = tiers

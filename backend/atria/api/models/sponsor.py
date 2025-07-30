@@ -89,6 +89,12 @@ class Sponsor(db.Model):
         tier = self.tier_info
         return tier.get("order", 999) if tier else 999
 
+    @property
+    def tier_color(self):
+        """Get tier color for display"""
+        tier = self.tier_info
+        return tier.get("color", "#6B7280") if tier else "#6B7280"
+
     def update_social_links(self, **kwargs):
         """Update social media links"""
         valid_platforms = {"twitter", "linkedin", "facebook", "instagram"}
