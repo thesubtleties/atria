@@ -242,3 +242,82 @@ class DashboardService:
                 'is_new': False
             }
         ]
+
+    @staticmethod
+    def get_user_invitations(user_id: int):
+        """Get all pending invitations for a user"""
+        from api.services.organization_invitation import OrganizationInvitationService
+        from api.services.event_invitation import EventInvitationService
+        
+        user = User.query.get_or_404(user_id)
+        
+        # Get organization invitations
+        org_invitations = OrganizationInvitationService.get_user_pending_invitations_query(
+            user.email
+        ).options(
+            joinedload('organization'),
+            joinedload('invited_by')
+        ).all()
+        
+        # Get event invitations  
+        event_invitations = EventInvitationService.get_user_pending_invitations_query(
+            user.email
+        ).options(
+            joinedload('event').joinedload('organization'),
+            joinedload('invited_by')
+        ).all()
+        
+        # Format organization invitations
+        org_invites_formatted = []
+        for inv in org_invitations:
+            org_invites_formatted.append({
+                'id': inv.id,
+                'type': 'organization',
+                'organization': {
+                    'id': inv.organization.id,
+                    'name': inv.organization.name
+                },
+                'role': inv.role.value,
+                'invited_by': {
+                    'id': inv.invited_by.id,
+                    'name': inv.invited_by.full_name,
+                    'email': inv.invited_by.email
+                } if inv.invited_by else None,
+                'message': inv.message,
+                'created_at': inv.created_at,
+                'expires_at': inv.expires_at,
+                'token': inv.token
+            })
+        
+        # Format event invitations
+        event_invites_formatted = []
+        for inv in event_invitations:
+            event_invites_formatted.append({
+                'id': inv.id,
+                'type': 'event',
+                'event': {
+                    'id': inv.event.id,
+                    'title': inv.event.title,
+                    'start_date': inv.event.start_date,
+                    'organization': {
+                        'id': inv.event.organization.id,
+                        'name': inv.event.organization.name
+                    }
+                },
+                'role': inv.role.value,
+                'invited_by': {
+                    'id': inv.invited_by.id,
+                    'name': inv.invited_by.full_name,
+                    'email': inv.invited_by.email
+                } if inv.invited_by else None,
+                'message': inv.message,
+                'created_at': inv.created_at,
+                'expires_at': inv.expires_at,
+                'token': inv.token
+            })
+        
+        return {
+            'organization_invitations': org_invites_formatted,
+            'event_invitations': event_invites_formatted,
+            'total_count': len(org_invites_formatted) + len(event_invites_formatted)
+        }

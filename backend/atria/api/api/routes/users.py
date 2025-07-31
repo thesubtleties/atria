@@ -11,7 +11,7 @@ from api.api.schemas import (
     SessionSchema,
     UserCheckResponseSchema,
 )
-from api.api.schemas.dashboard import DashboardResponseSchema
+from api.api.schemas.dashboard import DashboardResponseSchema, UserInvitationsResponseSchema
 from api.commons.pagination import (
     PAGINATION_PARAMETERS,
     get_pagination_schema,
@@ -162,6 +162,30 @@ class UserDashboardResource(MethodView):
             abort(404, message="User not found")
             
         return dashboard_data
+
+
+@blp.route("/<int:user_id>/invitations")
+class UserInvitationsResource(MethodView):
+    @blp.response(200, UserInvitationsResponseSchema)
+    @blp.doc(
+        summary="Get user invitations",
+        description="Get all pending invitations for a user (both organization and event invitations)",
+        responses={
+            403: {"description": "Not authorized to view these invitations"},
+            404: {"description": "User not found"},
+        },
+    )
+    @jwt_required()
+    def get(self, user_id):
+        """Get user's pending invitations"""
+        current_user_id = int(get_jwt_identity())
+        
+        # Users can only view their own invitations
+        if current_user_id != user_id:
+            abort(403, message="Not authorized to view these invitations")
+        
+        invitations = DashboardService.get_user_invitations(user_id)
+        return invitations
 
 
 @blp.route("/debug")

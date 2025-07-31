@@ -81,3 +81,43 @@ class DashboardResponseSchema(Schema):
     events = fields.List(fields.Nested(DashboardEventSchema), dump_only=True)
     connections = fields.List(fields.Nested(DashboardConnectionSchema), dump_only=True)
     news = fields.List(fields.Nested(DashboardNewsSchema), dump_only=True)
+
+
+class InvitationInviterSchema(Schema):
+    """Schema for invitation inviter info"""
+    id = fields.Int(dump_only=True)
+    name = fields.Str(dump_only=True)
+    email = fields.Email(dump_only=True)
+
+
+class OrganizationInvitationSchema(Schema):
+    """Schema for organization invitation in dashboard"""
+    id = fields.Int(dump_only=True)
+    type = fields.Str(dump_only=True)  # Will be set to "organization" in the service
+    organization = fields.Dict(dump_only=True)  # {id, name}
+    role = fields.Str(dump_only=True)
+    invited_by = fields.Nested(InvitationInviterSchema, dump_only=True, allow_none=True)
+    message = fields.Str(dump_only=True, allow_none=True)
+    created_at = fields.DateTime(format="iso", dump_only=True)
+    expires_at = fields.DateTime(format="iso", dump_only=True)
+    token = fields.Str(dump_only=True)
+
+
+class EventInvitationSchema(Schema):
+    """Schema for event invitation in dashboard"""
+    id = fields.Int(dump_only=True)
+    type = fields.Str(dump_only=True)  # Will be set to "event" in the service
+    event = fields.Dict(dump_only=True)  # {id, title, start_date, organization: {id, name}}
+    role = fields.Str(dump_only=True)
+    invited_by = fields.Nested(InvitationInviterSchema, dump_only=True, allow_none=True)
+    message = fields.Str(dump_only=True, allow_none=True)
+    created_at = fields.DateTime(format="iso", dump_only=True)
+    expires_at = fields.DateTime(format="iso", dump_only=True)
+    token = fields.Str(dump_only=True)
+
+
+class UserInvitationsResponseSchema(Schema):
+    """Response schema for user invitations"""
+    organization_invitations = fields.List(fields.Nested(OrganizationInvitationSchema), dump_only=True)
+    event_invitations = fields.List(fields.Nested(EventInvitationSchema), dump_only=True)
+    total_count = fields.Int(dump_only=True)
