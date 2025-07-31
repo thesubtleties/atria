@@ -246,25 +246,30 @@ class DashboardService:
     @staticmethod
     def get_user_invitations(user_id: int):
         """Get all pending invitations for a user"""
-        from api.services.organization_invitation import OrganizationInvitationService
-        from api.services.event_invitation import EventInvitationService
+        from api.models import OrganizationInvitation, EventInvitation
+        from api.models.enums import InvitationStatus
         
-        user = User.query.get_or_404(user_id)
+        # Get user email with a single query
+        user_email = db.session.query(User.email).filter_by(id=user_id).scalar()
+        if not user_email:
+            raise ValueError("User not found")
         
-        # Get organization invitations
-        org_invitations = OrganizationInvitationService.get_user_pending_invitations_query(
-            user.email
+        # Single query for organization invitations with all relationships
+        org_invitations = OrganizationInvitation.query.filter_by(
+            email=user_email,
+            status=InvitationStatus.PENDING
         ).options(
-            joinedload('organization'),
-            joinedload('invited_by')
+            joinedload(OrganizationInvitation.organization),
+            joinedload(OrganizationInvitation.invited_by)
         ).all()
         
-        # Get event invitations  
-        event_invitations = EventInvitationService.get_user_pending_invitations_query(
-            user.email
+        # Single query for event invitations with all relationships
+        event_invitations = EventInvitation.query.filter_by(
+            email=user_email,
+            status=InvitationStatus.PENDING
         ).options(
-            joinedload('event').joinedload('organization'),
-            joinedload('invited_by')
+            joinedload(EventInvitation.event).joinedload(Event.organization),
+            joinedload(EventInvitation.invited_by)
         ).all()
         
         # Format organization invitations
