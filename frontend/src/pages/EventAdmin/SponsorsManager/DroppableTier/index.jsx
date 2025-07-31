@@ -2,6 +2,7 @@ import React from 'react';
 import { Title, Badge } from '@mantine/core';
 import { useDroppable } from '@dnd-kit/react';
 import { CollisionPriority } from '@dnd-kit/abstract';
+import { getGradientBadgeStyles } from '../../../../shared/hooks/useGradientBadge';
 import styles from './styles/index.module.css';
 
 const DroppableTier = ({ id, tier, children }) => {
@@ -12,6 +13,10 @@ const DroppableTier = ({ id, tier, children }) => {
     collisionPriority: CollisionPriority.Low,
   });
 
+  // Get the tier color from the first sponsor (they all have the same tier)
+  const tierColor = tier.sponsors.length > 0 ? tier.sponsors[0].tier_color : null;
+  const badgeStyles = tierColor ? getGradientBadgeStyles(tierColor) : {};
+
   return (
     <div className={styles.tierSection}>
       <div className={styles.tierHeader}>
@@ -20,10 +25,9 @@ const DroppableTier = ({ id, tier, children }) => {
         </Title>
         <Badge 
           size="lg" 
-          variant="light" 
-          color="grape"
           radius="sm"
           className={styles.tierBadge}
+          style={badgeStyles}
         >
           {tier.sponsors.length} sponsor{tier.sponsors.length !== 1 ? 's' : ''}
         </Badge>
