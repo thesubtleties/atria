@@ -38,7 +38,17 @@ export const eventInvitationsApi = baseApi.injectEndpoints({
         method: 'POST',
         body: {},
       }),
-      invalidatesTags: ['EventUsers', 'Events'],
+      invalidatesTags: ['EventUsers', 'Events', 'Invitations', 'Dashboard'],
+    }),
+
+    // Decline invitation
+    declineInvitation: builder.mutation({
+      query: ({ token }) => ({
+        url: `/invitations/${token}/decline`,
+        method: 'POST',
+        body: {},
+      }),
+      invalidatesTags: ['Invitations'],
     }),
 
     // Cancel invitation
@@ -57,5 +67,6 @@ export const {
   useSendEventInvitationMutation,
   useSendBulkEventInvitationsMutation,
   useAcceptInvitationMutation,
+  useDeclineInvitationMutation,
   useCancelEventInvitationMutation,
 } = eventInvitationsApi;

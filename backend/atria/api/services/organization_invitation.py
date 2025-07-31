@@ -201,3 +201,20 @@ class OrganizationInvitationService:
                 db.session.commit()
         
         return invitation
+    
+    @staticmethod
+    def get_user_pending_invitations_query(email):
+        """Get query for pending invitations for a user by email"""
+        return OrganizationInvitation.query.filter_by(
+            email=email,
+            status=InvitationStatus.PENDING
+        ).order_by(OrganizationInvitation.created_at.desc())
+    
+    @staticmethod
+    def get_user_pending_invitations(user_id):
+        """Get pending invitations for a user"""
+        user = User.query.get_or_404(user_id)
+        return OrganizationInvitation.query.filter_by(
+            email=user.email,
+            status=InvitationStatus.PENDING
+        ).order_by(OrganizationInvitation.created_at.desc()).all()

@@ -8,6 +8,7 @@ import { OrganizationsSection } from './OrganizationsSection';
 import { EventsSection } from './EventsSection';
 import { ConnectionsSection } from './ConnectionsSection';
 import { NewsSection } from './NewsSection';
+import InvitationsSection from './InvitationsSection';
 import styles from './styles/index.module.css';
 
 export const Dashboard = () => {
@@ -51,6 +52,9 @@ export const Dashboard = () => {
         </div>
         <StatsGrid stats={stats} />
       </section>
+
+      {/* Invitations */}
+      <InvitationsSection userId={userId} />
 
       <div className={styles.dashboardGrid}>
         {/* Organizations */}

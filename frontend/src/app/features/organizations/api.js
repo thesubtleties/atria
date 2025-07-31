@@ -111,13 +111,14 @@ export const organizationsApi = baseApi.injectEndpoints({
         method: 'POST',
         body: {},
       }),
-      invalidatesTags: ['Organizations', 'OrganizationUsers'],
+      invalidatesTags: ['Organizations', 'OrganizationUsers', 'Invitations', 'Dashboard'],
     }),
     declineOrganizationInvitation: builder.mutation({
       query: (token) => ({
         url: `/invitations/organization/${token}/decline`,
         method: 'POST',
       }),
+      invalidatesTags: ['Invitations'],
     }),
     cancelOrganizationInvitation: builder.mutation({
       query: ({ orgId, invitationId }) => ({

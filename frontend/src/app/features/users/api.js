@@ -55,6 +55,12 @@ export const usersApi = baseApi.injectEndpoints({
       // Cache for 5 minutes
       keepUnusedDataFor: 300,
     }),
+    getUserInvitations: builder.query({
+      query: (userId) => ({
+        url: `/users/${userId}/invitations`,
+      }),
+      providesTags: ['Invitations'],
+    }),
   }),
 });
 
@@ -65,4 +71,5 @@ export const {
   useGetUserEventsQuery,
   useGetUserSpeakingSessionsQuery,
   useGetUserDashboardQuery,
+  useGetUserInvitationsQuery,
 } = usersApi;

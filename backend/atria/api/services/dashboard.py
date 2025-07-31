@@ -242,3 +242,87 @@ class DashboardService:
                 'is_new': False
             }
         ]
+
+    @staticmethod
+    def get_user_invitations(user_id: int):
+        """Get all pending invitations for a user"""
+        from api.models import OrganizationInvitation, EventInvitation
+        from api.models.enums import InvitationStatus
+        
+        # Get user email with a single query
+        user_email = db.session.query(User.email).filter_by(id=user_id).scalar()
+        if not user_email:
+            raise ValueError("User not found")
+        
+        # Single query for organization invitations with all relationships
+        org_invitations = OrganizationInvitation.query.filter_by(
+            email=user_email,
+            status=InvitationStatus.PENDING
+        ).options(
+            joinedload(OrganizationInvitation.organization),
+            joinedload(OrganizationInvitation.invited_by)
+        ).all()
+        
+        # Single query for event invitations with all relationships
+        event_invitations = EventInvitation.query.filter_by(
+            email=user_email,
+            status=InvitationStatus.PENDING
+        ).options(
+            joinedload(EventInvitation.event).joinedload(Event.organization),
+            joinedload(EventInvitation.invited_by)
+        ).all()
+        
+        # Format organization invitations
+        org_invites_formatted = []
+        for inv in org_invitations:
+            org_invites_formatted.append({
+                'id': inv.id,
+                'type': 'organization',
+                'organization': {
+                    'id': inv.organization.id,
+                    'name': inv.organization.name
+                },
+                'role': inv.role.value,
+                'invited_by': {
+                    'id': inv.invited_by.id,
+                    'name': inv.invited_by.full_name,
+                    'email': inv.invited_by.email
+                } if inv.invited_by else None,
+                'message': inv.message,
+                'created_at': inv.created_at,
+                'expires_at': inv.expires_at,
+                'token': inv.token
+            })
+        
+        # Format event invitations
+        event_invites_formatted = []
+        for inv in event_invitations:
+            event_invites_formatted.append({
+                'id': inv.id,
+                'type': 'event',
+                'event': {
+                    'id': inv.event.id,
+                    'title': inv.event.title,
+                    'start_date': inv.event.start_date,
+                    'organization': {
+                        'id': inv.event.organization.id,
+                        'name': inv.event.organization.name
+                    }
+                },
+                'role': inv.role.value,
+                'invited_by': {
+                    'id': inv.invited_by.id,
+                    'name': inv.invited_by.full_name,
+                    'email': inv.invited_by.email
+                } if inv.invited_by else None,
+                'message': inv.message,
+                'created_at': inv.created_at,
+                'expires_at': inv.expires_at,
+                'token': inv.token
+            })
+        
+        return {
+            'organization_invitations': org_invites_formatted,
+            'event_invitations': event_invites_formatted,
+            'total_count': len(org_invites_formatted) + len(event_invites_formatted)
+        }
