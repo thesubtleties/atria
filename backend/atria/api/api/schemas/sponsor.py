@@ -17,6 +17,7 @@ class SponsorSchema(ma.SQLAlchemyAutoSchema):
     # Computed Properties
     tier_name = ma.String(dump_only=True)
     tier_order = ma.Integer(dump_only=True)
+    tier_color = ma.String(dump_only=True)
     tier_info = ma.Dict(dump_only=True)
 
 
@@ -145,6 +146,7 @@ class SponsorListSchema(ma.Schema):
     tier_id = ma.String()
     tier_name = ma.String()
     tier_order = ma.Integer()
+    tier_color = ma.String()
     display_order = ma.Float()
     featured = ma.Boolean()
     is_active = ma.Boolean()
@@ -156,3 +158,4 @@ class SponsorTierSchema(ma.Schema):
     id = ma.String(required=True)
     name = ma.String(required=True)
     order = ma.Integer(required=True)
+    color = ma.String(required=True)

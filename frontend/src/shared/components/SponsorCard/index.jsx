@@ -1,6 +1,7 @@
 import { Card, Text, Group, ActionIcon, Anchor } from '@mantine/core';
 import { IconExternalLink, IconBrandTwitter, IconBrandLinkedin, IconBrandFacebook, IconBrandInstagram } from '@tabler/icons-react';
 import PrivateImage from '../PrivateImage';
+import { useGradientBadge } from '../../hooks/useGradientBadge';
 import styles from './SponsorCard.module.css';
 
 const socialIcons = {
@@ -17,9 +18,13 @@ export const SponsorCard = ({ sponsor }) => {
     logo_url, 
     website_url, 
     tier_name,
+    tier_color,
     social_links,
     featured
   } = sponsor;
+
+  // Get gradient badge styles
+  const badgeStyles = useGradientBadge(tier_color);
 
   return (
     <Card 
@@ -36,7 +41,10 @@ export const SponsorCard = ({ sponsor }) => {
     >
       {/* Tier indicator - subtle, not centered */}
       {tier_name && (
-        <div className={styles.tierIndicator}>
+        <div 
+          className={styles.tierIndicator}
+          style={badgeStyles}
+        >
           <span className={styles.tierText}>{tier_name}</span>
         </div>
       )}
