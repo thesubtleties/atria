@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Group, LoadingOverlay, Text, Badge, ActionIcon, Menu } from '@mantine/core';
-import { IconPlus, IconDownload, IconUpload, IconDots, IconTags } from '@tabler/icons-react';
+import { LoadingOverlay, Text } from '@mantine/core';
 import { useParams } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
 import { useGetSponsorsQuery } from '../../../app/features/sponsors/api';
 import { Button } from '../../../shared/components/buttons';
+import SponsorsHeader from './SponsorsHeader';
 import SponsorsList from './SponsorsList';
 import SponsorModal from './SponsorModal';
 import TierManagementModal from './TierManagementModal';
@@ -19,14 +19,6 @@ const SponsorsManager = () => {
     eventId: parseInt(eventId), 
     activeOnly: false 
   });
-
-  // Count sponsors by tier
-  const tierCounts = sponsors.reduce((acc, sponsor) => {
-    const tierName = sponsor.tier_name || 'No Tier';
-    acc[tierName] = (acc[tierName] || 0) + 1;
-    acc.total = (acc.total || 0) + 1;
-    return acc;
-  }, {});
 
   const handleExport = () => {
     // TODO: Implement CSV export
@@ -78,66 +70,14 @@ const SponsorsManager = () => {
       <div className={styles.bgShape2} />
 
       <div className={styles.contentWrapper}>
-        {/* Header Section */}
-        <section className={styles.headerSection}>
-          <Group justify="space-between" align="flex-start">
-            <div>
-              <h2 className={styles.pageTitle}>Sponsors Management</h2>
-              <div className={styles.badgeGroup}>
-                <Badge className={styles.statsBadge} size="lg" variant="light" radius="sm">
-                  {tierCounts.total || 0} Total
-                </Badge>
-                {Object.entries(tierCounts).map(([tier, count]) => {
-                  if (tier === 'total') return null;
-                  return (
-                    <Badge key={tier} className={styles.tierBadge} size="lg" variant="light" color="grape" radius="sm">
-                      {count} {tier}
-                    </Badge>
-                  );
-                })}
-              </div>
-            </div>
-            <Group>
-              <Menu shadow="md" width={200}>
-                <Menu.Target>
-                  <ActionIcon className={styles.actionIcon} variant="subtle" size="lg">
-                    <IconDots size={20} />
-                  </ActionIcon>
-                </Menu.Target>
-                <Menu.Dropdown className={styles.menuDropdown}>
-                  <Menu.Item
-                    className={styles.menuItem}
-                    leftSection={<IconDownload size={16} />}
-                    onClick={handleExport}
-                  >
-                    Export to CSV
-                  </Menu.Item>
-                  <Menu.Item
-                    className={styles.menuItem}
-                    leftSection={<IconUpload size={16} />}
-                    onClick={handleImport}
-                  >
-                    Import from CSV
-                  </Menu.Item>
-                </Menu.Dropdown>
-              </Menu>
-              <Button
-                variant="secondary"
-                onClick={() => setTierModalOpen(true)}
-              >
-                <IconTags size={18} />
-                Manage Tiers
-              </Button>
-              <Button
-                variant="primary"
-                onClick={() => setCreateModalOpen(true)}
-              >
-                <IconPlus size={18} />
-                Add Sponsor
-              </Button>
-            </Group>
-          </Group>
-        </section>
+        <SponsorsHeader
+          eventId={parseInt(eventId)}
+          sponsors={sponsors}
+          onCreateClick={() => setCreateModalOpen(true)}
+          onTierManageClick={() => setTierModalOpen(true)}
+          onExport={handleExport}
+          onImport={handleImport}
+        />
 
         {/* Main Content Section */}
         <section className={styles.mainContent}>

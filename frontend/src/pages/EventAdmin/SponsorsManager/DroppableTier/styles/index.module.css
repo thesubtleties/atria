@@ -29,9 +29,20 @@
 }
 
 .tierBadge {
+  /* Default fallback styles */
   background: rgba(139, 92, 246, 0.08);
   color: #8B5CF6;
   border: 1px solid rgba(139, 92, 246, 0.15);
+  /* Ensure proper styling when dynamic colors are applied */
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.tierBadge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
 /* Sponsor Cards Container */
