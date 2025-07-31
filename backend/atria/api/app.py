@@ -2,7 +2,8 @@ from flask import Flask
 from flask_cors import CORS
 import os
 from api import api
-from api import manage
+
+# from api import manage # this has been unused for a while
 from api.extensions import smorest_api
 from api.extensions import db
 from api.extensions import jwt
@@ -23,7 +24,7 @@ def create_app(testing=False):
         app.config["TESTING"] = True
 
     configure_extensions(app)
-    configure_cli(app)
+    # configure_cli(app) #! removed because it is not used
     # configure_apispec(app)  #! will remove once smorest is working
     configure_smorest(app)
     # register_blueprints(app) #! turned off to use only new routes
@@ -95,9 +96,10 @@ def configure_smorest(app):
     register_blueprints(smorest_api)
 
 
-def configure_cli(app):
-    """Configure Flask 2.0's cli for easy entity management"""
-    app.cli.add_command(manage.init)
+# below is unused and will be removed in a future update
+# def configure_cli(app):
+#     """Configure Flask 2.0's cli for easy entity management"""
+#     app.cli.add_command(manage.init)
 
 
 def configure_apispec(app):
