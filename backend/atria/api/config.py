@@ -22,7 +22,10 @@ JWT_BLOCKLIST_ENABLED = True
 JWT_BLOCKLIST_TOKEN_CHECKS = ["access", "refresh"]
 
 # JWT Cookie settings
-JWT_TOKEN_LOCATION = ["cookies", "headers"]  # Check cookies first, then headers
+JWT_TOKEN_LOCATION = [
+    "cookies",
+    "headers",
+]  # Check cookies first, then headers
 JWT_COOKIE_SECURE = ENV == "production"  # Only use secure in production
 JWT_ACCESS_COOKIE_PATH = "/api"
 JWT_REFRESH_COOKIE_PATH = "/api/auth/refresh"
@@ -74,8 +77,10 @@ APISPEC_SPEC = {
 
 # Email settings
 SMTP2GO_API_KEY = os.getenv("SMTP2GO_API_KEY")
-MAIL_DEFAULT_SENDER = os.getenv("MAIL_DEFAULT_SENDER", "noreply@atria.app")
-FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
+MAIL_DEFAULT_SENDER = os.getenv(
+    "MAIL_DEFAULT_SENDER", "atria-noreply@sbtl.dev"
+)
+FRONTEND_URL = os.getenv("FRONTEND_URL", "https://atria.gg")
 
 # Celery settings (for future use)
 USE_CELERY = os.getenv("USE_CELERY", "false").lower() == "true"
