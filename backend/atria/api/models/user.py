@@ -6,6 +6,8 @@ from api.models.enums import (
     EventUserRole,
     ConnectionStatus,
 )
+import random
+import string
 
 
 class User(db.Model):
@@ -95,6 +97,18 @@ class User(db.Model):
         back_populates="user",
         cascade="all, delete-orphan",
     )
+
+    def __init__(self, **kwargs):
+        """Initialize user with default avatar if not provided"""
+        # Generate default avatar URL if not provided
+        if 'image_url' not in kwargs or not kwargs['image_url']:
+            # Generate random seed (8-13 characters)
+            length = random.randint(8, 13)
+            chars = string.ascii_letters + string.digits
+            seed = ''.join(random.choice(chars) for _ in range(length))
+            kwargs['image_url'] = f'https://api.dicebear.com/7.x/avataaars/svg?seed={seed}'
+        
+        super().__init__(**kwargs)
 
     @hybrid_property
     def password(self):

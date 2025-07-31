@@ -1,10 +1,11 @@
 // src/pages/Events/EventsList/index.jsx
 import { useMemo } from 'react';
-import { useGetUserEventsQuery } from '@/app/features/users/api';
+import { useGetUserEventsQuery, useGetUserInvitationsQuery } from '@/app/features/users/api';
 import { Text, LoadingOverlay } from '@mantine/core';
 import { useSelector } from 'react-redux';
-import { IconCalendar, IconClock, IconHistory } from '@tabler/icons-react';
+import { IconCalendar, IconClock, IconHistory, IconMail } from '@tabler/icons-react';
 import { AttendeeEventCard } from './AttendeeEventCard';
+import { EventInvitationCard } from './EventInvitationCard';
 import { categorizeEvents } from './utils/eventCategorization';
 import styles from './styles/index.module.css';
 
@@ -16,7 +17,13 @@ export const EventsList = () => {
     { skip: !currentUser?.id }
   );
 
+  const { data: invitationsData, isLoading: invitationsLoading } = useGetUserInvitationsQuery(
+    currentUser?.id,
+    { skip: !currentUser?.id }
+  );
+
   const events = data?.events || [];
+  const eventInvitations = invitationsData?.event_invitations || [];
 
   // Filter only published events and categorize them
   const categorizedEvents = useMemo(() => {
@@ -24,7 +31,7 @@ export const EventsList = () => {
     return categorizeEvents(publishedEvents);
   }, [events]);
 
-  if (isLoading) {
+  if (isLoading || invitationsLoading) {
     return (
       <div className={styles.container}>
         <div className={styles.bgShape1} />
@@ -41,6 +48,8 @@ export const EventsList = () => {
   const hasAnyEvents = categorizedEvents.live.length > 0 || 
                       categorizedEvents.upcoming.length > 0 || 
                       categorizedEvents.past.length > 0;
+  const hasInvitations = eventInvitations.length > 0;
+  const hasAnyContent = hasAnyEvents || hasInvitations;
 
   return (
     <div className={styles.container}>
@@ -58,8 +67,24 @@ export const EventsList = () => {
         </section>
 
         {/* Main Content */}
-        {hasAnyEvents ? (
+        {hasAnyContent ? (
           <div className={styles.eventSections}>
+            {/* Event Invitations */}
+            {hasInvitations && (
+              <section className={styles.eventCategory}>
+                <div className={styles.categoryHeader}>
+                  <IconMail size={24} className={styles.categoryIcon} />
+                  <h2 className={styles.categoryTitle}>Pending Invitations</h2>
+                  <span className={styles.eventCount}>{eventInvitations.length}</span>
+                </div>
+                <div className={styles.eventsGrid}>
+                  {eventInvitations.map((invitation) => (
+                    <EventInvitationCard key={invitation.id} invitation={invitation} />
+                  ))}
+                </div>
+              </section>
+            )}
+
             {/* Live Events */}
             {categorizedEvents.live.length > 0 && (
               <section className={styles.eventCategory}>
