@@ -18,7 +18,7 @@ from api.commons.decorators import (
     event_organizer_required,
     event_admin_required,
 )
-from api.services.event_user import EventUserService
+from api.services.event_invitation import EventInvitationService
 
 
 blp = Blueprint(
@@ -55,7 +55,7 @@ class EventInvitationList(MethodView):
     @event_organizer_required()
     def get(self, event_id):
         """Get pending invitations for event"""
-        query = EventUserService.get_pending_invitations_query(event_id)
+        query = EventInvitationService.get_pending_invitations_query(event_id)
         return paginate(query, EventInvitationDetailSchema(many=True), collection_name="invitations")
 
     @blp.arguments(EventInvitationCreateSchema)
@@ -88,7 +88,7 @@ class EventInvitationList(MethodView):
     def post(self, data, event_id):
         """Send invitation to join event"""
         try:
-            invitation = EventUserService.invite_user_to_event(
+            invitation = EventInvitationService.invite_user_to_event(
                 event_id=event_id,
                 email=data["email"],
                 role=data["role"],
@@ -131,11 +131,26 @@ class BulkEventInvitation(MethodView):
     @event_organizer_required()
     def post(self, data, event_id):
         """Send bulk invitations"""
-        results = EventUserService.bulk_invite_users(
+        results = EventInvitationService.bulk_invite_users(
             event_id=event_id,
             invitations=data["invitations"]
         )
         return results
+
+
+@blp.route("/invitations/event/<string:token>")
+class EventInvitationDetail(MethodView):
+    @blp.response(200, EventInvitationDetailSchema)
+    @blp.doc(
+        summary="Get invitation details",
+        description="Get details of an invitation by token",
+        responses={
+            404: {"description": "Invitation not found"},
+        },
+    )
+    def get(self, token):
+        """Get invitation details by token"""
+        return EventInvitationService.get_invitation_by_token(token)
 
 
 @blp.route("/invitations/<string:token>/accept")
@@ -188,8 +203,40 @@ class AcceptInvitation(MethodView):
     def post(self, data, token):
         """Accept invitation"""
         try:
-            event_user = EventUserService.accept_invitation(token)
+            event_user = EventInvitationService.accept_invitation(token)
             return {"message": "Successfully joined event", "event_user_id": event_user.id}
+        except ValueError as e:
+            abort(400, message=str(e))
+
+
+@blp.route("/invitations/<string:token>/decline")
+class DeclineEventInvitation(MethodView):
+    @jwt_required()
+    @blp.response(200)
+    @blp.doc(
+        summary="Decline event invitation",
+        description="Decline an invitation to join an event",
+        responses={
+            400: {
+                "description": "Validation error",
+                "content": {
+                    "application/json": {
+                        "examples": {
+                            "wrong_email": {
+                                "value": {"message": "This invitation is for a different email address"}
+                            },
+                        }
+                    }
+                },
+            },
+            404: {"description": "Invitation not found"},
+        },
+    )
+    def post(self, token):
+        """Decline event invitation"""
+        try:
+            EventInvitationService.decline_invitation(token)
+            return {"message": "Invitation declined"}
         except ValueError as e:
             abort(400, message=str(e))
 
@@ -225,7 +272,7 @@ class InvitationDetail(MethodView):
     def delete(self, invitation_id):
         """Cancel invitation"""
         try:
-            EventUserService.cancel_invitation(invitation_id)
+            EventInvitationService.cancel_invitation(invitation_id)
             return {"message": "Invitation cancelled"}
         except ValueError as e:
             abort(400, message=str(e))
