@@ -36,3 +36,67 @@ class SignupSchema(ma.Schema):
     def validate_password(self, value, **kwargs):
         if len(value) < 8:
             raise ValidationError("Password must be at least 8 characters")
+
+
+class EmailVerificationResponseSchema(ma.Schema):
+    """Response schema for email verification"""
+    
+    class Meta:
+        name = "EmailVerificationResponse"
+    
+    message = ma.String(required=True)
+    email = ma.String(required=True)
+
+
+class ResendVerificationSchema(ma.Schema):
+    """Schema for resend verification request"""
+    
+    class Meta:
+        name = "ResendVerification"
+    
+    email = ma.Email(required=True)
+
+
+class ForgotPasswordSchema(ma.Schema):
+    """Schema for forgot password request"""
+    
+    class Meta:
+        name = "ForgotPassword"
+    
+    email = ma.Email(required=True)
+
+
+class ResetPasswordSchema(ma.Schema):
+    """Schema for password reset"""
+    
+    class Meta:
+        name = "ResetPassword"
+    
+    token = ma.String(required=True)
+    password = ma.String(required=True, load_only=True)
+    
+    @validates("password")
+    def validate_password(self, value, **kwargs):
+        if len(value) < 8:
+            raise ValidationError("Password must be at least 8 characters")
+
+
+class ValidateResetTokenResponseSchema(ma.Schema):
+    """Response schema for reset token validation"""
+    
+    class Meta:
+        name = "ValidateResetTokenResponse"
+    
+    valid = ma.Boolean(required=True)
+    email = ma.String(required=True)
+
+
+class SignupResponseSchema(ma.Schema):
+    """Response schema for signup"""
+    
+    class Meta:
+        name = "SignupResponse"
+    
+    message = ma.String(required=True)
+    email = ma.String(required=True)
+    requires_verification = ma.Boolean(required=True)

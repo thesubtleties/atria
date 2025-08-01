@@ -2,7 +2,17 @@ from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from flask_jwt_extended import jwt_required
 
-from api.api.schemas import LoginSchema, SignupSchema, UserDetailSchema
+from api.api.schemas import (
+    LoginSchema, 
+    SignupSchema,
+    SignupResponseSchema,
+    UserDetailSchema,
+    EmailVerificationResponseSchema,
+    ResendVerificationSchema,
+    ForgotPasswordSchema,
+    ResetPasswordSchema,
+    ValidateResetTokenResponseSchema,
+)
 from api.services.auth import AuthService
 
 blp = Blueprint(
@@ -166,26 +176,12 @@ class AuthLogoutResource(MethodView):
 @blp.route("/signup")
 class AuthSignupResource(MethodView):
     @blp.arguments(SignupSchema)
-    @blp.response(201)
+    @blp.response(201, SignupResponseSchema)
     @blp.doc(
         summary="Register new user",
-        description="Create new user account and return tokens",
+        description="Create new user account (requires email verification)",
         responses={
-            201: {
-                "description": "User created successfully",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "message": {"type": "string"},
-                                "access_token": {"type": "string"},
-                                "refresh_token": {"type": "string"},
-                            },
-                        }
-                    }
-                },
-            },
+            201: {"description": "User created successfully, verification email sent"},
             400: {"description": "Email already registered or invalid input"},
         },
     )
@@ -194,5 +190,112 @@ class AuthSignupResource(MethodView):
         try:
             result = AuthService.signup(signup_data)
             return result, 201
+        except ValueError as e:
+            abort(400, message=str(e))
+
+
+@blp.route("/verify-email/<token>")
+class EmailVerificationResource(MethodView):
+    @blp.response(200, EmailVerificationResponseSchema)
+    @blp.doc(
+        summary="Verify email address",
+        description="Verify user email using verification token",
+        responses={
+            200: {"description": "Email verified successfully"},
+            400: {"description": "Invalid or expired token"},
+        },
+    )
+    def get(self, token):
+        """Verify email with token"""
+        try:
+            from api.services.email_verification import EmailVerificationService
+            user = EmailVerificationService.verify_email(token)
+            return {"message": "Email verified successfully", "email": user.email}
+        except ValueError as e:
+            abort(400, message=str(e))
+
+
+@blp.route("/resend-verification")
+class ResendVerificationResource(MethodView):
+    @blp.arguments(ResendVerificationSchema)
+    @blp.response(200)
+    @blp.doc(
+        summary="Resend verification email",
+        description="Resend email verification link",
+        responses={
+            200: {"description": "Verification email sent"},
+            400: {"description": "Email already verified or rate limit exceeded"},
+        },
+    )
+    def post(self, args):
+        """Resend verification email"""
+        try:
+            from api.services.email_verification import EmailVerificationService
+            EmailVerificationService.resend_verification(args["email"])
+            return {"message": "Verification email sent"}
+        except ValueError as e:
+            abort(400, message=str(e))
+
+
+@blp.route("/forgot-password")
+class ForgotPasswordResource(MethodView):
+    @blp.arguments(ForgotPasswordSchema)
+    @blp.response(200)
+    @blp.doc(
+        summary="Request password reset",
+        description="Send password reset email",
+        responses={
+            200: {"description": "Reset email sent if account exists"},
+        },
+    )
+    def post(self, args):
+        """Request password reset"""
+        from api.services.password_reset import PasswordResetService
+        # Always return success to prevent email enumeration
+        PasswordResetService.create_reset_token(args["email"])
+        return {"message": "If an account exists with this email, a reset link has been sent"}
+
+
+@blp.route("/reset-password/<token>")
+class ValidateResetTokenResource(MethodView):
+    @blp.response(200, ValidateResetTokenResponseSchema)
+    @blp.doc(
+        summary="Validate reset token",
+        description="Check if password reset token is valid",
+        responses={
+            200: {"description": "Token is valid"},
+            400: {"description": "Invalid or expired token"},
+        },
+    )
+    def get(self, token):
+        """Validate reset token"""
+        try:
+            from api.services.password_reset import PasswordResetService
+            result = PasswordResetService.validate_reset_token(token)
+            if not result["valid"]:
+                abort(400, message=result["reason"])
+            return {"valid": True, "email": result["email"]}
+        except Exception:
+            abort(400, message="Invalid token")
+
+
+@blp.route("/reset-password")
+class ResetPasswordResource(MethodView):
+    @blp.arguments(ResetPasswordSchema)
+    @blp.response(200)
+    @blp.doc(
+        summary="Reset password",
+        description="Set new password using reset token",
+        responses={
+            200: {"description": "Password reset successfully"},
+            400: {"description": "Invalid token or password"},
+        },
+    )
+    def post(self, args):
+        """Reset password with token"""
+        try:
+            from api.services.password_reset import PasswordResetService
+            user = PasswordResetService.reset_password(args["token"], args["password"])
+            return {"message": "Password reset successfully", "email": user.email}
         except ValueError as e:
             abort(400, message=str(e))

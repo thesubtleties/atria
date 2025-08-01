@@ -71,6 +71,12 @@ from api.api.schemas.session_speaker import (
 from api.api.schemas.auth import (
     LoginSchema,
     SignupSchema,
+    SignupResponseSchema,
+    EmailVerificationResponseSchema,
+    ResendVerificationSchema,
+    ForgotPasswordSchema,
+    ResetPasswordSchema,
+    ValidateResetTokenResponseSchema,
 )
 
 from api.api.schemas.chat import (
@@ -167,6 +173,12 @@ __all__ = [
     # Auth schemas
     "LoginSchema",
     "SignupSchema",
+    "SignupResponseSchema",
+    "EmailVerificationResponseSchema",
+    "ResendVerificationSchema",
+    "ForgotPasswordSchema",
+    "ResetPasswordSchema",
+    "ValidateResetTokenResponseSchema",
     # Networking schemas
     "ChatRoomSchema",
     "ChatRoomDetailSchema",
