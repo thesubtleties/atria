@@ -12,7 +12,6 @@ const axiosClient = axios.create({
 // REQ interceptor (adds to all requests)
 axiosClient.interceptors.request.use(
   (config) => {
-    console.log('Final URL:', `${config.baseURL}${config.url}`);
     // No need to manually add token - cookies are sent automatically
     // Ensure cookies are included
     config.withCredentials = true;

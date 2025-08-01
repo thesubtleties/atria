@@ -92,6 +92,44 @@ export const authApi = baseApi.injectEndpoints({
       },
       invalidatesTags: ['Auth'],
     }),
+
+    verifyEmail: builder.query({
+      query: (token) => ({
+        url: `/auth/verify-email/${token}`,
+        method: 'GET',
+      }),
+    }),
+
+    resendVerification: builder.mutation({
+      query: (email) => ({
+        url: '/auth/resend-verification',
+        method: 'POST',
+        body: { email },
+      }),
+    }),
+
+    forgotPassword: builder.mutation({
+      query: (email) => ({
+        url: '/auth/forgot-password',
+        method: 'POST',
+        body: { email },
+      }),
+    }),
+
+    validateResetToken: builder.query({
+      query: (token) => ({
+        url: `/auth/reset-password/${token}`,
+        method: 'GET',
+      }),
+    }),
+
+    resetPassword: builder.mutation({
+      query: ({ token, password }) => ({
+        url: '/auth/reset-password',
+        method: 'POST',
+        body: { token, password },
+      }),
+    }),
   }),
 });
 
@@ -101,4 +139,9 @@ export const {
   useGetCurrentUserQuery,
   useRefreshMutation,
   useLogoutMutation,
+  useVerifyEmailQuery,
+  useResendVerificationMutation,
+  useForgotPasswordMutation,
+  useValidateResetTokenQuery,
+  useResetPasswordMutation,
 } = authApi;
