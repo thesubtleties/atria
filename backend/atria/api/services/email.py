@@ -35,7 +35,7 @@ class ThreadedEmailBackend(EmailBackend):
         from flask import current_app
         app = current_app._get_current_object()
         smtp2go_api_key = current_app.config.get('SMTP2GO_API_KEY')
-        mail_sender = current_app.config.get('MAIL_DEFAULT_SENDER', 'noreply@atria.app')
+        mail_sender = current_app.config.get('MAIL_DEFAULT_SENDER', 'noreply@atria.gg')
         
         thread = Thread(
             target=self._send_sync,

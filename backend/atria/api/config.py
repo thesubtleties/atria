@@ -78,7 +78,7 @@ APISPEC_SPEC = {
 # Email settings
 SMTP2GO_API_KEY = os.getenv("SMTP2GO_API_KEY")
 MAIL_DEFAULT_SENDER = os.getenv(
-    "MAIL_DEFAULT_SENDER", "atria-noreply@sbtl.dev"
+    "MAIL_DEFAULT_SENDER", "noreply@atria.gg"
 )
 FRONTEND_URL = os.getenv("FRONTEND_URL", "https://atria.gg")
 

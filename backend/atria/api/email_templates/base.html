@@ -4,111 +4,129 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Atria{% endblock %}</title>
-    <style>
-        /* Email-safe CSS */
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 0;
-            background-color: #f4f4f4;
+    <!--[if mso]>
+    <noscript>
+        <xml>
+            <o:OfficeDocumentSettings>
+                <o:PixelsPerInch>96</o:PixelsPerInch>
+            </o:OfficeDocumentSettings>
+        </xml>
+    </noscript>
+    <![endif]-->
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #64748b; margin: 0; padding: 0; background-color: #fbfaff;">
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #fbfaff;">
+        <tr>
+            <td align="center" style="padding: 20px 0;">
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="max-width: 600px; margin: 0 auto;">
+                    <tr>
+                        <td>
+                            <!-- Email Container with Glass Effect -->
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 20px rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.06); overflow: hidden;">
+                                <!-- Header -->
+                                <tr>
+                                    <td style="background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%); padding: 40px 30px; text-align: center; border-radius: 12px 12px 0 0;">
+                                        <h1 style="margin: 0; font-size: 32px; font-weight: 300; color: #ffffff; letter-spacing: -0.02em;">atria</h1>
+                                        {% block header_subtitle %}
+                                        <p style="margin: 12px 0 0 0; color: rgba(255, 255, 255, 0.9); font-size: 16px; font-weight: 400;">Event Management & Networking Platform</p>
+                                        {% endblock %}
+                                    </td>
+                                </tr>
+                                
+                                <!-- Body -->
+                                <tr>
+                                    <td style="padding: 40px 30px; background-color: #ffffff;">
+                                        {% block content %}{% endblock %}
+                                    </td>
+                                </tr>
+                                
+                                <!-- Footer -->
+                                <tr>
+                                    <td style="background-color: rgba(139, 92, 246, 0.04); padding: 30px; text-align: center; border-top: 1px solid rgba(139, 92, 246, 0.08);">
+                                        {% block footer %}
+                                        <p style="margin: 0 0 12px 0; font-size: 14px; color: #64748b;">
+                                            This email was sent by atria. If you have any questions, 
+                                            please contact our support team at <a href="mailto:support@atria.gg" style="color: #8b5cf6; text-decoration: none;">support@atria.gg</a>
+                                        </p>
+                                        <p style="margin: 0; font-size: 13px; color: #94a3b8;">
+                                            © {{ current_year }} atria. All rights reserved.
+                                        </p>
+                                        {% endblock %}
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    
+    <!-- Style definitions for content blocks -->
+    <style type="text/css">
+        /* These styles will be used inline in the actual email content */
+        /* Primary Button Style */
+        .button-primary {
+            /* inline: display: inline-block; padding: 14px 32px; margin: 20px 0; background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%); color: #ffffff !important; text-decoration: none; border-radius: 6px; font-weight: 500; font-size: 16px; box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2); */
         }
-        .email-container {
-            background-color: #ffffff;
-            margin: 20px auto;
-            padding: 0;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        .email-header {
-            background-color: #000000;
-            color: #ffffff;
-            padding: 30px;
-            text-align: center;
-            border-radius: 8px 8px 0 0;
-        }
-        .email-header h1 {
-            margin: 0;
-            font-size: 24px;
-            font-weight: 600;
-        }
-        .email-body {
-            padding: 30px;
-        }
-        .email-footer {
-            background-color: #f8f9fa;
-            padding: 20px 30px;
-            text-align: center;
-            font-size: 14px;
-            color: #666;
-            border-radius: 0 0 8px 8px;
-        }
-        .button {
-            display: inline-block;
-            padding: 12px 30px;
-            margin: 20px 0;
-            background-color: #007bff;
-            color: #ffffff !important;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: 500;
-        }
-        .button:hover {
-            background-color: #0056b3;
-        }
+        
+        /* Secondary Button Style */
         .button-secondary {
-            background-color: #6c757d;
+            /* inline: display: inline-block; padding: 14px 32px; margin: 20px 0; background-color: rgba(139, 92, 246, 0.08); color: #8b5cf6 !important; text-decoration: none; border-radius: 6px; font-weight: 500; font-size: 16px; border: 1px solid rgba(139, 92, 246, 0.15); */
         }
-        .button-secondary:hover {
-            background-color: #545b62;
-        }
-        h2 {
-            color: #000;
-            margin-top: 0;
-        }
+        
+        /* Info Box Style (Glass Effect) */
         .info-box {
-            background-color: #f8f9fa;
-            border-left: 4px solid #007bff;
-            padding: 15px;
-            margin: 20px 0;
+            /* inline: background-color: rgba(139, 92, 246, 0.04); border: 1px solid rgba(139, 92, 246, 0.08); border-radius: 8px; padding: 20px; margin: 24px 0; */
         }
+        
+        /* Success Box Style */
+        .success-box {
+            /* inline: background-color: rgba(34, 197, 94, 0.04); border: 1px solid rgba(34, 197, 94, 0.08); border-left: 4px solid #16a34a; border-radius: 8px; padding: 20px; margin: 24px 0; */
+        }
+        
+        /* Warning Box Style */
+        .warning-box {
+            /* inline: background-color: rgba(245, 158, 11, 0.04); border: 1px solid rgba(245, 158, 11, 0.08); border-left: 4px solid #f59e0b; border-radius: 8px; padding: 20px; margin: 24px 0; */
+        }
+        
+        /* Danger Box Style */
+        .danger-box {
+            /* inline: background-color: rgba(220, 38, 38, 0.04); border: 1px solid rgba(220, 38, 38, 0.08); border-left: 4px solid #dc2626; border-radius: 8px; padding: 20px; margin: 24px 0; */
+        }
+        
+        /* Typography Styles */
+        .h2 {
+            /* inline: font-size: 24px; font-weight: 600; color: #1e293b; margin: 0 0 16px 0; line-height: 1.3; */
+        }
+        
+        .h3 {
+            /* inline: font-size: 18px; font-weight: 600; color: #1e293b; margin: 0 0 12px 0; line-height: 1.4; */
+        }
+        
         .text-muted {
-            color: #6c757d;
+            /* inline: color: #94a3b8; font-size: 14px; */
         }
-        ul {
-            padding-left: 20px;
+        
+        .text-primary {
+            /* inline: color: #8b5cf6; */
         }
-        li {
-            margin-bottom: 8px;
+        
+        /* List Styles */
+        .styled-list {
+            /* inline for ul: padding-left: 20px; margin: 16px 0; */
+            /* inline for li: margin-bottom: 10px; color: #64748b; */
+        }
+        
+        /* Divider */
+        .divider {
+            /* inline: border-top: 1px solid rgba(139, 92, 246, 0.08); margin: 32px 0; */
+        }
+        
+        /* Quote/Message Style */
+        .quote-block {
+            /* inline: background-color: rgba(139, 92, 246, 0.04); border-left: 3px solid #8b5cf6; padding: 16px 20px; margin: 20px 0; border-radius: 0 6px 6px 0; font-style: italic; color: #64748b; */
         }
     </style>
-</head>
-<body>
-    <div class="email-container">
-        <div class="email-header">
-            <h1>Atria</h1>
-            {% block header_subtitle %}
-            <p style="margin: 10px 0 0 0; opacity: 0.9;">Event Management & Networking Platform</p>
-            {% endblock %}
-        </div>
-        
-        <div class="email-body">
-            {% block content %}{% endblock %}
-        </div>
-        
-        <div class="email-footer">
-            {% block footer %}
-            <p>
-                This email was sent by Atria. If you have any questions, 
-                please contact our support team.
-            </p>
-            <p class="text-muted">
-                © {{ current_year }} Atria. All rights reserved.
-            </p>
-            {% endblock %}
-        </div>
-    </div>
 </body>
 </html>
