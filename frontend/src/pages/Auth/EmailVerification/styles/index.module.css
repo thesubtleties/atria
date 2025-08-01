@@ -1,0 +1,53 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--mantine-spacing-md);
+}
+
+.paper {
+  width: 100%;
+  max-width: 450px;
+  box-shadow: var(--mantine-shadow-lg);
+}
+
+.iconWrapper {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.success .iconWrapper {
+  background-color: var(--mantine-color-green-1);
+  color: var(--mantine-color-green-7);
+}
+
+.error .iconWrapper {
+  background-color: var(--mantine-color-red-1);
+  color: var(--mantine-color-red-7);
+}
+
+.alert {
+  width: 100%;
+}
+
+/* Animation for status transitions */
+.success,
+.error {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
