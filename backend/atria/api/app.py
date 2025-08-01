@@ -65,7 +65,7 @@ def configure_extensions(app):
         # Production: Only allow production domain with credentials
         CORS(
             app,
-            origins=["https://atria.sbtl.dev", "https://www.atria.sbtl.dev"],
+            origins=["https://atria.gg", "https://www.atria.gg"],
             supports_credentials=True,
             methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
             allow_headers=["Content-Type", "Authorization"],
@@ -73,8 +73,8 @@ def configure_extensions(app):
         socketio.init_app(
             app,
             cors_allowed_origins=[
-                "https://atria.sbtl.dev",
-                "https://www.atria.sbtl.dev",
+                "https://atria.gg",
+                "https://www.atria.gg",
             ],
         )
 
