@@ -3,38 +3,46 @@
 {% block title %}You're invited to join {{ organization_name }}{% endblock %}
 
 {% block header_subtitle %}
-<p style="margin: 10px 0 0 0; opacity: 0.9;">Organization Invitation</p>
+<p style="margin: 12px 0 0 0; color: rgba(255, 255, 255, 0.9); font-size: 16px; font-weight: 400;">Organization Invitation</p>
 {% endblock %}
 
 {% block content %}
-<h2>You're invited to join {{ organization_name }}!</h2>
+<h2 style="font-size: 24px; font-weight: 600; color: #1e293b; margin: 0 0 24px 0; line-height: 1.3;">You're invited to join {{ organization_name }}!</h2>
 
-<p>Hi there,</p>
+<p style="font-size: 16px; color: #64748b; line-height: 1.6; margin: 0 0 20px 0;">Hi there,</p>
 
-<p>{{ inviter_name }} has invited you to join <strong>{{ organization_name }}</strong> as a <strong>{{ role }}</strong>.</p>
+<p style="font-size: 16px; color: #64748b; line-height: 1.6; margin: 0 0 24px 0;">{{ inviter_name }} has invited you to join <strong style="color: #8b5cf6;">{{ organization_name }}</strong> as a <strong style="color: #8b5cf6;">{{ role }}</strong>.</p>
 
-<div class="info-box">
-    <h3 style="margin-top: 0;">Organization Details</h3>
-    <ul style="margin-bottom: 0;">
-        <li><strong>Organization:</strong> {{ organization_name }}</li>
-        <li><strong>Your Role:</strong> {{ role }}</li>
-    </ul>
+<div style="background-color: rgba(139, 92, 246, 0.04); border: 1px solid rgba(139, 92, 246, 0.08); border-radius: 8px; padding: 20px; margin: 24px 0;">
+    <h3 style="font-size: 18px; font-weight: 600; color: #1e293b; margin: 0 0 16px 0; line-height: 1.4;">Organization Details</h3>
+    <table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
+        <tr>
+            <td style="padding: 8px 0; color: #64748b;">
+                <strong style="color: #8b5cf6;">Organization:</strong> {{ organization_name }}
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 8px 0; color: #64748b;">
+                <strong style="color: #8b5cf6;">Your Role:</strong> {{ role }}
+            </td>
+        </tr>
+    </table>
 </div>
 
-<p>As a member of {{ organization_name }}, you'll be able to:</p>
-<ul>
-    <li>Create and manage events</li>
-    <li>Collaborate with other organization members</li>
-    <li>Access organization-wide resources and tools</li>
+<p style="font-size: 16px; color: #64748b; line-height: 1.6; margin: 24px 0 12px 0;">As a member of {{ organization_name }}, you'll be able to:</p>
+<ul style="padding-left: 20px; margin: 16px 0 24px 0;">
+    <li style="margin-bottom: 10px; color: #64748b;">Create and manage events</li>
+    <li style="margin-bottom: 10px; color: #64748b;">Collaborate with other organization members</li>
+    <li style="margin-bottom: 10px; color: #64748b;">Access organization-wide resources and tools</li>
 </ul>
 
-<p>Since you already have an Atria account, you can accept this invitation with just one click!</p>
+<p style="font-size: 16px; color: #64748b; line-height: 1.6; margin: 24px 0;">Since you already have an Atria account, you can accept this invitation with just one click!</p>
 
-<div style="text-align: center;">
-    <a href="{{ invitation_url }}" class="button">Accept Invitation</a>
+<div style="text-align: center; margin: 32px 0;">
+    <a href="{{ invitation_url }}" style="display: inline-block; padding: 14px 32px; background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%); color: #ffffff !important; text-decoration: none; border-radius: 6px; font-weight: 500; font-size: 16px; box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2);">Accept Invitation</a>
 </div>
 
-<p class="text-muted" style="font-size: 14px;">
+<p style="color: #94a3b8; font-size: 14px; text-align: center; margin: 20px 0;">
     This invitation will expire in 7 days. If you don't want to join this organization, 
     you can safely ignore this email.
 </p>

@@ -3,43 +3,45 @@
 {% block title %}Verify Your Atria Account{% endblock %}
 
 {% block header_subtitle %}
-<p style="margin: 10px 0 0 0; opacity: 0.9;">Almost there! Let's verify your email</p>
+<p style="margin: 12px 0 0 0; color: rgba(255, 255, 255, 0.9); font-size: 16px; font-weight: 400;">Almost there! Let's verify your email</p>
 {% endblock %}
 
 {% block content %}
-<h2>Welcome to Atria, {{ user_name }}!</h2>
+<h2 style="font-size: 24px; font-weight: 600; color: #1e293b; margin: 0 0 16px 0; line-height: 1.3;">Welcome to Atria, {{ user_name }}!</h2>
 
-<p>Thanks for signing up! You're just one click away from accessing all the features Atria has to offer.</p>
+<p style="font-size: 16px; color: #64748b; line-height: 1.6; margin: 0 0 20px 0;">Thanks for signing up! You're just one click away from accessing all the features Atria has to offer.</p>
 
-<p>Please verify your email address by clicking the button below:</p>
+<p style="font-size: 16px; color: #64748b; line-height: 1.6; margin: 0 0 24px 0;">Please verify your email address by clicking the button below:</p>
 
-<div style="text-align: center;">
-    <a href="{{ verification_url }}" class="button">Verify Email Address</a>
+<div style="text-align: center; margin: 32px 0;">
+    <a href="{{ verification_url }}" style="display: inline-block; padding: 14px 32px; background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%); color: #ffffff !important; text-decoration: none; border-radius: 6px; font-weight: 500; font-size: 16px; box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2);">Verify Email Address</a>
 </div>
 
-<div class="info-box">
-    <p><strong>Why verify your email?</strong></p>
-    <ul>
-        <li>Secure your account and protect your data</li>
-        <li>Receive important event updates and invitations</li>
-        <li>Enable password recovery options</li>
-        <li>Connect with other attendees and speakers</li>
+<div style="background-color: rgba(139, 92, 246, 0.04); border: 1px solid rgba(139, 92, 246, 0.08); border-radius: 8px; padding: 20px; margin: 24px 0;">
+    <p style="font-size: 16px; font-weight: 600; color: #1e293b; margin: 0 0 12px 0;">Why verify your email?</p>
+    <ul style="padding-left: 20px; margin: 16px 0;">
+        <li style="margin-bottom: 10px; color: #64748b;">Secure your account and protect your data</li>
+        <li style="margin-bottom: 10px; color: #64748b;">Receive important event updates and invitations</li>
+        <li style="margin-bottom: 10px; color: #64748b;">Enable password recovery options</li>
+        <li style="margin-bottom: 10px; color: #64748b;">Connect with other attendees and speakers</li>
     </ul>
 </div>
 
-<p class="text-muted">
-    This verification link will expire in <strong>{{ expires_in }}</strong>.
+<p style="color: #94a3b8; font-size: 14px; margin: 20px 0;">
+    This verification link will expire in <strong style="color: #8b5cf6;">{{ expires_in }}</strong>.
 </p>
 
-<p class="text-muted">
+<p style="color: #94a3b8; font-size: 14px; margin: 20px 0;">
     If you didn't create an account on Atria, please ignore this email.
 </p>
 
-<hr style="margin: 30px 0; border: none; border-top: 1px solid #e0e0e0;">
+<hr style="border: none; border-top: 1px solid rgba(139, 92, 246, 0.08); margin: 32px 0;">
 
-<p class="text-muted" style="font-size: 14px;">
-    <strong>Having trouble?</strong><br>
-    If the button above doesn't work, copy and paste this link into your browser:<br>
-    <span style="font-size: 12px; word-break: break-all;">{{ verification_url }}</span>
-</p>
+<div style="background-color: rgba(139, 92, 246, 0.02); border-radius: 6px; padding: 16px;">
+    <p style="color: #94a3b8; font-size: 14px; margin: 0;">
+        <strong style="color: #64748b;">Having trouble?</strong><br>
+        If the button above doesn't work, copy and paste this link into your browser:
+    </p>
+    <p style="font-size: 12px; word-break: break-all; color: #8b5cf6; margin: 12px 0 0 0;">{{ verification_url }}</p>
+</div>
 {% endblock %}
