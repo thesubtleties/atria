@@ -201,6 +201,22 @@ class EmailService:
             context
         )
     
+    def send_email_verification(self, user: 'User', verification_token: str) -> None:
+        """Send email verification"""
+        context = {
+            'user_name': user.first_name,
+            'verification_url': f"{current_app.config.get('FRONTEND_URL')}/verify-email/{verification_token}",
+            'expires_in': '24 hours',
+            'current_year': datetime.utcnow().year
+        }
+        
+        self.backend.send(
+            user.email,
+            'Verify your Atria account',
+            'email_verification.html',
+            context
+        )
+    
     def send_password_reset(self, user: 'User', reset_token: str) -> None:
         """Send password reset email"""
         context = {

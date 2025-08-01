@@ -22,6 +22,10 @@ class AuthService:
         if not user or not user.verify_password(login_data["password"]):
             raise ValueError("Invalid credentials")
 
+        # Check if email is verified
+        if not user.email_verified:
+            raise ValueError("Email not verified. Please check your email for the verification link.")
+
         # Create tokens
         access_token = create_access_token(identity=str(user.id))
         refresh_token = create_refresh_token(identity=str(user.id))
@@ -83,35 +87,25 @@ class AuthService:
 
     @staticmethod
     def signup(signup_data):
-        """Register new user and generate tokens"""
+        """Register new user without auto-login (requires email verification)"""
         if User.query.filter_by(email=signup_data["email"]).first():
             raise ValueError("Email already registered")
 
-        user = User(**signup_data)
+        # Create user with email_verified=False
+        user = User(**signup_data, email_verified=False)
         db.session.add(user)
         db.session.commit()
 
-        # Create tokens
-        access_token = create_access_token(identity=str(user.id))
-        refresh_token = create_refresh_token(identity=str(user.id))
+        # Send verification email
+        from api.services.email_verification import EmailVerificationService
+        EmailVerificationService.create_verification(user.id, user.email)
 
-        # Add tokens to blocklist database
-        add_token_to_database(
-            access_token, current_app.config["JWT_IDENTITY_CLAIM"]
-        )
-        add_token_to_database(
-            refresh_token, current_app.config["JWT_IDENTITY_CLAIM"]
-        )
-
-        # Create response with user info
+        # Don't create tokens or set cookies - user must verify email first
         response = jsonify({
-            "message": "User created successfully",
-            "user_id": user.id
+            "message": "Account created. Please check your email to verify your account.",
+            "email": user.email,
+            "requires_verification": True
         })
-        
-        # Set JWT cookies
-        set_access_cookies(response, access_token)
-        set_refresh_cookies(response, refresh_token)
         
         return response
 
