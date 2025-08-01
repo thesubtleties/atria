@@ -57,10 +57,10 @@ def seed_database():
                         """
                     INSERT INTO users (id, email, password_hash, first_name, last_name,
                                      company_name, title, bio, image_url, social_links,
-                                     is_active, created_at)
+                                     is_active, email_verified, created_at)
                     VALUES (:id, :email, :password_hash, :first_name, :last_name,
                            :company_name, :title, :bio, :image_url, :social_links,
-                           :is_active, CURRENT_TIMESTAMP)
+                           :is_active, :email_verified, CURRENT_TIMESTAMP)
                     """
                     ),
                     user_data,

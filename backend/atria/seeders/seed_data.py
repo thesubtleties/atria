@@ -18,6 +18,7 @@ def seed_users():
             "image_url": "https://api.dicebear.com/7.x/avataaars/svg?seed=Demo",
             "social_links": {"linkedin": "https://linkedin.com/in/demouser"},
             "is_active": True,
+            "email_verified": True,
         },
         # Speakers
         {
@@ -32,6 +33,7 @@ def seed_users():
             "image_url": "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
             "social_links": {"linkedin": "https://linkedin.com/in/sarahchen"},
             "is_active": True,
+            "email_verified": True,
         },
         {
             "id": 3,
@@ -47,6 +49,7 @@ def seed_users():
                 "linkedin": "https://linkedin.com/in/marcusrodriguez"
             },
             "is_active": True,
+            "email_verified": True,
         },
         {
             "id": 4,
@@ -62,6 +65,7 @@ def seed_users():
                 "linkedin": "https://linkedin.com/in/emilyjohnson"
             },
             "is_active": True,
+            "email_verified": True,
         },
         # Additional Attendees
         {
@@ -76,6 +80,7 @@ def seed_users():
             "image_url": "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex",
             "social_links": {"linkedin": "https://linkedin.com/in/alexpatel"},
             "is_active": True,
+            "email_verified": True,
         },
         {
             "id": 6,
@@ -89,6 +94,7 @@ def seed_users():
             "image_url": "https://api.dicebear.com/7.x/avataaars/svg?seed=Jamie",
             "social_links": {"linkedin": "https://linkedin.com/in/jamiewong"},
             "is_active": True,
+            "email_verified": True,
         },
         {
             "id": 7,
@@ -102,6 +108,7 @@ def seed_users():
             "image_url": "https://api.dicebear.com/7.x/avataaars/svg?seed=Taylor",
             "social_links": {"linkedin": "https://linkedin.com/in/taylorkim"},
             "is_active": True,
+            "email_verified": True,
         },
         {
             "id": 8,
@@ -115,6 +122,7 @@ def seed_users():
             "image_url": "https://api.dicebear.com/7.x/avataaars/svg?seed=Chris",
             "social_links": {"linkedin": "https://linkedin.com/in/chrismartinez"},
             "is_active": True,
+            "email_verified": True,
         },
     ]
 
