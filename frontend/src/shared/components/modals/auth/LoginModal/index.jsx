@@ -1,4 +1,4 @@
-import { TextInput, PasswordInput, Button, Stack, Group } from '@mantine/core';
+import { TextInput, PasswordInput, Button, Stack, Group, Anchor } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { useDispatch } from 'react-redux';
 import { useLoginMutation, authApi } from '@/app/features/auth/api';
@@ -6,7 +6,7 @@ import { loginSchema } from './schemas/loginSchema';
 import { setUser } from '@/app/store/authSlice';
 import styles from './styles/index.module.css';
 
-export const LoginModal = ({ onClose, onSuccess }) => {
+export const LoginModal = ({ onClose, onSuccess, onForgotPassword }) => {
   const dispatch = useDispatch();
   const [login, { isLoading }] = useLoginMutation();
 
@@ -28,7 +28,9 @@ export const LoginModal = ({ onClose, onSuccess }) => {
         onSuccess();
       }
     } catch (error) {
-      if (error.status === 401) {
+      if (error.status === 400 && error.data?.message?.includes('Email not verified')) {
+        form.setErrors({ email: 'Please verify your email before logging in' });
+      } else if (error.status === 401 || error.status === 400) {
         form.setErrors({ password: 'Invalid email or password' });
       } else {
         form.setErrors({ email: 'An unexpected error occurred' });
@@ -70,12 +72,23 @@ export const LoginModal = ({ onClose, onSuccess }) => {
           disabled={isLoading}
         />
 
-        <PasswordInput
-          label="Password"
-          placeholder="Your password"
-          {...form.getInputProps('password')}
-          disabled={isLoading}
-        />
+        <div>
+          <PasswordInput
+            label="Password"
+            placeholder="Your password"
+            {...form.getInputProps('password')}
+            disabled={isLoading}
+          />
+          <Anchor
+            component="button"
+            type="button"
+            size="sm"
+            onClick={onForgotPassword}
+            className={styles.forgotPassword}
+          >
+            Forgot password?
+          </Anchor>
+        </div>
 
         <Group grow>
           <Button type="submit" loading={isLoading}>

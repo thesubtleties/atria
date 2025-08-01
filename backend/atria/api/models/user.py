@@ -24,6 +24,7 @@ class User(db.Model):
     image_url = db.Column(db.Text)
     social_links = db.Column(db.JSON, nullable=False, default={})
     is_active = db.Column(db.Boolean, nullable=False, default=True)
+    email_verified = db.Column(db.Boolean, nullable=False, default=False, server_default='false')
     created_at = db.Column(
         db.DateTime(timezone=True), server_default=db.func.current_timestamp()
     )

@@ -25,3 +25,9 @@
     transform: translateY(0);
   }
 }
+
+.forgotPassword {
+  display: inline-block;
+  margin-top: var(--mantine-spacing-xs);
+  font-size: var(--mantine-font-size-sm);
+}

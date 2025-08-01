@@ -25,3 +25,9 @@
     transform: translateY(0);
   }
 }
+
+.verificationMessage {
+  padding: var(--mantine-spacing-md);
+  min-width: 400px;
+  animation: fadeIn 0.3s ease;
+}
