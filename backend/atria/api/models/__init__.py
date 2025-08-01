@@ -24,6 +24,8 @@ from api.models.user_key_backup import UserKeyBackup
 from api.models.sponsor import Sponsor
 from api.models.event_invitation import EventInvitation
 from api.models.organization_invitation import OrganizationInvitation
+from api.models.email_verification import EmailVerification
+from api.models.password_reset import PasswordReset
 
 __all__ = [
     "User",
@@ -45,4 +47,6 @@ __all__ = [
     "Sponsor",
     "EventInvitation",
     "OrganizationInvitation",
+    "EmailVerification",
+    "PasswordReset",
 ]
