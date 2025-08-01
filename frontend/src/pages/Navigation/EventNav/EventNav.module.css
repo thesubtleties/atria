@@ -1,14 +1,21 @@
-.container {
-  padding: 1.5rem;
-  background: rgba(251, 250, 255, 0.1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: 2px 0 8px rgba(139, 92, 246, 0.05);
+.navWrapper {
   height: 100%;
   width: 100%;
   position: absolute;
   top: 0;
   left: 0;
+  display: flex;
+  flex-direction: column;
+  background: rgba(251, 250, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 2px 0 8px rgba(139, 92, 246, 0.05);
+}
+
+.container {
+  padding: 1.5rem;
+  flex: 1;
+  overflow: auto;
 }
 
 /* Override Mantine AppShell.Navbar styles */
@@ -28,4 +35,39 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   font-size: 0.875rem;
+}
+
+.attribution {
+  position: absolute;
+  bottom: 40px;
+  left: 0;
+  right: 0;
+  padding: 1rem;
+  text-align: center;
+}
+
+.attribution :global(.mantine-Text-root) {
+  color: #94a3b8;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+.heartIcon {
+  color: #8b5cf6;
+  fill: #8b5cf6;
+  vertical-align: middle;
+}
+
+.link {
+  color: #8b5cf6;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.link:hover {
+  opacity: 0.8;
+  text-decoration: none;
 }
