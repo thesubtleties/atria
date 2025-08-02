@@ -236,11 +236,11 @@ class ChatMessageList(MethodView):
     @chat_room_access_required()
     def get(self, room_id):
         """Get chat room messages"""
-        query = ChatMessage.query.filter_by(room_id=room_id).order_by(
-            ChatMessage.created_at.asc()
-        )
-        return paginate(
-            query, ChatMessageSchema(many=True), collection_name="messages"
+        user_id = int(get_jwt_identity())
+        
+        # Use the service method with role-based filtering
+        return ChatRoomService.get_chat_messages(
+            room_id, user_id, ChatMessageSchema(many=True)
         )
 
     @blp.arguments(ChatMessageCreateSchema)
@@ -274,6 +274,34 @@ class ChatMessageList(MethodView):
         emit_new_chat_message(message, room_id)
 
         return message, 201
+
+
+@blp.route("/chat-rooms/<int:room_id>/messages/<int:message_id>")
+class ChatMessageResource(MethodView):
+    @blp.response(204)
+    @blp.doc(
+        summary="Delete (moderate) a chat message",
+        description="Soft delete a chat message. Only available to event admins and organizers.",
+        responses={
+            403: {"description": "Not authorized to moderate messages"},
+            404: {"description": "Message not found"},
+        },
+    )
+    @jwt_required()
+    def delete(self, room_id, message_id):
+        """Delete (moderate) a chat message"""
+        user_id = int(get_jwt_identity())
+        
+        try:
+            result = ChatRoomService.delete_message(message_id, user_id)
+            
+            # Emit different events based on user role
+            from api.api.sockets.chat_notifications import emit_chat_message_moderated
+            emit_chat_message_moderated(message_id, room_id, result["deleted_by"])
+            
+            return "", 204
+        except ValueError as e:
+            abort(403, message=str(e))
 
 
 @blp.route("/chat-rooms/<int:room_id>/toggle")

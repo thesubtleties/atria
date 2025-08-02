@@ -17,12 +17,87 @@ def emit_new_chat_message(message, room_id):
         message: ChatMessage instance
         room_id: ID of the chat room
     """
-    message_data = ChatRoomService.format_message_for_response(message)
-    socketio.emit("new_chat_message", message_data, room=f"room_{room_id}")
+    from api.models import ChatRoom, Event, EventUser
+    from api.models.enums import EventUserRole
+    
+    # Get the chat room and event
+    chat_room = ChatRoom.query.get(room_id)
+    if not chat_room:
+        return
+    
+    event = Event.query.get(chat_room.event_id)
+    if not event:
+        return
+    
+    # Get all users in the room and format message based on their role
+    event_users = EventUser.query.filter_by(event_id=event.id).all()
+    
+    for event_user in event_users:
+        user_socket_room = f"user_{event_user.user_id}"
+        
+        # Include deletion info for admins/organizers
+        include_deletion_info = event_user.role in [EventUserRole.ADMIN, EventUserRole.ORGANIZER]
+        message_data = ChatRoomService.format_message_for_response(message, include_deletion_info)
+        
+        socketio.emit("new_chat_message", message_data, room=user_socket_room)
+
+
+def emit_chat_message_moderated(message_id, room_id, deleted_by_user):
+    """
+    Emit role-specific events for message moderation.
+    
+    Args:
+        message_id: ID of moderated message
+        room_id: ID of the chat room
+        deleted_by_user: User object who deleted the message
+    """
+    from api.models import ChatRoom, Event, EventUser
+    from api.models.enums import EventUserRole
+    
+    # Get the chat room and event
+    chat_room = ChatRoom.query.get(room_id)
+    if not chat_room:
+        return
+    
+    event = Event.query.get(chat_room.event_id)
+    if not event:
+        return
+    
+    # Get all users in the room and emit different events based on their role
+    event_users = EventUser.query.filter_by(event_id=event.id).all()
+    
+    for event_user in event_users:
+        user_socket_room = f"user_{event_user.user_id}"
+        
+        if event_user.role in [EventUserRole.ADMIN, EventUserRole.ORGANIZER]:
+            # Admins/Organizers see the message as moderated with full info
+            socketio.emit(
+                "chat_message_moderated",
+                {
+                    "message_id": message_id,
+                    "room_id": room_id,
+                    "deleted_by": {
+                        "id": deleted_by_user.id,
+                        "full_name": deleted_by_user.full_name
+                    }
+                },
+                room=user_socket_room
+            )
+        else:
+            # Other users see the message as removed
+            socketio.emit(
+                "chat_message_removed",
+                {
+                    "message_id": message_id,
+                    "room_id": room_id
+                },
+                room=user_socket_room
+            )
 
 
 def emit_chat_message_deleted(message_id, room_id):
     """
+    Legacy function - use emit_chat_message_moderated instead.
     Notify room that a message was deleted.
     
     Args:
