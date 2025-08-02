@@ -1,9 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Center, Loader } from '@mantine/core';
-import { useGetChatRoomMessagesQuery } from '@/app/features/chat/api';
+import { useGetChatRoomMessagesQuery, useDeleteMessageMutation } from '@/app/features/chat/api';
 import { setActiveChatRoom } from '@/app/features/networking/socketClient';
 import { MessageList } from '../MessageList';
 import { MessageInput } from '../MessageInput';
+import { DeleteMessageModal } from '../DeleteMessageModal';
+import { notifications } from '@mantine/notifications';
 import styles from './styles/index.module.css';
 
 export function ChatRoom({ 
@@ -12,12 +14,18 @@ export function ChatRoom({
   inputValue, 
   onInputChange, 
   onSendMessage,
-  isActive
+  isActive,
+  canModerate
 }) {
+  const [messageToDelete, setMessageToDelete] = useState(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  
   const { data, isLoading } = useGetChatRoomMessagesQuery(
     { chatRoomId: room.id, limit: 100, offset: 0 },
     { skip: !room.id }
   );
+  
+  const [deleteMessage, { isLoading: isDeleting }] = useDeleteMessageMutation();
 
   // Get messages from API
   const messages = data?.messages || [];
@@ -61,6 +69,37 @@ export function ChatRoom({
     };
   }, [room?.id]);
 
+  const handleDeleteClick = (message) => {
+    setMessageToDelete(message);
+    setDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!messageToDelete) return;
+
+    try {
+      await deleteMessage({
+        chatRoomId: room.id,
+        messageId: messageToDelete.id
+      }).unwrap();
+
+      notifications.show({
+        title: 'Message deleted',
+        message: 'The message has been removed from the chat.',
+        color: 'red',
+      });
+
+      setDeleteModalOpen(false);
+      setMessageToDelete(null);
+    } catch (error) {
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to delete the message. Please try again.',
+        color: 'red',
+      });
+    }
+  };
+
   if (isLoading) {
     return (
       <Center className={styles.chatContainer}>
@@ -70,19 +109,34 @@ export function ChatRoom({
   }
 
   return (
-    <div className={styles.chatContainer}>
-      <MessageList 
-        room={room}
-        messages={messages}
-        isActive={isActive}
+    <>
+      <div className={styles.chatContainer}>
+        <MessageList 
+          room={room}
+          messages={messages}
+          isActive={isActive}
+          canModerate={canModerate}
+          onDeleteMessage={handleDeleteClick}
+        />
+        
+        <MessageInput 
+          roomName={room.name}
+          value={inputValue}
+          onChange={onInputChange}
+          onSend={onSendMessage}
+        />
+      </div>
+
+      <DeleteMessageModal
+        opened={deleteModalOpen}
+        onClose={() => {
+          setDeleteModalOpen(false);
+          setMessageToDelete(null);
+        }}
+        message={messageToDelete}
+        onConfirm={handleConfirmDelete}
+        isLoading={isDeleting}
       />
-      
-      <MessageInput 
-        roomName={room.name}
-        value={inputValue}
-        onChange={onInputChange}
-        onSend={onSendMessage}
-      />
-    </div>
+    </>
   );
 }

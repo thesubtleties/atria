@@ -3,7 +3,7 @@ import { ScrollArea, Stack, Text, Group, Box } from '@mantine/core';
 import { MessageBubble } from '../MessageBubble';
 import styles from './styles/index.module.css';
 
-export function MessageList({ room, messages, isActive }) {
+export function MessageList({ room, messages, isActive, canModerate, onDeleteMessage }) {
   const scrollAreaRef = useRef(null);
   const messagesEndRef = useRef(null);
   const isNearBottomRef = useRef(true);
@@ -107,7 +107,9 @@ export function MessageList({ room, messages, isActive }) {
             messages.map((message) => (
               <MessageBubble 
                 key={message.id} 
-                message={message} 
+                message={message}
+                canModerate={canModerate}
+                onDelete={onDeleteMessage}
               />
             ))
           )}

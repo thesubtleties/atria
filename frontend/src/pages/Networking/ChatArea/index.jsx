@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Text, Stack, Loader, Center } from '@mantine/core';
 import { IconHash, IconLock, IconGlobe, IconMicrophone } from '@tabler/icons-react';
 import { useGetChatRoomsQuery, useSendMessageMutation } from '@/app/features/chat/api';
+import { useGetEventQuery } from '@/app/features/events/api';
 import { joinEventNotifications, leaveEventNotifications } from '@/app/features/networking/socketClient';
 import { ChatRoom } from './ChatRoom';
 import styles from './styles/index.module.css';
@@ -15,6 +16,9 @@ export function ChatArea({ eventId }) {
   console.log('About to call useGetChatRoomsQuery with eventId:', eventId, 'type:', typeof eventId);
   
   const { data: chatRooms, isLoading, error } = useGetChatRoomsQuery(eventId, {
+    skip: !eventId
+  });
+  const { data: eventData } = useGetEventQuery(eventId, {
     skip: !eventId
   });
   const [sendMessage] = useSendMessageMutation();
@@ -36,6 +40,9 @@ export function ChatArea({ eventId }) {
   });
   
   console.log('ChatArea API response:', { eventId, chatRooms, rooms, isLoading, error });
+
+  // Determine if current user can moderate messages
+  const canModerate = eventData?.user_role === 'ADMIN' || eventData?.user_role === 'ORGANIZER';
 
   useEffect(() => {
     if (rooms.length > 0 && !activeRoom) {
@@ -119,7 +126,7 @@ export function ChatArea({ eventId }) {
   };
 
   // Check if user can access room
-  const canAccessRoom = (room) => {
+  const canAccessRoom = () => {
     // For now, allow all rooms that are returned from the API
     // The backend already filters based on permissions
     return true;
@@ -139,7 +146,7 @@ export function ChatArea({ eventId }) {
                 key={room.id}
                 className={`${styles.roomTab} ${isActive ? styles.roomTabActive : ''}`}
                 onClick={() => setActiveRoom(room.id)}
-                disabled={!canAccessRoom(room)}
+                disabled={!canAccessRoom()}
               >
                 {getRoomIcon(room.room_type)}
                 <span>{room.name}</span>
@@ -160,7 +167,7 @@ export function ChatArea({ eventId }) {
             
             return (
               <div key={room.id} className={styles.chatPanel}>
-                {canAccessRoom(room) ? (
+                {canAccessRoom() ? (
                   <ChatRoom 
                     room={room} 
                     eventId={eventId}
@@ -170,6 +177,8 @@ export function ChatArea({ eventId }) {
                       [room.id]: value 
                     }))}
                     onSendMessage={() => handleSendMessage(room.id)}
+                    canModerate={canModerate}
+                    isActive={activeRoom === room.id}
                   />
                 ) : (
                   <Center className={styles.restricted}>
