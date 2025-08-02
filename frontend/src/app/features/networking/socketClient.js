@@ -303,6 +303,60 @@ export const initializeSocket = (token = null) => {
   // CHAT ROOM EVENT HANDLERS
   // ============================================
 
+  // Handle message moderation events
+  socket.on('chat_message_moderated', (data) => {
+    console.log('🔴 SOCKET EVENT: chat_message_moderated received:', data);
+    
+    if (data && data.room_id && data.message_id) {
+      const roomId = parseInt(data.room_id);
+      const messageId = parseInt(data.message_id);
+      
+      // Update the message in the cache to show as deleted
+      store.dispatch(
+        chatApi.util.updateQueryData(
+          'getChatRoomMessages',
+          { chatRoomId: roomId, limit: 100, offset: 0 },
+          (draft) => {
+            if (draft?.messages) {
+              const messageIndex = draft.messages.findIndex(m => m.id === messageId);
+              if (messageIndex >= 0) {
+                // Update the message to show as deleted with moderator info
+                draft.messages[messageIndex] = {
+                  ...draft.messages[messageIndex],
+                  is_deleted: true,
+                  deleted_at: new Date().toISOString(),
+                  deleted_by: data.deleted_by
+                };
+              }
+            }
+          }
+        )
+      );
+    }
+  });
+
+  socket.on('chat_message_removed', (data) => {
+    console.log('🔴 SOCKET EVENT: chat_message_removed received:', data);
+    
+    if (data && data.room_id && data.message_id) {
+      const roomId = parseInt(data.room_id);
+      const messageId = parseInt(data.message_id);
+      
+      // Remove the message from the cache entirely
+      store.dispatch(
+        chatApi.util.updateQueryData(
+          'getChatRoomMessages',
+          { chatRoomId: roomId, limit: 100, offset: 0 },
+          (draft) => {
+            if (draft?.messages) {
+              draft.messages = draft.messages.filter(m => m.id !== messageId);
+            }
+          }
+        )
+      );
+    }
+  });
+
   socket.on('new_chat_message', (data) => {
     console.log('🔵 SOCKET EVENT: new_chat_message received:', data);
     console.log('🔵 Room ID:', data.room_id, 'Type:', typeof data.room_id);

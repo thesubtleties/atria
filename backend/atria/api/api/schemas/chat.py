@@ -52,6 +52,12 @@ class ChatMessageSchema(ma.SQLAlchemyAutoSchema):
         only=("id", "full_name", "image_url"),
         dump_only=True,
     )
+    deleted_by = ma.Nested(
+        "UserSchema",
+        only=("id", "full_name"),
+        dump_only=True,
+    )
+    is_deleted = ma.Boolean(dump_only=True)
 
 
 class ChatMessageCreateSchema(ma.Schema):

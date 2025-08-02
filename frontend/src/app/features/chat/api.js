@@ -103,6 +103,15 @@ export const chatApi = baseApi.injectEndpoints({
       invalidatesTags: ['ChatMessage'],
     }),
 
+    // Delete (moderate) a message
+    deleteMessage: builder.mutation({
+      query: ({ chatRoomId, messageId }) => ({
+        url: `/chat-rooms/${chatRoomId}/messages/${messageId}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['ChatMessage'],
+    }),
+
     // Join a chat room
     joinChatRoom: builder.mutation({
       query: (chatRoomId) => ({
@@ -143,6 +152,7 @@ export const {
   useDisableAllPublicRoomsMutation,
   useGetChatRoomMessagesQuery,
   useSendMessageMutation,
+  useDeleteMessageMutation,
   useJoinChatRoomMutation,
   useLeaveChatRoomMutation,
   useGetSessionChatRoomsQuery,

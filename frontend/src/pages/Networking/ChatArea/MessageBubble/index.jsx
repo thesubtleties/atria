@@ -1,11 +1,26 @@
-import { Group, Text, Avatar } from '@mantine/core';
+import { useState } from 'react';
+import { Group, Text, Avatar, ActionIcon } from '@mantine/core';
+import { IconTrash } from '@tabler/icons-react';
 import styles from '../styles/index.module.css';
 
-export function MessageBubble({ message }) {
+export function MessageBubble({ message, canModerate, onDelete }) {
+  const [showActions, setShowActions] = useState(false);
+  
   // Handle both snake_case (from backend) and camelCase (from local state)
-  const { user, sender, content, created_at, createdAt } = message;
+  const { 
+    user, 
+    sender, 
+    content, 
+    created_at, 
+    createdAt,
+    is_deleted,
+    deleted_at,
+    deleted_by
+  } = message;
+  
   const messageUser = user || sender;
   const timestamp = created_at || createdAt;
+  const isDeleted = is_deleted || false;
   
   const time = timestamp ? new Date(timestamp).toLocaleTimeString([], { 
     hour: '2-digit', 
@@ -18,8 +33,29 @@ export function MessageBubble({ message }) {
                    'Anonymous';
   const initial = fullName?.[0] || '?';
 
+  // Format deletion time
+  const deletionTime = deleted_at ? new Date(deleted_at).toLocaleTimeString([], { 
+    hour: '2-digit', 
+    minute: '2-digit' 
+  }) : '';
+
   return (
-    <Group gap="sm" align="flex-start" className={styles.message}>
+    <Group 
+      gap="sm" 
+      align="flex-start" 
+      className={styles.message}
+      onMouseEnter={() => setShowActions(true)}
+      onMouseLeave={() => setShowActions(false)}
+      style={{
+        backgroundColor: isDeleted ? 'rgba(220, 38, 38, 0.04)' : undefined,
+        transition: 'background-color 0.1s ease',
+      }}
+      sx={(theme) => ({
+        '&:hover': {
+          backgroundColor: isDeleted ? 'rgba(220, 38, 38, 0.06)' : theme.colors.gray[0],
+        },
+      })}
+    >
       <Avatar 
         size="sm" 
         radius="xl"
@@ -40,7 +76,27 @@ export function MessageBubble({ message }) {
         <Text size="sm" className={styles.messageText}>
           {content}
         </Text>
+        {isDeleted && deleted_by && (
+          <div className={styles.deletionInfo}>
+            <Text size="xs" c="dimmed" fs="italic">
+              Message deleted by {deleted_by.full_name} • {deletionTime}
+            </Text>
+          </div>
+        )}
       </div>
+      
+      {showActions && canModerate && !isDeleted && (
+        <ActionIcon
+          variant="subtle"
+          color="red"
+          size="sm"
+          className={styles.deleteButton}
+          onClick={() => onDelete(message)}
+          aria-label={`Delete message from ${fullName}`}
+        >
+          <IconTrash size={14} />
+        </ActionIcon>
+      )}
     </Group>
   );
 }

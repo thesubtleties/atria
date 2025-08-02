@@ -81,7 +81,10 @@ class User(db.Model):
         cascade="all, delete-orphan",
     )
     chat_messages = db.relationship(
-        "ChatMessage", back_populates="user", cascade="all, delete-orphan"
+        "ChatMessage", 
+        foreign_keys="ChatMessage.user_id",
+        back_populates="user", 
+        cascade="all, delete-orphan"
     )
     sent_direct_messages = db.relationship(
         "DirectMessage", back_populates="sender", cascade="all, delete-orphan"
