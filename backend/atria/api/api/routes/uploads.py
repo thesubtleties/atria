@@ -29,7 +29,7 @@ class ImageUploadResource(MethodView):
     @blp.response(201, ImageUploadResponseSchema)
     @blp.doc(
         summary="Upload an image",
-        description="Upload an image file to storage. Supports JPEG, PNG, GIF, and WebP formats up to 5MB.",
+        description="Upload an image file to storage. Supports JPEG, PNG, GIF, and WebP formats up to 10MB.",
         responses={
             400: {"description": "Invalid file or validation error"},
             401: {"description": "Authentication required"},

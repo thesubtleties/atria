@@ -101,9 +101,10 @@ const BrandingSection = ({ event, eventId }) => {
         color: 'green',
       });
     } catch (error) {
+      const errorMessage = error.data?.message || error.message || `Failed to upload ${field === 'logo_url' ? 'logo' : 'hero image'}`;
       notifications.show({
         title: 'Error',
-        message: `Failed to upload ${field === 'logo_url' ? 'logo' : 'hero image'}`,
+        message: errorMessage,
         color: 'red',
       });
     }
