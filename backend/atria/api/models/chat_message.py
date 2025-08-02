@@ -21,10 +21,27 @@ class ChatMessage(db.Model):
     created_at = db.Column(
         db.DateTime(timezone=True), server_default=db.func.current_timestamp()
     )
+    deleted_at = db.Column(db.DateTime(timezone=True), nullable=True)
+    deleted_by_id = db.Column(
+        db.BigInteger,
+        db.ForeignKey("users.id", ondelete="SET NULL"),
+        nullable=True,
+    )
 
     # Relationships
     room = db.relationship("ChatRoom", back_populates="messages")
-    user = db.relationship("User", back_populates="chat_messages")
+    user = db.relationship("User", foreign_keys=[user_id], back_populates="chat_messages")
+    deleted_by = db.relationship(
+        "User",
+        foreign_keys=[deleted_by_id],
+        backref="deleted_messages",
+        lazy="joined",
+    )
+
+    @property
+    def is_deleted(self):
+        """Check if message has been soft deleted"""
+        return self.deleted_at is not None
 
     def __repr__(self):
         return f"ChatMessage(id={self.id}, room_id={self.room_id}, user_id={self.user_id})"
