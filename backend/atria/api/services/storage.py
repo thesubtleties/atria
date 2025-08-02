@@ -23,7 +23,7 @@ class StorageService:
     """Service for handling file storage with MinIO using three-tier bucket structure."""
     
     ALLOWED_IMAGE_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif', 'webp'}
-    MAX_IMAGE_SIZE = 5 * 1024 * 1024  # 5MB
+    MAX_IMAGE_SIZE = 10 * 1024 * 1024  # 10MB
     
     # Max dimensions by context
     MAX_DIMENSIONS = {
