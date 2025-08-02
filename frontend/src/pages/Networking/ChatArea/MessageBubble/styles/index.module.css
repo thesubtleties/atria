@@ -1,11 +1,7 @@
 .message {
+  position: relative;
   padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
   border-radius: var(--mantine-radius-md);
-  transition: background-color 0.1s ease;
-}
-
-.message:hover {
-  background-color: var(--mantine-color-gray-0);
 }
 
 .avatar {
@@ -20,4 +16,32 @@
 .messageText {
   word-wrap: break-word;
   white-space: pre-wrap;
+}
+
+.deletionInfo {
+  margin-top: var(--mantine-spacing-xs);
+  padding-top: var(--mantine-spacing-xs);
+  border-top: 1px solid rgba(220, 38, 38, 0.08);
+}
+
+.deleteButton {
+  position: absolute;
+  top: var(--mantine-spacing-xs);
+  right: var(--mantine-spacing-xs);
+  opacity: 0;
+  transition: all 0.2s ease;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1px solid rgba(220, 38, 38, 0.1);
+}
+
+.message:hover .deleteButton {
+  opacity: 1;
+}
+
+.deleteButton:hover {
+  background: rgba(220, 38, 38, 0.04);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.15);
 }

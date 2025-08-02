@@ -1,0 +1,38 @@
+.modalContent {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.modalHeader {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1E293B;
+}
+
+.dangerAlert {
+  background: rgba(220, 38, 38, 0.04);
+  border: 1px solid rgba(220, 38, 38, 0.1);
+  border-radius: 6px;
+}
+
+.messagePreview {
+  background: rgba(139, 92, 246, 0.04);
+  padding: 1rem;
+  border-radius: 6px;
+  border: 1px solid rgba(139, 92, 246, 0.08);
+}
+
+.messageContent {
+  margin-top: 0.25rem;
+  color: #64748B;
+  font-style: italic;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+.buttonGroup {
+  padding-top: 1rem;
+  border-top: 1px solid rgba(139, 92, 246, 0.04);
+  margin-top: 1rem;
+}
