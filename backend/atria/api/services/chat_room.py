@@ -2,7 +2,7 @@ from api.extensions import db
 from api.models import ChatRoom, ChatMessage, Event, User, EventUser
 from api.models.enums import EventUserRole
 from api.commons.pagination import paginate
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 class ChatRoomService:
@@ -119,11 +119,23 @@ class ChatRoomService:
         return chat_room.event_id  # Return event_id for notifications
 
     @staticmethod
-    def get_chat_messages(room_id, schema=None):
-        """Get messages for a chat room with pagination"""
-        query = ChatMessage.query.filter_by(room_id=room_id).order_by(
-            ChatMessage.created_at.desc()
-        )
+    def get_chat_messages(room_id, user_id, schema=None):
+        """Get messages for a chat room with role-based filtering"""
+        # Get user's role in the event
+        chat_room = ChatRoom.query.get_or_404(room_id)
+        event = Event.query.get_or_404(chat_room.event_id)
+        user = User.query.get_or_404(user_id)
+        user_role = event.get_user_role(user)
+        
+        # Base query
+        query = ChatMessage.query.filter_by(room_id=room_id)
+        
+        # Filter out deleted messages for non-privileged users
+        if user_role not in [EventUserRole.ADMIN, EventUserRole.ORGANIZER]:
+            query = query.filter(ChatMessage.deleted_at.is_(None))
+        
+        # Order by creation time
+        query = query.order_by(ChatMessage.created_at.asc())
 
         if schema:
             return paginate(query, schema, collection_name="messages")
@@ -143,34 +155,31 @@ class ChatRoomService:
 
     @staticmethod
     def delete_message(message_id, user_id):
-        """Delete a chat message"""
+        """Soft delete a chat message (moderation)"""
         message = ChatMessage.query.get_or_404(message_id)
         chat_room = ChatRoom.query.get(message.room_id)
         event = Event.query.get(chat_room.event_id)
 
-        # Check if user is the message sender or an admin/organizer/moderator
+        # Only admins/organizers can moderate messages
         current_user = User.query.get(user_id)
         user_role = event.get_user_role(current_user)
 
-        if message.user_id != user_id and user_role not in [
-            EventUserRole.ADMIN,
-            EventUserRole.ORGANIZER,
-            EventUserRole.MODERATOR,
-        ]:
-            raise ValueError("Not authorized to delete this message")
+        if user_role not in [EventUserRole.ADMIN, EventUserRole.ORGANIZER]:
+            raise ValueError("Not authorized to moderate this message")
 
-        room_id = message.room_id  # Store before deletion
+        # Soft delete the message
+        message.deleted_at = datetime.now(timezone.utc)
+        message.deleted_by_id = user_id
 
-        db.session.delete(message)
         db.session.commit()
 
-        return {"message_id": message_id, "room_id": room_id}
+        return {"message_id": message_id, "room_id": message.room_id, "deleted_by": current_user}
 
     @staticmethod
-    def format_message_for_response(message):
+    def format_message_for_response(message, include_deletion_info=False):
         """Format a message for socket response"""
         user = User.query.get(message.user_id)
-        return {
+        data = {
             "id": message.id,
             "room_id": message.room_id,
             "user_id": message.user_id,
@@ -181,7 +190,19 @@ class ChatRoomService:
             },
             "content": message.content,
             "created_at": message.created_at.isoformat(),
+            "is_deleted": message.is_deleted,
         }
+        
+        # Include deletion info for privileged users
+        if include_deletion_info and message.is_deleted:
+            data["deleted_at"] = message.deleted_at.isoformat()
+            if message.deleted_by:
+                data["deleted_by"] = {
+                    "id": message.deleted_by.id,
+                    "full_name": message.deleted_by.full_name,
+                }
+        
+        return data
 
     @staticmethod
     def get_next_display_order(event_id, room_type):
@@ -277,22 +298,29 @@ class ChatRoomService:
         return False
 
     @staticmethod
-    def get_recent_messages(room_id, limit=50):
-        """Get recent messages for a chat room"""
-        messages = (
-            ChatMessage.query.filter_by(room_id=room_id)
-            .order_by(ChatMessage.created_at.desc())
-            .limit(limit)
-            .all()
-        )
+    def get_recent_messages(room_id, user_id, limit=50):
+        """Get recent messages for a chat room with role-based filtering"""
+        # Get user's role
+        chat_room = ChatRoom.query.get_or_404(room_id)
+        event = Event.query.get_or_404(chat_room.event_id)
+        user = User.query.get_or_404(user_id)
+        user_role = event.get_user_role(user)
+        
+        # Build query
+        query = ChatMessage.query.filter_by(room_id=room_id)
+        
+        # Filter deleted messages for non-privileged users
+        include_deletion_info = user_role in [EventUserRole.ADMIN, EventUserRole.ORGANIZER]
+        if not include_deletion_info:
+            query = query.filter(ChatMessage.deleted_at.is_(None))
+        
+        messages = query.order_by(ChatMessage.created_at.desc()).limit(limit).all()
 
         # Format messages for response
         formatted_messages = []
-        for message in reversed(
-            messages
-        ):  # Reverse to get chronological order
+        for message in reversed(messages):  # Reverse to get chronological order
             formatted_messages.append(
-                ChatRoomService.format_message_for_response(message)
+                ChatRoomService.format_message_for_response(message, include_deletion_info)
             )
 
         return formatted_messages
