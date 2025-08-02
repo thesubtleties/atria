@@ -1,5 +1,6 @@
-import { Modal, Text, Alert, Stack, Button, Group } from '@mantine/core';
+import { Modal, Text, Alert, Stack, Group } from '@mantine/core';
 import { IconAlertTriangle } from '@tabler/icons-react';
+import { Button } from '../../../../shared/components/buttons';
 import styles from './styles/index.module.css';
 
 export function DeleteMessageModal({ opened, onClose, message, onConfirm, isLoading }) {
@@ -21,7 +22,7 @@ export function DeleteMessageModal({ opened, onClose, message, onConfirm, isLoad
         header: styles.modalHeader,
       }}
     >
-      <Stack>
+      <Stack spacing="md">
         <Alert 
           icon={<IconAlertTriangle size={16} />} 
           className={styles.dangerAlert}
@@ -45,12 +46,11 @@ export function DeleteMessageModal({ opened, onClose, message, onConfirm, isLoad
             Cancel
           </Button>
           <Button 
-            variant="filled" 
-            color="red" 
+            variant="danger"
             onClick={onConfirm} 
-            loading={isLoading}
+            disabled={isLoading}
           >
-            Delete Message
+            {isLoading ? 'Deleting...' : 'Delete Message'}
           </Button>
         </Group>
       </Stack>

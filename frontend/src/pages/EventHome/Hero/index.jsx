@@ -26,7 +26,7 @@ export default function Hero({ title, description, images }) {
   }, [desktopData, mobileData]);
 
   // Default gradient background if no image
-  const defaultBackground = 'linear-gradient(135deg, #868e96 0%, #495057 100%)';
+  const defaultBackground = 'linear-gradient(90deg, #D6C7F0 0%, #E9DFF9 50%, #FAF9FC 100%)';
 
   // Create style object with both desktop and mobile images
   const backgroundStyle = {
