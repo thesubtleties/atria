@@ -1,13 +1,56 @@
+/* Global Mantine overrides */
+:global(.mantine-Modal-content) {
+  background: rgba(255, 255, 255, 1) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.08);
+}
+
+:global(.mantine-Modal-overlay) {
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(4px);
+}
+
+:global(.mantine-Modal-header) {
+  padding: 1.5rem 1.5rem 0;
+  background: transparent;
+}
+
+:global(.mantine-Modal-title) {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1E293B;
+}
+
+:global(.mantine-Modal-body) {
+  padding: 1.5rem;
+}
+
+:global(.mantine-Modal-close) {
+  color: #64748B;
+  background: rgba(139, 92, 246, 0.04);
+  border: 1px solid rgba(139, 92, 246, 0.08);
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+:global(.mantine-Modal-close:hover) {
+  background: rgba(139, 92, 246, 0.1);
+  border-color: rgba(139, 92, 246, 0.2);
+  color: #8B5CF6;
+}
+
+/* Component specific styles */
 .modalContent {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 1) !important;
 }
 
 .modalHeader {
   font-size: 1.25rem;
   font-weight: 600;
   color: #1E293B;
+  padding: 1.5rem 1.5rem 0;
 }
 
 .dangerAlert {
@@ -32,7 +75,11 @@
 }
 
 .buttonGroup {
-  padding-top: 1rem;
+  padding: 1.5rem;
   border-top: 1px solid rgba(139, 92, 246, 0.04);
-  margin-top: 1rem;
+  margin-top: 1.5rem;
+  background: rgba(251, 250, 255, 0.5);
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
 }
