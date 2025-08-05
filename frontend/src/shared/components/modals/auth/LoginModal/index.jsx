@@ -1,9 +1,10 @@
-import { TextInput, PasswordInput, Button, Stack, Group, Anchor } from '@mantine/core';
+import { TextInput, PasswordInput, Stack, Anchor } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { useDispatch } from 'react-redux';
 import { useLoginMutation, authApi } from '@/app/features/auth/api';
 import { loginSchema } from './schemas/loginSchema';
 import { setUser } from '@/app/store/authSlice';
+import { Button } from '../../../../components/buttons';
 import styles from './styles/index.module.css';
 
 export const LoginModal = ({ onClose, onSuccess, onForgotPassword }) => {
@@ -38,23 +39,6 @@ export const LoginModal = ({ onClose, onSuccess, onForgotPassword }) => {
     }
   };
 
-  const handleDemoLogin = async (e) => {
-    e.preventDefault();
-    try {
-      await login({
-        email: 'demouser@demo.com',
-        password: 'changeme',
-      }).unwrap();
-      const userData = await dispatch(
-        authApi.endpoints.getCurrentUser.initiate()
-      ).unwrap();
-      if (userData) {
-        onSuccess();
-      }
-    } catch (error) {
-      form.setErrors({ email: 'Demo login failed. Please try again.' });
-    }
-  };
 
   return (
     <form
@@ -90,18 +74,9 @@ export const LoginModal = ({ onClose, onSuccess, onForgotPassword }) => {
           </Anchor>
         </div>
 
-        <Group grow>
-          <Button type="submit" loading={isLoading}>
-            {isLoading ? 'Logging in...' : 'Log in'}
-          </Button>
-          <Button
-            variant="light"
-            onClick={handleDemoLogin}
-            disabled={isLoading}
-          >
-            Demo Login
-          </Button>
-        </Group>
+        <Button type="submit" disabled={isLoading} className={styles.submitButton}>
+          {isLoading ? 'Logging in...' : 'Log in'}
+        </Button>
       </Stack>
     </form>
   );

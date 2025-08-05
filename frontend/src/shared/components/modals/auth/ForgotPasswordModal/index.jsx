@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { TextInput, Button, Stack, Alert, Text } from '@mantine/core';
+import { TextInput, Stack, Alert, Text } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { IconMail } from '@tabler/icons-react';
 import { useForgotPasswordMutation } from '@/app/features/auth/api';
 import { forgotPasswordSchema } from './schemas/forgotPasswordSchema';
+import { Button } from '../../../../components/buttons';
 import styles from './styles/index.module.css';
 
 export const ForgotPasswordModal = ({ onClose }) => {
@@ -37,9 +38,11 @@ export const ForgotPasswordModal = ({ onClose }) => {
         <Text size="sm" c="dimmed" ta="center">
           The reset link will expire in 1 hour. If you don't receive an email, please check your spam folder.
         </Text>
-        <Button variant="light" onClick={onClose} fullWidth>
-          Close
-        </Button>
+        <div className={styles.buttonGroup}>
+          <Button variant="subtle" onClick={onClose}>
+            Close
+          </Button>
+        </div>
       </Stack>
     );
   }
@@ -62,14 +65,14 @@ export const ForgotPasswordModal = ({ onClose }) => {
           autoFocus
         />
 
-        <Stack gap="xs">
-          <Button type="submit" loading={isLoading} fullWidth>
+        <div className={styles.buttonGroup}>
+          <Button variant="subtle" onClick={onClose} disabled={isLoading}>
+            Cancel
+          </Button>
+          <Button type="submit" loading={isLoading}>
             {isLoading ? 'Sending...' : 'Send Reset Link'}
           </Button>
-          <Button variant="subtle" onClick={onClose} fullWidth disabled={isLoading}>
-            Back to Login
-          </Button>
-        </Stack>
+        </div>
       </Stack>
     </form>
   );
