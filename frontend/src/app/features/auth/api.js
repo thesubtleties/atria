@@ -1,6 +1,6 @@
 // features/auth/api.js
 import { baseApi } from '../api';
-import { setUser } from '../../store/authSlice';
+import { setUser, logout } from '../../store/authSlice';
 
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -77,17 +77,14 @@ export const authApi = baseApi.injectEndpoints({
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           await queryFulfilled;
-          // Clear Redux state
-          dispatch(setUser(null));
+          // Dispatch logout action to reset auth state
+          dispatch(logout());
           // Reset API state
           dispatch(baseApi.util.resetApiState());
-          // Dispatch logout action to reset entire Redux state
-          dispatch({ type: 'auth/logout' });
         } catch (error) {
           // Even if logout fails, we clear local state
-          dispatch(setUser(null));
+          dispatch(logout());
           dispatch(baseApi.util.resetApiState());
-          dispatch({ type: 'auth/logout' });
         }
       },
       invalidatesTags: ['Auth'],
