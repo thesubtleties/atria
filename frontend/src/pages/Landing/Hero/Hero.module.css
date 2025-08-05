@@ -1,0 +1,343 @@
+@import '../_variables.css';
+
+.hero {
+  position: relative;
+  min-height: 100vh;
+  overflow: visible !important;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  clip-path: none !important;
+  font-family: var(--font-system);
+}
+.movingBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh; /* Full viewport height */
+  background: #F3EACE; /* Light yellow background */
+  z-index: 0;
+  overflow: visible; /* Allow drape to extend beyond container */
+  will-change: transform;
+}
+
+/* Purple drape that slides up */
+.drape {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 110vh; /* Extend beyond viewport to prevent clipping */
+  pointer-events: none;
+  overflow: visible; /* Allow SVG to extend beyond */
+  will-change: transform;
+}
+
+.drapeSvg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh; /* Full viewport height */
+}
+
+/* Background shapes - mysterious and inviting */
+.backgroundShapes {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.shape {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(40px);
+  opacity: 0.15;
+  will-change: transform;
+}
+
+.shape1 {
+  width: 600px;
+  height: 600px;
+  background: linear-gradient(135deg, #fde047 0%, #f59e0b 100%);
+  top: -200px;
+  right: -200px;
+  max-width: 50vw;
+  max-height: 50vw;
+}
+
+.shape2 {
+  width: 400px;
+  height: 400px;
+  background: linear-gradient(135deg, #a78bfa 0%, #c084fc 100%);
+  bottom: -100px;
+  left: -100px;
+}
+
+.shape3 {
+  width: 300px;
+  height: 300px;
+  background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+  top: 50%;
+  left: 10%;
+  transform: translateY(-50%);
+}
+
+/* Navigation - subtle and elegant */
+.nav {
+  position: relative;
+  z-index: 20;
+  padding: var(--space-comfort) 0;
+}
+
+.navContent {
+  max-width: var(--container-xl);
+  margin: 0 auto;
+  padding: 0 var(--space-comfort);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.navLinks {
+  display: flex;
+  gap: var(--space-comfort);
+}
+
+.navLink {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: var(--text-small);
+  font-weight: 500;
+  text-decoration: none;
+  transition: var(--transition-smooth);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-small);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.navLink:hover {
+  color: var(--color-almost-white);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Main content */
+.content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 10;
+  padding: var(--space-breath) 0;
+}
+
+.heroContent {
+  text-align: center;
+}
+
+/* Logo - large, confident, breathing room */
+.logoContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: var(--space-comfort);
+  gap: 1rem;
+}
+
+.logo {
+  width: clamp(120px, 20vw, 160px);
+  height: auto;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+.logoText {
+  font-family: var(--font-logo);
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  font-weight: 300;
+  letter-spacing: 0.08em;
+  margin: 0;
+  color: var(--color-almost-white);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Tagline with scramble effect */
+.tagline {
+  margin-bottom: var(--space-breath);
+  text-align: center;
+}
+
+.taglineTop {
+  font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0 0 0.75rem 0;
+  line-height: 1.2;
+  letter-spacing: 0.3em;
+  text-transform: lowercase;
+  font-style: italic;
+}
+
+.scrambleText {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  color: var(--color-accent-yellow);
+  font-weight: 400;
+  display: block;
+  min-height: 1.2em;
+  margin: 0 auto;
+  text-shadow: 
+    0 0 10px rgba(253, 224, 71, 0.6),
+    0 0 20px rgba(253, 224, 71, 0.3);
+  animation: goldPulse 3s ease-in-out infinite;
+  letter-spacing: 0.02em;
+  will-change: transform;
+  /* Fix width to prevent layout shift during scramble */
+  width: 12ch; /* Approximate width for longest word */
+  text-align: center;
+}
+
+@keyframes goldPulse {
+  0%, 100% {
+    text-shadow: 
+      0 0 10px rgba(253, 224, 71, 0.6),
+      0 0 20px rgba(253, 224, 71, 0.3);
+  }
+  50% {
+    text-shadow: 
+      0 0 15px rgba(253, 224, 71, 0.8),
+      0 0 30px rgba(253, 224, 71, 0.4);
+  }
+}
+
+.ctaWrapper {
+  margin-top: var(--space-breath);
+  position: relative;
+  z-index: 10;
+}
+
+.ctaButton {
+  font-size: 1rem;
+  padding: 1.25rem 3rem;
+  background: rgba(255, 255, 255, 0.95) !important;
+  color: var(--color-primary) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 10;
+}
+
+.ctaButton:hover {
+  background: var(--color-almost-white) !important;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15);
+}
+
+.loginText {
+  margin-top: 1rem;
+  font-size: var(--text-small);
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 300;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.loginText:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.loginLink {
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  transition: color 0.2s ease;
+}
+
+.loginLink:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.scrollIndicator {
+  position: absolute;
+  bottom: var(--space-breath);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: rgba(255, 255, 255, 0.6);
+  will-change: transform, opacity;
+}
+
+.scrollText {
+  font-size: var(--text-small);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.scrollArrow {
+  width: 24px;
+  height: 24px;
+}
+
+
+@media (max-width: 768px) {
+  .hero {
+    min-height: 100vh;
+  }
+
+  .shape1 {
+    width: 400px;
+    height: 400px;
+    top: -150px;
+    right: -150px;
+  }
+
+  .shape2 {
+    width: 300px;
+    height: 300px;
+  }
+
+  .shape3 {
+    width: 200px;
+    height: 200px;
+  }
+
+  .navLinks {
+    gap: var(--space-cozy);
+  }
+
+  .logo {
+    margin-bottom: var(--space-cozy);
+  }
+
+  .tagline {
+    margin-bottom: var(--space-comfort);
+  }
+
+  .scrambleText {
+    display: block;
+    text-align: center;
+    margin-top: 0.5rem;
+  }
+
+  .ctaButton {
+    padding: 1rem 2.5rem;
+    font-size: 0.9rem;
+  }
+
+  .scrollIndicator {
+    bottom: var(--space-comfort);
+  }
+}

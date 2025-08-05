@@ -1,0 +1,357 @@
+@import '../_variables.css';
+
+.brandExperience {
+  position: relative;
+  padding: var(--space-breath) 0;
+  min-height: 100vh;
+  background: rgb(251, 250, 255); /* Off-white purple */
+  overflow: hidden;
+  font-family: var(--font-system);
+}
+
+.container {
+  max-width: var(--container-lg);
+  margin: 0 auto;
+  padding: 0 var(--space-comfort);
+}
+
+.sectionTitle {
+  font-size: clamp(2.5rem, 5vw, var(--text-display));
+  font-weight: 300;
+  color: var(--color-primary);
+  text-align: center;
+  margin-bottom: var(--space-cozy);
+  position: relative;
+  z-index: 2;
+  letter-spacing: -0.02em;
+}
+
+.sectionSubtitle {
+  font-size: clamp(1.1rem, 2.5vw, var(--text-body-lg));
+  color: var(--color-text-speak);
+  text-align: center;
+  margin-bottom: var(--space-breath);
+  margin-top: var(--space-cozy);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  z-index: 2;
+  opacity: 0.9;
+  letter-spacing: 0.02em;
+}
+
+.showcaseWrapper {
+  position: relative;
+  min-height: clamp(400px, 60vh, 600px);
+  margin-bottom: var(--space-breath);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: var(--space-cozy);
+  padding-left: var(--space-tight);
+  padding-right: var(--space-tight);
+}
+
+.mockInterface {
+  width: 100%;
+  max-width: 900px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: var(--radius-large);
+  box-shadow: 0 30px 100px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  position: relative;
+  will-change: transform;
+}
+
+/* Atria Dashboard Styles */
+.dashboardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-comfort);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  background: var(--color-almost-white);
+}
+
+.atriaLogo {
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: var(--color-primary);
+  letter-spacing: -0.02em;
+}
+
+.dashboardNav {
+  display: flex;
+  gap: var(--space-comfort);
+}
+
+.navItem {
+  color: var(--color-text-whisper);
+  font-size: var(--text-small);
+  transition: var(--transition-smooth);
+  cursor: pointer;
+}
+
+.navItem:hover {
+  color: var(--color-text-speak);
+}
+
+.dashboardContent {
+  padding: clamp(var(--space-cozy), 4vw, calc(var(--space-comfort) * 2));
+}
+
+.dashboardTitle {
+  font-size: var(--text-heading);
+  font-weight: 400;
+  color: var(--color-text-speak);
+  margin-bottom: var(--space-comfort);
+}
+
+.eventCard {
+  background: var(--color-almost-white);
+  border-radius: var(--radius-medium);
+  padding: var(--space-comfort);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.eventPreview h4 {
+  font-size: var(--text-body-lg);
+  color: var(--color-text-shout);
+  margin-bottom: var(--space-tight);
+}
+
+.eventPreview p {
+  color: var(--color-text-whisper);
+  margin-bottom: var(--space-cozy);
+}
+
+.launchButton {
+  background: var(--color-primary);
+  color: var(--color-almost-white);
+  border: none;
+  padding: var(--space-tight) var(--space-cozy);
+  border-radius: var(--radius-small);
+  font-size: var(--text-small);
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.launchButton:hover {
+  background: var(--color-primary-dark);
+  transform: translateY(-1px);
+}
+
+.transformIndicator {
+  position: absolute;
+  bottom: var(--space-comfort);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-tight);
+  color: var(--color-text-whisper);
+  font-size: var(--text-small);
+}
+
+.transformIndicator svg {
+  animation: bounce 2s infinite;
+  will-change: transform;
+}
+
+/* Event View Styles */
+.eventHeader {
+  padding: var(--space-comfort);
+  background: #1a1a2e;
+  color: var(--color-almost-white);
+}
+
+.eventBranding {
+  margin-bottom: var(--space-cozy);
+}
+
+.eventLogo {
+  font-size: var(--text-title);
+  font-weight: 600;
+  margin-bottom: var(--space-micro);
+}
+
+.eventTagline {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: var(--text-body);
+}
+
+.eventNav {
+  display: flex;
+  gap: var(--space-comfort);
+  margin-top: var(--space-cozy);
+}
+
+.eventNavItem {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: var(--text-small);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  padding-bottom: var(--space-micro);
+  border-bottom: 2px solid transparent;
+}
+
+.eventNavItem:hover {
+  color: var(--color-almost-white);
+  border-bottom-color: var(--color-accent-yellow);
+}
+
+.eventContent {
+  position: relative;
+  padding: clamp(var(--space-cozy), 4vw, calc(var(--space-comfort) * 2));
+  min-height: clamp(300px, 40vh, 400px);
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+.heroSection {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.eventHeroTitle {
+  font-size: var(--text-display);
+  color: var(--color-almost-white);
+  margin-bottom: var(--space-cozy);
+}
+
+.eventHeroText {
+  font-size: var(--text-body-lg);
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+}
+
+.atriaAttribution {
+  position: absolute;
+  bottom: var(--space-cozy);
+  right: var(--space-cozy);
+  display: flex;
+  align-items: center;
+  gap: var(--space-micro);
+  font-size: var(--text-tiny);
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.poweredBy {
+  opacity: 0.7;
+}
+
+.atriaSmall {
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+.brandHighlight {
+  position: absolute;
+  bottom: clamp(-100px, -10vh, -80px);
+  right: clamp(20px, 4vw, 40px);
+  display: flex;
+  align-items: center;
+  gap: var(--space-cozy);
+}
+
+.highlightPointer {
+  animation: pulse 2s infinite;
+  will-change: transform;
+}
+
+.highlightText {
+  background: var(--color-accent-yellow);
+  color: var(--color-text-shout);
+  padding: var(--space-tight) var(--space-cozy);
+  border-radius: var(--radius-medium);
+  font-size: var(--text-small);
+  font-weight: 500;
+  box-shadow: var(--shadow-medium);
+}
+
+.highlightSubtext {
+  font-size: var(--text-tiny);
+  color: var(--color-text-speak);
+  font-weight: 400;
+}
+
+
+/* Animations */
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(10px);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .brandExperience {
+    padding: var(--space-cozy) 0;
+  }
+  
+  .showcaseWrapper {
+    min-height: auto;
+    padding: var(--space-tight);
+  }
+  
+  .mockInterface {
+    max-width: 100%;
+    border-radius: var(--radius-medium);
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dashboardHeader {
+    padding: var(--space-tight) var(--space-cozy);
+  }
+  
+  .dashboardNav,
+  .eventNav {
+    display: none;
+  }
+  
+  .eventHeader {
+    padding: var(--space-cozy);
+  }
+  
+  .eventLogo {
+    font-size: clamp(1.5rem, 6vw, var(--text-title));
+  }
+  
+  .eventHeroTitle {
+    font-size: clamp(1.75rem, 7vw, var(--text-display));
+  }
+  
+  .eventHeroText {
+    font-size: var(--text-body);
+  }
+  
+  .brandHighlight {
+    position: static;
+    margin-top: var(--space-cozy);
+    margin-bottom: var(--space-cozy);
+    justify-content: center;
+    transform: scale(0.9);
+  }
+  
+  .highlightText {
+    font-size: var(--text-tiny);
+    padding: var(--space-micro) var(--space-tight);
+  }
+}

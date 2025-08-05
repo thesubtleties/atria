@@ -1,0 +1,108 @@
+@import '../_variables.css';
+
+.footerContent {
+  color: var(--color-almost-white);
+  padding: var(--space-comfort) 0;
+  position: relative;
+  width: 100%;
+}
+
+.container {
+  max-width: var(--container-xl);
+  margin: 0 auto;
+  padding: 0 var(--space-comfort);
+}
+
+/* Social Section */
+.socialSection {
+  padding: var(--space-comfort) 0;
+  margin-bottom: var(--space-tight);
+}
+
+.socialLinks {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-comfort);
+}
+
+.socialLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  color: var(--color-almost-white);
+  transition: var(--transition-smooth);
+}
+
+.socialLink:hover {
+  background: var(--color-primary);
+  transform: translateY(-2px);
+}
+
+.socialLink svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Bottom Section */
+.bottomSection {
+  text-align: center;
+  padding-top: var(--space-tight);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.copyright {
+  font-size: var(--text-small);
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: var(--space-tight);
+}
+
+.atriaLink,
+.sbtlLink {
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.atriaLink:hover,
+.sbtlLink:hover {
+  color: var(--color-almost-white);
+  text-decoration: underline;
+}
+
+.license {
+  font-size: var(--text-tiny);
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: var(--space-tight);
+}
+
+.attribution {
+  font-size: var(--text-small);
+  color: rgba(255, 255, 255, 0.7);
+  margin: var(--space-tight) 0;
+}
+
+/* Mobile responsive */
+@media (max-width: 640px) {
+  .footerContent {
+    padding: var(--space-breath) 0;
+  }
+  
+  .socialLinks {
+    gap: var(--space-cozy);
+  }
+  
+  .socialLink {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .copyright,
+  .attribution,
+  .license {
+    font-size: var(--text-tiny);
+  }
+}

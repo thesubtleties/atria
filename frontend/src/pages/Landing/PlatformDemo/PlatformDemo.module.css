@@ -1,0 +1,666 @@
+/* Platform Demo - Animated Interface Cards */
+@import '../_variables.css';
+
+.platformDemo {
+  position: relative;
+  background: rgb(251, 250, 255);
+  padding: var(--space-breath) 0;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 var(--space-comfort);
+}
+
+/* Header */
+.sectionTitle {
+  font-size: clamp(2.5rem, 5vw, var(--text-title));
+  font-weight: 300;
+  color: var(--color-primary);
+  text-align: center;
+  margin-bottom: var(--space-cozy);
+  letter-spacing: -0.02em;
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.sectionTitle::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    var(--color-accent-yellow) 20%, 
+    var(--color-accent-yellow) 80%, 
+    transparent 100%
+  );
+  border-radius: 2px;
+}
+
+.sectionSubtitle {
+  font-size: clamp(1.1rem, 2.5vw, var(--text-body-lg));
+  color: var(--color-text-speak);
+  text-align: center;
+  margin-bottom: var(--space-breath);
+  margin-top: var(--space-cozy);
+  font-style: italic;
+  opacity: 0.9;
+  letter-spacing: 0.02em;
+}
+
+/* Demo Wrapper */
+.demoWrapper {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+}
+
+/* Cards Container */
+.cardsContainer {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Demo Card - Glassmorphic styling */
+.demoCard {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(251, 250, 255, 0.98);
+  will-change: transform;
+}
+
+.cardInner {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: var(--space-comfort);
+  padding: var(--space-comfort);
+  min-height: 500px;
+  max-width: var(--container-lg);
+  width: 90%;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Card Content - Left side */
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--space-cozy);
+}
+
+.cardTitle {
+  font-size: var(--text-heading);
+  font-weight: 600;
+  color: var(--color-text-shout);
+  margin-bottom: var(--space-tight);
+}
+
+.cardSubtitle {
+  font-size: var(--text-body-lg);
+  color: var(--color-text-speak);
+  line-height: 1.5;
+}
+
+/* Demo Interface - Right side */
+.demoInterface {
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 16px;
+  padding: var(--space-cozy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Agenda Card Styles */
+.agendaContent {
+  width: 100%;
+  max-width: 500px;
+  min-height: 400px;
+  position: relative;
+}
+
+.agendaHeader {
+  margin-bottom: var(--space-cozy);
+  padding-bottom: var(--space-tight);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.dateLabel {
+  font-size: var(--text-small);
+  color: var(--color-text-whisper);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.agendaItem {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: var(--space-cozy);
+  padding: var(--space-tight) 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  align-items: start;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.agendaItem:hover {
+  background: rgba(139, 92, 246, 0.05);
+  margin: 0 -16px;
+  padding: var(--space-tight) 16px;
+  border-radius: 8px;
+}
+
+.time {
+  font-size: var(--text-small);
+  color: var(--color-text-whisper);
+  font-weight: 500;
+  min-width: 80px;
+}
+
+.sessionInfo {
+  flex: 1;
+}
+
+.sessionType {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: var(--text-tiny);
+  font-weight: 600;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-tight);
+}
+
+.sessionInfo h4 {
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: var(--color-text-shout);
+  margin: 0 0 4px 0;
+}
+
+.speaker {
+  font-size: var(--text-small);
+  color: var(--color-text-speak);
+  margin: 0;
+}
+
+.hoverDetail {
+  font-size: var(--text-small);
+  color: var(--color-primary);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Networking Card Styles */
+.networkingContent {
+  width: 100%;
+  max-width: 500px;
+}
+
+.networkingHeader {
+  margin-bottom: var(--space-cozy);
+  padding-bottom: var(--space-tight);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.greenLight {
+  color: #10B981;
+  font-size: var(--text-small);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.connectionItem {
+  padding: var(--space-cozy) 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.connectionInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-cozy);
+  margin-bottom: var(--space-tight);
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #E0E7FF 0%, #C7D2FE 100%);
+  border-radius: 50%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar::before {
+  content: '👤';
+  font-size: 20px;
+  opacity: 0.7;
+}
+
+.statusIndicator {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+.statusIndicator.green {
+  background: #10B981;
+}
+
+.statusIndicator.pending {
+  background: #F59E0B;
+}
+
+.statusIndicator.connected {
+  background: #3B82F6;
+}
+
+.personInfo h4 {
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: var(--color-text-shout);
+  margin: 0 0 4px 0;
+}
+
+.personInfo p {
+  font-size: var(--text-small);
+  color: var(--color-text-speak);
+  margin: 0;
+}
+
+.connectionActions {
+  margin-left: 60px;
+}
+
+.icebreaker {
+  overflow: hidden;
+}
+
+.icebreakerText {
+  font-size: var(--text-small);
+  color: var(--color-text-whisper);
+  font-style: italic;
+  padding: var(--space-tight);
+  background: rgba(16, 185, 129, 0.1);
+  border-radius: 8px;
+  margin-bottom: var(--space-tight);
+}
+
+.actionButton {
+  padding: 8px 20px;
+  border: none;
+  border-radius: 20px;
+  font-size: var(--text-small);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.actionButton.green {
+  background: var(--color-primary);
+  color: white;
+}
+
+.actionButton.green:hover {
+  background: #7C3AED;
+  transform: translateY(-1px);
+}
+
+.actionButton.pending {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+.actionButton.connected {
+  background: #DBEAFE;
+  color: #1E40AF;
+}
+
+/* Session Card Styles */
+.sessionContent {
+  width: 100%;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: var(--space-cozy);
+  height: 100%;
+}
+
+.videoContainer {
+  width: 100%;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+}
+
+.videoPlayer {
+  aspect-ratio: 16 / 9;
+  position: relative;
+  background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.videoPlayer::before {
+  content: '▶';
+  font-size: 48px;
+  color: rgba(255, 255, 255, 0.3);
+  position: absolute;
+}
+
+.videoOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: var(--space-cozy);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.liveIndicator {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background: #EF4444;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: var(--text-tiny);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.liveDot {
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.sessionTitle {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  color: white;
+  font-size: var(--text-body-lg);
+  font-weight: 600;
+}
+
+.viewerCount {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: var(--text-small);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.interactionPanel {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.chatTabs {
+  display: flex;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.chatTabs button {
+  flex: 1;
+  padding: var(--space-tight) var(--space-cozy);
+  border: none;
+  background: none;
+  font-size: var(--text-small);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.activeTab {
+  color: var(--color-primary);
+  border-bottom: 2px solid var(--color-primary);
+}
+
+.inactiveTab {
+  color: var(--color-text-whisper);
+}
+
+.inactiveTab:hover {
+  color: var(--color-text-speak);
+}
+
+.chatMessages {
+  padding: var(--space-tight);
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.chatMessage {
+  padding: var(--space-tight) 0;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-tight);
+}
+
+.chatUser {
+  font-size: var(--text-small);
+  font-weight: 600;
+  color: var(--color-text-shout);
+  min-width: 80px;
+}
+
+.chatText {
+  font-size: var(--text-small);
+  color: var(--color-text-speak);
+  flex: 1;
+}
+
+/* Smart Agenda Building Styles */
+.agendaGrid {
+  position: relative;
+  width: 100%;
+  height: 360px;
+}
+
+.smartAgendaItem {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 12px;
+  box-shadow: 
+    0 2px 15px rgba(139, 92, 246, 0.08),
+    inset 0 1px 1px rgba(255, 255, 255, 0.8);
+  display: flex;
+  flex-direction: column;
+  min-height: 90px;
+  position: absolute;
+  overflow: visible;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  /* No transition - GSAP handles all animations */
+}
+
+.smartAgendaItem:hover {
+  /* Hover transform handled by GSAP */
+}
+
+.smartAgendaItem:hover .expandedContent {
+  max-height: 100px;
+  opacity: 1;
+  padding: 8px 12px 10px;
+  border-top: 1px solid rgba(139, 92, 246, 0.1);
+}
+
+/* Type tag positioning */
+.typeTag {
+  padding: 0;
+  margin: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.sessionType {
+  display: inline-block;
+  padding: 6px 12px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-top-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Session type colors matching real implementation */
+.keynote {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.88) 0%, rgba(124, 58, 237, 0.88) 100%);
+}
+
+.workshop {
+  background: linear-gradient(135deg, rgba(20, 184, 166, 0.88) 0%, rgba(13, 148, 136, 0.88) 100%);
+}
+
+.panel {
+  background: linear-gradient(135deg, rgba(249, 159, 11, 0.88) 0%, rgba(234, 122, 12, 0.88) 100%);
+}
+
+.presentation {
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.88) 0%, rgba(234, 88, 12, 0.88) 100%);
+}
+
+/* Card content */
+.sessionCardContent {
+  padding: 12px 16px;
+  flex-grow: 1;
+}
+
+.sessionCardContent h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-shout);
+  line-height: 1.3;
+  margin-bottom: 6px;
+}
+
+.sessionTime {
+  font-size: 12px;
+  color: var(--color-text-whisper);
+  font-weight: 500;
+}
+
+/* Expanded content for hover */
+.expandedContent {
+  padding: 0 16px;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+  border-top: 1px solid transparent;
+}
+
+.speakerInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.speakerName {
+  font-size: 12px;
+  color: var(--color-text-speak);
+  font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .cardInner {
+    grid-template-columns: 1fr;
+    gap: var(--space-cozy);
+  }
+  
+  .cardContent {
+    text-align: center;
+  }
+  
+  .demoInterface {
+    min-height: 400px;
+  }
+}
+
+@media (max-width: 768px) {
+  .cardsContainer {
+    padding-bottom: 200px;
+  }
+  
+  .demoCard {
+    margin-bottom: 50px;
+  }
+  
+  .cardInner {
+    padding: var(--space-cozy);
+  }
+  
+  .cardTitle {
+    font-size: var(--text-body-lg);
+  }
+  
+  .cardSubtitle {
+    font-size: var(--text-body);
+  }
+}

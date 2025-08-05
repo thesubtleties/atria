@@ -1,0 +1,86 @@
+/* Problem Statement - Text Lock Section */
+@import '../_variables.css';
+
+.problemStatement {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background: rgb(251, 250, 255); /* Start with off-white purple - matches other sections */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 1.2s ease;
+  margin-top: -100vh; /* Pull up to overlap with Hero */
+  font-family: var(--font-system);
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-comfort);
+}
+
+.textContent {
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  line-height: 1.4;
+  font-weight: 300;
+  color: var(--color-text-primary);
+  text-align: center;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.word {
+  display: inline-block;
+  margin-right: 0.3em;
+  transition: all 0.5s ease;
+  will-change: opacity, filter;
+}
+
+.word.highlighted {
+  color: var(--color-primary);
+  font-weight: 600;
+  position: relative;
+  display: inline-block;
+  transform-origin: center center;
+  will-change: transform, opacity, color;
+}
+
+/* Initial state - off-white purple background with purple text */
+.problemStatement[style*="background-color: rgb(251, 250, 255)"] .word {
+  color: var(--color-primary);
+}
+
+.problemStatement[style*="background-color: rgb(251, 250, 255)"] .word.highlighted {
+  color: #7c3aed; /* Darker purple for emphasis */
+}
+
+/* Final state - purple background with white/yellow text */
+.problemStatement[style*="background-color: rgb(139, 92, 246)"] .word {
+  color: white;
+}
+
+.problemStatement[style*="background-color: rgb(139, 92, 246)"] .word.highlighted {
+  color: var(--color-accent-yellow);
+  text-shadow: 0 0 20px rgba(255, 217, 61, 0.5);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .textContent {
+    font-size: clamp(1.5rem, 5vw, 2rem);
+    padding: 0 var(--space-cozy);
+  }
+  
+  .word {
+    margin-right: 0.2em;
+  }
+}
+
+@media (max-width: 480px) {
+  .textContent {
+    font-size: 1.25rem;
+    line-height: 1.5;
+  }
+}
