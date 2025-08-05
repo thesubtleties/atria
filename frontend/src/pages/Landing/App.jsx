@@ -149,8 +149,6 @@ function App() {
       '.audienceCards',
       '.openSourceSplit',
       '.brandExperience',
-      '.connectionImpact',
-      '.techIntegrations',
       '.finalSection',
     ];
 

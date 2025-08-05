@@ -76,12 +76,6 @@ const PlatformDemo = () => {
           ease: 'power3.out',
           force3D: true
         })
-        .from(headerRef.current.querySelector(`.${styles.sectionTitle}::after`), {
-          scaleX: 0,
-          duration: 0.6,
-          ease: 'power2.out',
-          force3D: true
-        }, '-=0.3')
         .from(headerRef.current.querySelector(`.${styles.sectionSubtitle}`), {
           opacity: 0,
           y: 20,
