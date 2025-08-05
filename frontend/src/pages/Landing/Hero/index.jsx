@@ -86,6 +86,7 @@ const Hero = () => {
       centered: true,
       closeOnClickOutside: true,
       closeOnEscape: true,
+      lockScroll: false,
     });
   };
 
@@ -109,6 +110,7 @@ const Hero = () => {
       centered: true,
       closeOnClickOutside: true,
       closeOnEscape: true,
+      lockScroll: false,
     });
   };
 
@@ -128,6 +130,7 @@ const Hero = () => {
       centered: true,
       closeOnClickOutside: true,
       closeOnEscape: true,
+      lockScroll: false,
     });
   };
 

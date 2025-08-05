@@ -28,6 +28,7 @@ const CallToAction = () => {
         opacity: 0.55,
         blur: 3,
       },
+      lockScroll: false,
     })
   }
 
