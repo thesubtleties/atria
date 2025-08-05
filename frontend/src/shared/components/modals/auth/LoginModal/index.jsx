@@ -56,27 +56,31 @@ export const LoginModal = ({ onClose, onSuccess, onForgotPassword }) => {
           disabled={isLoading}
         />
 
-        <div>
-          <PasswordInput
-            label="Password"
-            placeholder="Your password"
-            {...form.getInputProps('password')}
-            disabled={isLoading}
-          />
-          <Anchor
-            component="button"
-            type="button"
-            size="sm"
-            onClick={onForgotPassword}
-            className={styles.forgotPassword}
-          >
-            Forgot password?
-          </Anchor>
-        </div>
+        <PasswordInput
+          label="Password"
+          placeholder="Your password"
+          {...form.getInputProps('password')}
+          disabled={isLoading}
+        />
 
         <Button type="submit" disabled={isLoading} className={styles.submitButton}>
           {isLoading ? 'Logging in...' : 'Log in'}
         </Button>
+
+        <div className={styles.actionsSection}>
+          <div className={styles.forgotPasswordContainer}>
+            <Anchor
+              component="button"
+              type="button"
+              size="sm"
+              onClick={onForgotPassword}
+              className={styles.forgotPassword}
+              style={{ color: '#64748b', textDecoration: 'none' }}
+            >
+              Forgot password?
+            </Anchor>
+          </div>
+        </div>
       </Stack>
     </form>
   );

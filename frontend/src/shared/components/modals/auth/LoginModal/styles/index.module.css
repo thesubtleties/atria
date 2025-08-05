@@ -49,17 +49,37 @@
   margin-top: 0.5rem;
 }
 
+/* Actions Section - similar to other modals */
+.actionsSection {
+  margin-top: 0.5rem;
+  padding-top: 0;
+  border-top: none;
+}
+
+/* Forgot Password Container */
+.forgotPasswordContainer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 0;
+}
+
 /* Forgot Password Link */
 .forgotPassword {
-  display: inline-block;
-  margin-top: var(--mantine-spacing-xs);
-  font-size: var(--mantine-font-size-sm);
-  color: #8B5CF6;
-  transition: color 0.2s ease;
+  font-size: 0.8rem !important; /* Smaller, more subtle size matching meta-text from design guide */
+  color: #64748b !important; /* Secondary text color from design guide instead of primary purple */
+  transition: all 0.2s ease;
+  font-weight: 500;
+  text-decoration: none !important;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
 }
 
 .forgotPassword:hover {
-  color: #7C3AED;
+  color: #8b5cf6 !important; /* Primary purple on hover for emphasis */
+  text-decoration: none !important;
 }
 
 /* Animation */
