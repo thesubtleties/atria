@@ -1,11 +1,7 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { showNotification } from '@mantine/notifications';
-import { Hero } from './Hero';
-import { Features } from './Features';
-import { Stats } from './Stats';
-import { Testimonials } from './Testimonials';
-import styles from './index.module.css';
+import App from './App';
 
 export const Landing = () => {
   const location = useLocation();
@@ -31,12 +27,5 @@ export const Landing = () => {
     }
   }, [location]);
 
-  return (
-    <main className={styles.mainContainer}>
-      <Hero />
-      <Stats />
-      <Features />
-      <Testimonials />
-    </main>
-  );
+  return <App />;
 };

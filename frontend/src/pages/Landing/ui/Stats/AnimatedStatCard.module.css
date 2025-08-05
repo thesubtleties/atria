@@ -1,0 +1,46 @@
+.statCard {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: var(--radius-large);
+  padding: var(--space-comfort);
+  text-align: center;
+  box-shadow: var(--shadow-medium);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.statCard:hover {
+  box-shadow: var(--shadow-large);
+  transform: translateY(-5px);
+}
+
+.statNumber {
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  font-weight: 300;
+  color: var(--color-primary);
+  margin-bottom: var(--space-tight);
+  letter-spacing: -0.02em;
+}
+
+.statLabel {
+  font-size: var(--text-body);
+  color: var(--color-text-speak);
+  margin-bottom: var(--space-cozy);
+}
+
+.statIcon {
+  position: absolute;
+  top: var(--space-cozy);
+  right: var(--space-cozy);
+  font-size: 2rem;
+  opacity: 0.3;
+  transition: var(--transition-smooth);
+}
+
+.statCard:hover .statIcon {
+  opacity: 0.6;
+  transform: scale(1.1) rotate(10deg);
+}

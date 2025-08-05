@@ -1,0 +1,28 @@
+.container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-comfort);
+  transition: background-color 0.3s ease;
+}
+
+.textContent {
+  max-width: 1000px;
+  font-size: clamp(1.5rem, 4vw, 3rem);
+  line-height: 1.6;
+  text-align: center;
+  margin: 0;
+}
+
+.word {
+  display: inline-block;
+  margin: 0 0.15em;
+  transition: all 0.3s ease;
+}
+
+.highlighted {
+  font-weight: 500;
+}

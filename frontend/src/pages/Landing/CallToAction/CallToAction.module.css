@@ -1,0 +1,145 @@
+@import '../_variables.css';
+
+.finalSection {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--color-text-shout); /* Dark blue background */
+  font-family: var(--font-system);
+}
+
+.closingDrape {
+  position: absolute;
+  top: clamp(-15vh, -10vh, -5vh); /* Responsive drape positioning */
+  left: 0;
+  width: 100%;
+  height: clamp(80vh, 90vh, 95vh); /* Responsive drape height */
+  z-index: 2;
+  will-change: transform;
+}
+
+.drapeSvg {
+  width: 100%;
+  height: 100%;
+}
+
+.drapeContent {
+  position: absolute;
+  top: clamp(45%, 55%, 60%);
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  max-width: var(--container-lg);
+  padding: 0 clamp(var(--space-tight), 4vw, var(--space-comfort));
+  text-align: center;
+  z-index: 3;
+  pointer-events: auto;
+}
+
+
+.footerWrapper {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 4; /* Higher than drape (2) and content (3) */
+  height: clamp(20vh, 25vh, 30vh); /* Responsive footer height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+}
+
+
+.sectionTitle {
+  font-size: var(--text-display);
+  font-weight: 300;
+  color: var(--color-almost-white);
+  text-align: center;
+  margin-bottom: var(--space-cozy);
+  letter-spacing: -0.02em;
+}
+
+.sectionSubtitle {
+  font-size: clamp(var(--text-body), 2.5vw, var(--text-body-lg));
+  color: rgba(255, 255, 255, 0.9);
+  text-align: center;
+  margin-bottom: clamp(var(--space-cozy), 3vw, var(--space-comfort));
+  max-width: min(600px, 90vw);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Primary CTA */
+.primaryCta {
+  text-align: center;
+  margin-top: 0;
+  transform-origin: center;
+  position: relative;
+  z-index: 10;
+}
+
+.mainButton {
+  background: var(--color-almost-white) !important;
+  color: var(--color-primary) !important;
+  padding: var(--space-cozy) calc(var(--space-comfort) * 1.5) !important;
+  border-radius: var(--radius-xl) !important;
+  font-size: var(--text-body-lg) !important;
+  font-weight: 600 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: var(--space-cozy) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important;
+  transition: var(--transition-smooth) !important;
+  will-change: transform;
+}
+
+.mainButton:hover {
+  background: #FFD666 !important; /* Match logo golden yellow */
+  color: var(--color-text-shout) !important;
+  transform: translateY(clamp(-3px, -0.3vw, -2px)) !important;
+  box-shadow: 0 clamp(10px, 2vw, 15px) clamp(30px, 4vw, 40px) rgba(0, 0, 0, 0.3) !important;
+}
+
+.buttonText {
+  letter-spacing: 0.05em;
+}
+
+.buttonIcon {
+  font-size: 1.5rem;
+  transition: var(--transition-smooth);
+}
+
+.mainButton:hover .buttonIcon {
+  transform: translateX(clamp(3px, 0.5vw, 5px));
+}
+
+.ctaSubtext {
+  margin-top: var(--space-cozy);
+  font-size: var(--text-body);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .finalSection {
+    height: auto;
+    min-height: 100vh;
+  }
+  
+  .drapeContent {
+    padding: 0 var(--space-tight);
+  }
+  
+  .sectionTitle {
+    font-size: var(--text-title);
+  }
+  
+  .mainButton {
+    font-size: var(--text-body) !important;
+    padding: var(--space-tight) var(--space-cozy) !important;
+  }
+}

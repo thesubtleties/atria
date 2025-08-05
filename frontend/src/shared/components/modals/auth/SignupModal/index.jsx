@@ -1,9 +1,10 @@
-import { TextInput, PasswordInput, Button, Stack, Alert, Title, Text } from '@mantine/core';
+import { TextInput, PasswordInput, Stack, Alert, Title, Text } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { useState } from 'react';
 import { IconMail } from '@tabler/icons-react';
 import { useSignupMutation } from '@/app/features/auth/api';
 import { signupSchema } from './schemas/signupSchema';
+import { Button } from '../../../../components/buttons';
 import styles from './styles/index.module.css';
 
 export const SignupModal = ({ onClose, onSuccess }) => {
@@ -58,7 +59,7 @@ export const SignupModal = ({ onClose, onSuccess }) => {
         <Text size="sm" c="dimmed" ta="center">
           Didn't receive the email? Check your spam folder or contact support.
         </Text>
-        <Button variant="light" onClick={onClose} fullWidth>
+        <Button variant="subtle" onClick={onClose} className={styles.closeButton}>
           Close
         </Button>
       </Stack>
@@ -103,7 +104,7 @@ export const SignupModal = ({ onClose, onSuccess }) => {
           disabled={isLoading}
         />
 
-        <Button type="submit" loading={isLoading} fullWidth>
+        <Button type="submit" disabled={isLoading} className={styles.submitButton}>
           {isLoading ? 'Creating account...' : 'Sign up'}
         </Button>
       </Stack>

@@ -1,0 +1,230 @@
+@import '../_variables.css';
+
+.audienceCards {
+  position: relative;
+  padding: var(--space-breath) 0;
+  background-color: var(--color-almost-white);
+  overflow: hidden;
+  font-family: var(--font-system);
+}
+
+.container {
+  max-width: var(--container-lg);
+  margin: 0 auto;
+  padding: 0 var(--space-comfort);
+}
+
+.sectionTitle {
+  font-size: clamp(2.5rem, 5vw, var(--text-title));
+  font-weight: 300;
+  color: var(--color-primary);
+  text-align: center;
+  margin-bottom: var(--space-cozy);
+  letter-spacing: -0.02em;
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  opacity: 0;
+  transform: translateY(50px);
+}
+
+.sectionTitle::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    var(--color-accent-yellow) 20%, 
+    var(--color-accent-yellow) 80%, 
+    transparent 100%
+  );
+  border-radius: 2px;
+}
+
+.sectionSubtitle {
+  font-size: clamp(1.1rem, 2.5vw, var(--text-body-lg));
+  color: var(--color-text-speak);
+  text-align: center;
+  margin-bottom: var(--space-breath);
+  margin-top: var(--space-cozy);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  opacity: 0;
+  transform: translateY(50px);
+  letter-spacing: 0.02em;
+}
+
+.cardsWrapper {
+  position: relative;
+  width: 100%;
+  margin-top: calc(var(--space-breath) * 2);
+  perspective: 1200px;
+  transform-style: preserve-3d;
+}
+
+.audienceCard {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto 60px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: var(--radius-large);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+  transform-origin: center center;
+  will-change: transform, opacity;
+  transform-style: preserve-3d;
+}
+
+/* No hover effects */
+
+.accentBar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  transition: height var(--transition-smooth);
+}
+
+/* No hover effects */
+
+.cardContent {
+  position: relative;
+  padding: calc(var(--space-comfort) * 2);
+  z-index: 2;
+}
+
+.cardTitle {
+  font-size: var(--text-title);
+  font-weight: 400;
+  color: var(--color-text-shout);
+  margin-bottom: var(--space-cozy);
+}
+
+.cardDescription {
+  font-size: var(--text-body-lg);
+  color: var(--color-text-speak);
+  margin-bottom: var(--space-cozy);
+  line-height: 1.6;
+}
+
+.cardFeatures {
+  font-size: var(--text-body);
+  color: var(--color-text-whisper);
+  margin-bottom: var(--space-comfort);
+}
+
+.cardCta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-tight);
+  color: var(--color-text-speak);
+  font-weight: 500;
+  transition: var(--transition-smooth);
+  cursor: pointer;
+}
+
+/* Keep just the subtle CTA hover for usability */
+.cardCta:hover {
+  color: var(--color-text-shout);
+}
+
+.ctaText {
+  font-size: var(--text-body);
+}
+
+.ctaArrow {
+  transition: var(--transition-smooth);
+}
+
+/* No hover effects */
+
+.cardBackground {
+  position: absolute;
+  top: 0;
+  right: -100px;
+  bottom: 0;
+  width: 300px;
+  opacity: 0.05;
+  pointer-events: none;
+}
+
+.backgroundPattern {
+  width: 100%;
+  height: 100%;
+  background-image: 
+    repeating-linear-gradient(
+      45deg,
+      currentColor,
+      currentColor 1px,
+      transparent 1px,
+      transparent 15px
+    );
+}
+
+/* Accent color variations */
+.purple {
+  border-top: 6px solid var(--color-primary);
+}
+
+.green {
+  border-top: 6px solid #10B981;
+}
+
+.yellow {
+  border-top: 6px solid var(--color-accent-yellow);
+}
+
+.red {
+  border-top: 6px solid #EF4444;
+}
+
+.pink {
+  border-top: 6px solid #EC4899;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .audienceCard {
+    margin: 0 auto 60px;
+  }
+  
+  .cardContent {
+    padding: var(--space-comfort);
+  }
+  
+  .cardTitle {
+    font-size: var(--text-heading);
+  }
+  
+  .cardDescription {
+    font-size: var(--text-body);
+  }
+  
+  .cardFeatures {
+    font-size: var(--text-small);
+  }
+  
+  .cardBackground {
+    display: none;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .audienceCard {
+    position: relative !important;
+    top: unset !important;
+    transform: scale(1) translate3d(0,0,0) !important;
+    transform-origin: unset !important;
+  }
+}

@@ -1,0 +1,41 @@
+.backgroundShapes {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.shape {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(40px);
+  will-change: transform;
+}
+
+.shape1 {
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, var(--color-primary) 0%, transparent 70%);
+  opacity: 0.15;
+  top: -20%;
+  left: -10%;
+}
+
+.shape2 {
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle, var(--color-accent-purple) 0%, transparent 70%);
+  opacity: 0.1;
+  bottom: -30%;
+  right: -15%;
+}
+
+.shape3 {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, var(--color-accent-yellow) 0%, transparent 70%);
+  opacity: 0.08;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}

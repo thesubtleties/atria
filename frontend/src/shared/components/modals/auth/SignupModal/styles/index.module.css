@@ -1,20 +1,79 @@
+/* Modal Content Styling */
+.modalContent {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 0;
+}
+
+/* Modal Header */
+.modalHeader {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1E293B;
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.04);
+}
+
+/* Form Container */
 .form {
-  padding: 1rem 0;
+  padding: 1.5rem;
+  animation: fadeIn 0.2s ease;
 }
 
 .form > div {
   gap: 1.25rem;
 }
 
+/* Form Elements */
 .form input:disabled {
   opacity: 0.7;
   cursor: not-allowed;
 }
 
-.form {
-  animation: fadeIn 0.2s ease;
+/* Custom input styling */
+.form input {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  transition: all 0.2s ease;
 }
 
+.form input:focus {
+  border-color: rgba(139, 92, 246, 0.3);
+  background: rgba(255, 255, 255, 0.8);
+}
+
+/* Submit Button */
+.submitButton {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+/* Close Button */
+.closeButton {
+  width: 100%;
+}
+
+/* Verification Message Section */
+.verificationMessage {
+  padding: 1.5rem;
+  min-width: 400px;
+  animation: fadeIn 0.3s ease;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 8px;
+  border: 1px solid rgba(139, 92, 246, 0.08);
+}
+
+/* Alert Styling within verification message */
+.verificationMessage .mantine-Alert-root {
+  background: rgba(139, 92, 246, 0.04);
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  border-radius: 6px;
+}
+
+/* Animation */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -26,8 +85,21 @@
   }
 }
 
-.verificationMessage {
-  padding: var(--mantine-spacing-md);
-  min-width: 400px;
-  animation: fadeIn 0.3s ease;
+/* Override Mantine Modal Styles */
+:global(.mantine-Modal-content) {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.08);
+}
+
+:global(.mantine-Modal-header) {
+  background: transparent;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.04);
+}
+
+:global(.mantine-Modal-overlay) {
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(4px);
 }

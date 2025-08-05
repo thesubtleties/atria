@@ -1,0 +1,93 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.button:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Sizes */
+.size-small {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+}
+
+.size-medium {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+}
+
+.size-large {
+  padding: 1rem 2rem;
+  font-size: 1.125rem;
+}
+
+/* Variants */
+.variant-primary {
+  background: var(--color-primary-dark);
+  color: white;
+}
+
+.variant-primary:hover:not(.disabled) {
+  background: var(--color-primary);
+  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.2);
+}
+
+.variant-secondary {
+  background: rgba(139, 92, 246, 0.1);
+  color: var(--color-primary);
+}
+
+.variant-secondary:hover:not(.disabled) {
+  background: rgba(139, 92, 246, 0.2);
+}
+
+.variant-outline {
+  background: transparent;
+  color: var(--color-primary);
+  border: 2px solid var(--color-primary);
+}
+
+.variant-outline:hover:not(.disabled) {
+  background: var(--color-primary);
+  color: white;
+}
+
+.variant-ghost {
+  background: transparent;
+  color: var(--color-text-primary);
+}
+
+.variant-ghost:hover:not(.disabled) {
+  background: rgba(139, 92, 246, 0.05);
+  color: var(--color-primary);
+}
+
+/* States */
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

@@ -1,0 +1,54 @@
+.section {
+  position: relative;
+  width: 100%;
+}
+
+/* Backgrounds */
+.bg-default {
+  background: var(--color-background);
+}
+
+.bg-light {
+  background: var(--color-almost-white);
+}
+
+.bg-gradient-primary {
+  background: var(--gradient-primary);
+}
+
+.bg-gradient-subtle {
+  background: linear-gradient(180deg, 
+    var(--color-almost-white) 0%, 
+    var(--color-background) 100%
+  );
+}
+
+/* Padding variations */
+.padding-none {
+  padding: 0;
+}
+
+.padding-small {
+  padding: var(--space-breath) 0;
+}
+
+.padding-normal {
+  padding: calc(var(--space-breath) * 2) 0;
+}
+
+.padding-large {
+  padding: calc(var(--space-breath) * 3) 0;
+}
+
+/* Overflow */
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.overflow-visible {
+  overflow: visible;
+}
+
+.overflow-clip {
+  overflow: clip;
+}

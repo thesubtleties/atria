@@ -1,0 +1,125 @@
+/* Magnetic Button - "We're drawn to each other" */
+@import '../../_variables.css';
+
+.button {
+  position: relative;
+  padding: 1rem 2.5rem;
+  border: none;
+  border-radius: var(--radius-medium);
+  font-weight: 500;
+  font-size: var(--text-body);
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: inherit;
+  outline: none;
+  overflow: hidden;
+  transition: var(--transition-magnetic);
+  transform-style: preserve-3d;
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 4px;
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+}
+
+/* Glow effect */
+.glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, var(--color-primary) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Primary variant */
+.primary {
+  background: var(--gradient-primary);
+  color: var(--color-almost-white);
+  box-shadow: var(--shadow-medium);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.9rem;
+}
+
+.primary:hover {
+  box-shadow: var(--shadow-large), var(--shadow-glow);
+}
+
+.primary .glow {
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+}
+
+/* Secondary variant */
+.secondary {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: var(--color-primary);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  box-shadow: var(--shadow-soft);
+}
+
+.secondary:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(139, 92, 246, 0.3);
+  box-shadow: var(--shadow-medium);
+}
+
+/* Ghost variant */
+.ghost {
+  background: transparent;
+  color: var(--color-text-speak);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  box-shadow: none;
+}
+
+.ghost:hover {
+  background: rgba(139, 92, 246, 0.05);
+  border-color: rgba(139, 92, 246, 0.3);
+  color: var(--color-primary);
+}
+
+/* Size variations */
+.button.large {
+  padding: 1.25rem 3rem;
+  font-size: 1.1rem;
+}
+
+.button.small {
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+}
+
+/* Loading state */
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .button {
+    padding: 0.875rem 2rem;
+  }
+  
+  .button.large {
+    padding: 1rem 2.5rem;
+  }
+}
