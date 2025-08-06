@@ -2,53 +2,11 @@ import { useRef } from 'react'
 import { gsap } from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { motion } from 'motion/react'
+import { AudienceCard, SectionHeader } from './components'
+import { audienceData } from './audienceData'
 import styles from './AudienceCards.module.css'
 
 gsap.registerPlugin(ScrollTrigger)
-
-const audienceData = [
-  {
-    id: 'corporate',
-    title: 'Enterprise Conferences',
-    description: 'Advanced controls, custom branding, enterprise security',
-    features: 'Multi-day events, sponsor management, detailed analytics',
-    color: '#8B5CF6', // Purple
-    accent: 'purple'
-  },
-  {
-    id: 'single-session',
-    title: 'Single Session Events',
-    description: 'Galas, luncheons, fundraisers - polish without complexity',
-    features: 'Streamlined check-in, instant setup, uncluttered experience',
-    color: '#10B981', // Green
-    accent: 'green'
-  },
-  {
-    id: 'gaming',
-    title: 'Creator Platforms',
-    description: 'Discord alternative with your own domain',
-    features: 'Custom chat rooms, streaming integration, community ownership',
-    color: '#EF4444', // Red
-    accent: 'red'
-  },
-  {
-    id: 'weddings',
-    title: 'Include Everyone',
-    description: 'Special moments, even from afar',
-    features: 'Virtual attendance, live streaming, guest interaction',
-    color: '#EC4899', // Pink
-    accent: 'pink'
-  },
-  {
-    id: 'nonprofit',
-    title: 'Community Building',
-    description: 'Professional networking for any budget',
-    features: 'Fundraising integration, volunteer coordination, member engagement',
-    color: '#FDE047', // Yellow
-    accent: 'yellow'
-  }
-]
 
 const AudienceCards = () => {
   const containerRef = useRef(null)
@@ -66,20 +24,28 @@ const AudienceCards = () => {
           }
         })
         
-        tl.to(headerRef.current.querySelector(`.${styles.sectionTitle}`), {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: 'power3.out',
-          force3D: true
-        })
-        .to(headerRef.current.querySelector(`.${styles.sectionSubtitle}`), {
-          opacity: 1,
-          y: 0,
-          duration: 0.6,
-          ease: 'power2.out',
-          force3D: true
-        }, '-=0.4')
+        const title = headerRef.current.querySelector('h2')
+        const subtitle = headerRef.current.querySelector('p')
+        
+        if (title) {
+          tl.to(title, {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: 'power3.out',
+            force3D: true
+          })
+        }
+        
+        if (subtitle) {
+          tl.to(subtitle, {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            ease: 'power2.out',
+            force3D: true
+          }, '-=0.4')
+        }
       }
 
       // Get cards and wrapper with proper scoping
@@ -132,35 +98,39 @@ const AudienceCards = () => {
             }
           })
           
-          // Animate accent bars
+          // Animate accent bars using div selector
           batch.forEach((card, i) => {
-            const accentBar = card.querySelector(`.${styles.accentBar}`)
-            gsap.fromTo(accentBar, {
-              scaleX: 0,
-              transformOrigin: "left center"
-            }, {
-              scaleX: 1,
-              duration: 0.4,
-              ease: "power2.out",
-              delay: i * 0.1 + 0.2,
-              force3D: true
-            })
+            const accentBar = card.querySelector('div[style*="background"]')
+            if (accentBar) {
+              gsap.fromTo(accentBar, {
+                scaleX: 0,
+                transformOrigin: "left center"
+              }, {
+                scaleX: 1,
+                duration: 0.4,
+                ease: "power2.out",
+                delay: i * 0.1 + 0.2,
+                force3D: true
+              })
+            }
             
-            // Animate content
-            const content = card.querySelector(`.${styles.cardContent}`)
-            const contentElements = content.children
-            gsap.fromTo(contentElements, {
-              opacity: 0,
-              y: 20
-            }, {
-              opacity: 1,
-              y: 0,
-              duration: 0.3,
-              stagger: 0.05,
-              ease: "power2.out",
-              delay: i * 0.1 + 0.3,
-              force3D: true
-            })
+            // Animate content - get second div which contains content
+            const content = card.querySelectorAll('div')[1]
+            if (content) {
+              const contentElements = content.children
+              gsap.fromTo(contentElements, {
+                opacity: 0,
+                y: 20
+              }, {
+                opacity: 1,
+                y: 0,
+                duration: 0.3,
+                stagger: 0.05,
+                ease: "power2.out",
+                delay: i * 0.1 + 0.3,
+                force3D: true
+              })
+            }
           })
         },
         start: "top bottom-=50",
@@ -210,50 +180,13 @@ const AudienceCards = () => {
   return (
     <section ref={containerRef} className={`${styles.audienceCards} audienceCards`}>
       <div className={styles.container}>
-        <div ref={headerRef} className="audience-header">
-          <h2 className={styles.sectionTitle}>One Platform, Unlimited Possibilities</h2>
-          <p className={styles.sectionSubtitle}>
-            Flexible solutions that adapt to your unique needs
-          </p>
+        <div ref={headerRef}>
+          <SectionHeader />
         </div>
 
         <div className={`${styles.cardsWrapper} cards-wrapper`}>
-          {audienceData.map((audience, index) => (
-            <div
-              key={audience.id}
-              className={`${styles.audienceCard} ${styles[audience.accent]} audience-card`}
-            >
-              <div 
-                className={styles.accentBar}
-                style={{ backgroundColor: audience.color }}
-              />
-              <div className={styles.cardContent}>
-                <h3 className={styles.cardTitle}>{audience.title}</h3>
-                <p className={styles.cardDescription}>{audience.description}</p>
-                <p className={styles.cardFeatures}>{audience.features}</p>
-                <div className={styles.cardCta}>
-                  <span className={styles.ctaText}>Learn more</span>
-                  <svg 
-                    className={styles.ctaArrow}
-                    width="20" 
-                    height="20" 
-                    viewBox="0 0 20 20" 
-                    fill="none"
-                  >
-                    <path 
-                      d="M7.5 5L12.5 10L7.5 15" 
-                      stroke="currentColor" 
-                      strokeWidth="2" 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </div>
-              </div>
-              <div className={styles.cardBackground}>
-                <div className={styles.backgroundPattern} />
-              </div>
-            </div>
+          {audienceData.map((audience) => (
+            <AudienceCard key={audience.id} audience={audience} />
           ))}
         </div>
       </div>

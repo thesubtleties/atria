@@ -1,0 +1,120 @@
+@import '../../_variables.css';
+
+.audienceCard {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto 60px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: var(--radius-large);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+  transform-origin: center center;
+  will-change: transform, opacity;
+  transform-style: preserve-3d;
+}
+
+.accentBar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  transition: height var(--transition-smooth);
+}
+
+.cardContent {
+  position: relative;
+  padding: calc(var(--space-comfort) * 2);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-cozy);
+}
+
+.cardTitle {
+  font-size: var(--text-title);
+  font-weight: 400;
+  color: var(--color-text-shout);
+  margin: 0;
+}
+
+.cardDescription {
+  font-size: var(--text-body-lg);
+  color: var(--color-text-speak);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.cardFeatures {
+  font-size: var(--text-body);
+  color: var(--color-text-whisper);
+  margin: 0;
+  padding-top: var(--space-tight);
+}
+
+.cardBackground {
+  position: absolute;
+  top: 0;
+  right: -100px;
+  bottom: 0;
+  width: 300px;
+  opacity: 0.05;
+  pointer-events: none;
+}
+
+.backgroundPattern {
+  width: 100%;
+  height: 100%;
+  background-image: 
+    repeating-linear-gradient(
+      45deg,
+      currentColor,
+      currentColor 1px,
+      transparent 1px,
+      transparent 15px
+    );
+}
+
+/* Accent color variations */
+.purple {
+  border-top: 6px solid var(--color-primary);
+}
+
+.green {
+  border-top: 6px solid #10B981;
+}
+
+.yellow {
+  border-top: 6px solid var(--color-accent-yellow);
+}
+
+.red {
+  border-top: 6px solid #EF4444;
+}
+
+.pink {
+  border-top: 6px solid #EC4899;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .audienceCard {
+    margin: 0 auto 60px;
+  }
+  
+  .cardContent {
+    padding: var(--space-comfort);
+  }
+  
+  .cardTitle {
+    font-size: var(--text-heading);
+  }
+  
+  .cardDescription {
+    font-size: var(--text-body);
+  }
+}
