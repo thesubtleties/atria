@@ -1,0 +1,172 @@
+@import '../../_variables.css';
+
+.mockInterface {
+  width: 100%;
+  max-width: 900px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: var(--radius-large);
+  box-shadow: 0 30px 100px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  position: relative;
+  will-change: transform;
+}
+
+.dashboardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  height: 60px;
+  background: rgba(106, 45, 204, 0.808);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.navLeft {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.navCenter {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.navRight {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.atriaTextLogo {
+  font-family: 'M Plus 2', system-ui, -apple-system, sans-serif;
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.atriaTextLogo:hover {
+  opacity: 0.9;
+}
+
+.userMenuButton {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.userMenuButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.dashboardContent {
+  padding: 2rem;
+  background: rgba(251, 250, 255, 1);
+  min-height: 400px;
+}
+
+.dashboardTitle {
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: #8b5cf6;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.5rem;
+}
+
+.eventCard {
+  background: var(--color-almost-white);
+  border-radius: var(--radius-medium);
+  padding: var(--space-comfort);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.eventPreview h4 {
+  font-size: var(--text-body-lg);
+  color: var(--color-text-shout);
+  margin-bottom: var(--space-tight);
+}
+
+.eventPreview p {
+  color: var(--color-text-whisper);
+  margin-bottom: var(--space-cozy);
+}
+
+.launchButton {
+  background: var(--color-primary);
+  color: var(--color-almost-white);
+  border: none;
+  padding: var(--space-tight) var(--space-cozy);
+  border-radius: var(--radius-small);
+  font-size: var(--text-small);
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.launchButton:hover {
+  background: var(--color-primary-dark);
+  transform: translateY(-1px);
+}
+
+.transformIndicator {
+  position: absolute;
+  bottom: var(--space-comfort);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-tight);
+  color: var(--color-text-whisper);
+  font-size: var(--text-small);
+}
+
+.transformIndicator svg {
+  animation: bounce 2s infinite;
+  will-change: transform;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(10px);
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboardHeader {
+    padding: 0 1rem;
+  }
+  
+  .dashboardContent {
+    padding: 1rem;
+  }
+  
+  .dashboardTitle {
+    font-size: 1.25rem;
+  }
+  
+  .eventCard {
+    padding: 1rem;
+  }
+}
