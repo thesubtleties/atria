@@ -139,9 +139,22 @@
   font-size: var(--text-small);
 }
 
+.transformIndicator {
+  animation: fadeLoop 2s ease-in-out infinite;
+}
+
 .transformIndicator svg {
-  animation: bounce 2s infinite;
+  animation: bounce 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   will-change: transform;
+}
+
+@keyframes fadeLoop {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 @keyframes bounce {

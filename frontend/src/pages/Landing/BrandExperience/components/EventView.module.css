@@ -213,8 +213,12 @@
   z-index: 200;
 }
 
+.brandHighlight {
+  animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.5s both;
+}
+
 .highlightPointer {
-  animation: pulse 2s infinite;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   will-change: transform;
 }
 
@@ -232,6 +236,17 @@
   font-size: var(--text-tiny);
   color: var(--color-text-speak);
   font-weight: 400;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes pulse {

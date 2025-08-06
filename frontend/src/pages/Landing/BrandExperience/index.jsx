@@ -29,36 +29,19 @@ const BrandExperience = () => {
 
     // Header animation - only animate once on initial load
     if (headerRef.current) {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: headerRef.current,
-          start: 'top 80%',
-          once: true
-        }
-      })
-      
-      const title = headerRef.current.querySelector('h2')
-      const subtitle = headerRef.current.querySelector('p')
-      
-      if (title) {
-        tl.from(title, {
+      ScrollTrigger.batch(headerRef.current.querySelectorAll('h2, p'), {
+        onEnter: batch => gsap.from(batch, {
           opacity: 0,
           y: 30,
           duration: 0.8,
+          stagger: 0.15,
           ease: 'power3.out',
-          force3D: true
-        })
-      }
-      
-      if (subtitle) {
-        tl.from(subtitle, {
-          opacity: 0,
-          y: 20,
-          duration: 0.6,
-          ease: 'power2.out',
-          force3D: true
-        }, '-=0.4')
-      }
+          force3D: true,
+          overwrite: 'auto'
+        }),
+        start: 'top 80%',
+        once: true
+      })
     }
 
     // Create the transformation animation with GSAP timeline instead of setTimeout
@@ -102,31 +85,29 @@ const BrandExperience = () => {
       }
     })
 
-    // Set initial state for dashboard to prevent flash
+    // Dashboard entrance animation - use CSS for initial state
     if (dashboard) {
-      gsap.set(dashboard, {
-        y: 100,
-        opacity: 0
+      dashboard.style.transform = 'translateY(100px)';
+      dashboard.style.opacity = '0';
+      
+      ScrollTrigger.create({
+        trigger: container,
+        start: 'top 50%',
+        once: true,
+        onEnter: () => {
+          if (!showEventView) {
+            gsap.to(dashboard, {
+              y: 0,
+              opacity: 1,
+              duration: 1,
+              ease: 'power2.out',
+              force3D: true,
+              clearProps: 'transform,opacity'
+            })
+          }
+        }
       })
     }
-
-    // Mock interface sliding animation
-    ScrollTrigger.create({
-      trigger: container,
-      start: 'top 50%',
-      once: true,
-      onEnter: () => {
-        if (dashboard && !showEventView) {
-          gsap.to(dashboard, {
-            y: 0,
-            opacity: 1,
-            duration: 1,
-            ease: 'power2.out',
-            force3D: true
-          })
-        }
-      }
-    })
     
     // Ensure proper cleanup on component state change
     return () => {

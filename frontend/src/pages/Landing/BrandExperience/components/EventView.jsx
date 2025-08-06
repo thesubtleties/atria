@@ -87,12 +87,7 @@ export const EventView = forwardRef(({ isTransitioning }, ref) => {
       </div>
 
       {/* Highlight the branding ownership */}
-      <motion.div 
-        className={styles.brandHighlight}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
-      >
+      <div className={styles.brandHighlight}>
         <div className={styles.highlightPointer}>
           <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
             <path d="M20 10v20m-10-10h20" stroke="var(--color-accent-yellow)" strokeWidth="3" strokeLinecap="round"/>
@@ -103,7 +98,7 @@ export const EventView = forwardRef(({ isTransitioning }, ref) => {
           <p>Your brand front and center</p>
           <p className={styles.highlightSubtext}>Atria attribution moved to sidebar</p>
         </div>
-      </motion.div>
+      </div>
     </motion.div>
   )
 })

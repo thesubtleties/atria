@@ -44,16 +44,12 @@ export const DashboardView = forwardRef(({ isTransitioning }, ref) => {
       </div>
 
       {/* Transform indicator */}
-      <motion.div 
-        className={styles.transformIndicator}
-        animate={{ opacity: [0.5, 1, 0.5] }}
-        transition={{ duration: 2, repeat: Infinity }}
-      >
+      <div className={styles.transformIndicator}>
         <span>Scroll to see the transformation</span>
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
           <path d="M12 5v14m0 0l-7-7m7 7l7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
-      </motion.div>
+      </div>
     </motion.div>
   )
 })
