@@ -1,0 +1,146 @@
+/* Networking Demo Styles */
+.networkingContent {
+  width: 100%;
+  max-width: 500px;
+}
+
+.networkingHeader {
+  margin-bottom: var(--space-cozy);
+  padding-bottom: var(--space-tight);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.greenLight {
+  color: #10B981;
+  font-size: var(--text-small);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.connectionItem {
+  padding: var(--space-cozy) 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.connectionInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-cozy);
+  margin-bottom: var(--space-tight);
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #E0E7FF 0%, #C7D2FE 100%);
+  border-radius: 50%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar::before {
+  content: '👤';
+  font-size: 20px;
+  opacity: 0.7;
+}
+
+.statusIndicator {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+.statusIndicator.green {
+  background: #10B981;
+}
+
+.statusIndicator.pending {
+  background: #F59E0B;
+}
+
+.statusIndicator.connected {
+  background: #3B82F6;
+}
+
+.personInfo h4 {
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: var(--color-text-shout);
+  margin: 0 0 4px 0;
+}
+
+.personInfo p {
+  font-size: var(--text-small);
+  color: var(--color-text-speak);
+  margin: 0;
+}
+
+.connectionActions {
+  margin-left: 60px;
+}
+
+.icebreaker {
+  overflow: hidden;
+}
+
+.icebreakerText {
+  font-size: var(--text-small);
+  color: var(--color-text-whisper);
+  font-style: italic;
+  padding: var(--space-tight);
+  background: rgba(16, 185, 129, 0.1);
+  border-radius: 8px;
+  margin-bottom: var(--space-tight);
+}
+
+.actionButton {
+  padding: 8px 20px;
+  border: none;
+  border-radius: 20px;
+  font-size: var(--text-small);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.actionButton.green {
+  background: var(--color-primary);
+  color: white;
+}
+
+.actionButton.green:hover {
+  background: #7C3AED;
+  transform: translateY(-1px);
+}
+
+.actionButton.pending {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+.actionButton.connected {
+  background: #DBEAFE;
+  color: #1E40AF;
+}
+
+/* Firefox Optimizations */
+@-moz-document url-prefix() {
+  .connectionItem {
+    will-change: auto;
+  }
+  
+  .personInfo h4,
+  .personInfo p,
+  .icebreakerText {
+    text-rendering: geometricPrecision;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
