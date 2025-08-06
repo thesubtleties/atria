@@ -66,6 +66,31 @@
   text-shadow: 0 0 20px rgba(255, 217, 61, 0.5);
 }
 
+/* Firefox-specific optimizations */
+@-moz-document url-prefix() {
+  .problemStatement {
+    /* Optimize background transitions */
+    will-change: auto;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+  
+  .word {
+    /* Reduce will-change to improve memory usage */
+    will-change: auto;
+  }
+  
+  .word.highlighted {
+    /* Only use will-change during animation */
+    will-change: auto;
+  }
+  
+  /* Optimize text rendering */
+  .textContent {
+    text-rendering: optimizeLegibility;
+  }
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .textContent {

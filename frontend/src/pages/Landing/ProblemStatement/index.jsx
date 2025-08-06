@@ -10,6 +10,8 @@ const ProblemStatement = () => {
   const containerRef = useRef(null)
 
   useGSAP(() => {
+    const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+    
     let ctx = gsap.context(() => {
       const textElement = containerRef.current?.querySelector('.text-content')
       
@@ -53,7 +55,7 @@ const ProblemStatement = () => {
         opacity: 0,
         y: 20,
         color: "#8B5CF6", // Purple for main text
-        force3D: true
+        force3D: !isFirefox // Avoid force3D in Firefox for better text rendering
       })
       
       // Get highlighted words for color animation
@@ -63,7 +65,7 @@ const ProblemStatement = () => {
       gsap.set(highlightedWords, {
         color: "#F5AF00", // Golden orange
         fontWeight: "600",
-        force3D: true
+        force3D: !isFirefox // Avoid force3D in Firefox for better text rendering
       })
       
       // Add a small delay before words start appearing
@@ -80,8 +82,7 @@ const ProblemStatement = () => {
           ease: isHighlighted ? "power3.out" : "power2.out",
           // Add a slight scale effect to highlighted words
           scale: isHighlighted ? 1.05 : 1,
-          force3D: true,
-          force3D: true  // GPU acceleration for smoother animation
+          force3D: !isFirefox  // Better text rendering in Firefox without force3D
         }, 0.3 + (index * 0.08)) // Natural reading pace - about 12-13 words per second
       })
 
@@ -90,10 +91,10 @@ const ProblemStatement = () => {
         backgroundColor: "rgb(251, 250, 255)", // Off-white purple - must match PlatformDemo
         duration: 1.2,
         ease: "power2.inOut",
-        force3D: true,
+        force3D: false, // Don't use force3D on background color transitions
         onComplete: () => {
           // Ensure the final color is set precisely
-          gsap.set(containerRef.current, { backgroundColor: "rgb(251, 250, 255)", force3D: true })
+          gsap.set(containerRef.current, { backgroundColor: "rgb(251, 250, 255)" })
         }
       }, 2.5) // Start transition near the end of word animations
       

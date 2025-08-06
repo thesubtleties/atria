@@ -154,6 +154,7 @@ const Hero = () => {
 
   useGSAP(
     () => {
+      const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
       let scrambleIntervalHandle = null;
       let ctx = gsap.context(() => {
         // Initial animations using refs
@@ -231,17 +232,7 @@ const Hero = () => {
         // Start scramble animation after initial load
         scrambleIntervalHandle = setInterval(scrambleAnimation, 3000);
 
-        // Scroll indicator animation
-        if (scrollIndicatorRef.current) {
-          gsap.to(scrollIndicatorRef.current, {
-            y: 10,
-            duration: 1.5,
-            repeat: -1,
-            yoyo: true,
-            ease: 'power1.inOut',
-            force3D: true,
-          });
-        }
+        // Scroll indicator animation handled by CSS for better performance
 
         // Create drape reveal animation
         let drapeTl = null;
@@ -331,7 +322,7 @@ const Hero = () => {
               {
                 opacity: 0,
                 duration: 0.2,
-                force3D: true,
+                force3D: !isFirefox,  // No force3D in Firefox to preserve centering
               },
               0
             );

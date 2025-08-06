@@ -38,9 +38,11 @@ const CallToAction = () => {
     const content = contentRef.current
     
     if (!container || !drape || !content) return
+    
+    const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1
 
-    // Set initial states
-    gsap.set(content, { opacity: 0, y: 20, force3D: true })
+    // Set initial states - no force3D for content in Firefox to preserve centering
+    gsap.set(content, { opacity: 0, y: 20, force3D: !isFirefox })
     gsap.set(drape, { y: "-100%", force3D: true })
     
     // Create the closing drape animation
