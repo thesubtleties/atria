@@ -1,0 +1,112 @@
+@import '../../_variables.css';
+
+.panel {
+  position: relative;
+  flex: 0 0 100vw;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.philosophyPanel {
+  background: rgb(251, 250, 255); /* Off-white purple */
+}
+
+.panelContent {
+  position: relative;
+  z-index: 2;
+  max-width: 900px;
+  width: 90%;
+  margin: 0 auto;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.magazineLayout {
+  max-width: 700px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.philosophyTitle {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 300;
+  color: var(--color-text-primary);
+  margin-bottom: 2rem;
+  letter-spacing: -0.02em;
+  position: relative;
+}
+
+.philosophyTitle:after {
+  content: '';
+  position: absolute;
+  bottom: -1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 2px;
+  background: var(--color-primary);
+  opacity: 0.5;
+}
+
+.philosophyQuote {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-style: italic;
+  font-weight: 300;
+  color: var(--color-primary);
+  margin-bottom: 2rem;
+  line-height: 1.4;
+  opacity: 0.9;
+}
+
+.philosophyContent {
+  margin: 0 auto 2rem;
+  max-width: 600px;
+}
+
+.philosophyContent p {
+  font-size: clamp(1.1rem, 2vw, 1.3rem);
+  line-height: 1.8;
+  color: var(--color-text-secondary);
+  font-weight: 400;
+  text-align: center;
+  letter-spacing: 0.01em;
+  margin: 0;
+}
+
+.philosophyFooter {
+  font-size: clamp(1rem, 1.8vw, 1.2rem);
+  color: var(--color-text-primary);
+  text-align: center;
+  margin-top: 2.5rem;
+  padding: 0 2rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  opacity: 0.9;
+}
+
+@media (max-width: 768px) {
+  .philosophyTitle {
+    font-size: 2rem;
+  }
+  
+  .philosophyQuote {
+    font-size: 1.25rem;
+  }
+  
+  .philosophyContent {
+    font-size: 1rem;
+    padding: 1.5rem;
+  }
+  
+  .philosophyFooter {
+    font-size: 0.875rem;
+  }
+}
