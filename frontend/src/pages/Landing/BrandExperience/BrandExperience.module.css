@@ -44,7 +44,7 @@
 .showcaseWrapper {
   position: relative;
   min-height: clamp(400px, 60vh, 600px);
-  margin-bottom: var(--space-breath);
+  margin-bottom: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -278,6 +278,48 @@
   font-size: var(--text-tiny);
   color: var(--color-text-speak);
   font-weight: 400;
+}
+
+/* Coming Soon Note */
+.comingSoonNote {
+  margin-top: var(--space-breath);
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 900px;
+  background: rgba(139, 92, 246, 0.04);
+  border-radius: var(--radius-medium);
+  border: 1px solid rgba(139, 92, 246, 0.08);
+  overflow: hidden;
+  position: relative;
+}
+
+.noteContent {
+  padding: var(--space-cozy) var(--space-comfort);
+}
+
+.noteIcon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(139, 92, 246, 0.08);
+  border-radius: var(--radius-small);
+}
+
+.noteText h4 {
+  font-size: var(--text-body-lg);
+  font-weight: 600;
+  color: var(--color-text-shout);
+  margin-bottom: var(--space-micro);
+}
+
+.noteText p {
+  font-size: var(--text-small);
+  color: var(--color-text-whisper);
+  line-height: 1.5;
+  margin: 0;
 }
 
 
