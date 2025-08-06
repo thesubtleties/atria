@@ -199,6 +199,8 @@ const PlatformDemo = () => {
         pin: true,
         pinSpacing: true,
         invalidateOnRefresh: true,
+        fastScrollEnd: true,
+        preventOverlaps: true,
         onEnter: () => {
           // Reset to first card when entering from above
           currentIndexRef.current = 0

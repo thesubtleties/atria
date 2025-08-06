@@ -74,6 +74,7 @@ const OpenSourceSplit = () => {
         anticipatePin: 1,
         invalidateOnRefresh: true,
         fastScrollEnd: true,
+        preventOverlaps: true,
       }
     })
     
@@ -197,10 +198,13 @@ const OpenSourceSplit = () => {
                   )}
                 </div>
 
-                <motion.button 
+                <motion.a 
+                  href={panel.type === 'opensource' ? 'https://github.com/thesubtleties/atria' : 'mailto:steven@sbtl.dev'}
                   className={`${styles.ctaButton} ${panel.type === 'enterprise' ? styles.enterpriseButton : ''}`}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
+                  target={panel.type === 'opensource' ? '_blank' : undefined}
+                  rel={panel.type === 'opensource' ? 'noopener noreferrer' : undefined}
                 >
                   {panel.ctaIcon === 'github' && (
                     <svg className={styles.githubIcon} width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
@@ -208,7 +212,7 @@ const OpenSourceSplit = () => {
                     </svg>
                   )}
                   {panel.cta}
-                </motion.button>
+                </motion.a>
               </div>
             </div>
             
