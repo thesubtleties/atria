@@ -1,0 +1,152 @@
+@import '../../_variables.css';
+
+.panel {
+  position: relative;
+  flex: 0 0 100vw;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.panelContent {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  width: 90%;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.contentWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  width: 100%;
+}
+
+.panelHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.panelTitle {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 300;
+  margin-bottom: 0.5rem;
+  color: var(--color-text-primary);
+  letter-spacing: -0.02em;
+  margin: 0 0 0.5rem 0;
+}
+
+.opensourcePanel .panelTitle {
+  font-weight: 300;
+  color: #14B8A6; /* Teal color */
+}
+
+.enterprisePanel .panelTitle {
+  font-weight: 300;
+  color: var(--color-primary); /* Purple */
+}
+
+.panelSubtitle {
+  font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+  color: var(--color-text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.panelDescription {
+  font-size: clamp(0.95rem, 1.8vw, 1.1rem);
+  color: var(--color-text-secondary);
+  max-width: 700px;
+  margin: 0 auto 1rem;
+  line-height: 1.6;
+}
+
+.ctaButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  background: var(--color-primary-dark);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+  position: relative;
+  z-index: 1;
+  text-decoration: none;
+}
+
+.opensourcePanel .ctaButton {
+  background: #14B8A6; /* Teal */
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(20, 184, 166, 0.2);
+}
+
+.opensourcePanel .ctaButton:hover {
+  background: #10B981; /* Darker teal on hover */
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(20, 184, 166, 0.3);
+  text-decoration: none;
+}
+
+.enterpriseButton {
+  background: var(--color-primary); /* Purple */
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.2);
+}
+
+.enterpriseButton:hover {
+  background: var(--color-primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.3);
+  text-decoration: none;
+}
+
+.githubIcon {
+  flex-shrink: 0;
+}
+
+.opensourcePanel {
+  background: rgb(251, 250, 255); /* Off-white purple */
+  position: relative;
+  overflow: hidden;
+}
+
+.enterprisePanel {
+  background: rgb(251, 250, 255); /* Off-white purple */
+}
+
+@media (max-width: 768px) {
+  .panelTitle {
+    font-size: 2rem;
+  }
+  
+  .panelSubtitle {
+    font-size: 1.25rem;
+  }
+  
+  .panelDescription {
+    font-size: 1rem;
+  }
+  
+  .ctaButton {
+    font-size: 1rem;
+    padding: 0.875rem 1.5rem;
+  }
+}

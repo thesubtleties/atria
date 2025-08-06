@@ -1,0 +1,293 @@
+@import '../../_variables.css';
+
+.mockInterface {
+  width: 100%;
+  max-width: 900px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: var(--radius-large);
+  box-shadow: 0 30px 100px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  position: relative;
+  will-change: transform;
+}
+
+.eventHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  height: 60px;
+  background: rgba(106, 45, 204, 0.808);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.navLeft {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.navCenter {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.navRight {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.hamburgerMenu {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.hamburgerMenu:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.eventTitle {
+  font-family: 'M Plus 2', system-ui, -apple-system, sans-serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ffffff;
+  text-align: center;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.userMenuButton {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.userMenuButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.contentWrapper {
+  display: flex;
+  height: 500px;
+}
+
+.sidebar {
+  width: 300px;
+  background: rgba(255, 255, 255, 0.95);
+  border-right: 1px solid rgba(139, 92, 246, 0.08);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebarContent {
+  flex: 1;
+  padding: 1rem 0;
+}
+
+.sidebarHeader {
+  padding: 0 1rem 0.75rem 1rem;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.04);
+  margin-bottom: 0.5rem;
+}
+
+.sidebarTitle {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.eventNav {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.eventNavItem {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  color: #64748b;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-left: 3px solid transparent;
+}
+
+.eventNavItem:hover {
+  background: rgba(139, 92, 246, 0.04);
+  color: #8b5cf6;
+}
+
+.eventNavItem.active {
+  background: rgba(139, 92, 246, 0.08);
+  color: #8b5cf6;
+  border-left-color: #8b5cf6;
+  font-weight: 600;
+}
+
+.atriaAttribution {
+  padding: 1rem;
+  border-top: 1px solid rgba(139, 92, 246, 0.04);
+  background: rgba(251, 250, 255, 0.5);
+}
+
+.attributionText {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.atriaLink,
+.sbtlLink {
+  color: #8b5cf6;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.atriaLink:hover,
+.sbtlLink:hover {
+  text-decoration: underline;
+}
+
+.eventContent {
+  flex: 1;
+  position: relative;
+  padding: 2rem;
+  background: rgba(251, 250, 255, 1);
+  min-height: 500px;
+}
+
+.heroSection {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.eventHeroTitle {
+  font-size: 2rem;
+  color: #1e293b;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.eventHeroText {
+  font-size: 1.125rem;
+  color: #64748b;
+  line-height: 1.6;
+  max-width: 600px;
+}
+
+.brandHighlight {
+  position: absolute;
+  bottom: -90px;
+  left: 320px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  z-index: 200;
+}
+
+.brandHighlight {
+  animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.5s both;
+}
+
+.highlightPointer {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  will-change: transform;
+}
+
+.highlightText {
+  background: var(--color-accent-yellow);
+  color: var(--color-text-shout);
+  padding: var(--space-tight) var(--space-cozy);
+  border-radius: var(--radius-medium);
+  font-size: var(--text-small);
+  font-weight: 500;
+  box-shadow: var(--shadow-medium);
+}
+
+.highlightSubtext {
+  font-size: var(--text-tiny);
+  color: var(--color-text-speak);
+  font-weight: 400;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@media (max-width: 768px) {
+  .contentWrapper {
+    flex-direction: column;
+    height: auto;
+  }
+  
+  .sidebar {
+    width: 100%;
+    height: 200px;
+  }
+  
+  .eventContent {
+    padding: 1rem;
+  }
+  
+  .eventHeader {
+    padding: 0 1rem;
+  }
+  
+  .brandHighlight {
+    bottom: -60px;
+    left: 20px;
+    right: auto;
+  }
+  
+  .eventHeroTitle {
+    font-size: 1.5rem;
+  }
+  
+  .eventHeroText {
+    font-size: 1rem;
+  }
+}
