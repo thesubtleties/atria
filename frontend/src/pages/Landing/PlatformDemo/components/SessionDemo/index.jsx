@@ -1,80 +1,155 @@
-import { motion, AnimatePresence } from 'motion/react'
+import { useEffect, useRef, useState } from 'react'
+import { gsap } from 'gsap'
+import { motion } from 'motion/react'
 import styles from './SessionDemo.module.css'
 
-const sessionData = {
-  speaker: 'Innovation in AI',
-  viewers: '2,341',
-  messages: [
-    { user: 'Alex Chen', text: 'Great presentation! 🎉' },
-    { user: 'Sarah Kim', text: 'Can you share the slides?' },
-    { user: 'Mike Ross', text: 'Amazing insights on ML!' }
+const chatMessages = {
+  chat: [
+    { id: 1, user: 'Sarah M.', avatar: 'sarah123', message: 'Thank you for sharing your journey!', time: '2:15 PM' },
+    { id: 2, user: 'David Chen', avatar: 'davidchen', message: 'How can small nonprofits get started?', time: '2:16 PM' },
+    { id: 3, user: 'Maria G.', avatar: 'mariag', message: 'The community impact data is inspiring 💚', time: '2:17 PM' },
+    { id: 4, user: 'James Wilson', avatar: 'jwilson', message: 'What funding sources do you recommend?', time: '2:18 PM' }
+  ],
+  backstage: [
+    { id: 1, user: 'Tech Support', avatar: 'techsupport232fdafrereaaazzzffdf', message: 'Audio levels look good on our end', time: '2:14 PM', isOrganizer: true },
+    { id: 2, user: 'Dr. Emily Rodriguez', avatar: 'emilyrodriguez', message: 'Perfect, can you see the slides?', time: '2:14 PM', isSpeaker: true },
+    { id: 3, user: 'Event Coordinator', avatar: 'eventcoordinatorfkldjfdafdfa', message: 'Yes, everything looks great! We have 300+ attendees', time: '2:15 PM', isOrganizer: true },
+    { id: 4, user: 'Dr. Emily Rodriguez', avatar: 'emilyrodriguez', message: 'Wonderful! Ready to take Q&A after this section', time: '2:16 PM', isSpeaker: true }
   ]
 }
 
-export const SessionDemo = () => {
+export const SessionDemo = ({ isFirefox }) => {
+  const containerRef = useRef(null)
+  const hasAnimatedRef = useRef(false)
+  const [activeTab, setActiveTab] = useState('chat')
+
+  useEffect(() => {
+    // Listen for card-active event from parent
+    const handleCardActive = () => {
+      if (!hasAnimatedRef.current && containerRef.current) {
+        hasAnimatedRef.current = true
+        
+        const elements = containerRef.current.querySelectorAll('[data-animate]')
+        
+        const tl = gsap.timeline({ delay: 0.2 })
+        
+        elements.forEach((element, index) => {
+          tl.fromTo(element, {
+            opacity: 0,
+            y: 20,
+          }, {
+            opacity: 1,
+            y: 0,
+            duration: 0.4,
+            ease: 'power2.out',
+            force3D: !isFirefox
+          }, index * 0.1)
+        })
+      }
+    }
+
+    // Listen for the card-active event
+    const cardElement = containerRef.current?.closest('.demo-card')
+    if (cardElement) {
+      cardElement.addEventListener('card-active', handleCardActive)
+      return () => {
+        cardElement.removeEventListener('card-active', handleCardActive)
+      }
+    }
+  }, [isFirefox])
+
   return (
-    <motion.div className={styles.sessionContent}>
-      <div className={styles.videoWrapper}>
-        <div className={styles.videoContainer}>
+    <motion.div className={styles.sessionContent} ref={containerRef}>
+      <div className={styles.mainContent}>
+        <div className={styles.videoSection} data-animate>
           <div className={styles.videoPlayer}>
-            <div className={styles.videoOverlay}>
+            <div className={styles.videoFrame}>
+              <img 
+                className={styles.videoPoster}
+                src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=800&q=80"
+                alt="Community Outreach Program"
+              />
               <div className={styles.liveIndicator}>
-                <span className={styles.liveDot} />
+                <span className={styles.liveDot}></span>
                 LIVE
-              </div>
-              <div className={styles.sessionInfo}>
-                <div className={styles.sessionTitle}>{sessionData.speaker}</div>
-                <div className={styles.viewerCount}>
-                  <span>👁</span> {sessionData.viewers} watching
-                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div className={styles.videoControls}>
-          <button className={styles.controlBtn}>⏯</button>
-          <button className={styles.controlBtn}>🔊</button>
-          <button className={styles.controlBtn}>⚙️</button>
-          <button className={styles.controlBtn}>⛶</button>
-        </div>
-      </div>
-      <div className={styles.interactionPanel}>
-        <div className={styles.chatHeader}>
-          <div className={styles.chatTabs}>
-            <button className={styles.activeTab}>Chat</button>
-            <button className={styles.inactiveTab}>Backstage</button>
-            <button className={styles.inactiveTab}>Q&A</button>
+
+          {/* Mini Speaker Card */}
+          <div className={styles.speakerCard}>
+            <div className={styles.speakerHeader}>
+              <img 
+                className={styles.speakerAvatar}
+                src="https://api.dicebear.com/9.x/avataaars/svg?seed=emilyrodriguez"
+                alt="Dr. Emily Rodriguez"
+              />
+              <div className={styles.speakerDetails}>
+                <h4 className={styles.speakerName}>Dr. Emily Rodriguez</h4>
+                <p className={styles.speakerTitle}>Executive Director @ Hope Foundation</p>
+                <span className={styles.speakerRole}>KEYNOTE SPEAKER</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Session Description */}
+          <div className={styles.sessionDescription}>
+            <h3 className={styles.sessionTitle}>Building Sustainable Communities</h3>
+            <p className={styles.description}>
+              Exploring innovative approaches to community development through grassroots education initiatives.
+            </p>
           </div>
         </div>
-        <div className={styles.chatMessages}>
-          <AnimatePresence>
-            {sessionData.messages.map((msg, idx) => (
-              <motion.div
-                key={idx}
-                className={styles.chatMessage}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.8 + idx * 0.3, duration: 0.4 }}
-              >
-                <div className={styles.chatAvatar}>
-                  {msg.user.charAt(0)}
-                </div>
-                <div className={styles.chatContent}>
-                  <span className={styles.chatUser}>{msg.user}</span>
-                  <span className={styles.chatText}>{msg.text}</span>
-                </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
+      </div>
+      
+      {/* Chat Section */}
+      <div className={styles.chatSection} data-animate>
+        <div className={styles.chatTabs}>
+          <button 
+            className={`${styles.tabButton} ${activeTab === 'chat' ? styles.activeTab : ''}`}
+            onClick={() => setActiveTab('chat')}
+          >
+            Chat
+          </button>
+          <button 
+            className={`${styles.tabButton} ${activeTab === 'backstage' ? styles.activeTab : ''}`}
+            onClick={() => setActiveTab('backstage')}
+          >
+            Backstage
+          </button>
         </div>
+        
+        <div className={styles.chatMessages}>
+          {chatMessages[activeTab].map(msg => (
+            <div key={msg.id} className={styles.message}>
+              <img 
+                className={styles.messageAvatar}
+                src={`https://api.dicebear.com/9.x/avataaars/svg?seed=${msg.avatar}`}
+                alt={msg.user}
+              />
+              <div className={styles.messageContent}>
+                <div className={styles.messageHeader}>
+                  <span className={`${styles.messageUser} ${
+                    msg.isOrganizer ? styles.organizer : 
+                    msg.isSpeaker ? styles.speaker : ''
+                  }`}>
+                    {msg.user}
+                  </span>
+                  <span className={styles.messageTime}>{msg.time}</span>
+                </div>
+                <p className={styles.messageText}>{msg.message}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        
         <div className={styles.chatInput}>
           <input 
             type="text" 
             placeholder="Type a message..." 
-            className={styles.chatInputField}
-            disabled
+            className={styles.inputField}
           />
-          <button className={styles.chatSendBtn}>Send</button>
+          <button className={styles.sendButton}>Send</button>
         </div>
       </div>
     </motion.div>
