@@ -23,7 +23,7 @@ gsap.registerPlugin(useGSAP, ScrollTrigger, ScrambleTextPlugin);
 // Configure ScrollTrigger for better performance
 ScrollTrigger.config({
   limitCallbacks: true, // Improves performance by limiting callback frequency
-  syncInterval: 100, // Throttle scroll sync (default is 20)
+  syncInterval: 20, // Default value for smooth scrolling
   autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load', // When to auto-refresh
 });
 
