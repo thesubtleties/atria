@@ -2,145 +2,211 @@
 .networkingContent {
   width: 100%;
   max-width: 500px;
-}
-
-.networkingHeader {
-  margin-bottom: var(--space-cozy);
-  padding-bottom: var(--space-tight);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.greenLight {
-  color: #10B981;
-  font-size: var(--text-small);
-  font-weight: 500;
   display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.connectionItem {
-  padding: var(--space-cozy) 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.connectionInfo {
-  display: flex;
-  align-items: center;
-  gap: var(--space-cozy);
-  margin-bottom: var(--space-tight);
-}
-
-.avatar {
-  width: 48px;
-  height: 48px;
-  background: linear-gradient(135deg, #E0E7FF 0%, #C7D2FE 100%);
-  border-radius: 50%;
+  flex-direction: column;
+  gap: 16px;
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
-.avatar::before {
-  content: '👤';
-  font-size: 20px;
-  opacity: 0.7;
+/* Header Section */
+.networkingHeader {
+  text-align: center;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.08);
 }
 
-.statusIndicator {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  border: 2px solid white;
-}
-
-.statusIndicator.green {
-  background: #10B981;
-}
-
-.statusIndicator.pending {
-  background: #F59E0B;
-}
-
-.statusIndicator.connected {
-  background: #3B82F6;
-}
-
-.personInfo h4 {
-  font-size: var(--text-body);
+.tagline {
+  margin: 0 0 8px 0;
+  font-size: 15px;
   font-weight: 600;
   color: var(--color-text-shout);
-  margin: 0 0 4px 0;
+  line-height: 1.3;
 }
 
-.personInfo p {
-  font-size: var(--text-small);
-  color: var(--color-text-speak);
+.description {
   margin: 0;
+  font-size: 11px;
+  color: var(--color-text-speak);
+  line-height: 1.5;
+  opacity: 0.9;
 }
 
-.connectionActions {
-  margin-left: 60px;
+/* Connections Container */
+.connectionsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.icebreaker {
+/* Connection Card */
+.connectionCard {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(139, 92, 246, 0.08);
+  border-radius: 10px;
   overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.03);
 }
 
-.icebreakerText {
-  font-size: var(--text-small);
-  color: var(--color-text-whisper);
-  font-style: italic;
-  padding: var(--space-tight);
-  background: rgba(16, 185, 129, 0.1);
-  border-radius: 8px;
-  margin-bottom: var(--space-tight);
-}
-
-.actionButton {
-  padding: 8px 20px;
-  border: none;
-  border-radius: 20px;
-  font-size: var(--text-small);
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.actionButton.green {
-  background: var(--color-primary);
-  color: white;
-}
-
-.actionButton.green:hover {
-  background: #7C3AED;
+.connectionCard:hover {
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.06);
+  border-color: rgba(139, 92, 246, 0.12);
   transform: translateY(-1px);
 }
 
-.actionButton.pending {
-  background: #FEF3C7;
-  color: #92400E;
+/* Connection Main Content */
+.connectionMain {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
 }
 
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 2px solid rgba(139, 92, 246, 0.15);
+  box-shadow: 0 2px 6px rgba(139, 92, 246, 0.05);
+}
+
+.personInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.personName {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-shout);
+  line-height: 1.2;
+  transition: color 0.2s ease;
+}
+
+.connectionCard:hover .personName {
+  color: #8B5CF6;
+}
+
+.personTitle {
+  margin: 2px 0;
+  font-size: 11px;
+  color: var(--color-text-speak);
+  opacity: 0.9;
+}
+
+.personCompany {
+  margin: 0;
+  font-size: 10px;
+  color: var(--color-text-whisper);
+  opacity: 0.8;
+}
+
+/* Action Button */
+.actionButton {
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+/* Connect button - light purple with outline */
+.actionButton.connect {
+  background: rgba(139, 92, 246, 0.08);
+  color: #8B5CF6;
+  border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.actionButton.connect:hover {
+  background: rgba(139, 92, 246, 0.12);
+  border-color: rgba(139, 92, 246, 0.3);
+  transform: translateY(-1px);
+}
+
+/* Pending button - gray and disabled */
+.actionButton.pending {
+  background: rgba(148, 163, 184, 0.1);
+  color: #94A3B8;
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.actionButton.pending:hover {
+  transform: none;
+}
+
+/* Message button - purple like old connect */
 .actionButton.connected {
-  background: #DBEAFE;
-  color: #1E40AF;
+  background: #8B5CF6;
+  color: white;
+  border: none;
+  box-shadow: 0 2px 6px rgba(139, 92, 246, 0.2);
+}
+
+.actionButton.connected:hover {
+  background: #7C3AED;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(139, 92, 246, 0.25);
+}
+
+/* Privacy Note */
+.privacyNote {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: rgba(139, 92, 246, 0.05);
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+.privacyText {
+  margin: 0;
+  font-size: 10px;
+  color: var(--color-text-speak);
+  line-height: 1.4;
+  opacity: 0.9;
+  text-align: center;
 }
 
 /* Firefox Optimizations */
 @-moz-document url-prefix() {
-  .connectionItem {
+  .connectionCard {
+    transform: translateZ(0);
+    backface-visibility: hidden;
     will-change: auto;
   }
   
-  .personInfo h4,
-  .personInfo p,
-  .icebreakerText {
+  .personName,
+  .personTitle,
+  .personCompany {
     text-rendering: geometricPrecision;
     -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .networkingContent {
+    max-width: 100%;
+  }
+  
+  .connectionMain {
+    padding: 10px;
+  }
+  
+  .avatar {
+    width: 40px;
+    height: 40px;
   }
 }

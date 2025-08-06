@@ -18,8 +18,8 @@ const demoCards = [
   },
   {
     id: 'networking',
-    title: 'Professional Networking',
-    subtitle: 'LinkedIn without the awkwardness',
+    title: 'Lasting Connections',
+    subtitle: 'Curated conversation starters help attendees connect authentically',
     Component: NetworkingDemo
   },
   {
