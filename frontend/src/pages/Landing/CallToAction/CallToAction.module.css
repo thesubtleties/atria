@@ -38,6 +38,17 @@
   pointer-events: auto;
 }
 
+/* Firefox-specific fix for centering issue */
+@-moz-document url-prefix() {
+  .drapeContent {
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    transform: translateY(-50%);
+  }
+}
+
 
 .footerWrapper {
   position: absolute;

@@ -276,7 +276,6 @@
   align-items: center;
   gap: 0.5rem;
   color: rgba(255, 255, 255, 0.6);
-  will-change: transform, opacity;
 }
 
 .scrollText {
@@ -289,6 +288,41 @@
 .scrollArrow {
   width: 24px;
   height: 24px;
+}
+
+/* CSS animation for scroll indicator - lighter than GSAP for simple animations */
+@keyframes scrollBounce {
+  0%, 100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(10px);
+  }
+}
+
+.scrollIndicator {
+  animation: scrollBounce 1.5s ease-in-out infinite;
+}
+
+/* Firefox-specific optimizations */
+@-moz-document url-prefix() {
+  .scrollIndicator {
+    will-change: auto; /* Remove will-change to reduce memory usage in Firefox */
+  }
+  
+  /* Performance: Hardware acceleration for animated elements */
+  .heroBackground,
+  .heroContent > div:not(.scrollIndicator) {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+  
+  /* Optimize text rendering */
+  .heroTitle,
+  .heroTagline,
+  .ctaButtons {
+    text-rendering: geometricPrecision;
+  }
 }
 
 
