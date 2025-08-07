@@ -20,7 +20,8 @@ def create_app(testing=False):
     # app.json_provider_class = CustomJSONProvider # Commented out because I think we fixed serialization problems
     app.config.from_object("api.config")
 
-    if testing is True:
+    # Use environment variable or function parameter for TESTING config
+    if testing is True or os.getenv("FLASK_TESTING", "false").lower() == "true":
         app.config["TESTING"] = True
 
     configure_extensions(app)

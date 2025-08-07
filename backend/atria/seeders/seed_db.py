@@ -3,6 +3,7 @@ from flask import current_app
 from api.extensions import db
 from api.app import create_app
 from sqlalchemy import text
+from sqlalchemy.sql import quoted_name
 import json
 
 # Import all seed functions directly
@@ -295,14 +296,23 @@ def seed_database():
             
             for seq_name, table_name in sequences_to_reset:
                 try:
-                    db.session.execute(
-                        text(f"""
-                            SELECT setval('{seq_name}', 
-                                (SELECT COALESCE(MAX(id), 0) FROM {table_name}) + 1, 
-                                false
-                            )
-                        """)
-                    )
+                    # Safe approach: Validate table/sequence names and use quoted identifiers
+                    # This prevents SQL injection while working with PostgreSQL's limitations
+                    
+                    # Validate that these are simple identifiers (no SQL injection possible)
+                    if not all(c.isalnum() or c == '_' for c in seq_name):
+                        raise ValueError(f"Invalid sequence name: {seq_name}")
+                    if not all(c.isalnum() or c == '_' for c in table_name):
+                        raise ValueError(f"Invalid table name: {table_name}")
+                    
+                    # Now safe to use in query with proper quoting
+                    query = text(f"""
+                        SELECT setval('"{seq_name}"'::regclass, 
+                            (SELECT COALESCE(MAX(id), 0) FROM "{table_name}") + 1, 
+                            false
+                        )
+                    """)
+                    db.session.execute(query)
                 except Exception as e:
                     print(f"Warning: Could not reset sequence {seq_name}: {str(e)}")
             
