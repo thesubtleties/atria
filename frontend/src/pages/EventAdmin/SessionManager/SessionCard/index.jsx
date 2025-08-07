@@ -9,7 +9,7 @@ import {
   ActionIcon,
   Menu,
 } from '@mantine/core';
-import { TimeInput } from '@mantine/dates';
+import { TimeSelect } from '@/shared/components/forms/TimeSelect';
 import { 
   IconDots, 
   IconTrash, 
@@ -226,19 +226,19 @@ export const SessionCard = ({ session, eventId, hasConflict }) => {
       {/* Time Block */}
       <div className={styles.timeBlock}>
         <Group>
-          <TimeInput
+          <TimeSelect
             value={startTime}
-            onChange={(event) => handleTimeChange('start_time', event.target.value)}
-            format="24"
-            className={styles.timeInput}
+            onChange={(value) => handleTimeChange('start_time', value)}
+            placeholder="Start time"
+            classNames={{ input: styles.timeInput }}
             error={errors.start_time}
           />
           <Text size="sm" c="dimmed">to</Text>
-          <TimeInput
+          <TimeSelect
             value={endTime}
-            onChange={(event) => handleTimeChange('end_time', event.target.value)}
-            format="24"
-            className={styles.timeInput}
+            onChange={(value) => handleTimeChange('end_time', value)}
+            placeholder="End time"
+            classNames={{ input: styles.timeInput }}
             error={errors.end_time || errors.time_order}
           />
         </Group>
