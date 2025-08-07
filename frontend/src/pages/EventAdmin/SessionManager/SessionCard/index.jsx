@@ -140,23 +140,23 @@ export const SessionCard = ({ session, eventId, hasConflict }) => {
       return;
     }
     
-    // Update local state
+    // Always update local state immediately for better UX
     if (field === 'start_time') {
       setStartTime(value);
-      // Validate time order
-      const timeOrderValidation = validateTimeOrder(value, endTime);
-      if (!timeOrderValidation.success) {
-        setErrors(prev => ({ ...prev, time_order: timeOrderValidation.error.message }));
-        return;
-      }
     } else {
       setEndTime(value);
-      // Validate time order
-      const timeOrderValidation = validateTimeOrder(startTime, value);
-      if (!timeOrderValidation.success) {
-        setErrors(prev => ({ ...prev, time_order: timeOrderValidation.error.message }));
-        return;
-      }
+    }
+    
+    // Check time order validation with the new values
+    const newStartTime = field === 'start_time' ? value : startTime;
+    const newEndTime = field === 'end_time' ? value : endTime;
+    const timeOrderValidation = validateTimeOrder(newStartTime, newEndTime);
+    
+    if (!timeOrderValidation.success) {
+      // Show error but don't prevent local state update
+      setErrors(prev => ({ ...prev, time_order: timeOrderValidation.error.message }));
+      // Don't update backend if validation fails
+      return;
     }
     
     // Clear time order error if validation passes
@@ -166,7 +166,12 @@ export const SessionCard = ({ session, eventId, hasConflict }) => {
       return newErrors;
     });
     
-    const updates = { [field]: value };
+    // Always send both times when clearing a time order error to ensure backend is in sync
+    // This handles the case where user had invalid times and is now fixing them
+    const updates = errors.time_order 
+      ? { start_time: newStartTime, end_time: newEndTime }
+      : { [field]: value };
+    
     handleUpdate(updates);
   };
 
