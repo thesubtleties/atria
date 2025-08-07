@@ -9,6 +9,7 @@ import {
 } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
+import { openConfirmationModal } from '@/shared/components/modals/ConfirmationModal';
 import { getRoleBadgeColor, getRoleDisplayName, canChangeRole } from '../schemas/attendeeSchemas';
 import { useRemoveEventUserMutation } from '../../../../app/features/events/api';
 import styles from './styles.module.css';
@@ -21,29 +22,34 @@ const AttendeeRow = ({
   const navigate = useNavigate();
   const [removeUser] = useRemoveEventUserMutation();
 
-  const handleRemove = async () => {
-    if (!window.confirm(`Remove ${attendee.full_name} from the event?`)) {
-      return;
-    }
-
-    try {
-      await removeUser({
-        eventId: attendee.event_id,
-        userId: attendee.user_id,
-      }).unwrap();
-      
-      notifications.show({
-        title: 'Success',
-        message: `${attendee.full_name} removed from event`,
-        color: 'green',
-      });
-    } catch (error) {
-      notifications.show({
-        title: 'Error',
-        message: error.data?.message || 'Failed to remove user',
-        color: 'red',
-      });
-    }
+  const handleRemove = () => {
+    openConfirmationModal({
+      title: 'Remove Attendee',
+      message: `Remove ${attendee.full_name} from the event?`,
+      confirmLabel: 'Remove',
+      cancelLabel: 'Cancel',
+      isDangerous: true,
+      onConfirm: async () => {
+        try {
+          await removeUser({
+            eventId: attendee.event_id,
+            userId: attendee.user_id,
+          }).unwrap();
+          
+          notifications.show({
+            title: 'Success',
+            message: `${attendee.full_name} removed from event`,
+            color: 'green',
+          });
+        } catch (error) {
+          notifications.show({
+            title: 'Error',
+            message: error.data?.message || 'Failed to remove user',
+            color: 'red',
+          });
+        }
+      },
+    });
   };
 
   const formatDate = (dateString) => {

@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Group, Alert } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
+import { openConfirmationModal } from '@/shared/components/modals/ConfirmationModal';
 import { Button } from '@/shared/components/buttons';
 import { 
   useGetEventAdminChatRoomsQuery,
@@ -29,23 +30,30 @@ const NetworkingManager = () => {
 
   const chatRooms = response?.chat_rooms || [];
 
-  const handleDisableAllPublic = async () => {
-    if (confirm('Are you sure you want to disable all public chat rooms? This will prevent attendees from chatting until rooms are re-enabled.')) {
-      try {
-        const result = await disableAllPublic(eventId).unwrap();
-        notifications.show({
-          title: 'Success',
-          message: `Disabled ${result.disabled_count} public chat rooms`,
-          color: 'green',
-        });
-      } catch (error) {
-        notifications.show({
-          title: 'Error',
-          message: 'Failed to disable chat rooms',
-          color: 'red',
-        });
-      }
-    }
+  const handleDisableAllPublic = () => {
+    openConfirmationModal({
+      title: 'Disable All Public Chat Rooms',
+      message: 'Are you sure you want to disable all public chat rooms? This will prevent attendees from chatting until rooms are re-enabled.',
+      confirmLabel: 'Disable All',
+      cancelLabel: 'Cancel',
+      isDangerous: true,
+      onConfirm: async () => {
+        try {
+          const result = await disableAllPublic(eventId).unwrap();
+          notifications.show({
+            title: 'Success',
+            message: `Disabled ${result.disabled_count} public chat rooms`,
+            color: 'green',
+          });
+        } catch (error) {
+          notifications.show({
+            title: 'Error',
+            message: 'Failed to disable chat rooms',
+            color: 'red',
+          });
+        }
+      },
+    });
   };
 
   return (

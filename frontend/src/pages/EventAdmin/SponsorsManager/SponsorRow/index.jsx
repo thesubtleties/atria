@@ -16,6 +16,7 @@ import {
   IconStarFilled,
 } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
+import { openConfirmationModal } from '@/shared/components/modals/ConfirmationModal';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import {
@@ -55,23 +56,30 @@ const SponsorRow = ({
         opacity: isDragging ? 0.5 : 1,
       };
 
-  const handleDelete = async () => {
-    if (window.confirm('Are you sure you want to delete this sponsor?')) {
-      try {
-        await deleteSponsor(sponsor.id).unwrap();
-        notifications.show({
-          title: 'Success',
-          message: 'Sponsor deleted successfully',
-          color: 'green',
-        });
-      } catch (error) {
-        notifications.show({
-          title: 'Error',
-          message: error.data?.message || 'Failed to delete sponsor',
-          color: 'red',
-        });
-      }
-    }
+  const handleDelete = () => {
+    openConfirmationModal({
+      title: 'Delete Sponsor',
+      message: 'Are you sure you want to delete this sponsor?',
+      confirmLabel: 'Delete',
+      cancelLabel: 'Cancel',
+      isDangerous: true,
+      onConfirm: async () => {
+        try {
+          await deleteSponsor(sponsor.id).unwrap();
+          notifications.show({
+            title: 'Success',
+            message: 'Sponsor deleted successfully',
+            color: 'green',
+          });
+        } catch (error) {
+          notifications.show({
+            title: 'Error',
+            message: error.data?.message || 'Failed to delete sponsor',
+            color: 'red',
+          });
+        }
+      },
+    });
   };
 
   const handleToggleActive = async () => {
