@@ -7,6 +7,7 @@ import {
   IconCheck,
 } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
+import { openConfirmationModal } from '@/shared/components/modals/ConfirmationModal';
 import { getRoleBadgeColor, getRoleDisplayName } from '../schemas/attendeeSchemas';
 import { useCancelEventInvitationMutation } from '../../../../app/features/eventInvitations/api';
 import styles from './styles.module.css';
@@ -14,26 +15,31 @@ import styles from './styles.module.css';
 const PendingInvitations = ({ invitations, onRefresh }) => {
   const [cancelInvitation] = useCancelEventInvitationMutation();
 
-  const handleCancel = async (invitation) => {
-    if (!window.confirm(`Cancel invitation to ${invitation.email}?`)) {
-      return;
-    }
-
-    try {
-      await cancelInvitation(invitation.id).unwrap();
-      notifications.show({
-        title: 'Success',
-        message: 'Invitation cancelled',
-        color: 'green',
-      });
-      onRefresh?.();
-    } catch (error) {
-      notifications.show({
-        title: 'Error',
-        message: error.data?.message || 'Failed to cancel invitation',
-        color: 'red',
-      });
-    }
+  const handleCancel = (invitation) => {
+    openConfirmationModal({
+      title: 'Cancel Invitation',
+      message: `Cancel invitation to ${invitation.email}?`,
+      confirmLabel: 'Cancel Invitation',
+      cancelLabel: 'Keep',
+      isDangerous: true,
+      onConfirm: async () => {
+        try {
+          await cancelInvitation(invitation.id).unwrap();
+          notifications.show({
+            title: 'Success',
+            message: 'Invitation cancelled',
+            color: 'green',
+          });
+          onRefresh?.();
+        } catch (error) {
+          notifications.show({
+            title: 'Error',
+            message: error.data?.message || 'Failed to cancel invitation',
+            color: 'red',
+          });
+        }
+      },
+    });
   };
 
   const handleResend = async (invitation) => {

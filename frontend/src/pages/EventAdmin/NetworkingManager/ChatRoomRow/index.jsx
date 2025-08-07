@@ -3,6 +3,7 @@ import { Table, Switch, ActionIcon, Menu, Text, Indicator } from '@mantine/core'
 import { IconDotsVertical, IconEdit, IconTrash, IconMessages } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
+import { openConfirmationModal } from '@/shared/components/modals/ConfirmationModal';
 import { 
   useToggleChatRoomMutation, 
   useDeleteChatRoomMutation 
@@ -35,23 +36,30 @@ const ChatRoomRow = ({ room, color, onEdit, isTableRow }) => {
     }
   };
 
-  const handleDelete = async () => {
-    if (confirm(`Are you sure you want to delete "${room.name}"? This will permanently delete all messages in this room.`)) {
-      try {
-        await deleteRoom(room.id).unwrap();
-        notifications.show({
-          title: 'Success',
-          message: 'Chat room deleted successfully',
-          color: 'green',
-        });
-      } catch (error) {
-        notifications.show({
-          title: 'Error',
-          message: 'Failed to delete chat room',
-          color: 'red',
-        });
-      }
-    }
+  const handleDelete = () => {
+    openConfirmationModal({
+      title: 'Delete Chat Room',
+      message: `Are you sure you want to delete "${room.name}"? This will permanently delete all messages in this room.`,
+      confirmLabel: 'Delete Room',
+      cancelLabel: 'Cancel',
+      isDangerous: true,
+      onConfirm: async () => {
+        try {
+          await deleteRoom(room.id).unwrap();
+          notifications.show({
+            title: 'Success',
+            message: 'Chat room deleted successfully',
+            color: 'green',
+          });
+        } catch (error) {
+          notifications.show({
+            title: 'Error',
+            message: 'Failed to delete chat room',
+            color: 'red',
+          });
+        }
+      },
+    });
   };
 
   const handleViewChat = () => {

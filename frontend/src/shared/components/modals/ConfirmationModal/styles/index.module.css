@@ -1,0 +1,78 @@
+/* Modal Root */
+.modalRoot {
+  animation: fadeIn 0.2s ease;
+}
+
+/* Modal Content */
+.modalContent {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(139, 92, 246, 0.08);
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.08);
+}
+
+/* Modal Header */
+.modalHeader {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1E293B;
+  padding: 1.5rem 1.5rem 0;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.04);
+}
+
+/* Modal Body */
+.modalBody {
+  padding: 1.5rem;
+}
+
+/* Message Text */
+.message {
+  color: #475569;
+  line-height: 1.6;
+}
+
+/* Button Group */
+.buttonGroup {
+  padding: 1.5rem;
+  border-top: 1px solid rgba(139, 92, 246, 0.04);
+  margin-top: 1.5rem;
+  background: rgba(251, 250, 255, 0.5);
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+/* Modal Overlay */
+.modalOverlay {
+  background: rgba(30, 41, 59, 0.4) !important;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Global overrides for Mantine Modal */
+:global(.mantine-Modal-close) {
+  color: #64748B;
+  background: rgba(139, 92, 246, 0.04);
+  border: 1px solid rgba(139, 92, 246, 0.08);
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+:global(.mantine-Modal-close:hover) {
+  background: rgba(139, 92, 246, 0.1);
+  border-color: rgba(139, 92, 246, 0.2);
+  color: #8B5CF6;
+}

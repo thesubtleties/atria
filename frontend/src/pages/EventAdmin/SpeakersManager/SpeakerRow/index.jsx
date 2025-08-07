@@ -9,6 +9,7 @@ import {
 } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
+import { openConfirmationModal } from '@/shared/components/modals/ConfirmationModal';
 import { useUpdateEventUserMutation } from '@/app/features/events/api';
 import styles from './styles.module.css';
 
@@ -39,30 +40,35 @@ const SpeakerRow = ({
     ).join(' ');
   };
 
-  const handleRemoveSpeaker = async () => {
-    if (!window.confirm(`Remove ${speaker.full_name} as a speaker? They will become a regular attendee.`)) {
-      return;
-    }
-
-    try {
-      await updateUser({
-        eventId: speaker.event_id,
-        userId: speaker.user_id,
-        role: 'ATTENDEE',
-      }).unwrap();
-      
-      notifications.show({
-        title: 'Success',
-        message: `${speaker.full_name} is no longer a speaker`,
-        color: 'green',
-      });
-    } catch (error) {
-      notifications.show({
-        title: 'Error',
-        message: error.data?.message || 'Failed to update role',
-        color: 'red',
-      });
-    }
+  const handleRemoveSpeaker = () => {
+    openConfirmationModal({
+      title: 'Remove Speaker Role',
+      message: `Remove ${speaker.full_name} as a speaker? They will become a regular attendee.`,
+      confirmLabel: 'Remove Speaker',
+      cancelLabel: 'Cancel',
+      isDangerous: true,
+      onConfirm: async () => {
+        try {
+          await updateUser({
+            eventId: speaker.event_id,
+            userId: speaker.user_id,
+            role: 'ATTENDEE',
+          }).unwrap();
+          
+          notifications.show({
+            title: 'Success',
+            message: `${speaker.full_name} is no longer a speaker`,
+            color: 'green',
+          });
+        } catch (error) {
+          notifications.show({
+            title: 'Error',
+            message: error.data?.message || 'Failed to update role',
+            color: 'red',
+          });
+        }
+      },
+    });
   };
 
   // Truncate bio for display
