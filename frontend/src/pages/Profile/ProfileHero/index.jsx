@@ -1,6 +1,6 @@
 import React from 'react';
 import { Avatar, Group, Stack, Text } from '@mantine/core';
-import { IconEdit, IconShare, IconRefresh } from '@tabler/icons-react';
+import { IconEdit, IconRefresh } from '@tabler/icons-react';
 import { Button } from '@/shared/components/buttons';
 import styles from './styles/index.module.css';
 
@@ -80,13 +80,6 @@ export const ProfileHero = ({ user, onEditClick, isOwnProfile = true, isEditing 
             >
               <IconEdit size={16} />
               Edit Profile
-            </Button>
-            <Button
-              variant="secondary"
-              onClick={() => {}}
-            >
-              <IconShare size={16} />
-              Share
             </Button>
           </div>
         )}
