@@ -86,9 +86,8 @@ class SessionService:
             )
         ]
         
-        for room in chat_rooms:
-            db.session.add(room)
-        
+        # Use batch insert for better performance
+        db.session.add_all(chat_rooms)
         db.session.commit()
 
         return session

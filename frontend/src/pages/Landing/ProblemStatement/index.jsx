@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import React, { useRef } from 'react'
 import { gsap } from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -8,6 +8,23 @@ gsap.registerPlugin(ScrollTrigger)
 
 const ProblemStatement = () => {
   const containerRef = useRef(null)
+  const textContent = "The difference between events people attend and events people remember isn't the content—it's the connections. Most platforms focus on logistics. We focus on relationships."
+  const words = textContent.split(' ')
+  
+  // Component for each word span
+  const WordSpan = ({ word, index }) => {
+    const cleanWord = word.replace(/[.,—'']/g, '')
+    const isHighlighted = ['remember', 'connections', 'relationships'].includes(cleanWord)
+    
+    return (
+      <span 
+        className={`${styles.word} ${isHighlighted ? styles.highlighted : ''}`}
+        data-index={index}
+      >
+        {word}
+      </span>
+    )
+  }
 
   useGSAP(() => {
     const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
@@ -16,17 +33,6 @@ const ProblemStatement = () => {
       const textElement = containerRef.current?.querySelector('.text-content')
       
       if (!textElement) return
-      // Split text into words
-      const textContent = "The difference between events people attend and events people remember isn't the content—it's the connections. Most platforms focus on logistics. We focus on relationships."
-      const words = textContent.split(' ')
-      
-      // Create spans for each word
-      textElement.innerHTML = words.map((word, index) => {
-        // Highlight key words
-        const cleanWord = word.replace(/[.,—'']/g, '')
-        const isHighlighted = ['remember', 'connections', 'relationships'].includes(cleanWord)
-        return `<span class="${styles.word} ${isHighlighted ? styles.highlighted : ''}" data-index="${index}">${word}</span>`
-      }).join(' ')
 
       const wordElements = textElement.querySelectorAll(`.${styles.word}`)
 
@@ -109,7 +115,14 @@ const ProblemStatement = () => {
   return (
     <section ref={containerRef} className={`${styles.problemStatement} problemStatement`}>
       <div className={styles.container}>
-        <p className={`${styles.textContent} text-content`}></p>
+        <p className={`${styles.textContent} text-content`}>
+          {words.map((word, index) => (
+            <React.Fragment key={index}>
+              <WordSpan word={word} index={index} />
+              {index < words.length - 1 && ' '}
+            </React.Fragment>
+          ))}
+        </p>
       </div>
     </section>
   )

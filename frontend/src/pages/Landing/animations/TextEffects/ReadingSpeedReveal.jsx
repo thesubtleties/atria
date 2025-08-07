@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import React, { useRef, useEffect } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import styles from './ReadingSpeedReveal.module.css'
@@ -23,18 +23,24 @@ const ReadingSpeedReveal = ({
 }) => {
   const containerRef = useRef(null)
   const textRef = useRef(null)
+  
+  // Component for each word span  
+  const WordSpan = ({ word, index }) => {
+    const cleanWord = word.replace(/[.,—'']/g, '')
+    const isHighlighted = highlightWords.includes(cleanWord)
+    
+    return (
+      <span 
+        className={`${styles.word} ${isHighlighted ? styles.highlighted : ''}`}
+        data-index={index}
+      >
+        {word}
+      </span>
+    )
+  }
 
   useEffect(() => {
     if (!textRef.current || !containerRef.current) return
-
-    const words = text.split(' ')
-    
-    // Create spans for each word
-    textRef.current.innerHTML = words.map((word, index) => {
-      const cleanWord = word.replace(/[.,—'']/g, '')
-      const isHighlighted = highlightWords.includes(cleanWord)
-      return `<span class="${styles.word} ${isHighlighted ? styles.highlighted : ''}" data-index="${index}">${word}</span>`
-    }).join(' ')
 
     const wordElements = textRef.current.querySelectorAll(`.${styles.word}`)
     const highlightedElements = textRef.current.querySelectorAll(`.${styles.highlighted}`)
@@ -105,9 +111,18 @@ const ReadingSpeedReveal = ({
     }
   }, [text, highlightWords, readingSpeed, backgroundColor, textColor, highlightGlow, scrollTriggerOptions])
 
+  const words = text.split(' ')
+  
   return (
     <div ref={containerRef} className={`${styles.container} ${className}`}>
-      <p ref={textRef} className={styles.textContent}></p>
+      <p ref={textRef} className={styles.textContent}>
+        {words.map((word, index) => (
+          <React.Fragment key={index}>
+            <WordSpan word={word} index={index} />
+            {index < words.length - 1 && ' '}
+          </React.Fragment>
+        ))}
+      </p>
     </div>
   )
 }
