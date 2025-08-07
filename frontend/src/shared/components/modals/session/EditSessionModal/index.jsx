@@ -8,7 +8,7 @@ import {
   Text,
   Box,
 } from '@mantine/core';
-import { TimeInput } from '@mantine/dates';
+import { TimeSelect } from '@/shared/components/forms/TimeSelect';
 import { useForm, zodResolver } from '@mantine/form';
 import {
   useCreateSessionMutation,
@@ -208,18 +208,18 @@ export const EditSessionModal = ({
           />
 
           <Group grow className={styles.timeInputGroup}>
-            <TimeInput
+            <TimeSelect
               label="Start Time"
               required
-              format="24"
+              placeholder="Select start time"
               classNames={{ input: styles.formTimeInput }}
               {...form.getInputProps('start_time')}
             />
 
-            <TimeInput
+            <TimeSelect
               label="End Time"
               required
-              format="24"
+              placeholder="Select end time"
               classNames={{ input: styles.formTimeInput }}
               {...form.getInputProps('end_time')}
             />

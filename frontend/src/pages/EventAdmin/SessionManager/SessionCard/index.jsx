@@ -9,7 +9,7 @@ import {
   ActionIcon,
   Menu,
 } from '@mantine/core';
-import { TimeInput } from '@mantine/dates';
+import { TimeSelect } from '@/shared/components/forms/TimeSelect';
 import { 
   IconDots, 
   IconTrash, 
@@ -140,23 +140,23 @@ export const SessionCard = ({ session, eventId, hasConflict }) => {
       return;
     }
     
-    // Update local state
+    // Always update local state immediately for better UX
     if (field === 'start_time') {
       setStartTime(value);
-      // Validate time order
-      const timeOrderValidation = validateTimeOrder(value, endTime);
-      if (!timeOrderValidation.success) {
-        setErrors(prev => ({ ...prev, time_order: timeOrderValidation.error.message }));
-        return;
-      }
     } else {
       setEndTime(value);
-      // Validate time order
-      const timeOrderValidation = validateTimeOrder(startTime, value);
-      if (!timeOrderValidation.success) {
-        setErrors(prev => ({ ...prev, time_order: timeOrderValidation.error.message }));
-        return;
-      }
+    }
+    
+    // Check time order validation with the new values
+    const newStartTime = field === 'start_time' ? value : startTime;
+    const newEndTime = field === 'end_time' ? value : endTime;
+    const timeOrderValidation = validateTimeOrder(newStartTime, newEndTime);
+    
+    if (!timeOrderValidation.success) {
+      // Show error but don't prevent local state update
+      setErrors(prev => ({ ...prev, time_order: timeOrderValidation.error.message }));
+      // Don't update backend if validation fails
+      return;
     }
     
     // Clear time order error if validation passes
@@ -166,7 +166,12 @@ export const SessionCard = ({ session, eventId, hasConflict }) => {
       return newErrors;
     });
     
-    const updates = { [field]: value };
+    // Always send both times when clearing a time order error to ensure backend is in sync
+    // This handles the case where user had invalid times and is now fixing them
+    const updates = errors.time_order 
+      ? { start_time: newStartTime, end_time: newEndTime }
+      : { [field]: value };
+    
     handleUpdate(updates);
   };
 
@@ -226,19 +231,19 @@ export const SessionCard = ({ session, eventId, hasConflict }) => {
       {/* Time Block */}
       <div className={styles.timeBlock}>
         <Group>
-          <TimeInput
+          <TimeSelect
             value={startTime}
-            onChange={(event) => handleTimeChange('start_time', event.target.value)}
-            format="24"
-            className={styles.timeInput}
+            onChange={(value) => handleTimeChange('start_time', value)}
+            placeholder="Start time"
+            classNames={{ input: styles.timeInput }}
             error={errors.start_time}
           />
           <Text size="sm" c="dimmed">to</Text>
-          <TimeInput
+          <TimeSelect
             value={endTime}
-            onChange={(event) => handleTimeChange('end_time', event.target.value)}
-            format="24"
-            className={styles.timeInput}
+            onChange={(value) => handleTimeChange('end_time', value)}
+            placeholder="End time"
+            classNames={{ input: styles.timeInput }}
             error={errors.end_time || errors.time_order}
           />
         </Group>
