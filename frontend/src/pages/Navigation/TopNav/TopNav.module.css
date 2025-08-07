@@ -1,3 +1,6 @@
+/* Import Nunito font with block to prevent FOUC */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600;700&display=block');
+
 .navbar {
   width: 100%;
   height: 60px; /* Match AppShell header height */
@@ -37,11 +40,11 @@
 
 .atriaTitle {
   font-family:
-    'M Plus 2',
+    'Nunito',
     system-ui,
     -apple-system,
     sans-serif;
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   font-weight: 300;
   color: #ffffff;
   letter-spacing: -0.02em;
