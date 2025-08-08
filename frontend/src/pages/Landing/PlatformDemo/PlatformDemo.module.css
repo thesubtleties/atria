@@ -623,7 +623,7 @@
 
 .chatInputField:disabled {
   background: rgba(255, 255, 255, 0.5);
-  cursor: not-allowed;
+  cursor: default;
 }
 
 .chatSendBtn {

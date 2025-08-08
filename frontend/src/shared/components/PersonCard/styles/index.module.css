@@ -194,7 +194,7 @@
   color: #F59E0B;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  cursor: not-allowed;
+  cursor: default;
   opacity: 0.8;
 }
 
