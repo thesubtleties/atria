@@ -219,7 +219,7 @@ export const SessionCard = ({ session, eventId, hasConflict }) => {
         {/* Actions Menu */}
         <Menu position="bottom-end" withinPortal>
           <Menu.Target>
-            <ActionIcon variant="subtle">
+            <ActionIcon variant="subtle" color="gray">
               <IconDots size={16} />
             </ActionIcon>
           </Menu.Target>

@@ -182,7 +182,7 @@ const SponsorRow = ({
           position="bottom-end"
         >
           <Menu.Target>
-            <ActionIcon variant="subtle" color="gray" className={styles.actionIcon}>
+            <ActionIcon variant="subtle" color="gray" className={styles.actionButton}>
               <IconDots size={16} />
             </ActionIcon>
           </Menu.Target>
