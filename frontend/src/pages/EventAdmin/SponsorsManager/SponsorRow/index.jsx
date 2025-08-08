@@ -176,9 +176,13 @@ const SponsorRow = ({
         </ActionIcon>
       </Table.Td>
       <Table.Td className={styles.actionsCell}>
-        <Menu position="bottom-end">
+        <Menu 
+          shadow="md" 
+          width={200} 
+          position="bottom-end"
+        >
           <Menu.Target>
-            <ActionIcon variant="subtle" className={styles.actionButton}>
+            <ActionIcon variant="subtle" color="gray" className={styles.actionIcon}>
               <IconDots size={16} />
             </ActionIcon>
           </Menu.Target>

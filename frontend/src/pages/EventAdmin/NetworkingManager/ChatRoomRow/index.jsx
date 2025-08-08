@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Table, Switch, ActionIcon, Menu, Text, Indicator } from '@mantine/core';
-import { IconDotsVertical, IconEdit, IconTrash, IconMessages } from '@tabler/icons-react';
+import { IconDots, IconEdit, IconTrash, IconMessages } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
 import { openConfirmationModal } from '@/shared/components/modals/ConfirmationModal';
@@ -105,20 +105,26 @@ const ChatRoomRow = ({ room, color, onEdit, isTableRow }) => {
         </div>
       </Table.Td>
       <Table.Td style={{ textAlign: 'center' }}>
-        <Menu position="bottom-end" withArrow>
+        <Menu 
+          shadow="md" 
+          width={200} 
+          position="bottom-end"
+        >
           <Menu.Target>
-            <ActionIcon variant="subtle">
-              <IconDotsVertical size={16} />
+            <ActionIcon variant="subtle" color="gray" className={styles.actionIcon}>
+              <IconDots size={16} />
             </ActionIcon>
           </Menu.Target>
-          <Menu.Dropdown>
+          <Menu.Dropdown className={styles.menuDropdown}>
             <Menu.Item 
+              className={styles.menuItem}
               leftSection={<IconMessages size={14} />}
               onClick={handleViewChat}
             >
               View Chat
             </Menu.Item>
             <Menu.Item 
+              className={styles.menuItem}
               leftSection={<IconEdit size={14} />}
               onClick={() => onEdit(room)}
             >
@@ -126,6 +132,7 @@ const ChatRoomRow = ({ room, color, onEdit, isTableRow }) => {
             </Menu.Item>
             <Menu.Divider />
             <Menu.Item 
+              className={styles.menuItem}
               leftSection={<IconTrash size={14} />}
               color="red"
               onClick={handleDelete}
