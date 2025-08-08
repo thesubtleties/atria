@@ -1,5 +1,5 @@
 from api.extensions import db
-from api.models.enums import EventType, EventStatus, EventUserRole, EventFormat
+from api.models.enums import EventType, EventStatus, EventUserRole, EventFormat, USState
 from datetime import datetime, timezone
 from slugify import slugify
 
@@ -47,6 +47,7 @@ class Event(db.Model):
     venue_name = db.Column(db.String(255), nullable=True)
     venue_address = db.Column(db.Text, nullable=True)
     venue_city = db.Column(db.String(100), nullable=True)
+    venue_state = db.Column(db.Enum(USState), nullable=True)
     venue_country = db.Column(db.String(100), nullable=True)
 
     sections = db.Column(
@@ -493,6 +494,7 @@ class Event(db.Model):
             "venue_name",
             "venue_address",
             "venue_city",
+            "venue_state",
             "venue_country",
         }
         for field, value in kwargs.items():
