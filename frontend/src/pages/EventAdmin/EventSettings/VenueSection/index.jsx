@@ -15,6 +15,7 @@ import { IconInfoCircle, IconCheck, IconX } from '@tabler/icons-react';
 import { useUpdateEventMutation } from '@/app/features/events/api';
 import { eventFormatSchema } from '../schemas/eventSettingsSchemas';
 import { Button } from '@/shared/components/buttons';
+import { US_STATES } from '@/shared/constants/usStates';
 import styles from './styles.module.css';
 import parentStyles from '../styles/index.module.css';
 
@@ -29,6 +30,7 @@ const VenueSection = ({ event, eventId }) => {
       venue_name: event?.venue_name || '',
       venue_address: event?.venue_address || '',
       venue_city: event?.venue_city || '',
+      venue_state: event?.venue_state || '',
       venue_country: event?.venue_country || '',
     },
     resolver: zodResolver(eventFormatSchema),
@@ -58,6 +60,7 @@ const VenueSection = ({ event, eventId }) => {
         updateData.venue_name = null;
         updateData.venue_address = null;
         updateData.venue_city = null;
+        updateData.venue_state = null;
         updateData.venue_country = null;
       }
 
@@ -88,6 +91,7 @@ const VenueSection = ({ event, eventId }) => {
       venue_name: event?.venue_name || '',
       venue_address: event?.venue_address || '',
       venue_city: event?.venue_city || '',
+      venue_state: event?.venue_state || '',
       venue_country: event?.venue_country || '',
     });
     setHasChanges(false);
@@ -184,6 +188,19 @@ const VenueSection = ({ event, eventId }) => {
                     label: styles.formLabel
                   }}
                   {...form.getInputProps('venue_city')}
+                />
+
+                <Select
+                  label="State"
+                  placeholder="Select state"
+                  searchable
+                  clearable
+                  data={US_STATES}
+                  classNames={{
+                    input: styles.formInput,
+                    label: styles.formLabel
+                  }}
+                  {...form.getInputProps('venue_state')}
                 />
 
                 <TextInput

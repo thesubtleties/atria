@@ -27,6 +27,7 @@ export const EventHome = () => {
     venue_name,
     venue_address,
     venue_city,
+    venue_state,
     venue_country,
     start_date,
     end_date,
@@ -57,6 +58,7 @@ export const EventHome = () => {
             name: venue_name,
             address: venue_address,
             city: venue_city,
+            state: venue_state,
             country: venue_country,
           }}
           dates={{
