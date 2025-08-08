@@ -182,7 +182,7 @@ const SponsorCard = ({
 
           <Menu position="bottom-end">
             <Menu.Target>
-              <ActionIcon variant="subtle" className={styles.actionButton}>
+              <ActionIcon variant="subtle" color="gray" className={styles.actionButton}>
                 <IconDots size={18} />
               </ActionIcon>
             </Menu.Target>
