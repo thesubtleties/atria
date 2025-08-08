@@ -128,7 +128,8 @@ const OrganizationHeader = ({ organization, currentUserRole }) => {
           </div>
         </div>
 
-        <div className={styles.headerActions}>
+        {/* Settings button - commented out for now, will add later */}
+        {/* <div className={styles.headerActions}>
           {canViewSettings && (
             <ActionIcon
               size="lg"
@@ -140,7 +141,7 @@ const OrganizationHeader = ({ organization, currentUserRole }) => {
               <IconSettings size={22} />
             </ActionIcon>
           )}
-        </div>
+        </div> */}
       </div>
 
       {organization.description && (

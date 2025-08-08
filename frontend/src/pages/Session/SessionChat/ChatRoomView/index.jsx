@@ -8,7 +8,8 @@ export function ChatRoomView({
   inputValue, 
   onInputChange, 
   onSendMessage,
-  isActive 
+  isActive,
+  canModerate 
 }) {
   if (!room) {
     return (
@@ -27,6 +28,7 @@ export function ChatRoomView({
         onInputChange={onInputChange}
         onSendMessage={onSendMessage}
         isActive={isActive}
+        canModerate={canModerate}
       />
     </div>
   );
