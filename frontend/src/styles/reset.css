@@ -150,3 +150,27 @@ textarea:not([rows]) {
 .mantine-Menu-label {
   line-height: 1.2;
 }
+
+/* Override disabled cursor for all Mantine components */
+.mantine-Button-root:disabled,
+.mantine-ActionIcon-root:disabled,
+.mantine-Checkbox-input:disabled,
+.mantine-Radio-input:disabled,
+.mantine-Switch-input:disabled,
+.mantine-Select-input:disabled,
+.mantine-TextInput-input:disabled,
+.mantine-Textarea-input:disabled,
+.mantine-NumberInput-input:disabled,
+.mantine-DateInput-input:disabled,
+.mantine-TimeInput-input:disabled,
+.mantine-Slider-root:disabled,
+.mantine-Tabs-tab:disabled,
+.mantine-Pagination-control:disabled,
+.mantine-SegmentedControl-label:disabled,
+.mantine-Chip-label:disabled,
+.mantine-Pill-root:disabled,
+.mantine-CloseButton-root:disabled,
+[data-disabled],
+[data-disabled] * {
+  cursor: default !important;
+}

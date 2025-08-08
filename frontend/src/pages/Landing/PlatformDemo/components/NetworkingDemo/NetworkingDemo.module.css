@@ -135,7 +135,7 @@
   background: rgba(148, 163, 184, 0.1);
   color: #94A3B8;
   border: 1px solid rgba(148, 163, 184, 0.15);
-  cursor: not-allowed;
+  cursor: default;
   opacity: 0.6;
 }
 
