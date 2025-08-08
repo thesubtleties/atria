@@ -9,7 +9,8 @@ export function ChatTabs({
   chatRooms, 
   sessionData,
   isLoading,
-  error 
+  error,
+  canModerate 
 }) {
   const [activeTab, setActiveTab] = useState('public');
   const [inputValues, setInputValues] = useState({});
@@ -108,6 +109,7 @@ export function ChatTabs({
           onInputChange={(value) => handleInputChange(publicRoom?.id, value)}
           onSendMessage={() => handleSendMessage(publicRoom?.id)}
           isActive={activeTab === 'public'}
+          canModerate={canModerate}
         />
       </Tabs.Panel>
 
@@ -120,6 +122,7 @@ export function ChatTabs({
             onInputChange={(value) => handleInputChange(backstageRoom.id, value)}
             onSendMessage={() => handleSendMessage(backstageRoom.id)}
             isActive={activeTab === 'backstage'}
+            canModerate={canModerate}
           />
         </Tabs.Panel>
       )}

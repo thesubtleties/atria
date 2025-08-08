@@ -3,6 +3,7 @@ import { Card, ActionIcon, Transition } from '@mantine/core';
 import { IconMessage } from '@tabler/icons-react';
 import { useGetSessionChatRoomsQuery } from '@/app/features/chat/api';
 import { useGetSessionQuery } from '@/app/features/sessions/api';
+import { useGetEventQuery } from '@/app/features/events/api';
 import {
   joinSessionChatRooms,
   leaveSessionChatRooms,
@@ -16,6 +17,9 @@ export const SessionChat = ({ sessionId, isEnabled = true, isOpen = true, onTogg
 
   const sessionIdNum = sessionId ? parseInt(sessionId) : null;
   const { data: sessionData } = useGetSessionQuery(sessionIdNum);
+  const { data: eventData } = useGetEventQuery(sessionData?.event_id, {
+    skip: !sessionData?.event_id,
+  });
   const {
     data: chatRooms,
     isLoading,
@@ -23,6 +27,9 @@ export const SessionChat = ({ sessionId, isEnabled = true, isOpen = true, onTogg
   } = useGetSessionChatRoomsQuery(sessionIdNum, {
     skip: !sessionIdNum || !isEnabled,
   });
+
+  // Determine if current user can moderate messages
+  const canModerate = eventData?.user_role === 'ADMIN' || eventData?.user_role === 'ORGANIZER';
 
   // Join/leave session chat rooms via socket
   useEffect(() => {
@@ -50,6 +57,7 @@ export const SessionChat = ({ sessionId, isEnabled = true, isOpen = true, onTogg
           sessionData={sessionData}
           isLoading={isLoading}
           error={error}
+          canModerate={canModerate}
         />
       </Card>
     </div>
