@@ -175,6 +175,7 @@ export const SessionManager = () => {
               </div>
             </div>
             <Group>
+              {/* CSV Import/Export - Commented out for post-launch implementation
               <Menu shadow="md" width={200}>
                 <Menu.Target>
                   <ActionIcon className={styles.actionIcon} variant="subtle" size="lg">
@@ -198,6 +199,7 @@ export const SessionManager = () => {
                   </Menu.Item>
                 </Menu.Dropdown>
               </Menu>
+              */}
               <Button
                 variant="primary"
                 onClick={() => setShowCreateModal(true)}
