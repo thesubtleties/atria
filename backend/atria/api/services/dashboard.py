@@ -148,12 +148,24 @@ class DashboardService:
                 # Event is currently happening
                 display_status = 'live'
 
+            # Build location string
+            location = None
+            if event.venue_city:
+                location_parts = [event.venue_city]
+                if event.venue_state:
+                    location_parts.append(event.venue_state)
+                if event.venue_country:
+                    location_parts.append(event.venue_country)
+                location = ', '.join(location_parts)
+            elif event.event_format == 'VIRTUAL':
+                location = 'Virtual'
+            
             events.append({
                 'id': event.id,
                 'name': event.title,  # Event model uses 'title' not 'name'
                 'start_date': event.start_date,
                 'end_date': event.end_date,
-                'location': event.venue_address if hasattr(event, 'venue_address') else None,
+                'location': location,
                 'status': display_status,
                 'attendee_count': attendee_count,
                 'organization': {
