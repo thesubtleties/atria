@@ -45,7 +45,7 @@ export default function EventInfo({ format, venue, dates }) {
                 <h3 className={styles.cardTitle}>Where</h3>
                 <p className={styles.cardText}>{venue.name}</p>
                 <p className={styles.cardSubtext}>
-                  {venue.city}, {venue.country}
+                  {venue.city}{venue.state ? `, ${venue.state}` : ''}, {venue.country}
                 </p>
               </div>
             </div>

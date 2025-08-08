@@ -26,6 +26,12 @@ export const OrganizationsSection = ({ organizations }) => {
     return gradients[index % gradients.length];
   };
 
+  const formatRole = (role) => {
+    if (!role) return '';
+    // Convert OWNER -> Owner, ADMIN -> Admin, MEMBER -> Member
+    return role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
+  };
+
   return (
     <section className={styles.dashboardSection}>
       <div className={styles.sectionHeader}>
@@ -60,7 +66,7 @@ export const OrganizationsSection = ({ organizations }) => {
                 </div>
               </div>
               <div className={styles.cardMeta}>
-                {org.role} • {org.event_count} events • {org.member_count} members
+                {formatRole(org.role)} • {org.event_count} {org.event_count === 1 ? 'event' : 'events'} • {org.member_count} {org.member_count === 1 ? 'member' : 'members'}
               </div>
             </div>
           ))}

@@ -23,6 +23,7 @@ export const eventFormatSchema = z.object({
   venue_name: z.string().optional(),
   venue_address: z.string().optional(),
   venue_city: z.string().optional(),
+  venue_state: z.string().optional(),
   venue_country: z.string().optional(),
 }).refine((data) => {
   // If event is in-person or hybrid, venue details are required
