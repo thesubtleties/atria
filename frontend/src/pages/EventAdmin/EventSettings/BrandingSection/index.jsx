@@ -186,8 +186,8 @@ const BrandingSection = ({ event, eventId }) => {
 
   return (
     <div className={parentStyles.section}>
-      {/* Branding Section */}
-      <div className={styles.brandingSection}>
+      {/* Branding Section - Commented out for post-launch implementation */}
+      {/* <div className={styles.brandingSection}>
         <h3 className={parentStyles.sectionTitle}>Event Branding</h3>
         <Text c="dimmed" size="sm" mb="xl">
           Customize your event's visual identity
@@ -222,6 +222,7 @@ const BrandingSection = ({ event, eventId }) => {
                 {...form.getInputProps('secondary_color')}
               />
             </Group>
+            
 
             <div className={styles.logoSection}>
               <h4 className={styles.subsectionTitle}>Event Logo</h4>
@@ -281,9 +282,7 @@ const BrandingSection = ({ event, eventId }) => {
             )}
           </Stack>
         </form>
-      </div>
-
-      <Divider my="xl" className={styles.sectionDivider} />
+      </div> */}
 
       {/* Hero Section */}
       <div className={styles.heroSection}>

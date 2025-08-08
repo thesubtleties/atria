@@ -118,6 +118,7 @@ const VenueSection = ({ event, eventId }) => {
               {...form.getInputProps('event_format')}
             />
 
+            {/* Privacy Settings - Commented out, all events are private by default for now
             <div className={styles.privacySection}>
               <Text className={styles.formLabel}>
                 Privacy Settings
@@ -135,6 +136,7 @@ const VenueSection = ({ event, eventId }) => {
                 />
               </div>
             </div>
+            */}
           </Group>
 
           {form.values.event_format === 'VIRTUAL' && (

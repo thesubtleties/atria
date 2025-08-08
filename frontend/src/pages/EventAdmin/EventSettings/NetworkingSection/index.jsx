@@ -60,14 +60,15 @@ const DraggableIcebreaker = ({ id, message, icebreakerId, onEdit, onDelete, canD
           <ActionIcon
             variant="subtle"
             onClick={() => onEdit(icebreakerId)}
+            className={styles.editButton}
           >
             <IconEdit size={16} />
           </ActionIcon>
           <ActionIcon
             variant="subtle"
-            color="red"
             onClick={() => onDelete(icebreakerId)}
             disabled={!canDelete}
+            className={styles.deleteButton}
           >
             <IconTrash size={16} />
           </ActionIcon>

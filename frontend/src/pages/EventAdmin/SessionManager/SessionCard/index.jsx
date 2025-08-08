@@ -19,7 +19,7 @@ import { useDebouncedValue } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { useUpdateSessionMutation, useDeleteSessionMutation } from '@/app/features/sessions/api';
 import { SessionSpeakers } from '@/pages/Session/SessionSpeakers';
-import { modals } from '@mantine/modals';
+import { openConfirmationModal } from '@/shared/components/modals/ConfirmationModal';
 import { validateField, validateTimeOrder } from '../schemas/sessionCardSchema';
 import styles from '../styles/index.module.css';
 
@@ -176,20 +176,27 @@ export const SessionCard = ({ session, eventId, hasConflict }) => {
   };
 
   const handleDelete = () => {
-    modals.openConfirmModal({
+    openConfirmationModal({
       title: 'Delete Session',
-      children: (
-        <Text size="sm">
-          Are you sure you want to delete "{session.title}"? This action cannot be undone.
-        </Text>
-      ),
-      labels: { confirm: 'Delete', cancel: 'Cancel' },
-      confirmProps: { color: 'red' },
+      message: `Are you sure you want to delete "${session.title}"? This action cannot be undone.`,
+      confirmLabel: 'Delete',
+      cancelLabel: 'Cancel',
+      isDangerous: true,
       onConfirm: async () => {
         try {
           await deleteSession(session.id).unwrap();
+          notifications.show({
+            title: 'Success',
+            message: 'Session deleted successfully',
+            color: 'green',
+          });
         } catch (error) {
           console.error('Failed to delete session:', error);
+          notifications.show({
+            title: 'Error',
+            message: 'Failed to delete session',
+            color: 'red',
+          });
         }
       },
     });
