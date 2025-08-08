@@ -338,6 +338,7 @@ const NetworkingSection = ({ event, eventId }) => {
         onClose={() => setModalState({ open: false, mode: 'create', id: null })}
         title={modalState.mode === 'create' ? 'Add Icebreaker Message' : 'Edit Icebreaker Message'}
         size="lg"
+        lockScroll={false}
         classNames={{
           content: styles.modalContent,
           header: styles.modalHeader,

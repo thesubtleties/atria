@@ -78,6 +78,7 @@ const AddSpeakerModal = ({ opened, onClose, eventId, onSuccess }) => {
       onClose={handleClose}
       title="Add Speaker"
       size="md"
+      lockScroll={false}
       classNames={{
         content: styles.modalContent,
         header: styles.modalHeader,

@@ -68,6 +68,7 @@ const RoleUpdateModal = ({ opened, onClose, user, eventId, currentUserRole, onSu
       onClose={onClose}
       title="Update User Role"
       size="md"
+      lockScroll={false}
       classNames={{
         content: styles.modalContent,
         header: styles.modalHeader,

@@ -181,6 +181,7 @@ const MemberRow = ({ member, orgId, currentUserRole }) => {
         onClose={() => setRoleModalOpened(false)}
         title="Change Member Role"
         size="sm"
+        lockScroll={false}
       >
         <Stack spacing="md">
           <Text size="sm">
@@ -222,6 +223,7 @@ const MemberRow = ({ member, orgId, currentUserRole }) => {
         onClose={() => setRemoveModalOpened(false)}
         title="Remove Member"
         size="sm"
+        lockScroll={false}
       >
         <Stack spacing="md">
           <Text size="sm">

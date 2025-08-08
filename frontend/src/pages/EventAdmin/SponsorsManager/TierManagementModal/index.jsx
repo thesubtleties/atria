@@ -124,6 +124,7 @@ const TierManagementModal = ({ opened, onClose, eventId }) => {
       onClose={onClose}
       title="Manage Sponsor Tiers"
       size="lg"
+      lockScroll={false}
       classNames={{
         content: styles.modalContent,
         header: styles.modalHeader,

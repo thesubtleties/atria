@@ -50,7 +50,6 @@ export const heroSectionSchema = z.object({
 export const highlightSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   description: z.string().min(1, 'Description is required'),
-  icon: z.string().optional(),
 });
 
 export const faqSchema = z.object({

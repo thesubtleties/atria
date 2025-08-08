@@ -179,6 +179,7 @@ export const EventCard = ({ event, isOrgView, canEdit }) => {
         onClose={() => setShowDeleteModal(false)}
         title="Delete Event"
         size="sm"
+        lockScroll={false}
       >
         <Text size="sm" mb="lg">
           Are you sure you want to delete this event? This action cannot be

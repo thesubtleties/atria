@@ -75,6 +75,7 @@ export const InviteUserModal = ({ organizationId, opened, onClose }) => {
       title="Add Member"
       centered
       size="md"
+      lockScroll={false}
     >
       <form onSubmit={form.onSubmit(handleSubmit)} className={styles.form}>
         <Stack gap="md">

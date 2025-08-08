@@ -99,6 +99,7 @@ export const OrganizationCard = ({ organization }) => {
         onClose={() => setShowDeleteModal(false)}
         title="Delete Organization"
         size="sm"
+        lockScroll={false}
       >
         <Text size="sm" mb="lg">
           Are you sure you want to delete this organization? This action cannot

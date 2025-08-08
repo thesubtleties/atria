@@ -172,6 +172,7 @@ const InviteModal = ({ opened, onClose, eventId, onSuccess }) => {
       onClose={handleClose}
       title="Invite Attendees"
       size="lg"
+      lockScroll={false}
       classNames={{
         content: styles.modalContent,
         header: styles.modalHeader,

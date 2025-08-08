@@ -118,6 +118,7 @@ export const EventModal = ({
       centered
       title={isEditing ? 'Edit Event' : 'Create Event'}
       size="md"
+      lockScroll={false}
       classNames={{
         content: styles.modalContent,
         header: styles.modalHeader,
