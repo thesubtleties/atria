@@ -66,6 +66,7 @@ export const OrganizationModal = ({
       title={isEditing ? 'Edit Organization' : 'Create Organization'}
       centered
       size="md"
+      lockScroll={false}
     >
       <form onSubmit={form.onSubmit(handleSubmit)} className={styles.form}>
         <Stack gap="md">

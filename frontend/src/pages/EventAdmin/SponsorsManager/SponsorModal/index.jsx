@@ -266,6 +266,7 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }
       onClose={handleClose}
       title={mode === 'edit' ? 'Edit Sponsor' : 'Add New Sponsor'}
       size="lg"
+      lockScroll={false}
       classNames={{
         content: styles.modalContent,
         header: styles.modalHeader,

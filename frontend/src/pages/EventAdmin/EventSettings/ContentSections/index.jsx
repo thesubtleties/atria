@@ -7,8 +7,7 @@ import {
   Title,
   Text,
   ActionIcon,
-  Modal,
-  Select
+  Modal
 } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
@@ -63,13 +62,14 @@ const DraggableHighlight = ({ id, highlight, onEdit, onDelete }) => {
           <ActionIcon
             variant="subtle"
             onClick={() => onEdit(id)}
+            className={styles.editButton}
           >
             <IconEdit size={16} />
           </ActionIcon>
           <ActionIcon
             variant="subtle"
-            color="red"
             onClick={() => onDelete(id)}
+            className={styles.deleteButton}
           >
             <IconTrash size={16} />
           </ActionIcon>
@@ -113,13 +113,14 @@ const DraggableFAQ = ({ id, faq, onEdit, onDelete }) => {
           <ActionIcon
             variant="subtle"
             onClick={() => onEdit(id)}
+            className={styles.editButton}
           >
             <IconEdit size={16} />
           </ActionIcon>
           <ActionIcon
             variant="subtle"
-            color="red"
             onClick={() => onDelete(id)}
+            className={styles.deleteButton}
           >
             <IconTrash size={16} />
           </ActionIcon>
@@ -158,7 +159,6 @@ const ContentSections = ({ event, eventId }) => {
     initialValues: {
       title: '',
       description: '',
-      icon: 'IconStarFilled',
     },
     resolver: zodResolver(highlightSchema),
   });
@@ -233,17 +233,6 @@ const ContentSections = ({ event, eventId }) => {
     setHasChanges(welcomeChanged || highlightsChanged || faqsChanged);
   }, [welcomeForm.values, highlights, faqs, event]);
 
-  // Icon options for highlights
-  const iconOptions = [
-    { value: 'IconStarFilled', label: 'Star' },
-    { value: 'IconInfoCircle', label: 'Info' },
-    { value: 'IconUsers', label: 'Users' },
-    { value: 'IconCalendar', label: 'Calendar' },
-    { value: 'IconClock', label: 'Clock' },
-    { value: 'IconMapPin', label: 'Location' },
-    { value: 'IconTrophy', label: 'Trophy' },
-    { value: 'IconHeart', label: 'Heart' },
-  ];
 
   // Highlight handlers
   const handleAddHighlight = () => {
@@ -563,6 +552,7 @@ const ContentSections = ({ event, eventId }) => {
         opened={highlightModal.open}
         onClose={() => setHighlightModal({ open: false, mode: 'create', id: null })}
         title={highlightModal.mode === 'create' ? 'Add Highlight' : 'Edit Highlight'}
+        lockScroll={false}
         classNames={{
           content: styles.modalContent,
           header: styles.modalHeader,
@@ -584,12 +574,6 @@ const ContentSections = ({ event, eventId }) => {
               classNames={{ input: styles.formTextarea }}
               {...highlightForm.getInputProps('description')}
             />
-            <Select
-              label="Icon"
-              data={iconOptions}
-              classNames={{ input: styles.formSelect }}
-              {...highlightForm.getInputProps('icon')}
-            />
             <Group justify="flex-end">
               <Button
                 variant="subtle"
@@ -610,6 +594,7 @@ const ContentSections = ({ event, eventId }) => {
         opened={faqModal.open}
         onClose={() => setFaqModal({ open: false, mode: 'create', id: null })}
         title={faqModal.mode === 'create' ? 'Add FAQ' : 'Edit FAQ'}
+        lockScroll={false}
         classNames={{
           content: styles.modalContent,
           header: styles.modalHeader,

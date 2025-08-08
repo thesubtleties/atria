@@ -151,6 +151,7 @@ export const EditSessionModal = ({
       title={isEditing ? 'Edit Session' : 'Create New Session'}
       centered
       size="lg"
+      lockScroll={false}
       classNames={{
         content: styles.modalContent,
         header: styles.modalHeader,

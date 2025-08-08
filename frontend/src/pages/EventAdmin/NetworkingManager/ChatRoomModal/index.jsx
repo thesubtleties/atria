@@ -105,6 +105,7 @@ const ChatRoomModal = ({ opened, onClose, mode, room, eventId }) => {
       onClose={onClose}
       title={mode === 'create' ? 'Create Chat Room' : 'Edit Chat Room'}
       size="md"
+      lockScroll={false}
       classNames={{
         content: styles.modalContent,
         header: styles.modalHeader,

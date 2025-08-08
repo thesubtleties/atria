@@ -110,13 +110,34 @@
 
 /* Icons */
 .highlightIcon {
-  color: #FFD93D;
+  color: #FFD666;
   flex-shrink: 0;
 }
 
 .faqIcon {
   color: #8B5CF6;
   flex-shrink: 0;
+}
+
+/* ActionIcon Button Styling */
+.editButton {
+  transition: all 0.2s ease;
+  color: #94A3B8 !important;
+}
+
+.editButton:hover {
+  background: rgba(139, 92, 246, 0.08) !important;
+  color: #8B5CF6 !important;
+}
+
+.deleteButton {
+  transition: all 0.2s ease;
+  color: #94A3B8 !important;
+}
+
+.deleteButton:hover {
+  background: rgba(220, 38, 38, 0.08) !important;
+  color: #DC2626 !important;
 }
 
 /* Modal styles */

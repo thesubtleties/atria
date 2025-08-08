@@ -75,6 +75,7 @@ export const AddSpeakerModal = ({ sessionId, opened, onClose }) => {
       title="Add Speaker to Session"
       centered
       size="sm"
+      lockScroll={false}
       classNames={{
         content: styles.modalContent,
         header: styles.modalHeader,

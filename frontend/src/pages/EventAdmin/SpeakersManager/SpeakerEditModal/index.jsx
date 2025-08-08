@@ -64,6 +64,7 @@ const SpeakerEditModal = ({ opened, onClose, speaker, eventId, onSuccess }) => {
       onClose={onClose}
       title="Edit Speaker Information"
       size="lg"
+      lockScroll={false}
       classNames={{
         content: styles.modalContent,
         header: styles.modalHeader,

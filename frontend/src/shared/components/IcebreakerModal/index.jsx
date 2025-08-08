@@ -41,6 +41,7 @@ export function IcebreakerModal({
       onClose={handleClose}
       title="Send Connection Request"
       size="md"
+      lockScroll={false}
       classNames={{
         content: styles.modalContent,
         header: styles.modalHeader,

@@ -82,6 +82,7 @@ export const AddEventUserModal = ({ eventId, opened, onClose }) => {
       title="Add User to Event"
       centered
       size="md"
+      lockScroll={false}
     >
       <form onSubmit={form.onSubmit(handleSubmit)} className={styles.form}>
         <Stack gap="md">

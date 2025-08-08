@@ -17,6 +17,7 @@ export function DeleteMessageModal({ opened, onClose, message, onConfirm, isLoad
       onClose={onClose}
       title="Delete Message"
       size="sm"
+      lockScroll={false}
       classNames={{
         content: styles.modalContent,
         header: styles.modalHeader,
