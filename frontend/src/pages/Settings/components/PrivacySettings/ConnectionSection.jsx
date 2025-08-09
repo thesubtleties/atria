@@ -10,12 +10,12 @@ const ConnectionSection = ({ form }) => {
           {...form.getInputProps('allow_connection_requests')}
           className={styles.formInput}
           data={[
-            { value: 'everyone', label: 'Everyone' },
             { value: 'event_attendees', label: 'Event Attendees Only' },
             { value: 'speakers_organizers', label: 'Speakers & Organizers Only' },
             { value: 'none', label: 'No One' },
           ]}
           description="Who can send you connection requests"
+          allowDeselect={false}
         />
       </div>
       
@@ -25,11 +25,12 @@ const ConnectionSection = ({ form }) => {
           {...form.getInputProps('show_social_links')}
           className={styles.formInput}
           data={[
-            { value: 'everyone', label: 'Everyone' },
+            { value: 'event_attendees', label: 'Event Attendees' },
             { value: 'connections', label: 'Connections Only' },
             { value: 'hidden', label: 'Hidden' },
           ]}
           description="Who can see your social media links"
+          allowDeselect={false}
         />
       </div>
     </>

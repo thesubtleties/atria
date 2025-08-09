@@ -10,33 +10,35 @@ const EmailSection = ({ form }) => {
           {...form.getInputProps('email_visibility')}
           className={styles.formInput}
           data={[
-            { value: 'everyone', label: 'Everyone' },
+            { value: 'event_attendees', label: 'Event Attendees' },
             { value: 'connections_organizers', label: 'Connections & Event Organizers' },
             { value: 'organizers_only', label: 'Event Organizers Only' },
-            { value: 'hidden', label: 'Hidden' },
           ]}
           description="Who can see your email address"
+          allowDeselect={false}
         />
       </div>
       
-      <div className={styles.formSection}>
-        <Switch
-          {...form.getInputProps('show_public_email', { type: 'checkbox' })}
-          className={styles.formSwitch}
-          label="Use a different email for public display"
-          description="Show a different email address instead of your account email"
-          mb="sm"
-        />
-        {form.values.show_public_email && (
-          <TextInput
-            {...form.getInputProps('public_email')}
-            className={styles.formInput}
-            placeholder="public@example.com"
-            description="This email will be shown instead of your account email"
-            mt="sm"
+      {form.values.email_visibility === 'organizers_only' && (
+        <div className={styles.formSection}>
+          <Switch
+            {...form.getInputProps('show_public_email', { type: 'checkbox' })}
+            className={styles.formSwitch}
+            label="Use a different email for public display"
+            description="Show a different email address to other attendees instead of hiding it completely"
+            mb="sm"
           />
-        )}
-      </div>
+          {form.values.show_public_email && (
+            <TextInput
+              {...form.getInputProps('public_email')}
+              className={styles.formInput}
+              placeholder="public@example.com"
+              description="This email will be shown to attendees while organizers can still see your account email"
+              mt="sm"
+            />
+          )}
+        </div>
+      )}
     </>
   );
 };
