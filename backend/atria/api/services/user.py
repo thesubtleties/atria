@@ -8,6 +8,7 @@ from api.models.enums import (
     OrganizationUserRole,
     ConnectionStatus,
 )
+from api.services.privacy import PrivacyService
 from api.commons.pagination import paginate
 from sqlalchemy import distinct
 
@@ -15,9 +16,38 @@ from sqlalchemy import distinct
 class UserService:
     @staticmethod
     def get_user(user_id: int):
-        """Get a user by ID"""
+        """Get a user by ID (WITHOUT privacy filtering - use get_user_for_viewer instead)"""
         user = User.query.get_or_404(user_id)
         return user
+    
+    @staticmethod
+    def get_user_for_viewer(
+        user_id: int, 
+        viewer_id: Optional[int], 
+        event_id: Optional[int] = None
+    ) -> Dict[str, Any]:
+        """
+        Get user data filtered based on viewer's permissions and privacy settings.
+        This is the SECURE method that should be used in API endpoints.
+        
+        Args:
+            user_id: ID of the user to retrieve
+            viewer_id: ID of the user viewing the data (None for unauthenticated)
+            event_id: Optional event context for event-specific privacy rules
+            
+        Returns:
+            Dictionary of filtered user data based on privacy settings
+        """
+        user = User.query.get_or_404(user_id)
+        viewer = User.query.get(viewer_id) if viewer_id else None
+        
+        # Get viewer context
+        context = PrivacyService.get_viewer_context(user, viewer, event_id)
+        
+        # Apply privacy filtering
+        filtered_data = PrivacyService.filter_user_data(user, context, event_id)
+        
+        return filtered_data
 
     @staticmethod
     def check_user_access(current_user_id: int, target_user_id: int) -> bool:
@@ -222,3 +252,60 @@ class UserService:
         user.is_active = True
         db.session.commit()
         return True
+    
+    @staticmethod
+    def get_privacy_settings(user_id: int) -> Dict[str, Any]:
+        """Get user's privacy settings"""
+        user = User.query.get_or_404(user_id)
+        
+        # Return existing settings or defaults
+        if user.privacy_settings:
+            return user.privacy_settings
+        return PrivacyService.get_default_privacy_settings()
+    
+    @staticmethod
+    def update_privacy_settings(user_id: int, settings: Dict[str, Any]) -> Dict[str, Any]:
+        """Update user's privacy settings"""
+        user = User.query.get_or_404(user_id)
+        
+        # Merge with existing settings
+        current_settings = user.privacy_settings or {}
+        updated_settings = {**current_settings, **settings}
+        
+        user.privacy_settings = updated_settings
+        db.session.commit()
+        
+        return updated_settings
+    
+    @staticmethod
+    def get_event_privacy_overrides(user_id: int, event_id: int) -> Optional[Dict[str, Any]]:
+        """Get user's privacy overrides for a specific event"""
+        event_user = EventUser.query.filter_by(
+            user_id=user_id,
+            event_id=event_id
+        ).first()
+        
+        if event_user:
+            return event_user.privacy_overrides
+        return None
+    
+    @staticmethod
+    def update_event_privacy_overrides(
+        user_id: int, 
+        event_id: int, 
+        overrides: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """Update user's privacy overrides for a specific event"""
+        event_user = EventUser.query.filter_by(
+            user_id=user_id,
+            event_id=event_id
+        ).first_or_404()
+        
+        # Merge with existing overrides
+        current_overrides = event_user.privacy_overrides or {}
+        updated_overrides = {**current_overrides, **overrides}
+        
+        event_user.privacy_overrides = updated_overrides
+        db.session.commit()
+        
+        return updated_overrides
