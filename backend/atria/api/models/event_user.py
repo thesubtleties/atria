@@ -16,16 +16,35 @@ class EventUser(db.Model):
     role = db.Column(db.Enum(EventUserRole), nullable=False)
     speaker_bio = db.Column(db.Text)
     speaker_title = db.Column(db.Text)
+    privacy_overrides = db.Column(db.JSON, nullable=True, default=None)
+    is_banned = db.Column(db.Boolean, nullable=False, default=False)
+    banned_at = db.Column(db.DateTime(timezone=True), nullable=True)
+    banned_by = db.Column(db.BigInteger, db.ForeignKey("users.id"), nullable=True)
+    ban_reason = db.Column(db.Text, nullable=True)
+    is_chat_banned = db.Column(db.Boolean, nullable=False, default=False)
+    chat_ban_until = db.Column(db.DateTime(timezone=True), nullable=True)
+    chat_ban_reason = db.Column(db.Text, nullable=True)
+    moderation_notes = db.Column(db.Text, nullable=True)
     created_at = db.Column(
         db.DateTime(timezone=True), server_default=db.func.current_timestamp()
     )
 
     # Relationships
     event = db.relationship(
-        "Event", back_populates="event_users", overlaps="users,events"
+        "Event", 
+        foreign_keys=[event_id],
+        back_populates="event_users", 
+        overlaps="users,events"
     )
     user = db.relationship(
-        "User", back_populates="event_users", overlaps="events,users"
+        "User", 
+        foreign_keys=[user_id],
+        back_populates="event_users", 
+        overlaps="events,users"
+    )
+    banned_by_user = db.relationship(
+        "User",
+        foreign_keys=[banned_by]
     )
 
     def __init__(self, **kwargs):
@@ -167,3 +186,20 @@ class EventUser(db.Model):
         return cls.query.filter_by(
             event_id=event_id, role=EventUserRole.ATTENDEE
         ).count()
+    
+    def is_active_in_event(self):
+        """Check if user is active in event (not banned)"""
+        return not self.is_banned
+    
+    def can_use_chat(self):
+        """Check if user can use chat in this event"""
+        if self.is_banned:
+            return False
+        if self.is_chat_banned:
+            if self.chat_ban_until:
+                from datetime import datetime, timezone
+                if self.chat_ban_until > datetime.now(timezone.utc):
+                    return False
+            else:
+                return False  # Permanent chat ban
+        return True

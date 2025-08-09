@@ -61,6 +61,24 @@ export const usersApi = baseApi.injectEndpoints({
       }),
       providesTags: ['Invitations'],
     }),
+    
+    getUserPrivacySettings: builder.query({
+      query: (id) => ({ url: `/users/${id}/privacy-settings` }),
+      providesTags: (result, error, id) => [{ type: 'UserPrivacy', id }],
+    }),
+    
+    updateUserPrivacySettings: builder.mutation({
+      query: ({ id, ...settings }) => ({
+        url: `/users/${id}/privacy-settings`,
+        method: 'PUT',
+        body: settings,
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'UserPrivacy', id },
+        { type: 'Users', id },
+        'EventUsers', // Refresh attendee lists as privacy affects visibility
+      ],
+    }),
   }),
 });
 
@@ -72,4 +90,6 @@ export const {
   useGetUserSpeakingSessionsQuery,
   useGetUserDashboardQuery,
   useGetUserInvitationsQuery,
+  useGetUserPrivacySettingsQuery,
+  useUpdateUserPrivacySettingsMutation,
 } = usersApi;

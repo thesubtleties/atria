@@ -11,6 +11,12 @@ from api.api.schemas import (
     SessionSchema,
     UserCheckResponseSchema,
 )
+from api.api.schemas.user_privacy import PrivacyAwareUserSchema
+from api.api.schemas.privacy import (
+    PrivacySettingsSchema,
+    PrivacySettingsUpdateSchema,
+    UserPrivacyResponseSchema
+)
 from api.api.schemas.dashboard import DashboardResponseSchema, UserInvitationsResponseSchema
 from api.commons.pagination import (
     PAGINATION_PARAMETERS,
@@ -32,10 +38,10 @@ blp = Blueprint(
 
 @blp.route("/<int:user_id>")
 class UserResource(MethodView):
-    @blp.response(200, UserDetailSchema)
+    @blp.response(200, PrivacyAwareUserSchema)
     @blp.doc(
         summary="Get user profile",
-        description="Get detailed information about a user",
+        description="Get detailed information about a user with privacy filtering",
         responses={
             403: {"description": "Not authorized to view this user"},
             404: {"description": "User not found"},
@@ -43,14 +49,12 @@ class UserResource(MethodView):
     )
     @jwt_required()
     def get(self, user_id):
-        """Get user profile"""
+        """Get user profile with privacy filtering"""
         current_user_id = int(get_jwt_identity())
+        event_id = request.args.get('event_id', type=int)
 
-        # Check access
-        if not UserService.check_user_access(current_user_id, user_id):
-            return {"message": "Not authorized to view this profile"}, 403
-
-        return UserService.get_user(user_id)
+        # Use privacy-aware method that filters data based on viewer context
+        return UserService.get_user_for_viewer(user_id, current_user_id, event_id)
 
     @blp.arguments(UserUpdateSchema)
     @blp.response(200, UserDetailSchema)
@@ -186,6 +190,65 @@ class UserInvitationsResource(MethodView):
         
         invitations = DashboardService.get_user_invitations(user_id)
         return invitations
+
+
+@blp.route("/<int:user_id>/privacy-settings")
+class UserPrivacySettingsResource(MethodView):
+    @blp.response(200, UserPrivacyResponseSchema)
+    @blp.doc(
+        summary="Get user privacy settings",
+        description="Get privacy settings for a user including event overrides. Users can only access their own privacy settings.",
+        responses={
+            403: {"description": "Can only access own privacy settings"},
+            404: {"description": "User not found"},
+        },
+    )
+    @jwt_required()
+    def get(self, user_id):
+        """Get user privacy settings"""
+        current_user_id = int(get_jwt_identity())
+        
+        # Users can only access their own privacy settings
+        if current_user_id != user_id:
+            abort(403, message="Can only access own privacy settings")
+        
+        # Get privacy settings from service
+        from api.services.privacy import PrivacyService
+        privacy_data = PrivacyService.get_user_privacy_settings(user_id)
+        return privacy_data
+    
+    @blp.arguments(PrivacySettingsUpdateSchema)
+    @blp.response(200, UserPrivacyResponseSchema)
+    @blp.doc(
+        summary="Update user privacy settings",
+        description="Update privacy settings for a user. Users can only update their own privacy settings.",
+        responses={
+            403: {"description": "Can only update own privacy settings"},
+            404: {"description": "User not found"},
+        },
+    )
+    @jwt_required()
+    def put(self, update_data, user_id):
+        """Update user privacy settings"""
+        current_user_id = int(get_jwt_identity())
+        
+        # Users can only update their own privacy settings
+        if current_user_id != user_id:
+            return {"message": "Can only update own privacy settings"}, 403
+        
+        # Debug logging
+        print(f"DEBUG: Received update_data: {update_data}")
+        for key, value in update_data.items():
+            if hasattr(value, 'value'):
+                print(f"  {key}: {value} (enum) -> {value.value}")
+            else:
+                print(f"  {key}: {value} ({type(value).__name__})")
+        
+        # Update privacy settings via service
+        from api.services.privacy import PrivacyService
+        updated_settings = PrivacyService.update_user_privacy_settings(user_id, update_data)
+        print(f"DEBUG: Returning settings: {updated_settings['privacy_settings']}")
+        return updated_settings
 
 
 @blp.route("/debug")

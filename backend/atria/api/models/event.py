@@ -106,9 +106,12 @@ class Event(db.Model):
     users = db.relationship(
         "User",
         secondary="event_users",
+        primaryjoin="Event.id == EventUser.event_id",
+        secondaryjoin="EventUser.user_id == User.id",
         back_populates="events",
         overlaps="event_users",
         passive_deletes=True,
+        viewonly=True
     )
 
     event_users = db.relationship(
