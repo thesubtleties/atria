@@ -15,7 +15,8 @@ from api.api.schemas.user_privacy import PrivacyAwareUserSchema
 from api.api.schemas.privacy import (
     PrivacySettingsSchema,
     PrivacySettingsUpdateSchema,
-    UserPrivacyResponseSchema
+    UserPrivacyResponseSchema,
+    PrivacySettingsResponseSchema
 )
 from api.api.schemas.dashboard import DashboardResponseSchema, UserInvitationsResponseSchema
 from api.commons.pagination import (
@@ -249,6 +250,86 @@ class UserPrivacySettingsResource(MethodView):
         updated_settings = PrivacyService.update_user_privacy_settings(user_id, update_data)
         print(f"DEBUG: Returning settings: {updated_settings['privacy_settings']}")
         return updated_settings
+
+
+@blp.route("/<int:user_id>/events/<int:event_id>/privacy-overrides")
+class UserEventPrivacyOverrides(MethodView):
+    @jwt_required()
+    @blp.response(200, PrivacySettingsResponseSchema)
+    @blp.doc(
+        summary="Get user's privacy overrides for an event",
+        description="Get event-specific privacy setting overrides"
+    )
+    def get(self, user_id, event_id):
+        """Get user's privacy overrides for a specific event"""
+        current_user_id = int(get_jwt_identity())
+        
+        # Users can only get their own privacy overrides
+        if user_id != current_user_id:
+            abort(403, message="You can only view your own privacy overrides")
+        
+        # Check user is part of the event
+        from api.models import EventUser
+        event_user = EventUser.query.filter_by(
+            user_id=user_id,
+            event_id=event_id
+        ).first()
+        
+        if not event_user:
+            abort(404, message="User is not part of this event")
+        
+        # Get overrides from service
+        from api.services.privacy import PrivacyService
+        overrides = PrivacyService.get_event_privacy_overrides(user_id, event_id)
+        
+        return {
+            "event_id": event_id,
+            "user_id": user_id,
+            "privacy_overrides": overrides or {}
+        }
+    
+    @jwt_required()
+    @blp.arguments(PrivacySettingsUpdateSchema)
+    @blp.response(200, PrivacySettingsResponseSchema)
+    @blp.doc(
+        summary="Update user's privacy overrides for an event",
+        description="Set or update event-specific privacy setting overrides"
+    )
+    def put(self, update_data, user_id, event_id):
+        """Update user's privacy overrides for a specific event"""
+        current_user_id = int(get_jwt_identity())
+        
+        # Users can only update their own privacy overrides
+        if user_id != current_user_id:
+            abort(403, message="You can only update your own privacy overrides")
+        
+        # Update overrides via service
+        from api.services.privacy import PrivacyService
+        result = PrivacyService.update_event_privacy_overrides(
+            user_id, event_id, update_data
+        )
+        
+        return result
+    
+    @jwt_required()
+    @blp.response(204)
+    @blp.doc(
+        summary="Delete user's privacy overrides for an event",
+        description="Remove event-specific privacy setting overrides"
+    )
+    def delete(self, user_id, event_id):
+        """Delete user's privacy overrides for a specific event"""
+        current_user_id = int(get_jwt_identity())
+        
+        # Users can only delete their own privacy overrides
+        if user_id != current_user_id:
+            abort(403, message="You can only delete your own privacy overrides")
+        
+        # Delete overrides via service
+        from api.services.privacy import PrivacyService
+        PrivacyService.update_event_privacy_overrides(user_id, event_id, None)
+        
+        return None, 204
 
 
 @blp.route("/debug")

@@ -28,12 +28,12 @@ class PrivacySettingsSchema(ma.Schema):
     allow_connection_requests = ma.Enum(
         ConnectionRequestPermission,
         by_value=True,
-        load_default=ConnectionRequestPermission.EVERYONE
+        load_default=ConnectionRequestPermission.EVENT_ATTENDEES
     )
     show_social_links = ma.Enum(
         SocialLinksVisibility,
         by_value=True,
-        load_default=SocialLinksVisibility.EVERYONE
+        load_default=SocialLinksVisibility.EVENT_ATTENDEES
     )
     show_company = ma.Boolean(
         load_default=True
@@ -109,6 +109,18 @@ class UserPrivacyResponseSchema(ma.Schema):
         ma.Dict(),  # Also return as plain dicts
         dump_only=True
     )
+
+
+class PrivacySettingsResponseSchema(ma.Schema):
+    """Response schema for privacy settings endpoints"""
+    
+    class Meta:
+        name = "PrivacySettingsResponse"
+    
+    event_id = ma.Integer(dump_only=True, allow_none=True)
+    user_id = ma.Integer(dump_only=True)
+    privacy_overrides = ma.Dict(dump_only=True)  # Return as plain dict
+    privacy_settings = ma.Dict(dump_only=True, allow_none=True)  # For regular privacy settings
 
 
 class ModerationStatusSchema(ma.Schema):
