@@ -21,12 +21,14 @@ export const ProfessionalInfo = ({ user }) => {
             <span className={styles.infoValue}>{user.title}</span>
           </div>
         )}
-        <div className={styles.infoItem}>
-          <span className={styles.infoLabel}>Account Status</span>
-          <div className={user.is_active ? styles.statusActive : styles.statusInactive}>
-            {user.is_active ? 'Active' : 'Inactive'}
+        {user.is_active !== undefined && (
+          <div className={styles.infoItem}>
+            <span className={styles.infoLabel}>Account Status</span>
+            <div className={user.is_active ? styles.statusActive : styles.statusInactive}>
+              {user.is_active ? 'Active' : 'Inactive'}
+            </div>
           </div>
-        </div>
+        )}
         {!user.company_name && !user.title && (
           <Text color="dimmed" size="sm">
             No professional information added yet

@@ -16,10 +16,12 @@ export const ProfileHero = ({ user, onEditClick, isOwnProfile = true, isEditing 
     return name.substring(0, 2).toUpperCase();
   };
 
-  const memberSince = new Date(user.created_at).toLocaleDateString('en-US', {
-    month: 'long',
-    year: 'numeric'
-  });
+  const memberSince = user.created_at 
+    ? new Date(user.created_at).toLocaleDateString('en-US', {
+        month: 'long',
+        year: 'numeric'
+      })
+    : null;
 
   return (
     <section className={styles.profileHero}>
@@ -63,12 +65,14 @@ export const ProfileHero = ({ user, onEditClick, isOwnProfile = true, isEditing 
               </svg>
               {user.email}
             </div>
-            <div className={styles.profileMetaItem}>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                <path d="M8 8a3 3 0 100-6 3 3 0 000 6zM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 00-11.215 0c-.22.578.254 1.139.872 1.139h9.47z" />
-              </svg>
-              Member since {memberSince}
-            </div>
+            {memberSince && (
+              <div className={styles.profileMetaItem}>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M8 8a3 3 0 100-6 3 3 0 000 6zM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 00-11.215 0c-.22.578.254 1.139.872 1.139h9.47z" />
+                </svg>
+                Member since {memberSince}
+              </div>
+            )}
           </div>
         </div>
         
