@@ -79,6 +79,40 @@ export const usersApi = baseApi.injectEndpoints({
         'EventUsers', // Refresh attendee lists as privacy affects visibility
       ],
     }),
+    
+    getEventPrivacyOverrides: builder.query({
+      query: ({ userId, eventId }) => ({ 
+        url: `/users/${userId}/events/${eventId}/privacy-overrides` 
+      }),
+      providesTags: (result, error, { userId, eventId }) => [
+        { type: 'EventPrivacy', id: `${userId}-${eventId}` }
+      ],
+    }),
+    
+    updateEventPrivacyOverrides: builder.mutation({
+      query: ({ userId, eventId, ...overrides }) => ({
+        url: `/users/${userId}/events/${eventId}/privacy-overrides`,
+        method: 'PUT',
+        body: overrides,
+      }),
+      invalidatesTags: (result, error, { userId, eventId }) => [
+        { type: 'EventPrivacy', id: `${userId}-${eventId}` },
+        { type: 'UserPrivacy', id: userId },
+        'EventUsers', // Refresh attendee lists as privacy affects visibility
+      ],
+    }),
+    
+    deleteEventPrivacyOverrides: builder.mutation({
+      query: ({ userId, eventId }) => ({
+        url: `/users/${userId}/events/${eventId}/privacy-overrides`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (result, error, { userId, eventId }) => [
+        { type: 'EventPrivacy', id: `${userId}-${eventId}` },
+        { type: 'UserPrivacy', id: userId },
+        'EventUsers',
+      ],
+    }),
   }),
 });
 
@@ -92,4 +126,7 @@ export const {
   useGetUserInvitationsQuery,
   useGetUserPrivacySettingsQuery,
   useUpdateUserPrivacySettingsMutation,
+  useGetEventPrivacyOverridesQuery,
+  useUpdateEventPrivacyOverridesMutation,
+  useDeleteEventPrivacyOverridesMutation,
 } = usersApi;
