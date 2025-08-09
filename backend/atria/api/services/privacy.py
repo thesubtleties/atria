@@ -110,7 +110,7 @@ class PrivacyService:
         elif context['is_organizer']:
             # Organizers always see real email
             result['show_real_email'] = True
-        elif email_visibility == 'everyone':
+        elif email_visibility == 'event_attendees':
             if show_public_email and public_email:
                 result['show_public_email'] = True
                 result['public_email'] = public_email
@@ -166,11 +166,11 @@ class PrivacyService:
                 privacy = {**privacy, **event_user.privacy_overrides}
         
         # Extract privacy settings with defaults
-        email_visibility = privacy.get('email_visibility', 'everyone')
+        email_visibility = privacy.get('email_visibility', 'connections_organizers')
         show_company = privacy.get('show_company', True)
         show_bio = privacy.get('show_bio', True)
-        show_social_links = privacy.get('show_social_links', 'everyone')
-        allow_connection_requests = privacy.get('allow_connection_requests', 'everyone')
+        show_social_links = privacy.get('show_social_links', 'event_attendees')
+        allow_connection_requests = privacy.get('allow_connection_requests', 'event_attendees')
         
         # Apply email visibility rules
         email_data = PrivacyService._determine_email_visibility(user, context, privacy, email_visibility)
@@ -200,7 +200,7 @@ class PrivacyService:
         # Apply social links visibility
         if context['is_self'] or context['is_organizer']:
             filtered['social_links'] = user.social_links or {}
-        elif show_social_links == 'everyone':
+        elif show_social_links == 'event_attendees':
             filtered['social_links'] = user.social_links or {}
         elif show_social_links == 'connections' and context['is_connected']:
             filtered['social_links'] = user.social_links or {}
@@ -221,7 +221,7 @@ class PrivacyService:
             # Check if viewer can actually send a connection request
             can_connect = False
             
-            if allow_connection_requests == 'everyone':
+            if allow_connection_requests == 'event_attendees':
                 can_connect = True
             elif allow_connection_requests == 'event_attendees':
                 can_connect = context['is_event_attendee']
@@ -285,7 +285,7 @@ class PrivacyService:
         
         # Get recipient's privacy settings
         privacy = recipient.privacy_settings or {}
-        allow_requests = privacy.get('allow_connection_requests', 'everyone')
+        allow_requests = privacy.get('allow_connection_requests', 'event_attendees')
         
         # Check event-specific overrides
         if event_id:
@@ -302,7 +302,7 @@ class PrivacyService:
         if allow_requests == 'none':
             return False, "User has disabled connection requests"
         
-        if allow_requests == 'everyone':
+        if allow_requests == 'event_attendees':
             return True, None
         
         # Need event context for other rules
@@ -336,11 +336,11 @@ class PrivacyService:
     def get_default_privacy_settings() -> Dict[str, Any]:
         """Get default privacy settings for new users"""
         return {
-            'email_visibility': 'everyone',
+            'email_visibility': 'connections_organizers',
             'show_public_email': False,
             'public_email': '',
-            'allow_connection_requests': 'everyone',
-            'show_social_links': 'everyone',
+            'allow_connection_requests': 'event_attendees',
+            'show_social_links': 'event_attendees',
             'show_company': True,
             'show_bio': True
         }
@@ -353,7 +353,7 @@ class PrivacyService:
             'show_public_email': False,
             'public_email': '',
             'allow_connection_requests': 'event_attendees',
-            'show_social_links': 'everyone',
+            'show_social_links': 'event_attendees',
             'show_company': True,
             'show_bio': True
         }
@@ -441,6 +441,64 @@ class PrivacyService:
         print(f"DEBUG Service: Committed to DB")
         
         return PrivacyService.get_user_privacy_settings(user_id)
+    
+    @staticmethod
+    def get_event_privacy_overrides(user_id: int, event_id: int) -> Optional[Dict[str, Any]]:
+        """
+        Get event-specific privacy overrides for a user.
+        
+        Args:
+            user_id: ID of the user
+            event_id: ID of the event
+            
+        Returns:
+            Privacy overrides if they exist, None otherwise
+        """
+        from api.models import EventUser
+        
+        event_user = EventUser.query.filter_by(
+            user_id=user_id,
+            event_id=event_id
+        ).first()
+        
+        if event_user:
+            return event_user.privacy_overrides
+        return None
+    
+    @staticmethod
+    def update_event_privacy_overrides(user_id: int, event_id: int, overrides: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+        """
+        Update event-specific privacy overrides for a user.
+        
+        Args:
+            user_id: ID of the user
+            event_id: ID of the event
+            overrides: Privacy settings overrides for this event (None to delete)
+            
+        Returns:
+            Updated event user data with overrides
+        """
+        from api.models import EventUser
+        from api.extensions import db
+        
+        event_user = EventUser.query.filter_by(
+            user_id=user_id,
+            event_id=event_id
+        ).first()
+        
+        if not event_user:
+            from flask_smorest import abort
+            abort(404, message="User is not part of this event")
+        
+        # Set or update overrides (None to delete)
+        event_user.privacy_overrides = overrides
+        db.session.commit()
+        
+        return {
+            'event_id': event_id,
+            'user_id': user_id,
+            'privacy_overrides': event_user.privacy_overrides or {}
+        }
     
     @staticmethod
     def set_event_privacy_override(user_id: int, event_id: int, overrides: Dict[str, Any]) -> Dict[str, Any]:

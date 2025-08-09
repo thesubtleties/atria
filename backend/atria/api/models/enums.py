@@ -72,21 +72,19 @@ class ConnectionStatus(str, Enum):
 
 
 class EmailVisibility(str, Enum):
-    EVERYONE = "everyone"
+    EVENT_ATTENDEES = "event_attendees"
     CONNECTIONS_ORGANIZERS = "connections_organizers"
     ORGANIZERS_ONLY = "organizers_only"
-    HIDDEN = "hidden"
 
 
 class ConnectionRequestPermission(str, Enum):
-    EVERYONE = "everyone"
     EVENT_ATTENDEES = "event_attendees"
     SPEAKERS_ORGANIZERS = "speakers_organizers"
     NONE = "none"
 
 
 class SocialLinksVisibility(str, Enum):
-    EVERYONE = "everyone"
+    EVENT_ATTENDEES = "event_attendees"
     CONNECTIONS = "connections"
     HIDDEN = "hidden"
 

@@ -30,8 +30,8 @@ class User(db.Model):
             "email_visibility": "connections_organizers",
             "show_public_email": False,
             "public_email": None,
-            "allow_connection_requests": "everyone",
-            "show_social_links": "everyone",
+            "allow_connection_requests": "event_attendees",
+            "show_social_links": "event_attendees",
             "show_company": True,
             "show_bio": True
         }
