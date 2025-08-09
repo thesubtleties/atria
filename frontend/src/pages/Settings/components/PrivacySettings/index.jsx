@@ -8,10 +8,11 @@ import {
   Group,
   Loader,
   Center,
+  Tabs,
 } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
-import { IconCheck, IconX } from '@tabler/icons-react';
+import { IconCheck, IconX, IconWorld, IconCalendarEvent } from '@tabler/icons-react';
 import {
   useGetUserPrivacySettingsQuery,
   useUpdateUserPrivacySettingsMutation,
@@ -28,6 +29,7 @@ const PrivacySettings = () => {
   const currentUser = useSelector((state) => state.auth.user);
   const [hasChanges, setHasChanges] = useState(false);
   const [originalValues, setOriginalValues] = useState(null);
+  const [activeTab, setActiveTab] = useState('global');
   
   // Fetch privacy settings
   const { data: privacyData, isLoading } = useGetUserPrivacySettingsQuery(
@@ -44,8 +46,8 @@ const PrivacySettings = () => {
       email_visibility: 'connections_organizers',
       show_public_email: false,
       public_email: '',
-      allow_connection_requests: 'everyone',
-      show_social_links: 'everyone',
+      allow_connection_requests: 'event_attendees',
+      show_social_links: 'event_attendees',
       show_company: true,
       show_bio: true,
     },
@@ -112,56 +114,72 @@ const PrivacySettings = () => {
   }
   
   return (
-    <form onSubmit={form.onSubmit(handleSubmit)}>
-      <Stack gap="lg">
-        <div className={styles.headerSection}>
-          <Title order={3} className={styles.sectionTitle}>Privacy Settings</Title>
-          <Text size="sm" className={styles.description}>
-            Control who can see your information and contact you
-          </Text>
-        </div>
-        
-        <Divider className={styles.divider} />
-        
-        <EmailSection form={form} />
-        
-        <Divider className={styles.divider} />
-        
-        <ConnectionSection form={form} />
-        
-        <Divider className={styles.divider} />
-        
-        <ProfileSection form={form} />
-        
-        {privacyData?.event_overrides?.length > 0 && (
-          <>
-            <Divider className={styles.divider} />
-            <EventOverrides overrides={privacyData.event_overrides} />
-          </>
-        )}
-        
-        {hasChanges && (
-          <Group justify="flex-end" mt="md" className={styles.buttonGroup}>
-            <Button
-              variant="subtle"
-              onClick={handleReset}
-              disabled={isUpdating}
-            >
-              <IconX size={16} />
-              Cancel
-            </Button>
-            <Button
-              variant="primary"
-              type="submit"
-              loading={isUpdating}
-            >
-              <IconCheck size={16} />
-              Save Changes
-            </Button>
-          </Group>
-        )}
-      </Stack>
-    </form>
+    <Stack gap="lg">
+      <div className={styles.headerSection}>
+        <Title order={3} className={styles.sectionTitle}>Privacy Settings</Title>
+        <Text size="sm" className={styles.description}>
+          Control who can see your information and contact you
+        </Text>
+      </div>
+      
+      <Tabs value={activeTab} onChange={setActiveTab} className={styles.privacyTabs}>
+        <Tabs.List>
+          <Tabs.Tab 
+            value="global" 
+            leftSection={<IconWorld size={16} />}
+          >
+            Global Privacy
+          </Tabs.Tab>
+          <Tabs.Tab 
+            value="events" 
+            leftSection={<IconCalendarEvent size={16} />}
+          >
+            Event Privacy
+          </Tabs.Tab>
+        </Tabs.List>
+
+        <Tabs.Panel value="global" pt="xl">
+          <form onSubmit={form.onSubmit(handleSubmit)}>
+            <Stack gap="lg">
+              <EmailSection form={form} />
+              
+              <Divider className={styles.divider} />
+              
+              <ConnectionSection form={form} />
+              
+              <Divider className={styles.divider} />
+              
+              <ProfileSection form={form} />
+              
+              {hasChanges && (
+                <Group justify="flex-end" mt="md" className={styles.buttonGroup}>
+                  <Button
+                    variant="subtle"
+                    onClick={handleReset}
+                    disabled={isUpdating}
+                  >
+                    <IconX size={16} />
+                    Cancel
+                  </Button>
+                  <Button
+                    variant="primary"
+                    type="submit"
+                    loading={isUpdating}
+                  >
+                    <IconCheck size={16} />
+                    Save Changes
+                  </Button>
+                </Group>
+              )}
+            </Stack>
+          </form>
+        </Tabs.Panel>
+
+        <Tabs.Panel value="events" pt="xl">
+          <EventOverrides />
+        </Tabs.Panel>
+      </Tabs>
+    </Stack>
   );
 };
 

@@ -5,7 +5,7 @@
 
 /* Header Section */
 .headerSection {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.75rem;
 }
 
 /* Section Title */
@@ -127,4 +127,37 @@
   color: #8b5cf6;
   border: 1px solid rgba(139, 92, 246, 0.15);
   font-size: 0.8rem;
+}
+
+/* Override Card Styling */
+.overrideCard {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.04);
+  padding: 1.5rem;
+  border-radius: 8px;
+}
+
+/* Privacy Tabs Styling */
+.privacyTabs {
+  margin-top: 0.5rem;
+}
+
+.privacyTabs :global(.mantine-Tabs-tab) {
+  font-weight: 500;
+  padding: 0.75rem 1.25rem;
+  transition: all 0.2s ease;
+}
+
+.privacyTabs :global(.mantine-Tabs-tab:hover) {
+  background: rgba(139, 92, 246, 0.04);
+}
+
+.privacyTabs :global(.mantine-Tabs-tab[data-active]) {
+  color: #8b5cf6;
+  border-color: #8b5cf6;
+}
+
+.privacyTabs :global(.mantine-Tabs-panel) {
+  padding-top: 1.5rem;
 }
