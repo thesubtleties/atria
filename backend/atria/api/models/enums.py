@@ -71,6 +71,26 @@ class ConnectionStatus(str, Enum):
     BLOCKED = "blocked"
 
 
+class EmailVisibility(str, Enum):
+    EVERYONE = "everyone"
+    CONNECTIONS_ORGANIZERS = "connections_organizers"
+    ORGANIZERS_ONLY = "organizers_only"
+    HIDDEN = "hidden"
+
+
+class ConnectionRequestPermission(str, Enum):
+    EVERYONE = "everyone"
+    EVENT_ATTENDEES = "event_attendees"
+    SPEAKERS_ORGANIZERS = "speakers_organizers"
+    NONE = "none"
+
+
+class SocialLinksVisibility(str, Enum):
+    EVERYONE = "everyone"
+    CONNECTIONS = "connections"
+    HIDDEN = "hidden"
+
+
 class MessageStatus(str, Enum):
     SENT = "sent"
     DELIVERED = "delivered"

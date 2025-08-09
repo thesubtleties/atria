@@ -23,6 +23,19 @@ class User(db.Model):
     bio = db.Column(db.Text)
     image_url = db.Column(db.Text)
     social_links = db.Column(db.JSON, nullable=False, default={})
+    privacy_settings = db.Column(
+        db.JSON, 
+        nullable=False, 
+        default={
+            "email_visibility": "connections_organizers",
+            "show_public_email": False,
+            "public_email": None,
+            "allow_connection_requests": "everyone",
+            "show_social_links": "everyone",
+            "show_company": True,
+            "show_bio": True
+        }
+    )
     is_active = db.Column(db.Boolean, nullable=False, default=True)
     email_verified = db.Column(db.Boolean, nullable=False, default=False, server_default='false')
     created_at = db.Column(
@@ -47,11 +60,15 @@ class User(db.Model):
     events = db.relationship(
         "Event",
         secondary="event_users",
+        primaryjoin="User.id == EventUser.user_id",
+        secondaryjoin="EventUser.event_id == Event.id",
         back_populates="users",
         overlaps="event_users",
+        viewonly=True
     )
     event_users = db.relationship(
         "EventUser",
+        foreign_keys="[EventUser.user_id]",
         back_populates="user",
         overlaps="events,users",
         cascade="all, delete-orphan",
