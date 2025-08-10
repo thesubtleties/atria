@@ -92,12 +92,26 @@ export function AttendeesGrid({ eventId }) {
             ...(organizerData?.event_users || []),
           ],
           total_items:
-            (adminData?.total_items || 0) + (organizerData?.total_items || 0),
+            (adminData?.total_items || adminData?.total || 0) + 
+            (organizerData?.total_items || organizerData?.total || 0),
+          total:
+            (adminData?.total_items || adminData?.total || 0) + 
+            (organizerData?.total_items || organizerData?.total || 0),
         }
       : regularData;
 
   const attendees = data?.event_users || [];
-  console.log('AttendeesGrid debug:', { eventId, data, attendees, isLoading });
+  console.log('AttendeesGrid debug:', { 
+    eventId, 
+    data, 
+    attendees, 
+    isLoading,
+    filterRole,
+    regularData,
+    adminData,
+    organizerData,
+    totalItems: data?.total_items
+  });
   console.log('Event data:', eventData);
   console.log('Event icebreakers:', eventData?.icebreakers);
 
@@ -183,16 +197,18 @@ export function AttendeesGrid({ eventId }) {
   };
 
   const filteredAttendees = attendees?.filter((attendee) => {
-    const matchesSearch =
-      !searchQuery ||
-      attendee.user_name
-        ?.toLowerCase()
-        .includes(searchQuery?.toLowerCase() || '') ||
-      attendee.speaker_title
-        ?.toLowerCase()
-        .includes(searchQuery?.toLowerCase() || '');
+    if (!searchQuery) return true;
+    
+    const searchLower = searchQuery.toLowerCase();
+    
+    const matchesSearch = 
+      attendee.first_name?.toLowerCase().includes(searchLower) ||
+      attendee.last_name?.toLowerCase().includes(searchLower) ||
+      attendee.full_name?.toLowerCase().includes(searchLower) ||
+      attendee.company_name?.toLowerCase().includes(searchLower) ||
+      attendee.title?.toLowerCase().includes(searchLower) ||
+      attendee.speaker_title?.toLowerCase().includes(searchLower);
 
-    // Role filtering is now handled by the API query
     return matchesSearch;
   });
 
@@ -244,7 +260,9 @@ export function AttendeesGrid({ eventId }) {
           />
         </div>
         <Text className={styles.totalCount}>
-          {data?.total_items || 0} total attendees
+          {searchQuery 
+            ? `${filteredAttendees?.length || 0} of ${data?.total_items || data?.total || 0} attendees`
+            : `${data?.total_items || data?.total || 0} total attendees`}
         </Text>
       </div>
 
