@@ -98,7 +98,7 @@ const SpeakerEditModal = ({ opened, onClose, speaker, eventId, onSuccess }) => {
           <TextInput
             label="Speaker Title"
             placeholder={speaker.title || "Enter speaker's title for this event"}
-            description="How they should be introduced at this event"
+            description="How they should be introduced (e.g., 'CEO @ Atria'). This overrides their profile title and company."
             className={styles.formInput}
             {...form.getInputProps('speaker_title')}
           />
