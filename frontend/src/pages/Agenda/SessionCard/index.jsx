@@ -128,12 +128,12 @@ export const SessionCard = ({
                             {speaker.company_name &&
                               ` @ ${speaker.company_name}`}
                           </span>
-                          {speaker.social_links && (
+                          {speaker.social_links && (speaker.social_links.linkedin || speaker.social_links.website) && (
                             <div
                               className={styles.socialLinks}
                               onClick={(e) => e.stopPropagation()}
                             >
-                              {speaker.social_links.linkedin && (
+                              {speaker.social_links?.linkedin && (
                                 <span
                                   className={styles.socialLink}
                                   onClick={(e) => {
@@ -149,7 +149,7 @@ export const SessionCard = ({
                                   <IconBrandLinkedin size={20} stroke={1.5} />
                                 </span>
                               )}
-                              {speaker.social_links.website && (
+                              {speaker.social_links?.website && (
                                 <span
                                   className={styles.socialLink}
                                   onClick={(e) => {

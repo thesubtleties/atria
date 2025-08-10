@@ -88,11 +88,17 @@
 
 .connectionName {
   font-weight: 500;
-  color: #1E293B;
+  color: #6366f1;
   font-size: 0.9rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: color 0.2s ease;
+}
+
+.connectionName:hover {
+  color: #4f46e5;
+  text-decoration: underline;
 }
 
 .connectionRole {
@@ -111,4 +117,24 @@
 
 .emptyState p {
   margin-bottom: 1rem;
+}
+
+.messageButton {
+  flex-shrink: 0;
+  padding: 0.5rem;
+  background: #8B5CF6;
+  color: white;
+  border: none;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2);
+  transition: all 0.2s ease;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.messageButton:hover {
+  background: #7C3AED;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
 }
