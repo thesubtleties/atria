@@ -1,6 +1,7 @@
 import { Text, Avatar, Group, Button, ActionIcon, Stack } from '@mantine/core';
 import { IconBrandLinkedin, IconWorld, IconMail, IconMessageCircle, IconUserPlus } from '@tabler/icons-react';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import styles from './styles/index.module.css';
 
 export function PersonCard({ 
@@ -12,6 +13,7 @@ export function PersonCard({
   showActions = true 
 }) {
   const currentUser = useSelector((state) => state.auth.user);
+  const navigate = useNavigate();
   const { 
     firstName, 
     lastName, 
@@ -29,13 +31,29 @@ export function PersonCard({
   const fullName = `${firstName || ''} ${lastName || ''}`.trim();
   const initial = firstName?.[0]?.toUpperCase() || '?';
   
+  // Check if we can view this person's full profile
+  const isOwnProfile = currentUser?.id === person.id;
+  const isConnected = connectionStatus === 'connected' || connectionStatus === 'accepted' || connectionStatus === 'ACCEPTED';
+  const canViewProfile = isOwnProfile || isConnected;
+  
+  const handleCardClick = () => {
+    if (canViewProfile) {
+      navigate(isOwnProfile ? '/app/profile' : `/app/users/${person.id}`);
+    }
+  };
+  
   // Privacy controls - what info to show
   const showEmail = privacySettings.showEmail ?? (variant === 'speaker');
   const showCompany = privacySettings.showCompany ?? true;
   const showSocials = privacySettings.showSocials ?? true;
 
   return (
-    <div className={styles.card}>
+    <div 
+      className={`${styles.card} ${canViewProfile ? styles.clickable : ''}`}
+      onClick={handleCardClick}
+      style={{ cursor: canViewProfile ? 'pointer' : 'default' }}
+      title={canViewProfile ? 'View profile' : 'Connect to view profile'}
+    >
       <div className={styles.header}>
         <Avatar 
           src={avatarUrl} 
@@ -88,6 +106,7 @@ export function PersonCard({
                     href={linkedin} 
                     target="_blank"
                     aria-label="LinkedIn"
+                    onClick={(e) => e.stopPropagation()}
                   >
                     <IconBrandLinkedin size={20} />
                   </ActionIcon>
@@ -101,6 +120,7 @@ export function PersonCard({
                   href={website} 
                   target="_blank"
                   aria-label="Website"
+                  onClick={(e) => e.stopPropagation()}
                 >
                   <IconWorld size={20} />
                 </ActionIcon>
@@ -112,6 +132,7 @@ export function PersonCard({
                   component="a" 
                   href={`mailto:${email}`}
                   aria-label="Email"
+                  onClick={(e) => e.stopPropagation()}
                 >
                   <IconMail size={20} />
                 </ActionIcon>

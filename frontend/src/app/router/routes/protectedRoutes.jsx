@@ -87,6 +87,10 @@ export const protectedRoutes = [
         element: <Profile />,
       },
       {
+        path: 'users/:userId',
+        element: <Profile />,
+      },
+      {
         path: 'network',
         element: <Network />,
       },
