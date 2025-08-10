@@ -3,6 +3,8 @@ from api.models import Event, User, EventUser, Session, SessionSpeaker, Connecti
 from api.models.enums import EventUserRole, ConnectionStatus
 from api.commons.pagination import paginate
 from flask_jwt_extended import get_jwt_identity
+from sqlalchemy.orm import joinedload
+from api.services.user import UserService
 
 
 class EventUserService:
@@ -51,54 +53,92 @@ class EventUserService:
     
     @staticmethod
     def get_event_users_with_connection_status(event_id, role=None, schema=None):
-        """Get list of event users with connection status relative to current user"""
+        """Get list of event users with privacy filtering based on viewer's role"""
         current_user_id = get_jwt_identity()
         
-        # Get base query
-        query = EventUser.query.filter_by(event_id=event_id)
+        if not current_user_id:
+            from flask_smorest import abort
+            abort(401, message="Authentication required")
+            
+        current_user_id = int(current_user_id)
         
+        # Check if current user is admin/organizer for this event
+        current_event_user = EventUser.query.filter_by(
+            event_id=event_id, 
+            user_id=current_user_id
+        ).first()
+        
+        is_event_admin = current_event_user and current_event_user.role in [
+            EventUserRole.ADMIN, 
+            EventUserRole.ORGANIZER
+        ]
+        
+        # Get base query with eager loading for efficiency
+        query = EventUser.query.filter_by(event_id=event_id)
         if role:
             query = query.filter_by(role=role)
         
-        # Get paginated results first
-        paginated_result = paginate(query, schema, collection_name="event_users")
+        # Eager load users to avoid N+1 queries
+        query = query.options(joinedload(EventUser.user))
         
-        # Add connection status to each user
-        if current_user_id:
-            current_user_id = int(current_user_id)
-            for event_user in paginated_result['event_users']:
-                user_id = event_user.get('user_id')
-                if user_id and user_id != current_user_id:
-                    # Check for existing connection
-                    connection = Connection.query.filter(
-                        (
-                            (Connection.requester_id == current_user_id) &
-                            (Connection.recipient_id == user_id)
-                        ) | (
-                            (Connection.requester_id == user_id) &
-                            (Connection.recipient_id == current_user_id)
-                        )
-                    ).first()
-                    
-                    if connection:
-                        event_user['connection_status'] = connection.status.value
-                        event_user['connection_id'] = connection.id
-                        # Determine if current user sent or received the request
-                        if connection.requester_id == current_user_id:
-                            event_user['connection_direction'] = 'sent'
-                        else:
-                            event_user['connection_direction'] = 'received'
-                    else:
-                        event_user['connection_status'] = None
-                        event_user['connection_id'] = None
-                        event_user['connection_direction'] = None
-                else:
-                    # It's the current user or user_id is None
-                    event_user['connection_status'] = None
-                    event_user['connection_id'] = None
-                    event_user['connection_direction'] = None
+        # Get all event users
+        event_users = query.all()
         
-        return paginated_result
+        # Process each user with appropriate privacy filtering
+        result = []
+        for event_user in event_users:
+            if is_event_admin:
+                # Admins get full data with real email for event management
+                user_data = {
+                    'id': event_user.user.id,
+                    'first_name': event_user.user.first_name,
+                    'last_name': event_user.user.last_name,
+                    'full_name': event_user.user.full_name,
+                    'email': event_user.user.email,  # Always real email for admins
+                    'company_name': event_user.user.company_name,
+                    'title': event_user.user.title,
+                    'bio': event_user.user.bio,
+                    'image_url': event_user.user.image_url,
+                    'social_links': event_user.user.social_links,
+                    '_admin_view': True  # Indicator for frontend
+                }
+            else:
+                # Regular users get privacy-filtered data
+                user_data = UserService.get_user_for_viewer(
+                    event_user.user_id,
+                    current_user_id,
+                    event_id=event_id,  # Pass event context for overrides
+                    require_connection=False  # No connection required in event context
+                )
+                user_data['_admin_view'] = False
+            
+            # Build event user response
+            event_user_data = {
+                'event_id': event_user.event_id,
+                'user_id': event_user.user_id,
+                'role': event_user.role.value,
+                'created_at': event_user.created_at.isoformat() if event_user.created_at else None,
+                'is_speaker': event_user.role == EventUserRole.SPEAKER,
+                'is_organizer': event_user.role == EventUserRole.ORGANIZER,
+                # Include speaker-specific fields if this is a speaker
+                'speaker_bio': event_user.speaker_bio if event_user.role == EventUserRole.SPEAKER else None,
+                'speaker_title': event_user.speaker_title if event_user.role == EventUserRole.SPEAKER else None,
+                # Merge user data (admin or filtered)
+                **user_data
+            }
+            
+            # Add connection status for non-self users
+            if event_user.user_id != current_user_id:
+                connection = EventUserService._get_connection_status(
+                    current_user_id, 
+                    event_user.user_id
+                )
+                event_user_data.update(connection)
+            
+            result.append(event_user_data)
+        
+        # Apply pagination to the processed results
+        return EventUserService._paginate_list(result, "event_users")
 
     @staticmethod
     def add_user_to_event(event_id, data):
@@ -190,3 +230,50 @@ class EventUserService:
         db.session.commit()
 
         return event_user
+    
+    @staticmethod
+    def _get_connection_status(current_user_id, target_user_id):
+        """Get connection status between two users"""
+        connection = Connection.query.filter(
+            (
+                (Connection.requester_id == current_user_id) &
+                (Connection.recipient_id == target_user_id)
+            ) | (
+                (Connection.requester_id == target_user_id) &
+                (Connection.recipient_id == current_user_id)
+            )
+        ).first()
+        
+        if connection:
+            return {
+                'connection_status': connection.status.value,
+                'connection_id': connection.id,
+                'connection_direction': 'sent' if connection.requester_id == current_user_id else 'received'
+            }
+        
+        return {
+            'connection_status': None,
+            'connection_id': None,
+            'connection_direction': None
+        }
+    
+    @staticmethod
+    def _paginate_list(items, collection_name):
+        """Apply pagination to a list of items"""
+        from flask import request
+        
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 50, type=int)
+        
+        # Calculate pagination
+        total = len(items)
+        start = (page - 1) * per_page
+        end = start + per_page
+        
+        return {
+            collection_name: items[start:end],
+            'total': total,
+            'page': page,
+            'per_page': per_page,
+            'pages': (total + per_page - 1) // per_page if total > 0 else 0
+        }
