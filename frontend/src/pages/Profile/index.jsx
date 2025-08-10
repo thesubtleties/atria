@@ -310,8 +310,8 @@ export const ProfilePage = () => {
         
         {/* Right Column */}
         <div>
-          {/* Activity Overview */}
-          <ActivityOverview userId={profileUserId} />
+          {/* Activity Overview - Only show for own profile */}
+          {isOwnProfile && <ActivityOverview userId={profileUserId} />}
           
           {/* About */}
           <AboutSection 
