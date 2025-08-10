@@ -7,8 +7,9 @@ import {
   LoadingOverlay,
   Alert,
 } from '@mantine/core';
-import { IconCheck, IconX } from '@tabler/icons-react';
+import { IconCheck, IconX, IconUserPlus } from '@tabler/icons-react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useParams } from 'react-router-dom';
 import { useGetUserQuery, useUpdateUserMutation } from '@/app/features/users/api';
 import { useForm, zodResolver } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
@@ -25,12 +26,18 @@ import styles from './styles/index.module.css';
 export const ProfilePage = () => {
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.auth.user);
+  const { userId } = useParams(); // Get userId from URL params
   const [isEditing, setIsEditing] = useState(false);
   const [tempImageUrl, setTempImageUrl] = useState(null);
   const parallaxRef = useRef(null);
   
-  const { data: userProfile, isLoading, error } = useGetUserQuery(currentUser?.id, {
-    skip: !currentUser?.id,
+  // Determine which user profile to load
+  const profileUserId = userId ? parseInt(userId) : currentUser?.id;
+  const isOwnProfile = profileUserId === currentUser?.id;
+  
+  // Fetch user profile (backend will enforce connection requirement)
+  const { data: userProfile, isLoading, error } = useGetUserQuery(profileUserId, {
+    skip: !profileUserId,
   });
   
   const [updateUser, { isLoading: isUpdating }] = useUpdateUserMutation();
@@ -181,6 +188,21 @@ export const ProfilePage = () => {
   }
   
   if (error) {
+    // Handle 403 error for non-connected users
+    if (error?.status === 403) {
+      return (
+        <Container size="xl" className={styles.profileContainer}>
+          <Alert 
+            color="yellow" 
+            title="Connection Required"
+            icon={<IconUserPlus size={20} />}
+          >
+            You must be connected with this user to view their profile.
+          </Alert>
+        </Container>
+      );
+    }
+    
     return (
       <Container size="xl" className={styles.profileContainer}>
         <Alert color="red" title="Error">
@@ -209,7 +231,7 @@ export const ProfilePage = () => {
       <ProfileHero 
         user={displayUser} 
         onEditClick={handleEditClick}
-        isOwnProfile={true}
+        isOwnProfile={isOwnProfile}
         isEditing={isEditing}
         onAvatarReroll={handleAvatarReroll}
       />
@@ -289,7 +311,7 @@ export const ProfilePage = () => {
         {/* Right Column */}
         <div>
           {/* Activity Overview */}
-          <ActivityOverview userId={currentUser?.id} />
+          <ActivityOverview userId={profileUserId} />
           
           {/* About */}
           <AboutSection 

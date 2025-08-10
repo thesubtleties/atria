@@ -59,12 +59,14 @@ export const ProfileHero = ({ user, onEditClick, isOwnProfile = true, isEditing 
             </p>
           )}
           <div className={styles.profileMeta}>
-            <div className={styles.profileMetaItem}>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                <path d="M3 5.5a.5.5 0 01.5-.5h9a.5.5 0 010 1h-9a.5.5 0 01-.5-.5zM3 8a.5.5 0 01.5-.5h9a.5.5 0 010 1h-9A.5.5 0 013 8zm0 2.5a.5.5 0 01.5-.5h6a.5.5 0 010 1h-6a.5.5 0 01-.5-.5z" />
-              </svg>
-              {user.email}
-            </div>
+            {user.email && (
+              <div className={styles.profileMetaItem}>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M3 5.5a.5.5 0 01.5-.5h9a.5.5 0 010 1h-9a.5.5 0 01-.5-.5zM3 8a.5.5 0 01.5-.5h9a.5.5 0 010 1h-9A.5.5 0 013 8zm0 2.5a.5.5 0 01.5-.5h6a.5.5 0 010 1h-6a.5.5 0 01-.5-.5z" />
+                </svg>
+                {user.email}
+              </div>
+            )}
             {memberSince && (
               <div className={styles.profileMetaItem}>
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
