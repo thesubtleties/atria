@@ -108,14 +108,24 @@ class PrivacyService:
             result['show_public_email'] = show_public_email
             result['public_email'] = public_email
         elif context['is_organizer']:
-            # Organizers always see real email
+            # Organizers always see real email for event management
             result['show_real_email'] = True
         elif email_visibility == 'event_attendees':
-            if show_public_email and public_email:
-                result['show_public_email'] = True
-                result['public_email'] = public_email
+            # Most permissive setting - but context matters:
+            show_email = False
+            if event_id:
+                # In event context: show to actual event attendees
+                show_email = context.get('is_event_attendee', False)
             else:
-                result['show_real_email'] = True
+                # Outside event context: connections are "higher tier"
+                show_email = context['is_connected']
+            
+            if show_email:
+                if show_public_email and public_email:
+                    result['show_public_email'] = True
+                    result['public_email'] = public_email
+                else:
+                    result['show_real_email'] = True
         elif email_visibility == 'connections_organizers' and context['is_connected']:
             if show_public_email and public_email:
                 result['show_public_email'] = True
@@ -206,8 +216,20 @@ class PrivacyService:
             # Explicitly hidden from EVERYONE except self (even organizers)
             filtered['social_links'] = None
         elif show_social_links == 'event_attendees':
-            # Show to all event attendees (including organizers)
-            filtered['social_links'] = user.social_links or {}
+            # Most permissive setting - but context matters:
+            if event_id:
+                # In event context: show only to actual event attendees
+                if context.get('is_event_attendee'):
+                    filtered['social_links'] = user.social_links or {}
+                else:
+                    filtered['social_links'] = None
+            else:
+                # Outside event context: connections are "higher tier" than attendees
+                # Profile pages and My Network use this path
+                if context['is_connected']:
+                    filtered['social_links'] = user.social_links or {}
+                else:
+                    filtered['social_links'] = None
         elif show_social_links == 'connections' and context['is_connected']:
             # Show only to connections
             filtered['social_links'] = user.social_links or {}
