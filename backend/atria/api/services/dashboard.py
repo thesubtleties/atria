@@ -179,7 +179,9 @@ class DashboardService:
 
     @staticmethod
     def _get_recent_connections(user_id: int, limit: int = 5):
-        """Get user's most recent connections"""
+        """Get user's most recent connections with privacy filtering"""
+        from api.services.privacy import PrivacyService
+        
         connections = Connection.query.filter(
             or_(
                 and_(Connection.requester_id == user_id, Connection.status == ConnectionStatus.ACCEPTED),
@@ -190,27 +192,28 @@ class DashboardService:
             joinedload(Connection.recipient)
         ).all()
 
+        # Get the viewer for privacy context
+        viewer = User.query.get(user_id)
+        
         connection_list = []
         for conn in connections:
             # Get the other user in the connection
             other_user = conn.recipient if conn.requester_id == user_id else conn.requester
             
-            # Get the other user's current event roles for context
-            # This is simplified - in production you might want to get their primary role/company
-            recent_event_user = EventUser.query.filter_by(
-                user_id=other_user.id
-            ).order_by(EventUser.created_at.desc()).first()
+            # Apply privacy filtering to get what the viewer can see
+            context = PrivacyService.get_viewer_context(other_user, viewer, None)
+            filtered_data = PrivacyService.filter_user_data(other_user, context, None)
             
             connection_list.append({
                 'id': conn.id,
                 'user': {
                     'id': other_user.id,
-                    'username': other_user.email,  # Using email as username
-                    'display_name': other_user.full_name,  # Using full_name property
-                    'avatar_url': other_user.image_url  # Correct field name
+                    'username': other_user.email,  # Using email as username (always visible for connections)
+                    'display_name': other_user.full_name,  # Using full_name property (always visible)
+                    'avatar_url': other_user.image_url  # Correct field name (always visible)
                 },
-                'company': other_user.company_name,  # Get directly from user
-                'title': other_user.title,  # Get directly from user
+                'company': filtered_data.get('company_name'),  # Use privacy-filtered data
+                'title': filtered_data.get('title'),  # Use privacy-filtered data
                 'connected_at': conn.updated_at
             })
 
