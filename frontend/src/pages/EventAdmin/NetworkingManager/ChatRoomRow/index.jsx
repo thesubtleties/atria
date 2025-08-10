@@ -63,8 +63,8 @@ const ChatRoomRow = ({ room, color, onEdit, isTableRow }) => {
   };
 
   const handleViewChat = () => {
-    // Navigate to the networking page with this room selected
-    navigate(`/app/events/${room.event_id}/networking?room=${room.id}`);
+    // Navigate to the networking page with chat tab and this room selected
+    navigate(`/app/events/${room.event_id}/networking?tab=chat&room=${room.id}`);
   };
 
   // Show indicator if room has recent activity

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Text, Stack, Loader, Center } from '@mantine/core';
 import { IconHash, IconLock, IconGlobe, IconMicrophone } from '@tabler/icons-react';
+import { useSearchParams } from 'react-router-dom';
 import { useGetChatRoomsQuery, useSendMessageMutation } from '@/app/features/chat/api';
 import { useGetEventQuery } from '@/app/features/events/api';
 import { joinEventNotifications, leaveEventNotifications } from '@/app/features/networking/socketClient';
@@ -10,6 +11,7 @@ import styles from './styles/index.module.css';
 export function ChatArea({ eventId }) {
   console.log('ChatArea component mounting with eventId:', eventId);
   
+  const [searchParams, setSearchParams] = useSearchParams();
   const [activeRoom, setActiveRoom] = useState(null);
   const [inputValues, setInputValues] = useState({});
   
@@ -44,11 +46,56 @@ export function ChatArea({ eventId }) {
   // Determine if current user can moderate messages
   const canModerate = eventData?.user_role === 'ADMIN' || eventData?.user_role === 'ORGANIZER';
 
+  // Initialize active room from URL param or first room (only on mount and rooms change)
   useEffect(() => {
-    if (rooms.length > 0 && !activeRoom) {
-      setActiveRoom(rooms[0].id);
+    const roomParam = searchParams.get('room');
+    
+    if (rooms.length > 0) {
+      if (roomParam) {
+        // Check if the room from URL exists
+        const roomExists = rooms.some(r => r.id === parseInt(roomParam));
+        if (roomExists) {
+          const roomId = parseInt(roomParam);
+          if (activeRoom !== roomId) {
+            console.log('Setting active room from URL:', roomId);
+            setActiveRoom(roomId);
+          }
+        } else {
+          // Room doesn't exist, use first room
+          if (activeRoom !== rooms[0].id) {
+            setActiveRoom(rooms[0].id);
+          }
+        }
+      } else if (!activeRoom) {
+        // No room param and no active room, use first room
+        setActiveRoom(rooms[0].id);
+      }
     }
-  }, [rooms, activeRoom]);
+  }, [rooms, activeRoom]); // Only depend on rooms changing, not searchParams
+  
+  // Listen for URL changes (browser back/forward)
+  useEffect(() => {
+    const roomParam = searchParams.get('room');
+    if (roomParam && rooms.length > 0) {
+      const roomId = parseInt(roomParam);
+      const roomExists = rooms.some(r => r.id === roomId);
+      if (roomExists && activeRoom !== roomId) {
+        console.log('URL changed, updating active room to:', roomId);
+        setActiveRoom(roomId);
+      }
+    }
+  }, [searchParams]);
+
+  // Update URL when room changes (but not from URL updates)
+  const handleRoomChange = (roomId) => {
+    console.log('Switching to room:', roomId);
+    setActiveRoom(roomId);
+    
+    // Update URL
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set('room', roomId.toString());
+    setSearchParams(newParams, { replace: true });
+  };
 
   // Join event notifications for chat updates
   useEffect(() => {
@@ -145,7 +192,7 @@ export function ChatArea({ eventId }) {
               <button
                 key={room.id}
                 className={`${styles.roomTab} ${isActive ? styles.roomTabActive : ''}`}
-                onClick={() => setActiveRoom(room.id)}
+                onClick={() => handleRoomChange(room.id)}
                 disabled={!canAccessRoom()}
               >
                 {getRoomIcon(room.room_type)}
