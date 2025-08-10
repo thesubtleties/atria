@@ -4,15 +4,31 @@ import styles from './SpeakerCard.module.css';
 
 export const SpeakerCard = ({ speaker }) => {
   const { 
-    user_name, 
-    speaker_title, 
-    speaker_bio,
-    speaker_company,
+    full_name,
+    first_name,
+    last_name,
+    speaker_title, // Event-specific title (takes priority)
+    speaker_bio,   // Event-specific bio (takes priority)
+    title,         // User's profile title (fallback)
+    bio,           // User's profile bio (fallback)
+    company_name,
+    image_url,
     sessions = [] // sessions this speaker is presenting
   } = speaker;
 
+  // Use event-specific fields with fallback to profile fields
+  const displayName = full_name || `${first_name || ''} ${last_name || ''}`.trim() || 'Speaker';
+  const displayBio = speaker_bio || bio;        // Event-specific takes priority
+  
+  // If we have a custom speaker_title, use it and hide company
+  // Otherwise show profile title and company separately
+  const hasCustomTitle = !!speaker_title;
+  const displayTitle = speaker_title || title;
+  const displayCompany = hasCustomTitle ? null : company_name;  // Hide company if custom title exists
+
   // Generate avatar initials
   const getInitials = (name) => {
+    if (!name) return '??';
     return name
       .split(' ')
       .map(word => word[0])
@@ -35,34 +51,34 @@ export const SpeakerCard = ({ speaker }) => {
           size={120}
           radius="xl"
           className={styles.avatar}
-          src={speaker.image_url}
+          src={image_url}
         >
-          {getInitials(user_name)}
+          {getInitials(displayName)}
         </Avatar>
       </div>
 
       {/* Content section */}
       <div className={styles.content}>
-        <Text className={styles.speakerName}>{user_name}</Text>
+        <Text className={styles.speakerName}>{displayName}</Text>
         
         {/* Title and company */}
         <div className={styles.roleInfo}>
-          {speaker_title && (
+          {displayTitle && (
             <Group gap={6} className={styles.titleGroup}>
               <IconBriefcase size={14} className={styles.icon} />
-              <Text className={styles.title}>{speaker_title}</Text>
+              <Text className={styles.title}>{displayTitle}</Text>
             </Group>
           )}
           
-          {speaker_company && (
-            <Text className={styles.company}>{speaker_company}</Text>
+          {displayCompany && (
+            <Text className={styles.company}>{displayCompany}</Text>
           )}
         </div>
 
         {/* Bio */}
-        {speaker_bio && (
+        {displayBio && (
           <Text className={styles.bio} lineClamp={3}>
-            {speaker_bio}
+            {displayBio}
           </Text>
         )}
 

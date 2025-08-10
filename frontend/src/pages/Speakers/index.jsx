@@ -20,9 +20,13 @@ export const SpeakersPage = () => {
     );
   }
 
-  // Sort speakers alphabetically by name
+  // Sort speakers alphabetically by name (handle nullable fields)
   const sortedSpeakers = data?.event_users ? 
-    [...data.event_users].sort((a, b) => a.user_name.localeCompare(b.user_name)) 
+    [...data.event_users].sort((a, b) => {
+      const nameA = a.full_name || a.last_name || 'Unknown';
+      const nameB = b.full_name || b.last_name || 'Unknown';
+      return nameA.localeCompare(nameB);
+    }) 
     : [];
 
   return (
