@@ -52,10 +52,15 @@ class UserResource(MethodView):
     def get(self, user_id):
         """Get user profile with privacy filtering"""
         current_user_id = int(get_jwt_identity())
-        event_id = request.args.get('event_id', type=int)
-
-        # Use privacy-aware method that filters data based on viewer context
-        return UserService.get_user_for_viewer(user_id, current_user_id, event_id)
+        
+        # For full profile viewing, require connection (no event context)
+        # Service layer will handle the connection check and privacy filtering
+        return UserService.get_user_for_viewer(
+            user_id, 
+            current_user_id, 
+            event_id=None,  # No event context for full profiles
+            require_connection=True  # Enforce connection requirement
+        )
 
     @blp.arguments(UserUpdateSchema)
     @blp.response(200, UserDetailSchema)

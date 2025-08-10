@@ -24,7 +24,8 @@ class UserService:
     def get_user_for_viewer(
         user_id: int, 
         viewer_id: Optional[int], 
-        event_id: Optional[int] = None
+        event_id: Optional[int] = None,
+        require_connection: bool = False
     ) -> Dict[str, Any]:
         """
         Get user data filtered based on viewer's permissions and privacy settings.
@@ -34,12 +35,37 @@ class UserService:
             user_id: ID of the user to retrieve
             viewer_id: ID of the user viewing the data (None for unauthenticated)
             event_id: Optional event context for event-specific privacy rules
+            require_connection: If True, requires connection for non-self viewing
             
         Returns:
             Dictionary of filtered user data based on privacy settings
         """
+        from api.models import Connection
+        from api.models.enums import ConnectionStatus
+        from flask_smorest import abort
+        
         user = User.query.get_or_404(user_id)
         viewer = User.query.get(viewer_id) if viewer_id else None
+        
+        # Check if viewing own profile
+        if viewer_id and viewer_id == user_id:
+            # Return full data for own profile (use proper context from PrivacyService)
+            context = PrivacyService.get_viewer_context(user, viewer, event_id)
+            return PrivacyService.filter_user_data(user, context, event_id)
+        
+        # If connection required and not viewing self
+        if require_connection:
+            if not viewer_id:
+                abort(401, message="Authentication required")
+                
+            # Check for accepted connection
+            connection = Connection.query.filter(
+                ((Connection.requester_id == viewer_id) & (Connection.recipient_id == user_id)) |
+                ((Connection.requester_id == user_id) & (Connection.recipient_id == viewer_id))
+            ).filter_by(status=ConnectionStatus.ACCEPTED).first()
+            
+            if not connection:
+                abort(403, message="You must be connected with this user to view their profile")
         
         # Get viewer context
         context = PrivacyService.get_viewer_context(user, viewer, event_id)
