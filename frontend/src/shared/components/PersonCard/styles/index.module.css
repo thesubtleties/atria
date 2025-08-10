@@ -21,6 +21,20 @@
   background: rgba(255, 255, 255, 0.85);
 }
 
+.card.clickable {
+  cursor: pointer;
+}
+
+.card.clickable:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(139, 92, 246, 0.1);
+  border-color: rgba(139, 92, 246, 0.2);
+}
+
+.card:not(.clickable) {
+  cursor: default;
+}
+
 .header {
   display: flex;
   align-items: flex-start;
