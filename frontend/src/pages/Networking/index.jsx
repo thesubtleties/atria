@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Badge, Container } from '@mantine/core';
 import { IconMessages, IconUsers, IconUserPlus } from '@tabler/icons-react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { ChatArea } from './ChatArea';
 import { AttendeesGrid } from './AttendeesGrid';
 import { RequestsList } from './RequestsList';
@@ -10,7 +10,11 @@ import styles from './styles/index.module.css';
 
 export function Networking() {
   const { eventId } = useParams();
-  const [activeTab, setActiveTab] = useState('chat');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState(() => {
+    // Initialize from URL param or default to 'chat'
+    return searchParams.get('tab') || 'chat';
+  });
   
   // Get pending connections count for badge
   const { data: pendingData } = useGetPendingConnectionsQuery({
@@ -19,6 +23,24 @@ export function Networking() {
   });
   
   const pendingCount = pendingData?.total_items || 0;
+
+  // Sync URL params when tab changes
+  useEffect(() => {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set('tab', activeTab);
+    
+    // Remove room param if not on chat tab
+    if (activeTab !== 'chat') {
+      newParams.delete('room');
+    }
+    // Keep existing room param if we're on chat tab
+    
+    setSearchParams(newParams, { replace: true });
+  }, [activeTab, searchParams, setSearchParams]);
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+  };
 
   return (
     <div className={styles.container}>
@@ -42,21 +64,21 @@ export function Networking() {
             <div className={styles.customTabsList}>
               <button 
                 className={`${styles.customTab} ${activeTab === 'chat' ? styles.customTabActive : ''}`}
-                onClick={() => setActiveTab('chat')}
+                onClick={() => handleTabChange('chat')}
               >
                 <IconMessages size={18} />
                 <span>Chat</span>
               </button>
               <button 
                 className={`${styles.customTab} ${activeTab === 'attendees' ? styles.customTabActive : ''}`}
-                onClick={() => setActiveTab('attendees')}
+                onClick={() => handleTabChange('attendees')}
               >
                 <IconUsers size={18} />
                 <span>Attendees</span>
               </button>
               <button
                 className={`${styles.customTab} ${activeTab === 'requests' ? styles.customTabActive : ''}`}
-                onClick={() => setActiveTab('requests')}
+                onClick={() => handleTabChange('requests')}
               >
                 <IconUserPlus size={18} />
                 <span>Requests</span>
