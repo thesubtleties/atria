@@ -5,10 +5,12 @@ import { useCreateDirectMessageThreadMutation } from '@/app/features/networking/
 import { useDispatch, useSelector } from 'react-redux';
 import { openThread } from '@/app/store/chatSlice';
 import { notifications } from '@mantine/notifications';
+import { useNavigate } from 'react-router-dom';
 import styles from './styles/index.module.css';
 
 export function ConnectionRow({ connection }) {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const currentUser = useSelector((state) => state.auth.user);
   const [createThread, { isLoading: isCreatingThread }] = useCreateDirectMessageThreadMutation();
   const [isMessaging, setIsMessaging] = useState(false);
@@ -72,7 +74,14 @@ export function ConnectionRow({ connection }) {
           >
             {otherUser.full_name?.[0]?.toUpperCase()}
           </Avatar>
-          <Text fw={500}>{otherUser.full_name}</Text>
+          <Text 
+            fw={500} 
+            className={styles.clickableName}
+            onClick={() => navigate(`/app/users/${otherUser.id}`)}
+            style={{ cursor: 'pointer', color: '#6366f1' }}
+          >
+            {otherUser.full_name}
+          </Text>
         </Group>
       </Table.Td>
       
@@ -127,6 +136,9 @@ export function ConnectionRow({ connection }) {
             >
               <IconWorld size={16} />
             </ActionIcon>
+          )}
+          {!otherUser.social_links?.linkedin && !otherUser.social_links?.website && (
+            <Text size="sm" c="dimmed">-</Text>
           )}
         </Group>
       </Table.Td>

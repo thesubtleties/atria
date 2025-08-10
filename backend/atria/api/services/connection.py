@@ -15,7 +15,10 @@ from api.commons.pagination import paginate
 class ConnectionService:
     @staticmethod
     def get_user_connections(user_id, status=None, schema=None):
-        """Get connections for a user with optional status filter"""
+        """Get connections for a user with optional status filter and privacy filtering"""
+        from api.services.privacy import PrivacyService
+        from api.models import User
+        
         # Build query for connections where user is either requester or recipient
         query = Connection.query.filter(
             (Connection.requester_id == user_id)
@@ -30,9 +33,61 @@ class ConnectionService:
         query = query.order_by(Connection.created_at.desc())
 
         if schema:
-            return paginate(query, schema, collection_name="connections")
+            # Get paginated results first
+            from api.commons.pagination import extract_pagination
+            from flask import url_for, request
+            
+            page, per_page, other_request_args = extract_pagination(**request.args)
+            page_obj = query.paginate(page=page, per_page=per_page)
+            
+            # Apply privacy filtering to each connection's users
+            viewer = User.query.get(user_id)
+            for connection in page_obj.items:
+                # Apply privacy filtering to requester
+                ConnectionService._apply_user_privacy_filtering(
+                    connection, 'requester', viewer
+                )
+                # Apply privacy filtering to recipient
+                ConnectionService._apply_user_privacy_filtering(
+                    connection, 'recipient', viewer
+                )
+            
+            # Generate pagination response
+            endpoint = request.endpoint
+            view_args = request.view_args or {}
+            
+            links = {
+                "self": url_for(endpoint, page=page_obj.page, per_page=per_page, **other_request_args, **view_args),
+                "first": url_for(endpoint, page=1, per_page=per_page, **other_request_args, **view_args),
+                "last": url_for(endpoint, page=page_obj.pages, per_page=per_page, **other_request_args, **view_args),
+            }
+            
+            if page_obj.has_next:
+                links["next"] = url_for(endpoint, page=page_obj.next_num, per_page=per_page, **other_request_args, **view_args)
+            
+            if page_obj.has_prev:
+                links["prev"] = url_for(endpoint, page=page_obj.prev_num, per_page=per_page, **other_request_args, **view_args)
+            
+            return {
+                "total_items": page_obj.total,
+                "total_pages": page_obj.pages,
+                "current_page": page_obj.page,
+                "per_page": per_page,
+                **links,
+                "connections": schema.dump(page_obj.items),
+            }
 
-        return query.all()
+        # For non-paginated results
+        connections = query.all()
+        viewer = User.query.get(user_id)
+        for connection in connections:
+            ConnectionService._apply_user_privacy_filtering(
+                connection, 'requester', viewer
+            )
+            ConnectionService._apply_user_privacy_filtering(
+                connection, 'recipient', viewer
+            )
+        return connections
 
     @staticmethod
     def get_pending_requests(user_id, schema=None):
@@ -310,3 +365,28 @@ class ConnectionService:
                 }
 
         return request_data
+    
+    @staticmethod
+    def _apply_user_privacy_filtering(connection, user_attr, viewer):
+        """Apply privacy filtering to a user in a connection"""
+        from api.services.privacy import PrivacyService
+        
+        # Get the user object from the connection
+        user = getattr(connection, user_attr)
+        if not user:
+            return
+        
+        # Since these are connections, they can see each other but with privacy rules
+        # Get the privacy context
+        context = PrivacyService.get_viewer_context(user, viewer, None)
+        
+        # Apply privacy filtering
+        filtered_data = PrivacyService.filter_user_data(user, context, None)
+        
+        # Store filtered data as temporary attributes
+        user._filtered_email = filtered_data.get('email')
+        user._filtered_title = filtered_data.get('title')
+        user._filtered_company_name = filtered_data.get('company_name')
+        user._filtered_social_links = filtered_data.get('social_links')
+        user._filtered_bio = filtered_data.get('bio')
+        user._privacy_filtered = True

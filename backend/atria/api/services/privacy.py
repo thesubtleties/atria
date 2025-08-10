@@ -198,14 +198,22 @@ class PrivacyService:
             filtered['bio'] = None
         
         # Apply social links visibility
-        if context['is_self'] or context['is_organizer']:
+        # Social links respect user's privacy even for organizers (unlike email)
+        if context['is_self']:
+            # Always show to self
             filtered['social_links'] = user.social_links or {}
+        elif show_social_links == 'hidden':
+            # Explicitly hidden from EVERYONE except self (even organizers)
+            filtered['social_links'] = None
         elif show_social_links == 'event_attendees':
+            # Show to all event attendees (including organizers)
             filtered['social_links'] = user.social_links or {}
         elif show_social_links == 'connections' and context['is_connected']:
+            # Show only to connections
             filtered['social_links'] = user.social_links or {}
         else:
-            filtered['social_links'] = {}
+            # Default to hidden if not specified or no connection
+            filtered['social_links'] = None
         
         # Add privacy settings and account info only for self
         if context['is_self']:

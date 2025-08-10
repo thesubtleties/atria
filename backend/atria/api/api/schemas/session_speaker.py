@@ -1,11 +1,11 @@
 from api.extensions import ma, db
 from api.models import SessionSpeaker
 from api.models.enums import SessionSpeakerRole
-from marshmallow import validates, ValidationError
+from marshmallow import validates, ValidationError, fields
 
 
 class SessionSpeakerSchema(ma.SQLAlchemyAutoSchema):
-    """Base SessionSpeaker Schema"""
+    """Base SessionSpeaker Schema with privacy filtering support"""
 
     class Meta:
         model = SessionSpeaker
@@ -15,11 +15,46 @@ class SessionSpeakerSchema(ma.SQLAlchemyAutoSchema):
     # Computed Property
     speaker_name = ma.String(dump_only=True)
 
-    # From User Model
-    image_url = ma.String(attribute="user.image_url")
-    title = ma.String(attribute="user.title")
-    company_name = ma.String(attribute="user.company_name")
-    social_links = ma.Dict(attribute="user.social_links")
+    # These fields use privacy-filtered data if available, otherwise fall back to user data
+    image_url = ma.Method("get_image_url")
+    title = ma.Method("get_title")
+    company_name = ma.Method("get_company_name")
+    social_links = ma.Method("get_social_links")
+    
+    def get_image_url(self, obj):
+        """Get image URL (not filtered by privacy)"""
+        return obj.user.image_url if obj.user else None
+    
+    def get_title(self, obj):
+        """Get title with privacy filtering"""
+        if hasattr(obj, '_privacy_filtered') and obj._privacy_filtered:
+            return obj._filtered_title
+        # SAFETY: Hide by default if privacy filtering wasn't applied
+        # This should only happen if the service layer didn't apply filtering
+        import logging
+        if obj.user:
+            logging.warning(f"SessionSpeakerSchema: Privacy filtering not applied for speaker user {obj.user.id}")
+        return None
+    
+    def get_company_name(self, obj):
+        """Get company name with privacy filtering"""
+        if hasattr(obj, '_privacy_filtered') and obj._privacy_filtered:
+            return obj._filtered_company_name
+        # SAFETY: Hide by default if privacy filtering wasn't applied
+        import logging
+        if obj.user:
+            logging.warning(f"SessionSpeakerSchema: Privacy filtering not applied for speaker user {obj.user.id}")
+        return None
+    
+    def get_social_links(self, obj):
+        """Get social links with privacy filtering"""
+        if hasattr(obj, '_privacy_filtered') and obj._privacy_filtered:
+            return obj._filtered_social_links
+        # SAFETY: Hide by default if privacy filtering wasn't applied
+        import logging
+        if obj.user:
+            logging.warning(f"SessionSpeakerSchema: Privacy filtering not applied for speaker user {obj.user.id}")
+        return None
 
 
 class SessionSpeakerDetailSchema(SessionSpeakerSchema):

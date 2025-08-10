@@ -1,10 +1,10 @@
 # api/services/session.py
-from datetime import datetime, time
-from typing import Dict, List, Optional, Tuple, Any, Union
+from datetime import time
+from typing import Dict, Optional, Any
 
 from api.extensions import db
 from api.models import Session, Event, User, SessionSpeaker
-from api.models.enums import SessionStatus, SessionType, SessionSpeakerRole
+from api.models.enums import SessionStatus, SessionSpeakerRole
 from api.commons.pagination import paginate
 
 
@@ -13,7 +13,7 @@ class SessionService:
     def get_event_sessions(
         event_id: int, day_number: Optional[int] = None, schema=None
     ):
-        """Get sessions for an event with optional day filter"""
+        """Get sessions for an event with optional day filter and privacy-filtered speaker data"""
         # Verify event exists
         event = Event.query.get_or_404(event_id)
 
@@ -31,18 +31,60 @@ class SessionService:
         query = query.order_by(Session.day_number, Session.start_time)
 
         if schema:
-            return paginate(query, schema, collection_name="sessions")
-
-        return query.all()
+            # Use the standard paginate which will fetch and serialize
+            # But we need to hook into it to apply privacy filtering
+            from api.commons.pagination import extract_pagination
+            from flask import url_for, request
+            
+            page, per_page, other_request_args = extract_pagination(**request.args)
+            page_obj = query.paginate(page=page, per_page=per_page)
+            
+            # Apply privacy filtering to the fetched items BEFORE serialization
+            for session in page_obj.items:
+                SessionService._apply_speaker_privacy_filtering(session)
+            
+            # Generate pagination response
+            endpoint = request.endpoint
+            view_args = request.view_args or {}
+            
+            links = {
+                "self": url_for(endpoint, page=page_obj.page, per_page=per_page, **other_request_args, **view_args),
+                "first": url_for(endpoint, page=1, per_page=per_page, **other_request_args, **view_args),
+                "last": url_for(endpoint, page=page_obj.pages, per_page=per_page, **other_request_args, **view_args),
+            }
+            
+            if page_obj.has_next:
+                links["next"] = url_for(endpoint, page=page_obj.next_num, per_page=per_page, **other_request_args, **view_args)
+            
+            if page_obj.has_prev:
+                links["prev"] = url_for(endpoint, page=page_obj.prev_num, per_page=per_page, **other_request_args, **view_args)
+            
+            return {
+                "total_items": page_obj.total,
+                "total_pages": page_obj.pages,
+                "current_page": page_obj.page,
+                "per_page": per_page,
+                **links,
+                "sessions": schema.dump(page_obj.items),  # Now serialized with filtered data
+            }
+        
+        # For non-paginated results, get all and filter
+        sessions = query.all()
+        for session in sessions:
+            SessionService._apply_speaker_privacy_filtering(session)
+        return sessions
 
     @staticmethod
     def get_session(session_id: int):
-        """Get a session by ID"""
+        """Get a session by ID with privacy-filtered speaker data"""
         session = Session.query.options(
             db.joinedload(Session.speakers),
             db.joinedload(Session.session_speakers),
         ).get_or_404(session_id)
-
+        
+        # Apply privacy filtering to session speakers
+        SessionService._apply_speaker_privacy_filtering(session)
+        
         return session
 
     @staticmethod
@@ -244,3 +286,42 @@ class SessionService:
             return paginate(query, schema, collection_name="sessions")
 
         return sessions
+    
+    @staticmethod
+    def _apply_speaker_privacy_filtering(session):
+        """Apply privacy filtering to session speakers based on viewer context"""
+        from flask_jwt_extended import get_jwt_identity
+        from api.services.privacy import PrivacyService
+        from api.models import User, EventUser
+        from api.models.enums import EventUserRole
+        
+        viewer_id = get_jwt_identity()
+        viewer_id = int(viewer_id) if viewer_id else None
+        
+        # Apply privacy filtering to each speaker
+        for speaker in session.session_speakers:
+            if not speaker.user:
+                continue
+            
+            # Apply privacy filtering for all viewers
+            # This ensures social links respect 'hidden' setting even for organizers
+            viewer = User.query.get(viewer_id) if viewer_id else None
+            context = PrivacyService.get_viewer_context(
+                speaker.user,
+                viewer,
+                session.event_id
+            )
+            
+            filtered_data = PrivacyService.filter_user_data(
+                speaker.user,
+                context,
+                session.event_id
+            )
+            
+            # Store the filtered data as temporary attributes on the speaker
+            # The schema will use these if available
+            speaker._filtered_title = filtered_data.get('title')
+            speaker._filtered_company_name = filtered_data.get('company_name')
+            speaker._filtered_social_links = filtered_data.get('social_links')
+            speaker._filtered_bio = filtered_data.get('bio')
+            speaker._privacy_filtered = True
