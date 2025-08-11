@@ -97,12 +97,12 @@ with app.app_context():
     print("yes" if user_count > 0 else "no")
 END
 )
-    
+    # Updated to use comprehensive seed data.
     if [ "$HAS_DATA" = "yes" ]; then
         echo "[$(date)] Database already has data, skipping seeding"
     else
-        echo "[$(date)] Seeding database..."
-        PYTHONPATH=/app python -m seeders.seed_db || { echo "[$(date)] ERROR: Seeding failed"; exit 1; }
+        echo "[$(date)] Seeding database with comprehensive data (75+ users)..."
+        PYTHONPATH=/app python -m seeders.comprehensive_seed_db || { echo "[$(date)] ERROR: Seeding failed"; exit 1; }
     fi
 else
     echo "[$(date)] Skipping database seeding (SEED_DB=false)"
