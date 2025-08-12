@@ -112,6 +112,11 @@ from api.api.schemas.upload import (
     ImageUploadResponseSchema,
     PresignedUrlResponseSchema,
 )
+from api.api.schemas.invitation import (
+    InvitationDetailsResponseSchema,
+    RegisterAndAcceptInvitationsSchema,
+    RegisterAndAcceptResponseSchema,
+)
 
 __all__ = [
     # User schemas
@@ -205,4 +210,8 @@ __all__ = [
     "ImageUploadSchema",
     "ImageUploadResponseSchema",
     "PresignedUrlResponseSchema",
+    # Invitation schemas
+    "InvitationDetailsResponseSchema",
+    "RegisterAndAcceptInvitationsSchema",
+    "RegisterAndAcceptResponseSchema",
 ]
