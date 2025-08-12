@@ -1,14 +1,19 @@
 from api.extensions import db
 from api.models import Event, User
-from api.models.enums import EventUserRole
+from api.models.enums import EventUserRole, EventStatus
 from api.commons.pagination import paginate
 
 
 class EventService:
     @staticmethod
-    def get_organization_events(org_id, schema):
+    def get_organization_events(org_id, schema, include_deleted=False):
         """Get all events for an organization with pagination"""
         query = Event.query.filter_by(organization_id=org_id)
+        
+        # Exclude deleted events by default
+        if not include_deleted:
+            query = query.filter(Event.status != EventStatus.DELETED)
+        
         return paginate(query, schema, collection_name="events")
 
     @staticmethod
@@ -62,9 +67,13 @@ class EventService:
 
     @staticmethod
     def delete_event(event_id):
-        """Delete an event"""
+        """Soft delete an event - clears sensitive data but preserves for connections"""
+        from flask_jwt_extended import get_jwt_identity
+        
         event = Event.query.get_or_404(event_id)
-        db.session.delete(event)
+        current_user_id = int(get_jwt_identity())
+        
+        event.soft_delete(current_user_id)
         db.session.commit()
 
     @staticmethod
