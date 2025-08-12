@@ -1,0 +1,92 @@
+.container {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 8px;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
+  margin-bottom: 2rem;
+}
+
+.title {
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.subtitle {
+  color: #64748b;
+}
+
+/* Input Styling */
+.input {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  transition: all 0.2s ease;
+}
+
+.input:focus {
+  border-color: rgba(139, 92, 246, 0.3);
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.errorAlert {
+  background: rgba(220, 38, 38, 0.04);
+  border: 1px solid rgba(220, 38, 38, 0.1);
+  border-radius: 6px;
+}
+
+.disabledInput {
+  background: rgba(139, 92, 246, 0.04) !important;
+  cursor: not-allowed;
+  border: 1px solid rgba(139, 92, 246, 0.08) !important;
+  color: #64748b !important;
+}
+
+.passwordStrength {
+  margin-top: 0.5rem;
+}
+
+.progressBar {
+  border-radius: 4px;
+  background: rgba(139, 92, 246, 0.04);
+}
+
+.strengthText {
+  font-weight: 500;
+}
+
+.summary {
+  background: rgba(139, 92, 246, 0.04);
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  border-radius: 6px;
+  padding: 1rem;
+}
+
+.summaryTitle {
+  color: #1e293b;
+}
+
+.summaryList {
+  color: #64748b;
+}
+
+.listItem {
+  color: #64748b;
+}
+
+/* Submit Button - Now simplified since using shared Button component */
+.fullWidth {
+  width: 100%;
+}
+
+.submitButton {
+  padding: 0.875rem 1.5rem;
+  font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1.5rem;
+  }
+}

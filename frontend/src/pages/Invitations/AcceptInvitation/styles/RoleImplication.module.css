@@ -1,0 +1,15 @@
+.alert {
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(245, 158, 11, 0.1);
+  background: rgba(245, 158, 11, 0.04);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border-radius: 6px;
+  color: #1e293b;
+}
+
+@media (max-width: 768px) {
+  .alert {
+    margin-bottom: 1rem;
+  }
+}
