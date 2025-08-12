@@ -77,6 +77,7 @@ from api.api.schemas.auth import (
     ForgotPasswordSchema,
     ResetPasswordSchema,
     ValidateResetTokenResponseSchema,
+    VerifyPasswordSchema,
 )
 
 from api.api.schemas.chat import (
@@ -184,6 +185,7 @@ __all__ = [
     "ForgotPasswordSchema",
     "ResetPasswordSchema",
     "ValidateResetTokenResponseSchema",
+    "VerifyPasswordSchema",
     # Networking schemas
     "ChatRoomSchema",
     "ChatRoomDetailSchema",

@@ -12,6 +12,7 @@ from api.api.schemas import (
     ForgotPasswordSchema,
     ResetPasswordSchema,
     ValidateResetTokenResponseSchema,
+    VerifyPasswordSchema,
 )
 from api.services.auth import AuthService
 
@@ -299,3 +300,30 @@ class ResetPasswordResource(MethodView):
             return {"message": "Password reset successfully", "email": user.email}
         except ValueError as e:
             abort(400, message=str(e))
+
+
+@blp.route("/verify-password")
+class VerifyPasswordResource(MethodView):
+    @jwt_required()
+    @blp.arguments(VerifyPasswordSchema)
+    @blp.response(200)
+    @blp.doc(
+        summary="Verify current password",
+        description="Verify the current user's password for sensitive operations",
+        responses={
+            200: {"description": "Password verified successfully"},
+            401: {"description": "Incorrect password"},
+        },
+    )
+    def post(self, args):
+        """Verify current user's password"""
+        from flask_jwt_extended import get_jwt_identity
+        from api.models import User
+        
+        current_user_id = int(get_jwt_identity())
+        user = User.query.get_or_404(current_user_id)
+        
+        if not user.check_password(args["password"]):
+            abort(401, message="Incorrect password")
+        
+        return {"message": "Password verified successfully"}

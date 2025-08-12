@@ -1,30 +1,46 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { Tabs, LoadingOverlay, Alert, Text } from '@mantine/core';
 import { 
   IconInfoCircle, 
   IconMapPin, 
   IconPalette, 
   IconFileText,
-  IconUsers 
+  IconUsers,
+  IconAlertTriangle 
 } from '@tabler/icons-react';
 import { useGetEventQuery } from '@/app/features/events/api';
+import { useGetOrganizationQuery } from '@/app/features/organizations/api';
 import BasicInfoSection from './BasicInfoSection';
 import VenueSection from './VenueSection';
 import BrandingSection from './BrandingSection';
 import ContentSections from './ContentSections';
 import NetworkingSection from './NetworkingSection';
+import DangerZoneSection from './DangerZoneSection';
 import styles from './styles/index.module.css';
 
 const EventSettings = () => {
   const { eventId } = useParams();
   const [activeTab, setActiveTab] = useState('basic');
+  const currentUserId = useSelector((state) => state.auth.user?.id);
 
   const { 
     data: event, 
     isLoading, 
     error 
   } = useGetEventQuery(parseInt(eventId));
+  
+  // Fetch organization data to check user role
+  const { data: organization } = useGetOrganizationQuery(
+    event?.organization_id, 
+    { skip: !event?.organization_id }
+  );
+  
+  // Check if current user is org owner
+  const isOrgOwner = organization?.users?.some(
+    (user) => user.id === currentUserId && user.role === 'OWNER'
+  );
 
   if (isLoading) {
     return (
@@ -108,6 +124,15 @@ const EventSettings = () => {
               >
                 Networking
               </Tabs.Tab>
+              {isOrgOwner && (
+                <Tabs.Tab 
+                  value="danger" 
+                  className={styles.tab}
+                  leftSection={<IconAlertTriangle size={16} />}
+                >
+                  Danger Zone
+                </Tabs.Tab>
+              )}
             </Tabs.List>
 
             <Tabs.Panel value="basic" className={styles.tabPanel}>
@@ -129,6 +154,12 @@ const EventSettings = () => {
             <Tabs.Panel value="networking" className={styles.tabPanel}>
               <NetworkingSection event={event} eventId={parseInt(eventId)} />
             </Tabs.Panel>
+
+            {isOrgOwner && (
+              <Tabs.Panel value="danger" className={styles.tabPanel}>
+                <DangerZoneSection event={event} />
+              </Tabs.Panel>
+            )}
           </Tabs>
         </section>
       </div>
