@@ -65,6 +65,10 @@ class Event(db.Model):
     updated_at = db.Column(
         db.DateTime(timezone=True), onupdate=db.func.current_timestamp()
     )
+    deleted_at = db.Column(db.DateTime(timezone=True), nullable=True)
+    deleted_by_id = db.Column(
+        db.BigInteger, db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
 
     icebreakers = db.Column(
         db.JSON,
@@ -545,3 +549,24 @@ class Event(db.Model):
         if "faqs" in sections and 0 <= index < len(sections["faqs"]):
             sections["faqs"].pop(index)
             self.sections = sections
+
+    def soft_delete(self, deleted_by_user_id):
+        """Soft delete the event, clearing sensitive data but preserving core info for connections"""
+        self.status = EventStatus.DELETED
+        self.deleted_at = datetime.now(timezone.utc)
+        self.deleted_by_id = deleted_by_user_id
+        
+        # Clear sensitive/unnecessary data
+        self.description = None
+        self.hero_description = None
+        self.hero_images = {"desktop": None, "mobile": None}
+        self.sections = {}
+        self.branding = {
+            "primary_color": "#000000",
+            "secondary_color": "#ffffff",
+            "logo_url": None,
+            "banner_url": None,
+        }
+        self.icebreakers = []
+        
+        # Keep: title, dates, venue info, company_name for connection context

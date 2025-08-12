@@ -19,6 +19,7 @@ class EventStatus(str, Enum):
     DRAFT = "draft"
     PUBLISHED = "published"
     ARCHIVED = "archived"
+    DELETED = "deleted"
 
 
 class UserRole(str, Enum):
