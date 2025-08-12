@@ -1,0 +1,102 @@
+.invitationItem {
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  transition: all 0.2s ease;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.invitationItem:hover {
+  border-color: rgba(139, 92, 246, 0.3);
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.1);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.invitationItem.primary {
+  border: 2px solid #8b5cf6;
+  background: rgba(139, 92, 246, 0.04);
+}
+
+.checkbox {
+  margin-top: 2px;
+}
+
+.content {
+  flex: 1;
+}
+
+.icon {
+  color: #8b5cf6;
+}
+
+.primaryIcon {
+  color: #f59e0b;
+  fill: #f59e0b;
+}
+
+/* Text Styling */
+.entityName {
+  color: #1e293b;
+}
+
+.orgName {
+  color: #64748b;
+}
+
+.invitedByText,
+.inviterName {
+  color: #64748b;
+}
+
+/* Badge Styling - Modern style matching AttendeeRow */
+.roleBadge {
+  border-radius: 6px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.75rem;
+}
+
+.warningBadge {
+  border-radius: 6px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.75rem;
+}
+
+.expiringBadge {
+  border-radius: 6px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.75rem;
+}
+
+/* Avatar Styling */
+.inviterAvatar {
+  background: linear-gradient(45deg, #8b5cf6, #a855f7);
+  color: white;
+  border-radius: 4px;
+}
+
+/* Checkbox Styling */
+.checkbox {
+  margin-top: 2px;
+}
+
+@media (max-width: 768px) {
+  .invitationItem {
+    padding: 0.75rem;
+  }
+  
+  .content {
+    font-size: 0.875rem;
+  }
+}

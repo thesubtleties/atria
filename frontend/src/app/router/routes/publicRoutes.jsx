@@ -1,6 +1,7 @@
 import { Landing } from '../../../pages/Landing';
 import { EmailVerification } from '../../../pages/Auth/EmailVerification';
 import { ResetPassword } from '../../../pages/Auth/ResetPassword';
+import AcceptInvitation from '../../../pages/Invitations/AcceptInvitation';
 import { PublicGuard } from '../guards/PublicGuard';
 
 export const publicRoutes = [
@@ -19,5 +20,9 @@ export const publicRoutes = [
   {
     path: '/reset-password/:token',
     element: <ResetPassword />,
+  },
+  {
+    path: '/invitations/:token',
+    element: <AcceptInvitation />,
   },
 ];

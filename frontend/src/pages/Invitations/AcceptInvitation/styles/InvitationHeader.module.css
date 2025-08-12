@@ -1,0 +1,99 @@
+.header {
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 8px;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
+  margin-bottom: 2rem;
+}
+
+.header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #8b5cf6 0%, #a855f7 100%);
+  border-radius: 8px 8px 0 0;
+}
+
+.iconContainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.icon {
+  color: #8b5cf6;
+}
+
+.title {
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.subtitle {
+  color: #64748b;
+  margin-bottom: 1rem;
+}
+
+.messageBox {
+  background: rgba(139, 92, 246, 0.04);
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  border-left: 4px solid #8b5cf6;
+  border-radius: 6px;
+  padding: 1rem;
+  text-align: left;
+  margin: 1.5rem auto 0;
+  max-width: 500px;
+}
+
+.entityName {
+  color: #1e293b;
+}
+
+.roleBadge {
+  border-radius: 6px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.75rem;
+}
+
+.messageLabel {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.messageText {
+  color: #1e293b;
+}
+
+.avatar {
+  background: linear-gradient(45deg, #8b5cf6, #a855f7);
+  color: white;
+  border-radius: 8px;
+}
+
+.inviterText {
+  color: #64748b;
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 1.5rem;
+  }
+  
+  .subtitle {
+    font-size: 1rem;
+  }
+}
