@@ -33,6 +33,39 @@ def org_admin_required():
     return decorator
 
 
+def org_owner_required():
+    """Check if user is specifically the owner of the organization"""
+
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            current_user_id = int(get_jwt_identity())
+            current_user = User.query.get_or_404(current_user_id)
+            
+            # Handle both org_id in kwargs and event_id (need to get org from event)
+            org_id = kwargs.get("org_id")
+            if not org_id and "event_id" in kwargs:
+                event = Event.query.get_or_404(kwargs["event_id"])
+                org_id = event.organization_id
+
+            if not org_id:
+                return {"message": "Organization context required"}, 400
+
+            org = Organization.query.get_or_404(org_id)
+            user_role = org.get_user_role(current_user)
+
+            if user_role != OrganizationUserRole.OWNER:
+                return {
+                    "message": "Must be organization owner to perform this action"
+                }, 403
+
+            return f(*args, **kwargs)
+
+        return decorated_function
+
+    return decorator
+
+
 def org_member_required():
     """Check if user is any member of organization"""
 
