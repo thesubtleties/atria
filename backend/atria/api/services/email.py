@@ -161,7 +161,7 @@ class EmailService:
         context = {
             'organization_name': organization.name,
             'role': role.replace('_', ' ').title(),
-            'invitation_url': f"{current_app.config.get('FRONTEND_URL', 'http://localhost:3000')}/invitations/organization/{invitation_token}",
+            'invitation_url': f"{current_app.config.get('FRONTEND_URL', 'http://localhost:3000')}/invitations/{invitation_token}",
             'inviter_name': inviter.full_name,
             'has_account': has_account,
             'current_year': datetime.utcnow().year
