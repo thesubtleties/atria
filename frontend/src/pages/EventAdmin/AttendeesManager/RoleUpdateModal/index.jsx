@@ -3,12 +3,12 @@ import { Modal, Select, Stack, Text, Alert, List } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { IconAlertCircle, IconCheck } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
-import { roleUpdateSchema, getRoleDisplayName, canChangeRole } from '../schemas/attendeeSchemas';
+import { roleUpdateSchema, getRoleDisplayName, canChangeRole, canChangeUserRole } from '../schemas/attendeeSchemas';
 import { useUpdateEventUserMutation } from '../../../../app/features/events/api';
 import { Button } from '../../../../shared/components/buttons';
 import styles from './styles.module.css';
 
-const RoleUpdateModal = ({ opened, onClose, user, eventId, currentUserRole, onSuccess }) => {
+const RoleUpdateModal = ({ opened, onClose, user, eventId, currentUserRole, currentUserId, adminCount, onSuccess }) => {
   const [updateUser, { isLoading }] = useUpdateEventUserMutation();
 
   const form = useForm({
@@ -52,13 +52,24 @@ const RoleUpdateModal = ({ opened, onClose, user, eventId, currentUserRole, onSu
     }
   };
 
+  // Build role options based on what changes are allowed
   const roleOptions = ['ATTENDEE', 'SPEAKER', 'ORGANIZER', 'ADMIN']
-    .filter((role) => canChangeRole(currentUserRole, role))
-    .map((role) => ({
-      value: role,
-      label: getRoleDisplayName(role),
-      disabled: !canChangeRole(currentUserRole, role),
-    }));
+    .map((role) => {
+      const validation = canChangeUserRole(
+        currentUserRole,
+        currentUserId,
+        user?.user_id,
+        user?.role,
+        role,
+        adminCount
+      );
+      return {
+        value: role,
+        label: getRoleDisplayName(role),
+        disabled: !validation.allowed,
+      };
+    })
+    .filter(option => !option.disabled);
 
   if (!user) return null;
 
@@ -92,7 +103,7 @@ const RoleUpdateModal = ({ opened, onClose, user, eventId, currentUserRole, onSu
           {currentUserRole === 'ORGANIZER' && (
             <Alert icon={<IconAlertCircle size={16} />} className={styles.warningAlert}>
               <Text size="sm">
-                As an organizer, you can only assign roles lower than your own.
+                As an organizer, you can only change between attendee and speaker roles.
                 You cannot create other organizers or admins.
               </Text>
             </Alert>

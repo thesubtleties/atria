@@ -1,6 +1,6 @@
 from api.extensions import db
-from api.models import Event, User, EventUser, Session, SessionSpeaker, Connection
-from api.models.enums import EventUserRole, ConnectionStatus
+from api.models import Event, User, EventUser, Session, SessionSpeaker, Connection, Organization
+from api.models.enums import EventUserRole, ConnectionStatus, OrganizationUserRole
 from api.commons.pagination import paginate
 from flask_jwt_extended import get_jwt_identity
 from sqlalchemy.orm import joinedload
@@ -49,7 +49,27 @@ class EventUserService:
         if role:
             query = query.filter_by(role=role)
 
-        return paginate(query, schema, collection_name="event_users")
+        # Get the paginated response
+        result = paginate(query, schema, collection_name="event_users")
+        
+        # Add role counts to help with UI display and permission checks
+        result["role_counts"] = {
+            "total": EventUser.query.filter_by(event_id=event_id).count(),
+            "admins": EventUser.query.filter_by(
+                event_id=event_id, role=EventUserRole.ADMIN
+            ).count(),
+            "organizers": EventUser.query.filter_by(
+                event_id=event_id, role=EventUserRole.ORGANIZER
+            ).count(),
+            "speakers": EventUser.query.filter_by(
+                event_id=event_id, role=EventUserRole.SPEAKER
+            ).count(),
+            "attendees": EventUser.query.filter_by(
+                event_id=event_id, role=EventUserRole.ATTENDEE
+            ).count(),
+        }
+        
+        return result
     
     @staticmethod
     def get_event_users_with_connection_status(event_id, role=None, schema=None):
@@ -162,15 +182,74 @@ class EventUserService:
         ).first()
 
     @staticmethod
-    def update_user_role(event_id, user_id, update_data):
+    def update_user_role(event_id, user_id, update_data, current_user_id=None):
         """Update user's role or info in event"""
+        from flask_jwt_extended import get_jwt_identity
+        from flask_smorest import abort
+        
+        # Get current user if not provided
+        if current_user_id is None:
+            current_user_id = int(get_jwt_identity())
+        
+        # Get event user being updated
         event_user = EventUser.query.filter_by(
             event_id=event_id, user_id=user_id
         ).first_or_404()
-
+        
+        # Check if role is being changed
         if "role" in update_data:
-            event_user.role = update_data["role"]
+            new_role = update_data["role"]
+            current_role = event_user.role
+            
+            # Rule 1: Users cannot change their own role
+            if current_user_id == user_id:
+                abort(403, message="You cannot change your own role")
+            
+            # Get current user's role in the event
+            current_user_event = EventUser.query.filter_by(
+                event_id=event_id, user_id=current_user_id
+            ).first()
+            
+            # Check if user is org owner
+            event = Event.query.get(event_id)
+            org = Organization.query.get(event.organization_id)
+            current_user_obj = User.query.get(current_user_id)
+            is_org_owner = org.get_user_role(current_user_obj) == OrganizationUserRole.OWNER
+            
+            if not current_user_event and not is_org_owner:
+                abort(403, message="You are not a member of this event")
+            
+            # Org owners have admin-like permissions
+            if is_org_owner:
+                current_user_role = EventUserRole.ADMIN
+            else:
+                current_user_role = current_user_event.role
+            
+            # Rule 2: Organizers have limited permissions
+            if current_user_role == EventUserRole.ORGANIZER:
+                allowed_roles = [EventUserRole.ATTENDEE, EventUserRole.SPEAKER]
+                
+                # Check if target's current role can be changed by organizer
+                if current_role not in allowed_roles:
+                    abort(403, message="Organizers cannot change roles of other organizers or admins")
+                
+                # Check if new role is allowed for organizers to set
+                if new_role not in allowed_roles:
+                    abort(403, message="Organizers can only assign attendee or speaker roles")
+            
+            # Rule 3: Protect last admin
+            if current_role == EventUserRole.ADMIN and new_role != EventUserRole.ADMIN:
+                admin_count = EventUser.query.filter_by(
+                    event_id=event_id, role=EventUserRole.ADMIN
+                ).count()
+                
+                if admin_count <= 1:
+                    abort(400, message="Cannot remove or change role of last admin")
+            
+            # Apply the role change
+            event_user.role = new_role
 
+        # Update speaker info if applicable
         if event_user.role == EventUserRole.SPEAKER:
             if "speaker_bio" in update_data:
                 event_user.speaker_bio = update_data["speaker_bio"]
@@ -181,8 +260,19 @@ class EventUserService:
         return event_user
 
     @staticmethod
-    def remove_user_from_event(event_id, user_id):
+    def remove_user_from_event(event_id, user_id, current_user_id=None):
         """Remove user from event"""
+        from flask_jwt_extended import get_jwt_identity
+        from flask_smorest import abort
+        
+        # Get current user if not provided
+        if current_user_id is None:
+            current_user_id = int(get_jwt_identity())
+        
+        # Prevent users from removing themselves
+        if current_user_id == user_id:
+            abort(403, message="You cannot remove yourself from the event")
+        
         event = Event.query.get_or_404(event_id)
         target_user = User.query.get_or_404(user_id)
         target_role = event.get_user_role(target_user)
@@ -198,7 +288,7 @@ class EventUserService:
             )
             <= 1
         ):
-            raise ValueError("Cannot remove last admin")
+            abort(400, message="Cannot remove last admin")
 
         # Remove from sessions using subquery
         session_ids = Session.query.filter_by(event_id=event_id).with_entities(

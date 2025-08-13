@@ -96,14 +96,7 @@ export const getRoleDisplayName = (role) => {
 };
 
 // Validate if user can change roles based on their own role
-export const canChangeRole = (currentUserRole, targetUserRole) => {
-  const roleHierarchy = {
-    ADMIN: 4,
-    ORGANIZER: 3,
-    SPEAKER: 2,
-    ATTENDEE: 1,
-  };
-
+export const canChangeRole = (currentUserRole, targetRole) => {
   // Only admins and organizers can change roles
   if (!['ADMIN', 'ORGANIZER'].includes(currentUserRole)) {
     return false;
@@ -114,6 +107,53 @@ export const canChangeRole = (currentUserRole, targetUserRole) => {
     return true;
   }
 
-  // Organizers can only change roles lower than their own
-  return roleHierarchy[targetUserRole] < roleHierarchy[currentUserRole];
+  // Organizers can only assign ATTENDEE or SPEAKER roles
+  if (currentUserRole === 'ORGANIZER') {
+    return ['ATTENDEE', 'SPEAKER'].includes(targetRole);
+  }
+
+  return false;
+};
+
+// Validate if a specific role change is allowed
+export const canChangeUserRole = (currentUserRole, currentUserId, targetUserId, targetCurrentRole, targetNewRole, adminCount = 1) => {
+  // Cannot change own role
+  if (currentUserId === targetUserId) {
+    return { allowed: false, reason: "You cannot change your own role" };
+  }
+
+  // Only admins and organizers can change roles
+  if (!['ADMIN', 'ORGANIZER'].includes(currentUserRole)) {
+    return { allowed: false, reason: "You don't have permission to change roles" };
+  }
+
+  // Organizers have limited permissions
+  if (currentUserRole === 'ORGANIZER') {
+    // Can only change between ATTENDEE and SPEAKER
+    const allowedRoles = ['ATTENDEE', 'SPEAKER'];
+    
+    // Cannot change roles of ORGANIZERS or ADMINS
+    if (!allowedRoles.includes(targetCurrentRole)) {
+      return { allowed: false, reason: "Organizers cannot change roles of other organizers or admins" };
+    }
+    
+    // Can only assign ATTENDEE or SPEAKER roles
+    if (!allowedRoles.includes(targetNewRole)) {
+      return { allowed: false, reason: "Organizers can only assign attendee or speaker roles" };
+    }
+    
+    return { allowed: true };
+  }
+
+  // Admins can change most roles but cannot remove last admin
+  if (currentUserRole === 'ADMIN') {
+    // Check if trying to demote last admin
+    if (targetCurrentRole === 'ADMIN' && targetNewRole !== 'ADMIN' && adminCount <= 1) {
+      return { allowed: false, reason: "Cannot remove or change role of last admin" };
+    }
+    
+    return { allowed: true };
+  }
+
+  return { allowed: false, reason: "Invalid permission state" };
 };

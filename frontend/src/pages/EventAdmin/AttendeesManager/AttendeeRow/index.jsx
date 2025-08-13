@@ -10,7 +10,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
 import { openConfirmationModal } from '@/shared/components/modals/ConfirmationModal';
-import { getRoleBadgeColor, getRoleDisplayName, canChangeRole } from '../schemas/attendeeSchemas';
+import { getRoleBadgeColor, getRoleDisplayName, canChangeUserRole } from '../schemas/attendeeSchemas';
 import { useRemoveEventUserMutation } from '../../../../app/features/events/api';
 import styles from './styles.module.css';
 
@@ -18,6 +18,8 @@ const AttendeeRow = ({
   attendee,
   onUpdateRole,
   currentUserRole,
+  currentUserId,
+  adminCount,
 }) => {
   const navigate = useNavigate();
   const [removeUser] = useRemoveEventUserMutation();
@@ -62,7 +64,14 @@ const AttendeeRow = ({
     });
   };
 
-  const canManageUser = canChangeRole(currentUserRole, attendee.role);
+  // Check if user can be managed (role changed or removed)
+  const canRemoveUser = currentUserRole === 'ADMIN' && currentUserId !== attendee.user_id &&
+    !(attendee.role === 'ADMIN' && adminCount <= 1);
+  
+  // For role changes, we need to check more complex logic
+  const canChangeThisUserRole = currentUserId !== attendee.user_id && 
+    ((currentUserRole === 'ADMIN') || 
+     (currentUserRole === 'ORGANIZER' && ['ATTENDEE', 'SPEAKER'].includes(attendee.role)));
 
   return (
     <Table.Tr>
@@ -130,28 +139,29 @@ const AttendeeRow = ({
               View Profile
             </Menu.Item>
             
-            {canManageUser && (
+            {canChangeThisUserRole && (
+              <Menu.Item
+                className={styles.menuItem}
+                leftSection={<IconEdit size={16} />}
+                onClick={() => onUpdateRole(attendee)}
+              >
+                Change Role
+              </Menu.Item>
+            )}
+            
+            {attendee.role === 'SPEAKER' && currentUserRole === 'ADMIN' && (
+              <Menu.Item
+                className={styles.menuItem}
+                leftSection={<IconMicrophone size={16} />}
+                onClick={() => navigate(`/app/events/${attendee.event_id}/admin/speakers`)}
+              >
+                Manage Speaker Info
+              </Menu.Item>
+            )}
+            
+            {canRemoveUser && (
               <>
-                <Menu.Item
-                  className={styles.menuItem}
-                  leftSection={<IconEdit size={16} />}
-                  onClick={() => onUpdateRole(attendee)}
-                >
-                  Change Role
-                </Menu.Item>
-                
-                {attendee.role === 'SPEAKER' && (
-                  <Menu.Item
-                    className={styles.menuItem}
-                    leftSection={<IconMicrophone size={16} />}
-                    onClick={() => navigate(`/app/events/${attendee.event_id}/admin/speakers`)}
-                  >
-                    Manage Speaker Info
-                  </Menu.Item>
-                )}
-                
                 <Menu.Divider />
-                
                 <Menu.Item
                   className={styles.menuItemDanger}
                   leftSection={<IconTrash size={16} />}

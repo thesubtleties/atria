@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import {
   Group,
   TextInput,
@@ -59,6 +60,10 @@ const AttendeesManager = () => {
     sortOrder: 'asc',
   });
 
+  // Get current user info
+  const currentUser = useSelector((state) => state.auth.user);
+  const currentUserId = currentUser?.id;
+  
   // Fetch event details to get current user's role
   const { data: eventData } = useGetEventQuery(eventId);
   const currentUserRole = eventData?.user_role || 'ATTENDEE';
@@ -170,12 +175,13 @@ const AttendeesManager = () => {
     }
   });
 
-  // Count attendees by role
-  const roleCounts = attendeesData?.event_users?.reduce((acc, user) => {
-    acc[user.role] = (acc[user.role] || 0) + 1;
-    acc.total = (acc.total || 0) + 1;
-    return acc;
-  }, {}) || { total: 0 };
+  // Use role counts from backend if available, otherwise calculate from current page
+  const roleCounts = attendeesData?.role_counts || 
+    attendeesData?.event_users?.reduce((acc, user) => {
+      acc[user.role] = (acc[user.role] || 0) + 1;
+      acc.total = (acc.total || 0) + 1;
+      return acc;
+    }, {}) || { total: 0 };
 
   if (attendeesError) {
     return (
@@ -219,16 +225,16 @@ const AttendeesManager = () => {
                   {roleCounts.total || 0} Total
                 </Badge>
                 <Badge size="lg" variant="light" color="red" radius="sm">
-                  {roleCounts.ADMIN || 0} Admins
+                  {roleCounts.admins || roleCounts.ADMIN || 0} Admins
                 </Badge>
                 <Badge size="lg" variant="light" color="orange" radius="sm">
-                  {roleCounts.ORGANIZER || 0} Organizers
+                  {roleCounts.organizers || roleCounts.ORGANIZER || 0} Organizers
                 </Badge>
                 <Badge size="lg" variant="light" color="blue" radius="sm">
-                  {roleCounts.SPEAKER || 0} Speakers
+                  {roleCounts.speakers || roleCounts.SPEAKER || 0} Speakers
                 </Badge>
                 <Badge size="lg" variant="light" color="gray" radius="sm">
-                  {roleCounts.ATTENDEE || 0} Attendees
+                  {roleCounts.attendees || roleCounts.ATTENDEE || 0} Attendees
                 </Badge>
               </div>
             </div>
@@ -320,6 +326,8 @@ const AttendeesManager = () => {
               <AttendeesList
                 attendees={sortedAttendees}
                 currentUserRole={currentUserRole}
+                currentUserId={currentUserId}
+                adminCount={attendeesData?.role_counts?.admins || attendeesData?.event_users?.filter(u => u.role === 'ADMIN').length || 1}
                 onUpdateRole={(user) => {
                   setRoleUpdateModal({ open: true, user });
                 }}
@@ -361,6 +369,7 @@ const AttendeesManager = () => {
           opened={inviteModalOpen}
           onClose={() => setInviteModalOpen(false)}
           eventId={eventId}
+          currentUserRole={currentUserRole}
           onSuccess={() => {
             refetchInvitations();
             setActiveTab('invitations');
@@ -373,6 +382,8 @@ const AttendeesManager = () => {
           user={roleUpdateModal.user}
           eventId={eventId}
           currentUserRole={currentUserRole}
+          currentUserId={currentUserId}
+          adminCount={attendeesData?.role_counts?.admins || attendeesData?.event_users?.filter(u => u.role === 'ADMIN').length || 1}
           onSuccess={refetchAttendees}
         />
       </div>

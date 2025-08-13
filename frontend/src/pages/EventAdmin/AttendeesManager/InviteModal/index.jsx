@@ -20,7 +20,7 @@ import {
 import { Button } from '../../../../shared/components/buttons';
 import styles from './styles.module.css';
 
-const InviteModal = ({ opened, onClose, eventId, onSuccess }) => {
+const InviteModal = ({ opened, onClose, eventId, currentUserRole, onSuccess }) => {
   const [activeTab, setActiveTab] = useState('single');
   const [bulkEmails, setBulkEmails] = useState('');
   const [sendInvitation, { isLoading: isSending }] = useSendEventInvitationMutation();
@@ -159,12 +159,23 @@ const InviteModal = ({ opened, onClose, eventId, onSuccess }) => {
     onClose();
   };
 
-  const roleOptions = [
-    { value: 'ATTENDEE', label: getRoleDisplayName('ATTENDEE') },
-    { value: 'SPEAKER', label: getRoleDisplayName('SPEAKER') },
-    { value: 'ORGANIZER', label: getRoleDisplayName('ORGANIZER') },
-    { value: 'ADMIN', label: getRoleDisplayName('ADMIN') },
-  ];
+  // Filter role options based on current user's role
+  const roleOptions = (() => {
+    const allRoles = [
+      { value: 'ATTENDEE', label: getRoleDisplayName('ATTENDEE') },
+      { value: 'SPEAKER', label: getRoleDisplayName('SPEAKER') },
+      { value: 'ORGANIZER', label: getRoleDisplayName('ORGANIZER') },
+      { value: 'ADMIN', label: getRoleDisplayName('ADMIN') },
+    ];
+    
+    if (currentUserRole === 'ORGANIZER') {
+      // Organizers can only invite ATTENDEE and SPEAKER
+      return allRoles.filter(role => ['ATTENDEE', 'SPEAKER'].includes(role.value));
+    }
+    
+    // Admins can invite any role
+    return allRoles;
+  })();
 
   return (
     <Modal
