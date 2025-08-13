@@ -220,24 +220,24 @@ class OrganizationService:
         if not org.has_user(user):
             raise ValueError("Not a member of this organization")
 
-        # Get events
-        query = org.events
+        # Build query with proper filtering
+        from api.models import Event
+        from api.models.enums import EventStatus
+        
+        query = Event.query.filter_by(organization_id=org_id)
+        
+        # Filter out deleted events
+        # When comparing SQLAlchemy Enum columns, use the enum directly (not .value)
+        query = query.filter(Event.status != EventStatus.DELETED)
 
         # Filter for upcoming events if requested
         if upcoming_only:
-            query = [
-                event for event in query if event.start_date > datetime.now()
-            ]
+            query = query.filter(Event.start_date > datetime.now())
 
-        if schema and not upcoming_only:
-            # Convert list to query for pagination
-            from api.models import Event
-
-            event_ids = [event.id for event in query]
-            query = Event.query.filter(Event.id.in_(event_ids))
+        if schema:
             return paginate(query, schema, collection_name="events")
 
-        return query
+        return query.all()
 
     @staticmethod
     def check_user_is_admin(org_id: int, user_id: int) -> bool:

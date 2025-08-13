@@ -340,6 +340,10 @@ class Event(db.Model):
     @property
     def is_archived(self) -> bool:
         return self.status == EventStatus.ARCHIVED
+    
+    @property
+    def is_deleted(self) -> bool:
+        return self.status == EventStatus.DELETED
 
     @property
     def is_upcoming(self) -> bool:

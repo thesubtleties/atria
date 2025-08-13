@@ -12,6 +12,8 @@ class EventService:
         
         # Exclude deleted events by default
         if not include_deleted:
+            # When comparing SQLAlchemy Enum columns, use the enum directly (not .value)
+            # SQLAlchemy will handle the conversion properly
             query = query.filter(Event.status != EventStatus.DELETED)
         
         return paginate(query, schema, collection_name="events")
