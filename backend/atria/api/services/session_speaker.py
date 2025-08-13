@@ -26,9 +26,47 @@ class SessionSpeakerService:
             query = query.filter_by(role=role)
 
         if schema:
-            return paginate(query, schema, collection_name="session_speakers")
+            # For paginated results, we need to apply privacy filtering
+            from api.commons.pagination import extract_pagination
+            from flask import url_for, request
+            
+            page, per_page, other_request_args = extract_pagination(**request.args)
+            page_obj = query.paginate(page=page, per_page=per_page)
+            
+            # Apply privacy filtering to the fetched items BEFORE serialization
+            for speaker in page_obj.items:
+                SessionSpeakerService._apply_speaker_privacy_filtering(speaker, session.event_id)
+            
+            # Generate pagination response
+            endpoint = request.endpoint
+            view_args = request.view_args or {}
+            
+            links = {
+                "self": url_for(endpoint, page=page_obj.page, per_page=per_page, **other_request_args, **view_args),
+                "first": url_for(endpoint, page=1, per_page=per_page, **other_request_args, **view_args),
+                "last": url_for(endpoint, page=page_obj.pages, per_page=per_page, **other_request_args, **view_args),
+            }
+            
+            if page_obj.has_next:
+                links["next"] = url_for(endpoint, page=page_obj.next_num, per_page=per_page, **other_request_args, **view_args)
+            
+            if page_obj.has_prev:
+                links["prev"] = url_for(endpoint, page=page_obj.prev_num, per_page=per_page, **other_request_args, **view_args)
+            
+            return {
+                "total_items": page_obj.total,
+                "total_pages": page_obj.pages,
+                "current_page": page_obj.page,
+                "per_page": per_page,
+                **links,
+                "session_speakers": schema.dump(page_obj.items),  # Now serialized with filtered data
+            }
 
-        return query.all()
+        # For non-paginated results
+        speakers = query.all()
+        for speaker in speakers:
+            SessionSpeakerService._apply_speaker_privacy_filtering(speaker, session.event_id)
+        return speakers
 
     @staticmethod
     def get_session_speaker(session_id: int, user_id: int):
@@ -157,3 +195,36 @@ class SessionSpeakerService:
             return schema.dump(sessions, many=True)
 
         return sessions
+
+    @staticmethod
+    def _apply_speaker_privacy_filtering(speaker, event_id):
+        """Apply privacy filtering to a session speaker based on viewer context"""
+        from flask_jwt_extended import get_jwt_identity
+        from api.services.privacy import PrivacyService
+        from api.models import User
+        
+        viewer_id = get_jwt_identity()
+        viewer_id = int(viewer_id) if viewer_id else None
+        
+        if not speaker.user:
+            return
+        
+        # Apply privacy filtering for all viewers
+        viewer = User.query.get(viewer_id) if viewer_id else None
+        context = PrivacyService.get_viewer_context(
+            speaker.user,
+            viewer,
+            event_id
+        )
+        
+        filtered_data = PrivacyService.filter_user_data(
+            speaker.user,
+            context,
+            event_id
+        )
+        
+        # Store the filtered data as temporary attributes on the speaker
+        speaker._privacy_filtered = True
+        speaker._filtered_title = filtered_data.get('title')
+        speaker._filtered_company_name = filtered_data.get('company_name')
+        speaker._filtered_social_links = filtered_data.get('social_links')
