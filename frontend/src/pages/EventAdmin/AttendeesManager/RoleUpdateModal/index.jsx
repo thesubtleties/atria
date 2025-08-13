@@ -100,6 +100,45 @@ const RoleUpdateModal = ({ opened, onClose, user, eventId, currentUserRole, curr
             {...form.getInputProps('role')}
           />
 
+          {/* Warning for speaker being downgraded to attendee */}
+          {user?.role === 'SPEAKER' && form.values.role === 'ATTENDEE' && (
+            <Alert icon={<IconAlertCircle size={16} />} color="red" className={styles.dangerAlert}>
+              <Text size="sm" fw={500}>
+                Warning: Downgrading to Attendee
+              </Text>
+              <Text size="sm" mt="xs">
+                This user will be automatically removed from all sessions they are assigned to speak at.
+                This action cannot be undone automatically.
+              </Text>
+            </Alert>
+          )}
+
+          {/* Info for speaker being upgraded to organizer/admin */}
+          {user?.role === 'SPEAKER' && ['ORGANIZER', 'ADMIN'].includes(form.values.role) && (
+            <Alert icon={<IconAlertCircle size={16} />} className={styles.infoAlert}>
+              <Text size="sm" fw={500}>
+                Note: Upgrading from Speaker
+              </Text>
+              <Text size="sm" mt="xs">
+                This user will retain their speaker assignments to any sessions. 
+                If you want to remove them from sessions, you'll need to do so manually from the Sessions Manager.
+              </Text>
+            </Alert>
+          )}
+
+          {/* Info for organizer/admin being changed to speaker */}
+          {['ORGANIZER', 'ADMIN'].includes(user?.role) && form.values.role === 'SPEAKER' && (
+            <Alert icon={<IconAlertCircle size={16} />} className={styles.infoAlert}>
+              <Text size="sm" fw={500}>
+                Note: Changing to Speaker Role
+              </Text>
+              <Text size="sm" mt="xs">
+                This user can be assigned to sessions after this change.
+                They will lose their administrative permissions but can be upgraded back later if needed.
+              </Text>
+            </Alert>
+          )}
+
           {currentUserRole === 'ORGANIZER' && (
             <Alert icon={<IconAlertCircle size={16} />} className={styles.warningAlert}>
               <Text size="sm">

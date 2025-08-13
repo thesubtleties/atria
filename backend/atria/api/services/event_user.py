@@ -248,6 +248,21 @@ class EventUserService:
             
             # Apply the role change
             event_user.role = new_role
+            
+            # If downgrading from SPEAKER to ATTENDEE, remove from all sessions
+            if current_role == EventUserRole.SPEAKER and new_role == EventUserRole.ATTENDEE:
+                # Remove from all sessions in this event
+                session_ids = Session.query.filter_by(event_id=event_id).with_entities(
+                    Session.id
+                )
+                removed_count = SessionSpeaker.query.filter(
+                    SessionSpeaker.session_id.in_(session_ids),
+                    SessionSpeaker.user_id == user_id,
+                ).delete(synchronize_session=False)
+                
+                if removed_count > 0:
+                    # Note: Frontend will show the warning, backend just logs it
+                    print(f"Removed user {user_id} from {removed_count} session(s) after downgrading to ATTENDEE")
 
         # Update speaker info if applicable
         if event_user.role == EventUserRole.SPEAKER:
