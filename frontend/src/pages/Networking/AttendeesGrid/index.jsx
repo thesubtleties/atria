@@ -1,11 +1,10 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {
   TextInput,
   Select,
-  Text,
   Loader,
   Center,
-  Pagination,
+  Text,
 } from '@mantine/core';
 import { IconSearch, IconFilter } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
@@ -26,7 +25,9 @@ import styles from './styles/index.module.css';
 export function AttendeesGrid({ eventId }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterRole, setFilterRole] = useState('all');
-  const [page, setPage] = useState(1);
+  const [loadedAttendees, setLoadedAttendees] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
   const [modalOpened, setModalOpened] = useState(false);
   const [selectedAttendee, setSelectedAttendee] = useState(null);
   const perPage = 50;
@@ -35,11 +36,11 @@ export function AttendeesGrid({ eventId }) {
   const { data: eventData } = useGetEventQuery(eventId, { skip: !eventId });
 
   // Fetch both ADMIN and ORGANIZER when "organizer" is selected
-  const { data: adminData, isLoading: isLoadingAdmins } = useGetEventUsersQuery(
+  const { data: adminData, isLoading: isLoadingAdmins, isFetching: isFetchingAdmins } = useGetEventUsersQuery(
     {
       eventId: eventId,
       role: 'ADMIN',
-      page: page,
+      page: currentPage,
       per_page: perPage,
     },
     {
@@ -47,12 +48,12 @@ export function AttendeesGrid({ eventId }) {
     }
   );
 
-  const { data: organizerData, isLoading: isLoadingOrganizers } =
+  const { data: organizerData, isLoading: isLoadingOrganizers, isFetching: isFetchingOrganizers } =
     useGetEventUsersQuery(
       {
         eventId: eventId,
         role: 'ORGANIZER',
-        page: page,
+        page: currentPage,
         per_page: perPage,
       },
       {
@@ -60,7 +61,7 @@ export function AttendeesGrid({ eventId }) {
       }
     );
 
-  const { data: regularData, isLoading: isLoadingRegular } =
+  const { data: regularData, isLoading: isLoadingRegular, isFetching: isFetchingRegular } =
     useGetEventUsersQuery(
       {
         eventId: eventId,
@@ -70,7 +71,7 @@ export function AttendeesGrid({ eventId }) {
             : filterRole === 'organizer'
               ? undefined
               : filterRole?.toUpperCase(),
-        page: page,
+        page: currentPage,
         per_page: perPage,
       },
       {
@@ -79,12 +80,17 @@ export function AttendeesGrid({ eventId }) {
     );
 
   // Determine which data to use based on filter
-  const isLoading =
+  const isInitialLoading =
     filterRole === 'organizer'
       ? isLoadingAdmins || isLoadingOrganizers
       : isLoadingRegular;
+      
+  const isFetchingMore =
+    filterRole === 'organizer'
+      ? isFetchingAdmins || isFetchingOrganizers
+      : isFetchingRegular;
 
-  const data =
+  const currentData =
     filterRole === 'organizer'
       ? {
           event_users: [
@@ -92,40 +98,50 @@ export function AttendeesGrid({ eventId }) {
             ...(organizerData?.event_users || []),
           ],
           total_items:
-            (adminData?.total_items || adminData?.total || 0) + 
-            (organizerData?.total_items || organizerData?.total || 0),
-          total:
-            (adminData?.total_items || adminData?.total || 0) + 
-            (organizerData?.total_items || organizerData?.total || 0),
+            (adminData?.total_items || 0) + 
+            (organizerData?.total_items || 0),
+          total_pages: Math.max(
+            adminData?.total_pages || 0,
+            organizerData?.total_pages || 0
+          ),
+          current_page: currentPage,
+          has_next: (adminData?.has_next || false) || (organizerData?.has_next || false),
         }
       : regularData;
 
-  const attendees = data?.event_users || [];
+  // Update loaded attendees when new data arrives
+  React.useEffect(() => {
+    if (currentData?.event_users) {
+      if (currentPage === 1) {
+        // Reset for first page or filter change
+        setLoadedAttendees(currentData.event_users);
+      } else {
+        // Append for subsequent pages
+        setLoadedAttendees(prev => {
+          // Create a map to avoid duplicates
+          const existingIds = new Set(prev.map(a => a.user_id));
+          const newAttendees = currentData.event_users.filter(
+            a => !existingIds.has(a.user_id)
+          );
+          return [...prev, ...newAttendees];
+        });
+      }
+      
+      // Update hasMore based on API response
+      setHasMore(currentData.has_next || false);
+    }
+  }, [currentData, currentPage]);
   console.log('AttendeesGrid debug:', { 
     eventId, 
-    data, 
-    attendees, 
-    isLoading,
+    currentData, 
+    loadedAttendees, 
+    isInitialLoading,
+    isFetchingMore,
     filterRole,
-    regularData,
-    adminData,
-    organizerData,
-    totalItems: data?.total_items
+    currentPage,
+    hasMore,
+    totalItems: currentData?.total_items
   });
-  console.log('Event data:', eventData);
-  console.log('Event icebreakers:', eventData?.icebreakers);
-
-  // Debug connection statuses
-  if (attendees.length > 0) {
-    console.log('Connection statuses for all attendees:');
-    attendees.forEach((a) => {
-      console.log(`${a.first_name} ${a.last_name} (ID: ${a.user_id}):`, {
-        connection_status: a.connection_status,
-        connection_id: a.connection_id,
-        connection_direction: a.connection_direction,
-      });
-    });
-  }
   const [createConnection, { isLoading: isCreatingConnection }] =
     useCreateConnectionMutation();
   const [createThread] = useCreateDirectMessageThreadMutation();
@@ -196,7 +212,7 @@ export function AttendeesGrid({ eventId }) {
     }
   };
 
-  const filteredAttendees = attendees?.filter((attendee) => {
+  const filteredAttendees = loadedAttendees?.filter((attendee) => {
     if (!searchQuery) return true;
     
     const searchLower = searchQuery.toLowerCase();
@@ -212,7 +228,7 @@ export function AttendeesGrid({ eventId }) {
     return matchesSearch;
   });
 
-  if (isLoading) {
+  if (isInitialLoading && currentPage === 1) {
     return (
       <Center className={styles.loader}>
         <Loader size="lg" />
@@ -220,17 +236,24 @@ export function AttendeesGrid({ eventId }) {
     );
   }
 
-  // Calculate total pages
-  const totalPages = data ? Math.ceil(data.total_items / perPage) : 1;
-
-  // Reset page when filters change
+  // Reset when filters change
   const handleFilterChange = (value) => {
-    setFilterRole(value);
-    setPage(1);
+    // Default to 'all' if value is cleared/null
+    const newRole = value || 'all';
+    setFilterRole(newRole);
+    setCurrentPage(1);
+    setLoadedAttendees([]);
+    setHasMore(true);
   };
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
+  };
+  
+  const handleLoadMore = () => {
+    if (!isFetchingMore && hasMore) {
+      setCurrentPage(prev => prev + 1);
+    }
   };
 
   return (
@@ -250,6 +273,7 @@ export function AttendeesGrid({ eventId }) {
             leftSection={<IconFilter size={18} />}
             value={filterRole}
             onChange={handleFilterChange}
+            clearable={false}
             data={[
               { value: 'all', label: 'All Attendees' },
               { value: 'speaker', label: 'Speakers' },
@@ -259,11 +283,27 @@ export function AttendeesGrid({ eventId }) {
             className={styles.filterSelect}
           />
         </div>
-        <Text className={styles.totalCount}>
-          {searchQuery 
-            ? `${filteredAttendees?.length || 0} of ${data?.total_items || data?.total || 0} attendees`
-            : `${data?.total_items || data?.total || 0} total attendees`}
-        </Text>
+        <div className={styles.countDisplay}>
+          {searchQuery ? (
+            <>
+              <span className={styles.countNumber}>{filteredAttendees?.length || 0}</span>
+              <span className={styles.countLabel}>matching</span>
+              <span className={styles.countDivider}>•</span>
+              <span className={styles.countNumber}>{loadedAttendees?.length || 0}</span>
+              <span className={styles.countLabel}>loaded</span>
+              <span className={styles.countDivider}>•</span>
+              <span className={styles.countNumber}>{currentData?.total_items || 0}</span>
+              <span className={styles.countLabel}>total</span>
+            </>
+          ) : (
+            <>
+              <span className={styles.countNumber}>{loadedAttendees?.length || 0}</span>
+              <span className={styles.countLabel}>of</span>
+              <span className={styles.countNumber}>{currentData?.total_items || 0}</span>
+              <span className={styles.countLabel}>attendees</span>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Grid Container */}
@@ -294,23 +334,41 @@ export function AttendeesGrid({ eventId }) {
           ))}
         </div>
 
-        {filteredAttendees?.length === 0 && !isLoading && (
+        {filteredAttendees?.length === 0 && !isInitialLoading && (
           <div className={styles.emptyState}>
             <Text c="dimmed">No attendees found matching your criteria</Text>
           </div>
         )}
       </div>
 
-      {/* Pagination */}
-      {totalPages > 1 && (
+      {/* Load More Button */}
+      {hasMore && (
         <div className={styles.paginationContainer}>
-          <Pagination
-            value={page}
-            onChange={setPage}
-            total={totalPages}
-            size="md"
-            withEdges
-          />
+          <button
+            onClick={handleLoadMore}
+            disabled={isFetchingMore}
+            className={styles.loadMoreButton}
+            style={{
+              padding: '0.75rem 2rem',
+              background: isFetchingMore ? '#f3f4f6' : '#8b5cf6',
+              color: isFetchingMore ? '#9ca3af' : 'white',
+              border: 'none',
+              borderRadius: '0.5rem',
+              fontSize: '0.875rem',
+              fontWeight: '500',
+              cursor: isFetchingMore ? 'not-allowed' : 'pointer',
+              transition: 'all 0.2s',
+            }}
+          >
+            {isFetchingMore ? (
+              <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Loader size="xs" color="gray" />
+                Loading more...
+              </span>
+            ) : (
+              'Load More Attendees'
+            )}
+          </button>
         </div>
       )}
 
