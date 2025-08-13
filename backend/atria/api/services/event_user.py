@@ -98,8 +98,8 @@ class EventUserService:
         if role:
             query = query.filter_by(role=role)
         
-        # Eager load users to avoid N+1 queries
-        query = query.options(joinedload(EventUser.user))
+        # Eager load users to avoid N+1 queries and order by last name
+        query = query.options(joinedload(EventUser.user)).join(EventUser.user).order_by(User.last_name, User.first_name)
         
         # Get all event users
         event_users = query.all()
@@ -364,7 +364,7 @@ class EventUserService:
     
     @staticmethod
     def _paginate_list(items, collection_name):
-        """Apply pagination to a list of items"""
+        """Apply pagination to a list of items - matching standard format"""
         from flask import request
         
         page = request.args.get('page', 1, type=int)
@@ -372,13 +372,16 @@ class EventUserService:
         
         # Calculate pagination
         total = len(items)
+        total_pages = (total + per_page - 1) // per_page if total > 0 else 0
         start = (page - 1) * per_page
         end = start + per_page
         
         return {
             collection_name: items[start:end],
-            'total': total,
-            'page': page,
+            'total_items': total,  # Changed from 'total'
+            'total_pages': total_pages,  # Changed from 'pages'
+            'current_page': page,  # Changed from 'page'
             'per_page': per_page,
-            'pages': (total + per_page - 1) // per_page if total > 0 else 0
+            'has_next': page < total_pages,
+            'has_prev': page > 1
         }
