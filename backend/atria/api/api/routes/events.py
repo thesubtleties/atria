@@ -15,7 +15,7 @@ from api.commons.decorators import (
     event_member_required,
     org_admin_required,
     org_member_required,
-    event_admin_required,
+    org_owner_required,
 )
 from api.commons.pagination import (
     PAGINATION_PARAMETERS,
@@ -143,16 +143,17 @@ class EventResource(MethodView):
 
     @blp.response(204)
     @blp.doc(
-        summary="Delete event",
+        summary="Delete event (org owner only)",
+        description="Soft deletes an event, clearing sensitive data but preserving it for connection history",
         responses={
-            403: {"description": "Not authorized to delete this event"},
+            403: {"description": "Must be organization owner to delete events"},
             404: {"description": "Event not found"},
         },
     )
     @jwt_required()
-    @event_admin_required()
+    @org_owner_required()
     def delete(self, event_id):
-        """Delete event"""
+        """Soft delete event - org owner only"""
         EventService.delete_event(event_id)
         return ""
 

@@ -81,6 +81,15 @@ class ResetPasswordSchema(ma.Schema):
             raise ValidationError("Password must be at least 8 characters")
 
 
+class VerifyPasswordSchema(ma.Schema):
+    """Schema for password verification"""
+    
+    class Meta:
+        name = "VerifyPassword"
+    
+    password = ma.String(required=True, load_only=True)
+
+
 class ValidateResetTokenResponseSchema(ma.Schema):
     """Response schema for reset token validation"""
     

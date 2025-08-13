@@ -1,0 +1,76 @@
+.modalContent {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(139, 92, 246, 0.08);
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.08);
+}
+
+.modalHeader {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+  padding: 1.5rem 1.5rem 0;
+  border-bottom: 1px solid rgba(220, 38, 38, 0.08);
+}
+
+.modalBody {
+  padding: 1.5rem;
+}
+
+.dangerAlert {
+  background: rgba(220, 38, 38, 0.04);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1px solid rgba(220, 38, 38, 0.1);
+  border-radius: 6px;
+  padding: 1rem;
+}
+
+.alertHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.alertIcon {
+  color: #dc2626;
+}
+
+.alertTitle {
+  color: #991b1b;
+  font-size: 0.95rem;
+}
+
+.alertText {
+  color: #991b1b;
+  line-height: 1.5;
+  font-size: 0.875rem;
+}
+
+.alertText strong {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+.eventInfo {
+  background: rgba(139, 92, 246, 0.04);
+  padding: 1rem;
+  border-radius: 6px;
+  border: 1px solid rgba(139, 92, 246, 0.08);
+}
+
+.passwordInput input {
+  border-color: rgba(220, 38, 38, 0.2);
+}
+
+.passwordInput input:focus {
+  border-color: rgba(220, 38, 38, 0.4);
+}
+
+.buttonGroup {
+  padding-top: 1rem;
+  margin-top: 1.5rem;
+  border-top: 1px solid rgba(139, 92, 246, 0.04);
+}

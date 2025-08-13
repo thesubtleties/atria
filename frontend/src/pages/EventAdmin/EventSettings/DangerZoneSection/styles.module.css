@@ -1,0 +1,77 @@
+.dangerZone {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(220, 38, 38, 0.1);
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.04);
+}
+
+.warningSection {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(220, 38, 38, 0.08);
+}
+
+.warningHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.warningIcon {
+  color: #dc2626;
+}
+
+.sectionTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #dc2626;
+  margin: 0;
+}
+
+.warningText {
+  color: #991b1b;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.deleteSection {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 1.5rem;
+  border-radius: 6px;
+  border: 1px solid rgba(220, 38, 38, 0.08);
+}
+
+.deleteLabel {
+  color: #374151;
+}
+
+.deleteCode {
+  background: rgba(220, 38, 38, 0.1);
+  color: #dc2626;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-family: 'Monaco', 'Menlo', monospace;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.deleteInput input {
+  border-color: rgba(220, 38, 38, 0.2);
+  font-family: 'Monaco', 'Menlo', monospace;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.deleteInput input:focus {
+  border-color: rgba(220, 38, 38, 0.4);
+}
+
+.deleteButton {
+  align-self: flex-start;
+}

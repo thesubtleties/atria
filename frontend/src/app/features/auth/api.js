@@ -127,6 +127,14 @@ export const authApi = baseApi.injectEndpoints({
         body: { token, password },
       }),
     }),
+
+    verifyPassword: builder.mutation({
+      query: ({ password }) => ({
+        url: '/auth/verify-password',
+        method: 'POST',
+        body: { password },
+      }),
+    }),
   }),
 });
 
@@ -141,4 +149,5 @@ export const {
   useForgotPasswordMutation,
   useValidateResetTokenQuery,
   useResetPasswordMutation,
+  useVerifyPasswordMutation,
 } = authApi;
