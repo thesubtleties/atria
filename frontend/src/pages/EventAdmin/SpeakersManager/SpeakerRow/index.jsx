@@ -1,4 +1,4 @@
-import { Table, Group, Text, Avatar, Menu, ActionIcon, Badge, Tooltip, Stack } from '@mantine/core';
+import { Table, Group, Text, Avatar, Menu, ActionIcon, Badge, Tooltip, Stack, Alert } from '@mantine/core';
 import {
   IconDots,
   IconUserCircle,
@@ -6,6 +6,7 @@ import {
   IconMicrophone,
   IconTrash,
   IconMessage,
+  IconAlertCircle,
 } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
@@ -43,10 +44,31 @@ const SpeakerRow = ({
   const handleRemoveSpeaker = () => {
     openConfirmationModal({
       title: 'Remove Speaker Role',
-      message: `Remove ${speaker.full_name} as a speaker? They will become a regular attendee.`,
       confirmLabel: 'Remove Speaker',
       cancelLabel: 'Cancel',
       isDangerous: true,
+      children: (
+        <Stack spacing="md">
+          <Text size="sm">
+            Remove {speaker.full_name} as a speaker? They will become a regular attendee.
+          </Text>
+          {speaker.session_count > 0 && (
+            <Alert 
+              icon={<IconAlertCircle size={16} />} 
+              color="red" 
+              variant="light"
+            >
+              <Text size="sm" fw={500}>
+                Warning: Session Removal
+              </Text>
+              <Text size="sm" mt="xs">
+                This will also remove them from {speaker.session_count} session{speaker.session_count > 1 ? 's' : ''} they are currently assigned to speak at.
+                This action cannot be undone automatically.
+              </Text>
+            </Alert>
+          )}
+        </Stack>
+      ),
       onConfirm: async () => {
         try {
           await updateUser({
