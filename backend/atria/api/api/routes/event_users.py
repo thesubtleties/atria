@@ -20,6 +20,8 @@ from api.commons.decorators import (
     event_member_required,
     event_organizer_required,
     event_admin_required,
+    event_organizer_or_org_owner_required,
+    event_admin_or_org_owner_required,
 )
 from api.services.event_user import EventUserService
 
@@ -145,7 +147,7 @@ class EventUserDetail(MethodView):
         },
     )
     @jwt_required()
-    @event_organizer_required()
+    @event_organizer_or_org_owner_required()
     def put(self, update_data, event_id, user_id):
         """Update user's role or info in event"""
         return EventUserService.update_user_role(
@@ -170,7 +172,7 @@ class EventUserDetail(MethodView):
         },
     )
     @jwt_required()
-    @event_admin_required()
+    @event_admin_or_org_owner_required()
     def delete(self, event_id, user_id):
         """Remove user from event"""
         try:

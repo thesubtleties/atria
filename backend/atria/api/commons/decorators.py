@@ -222,3 +222,72 @@ def chat_room_access_required():
         return decorated_function
 
     return decorator
+
+
+def event_organizer_or_org_owner_required():
+    """Check if user is event organizer/admin OR organization owner"""
+
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            current_user_id = int(get_jwt_identity())
+            current_user = User.query.get_or_404(current_user_id)
+
+            # Handle either direct event_id or get it from session
+            event_id = kwargs.get("event_id")
+            if not event_id and "session_id" in kwargs:
+                session = Session.query.get_or_404(kwargs["session_id"])
+                event_id = session.event_id
+
+            event = Event.query.get_or_404(event_id)
+            
+            # First check event role
+            user_role = event.get_user_role(current_user)
+            if user_role in [EventUserRole.ADMIN, EventUserRole.ORGANIZER]:
+                return f(*args, **kwargs)
+            
+            # Then check if user is organization owner
+            org = Organization.query.get(event.organization_id)
+            org_role = org.get_user_role(current_user)
+            if org_role == OrganizationUserRole.OWNER:
+                return f(*args, **kwargs)
+
+            return {
+                "message": "Must be event organizer/admin or organization owner"
+            }, 403
+
+        return decorated_function
+
+    return decorator
+
+
+def event_admin_or_org_owner_required():
+    """Check if user is event admin OR organization owner"""
+
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            current_user_id = int(get_jwt_identity())
+            current_user = User.query.get_or_404(current_user_id)
+            event_id = kwargs.get("event_id")
+
+            event = Event.query.get_or_404(event_id)
+            
+            # First check event role
+            user_role = event.get_user_role(current_user)
+            if user_role == EventUserRole.ADMIN:
+                return f(*args, **kwargs)
+            
+            # Then check if user is organization owner
+            org = Organization.query.get(event.organization_id)
+            org_role = org.get_user_role(current_user)
+            if org_role == OrganizationUserRole.OWNER:
+                return f(*args, **kwargs)
+
+            return {
+                "message": "Must be event admin or organization owner"
+            }, 403
+
+        return decorated_function
+
+    return decorator

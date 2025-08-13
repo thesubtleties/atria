@@ -13,9 +13,29 @@ class EventInvitationService:
     @staticmethod
     def invite_user_to_event(event_id, email, role, message=None):
         """Send invitation to join event"""
+        from api.models import EventUser, Organization
+        from api.models.enums import OrganizationUserRole
+        
         event = Event.query.get_or_404(event_id)
         inviter_id = get_jwt_identity()
         inviter = User.query.get(inviter_id)
+        
+        # Get inviter's role in the event
+        inviter_event_role = event.get_user_role(inviter)
+        
+        # Check if inviter is org owner
+        org = Organization.query.get(event.organization_id)
+        is_org_owner = org.get_user_role(inviter) == OrganizationUserRole.OWNER
+        
+        # Validate role assignment based on inviter's permissions
+        if not is_org_owner:  # Org owners can invite anyone
+            if inviter_event_role == EventUserRole.ORGANIZER:
+                # Organizers can only invite ATTENDEE and SPEAKER
+                if role not in [EventUserRole.ATTENDEE, EventUserRole.SPEAKER]:
+                    raise ValueError("Organizers can only invite attendees and speakers")
+            elif inviter_event_role != EventUserRole.ADMIN:
+                # Only admins, organizers, and org owners can send invitations
+                raise ValueError("You don't have permission to send invitations")
 
         # Check if user already in event
         existing_user = User.query.filter_by(email=email).first()

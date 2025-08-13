@@ -6,6 +6,8 @@ import styles from './styles.module.css';
 const AttendeesList = ({
   attendees,
   currentUserRole,
+  currentUserId,
+  adminCount,
   onUpdateRole,
   onSort,
   sortBy,
@@ -75,6 +77,8 @@ const AttendeesList = ({
               attendee={attendee}
               onUpdateRole={onUpdateRole}
               currentUserRole={currentUserRole}
+              currentUserId={currentUserId}
+              adminCount={adminCount}
             />
           ))}
         </Table.Tbody>
