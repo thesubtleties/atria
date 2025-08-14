@@ -20,14 +20,8 @@ export const SpeakersPage = () => {
     );
   }
 
-  // Sort speakers alphabetically by name (handle nullable fields)
-  const sortedSpeakers = data?.event_users ? 
-    [...data.event_users].sort((a, b) => {
-      const nameA = a.full_name || a.last_name || 'Unknown';
-      const nameB = b.full_name || b.last_name || 'Unknown';
-      return nameA.localeCompare(nameB);
-    }) 
-    : [];
+  // Backend already sorts by last name, then first name - no need to re-sort
+  const speakers = data?.event_users || [];
 
   return (
     <div className={styles.pageContainer}>
@@ -39,15 +33,15 @@ export const SpeakersPage = () => {
       <Container size="xl" className={styles.contentWrapper}>
         <div className={styles.header}>
           <h1 className={styles.pageTitle}>Featured Speakers</h1>
-          {sortedSpeakers.length > 0 && (
+          {speakers.length > 0 && (
             <p className={styles.pageSubtitle}>
               Meet the experts sharing their knowledge at this event
             </p>
           )}
         </div>
         
-        {sortedSpeakers.length > 0 ? (
-          <SpeakersList speakers={sortedSpeakers} />
+        {speakers.length > 0 ? (
+          <SpeakersList speakers={speakers} />
         ) : (
           <div className={styles.emptyState}>
             <p>No speakers have been announced yet.</p>
