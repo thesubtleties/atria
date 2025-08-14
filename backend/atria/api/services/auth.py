@@ -125,3 +125,22 @@ class AuthService:
         )
         
         return {"token": socket_token}
+
+    @staticmethod
+    def change_password(current_password, new_password):
+        """Change user's password"""
+        from flask_smorest import abort
+        
+        # Get current user
+        user_id = int(get_jwt_identity())
+        user = User.query.get_or_404(user_id)
+        
+        # Verify current password
+        if not user.verify_password(current_password):
+            abort(400, message="Current password is incorrect")
+        
+        # Set new password (auto-hashes via property setter)
+        user.password = new_password
+        db.session.commit()
+        
+        return {"message": "Password changed successfully"}

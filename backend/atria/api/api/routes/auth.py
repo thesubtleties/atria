@@ -13,6 +13,7 @@ from api.api.schemas import (
     ResetPasswordSchema,
     ValidateResetTokenResponseSchema,
     VerifyPasswordSchema,
+    ChangePasswordSchema,
 )
 from api.services.auth import AuthService
 
@@ -327,3 +328,22 @@ class VerifyPasswordResource(MethodView):
             abort(401, message="Incorrect password")
         
         return {"message": "Password verified successfully"}
+
+
+@blp.route("/change-password")
+class ChangePasswordResource(MethodView):
+    @jwt_required()
+    @blp.arguments(ChangePasswordSchema)
+    @blp.response(200)
+    @blp.doc(
+        summary="Change user password",
+        description="Change the current user's password",
+        responses={
+            200: {"description": "Password changed successfully"},
+            400: {"description": "Invalid current password or new password requirements not met"},
+            401: {"description": "Not authenticated"},
+        },
+    )
+    def put(self, args):
+        """Change current user's password"""
+        return AuthService.change_password(args["current_password"], args["new_password"])

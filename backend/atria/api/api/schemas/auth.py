@@ -100,6 +100,21 @@ class ValidateResetTokenResponseSchema(ma.Schema):
     email = ma.String(required=True)
 
 
+class ChangePasswordSchema(ma.Schema):
+    """Schema for changing password"""
+    
+    class Meta:
+        name = "ChangePassword"
+    
+    current_password = ma.String(required=True, load_only=True)
+    new_password = ma.String(required=True, load_only=True)
+    
+    @validates("new_password")
+    def validate_new_password(self, value, **kwargs):
+        if len(value) < 8:
+            raise ValidationError("Password must be at least 8 characters")
+
+
 class SignupResponseSchema(ma.Schema):
     """Response schema for signup"""
     
