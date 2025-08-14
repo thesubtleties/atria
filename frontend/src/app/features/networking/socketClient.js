@@ -8,6 +8,7 @@ import { selectUser, selectIsAuthenticated } from '../../store/authSlice';
 let socket = null;
 let connectionPromise = null;
 let isConnecting = false;
+let messageCallbacks = new Map(); // Map of roomId -> callback function
 
 export const initializeSocket = (token = null) => {
   if (socket && socket.connected) {
@@ -311,7 +312,19 @@ export const initializeSocket = (token = null) => {
       const roomId = parseInt(data.room_id);
       const messageId = parseInt(data.message_id);
       
-      // Update the message in the cache to show as deleted
+      // Notify the registered callback for this room
+      const callback = messageCallbacks.get(roomId);
+      if (callback) {
+        console.log('🔴 Notifying callback for room:', roomId);
+        callback({
+          type: 'message_moderated',
+          messageId,
+          deleted_by: data.deleted_by,
+          deleted_at: new Date().toISOString()
+        });
+      }
+      
+      // Also update the RTK Query cache for backwards compatibility
       store.dispatch(
         chatApi.util.updateQueryData(
           'getChatRoomMessages',
@@ -335,12 +348,23 @@ export const initializeSocket = (token = null) => {
     }
   });
 
+
   socket.on('chat_message_removed', (data) => {
     console.log('🔴 SOCKET EVENT: chat_message_removed received:', data);
     
     if (data && data.room_id && data.message_id) {
       const roomId = parseInt(data.room_id);
       const messageId = parseInt(data.message_id);
+      
+      // Notify the registered callback for this room
+      const callback = messageCallbacks.get(roomId);
+      if (callback) {
+        console.log('🔴 Notifying callback for room (removed):', roomId);
+        callback({
+          type: 'message_removed',
+          messageId
+        });
+      }
       
       // Remove the message from the cache entirely
       store.dispatch(
@@ -359,35 +383,24 @@ export const initializeSocket = (token = null) => {
 
   socket.on('new_chat_message', (data) => {
     console.log('🔵 SOCKET EVENT: new_chat_message received:', data);
-    console.log('🔵 Room ID:', data.room_id, 'Type:', typeof data.room_id);
-    console.log('🔵 Socket ID:', socket.id, 'Connected:', socket.connected);
     
-    // Update messages for active room
     if (data && data.room_id) {
-      console.log(`🔵 Updating RTK cache for room ${data.room_id}`);
-      
-      // Ensure room_id is a number
       const roomId = parseInt(data.room_id);
       
-      // ChatRoom component uses { chatRoomId: room.id, limit: 100, offset: 0 }
-      const cacheKey = { chatRoomId: roomId, limit: 100, offset: 0 };
-      
-      // Log all active queries to debug
-      const state = store.getState();
-      console.log('🔵 Looking for chatApi queries...');
-      console.log('🔵 Available state keys:', Object.keys(state));
-      
-      // Check if chatApi exists and has queries
-      if (state.chatApi?.queries) {
-        console.log('🔵 Found chatApi.queries, checking for room', roomId);
-        Object.keys(state.chatApi.queries).forEach(key => {
-          if (key.includes('getChatRoomMessages')) {
-            console.log('  Found query:', key);
-          }
+      // Notify the registered callback for this room
+      const callback = messageCallbacks.get(roomId);
+      if (callback) {
+        console.log('🔵 Notifying callback for new message in room:', roomId);
+        callback({
+          type: 'new_message',
+          message: data
         });
-      } else {
-        console.log('🔵 No chatApi.queries found in state');
       }
+      
+      // Also update RTK Query cache for components that might still use it
+      // Note: The main ChatRoom uses local state now, but keep for backwards compatibility
+      const cacheKey = { chatRoomId: roomId, page: 1, per_page: 50 };
+      
       
       // Update the cache to append the new message
       const updateResult = store.dispatch(
@@ -587,6 +600,18 @@ export const initializeSocket = (token = null) => {
 export const getSocket = () => {
   console.log('🔌 getSocket called, socket is:', socket ? 'EXISTS' : 'NULL', 'connected:', socket?.connected);
   return socket;
+};
+
+// Register a callback for message updates in a specific room
+export const registerMessageCallback = (roomId, callback) => {
+  console.log('🔌 Registering message callback for room:', roomId);
+  messageCallbacks.set(roomId, callback);
+};
+
+// Unregister a callback for a specific room
+export const unregisterMessageCallback = (roomId) => {
+  console.log('🔌 Unregistering message callback for room:', roomId);
+  messageCallbacks.delete(roomId);
 };
 
 export const waitForSocket = async () => {
