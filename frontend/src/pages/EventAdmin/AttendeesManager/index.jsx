@@ -32,6 +32,7 @@ import {
   useGetEventUsersAdminQuery,
 } from '../../../app/features/events/api';
 import { Button } from '../../../shared/components/buttons';
+import { getNameSortValue } from '../../../shared/utils/sorting';
 import AttendeesList from './AttendeesList';
 import PendingInvitations from './PendingInvitations';
 import InviteModal from './InviteModal';
@@ -99,7 +100,9 @@ const AttendeesManager = () => {
   };
 
   const handleRoleFilter = (value) => {
-    setFilters((prev) => ({ ...prev, role: value }));
+    // Ensure we always have a role value - default to 'ALL' if cleared
+    const roleValue = value || 'ALL';
+    setFilters((prev) => ({ ...prev, role: roleValue }));
     setPage(1);
   };
 
@@ -144,8 +147,9 @@ const AttendeesManager = () => {
     let aVal, bVal;
     switch (filters.sortBy) {
       case 'name':
-        aVal = a.full_name || '';
-        bVal = b.full_name || '';
+        // Use the new sorting utility for proper last name sorting
+        aVal = getNameSortValue(a);
+        bVal = getNameSortValue(b);
         break;
       case 'email':
         aVal = a.email || '';
@@ -164,10 +168,18 @@ const AttendeesManager = () => {
         bVal = b.role || '';
         break;
       default:
-        aVal = a.full_name || '';
-        bVal = b.full_name || '';
+        // Default to name sorting with last name first
+        aVal = getNameSortValue(a);
+        bVal = getNameSortValue(b);
     }
 
+    // Use localeCompare for better string comparison, especially for names
+    if (typeof aVal === 'string' && typeof bVal === 'string') {
+      const comparison = aVal.localeCompare(bVal);
+      return filters.sortOrder === 'asc' ? comparison : -comparison;
+    }
+
+    // Fallback for non-string values
     if (filters.sortOrder === 'asc') {
       return aVal > bVal ? 1 : -1;
     } else {
@@ -312,6 +324,7 @@ const AttendeesManager = () => {
                   value={filters.role}
                   onChange={handleRoleFilter}
                   size="md"
+                  clearable={false}
                   data={[
                     { value: 'ALL', label: 'All Roles' },
                     { value: 'ADMIN', label: 'Admins' },
