@@ -214,9 +214,10 @@ export const networkingApi = baseApi.injectEndpoints({
           extraOptions
         );
       },
-      invalidatesTags: (result, error, { threadId }) => [
-        { type: 'DirectMessage', id: threadId },
-      ],
+      // Don't invalidate - we handle updates via optimistic updates and socket callbacks
+      // invalidatesTags: (result, error, { threadId }) => [
+      //   { type: 'DirectMessage', id: threadId },
+      // ],
     }),
 
     // Create a new thread
