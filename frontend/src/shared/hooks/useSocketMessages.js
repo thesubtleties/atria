@@ -6,24 +6,31 @@ import {
   useSendDirectMessageMutation,
   useMarkMessagesReadMutation,
 } from '../../app/features/networking/api';
+import { 
+  registerDirectMessageCallback, 
+  unregisterDirectMessageCallback 
+} from '../../app/features/networking/socketClient';
 
 export function useSocketMessages(threadId) {
   const [messageInput, setMessageInput] = useState('');
-  const [page, setPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [loadedMessages, setLoadedMessages] = useState([]);
   const { currentUser } = useSelector((state) => state.auth);
-  const loadingMoreRef = useRef(false);
+  const previousThreadIdRef = useRef(null);
 
-  // Get messages with RTK Query
+  // Get messages with RTK Query (but we'll manage accumulation locally)
   const {
     data = { messages: [], pagination: null },
     isLoading,
     error,
     isFetching,
   } = useGetDirectMessagesQuery(
-    { threadId, page },
+    { threadId, page: currentPage },
     {
       skip: !threadId,
+      // Don't keep in cache since we manage locally
+      keepUnusedDataFor: 0,
     }
   );
 
@@ -31,28 +38,83 @@ export function useSocketMessages(threadId) {
   const [sendMessageMutation] = useSendDirectMessageMutation();
   const [markAsRead] = useMarkMessagesReadMutation();
 
-  // Update hasMore based on pagination
+  // Reset state when thread changes
   useEffect(() => {
-    if (data?.pagination) {
-      setHasMore(data.pagination.has_next);
-    } else {
-      setHasMore(false);
+    if (threadId !== previousThreadIdRef.current) {
+      setLoadedMessages([]);
+      setCurrentPage(1);
+      setHasMore(true);
+      previousThreadIdRef.current = threadId;
     }
-    loadingMoreRef.current = false;
-  }, [data]);
+  }, [threadId]);
+
+  // Accumulate messages when data changes
+  useEffect(() => {
+    if (data?.messages && data.messages.length > 0) {
+      setLoadedMessages(prev => {
+        // For page 1, replace all messages
+        // Messages come newest-first from backend, keep that order
+        if (currentPage === 1) {
+          return data.messages;
+        }
+        
+        // For other pages, these are older messages
+        // They come newest-first, but they're OLDER than what we have
+        // So they should go at the BEGINNING (top)
+        const existingIds = new Set(prev.map(msg => msg.id));
+        const uniqueNewMessages = data.messages.filter(
+          msg => !existingIds.has(msg.id)
+        );
+        
+        // Prepend older messages at the beginning (they're older)
+        return [...uniqueNewMessages, ...prev];
+      });
+
+      // Update hasMore based on pagination
+      if (data.pagination) {
+        const hasMorePages = currentPage < data.pagination.total_pages;
+        setHasMore(hasMorePages);
+      } else {
+        setHasMore(false);
+      }
+    }
+  }, [data, currentPage]);
+
+  // Register socket callbacks for real-time updates
+  useEffect(() => {
+    if (!threadId) return;
+
+    const handleSocketUpdate = (update) => {
+      if (update.type === 'new_message') {
+        // Add new message to the end
+        setLoadedMessages(prev => {
+          // Check if message already exists (prevent duplicates)
+          if (prev.some(msg => msg.id === update.message.id)) {
+            return prev;
+          }
+          return [...prev, update.message];
+        });
+      }
+    };
+
+    registerDirectMessageCallback(threadId, handleSocketUpdate);
+    
+    return () => {
+      unregisterDirectMessageCallback(threadId);
+    };
+  }, [threadId]);
 
   // Mark messages as read when thread is opened
   useEffect(() => {
-    if (threadId && !isLoading && data?.messages?.length > 0) {
+    if (threadId && !isLoading && loadedMessages.length > 0) {
       markAsRead(threadId);
     }
-  }, [threadId, isLoading, data?.messages, markAsRead]);
+  }, [threadId, isLoading, loadedMessages.length, markAsRead]);
 
   // Load more messages
   const loadMoreMessages = useCallback(() => {
-    if (hasMore && !isFetching && !loadingMoreRef.current) {
-      loadingMoreRef.current = true;
-      setPage((prevPage) => prevPage + 1);
+    if (hasMore && !isFetching) {
+      setCurrentPage(prevPage => prevPage + 1);
     }
   }, [hasMore, isFetching]);
 
@@ -62,7 +124,7 @@ export function useSocketMessages(threadId) {
       if (!threadId || !content.trim()) return;
 
       try {
-        // Add optimistic update
+        // Create optimistic message
         const optimisticMessage = {
           id: `temp-${Date.now()}`,
           thread_id: threadId,
@@ -74,24 +136,38 @@ export function useSocketMessages(threadId) {
           pending: true,
         };
 
+        // Add optimistically
+        setLoadedMessages(prev => [...prev, optimisticMessage]);
         setMessageInput('');
 
-        await sendMessageMutation({
+        // Send to server
+        const result = await sendMessageMutation({
           threadId,
           content,
         }).unwrap();
+
+        // Replace optimistic message with real one
+        setLoadedMessages(prev => 
+          prev.map(msg => 
+            msg.id === optimisticMessage.id ? result : msg
+          )
+        );
       } catch (error) {
         console.error('Failed to send message:', error);
+        // Remove optimistic message on error
+        setLoadedMessages(prev => 
+          prev.filter(msg => !msg.id.startsWith('temp-'))
+        );
       }
     },
     [threadId, currentUser, sendMessageMutation]
   );
 
   return {
-    messages: data?.messages || [],
+    messages: loadedMessages,
     otherUser: data?.other_user,
     isEncrypted: data?.is_encrypted,
-    isLoading,
+    isLoading: isLoading && currentPage === 1,
     isFetching,
     error,
     messageInput,

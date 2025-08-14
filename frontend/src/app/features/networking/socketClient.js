@@ -8,7 +8,8 @@ import { selectUser, selectIsAuthenticated } from '../../store/authSlice';
 let socket = null;
 let connectionPromise = null;
 let isConnecting = false;
-let messageCallbacks = new Map(); // Map of roomId -> callback function
+let messageCallbacks = new Map(); // Map of roomId -> callback function for chat rooms
+let directMessageCallbacks = new Map(); // Map of threadId -> callback function for DMs
 
 export const initializeSocket = (token = null) => {
   if (socket && socket.connected) {
@@ -292,6 +293,47 @@ export const initializeSocket = (token = null) => {
             const exists = draft.some((t) => t.id === data.id);
             if (!exists) {
               draft.unshift(data);
+            }
+            return draft;
+          }
+        )
+      );
+    }
+  });
+
+  socket.on('new_direct_message', (data) => {
+    console.log('🔵 SOCKET EVENT: new_direct_message received:', data);
+    
+    if (data && data.thread_id) {
+      const threadId = parseInt(data.thread_id);
+      
+      // Notify the registered callback for this thread
+      const callback = directMessageCallbacks.get(threadId);
+      if (callback) {
+        console.log('🔵 Notifying DM callback for thread:', threadId);
+        callback({
+          type: 'new_message',
+          message: data
+        });
+      }
+      
+      // Also update thread list to show latest message/timestamp
+      store.dispatch(
+        networkingApi.util.updateQueryData(
+          'getDirectMessageThreads',
+          undefined,
+          (draft) => {
+            if (!Array.isArray(draft)) return draft;
+            const thread = draft.find(t => t.id === threadId);
+            if (thread) {
+              thread.last_message = data;
+              thread.last_message_at = data.created_at;
+              // Move thread to top of list
+              const index = draft.indexOf(thread);
+              if (index > 0) {
+                draft.splice(index, 1);
+                draft.unshift(thread);
+              }
             }
             return draft;
           }
@@ -612,6 +654,18 @@ export const registerMessageCallback = (roomId, callback) => {
 export const unregisterMessageCallback = (roomId) => {
   console.log('🔌 Unregistering message callback for room:', roomId);
   messageCallbacks.delete(roomId);
+};
+
+// Register a callback for direct message updates in a specific thread
+export const registerDirectMessageCallback = (threadId, callback) => {
+  console.log('🔌 Registering DM callback for thread:', threadId);
+  directMessageCallbacks.set(threadId, callback);
+};
+
+// Unregister a callback for a specific thread
+export const unregisterDirectMessageCallback = (threadId) => {
+  console.log('🔌 Unregistering DM callback for thread:', threadId);
+  directMessageCallbacks.delete(threadId);
 };
 
 export const waitForSocket = async () => {

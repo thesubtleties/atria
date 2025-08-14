@@ -23,8 +23,13 @@ function ChatWindow({ threadId }) {
   const [isMaximized, setIsMaximized] = useState(false);
   const messagesEndRef = useRef(null);
   const messagesContainerRef = useRef(null);
+  const scrollState = useRef({
+    isNearBottom: true,
+    scrollBeforeLoad: null,
+    hasInitialized: false,
+    scrollTimeout: null
+  });
   const currentUser = useSelector(selectUser);
-  console.log('current user', currentUser);
   const {
     messages,
     otherUser,
@@ -37,33 +42,63 @@ function ChatWindow({ threadId }) {
     loadMoreMessages,
   } = useSocketMessages(threadId);
 
-  // Scroll to bottom on new messages
+  // Scroll to bottom on new messages (only if user is near bottom)
   useEffect(() => {
     if (!isLoading && messages.length > 0 && messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      // Initial load or user is near bottom
+      if (!scrollState.current.hasInitialized || scrollState.current.isNearBottom) {
+        messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      }
     }
   }, [messages, isLoading]);
 
-  // Handle scroll to load more messages
+  // Set initialized flag after a delay when thread changes
+  useEffect(() => {
+    // Reset initialization flag when thread changes
+    scrollState.current.hasInitialized = false;
+    
+    // Set initialized after a delay to avoid triggering on initial scroll
+    const initTimer = setTimeout(() => {
+      scrollState.current.hasInitialized = true;
+    }, 500);
+
+    return () => clearTimeout(initTimer);
+  }, [threadId]);
+
+  // Handle scroll to load more messages with better position restoration
   useEffect(() => {
     const handleScroll = () => {
       const container = messagesContainerRef.current;
       if (!container) return;
 
-      // If scrolled near the top and has more messages, load more
-      if (container.scrollTop < 50 && hasMore && !isFetching) {
-        // Save current scroll position
-        const scrollHeight = container.scrollHeight;
+      // Don't process scroll events until we've initialized
+      if (!scrollState.current.hasInitialized) {
+        return;
+      }
 
-        loadMoreMessages();
+      // Track if user is near bottom
+      const threshold = 100;
+      const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < threshold;
+      scrollState.current.isNearBottom = isNearBottom;
 
-        // After loading, restore scroll position
-        setTimeout(() => {
-          if (container) {
-            const newScrollHeight = container.scrollHeight;
-            container.scrollTop = newScrollHeight - scrollHeight;
+      // Check if we should load more (25% from top)
+      const scrollPercentage = container.scrollTop / container.scrollHeight;
+      if (scrollPercentage < 0.25 && hasMore && !isFetching && !scrollState.current.scrollTimeout) {
+        // Debounce scroll loading
+        scrollState.current.scrollTimeout = setTimeout(() => {
+          // Save scroll position before loading
+          const firstMessage = container.querySelector('[data-message-id]');
+          if (firstMessage) {
+            scrollState.current.scrollBeforeLoad = {
+              messageId: firstMessage.dataset.messageId,
+              offsetTop: firstMessage.offsetTop,
+              scrollTop: container.scrollTop
+            };
           }
-        }, 100);
+          
+          loadMoreMessages();
+          scrollState.current.scrollTimeout = null;
+        }, 300);
       }
     };
 
@@ -76,8 +111,30 @@ function ChatWindow({ threadId }) {
       if (container) {
         container.removeEventListener('scroll', handleScroll);
       }
+      if (scrollState.current.scrollTimeout) {
+        clearTimeout(scrollState.current.scrollTimeout);
+      }
     };
   }, [hasMore, isFetching, loadMoreMessages]);
+
+  // Restore scroll position after loading more messages
+  useEffect(() => {
+    if (scrollState.current.scrollBeforeLoad && !isFetching) {
+      const container = messagesContainerRef.current;
+      if (container) {
+        const savedState = scrollState.current.scrollBeforeLoad;
+        const targetMessage = container.querySelector(`[data-message-id="${savedState.messageId}"]`);
+        
+        if (targetMessage) {
+          const newOffsetTop = targetMessage.offsetTop;
+          const scrollAdjustment = newOffsetTop - savedState.offsetTop;
+          container.scrollTop = savedState.scrollTop + scrollAdjustment;
+        }
+        
+        scrollState.current.scrollBeforeLoad = null;
+      }
+    }
+  }, [messages, isFetching]);
 
   // Handle window controls
   const handleClose = () => {

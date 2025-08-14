@@ -44,6 +44,8 @@ class DirectMessageService:
         if thread.user1_id != user_id and thread.user2_id != user_id:
             raise ValueError("Not authorized to view these messages")
 
+        # For infinite scroll: use DESC to get newest messages first
+        # Page 1 = most recent messages, Page 2 = older messages
         query = DirectMessage.query.filter_by(thread_id=thread_id).order_by(
             DirectMessage.created_at.desc()
         )
@@ -52,6 +54,7 @@ class DirectMessageService:
         DirectMessageService.mark_messages_read(thread_id, user_id)
 
         if schema:
+            # Don't reverse - return newest first
             return paginate(query, schema, collection_name="messages")
 
         # Manual pagination for socket responses
@@ -63,6 +66,8 @@ class DirectMessageService:
             messages = (
                 query.offset((page - 1) * per_page).limit(per_page).all()
             )
+            
+            # Don't reverse - return newest first
 
             return {
                 "messages": messages,
