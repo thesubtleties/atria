@@ -49,6 +49,9 @@ class EventUserService:
         if role:
             query = query.filter_by(role=role)
 
+        # Eager load users and order by last name, then first name (consistent with regular endpoint)
+        query = query.options(joinedload(EventUser.user)).join(EventUser.user).order_by(User.last_name, User.first_name)
+
         # Get the paginated response
         result = paginate(query, schema, collection_name="event_users")
         
