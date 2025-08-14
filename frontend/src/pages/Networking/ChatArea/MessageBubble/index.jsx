@@ -6,31 +6,23 @@ import styles from '../styles/index.module.css';
 export function MessageBubble({ message, canModerate, onDelete }) {
   const [showActions, setShowActions] = useState(false);
   
-  // Handle both snake_case (from backend) and camelCase (from local state)
+  // Extract message data (backend always returns snake_case)
   const { 
     user, 
-    sender, 
     content, 
-    created_at, 
-    createdAt,
+    created_at,
     is_deleted,
     deleted_at,
     deleted_by
   } = message;
   
-  const messageUser = user || sender;
-  const timestamp = created_at || createdAt;
-  const isDeleted = is_deleted || false;
-  
-  const time = timestamp ? new Date(timestamp).toLocaleTimeString([], { 
+  const time = created_at ? new Date(created_at).toLocaleTimeString([], { 
     hour: '2-digit', 
     minute: '2-digit' 
   }) : '';
 
-  // Extract user name - handle both formats
-  const fullName = messageUser?.full_name || messageUser?.fullName || 
-                   `${messageUser?.first_name || messageUser?.firstName || ''} ${messageUser?.last_name || messageUser?.lastName || ''}`.trim() || 
-                   'Anonymous';
+  // Extract user name
+  const fullName = user?.full_name || 'Anonymous';
   const initial = fullName?.[0] || '?';
 
   // Format deletion time
@@ -44,25 +36,26 @@ export function MessageBubble({ message, canModerate, onDelete }) {
       gap="sm" 
       align="flex-start" 
       className={styles.message}
+      data-message-id={message.id}
       onMouseEnter={() => setShowActions(true)}
       onMouseLeave={() => setShowActions(false)}
       style={{
-        backgroundColor: isDeleted ? 'rgba(220, 38, 38, 0.04)' : undefined,
+        backgroundColor: is_deleted ? 'rgba(220, 38, 38, 0.04)' : undefined,
         transition: 'background-color 0.1s ease',
       }}
       sx={(theme) => ({
         '&:hover': {
-          backgroundColor: isDeleted ? 'rgba(220, 38, 38, 0.06)' : theme.colors.gray[0],
+          backgroundColor: is_deleted ? 'rgba(220, 38, 38, 0.06)' : theme.colors.gray[0],
         },
       })}
     >
       <Avatar 
         size="sm" 
         radius="xl"
-        src={messageUser?.image_url || messageUser?.imageUrl}
+        src={user?.image_url}
         style={{ flexShrink: 0 }}
       >
-        {!messageUser?.image_url && !messageUser?.imageUrl && initial}
+        {!user?.image_url && initial}
       </Avatar>
       <div className={styles.messageContent}>
         <Group gap="xs">
@@ -76,7 +69,7 @@ export function MessageBubble({ message, canModerate, onDelete }) {
         <Text size="sm" className={styles.messageText}>
           {content}
         </Text>
-        {isDeleted && deleted_by && (
+        {is_deleted && deleted_by && (
           <div className={styles.deletionInfo}>
             <Text size="xs" c="dimmed" fs="italic">
               Message deleted by {deleted_by.full_name} • {deletionTime}
@@ -85,7 +78,7 @@ export function MessageBubble({ message, canModerate, onDelete }) {
         )}
       </div>
       
-      {showActions && canModerate && !isDeleted && (
+      {showActions && canModerate && !is_deleted && (
         <ActionIcon
           variant="subtle"
           color="red"
