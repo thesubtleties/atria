@@ -2,6 +2,7 @@ import { Table, Group, Text, ActionIcon, UnstyledButton, Badge } from '@mantine/
 import { IconChevronUp, IconChevronDown } from '@tabler/icons-react';
 import { useState } from 'react';
 import SpeakerRow from '../SpeakerRow';
+import { getNameSortValue } from '../../../../shared/utils/sorting';
 import styles from './styles.module.css';
 
 const SpeakersList = ({
@@ -26,8 +27,9 @@ const SpeakersList = ({
     let aVal, bVal;
     switch (sortBy) {
       case 'name':
-        aVal = a.full_name || '';
-        bVal = b.full_name || '';
+        // Use the new sorting utility for proper last name sorting
+        aVal = getNameSortValue(a);
+        bVal = getNameSortValue(b);
         break;
       case 'title':
         aVal = a.speaker_title || a.title || '';
@@ -42,10 +44,18 @@ const SpeakersList = ({
         bVal = b.session_count || 0;
         break;
       default:
-        aVal = a.full_name || '';
-        bVal = b.full_name || '';
+        // Default to name sorting with last name first
+        aVal = getNameSortValue(a);
+        bVal = getNameSortValue(b);
     }
 
+    // Use localeCompare for better string comparison, especially for names
+    if (typeof aVal === 'string' && typeof bVal === 'string') {
+      const comparison = aVal.localeCompare(bVal);
+      return sortOrder === 'asc' ? comparison : -comparison;
+    }
+
+    // Fallback for non-string values (like session counts)
     if (sortOrder === 'asc') {
       return aVal > bVal ? 1 : -1;
     } else {
