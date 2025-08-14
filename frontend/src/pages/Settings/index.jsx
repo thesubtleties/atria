@@ -3,6 +3,7 @@ import { Text } from '@mantine/core';
 import { IconLock, IconUser, IconBell, IconShield } from '@tabler/icons-react';
 import { Tabs } from '@mantine/core';
 import PrivacySettings from './components/PrivacySettings';
+import SecuritySettings from './components/SecuritySettings';
 import styles from './styles/index.module.css';
 
 const Settings = () => {
@@ -49,8 +50,7 @@ const Settings = () => {
               <Tabs.Tab 
                 value="security" 
                 className={styles.tab}
-                leftSection={<IconShield size={16} />} 
-                disabled
+                leftSection={<IconShield size={16} />}
               >
                 Security
               </Tabs.Tab>
@@ -69,6 +69,10 @@ const Settings = () => {
                   </a>
                 </Text>
               </div>
+            </Tabs.Panel>
+            
+            <Tabs.Panel value="security" className={styles.tabPanel}>
+              <SecuritySettings />
             </Tabs.Panel>
           </Tabs>
         </section>

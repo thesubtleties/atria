@@ -1,0 +1,57 @@
+/* Header Section - exact copy from PrivacySettings */
+.headerSection {
+  margin-bottom: 0.75rem;
+}
+
+.sectionTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+}
+
+.description {
+  color: #64748b;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* Form Section Styling - exact copy */
+.formSection {
+  padding: 1rem 0;
+}
+
+.sectionLabel {
+  font-weight: 500;
+  color: #1e293b;
+  font-size: 0.95rem;
+  margin-bottom: 0.75rem;
+  display: block;
+}
+
+/* Form Input Styling - exact copy */
+.formInput input {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.formInput input:focus {
+  border-color: rgba(139, 92, 246, 0.3);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+/* Button Group - exact copy */
+.buttonGroup {
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(139, 92, 246, 0.04);
+  margin-top: 1.5rem;
+  background: rgba(251, 250, 255, 0.3);
+  margin-left: -1.5rem;
+  margin-right: -1.5rem;
+  margin-bottom: -1.5rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  padding-bottom: 1.5rem;
+}
