@@ -86,11 +86,15 @@ export const chatApi = baseApi.injectEndpoints({
 
     // Get messages for a specific chat room
     getChatRoomMessages: builder.query({
-      query: ({ chatRoomId, limit = 50, offset = 0 }) => ({
+      query: ({ chatRoomId, page = 1, per_page = 50 }) => ({
         url: `/chat-rooms/${chatRoomId}/messages`,
-        params: { limit, offset },
+        params: { page, per_page },
       }),
-      providesTags: ['ChatMessage'],
+      providesTags: (result, error, { chatRoomId, page }) => [
+        { type: 'ChatMessage', id: `ROOM_${chatRoomId}_PAGE_${page}` }
+      ],
+      // Keep args separate to avoid caching issues
+      keepUnusedDataFor: 0, // Don't keep cached data when switching rooms
     }),
 
     // Send a message to a chat room
@@ -109,7 +113,7 @@ export const chatApi = baseApi.injectEndpoints({
         url: `/chat-rooms/${chatRoomId}/messages/${messageId}`,
         method: 'DELETE',
       }),
-      invalidatesTags: ['ChatMessage'],
+      // We handle the update optimistically in the component
     }),
 
     // Join a chat room
