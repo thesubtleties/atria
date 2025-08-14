@@ -134,11 +134,17 @@ class ChatRoomService:
         if user_role not in [EventUserRole.ADMIN, EventUserRole.ORGANIZER]:
             query = query.filter(ChatMessage.deleted_at.is_(None))
         
-        # Order by creation time
-        query = query.order_by(ChatMessage.created_at.asc())
+        # Order by creation time (newest first for proper chat pagination)
+        # Frontend will reverse for display after accumulation
+        query = query.order_by(ChatMessage.created_at.desc())
 
         if schema:
-            return paginate(query, schema, collection_name="messages")
+            result = paginate(query, schema, collection_name="messages")
+            # Reverse the messages for proper display order (oldest to newest)
+            # This way pagination loads older messages but displays them chronologically
+            if result.get("messages"):
+                result["messages"] = list(reversed(result["messages"]))
+            return result
         return query.all()
 
     @staticmethod
