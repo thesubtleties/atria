@@ -20,7 +20,8 @@ export function ChatRoom({
   onInputChange, 
   onSendMessage,
   isActive,
-  canModerate
+  canModerate,
+  canSendMessages = true
 }) {
   const currentUser = useSelector((state) => state.auth.user);
   const [messageToDelete, setMessageToDelete] = useState(null);
@@ -246,6 +247,8 @@ export function ChatRoom({
           value={inputValue}
           onChange={onInputChange}
           onSend={onSendMessage}
+          canSendMessages={canSendMessages}
+          muteReason={canSendMessages ? null : "You are muted from chat"}
         />
       </div>
 
