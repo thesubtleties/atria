@@ -105,7 +105,11 @@ class UserService:
     @staticmethod
     def update_user(user_id: int, update_data: Dict[str, Any]):
         """Update a user's profile"""
-        user = User.query.get_or_404(user_id)
+        from sqlalchemy.orm import joinedload
+        from api.models.event_user import EventUser
+        user = User.query.options(
+            joinedload(User.event_users).joinedload(EventUser.event)
+        ).get_or_404(user_id)
 
         for key, value in update_data.items():
             setattr(user, key, value)

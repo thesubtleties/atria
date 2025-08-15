@@ -50,8 +50,12 @@ class AuthService:
     @staticmethod
     def get_current_user():
         """Get current authenticated user"""
+        from sqlalchemy.orm import joinedload
+        from api.models.event_user import EventUser
         user_id = int(get_jwt_identity())
-        return User.query.get_or_404(user_id)
+        return User.query.options(
+            joinedload(User.event_users).joinedload(EventUser.event)
+        ).get_or_404(user_id)
 
     @staticmethod
     def refresh_token():

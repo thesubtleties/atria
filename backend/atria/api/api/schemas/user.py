@@ -37,15 +37,18 @@ class UserDetailSchema(UserSchema):
     
     def get_active_events(self, obj):
         """Get user's active events (excluding banned) with same format as nested events"""
-        active_events = obj.active_events
-        return [
-            {
-                "id": event.id,
-                "title": event.title,
-                "start_date": event.start_date.isoformat() if event.start_date else None
-            }
-            for event in active_events
-        ]
+        # Use the existing event_users relationship to avoid N+1 queries
+        # Filter out banned events from the already loaded relationship
+        active_events = []
+        for event_user in obj.event_users:
+            if not event_user.is_banned:
+                event = event_user.event
+                active_events.append({
+                    "id": event.id,
+                    "title": event.title,
+                    "start_date": event.start_date.isoformat() if event.start_date else None
+                })
+        return active_events
     speaking_sessions = ma.Nested(
         "SessionSchema",
         many=True,
