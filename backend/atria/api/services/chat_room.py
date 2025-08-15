@@ -150,6 +150,19 @@ class ChatRoomService:
     @staticmethod
     def send_message(room_id, user_id, content):
         """Send a new message in a chat room"""
+        # Check if user can send chat messages
+        chat_room = ChatRoom.query.get_or_404(room_id)
+        event_user = EventUser.query.filter_by(
+            event_id=chat_room.event_id,
+            user_id=user_id
+        ).first()
+        
+        if not event_user:
+            raise ValueError("User is not part of this event")
+        
+        if not event_user.can_use_chat():
+            raise ValueError("You are not allowed to send messages in this chat")
+        
         message = ChatMessage(
             room_id=room_id, user_id=user_id, content=content
         )

@@ -16,6 +16,7 @@ from .direct_messages import blp as direct_messages_blp
 from .sponsors import blp as sponsors_blp
 from .uploads import blp as uploads_blp
 from .invitations import blp as invitations_blp
+from .moderation import blp as moderation_blp
 
 __all__ = [
     # User blueprints
@@ -44,6 +45,8 @@ __all__ = [
     "uploads_blp",
     # Public invitations blueprint
     "invitations_blp",
+    # Moderation blueprint
+    "moderation_blp",
 ]
 
 
@@ -80,3 +83,5 @@ def register_blueprints(api):
     api.register_blueprint(uploads_blp)
     # Public invitations
     api.register_blueprint(invitations_blp)
+    # Moderation
+    api.register_blueprint(moderation_blp)
