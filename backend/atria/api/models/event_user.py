@@ -128,26 +128,18 @@ class EventUser(db.Model):
         """Get count of sessions this speaker is assigned to"""
         if self.role != EventUserRole.SPEAKER:
             return 0
-        # Avoid circular import by importing here
-        from api.models import SessionSpeaker
-        return SessionSpeaker.query.filter_by(
-            user_id=self.user_id
-        ).join(SessionSpeaker.session).filter_by(
-            event_id=self.event_id
-        ).count()
+        # Use existing relationship instead of manual query to avoid N+1 issues
+        return len([
+            ss for ss in self.user.session_speakers 
+            if ss.session.event_id == self.event_id
+        ])
     
     @property
     def sessions(self):
         """Get list of sessions this speaker is assigned to"""
         if self.role != EventUserRole.SPEAKER:
             return []
-        # Avoid circular import by importing here
-        from api.models import SessionSpeaker, Session
-        speaker_sessions = db.session.query(SessionSpeaker).join(Session).filter(
-            SessionSpeaker.user_id == self.user_id,
-            Session.event_id == self.event_id
-        ).all()
-        
+        # Use existing relationship instead of manual query to avoid N+1 issues
         return [{
             'id': ss.session.id,
             'title': ss.session.title,
@@ -156,7 +148,8 @@ class EventUser(db.Model):
             'day_number': ss.session.day_number,
             'role': ss.role.value if ss.role else None,
             'session_type': ss.session.session_type.value if ss.session.session_type else None
-        } for ss in speaker_sessions]
+        } for ss in self.user.session_speakers 
+          if ss.session.event_id == self.event_id]
 
     def update_speaker_info(self, speaker_bio=None, speaker_title=None):
         """Update speaker bio and title"""
