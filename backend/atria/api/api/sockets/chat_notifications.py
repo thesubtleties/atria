@@ -17,82 +17,63 @@ def emit_new_chat_message(message, room_id):
         message: ChatMessage instance
         room_id: ID of the chat room
     """
-    from api.models import ChatRoom, Event, EventUser
-    from api.models.enums import EventUserRole
+    # Format message for response (standard format for all users)
+    message_data = ChatRoomService.format_message_for_response(message, include_deletion_info=False)
     
-    # Get the chat room and event
-    chat_room = ChatRoom.query.get(room_id)
-    if not chat_room:
-        return
-    
-    event = Event.query.get(chat_room.event_id)
-    if not event:
-        return
-    
-    # Get all users in the room and format message based on their role
-    event_users = EventUser.query.filter_by(event_id=event.id).all()
-    
-    for event_user in event_users:
-        user_socket_room = f"user_{event_user.user_id}"
-        
-        # Include deletion info for admins/organizers
-        include_deletion_info = event_user.role in [EventUserRole.ADMIN, EventUserRole.ORGANIZER]
-        message_data = ChatRoomService.format_message_for_response(message, include_deletion_info)
-        
-        socketio.emit("new_chat_message", message_data, room=user_socket_room)
+    # Single broadcast to the chat room - much more efficient!
+    # All users who joined this room will receive the message
+    socketio.emit("new_chat_message", message_data, room=f"room_{room_id}")
 
 
 def emit_chat_message_moderated(message_id, room_id, deleted_by_user):
     """
-    Emit role-specific events for message moderation.
+    Emit role-specific events for message moderation using hybrid broadcast approach.
     
     Args:
         message_id: ID of moderated message
         room_id: ID of the chat room
         deleted_by_user: User object who deleted the message
     """
-    from api.models import ChatRoom, Event, EventUser
+    from api.models import ChatRoom, EventUser
     from api.models.enums import EventUserRole
     
-    # Get the chat room and event
+    # Get the chat room to find the event
     chat_room = ChatRoom.query.get(room_id)
     if not chat_room:
         return
     
-    event = Event.query.get(chat_room.event_id)
-    if not event:
-        return
+    # Step 1: Broadcast simple "removed" message to EVERYONE in the chat room
+    # This goes to the 400MHz "room_456" channel - all users get it
+    socketio.emit(
+        "chat_message_removed",
+        {
+            "message_id": message_id,
+            "room_id": room_id
+        },
+        room=f"room_{room_id}"
+    )
     
-    # Get all users in the room and emit different events based on their role
-    event_users = EventUser.query.filter_by(event_id=event.id).all()
+    # Step 2: Get admin user IDs only (much smaller query)
+    admin_user_ids = EventUser.query.filter(
+        EventUser.event_id == chat_room.event_id,
+        EventUser.role.in_([EventUserRole.ADMIN, EventUserRole.ORGANIZER])
+    ).with_entities(EventUser.user_id).all()
     
-    for event_user in event_users:
-        user_socket_room = f"user_{event_user.user_id}"
-        
-        if event_user.role in [EventUserRole.ADMIN, EventUserRole.ORGANIZER]:
-            # Admins/Organizers see the message as moderated with full info
-            socketio.emit(
-                "chat_message_moderated",
-                {
-                    "message_id": message_id,
-                    "room_id": room_id,
-                    "deleted_by": {
-                        "id": deleted_by_user.id,
-                        "full_name": deleted_by_user.full_name
-                    }
-                },
-                room=user_socket_room
-            )
-        else:
-            # Other users see the message as removed
-            socketio.emit(
-                "chat_message_removed",
-                {
-                    "message_id": message_id,
-                    "room_id": room_id
-                },
-                room=user_socket_room
-            )
+    # Step 3: Send detailed moderation info to admin personal channels only
+    # This goes to individual "user_123" channels - only admins get this
+    for (admin_id,) in admin_user_ids:
+        socketio.emit(
+            "chat_message_moderated",
+            {
+                "message_id": message_id,
+                "room_id": room_id,
+                "deleted_by": {
+                    "id": deleted_by_user.id,
+                    "full_name": deleted_by_user.full_name
+                }
+            },
+            room=f"user_{admin_id}"
+        )
 
 
 def emit_chat_message_deleted(message_id, room_id):
