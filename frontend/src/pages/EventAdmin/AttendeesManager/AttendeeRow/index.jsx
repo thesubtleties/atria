@@ -6,12 +6,22 @@ import {
   IconTrash,
   IconMessage,
   IconMicrophone,
+  IconBan,
+  IconVolume3,
+  IconVolumeOff,
+  IconUserCheck,
 } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
 import { openConfirmationModal } from '@/shared/components/modals/ConfirmationModal';
 import { getRoleBadgeColor, getRoleDisplayName, canChangeUserRole } from '../schemas/attendeeSchemas';
 import { useRemoveEventUserMutation } from '../../../../app/features/events/api';
+import { 
+  useBanEventUserMutation,
+  useUnbanEventUserMutation,
+  useChatBanEventUserMutation,
+  useChatUnbanEventUserMutation,
+} from '../../../../app/features/moderation/api';
 import styles from './styles.module.css';
 
 const AttendeeRow = ({
@@ -23,6 +33,10 @@ const AttendeeRow = ({
 }) => {
   const navigate = useNavigate();
   const [removeUser] = useRemoveEventUserMutation();
+  const [banUser] = useBanEventUserMutation();
+  const [unbanUser] = useUnbanEventUserMutation();
+  const [chatBanUser] = useChatBanEventUserMutation();
+  const [chatUnbanUser] = useChatUnbanEventUserMutation();
 
   const handleRemove = () => {
     openConfirmationModal({
@@ -54,6 +68,129 @@ const AttendeeRow = ({
     });
   };
 
+  const handleBan = () => {
+    openConfirmationModal({
+      title: 'Ban User from Event',
+      message: `Ban ${attendee.full_name} from the event? They will not be able to access the event and will be removed from attendee lists.`,
+      confirmLabel: 'Ban User',
+      cancelLabel: 'Cancel',
+      isDangerous: true,
+      onConfirm: async () => {
+        try {
+          await banUser({
+            eventId: attendee.event_id,
+            userId: attendee.user_id,
+            reason: 'Inappropriate behavior',
+            moderation_notes: `Banned by ${currentUserRole}`,
+          }).unwrap();
+          
+          notifications.show({
+            title: 'Success',
+            message: `${attendee.full_name} has been banned from the event`,
+            color: 'orange',
+          });
+        } catch (error) {
+          notifications.show({
+            title: 'Error',
+            message: error.data?.message || 'Failed to ban user',
+            color: 'red',
+          });
+        }
+      },
+    });
+  };
+
+  const handleUnban = () => {
+    openConfirmationModal({
+      title: 'Unban User',
+      message: `Unban ${attendee.full_name} and restore their access to the event?`,
+      confirmLabel: 'Unban User',
+      cancelLabel: 'Cancel',
+      onConfirm: async () => {
+        try {
+          await unbanUser({
+            eventId: attendee.event_id,
+            userId: attendee.user_id,
+            moderation_notes: `Unbanned by ${currentUserRole}`,
+          }).unwrap();
+          
+          notifications.show({
+            title: 'Success',
+            message: `${attendee.full_name} has been unbanned`,
+            color: 'green',
+          });
+        } catch (error) {
+          notifications.show({
+            title: 'Error',
+            message: error.data?.message || 'Failed to unban user',
+            color: 'red',
+          });
+        }
+      },
+    });
+  };
+
+  const handleChatBan = () => {
+    openConfirmationModal({
+      title: 'Mute User from Chat',
+      message: `Mute ${attendee.full_name} from sending chat messages? They can still view chat but cannot send messages.`,
+      confirmLabel: 'Mute Chat',
+      cancelLabel: 'Cancel',
+      onConfirm: async () => {
+        try {
+          await chatBanUser({
+            eventId: attendee.event_id,
+            userId: attendee.user_id,
+            reason: 'Inappropriate chat behavior',
+            moderation_notes: `Chat muted by ${currentUserRole}`,
+          }).unwrap();
+          
+          notifications.show({
+            title: 'Success',
+            message: `${attendee.full_name} has been muted from chat`,
+            color: 'yellow',
+          });
+        } catch (error) {
+          notifications.show({
+            title: 'Error',
+            message: error.data?.message || 'Failed to mute user from chat',
+            color: 'red',
+          });
+        }
+      },
+    });
+  };
+
+  const handleChatUnban = () => {
+    openConfirmationModal({
+      title: 'Unmute User from Chat',
+      message: `Unmute ${attendee.full_name} and restore their ability to send chat messages?`,
+      confirmLabel: 'Unmute Chat',
+      cancelLabel: 'Cancel',
+      onConfirm: async () => {
+        try {
+          await chatUnbanUser({
+            eventId: attendee.event_id,
+            userId: attendee.user_id,
+            moderation_notes: `Chat unmuted by ${currentUserRole}`,
+          }).unwrap();
+          
+          notifications.show({
+            title: 'Success',
+            message: `${attendee.full_name} has been unmuted from chat`,
+            color: 'green',
+          });
+        } catch (error) {
+          notifications.show({
+            title: 'Error',
+            message: error.data?.message || 'Failed to unmute user from chat',
+            color: 'red',
+          });
+        }
+      },
+    });
+  };
+
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
@@ -73,8 +210,42 @@ const AttendeeRow = ({
     ((currentUserRole === 'ADMIN') || 
      (currentUserRole === 'ORGANIZER' && ['ATTENDEE', 'SPEAKER'].includes(attendee.role)));
 
+  // Moderation permissions: Organizers can ban/mute, Admins can do everything including remove
+  const canModerateUser = currentUserId !== attendee.user_id && 
+    (currentUserRole === 'ADMIN' || currentUserRole === 'ORGANIZER') &&
+    !attendee.is_banned; // Can't moderate already banned users
+  
+  const canUnbanUser = currentUserId !== attendee.user_id && 
+    (currentUserRole === 'ADMIN' || currentUserRole === 'ORGANIZER') &&
+    attendee.is_banned;
+  
+  const canChatModerateUser = currentUserId !== attendee.user_id && 
+    (currentUserRole === 'ADMIN' || currentUserRole === 'ORGANIZER') &&
+    !attendee.is_banned; // Can't chat moderate banned users
+  
+  const canChatUnmuteUser = currentUserId !== attendee.user_id && 
+    (currentUserRole === 'ADMIN' || currentUserRole === 'ORGANIZER') &&
+    attendee.is_chat_banned;
+
+  // Row styling based on moderation status
+  const getRowStyle = () => {
+    if (attendee.is_banned) {
+      return {
+        backgroundColor: '#FFFAFA',
+        borderLeft: '3px solid #FFF0F0',
+      };
+    }
+    if (attendee.is_chat_banned) {
+      return {
+        backgroundColor: '#FFFEFA',
+        borderLeft: '3px solid #FFF8F0',
+      };
+    }
+    return {};
+  };
+
   return (
-    <Table.Tr>
+    <Table.Tr style={getRowStyle()}>
       <Table.Td>
         <Group gap="sm">
           <Avatar
@@ -156,6 +327,51 @@ const AttendeeRow = ({
                 onClick={() => navigate(`/app/events/${attendee.event_id}/admin/speakers`)}
               >
                 Manage Speaker Info
+              </Menu.Item>
+            )}
+            
+            {/* Moderation Actions */}
+            {(canModerateUser || canUnbanUser || canChatModerateUser || canChatUnmuteUser) && (
+              <Menu.Divider />
+            )}
+            
+            {canUnbanUser && (
+              <Menu.Item
+                className={styles.menuItem}
+                leftSection={<IconUserCheck size={16} />}
+                onClick={handleUnban}
+              >
+                Unban from Event
+              </Menu.Item>
+            )}
+            
+            {canModerateUser && (
+              <Menu.Item
+                className={styles.menuItem}
+                leftSection={<IconBan size={16} />}
+                onClick={handleBan}
+              >
+                Ban from Event
+              </Menu.Item>
+            )}
+            
+            {canChatUnmuteUser && (
+              <Menu.Item
+                className={styles.menuItem}
+                leftSection={<IconVolume3 size={16} />}
+                onClick={handleChatUnban}
+              >
+                Unmute Chat
+              </Menu.Item>
+            )}
+            
+            {canChatModerateUser && !attendee.is_chat_banned && (
+              <Menu.Item
+                className={styles.menuItem}
+                leftSection={<IconVolumeOff size={16} />}
+                onClick={handleChatBan}
+              >
+                Mute Chat
               </Menu.Item>
             )}
             

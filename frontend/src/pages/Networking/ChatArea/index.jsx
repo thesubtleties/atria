@@ -45,6 +45,9 @@ export function ChatArea({ eventId }) {
 
   // Determine if current user can moderate messages
   const canModerate = eventData?.user_role === 'ADMIN' || eventData?.user_role === 'ORGANIZER';
+  
+  // Check if current user can send chat messages (not banned or chat-banned)
+  const canSendMessages = eventData && !eventData.is_banned && !eventData.is_chat_banned;
 
   // Initialize active room from URL param or first room (only on mount and rooms change)
   useEffect(() => {
@@ -225,6 +228,7 @@ export function ChatArea({ eventId }) {
                     }))}
                     onSendMessage={() => handleSendMessage(room.id)}
                     canModerate={canModerate}
+                    canSendMessages={canSendMessages}
                     isActive={activeRoom === room.id}
                   />
                 ) : (

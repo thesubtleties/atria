@@ -94,3 +94,20 @@ class EventUserAdminSchema(EventUserSchema):
     full_name = ma.String(dump_only=True)
     session_count = ma.Integer(dump_only=True)
     sessions = ma.List(ma.Dict(), dump_only=True)
+    
+    # Moderation status fields
+    is_banned = ma.Boolean(dump_only=True)
+    banned_at = ma.DateTime(dump_only=True, allow_none=True)
+    banned_by = ma.Integer(dump_only=True, allow_none=True)
+    ban_reason = ma.String(dump_only=True, allow_none=True)
+    is_chat_banned = ma.Boolean(dump_only=True)
+    chat_ban_until = ma.DateTime(dump_only=True, allow_none=True)
+    chat_ban_reason = ma.String(dump_only=True, allow_none=True)
+    moderation_notes = ma.String(dump_only=True, allow_none=True)
+    can_use_chat = ma.Method("get_can_use_chat", dump_only=True)
+    
+    def get_can_use_chat(self, obj):
+        """Check if user can currently use chat"""
+        if hasattr(obj, 'can_use_chat'):
+            return obj.can_use_chat()
+        return not obj.is_banned and not obj.is_chat_banned

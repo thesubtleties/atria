@@ -33,15 +33,19 @@ class UserDetailSchema(UserSchema):
             "name",
         ),
     )
-    events = ma.Nested(
-        "EventSchema",
-        many=True,
-        only=(
-            "id",
-            "title",
-            "start_date",
-        ),
-    )
+    events = ma.Method("get_active_events", dump_only=True)
+    
+    def get_active_events(self, obj):
+        """Get user's active events (excluding banned) with same format as nested events"""
+        active_events = obj.active_events
+        return [
+            {
+                "id": event.id,
+                "title": event.title,
+                "start_date": event.start_date.isoformat() if event.start_date else None
+            }
+            for event in active_events
+        ]
     speaking_sessions = ma.Nested(
         "SessionSchema",
         many=True,

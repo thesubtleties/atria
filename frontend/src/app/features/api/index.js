@@ -23,6 +23,7 @@ export const baseApi = createApi({
     'Sponsor',
     'SponsorTiers',
     'Dashboard',
+    'ModerationStatus',
   ],
   endpoints: () => ({}),
 });

@@ -5,7 +5,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask import request
 
 from api.extensions import db, ma
-from api.models import ChatRoom, ChatMessage, Event, User
+from api.models import ChatRoom, ChatMessage, Event, User, EventUser
 from api.models.enums import EventUserRole, ChatRoomType
 from api.api.schemas import (
     ChatRoomSchema,
@@ -261,6 +261,16 @@ class ChatMessageList(MethodView):
     def post(self, message_data, room_id):
         """Send chat message"""
         user_id = int(get_jwt_identity())
+        
+        # Check if user can send chat messages
+        chat_room = ChatRoom.query.get_or_404(room_id)
+        event_user = EventUser.query.filter_by(
+            event_id=chat_room.event_id,
+            user_id=user_id
+        ).first()
+        
+        if not event_user or not event_user.can_use_chat():
+            abort(403, message="You are not allowed to send messages in this chat")
 
         message = ChatMessage(
             room_id=room_id, user_id=user_id, content=message_data["content"]

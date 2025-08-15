@@ -115,21 +115,23 @@ class UserService:
 
     @staticmethod
     def get_user_events(user_id: int, role: Optional[str] = None, schema=None):
-        """Get events a user is participating in, optionally filtered by role"""
+        """Get events a user is participating in (excluding banned), optionally filtered by role"""
         user = User.query.get_or_404(user_id)
 
+        # Base query that excludes banned users
+        query = Event.query.join(EventUser).filter(
+            EventUser.user_id == user_id,
+            EventUser.is_banned.is_(False)  # Exclude banned users
+        )
+
+        # Add role filter if specified
         if role:
-            # Convert string role to enum
             try:
                 role_enum = EventUserRole(role)
-                query = user.get_events_by_role(role_enum)
+                query = query.filter(EventUser.role == role_enum)
             except ValueError:
                 # Invalid role, return empty query
                 query = Event.query.filter(False)
-        else:
-            query = Event.query.join(EventUser).filter(
-                EventUser.user_id == user_id
-            )
 
         if schema:
             return paginate(query, schema, collection_name="events")

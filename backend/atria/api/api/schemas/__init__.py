@@ -119,6 +119,14 @@ from api.api.schemas.invitation import (
     RegisterAndAcceptInvitationsSchema,
     RegisterAndAcceptResponseSchema,
 )
+from api.api.schemas.moderation import (
+    ModerationStatusSchema,
+    BanUserSchema,
+    UnbanUserSchema,
+    ChatBanUserSchema,
+    ChatUnbanUserSchema,
+    ModerationActionResponseSchema,
+)
 
 __all__ = [
     # User schemas
@@ -218,4 +226,11 @@ __all__ = [
     "InvitationDetailsResponseSchema",
     "RegisterAndAcceptInvitationsSchema",
     "RegisterAndAcceptResponseSchema",
+    # Moderation schemas
+    "ModerationStatusSchema",
+    "BanUserSchema",
+    "UnbanUserSchema",
+    "ChatBanUserSchema",
+    "ChatUnbanUserSchema",
+    "ModerationActionResponseSchema",
 ]

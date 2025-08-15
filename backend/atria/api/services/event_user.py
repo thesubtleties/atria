@@ -76,7 +76,7 @@ class EventUserService:
     
     @staticmethod
     def get_event_users_with_connection_status(event_id, role=None, schema=None):
-        """Get list of event users with privacy filtering based on viewer's role"""
+        """Get list of event users with privacy filtering based on viewer's role - excludes banned users for networking"""
         current_user_id = get_jwt_identity()
         
         if not current_user_id:
@@ -100,6 +100,9 @@ class EventUserService:
         query = EventUser.query.filter_by(event_id=event_id)
         if role:
             query = query.filter_by(role=role)
+        
+        # Filter out banned users for networking purposes
+        query = query.filter(EventUser.is_banned.is_(False))
         
         # Eager load users to avoid N+1 queries and order by last name
         query = query.options(joinedload(EventUser.user)).join(EventUser.user).order_by(User.last_name, User.first_name)

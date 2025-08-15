@@ -183,10 +183,18 @@ class User(db.Model):
         return session_speaker.role if session_speaker else None
 
     def get_upcoming_events(self):
-        """Get user's upcoming events using relationship"""
+        """Get user's upcoming events (excluding banned) using relationship"""
+        from api.models.event_user import EventUser
+        from api.models.event import Event
+        from datetime import datetime, timezone
         return (
-            self.events.filter(db.text("start_date > CURRENT_TIMESTAMP"))
-            .order_by(db.text("start_date"))
+            self.events.join(EventUser)
+            .filter(
+                EventUser.user_id == self.id,
+                EventUser.is_banned.is_(False),  # Exclude banned users
+                Event.start_date > datetime.now(timezone.utc)
+            )
+            .order_by(Event.start_date)
             .all()
         )
 
@@ -214,8 +222,13 @@ class User(db.Model):
         return self.verify_password(password)
 
     def get_events_by_role(self, role: EventUserRole):
-        """Get all events where user has specific role"""
-        return self.events.filter(EventUser.role == role).all()
+        """Get all events where user has specific role (excluding banned)"""
+        from api.models.event_user import EventUser
+        return self.events.join(EventUser).filter(
+            EventUser.user_id == self.id,
+            EventUser.role == role,
+            EventUser.is_banned.is_(False)  # Exclude banned users
+        ).all()
 
     def get_connections(self, status=ConnectionStatus.ACCEPTED):
         """Get all connections with specified status"""
@@ -314,3 +327,12 @@ class User(db.Model):
     def full_name(self) -> str:
         """Get user's full name"""
         return f"{self.first_name} {self.last_name}"
+    
+    @property
+    def active_events(self):
+        """Get user's events excluding banned ones"""
+        from api.models.event_user import EventUser
+        return self.events.join(EventUser).filter(
+            EventUser.user_id == self.id,
+            EventUser.is_banned.is_(False)
+        ).all()

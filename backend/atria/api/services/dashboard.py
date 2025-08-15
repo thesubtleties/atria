@@ -42,10 +42,11 @@ class DashboardService:
     @staticmethod
     def _get_user_stats(user_id: int):
         """Get aggregated statistics for the user"""
-        # Events hosted (where user is ADMIN or ORGANIZER)
+        # Events hosted (where user is ADMIN or ORGANIZER and not banned)
         events_hosted = db.session.query(func.count(EventUser.event_id)).filter(
             EventUser.user_id == user_id,
-            EventUser.role.in_([EventUserRole.ADMIN, EventUserRole.ORGANIZER])
+            EventUser.role.in_([EventUserRole.ADMIN, EventUserRole.ORGANIZER]),
+            EventUser.is_banned.is_(False)  # Exclude banned users
         ).scalar() or 0
 
         # Total attendees reached (sum of attendees in events user organized)
@@ -57,7 +58,8 @@ class DashboardService:
             Event.id.in_(
                 db.session.query(EventUser.event_id).filter(
                     EventUser.user_id == user_id,
-                    EventUser.role.in_([EventUserRole.ADMIN, EventUserRole.ORGANIZER])
+                    EventUser.role.in_([EventUserRole.ADMIN, EventUserRole.ORGANIZER]),
+                    EventUser.is_banned.is_(False)  # Exclude banned users
                 )
             ),
             EventUser.user_id != user_id  # Don't count the organizer
@@ -71,9 +73,10 @@ class DashboardService:
             )
         ).scalar() or 0
 
-        # Events attended (total events user is part of)
+        # Events attended (total events user is part of and not banned from)
         events_attended = db.session.query(func.count(EventUser.event_id)).filter(
-            EventUser.user_id == user_id
+            EventUser.user_id == user_id,
+            EventUser.is_banned.is_(False)  # Exclude banned users
         ).scalar() or 0
 
         # Organizations count
@@ -118,12 +121,15 @@ class DashboardService:
 
     @staticmethod
     def _get_user_events(user_id: int, limit: int = 5):
-        """Get user's recent and upcoming events"""
+        """Get user's recent and upcoming events (excluding banned)"""
         now = datetime.now(timezone.utc)
         today = now.date()
         
-        # Get events where user is a participant
-        event_users = EventUser.query.filter_by(user_id=user_id).options(
+        # Get events where user is a participant and not banned
+        event_users = EventUser.query.filter(
+            EventUser.user_id == user_id,
+            EventUser.is_banned.is_(False)  # Exclude banned users
+        ).options(
             joinedload(EventUser.event).joinedload(Event.organization)
         ).join(Event).order_by(
             # Order by: published events first, then by start date
