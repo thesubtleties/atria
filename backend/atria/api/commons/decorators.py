@@ -1,6 +1,6 @@
 from functools import wraps
 from flask_jwt_extended import get_jwt_identity
-from api.models import User, Organization, Event, Session, ChatRoom
+from api.models import User, Organization, Event, Session, ChatRoom, EventUser
 from api.models.enums import EventUserRole, OrganizationUserRole
 
 
@@ -93,7 +93,7 @@ def org_member_required():
 
 
 def event_member_required():
-    """Check if user has any role in event (attendee, speaker, organizer, admin)"""
+    """Check if user has any role in event and is not banned"""
 
     def decorator(f):
         @wraps(f)
@@ -113,6 +113,57 @@ def event_member_required():
             event = Event.query.get_or_404(event_id)
             if not event.has_user(current_user):
                 return {"message": "Not authorized to access this event"}, 403
+
+            # Check if user is banned from the event
+            event_user = EventUser.query.filter_by(
+                event_id=event_id, 
+                user_id=current_user_id
+            ).first()
+            
+            if event_user and event_user.is_banned:
+                return {"message": "You have been banned from this event"}, 403
+
+            return f(*args, **kwargs)
+
+        return decorated_function
+
+    return decorator
+
+
+def event_member_or_admin_required():
+    """Check if user has any role in event - admins/organizers can access even if banned"""
+
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            current_user_id = int(get_jwt_identity())
+            current_user = User.query.get_or_404(current_user_id)
+
+            # Handle either direct event_id or get it from session
+            event_id = kwargs.get("event_id")
+            if not event_id and "session_id" in kwargs:
+                session = Session.query.get_or_404(kwargs["session_id"])
+                event_id = session.event_id
+
+            if not event_id:
+                return {"message": "No event ID found"}, 400
+
+            event = Event.query.get_or_404(event_id)
+            if not event.has_user(current_user):
+                return {"message": "Not authorized to access this event"}, 403
+
+            # Get user's event role
+            event_user = EventUser.query.filter_by(
+                event_id=event_id, 
+                user_id=current_user_id
+            ).first()
+            
+            # Allow access if user is admin/organizer even if banned, 
+            # or if user is not banned
+            if event_user:
+                is_admin_or_organizer = event_user.role in [EventUserRole.ADMIN, EventUserRole.ORGANIZER]
+                if not is_admin_or_organizer and event_user.is_banned:
+                    return {"message": "You have been banned from this event"}, 403
 
             return f(*args, **kwargs)
 
