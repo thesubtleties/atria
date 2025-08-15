@@ -188,7 +188,7 @@ class User(db.Model):
         from api.models.event import Event
         from datetime import datetime, timezone
         return (
-            self.events.join(EventUser)
+            Event.query.join(EventUser)
             .filter(
                 EventUser.user_id == self.id,
                 EventUser.is_banned.is_(False),  # Exclude banned users
@@ -223,8 +223,9 @@ class User(db.Model):
 
     def get_events_by_role(self, role: EventUserRole):
         """Get all events where user has specific role (excluding banned)"""
+        from api.models.event import Event
         from api.models.event_user import EventUser
-        return self.events.join(EventUser).filter(
+        return Event.query.join(EventUser).filter(
             EventUser.user_id == self.id,
             EventUser.role == role,
             EventUser.is_banned.is_(False)  # Exclude banned users
@@ -331,8 +332,10 @@ class User(db.Model):
     @property
     def active_events(self):
         """Get user's events excluding banned ones"""
+        from api.models.event import Event
         from api.models.event_user import EventUser
-        return self.events.join(EventUser).filter(
+        
+        return Event.query.join(EventUser).filter(
             EventUser.user_id == self.id,
             EventUser.is_banned.is_(False)
         ).all()
