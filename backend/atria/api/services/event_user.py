@@ -49,8 +49,10 @@ class EventUserService:
         if role:
             query = query.filter_by(role=role)
 
-        # Eager load users and order by last name, then first name (consistent with regular endpoint)
-        query = query.options(joinedload(EventUser.user)).join(EventUser.user).order_by(User.last_name, User.first_name)
+        # Eager load users and session data to prevent N+1 queries when schema accesses session_count/sessions properties
+        query = query.options(
+            joinedload(EventUser.user).joinedload(User.session_speakers).joinedload(SessionSpeaker.session)
+        ).join(EventUser.user).order_by(User.last_name, User.first_name)
 
         # Get the paginated response
         result = paginate(query, schema, collection_name="event_users")
@@ -104,8 +106,10 @@ class EventUserService:
         # Filter out banned users for networking purposes
         query = query.filter(EventUser.is_banned.is_(False))
         
-        # Eager load users to avoid N+1 queries and order by last name
-        query = query.options(joinedload(EventUser.user)).join(EventUser.user).order_by(User.last_name, User.first_name)
+        # Eager load users and session data to prevent N+1 queries when accessing session_count/sessions properties
+        query = query.options(
+            joinedload(EventUser.user).joinedload(User.session_speakers).joinedload(SessionSpeaker.session)
+        ).join(EventUser.user).order_by(User.last_name, User.first_name)
         
         # Get all event users
         event_users = query.all()
