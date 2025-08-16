@@ -38,7 +38,7 @@ const socketBaseQuery = () => async (args) => {
         return { data: result };
 
       case 'create-thread':
-        result = await createDirectMessageThread(body.userId);
+        result = await createDirectMessageThread(body.userId, body.eventId);
         return { data: result };
 
       case 'mark-read':
@@ -94,7 +94,12 @@ const queryWithFallback = async (args, api, extraOptions) => {
     } else if (args.url === 'create-thread') {
       httpArgs.url = '/direct-messages/threads';
       httpArgs.body = { user_id: args.body.userId };
+      // Include eventId if provided for admin messaging
+      if (args.body.eventId) {
+        httpArgs.body.event_id = args.body.eventId;
+      }
       delete httpArgs.body.userId;
+      delete httpArgs.body.eventId;
     } else if (args.url === 'mark-read') {
       httpArgs.url = `/direct-messages/threads/${args.body.threadId}/read`;
       httpArgs.method = 'POST';
@@ -225,11 +230,13 @@ export const networkingApi = baseApi.injectEndpoints({
     // HTTP: POST /direct-messages/threads
     createDirectMessageThread: builder.mutation({
       queryFn: async (arg, api, extraOptions) => {
+        // Support both old format (just userId) and new format (object with userId and eventId)
+        const body = typeof arg === 'object' ? arg : { userId: arg };
         return queryWithFallback(
           {
             url: 'create-thread',
             method: 'POST',
-            body: { userId: arg },
+            body,
           },
           api,
           extraOptions

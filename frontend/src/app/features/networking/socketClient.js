@@ -767,7 +767,7 @@ export const getDirectMessageThreads = () => {
       // Remove the listener to avoid memory leaks
       socket.off('direct_message_threads', onThreadsReceived);
       reject('Socket request timed out');
-    }, 10000); // Increased timeout to 10 seconds
+    }, 3000); // Reduced timeout to 3 seconds for faster fallback
   });
 };
 
@@ -818,7 +818,7 @@ export const getDirectMessages = (threadId, page = 1, perPage = 50) => {
       // Remove the listener to avoid memory leaks
       socket.off('direct_messages', onMessagesReceived);
       reject('Socket request timed out');
-    }, 10000); // Increased timeout to 10 seconds
+    }, 3000); // Reduced timeout to 3 seconds for faster fallback
   });
 };
 
@@ -871,7 +871,7 @@ export const sendDirectMessage = (
       // Remove the listener to avoid memory leaks
       socket.off('direct_message_sent', onMessageSent);
       reject('Socket request timed out');
-    }, 10000); // Increased timeout to 10 seconds
+    }, 3000); // Reduced timeout to 3 seconds for faster fallback
   });
 };
 
@@ -916,11 +916,11 @@ export const markMessagesRead = (threadId) => {
       // Remove the listener to avoid memory leaks
       socket.off('messages_marked_read', onMessagesMarkedRead);
       reject('Socket request timed out');
-    }, 10000); // Increased timeout to 10 seconds
+    }, 3000); // Reduced timeout to 3 seconds for faster fallback
   });
 };
 
-export const createDirectMessageThread = (userId) => {
+export const createDirectMessageThread = (userId, eventId = null) => {
   if (!socket || !socket.connected) {
     console.warn('Cannot create thread: Socket not connected');
     return Promise.reject('Socket not connected');
@@ -953,7 +953,12 @@ export const createDirectMessageThread = (userId) => {
     socket.once('direct_message_thread_created', onThreadCreated);
 
     // Emit the request
-    socket.emit('create_direct_message_thread', { user_id: userId });
+    // Emit with optional event context for admin messaging
+    const payload = { user_id: userId };
+    if (eventId) {
+      payload.event_id = eventId;
+    }
+    socket.emit('create_direct_message_thread', payload);
 
     // Add timeout for socket response
     const timeoutId = setTimeout(() => {
@@ -961,7 +966,7 @@ export const createDirectMessageThread = (userId) => {
       // Remove the listener to avoid memory leaks
       socket.off('direct_message_thread_created', onThreadCreated);
       reject('Socket request timed out');
-    }, 10000); // Increased timeout to 10 seconds
+    }, 3000); // Reduced timeout to 3 seconds for faster fallback
   });
 };
 
