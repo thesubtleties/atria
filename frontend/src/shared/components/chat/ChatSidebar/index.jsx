@@ -58,22 +58,38 @@ function ChatSidebar() {
 
   // Filter threads based on context
   const filteredThreads = useMemo(() => {
-    if (!eventId || !currentEventId) {
-      // Show all threads when not in an event
-      return threadsArray;
-    }
-
-    console.log('Filtering threads for event:', currentEventId);
-    console.log('Event user IDs:', Array.from(eventUserIds));
+    console.log('Filtering threads - eventId:', eventId, 'currentEventId:', currentEventId);
     console.log('All threads:', threadsArray);
 
-    // Filter to only show threads with users who are in the current event
+    if (!currentEventId) {
+      // General tab: Show only global threads (event_scope_id is null/undefined)
+      // Exclude event-scoped threads from general view
+      return threadsArray.filter((thread) => {
+        const isGlobalThread = !thread.event_scope_id;
+        console.log('General tab - Thread:', thread.id, 'event_scope_id:', thread.event_scope_id, 'isGlobal:', isGlobalThread);
+        return isGlobalThread;
+      });
+    }
+
+    console.log('Event tab - filtering for event:', currentEventId);
+    console.log('Event user IDs:', Array.from(eventUserIds));
+
+    // Event tab: Show threads with users who are in the current event
+    // This includes both global threads (for connected users) and event-scoped threads
     return threadsArray.filter((thread) => {
       const otherUserId = thread.other_user?.id;
-      console.log('Checking thread:', thread.id, 'other user:', otherUserId);
-      return otherUserId && eventUserIds.has(otherUserId);
+      const isEventScopedThread = thread.event_scope_id === currentEventId;
+      const userInEvent = otherUserId && eventUserIds.has(otherUserId);
+      
+      // Show thread if:
+      // 1. It's scoped to this specific event, OR
+      // 2. It's a global thread with a user who's in this event
+      const shouldShow = isEventScopedThread || (!thread.event_scope_id && userInEvent);
+      
+      console.log('Event tab - Thread:', thread.id, 'event_scope_id:', thread.event_scope_id, 'other user:', otherUserId, 'in event:', userInEvent, 'show:', shouldShow);
+      return shouldShow;
     });
-  }, [threadsArray, eventId, currentEventId, eventUserIds]);
+  }, [threadsArray, currentEventId, eventUserIds]);
 
   // Handle thread click
   const handleThreadClick = (threadId) => {
