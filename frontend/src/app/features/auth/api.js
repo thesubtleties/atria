@@ -81,13 +81,27 @@ export const authApi = baseApi.injectEndpoints({
           dispatch(logout());
           // Reset API state
           dispatch(baseApi.util.resetApiState());
+          
+          // Force page refresh to clear any persistent state
+          console.log('🔄 LOGOUT: Forcing page refresh to clear all state');
+          window.location.reload();
         } catch (error) {
           // Even if logout fails, we clear local state
           dispatch(logout());
           dispatch(baseApi.util.resetApiState());
+          
+          // Force page refresh even on error
+          console.log('🔄 LOGOUT: Error occurred, but still forcing page refresh');
+          window.location.reload();
         }
       },
-      invalidatesTags: ['Auth'],
+      // Invalidate ALL cache tags on logout
+      invalidatesTags: [
+        'Auth', 'Users', 'Organizations', 'OrganizationUsers', 'Events', 'EventUsers',
+        'Sessions', 'SessionSpeakers', 'ChatRoom', 'ChatMessage', 'SessionChatRoom',
+        'Attendee', 'Connection', 'Connections', 'Thread', 'DirectMessage',
+        'Sponsor', 'SponsorTiers', 'Dashboard', 'ModerationStatus'
+      ],
     }),
 
     verifyEmail: builder.query({
