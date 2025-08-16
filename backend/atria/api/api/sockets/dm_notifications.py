@@ -17,14 +17,24 @@ def emit_new_direct_message(message, thread_id, recipient_id):
         thread_id: ID of the message thread
         recipient_id: ID of the recipient user
     """
-    message_data = DirectMessageService.format_message_for_response(message)
+    print(f"🔔 Emitting new message notification to user {recipient_id} in room user_{recipient_id}")
     
-    # Emit to recipient's user room
-    socketio.emit(
-        "new_direct_message", 
-        message_data, 
-        room=f"user_{recipient_id}"
-    )
+    try:
+        message_data = DirectMessageService.format_message_for_response(message)
+        print(f"📨 Message data: {message_data.get('content', 'NO_CONTENT')} from user {message_data.get('sender_id', 'NO_SENDER')}")
+        
+        # Emit to recipient's user room
+        socketio.emit(
+            "new_direct_message", 
+            message_data, 
+            room=f"user_{recipient_id}"
+        )
+        print(f"✅ Socket emission successful to user_{recipient_id}")
+        
+    except Exception as e:
+        print(f"❌ Error in emit_new_direct_message: {e}")
+        import traceback
+        traceback.print_exc()
 
 
 def emit_direct_message_thread_created(thread, user1_id, user2_id):
@@ -36,17 +46,19 @@ def emit_direct_message_thread_created(thread, user1_id, user2_id):
         user1_id: ID of first user
         user2_id: ID of second user
     """
-    thread_data = DirectMessageService.format_thread_for_response(thread)
+    # Format thread data for each user (shows the OTHER user in thread)
+    thread_data_user1 = DirectMessageService.format_thread_for_response(thread, user1_id)
+    thread_data_user2 = DirectMessageService.format_thread_for_response(thread, user2_id)
     
-    # Emit to both users
+    # Emit to both users with their respective view of the thread
     socketio.emit(
         "direct_message_thread_created",
-        thread_data,
+        thread_data_user1,
         room=f"user_{user1_id}"
     )
     socketio.emit(
         "direct_message_thread_created",
-        thread_data,
+        thread_data_user2,
         room=f"user_{user2_id}"
     )
 
