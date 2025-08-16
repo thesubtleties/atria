@@ -341,6 +341,7 @@ const AttendeesManager = () => {
                 currentUserRole={currentUserRole}
                 currentUserId={currentUserId}
                 adminCount={attendeesData?.role_counts?.admins || attendeesData?.event_users?.filter(u => u.role === 'ADMIN').length || 1}
+                eventIcebreakers={eventData?.icebreakers || []}
                 onUpdateRole={(user) => {
                   setRoleUpdateModal({ open: true, user });
                 }}
