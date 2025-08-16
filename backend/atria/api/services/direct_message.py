@@ -11,10 +11,42 @@ from api.commons.pagination import paginate
 class DirectMessageService:
     @staticmethod
     def get_user_threads(user_id: int, schema=None):
-        """Get all direct message threads for a user"""
+        """Get all direct message threads for a user, respecting thread hiding"""
+        from sqlalchemy import case, and_, or_, func
+        from sqlalchemy.orm import aliased
+        
+        # Create an alias for the messages table to check for messages after cutoff
+        dm_alias = aliased(DirectMessage)
+        
+        # Create a CASE expression to get the user's cutoff time
+        user_cutoff = case(
+            (DirectMessageThread.user1_id == user_id, DirectMessageThread.user1_cutoff),
+            (DirectMessageThread.user2_id == user_id, DirectMessageThread.user2_cutoff),
+            else_=None
+        )
+        
+        # Subquery to check if thread has messages after cutoff
+        has_messages_after_cutoff = db.session.query(dm_alias.id).filter(
+            dm_alias.thread_id == DirectMessageThread.id,
+            dm_alias.created_at > user_cutoff
+        ).limit(1).scalar_subquery()
+        
+        # Main query that filters threads based on cutoff logic
         query = DirectMessageThread.query.filter(
-            (DirectMessageThread.user1_id == user_id)
-            | (DirectMessageThread.user2_id == user_id)
+            and_(
+                # User is part of the thread
+                or_(
+                    DirectMessageThread.user1_id == user_id,
+                    DirectMessageThread.user2_id == user_id
+                ),
+                # Include thread if either:
+                # 1. No cutoff is set (user_cutoff IS NULL), OR
+                # 2. There are messages after the cutoff time
+                or_(
+                    user_cutoff.is_(None),
+                    has_messages_after_cutoff.is_not(None)
+                )
+            )
         ).order_by(DirectMessageThread.last_message_at.desc())
 
         if schema:
@@ -37,21 +69,26 @@ class DirectMessageService:
     def get_thread_messages(
         thread_id: int, user_id: int, schema=None, page=1, per_page=50
     ):
-        """Get messages for a thread with pagination"""
+        """Get messages for a thread with pagination, respecting user's cutoff"""
         thread = DirectMessageThread.query.get_or_404(thread_id)
 
         # Check if user is part of this thread
         if thread.user1_id != user_id and thread.user2_id != user_id:
             raise ValueError("Not authorized to view these messages")
 
-        # For infinite scroll: use DESC to get newest messages first
-        # Page 1 = most recent messages, Page 2 = older messages
-        query = DirectMessage.query.filter_by(thread_id=thread_id).order_by(
-            DirectMessage.created_at.desc()
-        )
+        # Base query
+        query = DirectMessage.query.filter_by(thread_id=thread_id)
+        
+        # Apply cutoff filter if user has cleared their history
+        cutoff_time = thread.get_user_cutoff(user_id)
+        if cutoff_time:
+            query = query.filter(DirectMessage.created_at > cutoff_time)
+        
+        # Order by created_at DESC for newest first
+        query = query.order_by(DirectMessage.created_at.desc())
 
-        # Mark unread messages as read
-        DirectMessageService.mark_messages_read(thread_id, user_id)
+        # Mark unread messages as read (only messages user can see)
+        DirectMessageService.mark_messages_read(thread_id, user_id, cutoff_time)
 
         if schema:
             # Don't reverse - return newest first
@@ -147,22 +184,24 @@ class DirectMessageService:
         return message, other_user_id
 
     @staticmethod
-    def mark_messages_read(thread_id: int, user_id: int):
-        """Mark all unread messages in a thread as read"""
+    def mark_messages_read(thread_id: int, user_id: int, cutoff_time=None):
+        """Mark all unread messages in a thread as read, respecting cutoff"""
         thread = DirectMessageThread.query.get_or_404(thread_id)
 
         # Check if user is part of this thread
         if thread.user1_id != user_id and thread.user2_id != user_id:
             raise ValueError("Not authorized to access this thread")
 
-        # Mark unread messages as read
-        unread_messages = (
-            DirectMessage.query.filter_by(
-                thread_id=thread_id, status=MessageStatus.DELIVERED
-            )
-            .filter(DirectMessage.sender_id != user_id)
-            .all()
-        )
+        # Base query for unread messages
+        unread_query = DirectMessage.query.filter_by(
+            thread_id=thread_id, status=MessageStatus.DELIVERED
+        ).filter(DirectMessage.sender_id != user_id)
+        
+        # Apply cutoff filter if provided
+        if cutoff_time:
+            unread_query = unread_query.filter(DirectMessage.created_at > cutoff_time)
+        
+        unread_messages = unread_query.all()
 
         for message in unread_messages:
             message.status = MessageStatus.READ
@@ -488,3 +527,18 @@ class DirectMessageService:
             db.session.delete(event_thread)
         
         db.session.commit()
+
+    @staticmethod
+    def clear_thread_for_user(thread_id: int, user_id: int):
+        """Clear/hide a thread for a specific user"""
+        thread = DirectMessageThread.query.get_or_404(thread_id)
+        
+        # Check if user is part of this thread
+        if thread.user1_id != user_id and thread.user2_id != user_id:
+            raise ValueError("Not authorized to clear this thread")
+        
+        # Set cutoff to current time
+        thread.set_user_cutoff(user_id)
+        db.session.commit()
+        
+        return thread
