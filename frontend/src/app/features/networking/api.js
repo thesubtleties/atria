@@ -330,6 +330,32 @@ export const networkingApi = baseApi.injectEndpoints({
       }),
       providesTags: ['Connection'],
     }),
+
+    // Clear/hide a direct message thread
+    // HTTP only: DELETE /direct-messages/threads/:threadId/clear
+    clearThread: builder.mutation({
+      query: (threadId) => ({
+        url: `/direct-messages/threads/${threadId}/clear`,
+        method: 'DELETE',
+      }),
+      // Optimistically remove thread from cache
+      onQueryStarted: async (threadId, { dispatch, queryFulfilled }) => {
+        // Update the threads list to remove the cleared thread
+        const patchResult = dispatch(
+          networkingApi.util.updateQueryData('getDirectMessageThreads', undefined, (draft) => {
+            return draft.filter(thread => thread.id !== threadId);
+          })
+        );
+        
+        try {
+          await queryFulfilled;
+        } catch {
+          // Revert optimistic update on error
+          patchResult.undo();
+        }
+      },
+      invalidatesTags: ['Thread'],
+    }),
   }),
   overrideExisting: false,
 });
@@ -345,4 +371,5 @@ export const {
   useUpdateConnectionStatusMutation,
   useGetEventConnectionsQuery,
   useGetPendingConnectionsQuery,
+  useClearThreadMutation,
 } = networkingApi;
