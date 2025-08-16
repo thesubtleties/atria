@@ -79,3 +79,16 @@
   font-size: 0.875rem;
   line-height: 1.6;
 }
+
+.menuButton {
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.threadItem:hover .menuButton {
+  opacity: 1;
+}
+
+.menuButton:hover {
+  background: rgba(139, 92, 246, 0.08) !important;
+}
