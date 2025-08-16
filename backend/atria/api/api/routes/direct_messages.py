@@ -186,3 +186,31 @@ class DirectMessageList(MethodView):
 
         except ValueError as e:
             return {"message": str(e)}, 403
+
+
+@blp.route("/direct-messages/threads/<int:thread_id>/clear")
+class DirectMessageThreadClear(MethodView):
+    @blp.response(200, DirectMessageThreadSchema)
+    @blp.doc(
+        summary="Clear/hide thread for current user",
+        description="Hide thread from user's view (iMessage-style deletion)",
+        responses={
+            403: {"description": "Not authorized to clear this thread"},
+            404: {"description": "Thread not found"},
+        },
+    )
+    @jwt_required()
+    def delete(self, thread_id):
+        """Clear thread for current user"""
+        user_id = int(get_jwt_identity())
+        
+        try:
+            thread = DirectMessageService.clear_thread_for_user(thread_id, user_id)
+            
+            # Note: Socket event emission would go here if dm_notifications module exists
+            # from api.api.sockets.dm_notifications import emit_thread_cleared
+            # emit_thread_cleared(thread_id, user_id)
+            
+            return thread
+        except ValueError as e:
+            return {"message": str(e)}, 403
