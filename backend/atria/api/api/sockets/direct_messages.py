@@ -196,26 +196,48 @@ def handle_create_direct_message_thread(user_id, data):
         f"Received create_direct_message_thread event from user {user_id} with data: {data}"
     )
     other_user_id = data.get("user_id")
+    event_id = data.get("event_id")  # Optional event context
 
     if not other_user_id:
         emit("error", {"message": "Missing user ID"})
         return
+    
+    # Debug: Check if someone is trying to message themselves
+    if user_id == other_user_id:
+        print(f"WARNING: User {user_id} is trying to create a thread with themselves!")
+        emit("error", {"message": "Cannot create conversation with yourself"})
+        return
 
     try:
-        # Check if users are connected
+        # Check if users are connected OR admin privilege in event
         current_user = User.query.get(user_id)
-        if not current_user.is_connected_with(other_user_id):
-            emit(
-                "error",
-                {
-                    "message": "You must be connected with this user to start a conversation"
-                },
-            )
-            return
+        is_connected = current_user.is_connected_with(other_user_id)
+        
+        if not is_connected:
+            # If not connected, check for admin privilege if event_id provided
+            if event_id:
+                if not DirectMessageService.can_user_message_in_event_context(
+                    user_id, other_user_id, event_id
+                ):
+                    emit(
+                        "error",
+                        {
+                            "message": "You must be connected with this user to start a conversation"
+                        },
+                    )
+                    return
+            else:
+                emit(
+                    "error",
+                    {
+                        "message": "You must be connected with this user to start a conversation"
+                    },
+                )
+                return
 
-        # Get or create thread
+        # Get or create thread with appropriate scoping
         thread, is_new = DirectMessageService.get_or_create_thread(
-            user_id, other_user_id
+            user_id, other_user_id, event_scope_id=event_id
         )
 
         # If it's a new thread, notify both users

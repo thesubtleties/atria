@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Table, Group, Text, Badge, Avatar, Menu, ActionIcon } from '@mantine/core';
 import {
   IconDots,
@@ -10,6 +11,7 @@ import {
   IconVolume3,
   IconVolumeOff,
   IconUserCheck,
+  IconUserPlus,
 } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
@@ -22,6 +24,14 @@ import {
   useChatBanEventUserMutation,
   useChatUnbanEventUserMutation,
 } from '../../../../app/features/moderation/api';
+import {
+  useGetConnectionsQuery,
+  useCreateConnectionMutation,
+  useCreateDirectMessageThreadMutation,
+} from '../../../../app/features/networking/api';
+import { IcebreakerModal } from '../../../../shared/components/IcebreakerModal';
+import { useDispatch } from 'react-redux';
+import { openThread } from '../../../../app/store/chatSlice';
 import styles from './styles.module.css';
 
 const AttendeeRow = ({
@@ -32,11 +42,23 @@ const AttendeeRow = ({
   adminCount,
 }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [modalOpened, setModalOpened] = useState(false);
+  
   const [removeUser] = useRemoveEventUserMutation();
   const [banUser] = useBanEventUserMutation();
   const [unbanUser] = useUnbanEventUserMutation();
   const [chatBanUser] = useChatBanEventUserMutation();
   const [chatUnbanUser] = useChatUnbanEventUserMutation();
+  const [createConnection] = useCreateConnectionMutation();
+  const [createThread] = useCreateDirectMessageThreadMutation();
+  
+  // Check connection status
+  const { data: connectionsData } = useGetConnectionsQuery({ page: 1, per_page: 1000 });
+  const isConnected = connectionsData?.connections?.some(
+    conn => (conn.requester.id === attendee.user_id || conn.recipient.id === attendee.user_id) && 
+             conn.status === 'ACCEPTED'
+  );
 
   const handleRemove = () => {
     openConfirmationModal({
@@ -191,6 +213,71 @@ const AttendeeRow = ({
     });
   };
 
+  // Handle message creation (reuse pattern from AttendeesGrid)
+  const handleMessage = async () => {
+    try {
+      const result = await createThread({
+        userId: attendee.user_id,
+        eventId: attendee.event_id  // Pass event context for admin messaging
+      }).unwrap();
+      
+      // Get the thread ID from various possible response formats
+      const threadId = result.thread_id || result.id || result.data?.thread_id || result.data?.id;
+      
+      if (threadId) {
+        // Add a small delay to ensure the thread is in the cache before opening
+        setTimeout(() => {
+          dispatch(openThread(threadId));
+        }, 100);
+        
+        notifications.show({
+          title: 'Message opened',
+          message: `Chat with ${attendee.first_name} is ready`,
+          color: 'blue',
+        });
+      } else {
+        console.error('No thread ID received from createThread:', result);
+        throw new Error('No thread ID received from server');
+      }
+    } catch (error) {
+      console.error('Failed to create/get thread:', error);
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to open message thread. Please try again.',
+        color: 'red',
+      });
+    }
+  };
+
+  // Handle connection request (reuse pattern from AttendeesGrid)
+  const handleConnect = () => {
+    setModalOpened(true);
+  };
+
+  const handleSendConnectionRequest = async (icebreakerMessage) => {
+    try {
+      await createConnection({
+        recipientId: attendee.user_id,
+        icebreakerMessage,
+        originatingEventId: attendee.event_id,
+      }).unwrap();
+
+      notifications.show({
+        title: 'Connection request sent',
+        message: `Your request has been sent to ${attendee.first_name}`,
+        color: 'green',
+      });
+
+      setModalOpened(false);
+    } catch (error) {
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to send connection request. Please try again.',
+        color: 'red',
+      });
+    }
+  };
+
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
@@ -245,7 +332,8 @@ const AttendeeRow = ({
   };
 
   return (
-    <Table.Tr style={getRowStyle()}>
+    <>
+      <Table.Tr style={getRowStyle()}>
       <Table.Td>
         <Group gap="sm">
           <Avatar
@@ -388,24 +476,49 @@ const AttendeeRow = ({
               </>
             )}
             
-            <Menu.Item
-              className={styles.menuItem}
-              leftSection={<IconMessage size={16} />}
-              onClick={() => {
-                // TODO: Implement direct message
-                notifications.show({
-                  title: 'Coming Soon',
-                  message: 'Direct messaging will be available soon',
-                  color: 'blue',
-                });
-              }}
-            >
-              Send Message
-            </Menu.Item>
+            {/* Add Connect option if not connected and not self */}
+            {!isConnected && currentUserId !== attendee.user_id && (
+              <Menu.Item
+                className={styles.menuItem}
+                leftSection={<IconUserPlus size={16} />}
+                onClick={handleConnect}
+              >
+                Connect
+              </Menu.Item>
+            )}
+
+            {/* Send Message - always available except to self */}
+            {currentUserId !== attendee.user_id && (
+              <Menu.Item
+                className={styles.menuItem}
+                leftSection={<IconMessage size={16} />}
+                onClick={handleMessage}
+              >
+                Send Message
+              </Menu.Item>
+            )}
           </Menu.Dropdown>
         </Menu>
       </Table.Td>
-    </Table.Tr>
+      </Table.Tr>
+      
+      {/* IcebreakerModal for connection requests */}
+      <IcebreakerModal
+        opened={modalOpened}
+        onClose={() => setModalOpened(false)}
+        recipient={{
+          id: attendee.user_id,
+          firstName: attendee.first_name,
+          lastName: attendee.last_name,
+          title: attendee.title,
+          company: attendee.company_name,
+          avatarUrl: attendee.image_url,
+        }}
+        eventIcebreakers={[]} // Could fetch from event data if needed
+        onSend={handleSendConnectionRequest}
+        isLoading={false}
+      />
+    </>
   );
 };
 

@@ -8,6 +8,7 @@ from api.api.schemas import (
     DirectMessageThreadSchema,
     DirectMessageSchema,
     DirectMessageCreateSchema,
+    DirectMessageThreadCreateSchema,
 )
 from api.commons.pagination import (
     PAGINATION_PARAMETERS,
@@ -41,6 +42,58 @@ class DirectMessageThreadList(MethodView):
         return DirectMessageService.get_user_threads(
             user_id, DirectMessageThreadSchema(many=True)
         )
+
+    @blp.arguments(DirectMessageThreadCreateSchema)
+    @blp.response(201, DirectMessageThreadSchema)
+    @blp.doc(
+        summary="Create or get direct message thread",
+        description="Create a new thread or get existing thread between current user and another user",
+        responses={
+            201: {"description": "Thread created or retrieved successfully"},
+            400: {"description": "Validation error"},
+            403: {"description": "Not authorized to create thread with this user"},
+        },
+    )
+    @jwt_required()
+    def post(self, thread_data):
+        """Create or get a direct message thread"""
+        user_id = int(get_jwt_identity())
+        other_user_id = thread_data["user_id"]
+        event_id = thread_data.get("event_id")
+
+        try:
+            # Check permissions for thread creation
+            if event_id:
+                # Event-scoped thread requires admin privilege or existing connection
+                if not DirectMessageService.can_user_message_in_event_context(
+                    user_id, other_user_id, event_id
+                ):
+                    return {"message": "You must be connected with this user to start a conversation"}, 403
+            else:
+                # Global thread requires connection
+                from api.models.user import User
+                current_user = User.query.get(user_id)
+                if not current_user.is_connected_with(other_user_id):
+                    return {"message": "You must be connected with this user to start a conversation"}, 403
+
+            # Create or get thread
+            thread, is_new = DirectMessageService.get_or_create_thread(
+                user_id, other_user_id, event_scope_id=event_id
+            )
+
+            # If it's a new thread, emit socket notifications
+            if is_new:
+                from api.api.sockets.dm_notifications import emit_direct_message_thread_created
+                emit_direct_message_thread_created(thread, user_id, other_user_id)
+
+            # Format response using existing service method
+            thread_data = DirectMessageService.format_thread_for_response(thread, user_id)
+            thread_data["is_new"] = is_new
+
+            return thread_data, 201
+
+        except ValueError as e:
+            return {"message": str(e)}, 403
 
 
 @blp.route("/direct-messages/threads/<int:thread_id>")

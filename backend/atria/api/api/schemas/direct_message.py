@@ -95,3 +95,13 @@ class DirectMessageCreateSchema(ma.Schema):
 
     content = ma.String(required=True)
     encrypted_content = ma.String()
+
+
+class DirectMessageThreadCreateSchema(ma.Schema):
+    """Schema for creating direct message threads"""
+
+    class Meta:
+        name = "DirectMessageThreadCreate"
+
+    user_id = ma.Integer(required=True)
+    event_id = ma.Integer(required=False, allow_none=True)
