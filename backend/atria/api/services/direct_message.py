@@ -100,12 +100,31 @@ class DirectMessageService:
             thread.user2_id if thread.user1_id == user_id else thread.user1_id
         )
 
-        # Check if connection exists using the User model helper method
+        # Check if connection exists OR admin privilege for event-scoped threads
         current_user = User.query.get(user_id)
-        if not current_user.is_connected_with(other_user_id):
-            raise ValueError(
-                "You must be connected with this user to send messages"
-            )
+        is_connected = current_user.is_connected_with(other_user_id)
+        
+        if not is_connected:
+            # If not connected, check for admin privilege in event-scoped thread
+            if thread.event_scope_id:
+                # For event-scoped threads, allow messaging if EITHER user has admin privilege
+                # This allows both admin-initiated messages AND recipient responses
+                can_sender_message = DirectMessageService.can_user_message_in_event_context(
+                    user_id, other_user_id, thread.event_scope_id
+                )
+                can_recipient_respond = DirectMessageService.can_user_message_in_event_context(
+                    other_user_id, user_id, thread.event_scope_id
+                )
+                
+                if not (can_sender_message or can_recipient_respond):
+                    raise ValueError(
+                        "You must be connected with this user to send messages"
+                    )
+            else:
+                # Global thread requires connection
+                raise ValueError(
+                    "You must be connected with this user to send messages"
+                )
 
         # Create the message
         message = DirectMessage(
@@ -158,9 +177,29 @@ class DirectMessageService:
         return thread_id, other_user_id, len(unread_messages) > 0
 
     @staticmethod
-    def get_or_create_thread(user1_id: int, user2_id: int):
-        """Get existing thread or create a new one between two users"""
-        # Check if thread already exists
+    def get_or_create_thread(user1_id: int, user2_id: int, event_scope_id: int = None):
+        """
+        Get existing thread or create a new one between two users.
+        If users are connected, always use global thread (event_scope_id=None).
+        If not connected, use event-scoped thread.
+        """
+        from api.models.user import User
+        
+        # Prevent users from creating threads with themselves
+        if user1_id == user2_id:
+            raise ValueError(f"Cannot create thread with yourself (user_id: {user1_id})")
+        
+        print(f"Creating/getting thread between user1_id={user1_id} and user2_id={user2_id}, event_scope_id={event_scope_id}")
+        
+        # Check if users are connected
+        user1 = User.query.get(user1_id)
+        are_connected = user1.is_connected_with(user2_id)
+        
+        if are_connected:
+            # Always use global thread for connected users
+            event_scope_id = None
+        
+        # Check if thread already exists in this scope
         thread = DirectMessageThread.query.filter(
             (
                 (DirectMessageThread.user1_id == user1_id)
@@ -169,16 +208,18 @@ class DirectMessageService:
             | (
                 (DirectMessageThread.user1_id == user2_id)
                 & (DirectMessageThread.user2_id == user1_id)
-            )
+            ),
+            DirectMessageThread.event_scope_id == event_scope_id
         ).first()
 
         if thread:
             return thread, False
 
-        # Create new thread
+        # Create new thread with appropriate scope
         thread = DirectMessageThread(
             user1_id=user1_id,
             user2_id=user2_id,
+            event_scope_id=event_scope_id,
             is_encrypted=False,
         )
 
@@ -214,6 +255,7 @@ class DirectMessageService:
         thread_data = {
             "id": thread.id,
             "is_encrypted": thread.is_encrypted,
+            "event_scope_id": thread.event_scope_id,  # Include event scoping info
             "created_at": thread.created_at.isoformat(),
             "last_message_at": (
                 thread.last_message_at.isoformat()
@@ -369,3 +411,80 @@ class DirectMessageService:
             return paginate(search_query, schema, collection_name="results")
 
         return search_query.all()
+
+    @staticmethod
+    def can_user_message_in_event_context(sender_id: int, recipient_id: int, event_id: int) -> bool:
+        """
+        Check if sender can message recipient in specific event context without connection.
+        Returns True if sender is admin/organizer in the specified event and recipient is in the event.
+        """
+        from api.models.event_user import EventUser
+        from api.models.enums import EventUserRole
+        from api.models.user import User
+        
+        # First check if already connected (then no need for admin privilege)
+        sender = User.query.get(sender_id)
+        if sender and sender.is_connected_with(recipient_id):
+            return True  # Connected users can always message
+        
+        # Check admin privilege in specific event
+        sender_role = EventUser.query.filter_by(
+            user_id=sender_id, 
+            event_id=event_id
+        ).first()
+        
+        if not sender_role or sender_role.role not in [EventUserRole.ADMIN, EventUserRole.ORGANIZER]:
+            return False
+        
+        # Check if recipient is in this event
+        recipient_in_event = EventUser.query.filter_by(
+            user_id=recipient_id,
+            event_id=event_id
+        ).first()
+        
+        return recipient_in_event is not None
+
+    @staticmethod
+    def merge_event_threads_on_connection(user1_id: int, user2_id: int):
+        """
+        When users connect, merge all their event-scoped threads into one global thread.
+        Called after connection is accepted.
+        """
+        from api.models.direct_message import DirectMessage
+        
+        # Get all event-scoped threads between these users
+        event_threads = DirectMessageThread.query.filter(
+            (
+                (DirectMessageThread.user1_id == user1_id)
+                & (DirectMessageThread.user2_id == user2_id)
+            )
+            | (
+                (DirectMessageThread.user1_id == user2_id)
+                & (DirectMessageThread.user2_id == user1_id)
+            ),
+            DirectMessageThread.event_scope_id.isnot(None)
+        ).all()
+        
+        if not event_threads:
+            return  # No event threads to merge
+        
+        # Get or create global thread
+        global_thread, _ = DirectMessageService.get_or_create_thread(
+            user1_id, user2_id, event_scope_id=None
+        )
+        
+        # Move all messages from event threads to global thread
+        for event_thread in event_threads:
+            DirectMessage.query.filter_by(thread_id=event_thread.id).update({
+                'thread_id': global_thread.id
+            })
+            
+            # Update global thread's last_message_at if needed
+            if event_thread.last_message_at > global_thread.last_message_at:
+                global_thread.last_message_at = event_thread.last_message_at
+        
+        # Delete the empty event threads
+        for event_thread in event_threads:
+            db.session.delete(event_thread)
+        
+        db.session.commit()

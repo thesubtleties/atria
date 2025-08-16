@@ -223,6 +223,12 @@ class ConnectionService:
                 )
                 db.session.add(message)
                 db.session.commit()
+                
+            # Merge any existing event-scoped threads into the global thread
+            from api.services.direct_message import DirectMessageService
+            DirectMessageService.merge_event_threads_on_connection(
+                connection.requester_id, connection.recipient_id
+            )
 
             thread_id = thread.id if thread else None
 
