@@ -8,6 +8,7 @@ const AttendeesList = ({
   currentUserRole,
   currentUserId,
   adminCount,
+  eventIcebreakers,
   onUpdateRole,
   onSort,
   sortBy,
@@ -79,6 +80,7 @@ const AttendeesList = ({
               currentUserRole={currentUserRole}
               currentUserId={currentUserId}
               adminCount={adminCount}
+              eventIcebreakers={eventIcebreakers}
             />
           ))}
         </Table.Tbody>

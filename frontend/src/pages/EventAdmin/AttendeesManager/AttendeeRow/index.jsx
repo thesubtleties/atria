@@ -40,6 +40,7 @@ const AttendeeRow = ({
   currentUserRole,
   currentUserId,
   adminCount,
+  eventIcebreakers,
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -514,7 +515,7 @@ const AttendeeRow = ({
           company: attendee.company_name,
           avatarUrl: attendee.image_url,
         }}
-        eventIcebreakers={[]} // Could fetch from event data if needed
+        eventIcebreakers={eventIcebreakers || []}
         onSend={handleSendConnectionRequest}
         isLoading={false}
       />
