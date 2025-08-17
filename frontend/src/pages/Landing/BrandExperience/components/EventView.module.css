@@ -1,5 +1,10 @@
 @import '../../_variables.css';
 
+/* Hide the yellow "Your brand front and center" badge completely */
+.brandHighlight {
+  display: none !important;
+}
+
 .mockInterface {
   width: 100%;
   max-width: 900px;
@@ -255,6 +260,22 @@
   }
   50% {
     transform: scale(1.1);
+  }
+}
+
+/* MacBook Air responsive - middle ground height */
+@media (min-width: 1024px) and (max-width: 1680px) and (max-height: 1050px) {
+  .contentWrapper {
+    height: 400px; /* Middle ground between 350px and 450px */
+  }
+  
+  .eventMain {
+    min-height: 400px; /* Middle ground height */
+  }
+  
+  /* Hide the yellow "Your brand front and center" badge completely */
+  .brandHighlight {
+    display: none;
   }
 }
 

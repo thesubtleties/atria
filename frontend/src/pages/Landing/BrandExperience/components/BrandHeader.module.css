@@ -20,10 +20,11 @@
   transform: translateX(-50%);
   width: 80px;
   height: 3px;
-  background: linear-gradient(90deg, 
-    transparent 0%, 
-    #14B8A6 20%,
-    #14B8A6 80%,
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    #14b8a6 20%,
+    #14b8a6 80%,
     transparent 100%
   );
   opacity: 0.8;
@@ -40,11 +41,21 @@
   opacity: 0.9;
 }
 
+/* MacBook Air responsive - remove bottom margin */
+@media (min-width: 1024px) and (max-width: 1680px) and (max-height: 1050px) {
+  p.sectionSubtitle {
+    margin-bottom: 10px !important; /* Small 10px gap instead of 64px */
+    margin: 0 auto !important; /* Reset all margins */
+    margin-top: var(--space-cozy) !important; /* Keep top margin only */
+    margin-bottom: 10px !important; /* Small gap to animation */
+  }
+}
+
 @media (max-width: 768px) {
   .sectionTitle {
     font-size: 2rem;
   }
-  
+
   .sectionSubtitle {
     font-size: 1.125rem;
   }
