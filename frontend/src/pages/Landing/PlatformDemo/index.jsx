@@ -43,6 +43,9 @@ const PlatformDemo = () => {
   const isFirefox = typeof navigator !== 'undefined' && navigator.userAgent.toLowerCase().indexOf('firefox') > -1
 
   useGSAP(() => {
+      // Detect mobile devices
+      const isMobile = window.innerWidth < 768
+      
       // Header animation
       if (headerRef.current) {
         const tl = gsap.timeline({
@@ -192,16 +195,20 @@ const PlatformDemo = () => {
         })
       }
       
-      const scrollTriggerInstance = ScrollTrigger.create({
-        trigger: containerRef.current,
-        start: 'top top',
-        end: 'bottom top',
-        pin: true,
-        pinSpacing: true,
-        invalidateOnRefresh: true,
-        fastScrollEnd: true,
-        preventOverlaps: true,
-        onEnter: () => {
+      // Only enable scroll-lock on desktop
+      let scrollTriggerInstance = null
+      
+      if (!isMobile) {
+        scrollTriggerInstance = ScrollTrigger.create({
+          trigger: containerRef.current,
+          start: 'top top',
+          end: 'bottom top',
+          pin: true,
+          pinSpacing: true,
+          invalidateOnRefresh: true,
+          fastScrollEnd: true,
+          preventOverlaps: true,
+          onEnter: () => {
           // Reset to first card when entering from above
           currentIndexRef.current = 0
           cards.forEach((card, i) => {
@@ -240,7 +247,22 @@ const PlatformDemo = () => {
             observerRef.current = null
           }
         }
-      })
+        })
+      } else {
+        // Mobile: Stack cards normally without scroll-lock
+        cards.forEach((card, index) => {
+          gsap.set(card, {
+            y: 0,
+            zIndex: cards.length - index,
+            visibility: 'visible',
+            position: 'relative'
+          })
+          
+          // Trigger animations for all cards on mobile
+          const event = new CustomEvent('card-active', { detail: { index } })
+          card.dispatchEvent(event)
+        })
+      }
       
       // Cleanup function
       return () => {

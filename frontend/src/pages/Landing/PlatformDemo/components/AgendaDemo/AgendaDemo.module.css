@@ -258,10 +258,67 @@
   }
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+/* Mobile responsive - all cards full width, no speakers */
+@media (max-width: 767px) {
   .agendaGrid {
     min-height: 280px;
+    gap: 12px; /* Tighter spacing between cards */
+  }
+  
+  /* Make all session rows stack vertically */
+  .sessionRow {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .sessionCard {
+    font-size: 11px;
+    min-height: 90px; /* Shorter since no speakers */
+  }
+  
+  .content {
+    padding: 12px 16px; /* Slightly tighter padding */
+  }
+  
+  .title {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+  
+  .time {
+    font-size: 11px;
+  }
+  
+  .description {
+    font-size: 11px;
+    margin-top: 4px;
+  }
+  
+  /* Hide speakers section completely on mobile */
+  .speakers {
+    display: none !important;
+  }
+  
+  /* Disable hover effects on mobile */
+  .sessionCard:hover {
+    transform: none;
+    box-shadow: 0 2px 15px rgba(139, 92, 246, 0.08);
+  }
+  
+  .sessionCard:hover .title {
+    color: var(--color-text-shout);
+  }
+  
+  .sessionCard:hover .sessionType {
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+/* Tablet responsive */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .agendaGrid {
+    min-height: 300px;
   }
   
   .sessionCard {
@@ -269,10 +326,10 @@
   }
   
   .title {
-    font-size: 12px;
+    font-size: 13px;
   }
   
   .time {
-    font-size: 10px;
+    font-size: 11px;
   }
 }

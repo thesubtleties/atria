@@ -117,4 +117,11 @@
   .cardDescription {
     font-size: var(--text-body);
   }
+  
+  /* Remove diagonal pattern on mobile */
+  .backgroundPattern {
+    background-image: none !important;
+    background-color: currentColor !important;
+    opacity: 0.02 !important; /* Very subtle tint */
+  }
 }

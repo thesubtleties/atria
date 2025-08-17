@@ -219,6 +219,16 @@
   }
 }
 
+/* Mobile responsive adjustments */
+@media (max-width: 767px) {
+  /* Remove texture pattern on mobile - use clean solid background */
+  .backgroundPattern {
+    background-image: none !important;
+    background: currentColor !important;
+    opacity: 0.1 !important; /* Light tint instead of texture */
+  }
+}
+
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
   .audienceCard {

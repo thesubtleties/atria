@@ -839,25 +839,47 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 767px) {
+  /* Mobile: Disable scroll-lock, stack cards normally */
+  .demoWrapper {
+    height: auto; /* Remove fixed height */
+  }
+  
   .cardsContainer {
-    padding-bottom: 200px;
+    height: auto; /* Remove fixed height */
+    overflow: visible; /* Allow normal scrolling */
+    position: relative;
   }
   
   .demoCard {
-    margin-bottom: 50px;
+    position: relative !important; /* Override absolute positioning */
+    transform: none !important; /* Override GSAP transforms */
+    top: auto !important;
+    left: auto !important;
+    width: 100% !important;
+    height: auto !important; /* Remove fixed viewport height */
+    margin: 0 auto 2rem auto; /* Center horizontally with bottom margin */
+    display: flex !important; /* Use flex to center content */
+    align-items: center;
+    justify-content: center;
   }
   
   .cardInner {
     padding: var(--space-cozy);
   }
   
+  /* Tighter spacing between title and subtitle on mobile */
+  .cardContent {
+    padding: var(--space-tight); /* Reduce padding */
+  }
+  
   .cardTitle {
     font-size: var(--text-body-lg);
+    margin-bottom: var(--space-tight); /* Reduce from var(--space-tight) to tighter */
   }
   
   .cardSubtitle {
-    font-size: var(--text-body);
+    display: none; /* Hide subtitle on mobile to save space */
   }
   
   .agendaGrid {
