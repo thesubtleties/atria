@@ -15,8 +15,9 @@
 
 /* Social Section */
 .socialSection {
-  padding: var(--space-comfort) 0;
-  margin-bottom: var(--space-tight);
+  padding-top: var(--space-comfort);
+  padding-bottom: calc(var(--space-comfort) / 2); /* Half the bottom padding */
+  margin-bottom: var(--space-micro); /* Tighten gap to horizontal rule */
 }
 
 .socialLinks {
