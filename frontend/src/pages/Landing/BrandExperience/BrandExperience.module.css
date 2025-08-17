@@ -39,6 +39,7 @@
   z-index: 2;
   opacity: 0.9;
   letter-spacing: 0.02em;
+  margin-bottom: 0 !important;
 }
 
 .showcaseWrapper {
@@ -322,10 +323,10 @@
   margin: 0;
 }
 
-
 /* Animations */
 @keyframes bounce {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
@@ -334,7 +335,8 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
   }
   50% {
@@ -343,6 +345,22 @@
 }
 
 /* Mobile responsive */
+/* MacBook Air responsive - tighten spacing */
+@media (min-width: 1024px) and (max-width: 1680px) and (max-height: 1050px) {
+  .sectionSubtitle {
+    margin-bottom: 0 !important; /* Force remove all bottom margin */
+  }
+
+  .showcaseWrapper {
+    min-height: clamp(250px, 35vh, 400px); /* Much shorter showcase area */
+  }
+
+  /* Hide the "Complete Brand Customization" box on MacBook Air */
+  .comingSoonNote {
+    display: none;
+  }
+}
+
 @media (max-width: 767px) {
   /* Hide entire BrandExperience section on mobile */
   .brandExperience {
