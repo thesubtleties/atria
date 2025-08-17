@@ -27,7 +27,7 @@
 
 .drapeContent {
   position: absolute;
-  top: clamp(45%, 55%, 60%);
+  top: clamp(40%, 50%, 55%); /* Move content up on all devices */
   left: 50%;
   transform: translate(-50%, -50%);
   width: 100%;
@@ -135,14 +135,19 @@
 
 
 /* Mobile responsive */
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .finalSection {
     height: auto;
     min-height: 100vh;
   }
   
   .drapeContent {
+    top: 50%; /* Center content in drape area on mobile */
     padding: 0 var(--space-tight);
+  }
+  
+  .footerWrapper {
+    height: clamp(25vh, 30vh, 35vh); /* More room for footer text on mobile */
   }
   
   .sectionTitle {
@@ -152,5 +157,16 @@
   .mainButton {
     font-size: var(--text-body) !important;
     padding: var(--space-tight) var(--space-cozy) !important;
+  }
+}
+
+/* MacBook Air responsive */
+@media (min-width: 1024px) and (max-width: 1680px) and (max-height: 1050px) {
+  .drapeContent {
+    top: 45%; /* Bring content up just a tiny touch on MacBook Air */
+  }
+  
+  .footerWrapper {
+    height: clamp(25vh, 28vh, 32vh); /* More room for AGPL3 Licensed text on MacBook Air */
   }
 }

@@ -58,8 +58,13 @@ const CallToAction = () => {
         
         // Drape slides down to final position (stops just above footer)
         // Adjust final position based on screen size
-        const isMobile = window.innerWidth <= 768
-        const finalPosition = isMobile ? 10 : 5
+        const isMobile = window.innerWidth <= 767
+        const isMacBookAir = window.innerWidth >= 1024 && window.innerWidth <= 1680 && window.innerHeight <= 1050
+        
+        let finalPosition = 5 // Desktop default
+        if (isMobile) finalPosition = -2 // Bring drape up just a touch on mobile
+        else if (isMacBookAir) finalPosition = 0 // Bring drape up just barely on MacBook Air
+        
         const drapeY = gsap.utils.interpolate(-100, finalPosition, progress)
         gsap.set(drape, { y: `${drapeY}%`, force3D: true })
         
