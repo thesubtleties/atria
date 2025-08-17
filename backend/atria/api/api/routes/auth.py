@@ -318,16 +318,7 @@ class VerifyPasswordResource(MethodView):
     )
     def post(self, args):
         """Verify current user's password"""
-        from flask_jwt_extended import get_jwt_identity
-        from api.models import User
-        
-        current_user_id = int(get_jwt_identity())
-        user = User.query.get_or_404(current_user_id)
-        
-        if not user.check_password(args["password"]):
-            abort(401, message="Incorrect password")
-        
-        return {"message": "Password verified successfully"}
+        return AuthService.verify_password(args["password"])
 
 
 @blp.route("/change-password")
