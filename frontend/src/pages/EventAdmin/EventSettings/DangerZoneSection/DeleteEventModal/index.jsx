@@ -30,7 +30,7 @@ const DeleteEventModal = ({ opened, onClose, event, onSuccess }) => {
       await verifyPassword({ password: password.trim() }).unwrap();
       
       // If password is correct, delete the event
-      await deleteEvent({ eventId: event.id }).unwrap();
+      await deleteEvent(event.id).unwrap();
       
       // Show success notification
       notifications.show({
@@ -101,21 +101,18 @@ const DeleteEventModal = ({ opened, onClose, event, onSuccess }) => {
           </Text>
         </div>
 
-        <PasswordInput
-          label="Enter your password to confirm"
-          placeholder="Your account password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          disabled={isLoading}
-          error={error}
-          autoFocus
-          className={styles.passwordInput}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' && password.trim() && !isLoading) {
-              handleDelete();
-            }
-          }}
-        />
+        <form onSubmit={(e) => { e.preventDefault(); if (password.trim() && !isLoading) handleDelete(); }}>
+          <PasswordInput
+            label="Enter your password to confirm"
+            placeholder="Your account password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            disabled={isLoading}
+            error={error}
+            autoFocus
+            className={styles.passwordInput}
+          />
+        </form>
 
         <div className={styles.buttonGroup}>
           <Group justify="flex-end">
