@@ -37,8 +37,13 @@ class EventService:
         """Get event details by ID"""
         from flask_jwt_extended import get_jwt_identity
         from api.models import User
+        from flask_smorest import abort
         
         event = Event.query.get_or_404(event_id)
+        
+        # Check if event is soft-deleted
+        if event.status == EventStatus.DELETED:
+            abort(404, message="Event not found")
         
         # Add current user's role in the event
         current_user_id = int(get_jwt_identity())

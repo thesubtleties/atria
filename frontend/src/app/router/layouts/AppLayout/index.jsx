@@ -2,7 +2,7 @@
 import { useEffect } from 'react';
 import { AppShell, Burger } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { Outlet, useParams } from 'react-router-dom';
+import { Outlet, useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useGetEventQuery } from '@/app/features/events/api';
 import { TopNav, EventNav } from '@/pages/Navigation';
@@ -17,6 +17,7 @@ import styles from './AppLayout.module.css';
 
 export const AppLayout = () => {
   const { eventId } = useParams();
+  const navigate = useNavigate();
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
 
@@ -28,9 +29,17 @@ export const AppLayout = () => {
   console.log('🔐 AppLayout - Auth state:', { isAuthenticated, user });
 
   // Only fetch event data if eventId exists
-  const { data: event } = useGetEventQuery(eventId, {
+  const { data: event, error: eventError, isError: eventIsError } = useGetEventQuery(eventId, {
     skip: !eventId, // Skip the query if eventId is undefined
   });
+  
+  // Redirect to dashboard if event is deleted (404) or user has no access (403)
+  useEffect(() => {
+    if (eventId && eventIsError && (eventError?.status === 404 || eventError?.status === 403)) {
+      navigate('/app/dashboard', { replace: true });
+    }
+  }, [eventId, eventIsError, eventError, navigate]);
+  
   // Check if current user has ADMIN or ORGANIZER role in this event
   const isAdmin = event?.user_role === 'ADMIN' || event?.user_role === 'ORGANIZER';
 

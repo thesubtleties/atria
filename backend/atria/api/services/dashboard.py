@@ -43,10 +43,13 @@ class DashboardService:
     def _get_user_stats(user_id: int):
         """Get aggregated statistics for the user"""
         # Events hosted (where user is ADMIN or ORGANIZER and not banned)
-        events_hosted = db.session.query(func.count(EventUser.event_id)).filter(
+        events_hosted = db.session.query(func.count(EventUser.event_id)).join(
+            Event, EventUser.event_id == Event.id
+        ).filter(
             EventUser.user_id == user_id,
             EventUser.role.in_([EventUserRole.ADMIN, EventUserRole.ORGANIZER]),
-            EventUser.is_banned.is_(False)  # Exclude banned users
+            EventUser.is_banned.is_(False),  # Exclude banned users
+            Event.status != EventStatus.DELETED  # Exclude soft-deleted events
         ).scalar() or 0
 
         # Total attendees reached (sum of attendees in events user organized)
@@ -56,13 +59,17 @@ class DashboardService:
             Event, EventUser.event_id == Event.id
         ).filter(
             Event.id.in_(
-                db.session.query(EventUser.event_id).filter(
+                db.session.query(EventUser.event_id).join(
+                    Event, EventUser.event_id == Event.id
+                ).filter(
                     EventUser.user_id == user_id,
                     EventUser.role.in_([EventUserRole.ADMIN, EventUserRole.ORGANIZER]),
-                    EventUser.is_banned.is_(False)  # Exclude banned users
+                    EventUser.is_banned.is_(False),  # Exclude banned users
+                    Event.status != EventStatus.DELETED  # Exclude soft-deleted events
                 )
             ),
-            EventUser.user_id != user_id  # Don't count the organizer
+            EventUser.user_id != user_id,  # Don't count the organizer
+            Event.status != EventStatus.DELETED  # Exclude soft-deleted events
         ).scalar() or 0
 
         # Connections made
@@ -74,9 +81,12 @@ class DashboardService:
         ).scalar() or 0
 
         # Events attended (total events user is part of and not banned from)
-        events_attended = db.session.query(func.count(EventUser.event_id)).filter(
+        events_attended = db.session.query(func.count(EventUser.event_id)).join(
+            Event, EventUser.event_id == Event.id
+        ).filter(
             EventUser.user_id == user_id,
-            EventUser.is_banned.is_(False)  # Exclude banned users
+            EventUser.is_banned.is_(False),  # Exclude banned users
+            Event.status != EventStatus.DELETED  # Exclude soft-deleted events
         ).scalar() or 0
 
         # Organizations count
@@ -103,8 +113,11 @@ class DashboardService:
         for org_user in org_users:
             org = org_user.organization
             
-            # Get event count for this organization
-            event_count = Event.query.filter_by(organization_id=org.id).count()
+            # Get event count for this organization (excluding deleted)
+            event_count = Event.query.filter(
+                Event.organization_id == org.id,
+                Event.status != EventStatus.DELETED
+            ).count()
             
             # Get member count
             member_count = OrganizationUser.query.filter_by(organization_id=org.id).count()
@@ -131,7 +144,9 @@ class DashboardService:
             EventUser.is_banned.is_(False)  # Exclude banned users
         ).options(
             joinedload(EventUser.event).joinedload(Event.organization)
-        ).join(Event).order_by(
+        ).join(Event).filter(
+            Event.status != EventStatus.DELETED  # Exclude soft-deleted events
+        ).order_by(
             # Order by: published events first, then by start date
             Event.status == EventStatus.PUBLISHED,
             Event.start_date.asc(),
@@ -142,8 +157,11 @@ class DashboardService:
         for event_user in event_users:
             event = event_user.event
             
-            # Get attendee count for this event
-            attendee_count = EventUser.query.filter_by(event_id=event.id).count()
+            # Get attendee count for this event (excluding banned users)
+            attendee_count = EventUser.query.filter(
+                EventUser.event_id == event.id,
+                EventUser.is_banned.is_(False)
+            ).count()
             
             # Determine event status for display based on dates
             if event.end_date and event.end_date < today:
