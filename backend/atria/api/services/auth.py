@@ -131,6 +131,21 @@ class AuthService:
         return {"token": socket_token}
 
     @staticmethod
+    def verify_password(password):
+        """Verify current user's password"""
+        from flask_smorest import abort
+        
+        # Get current user
+        user_id = int(get_jwt_identity())
+        user = User.query.get_or_404(user_id)
+        
+        # Verify password
+        if not user.verify_password(password):
+            abort(401, message="Incorrect password")
+        
+        return {"message": "Password verified successfully"}
+
+    @staticmethod
     def change_password(current_password, new_password):
         """Change user's password"""
         from flask_smorest import abort
