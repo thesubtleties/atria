@@ -349,15 +349,147 @@
   background: rgba(139, 92, 246, 0.3);
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+/* Mobile responsive - vertical layout */
+@media (max-width: 767px) {
   .sessionContent {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* Tighter gap between main content and chat */
     height: auto;
+    max-height: none;
+  }
+  
+  .mainContent {
+    order: 1; /* Video/speaker/description comes first */
+    gap: 8px; /* Tighter spacing */
+  }
+  
+  .videoSection {
+    gap: 8px; /* Tighter spacing within video section */
+  }
+  
+  /* Tighten session description padding */
+  .sessionDescription {
+    padding: 0 2px; /* Reduce padding */
+  }
+  
+  /* Make video frame more proportional on mobile */
+  .videoFrame {
+    height: clamp(160px, 25vh, 200px);
+  }
+  
+  /* Optimize speaker card for mobile */
+  .speakerCard {
+    padding: 8px;
+  }
+  
+  .speakerAvatar {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .speakerName {
+    font-size: 12px;
+  }
+  
+  .speakerTitle {
+    font-size: 9px;
+  }
+  
+  .speakerRole {
+    display: none; /* Hide role badge on mobile */
+  }
+  
+  /* Session description mobile optimization - title only */
+  .sessionTitle {
+    font-size: 14px;
+    margin-bottom: 0; /* Remove bottom margin since no description */
+  }
+  
+  /* Hide description on mobile */
+  .description {
+    display: none;
+  }
+  
+  /* Chat section comes last */
+  .chatSection {
+    order: 2;
+    min-height: 200px;
+    max-height: 240px; /* Much smaller to fit better */
+    flex-shrink: 0;
+  }
+  
+  /* Hide chat tabs on mobile - just show chat directly */
+  .chatTabs {
+    display: none;
+  }
+  
+  .chatMessages {
+    padding: 10px;
+    gap: 8px;
+  }
+  
+  /* Hide last 2 chat messages on mobile to reduce height */
+  .message:nth-last-child(1),
+  .message:nth-last-child(2) {
+    display: none;
+  }
+  
+  .messageAvatar {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .messageUser {
+    font-size: 10px;
+  }
+  
+  .messageTime {
+    font-size: 9px;
+  }
+  
+  .messageText {
+    font-size: 10px;
+  }
+  
+  .chatInput {
+    padding: 8px 10px;
+    gap: 6px;
+  }
+  
+  .inputField {
+    padding: 8px 10px;
+    font-size: 12px;
+    min-height: 32px; /* Touch target */
+  }
+  
+  .sendButton {
+    padding: 8px 12px;
+    font-size: 10px;
+    min-height: 32px; /* Touch target */
+  }
+}
+
+/* Tablet responsive */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .sessionContent {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    gap: 16px;
+  }
+  
+  .mainContent {
+    order: 1;
+  }
+  
+  .videoFrame {
+    height: clamp(180px, 30vh, 220px);
   }
   
   .chatSection {
-    min-height: 300px;
+    order: 2;
+    min-height: 250px;
+    max-height: 300px;
   }
 }

@@ -343,57 +343,9 @@
 }
 
 /* Mobile responsive */
-@media (max-width: 768px) {
+@media (max-width: 767px) {
+  /* Hide entire BrandExperience section on mobile */
   .brandExperience {
-    padding: var(--space-cozy) 0;
-  }
-  
-  .showcaseWrapper {
-    min-height: auto;
-    padding: var(--space-tight);
-  }
-  
-  .mockInterface {
-    max-width: 100%;
-    border-radius: var(--radius-medium);
-    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
-  }
-  
-  .dashboardHeader {
-    padding: var(--space-tight) var(--space-cozy);
-  }
-  
-  .dashboardNav,
-  .eventNav {
     display: none;
-  }
-  
-  .eventHeader {
-    padding: var(--space-cozy);
-  }
-  
-  .eventLogo {
-    font-size: clamp(1.5rem, 6vw, var(--text-title));
-  }
-  
-  .eventHeroTitle {
-    font-size: clamp(1.75rem, 7vw, var(--text-display));
-  }
-  
-  .eventHeroText {
-    font-size: var(--text-body);
-  }
-  
-  .brandHighlight {
-    position: static;
-    margin-top: var(--space-cozy);
-    margin-bottom: var(--space-cozy);
-    justify-content: center;
-    transform: scale(0.9);
-  }
-  
-  .highlightText {
-    font-size: var(--text-tiny);
-    padding: var(--space-micro) var(--space-tight);
   }
 }
