@@ -234,97 +234,112 @@ const Hero = () => {
 
         // Scroll indicator animation handled by CSS for better performance
 
-        // Create drape reveal animation
+        // Create drape reveal animation with responsive configuration
         let drapeTl = null;
         if (containerRef.current && contentRef.current && drapeRef.current) {
-          drapeTl = gsap.timeline({
-            scrollTrigger: {
-              trigger: containerRef.current,
-              start: 'top top',
-              end: '+=135%', // Extended to prevent clipping
-              scrub: 1,
-              pin: true,
-              pinSpacing: true,
-              pinType: 'transform', // Use transform instead of fixed positioning
-              fastScrollEnd: true,
-              onUpdate: (self) => {
-                // Drape starts covering 90% of screen, edge at 10% from bottom
-                // As it moves up, the edge position rises
-                const drapeEdgeFromBottom = 10 + self.progress * 100;
+          // Get viewport dimensions for responsive calculations
+          const viewportWidth = window.innerWidth;
+          const isMobile = viewportWidth < 768;
+          const isTablet = viewportWidth >= 768 && viewportWidth < 1024;
+          
+          // Adjust scroll trigger based on device type
+          const scrollConfig = {
+            trigger: containerRef.current,
+            start: 'top top',
+            end: isMobile ? '+=120%' : isTablet ? '+=130%' : '+=135%',
+            scrub: 1,
+            pin: true,
+            pinSpacing: true,
+            pinType: 'transform',
+            fastScrollEnd: true,
+            onUpdate: (self) => {
+              // Responsive drape edge calculations
+              const baseEdge = isMobile ? 15 : isTablet ? 12 : 10;
+              const progressMultiplier = isMobile ? 85 : isTablet ? 90 : 100;
+              const drapeEdgeFromBottom = baseEdge + self.progress * progressMultiplier;
 
-                // CTA button is near bottom (~15% from bottom)
-                if (ctaRef.current) {
-                  gsap.to(ctaRef.current, {
-                    opacity: drapeEdgeFromBottom > 30 ? 0 : 1,
-                    duration: 0.3,
-                    ease: 'power2.out',
-                    overwrite: true,
-                    force3D: true,
-                  });
-                }
+              // Responsive opacity thresholds based on content positioning
+              const ctaThreshold = isMobile ? 35 : isTablet ? 32 : 30;
+              const taglineThreshold = isMobile ? 45 : isTablet ? 42 : 40;
+              const logoThreshold = isMobile ? 60 : isTablet ? 57 : 55;
+              const navThreshold = isMobile ? 85 : isTablet ? 82 : 80;
 
-                // Tagline is in middle (~45% from bottom)
-                if (taglineRef.current) {
-                  gsap.to(taglineRef.current, {
-                    opacity: drapeEdgeFromBottom > 40 ? 0 : 1,
-                    duration: 0.3,
-                    ease: 'power2.out',
-                    overwrite: true,
-                    force3D: true,
-                  });
-                }
+              // CTA button opacity control
+              if (ctaRef.current) {
+                gsap.to(ctaRef.current, {
+                  opacity: drapeEdgeFromBottom > ctaThreshold ? 0 : 1,
+                  duration: 0.3,
+                  ease: 'power2.out',
+                  overwrite: true,
+                  force3D: !isMobile, // Reduce force3D on mobile for better performance
+                });
+              }
 
-                // Logo is higher up (~60% from bottom)
-                if (logoRef.current) {
-                  gsap.to(logoRef.current, {
-                    opacity: drapeEdgeFromBottom > 55 ? 0 : 1,
-                    duration: 0.3,
-                    ease: 'power2.out',
-                    overwrite: true,
-                    force3D: true,
-                  });
-                }
+              // Tagline opacity control
+              if (taglineRef.current) {
+                gsap.to(taglineRef.current, {
+                  opacity: drapeEdgeFromBottom > taglineThreshold ? 0 : 1,
+                  duration: 0.3,
+                  ease: 'power2.out',
+                  overwrite: true,
+                  force3D: !isMobile,
+                });
+              }
 
-                // Navigation at top (~85% from bottom)
-                if (navRef.current) {
-                  gsap.to(navRef.current, {
-                    opacity: drapeEdgeFromBottom > 80 ? 0 : 1,
-                    duration: 0.3,
-                    ease: 'power2.out',
-                    overwrite: true,
-                    force3D: true,
-                  });
-                }
+              // Logo opacity control
+              if (logoRef.current) {
+                gsap.to(logoRef.current, {
+                  opacity: drapeEdgeFromBottom > logoThreshold ? 0 : 1,
+                  duration: 0.3,
+                  ease: 'power2.out',
+                  overwrite: true,
+                  force3D: !isMobile,
+                });
+              }
 
-                // Stop/restart scramble animation
-                if (self.progress > 0.3 && scrambleIntervalHandle) {
-                  clearInterval(scrambleIntervalHandle);
-                  scrambleIntervalHandle = null;
-                } else if (self.progress <= 0.3 && !scrambleIntervalHandle) {
-                  scrambleIntervalHandle = setInterval(scrambleAnimation, 3000);
-                }
-              },
+              // Navigation opacity control
+              if (navRef.current) {
+                gsap.to(navRef.current, {
+                  opacity: drapeEdgeFromBottom > navThreshold ? 0 : 1,
+                  duration: 0.3,
+                  ease: 'power2.out',
+                  overwrite: true,
+                  force3D: !isMobile,
+                });
+              }
+
+              // Adjust scramble animation timing for mobile
+              const scrambleThreshold = isMobile ? 0.25 : 0.3;
+              if (self.progress > scrambleThreshold && scrambleIntervalHandle) {
+                clearInterval(scrambleIntervalHandle);
+                scrambleIntervalHandle = null;
+              } else if (self.progress <= scrambleThreshold && !scrambleIntervalHandle) {
+                scrambleIntervalHandle = setInterval(scrambleAnimation, 3000);
+              }
             },
-          });
+          };
+          
+          drapeTl = gsap.timeline({ scrollTrigger: scrollConfig });
 
-          // Animate just the drape up within the background
+          // Animate drape with responsive distance
+          const drapeDistance = isMobile ? '-100vh' : isTablet ? '-105vh' : '-110vh';
           drapeTl
             .to(drapeRef.current, {
-              y: '-110vh', // Move drape up and out
-              duration: 0.5, // Complete in first half of scroll
+              y: drapeDistance,
+              duration: 0.5,
               ease: 'power2.inOut',
-              force3D: true,
+              force3D: !isMobile,
             })
 
-            // Fade out scroll indicator early
+            // Fade out scroll indicator (delay on mobile to keep it visible longer)
             .to(
               scrollIndicatorRef.current,
               {
-                opacity: 0,
+                opacity: isMobile ? 1 : 0, // Keep visible on mobile
                 duration: 0.2,
-                force3D: !isFirefox,  // No force3D in Firefox to preserve centering
+                force3D: !isFirefox && !isMobile,
               },
-              0
+              isMobile ? 0.3 : 0 // Delay fade on mobile
             );
         }
       }, containerRef); // Context scoped to container
@@ -378,7 +393,7 @@ const Hero = () => {
 
       {/* Main content */}
       <div ref={contentRef} className={styles.content}>
-        <div className="container">
+        <div className={styles.container}>
           <div className={styles.heroContent}>
             <div ref={logoRef} className={styles.logoContainer}>
               <img src={AtriaLogo} alt="Atria" className={styles.logo} />

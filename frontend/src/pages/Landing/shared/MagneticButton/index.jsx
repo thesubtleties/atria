@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { motion } from 'motion/react'
 import styles from './MagneticButton.module.css'
 
@@ -12,9 +12,19 @@ const MagneticButton = ({
 }) => {
   const buttonRef = useRef(null)
   const [position, setPosition] = useState({ x: 0, y: 0 })
+  const [isTouchDevice, setIsTouchDevice] = useState(false)
+
+  // Detect touch device on mount
+  useEffect(() => {
+    const checkTouchDevice = () => {
+      setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0)
+    }
+    checkTouchDevice()
+  }, [])
 
   const handleMouseMove = (e) => {
-    if (!buttonRef.current) return
+    // Skip magnetic effect on touch devices for better performance
+    if (!buttonRef.current || isTouchDevice) return
 
     const { left, top, width, height } = buttonRef.current.getBoundingClientRect()
     const centerX = left + width / 2
@@ -38,7 +48,9 @@ const MagneticButton = ({
   }
 
   const handleMouseLeave = () => {
-    setPosition({ x: 0, y: 0 })
+    if (!isTouchDevice) {
+      setPosition({ x: 0, y: 0 })
+    }
   }
 
   return (
@@ -49,16 +61,16 @@ const MagneticButton = ({
       onMouseLeave={handleMouseLeave}
       onClick={onClick}
       animate={{
-        x: position.x,
-        y: position.y
+        x: isTouchDevice ? 0 : position.x,
+        y: isTouchDevice ? 0 : position.y
       }}
       transition={{
         type: "spring",
-        stiffness: 150,
-        damping: 15,
+        stiffness: isTouchDevice ? 300 : 150,
+        damping: isTouchDevice ? 25 : 15,
         mass: 0.5
       }}
-      whileHover={{ scale: 1.05 }}
+      whileHover={isTouchDevice ? undefined : { scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
       {...props}
     >
@@ -66,7 +78,7 @@ const MagneticButton = ({
       <motion.div
         className={styles.glow}
         animate={{
-          opacity: position.x !== 0 || position.y !== 0 ? 0.3 : 0
+          opacity: !isTouchDevice && (position.x !== 0 || position.y !== 0) ? 0.3 : 0
         }}
       />
     </motion.button>

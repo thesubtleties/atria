@@ -138,6 +138,14 @@
   padding: var(--space-breath) 0;
 }
 
+/* Container for proper centering and max-width */
+.container {
+  width: 100%;
+  max-width: var(--container-xl);
+  margin: 0 auto;
+  padding: 0 var(--space-comfort);
+}
+
 .heroContent {
   text-align: center;
 }
@@ -326,44 +334,244 @@
 }
 
 
-@media (max-width: 768px) {
+/* Mobile First Responsive Design */
+@media (max-width: 767px) {
+  .hero {
+    min-height: 100vh;
+    min-height: 100svh; /* Use small viewport height for mobile */
+  }
+
+  /* Adjust navigation for mobile */
+  .nav {
+    padding: var(--space-tight) 0; /* Keep minimal padding - closer to top */
+    position: relative;
+    z-index: 25; /* Higher z-index to ensure clickability */
+  }
+
+  /* Adjust content distribution for mobile */
+  .content {
+    padding: var(--space-tight) 0; /* Reduce from 4rem to 0.5rem */
+    justify-content: flex-start;
+    align-items: flex-start; /* Start from top instead of center */
+    padding-top: 8vh; /* Move content up to give scroll indicator more space */
+    min-height: 92vh; /* Adjust content area accordingly */
+  }
+
+  /* Override container padding for mobile */
+  .container {
+    padding: 0 var(--space-cozy);
+    max-width: 100%;
+  }
+
+  .heroContent {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  /* Logo scaling for mobile */
+  .logoContainer {
+    margin-bottom: var(--space-comfort); /* Increase spacing below logo */
+    gap: 0.75rem;
+  }
+
+  .logo {
+    width: clamp(100px, 15vw, 120px);
+  }
+
+  .logoText {
+    font-size: clamp(2rem, 8vw, 2.5rem);
+  }
+
+  /* Tagline adjustments */
+  .tagline {
+    margin-bottom: var(--space-comfort); /* Increase spacing below tagline */
+  }
+
+  .taglineTop {
+    font-size: clamp(0.9rem, 4vw, 1.1rem);
+    margin-bottom: 0.5rem;
+  }
+
+  .scrambleText {
+    font-size: clamp(1.5rem, 8vw, 2rem);
+    width: 10ch; /* Slightly smaller for mobile */
+  }
+
+  /* CTA positioning - ensure it stays above drape */
+  .ctaWrapper {
+    margin-top: var(--space-cozy); /* Reduce top spacing to bring button higher */
+    margin-bottom: var(--space-comfort); /* Reduce bottom margin to make room for scroll indicator */
+  }
+
+  .ctaButton {
+    padding: 1rem 2rem;
+    font-size: 0.85rem;
+    min-height: 44px; /* Touch target minimum */
+  }
+
+  .loginText {
+    margin-top: 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  /* Navigation touch-friendly */
+  .navLinks {
+    gap: var(--space-tight);
+    margin-top: env(safe-area-inset-top, 0); /* Account for iOS notch */
+  }
+
+  .navLink {
+    padding: 1rem 1.25rem; /* Larger touch targets */
+    min-height: 48px; /* Increase minimum touch target */
+    min-width: 48px; /* Ensure square touch target */
+    font-size: 0.85rem;
+    position: relative;
+    z-index: 30; /* Ensure buttons are above any overlays */
+    cursor: pointer;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1); /* iOS tap feedback */
+  }
+
+  /* Scroll indicator positioning */
+  .scrollIndicator {
+    bottom: var(--space-breath); /* Use original spacing for better visibility */
+    font-size: 0.8rem; /* Slightly larger for mobile */
+    z-index: 20; /* Higher z-index to ensure visibility */
+    position: absolute; /* Ensure proper positioning */
+  }
+
+  .scrollText {
+    font-size: 0.75rem;
+  }
+
+  .scrollArrow {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Background shapes optimization for mobile */
+  .shape1 {
+    width: 300px;
+    height: 300px;
+    top: -100px;
+    right: -100px;
+  }
+
+  .shape2 {
+    width: 250px;
+    height: 250px;
+    bottom: -75px;
+    left: -75px;
+  }
+
+  .shape3 {
+    width: 150px;
+    height: 150px;
+  }
+}
+
+/* Tablet responsive design */
+@media (min-width: 768px) and (max-width: 1023px) {
   .hero {
     min-height: 100vh;
   }
 
-  .shape1 {
-    width: 400px;
-    height: 400px;
-    top: -150px;
-    right: -150px;
+  .content {
+    padding: var(--space-comfort) 0;
+    padding-top: 12vh; /* Slightly higher positioning for tablet */
   }
 
-  .shape2 {
-    width: 300px;
-    height: 300px;
+  .container {
+    max-width: 90%;
   }
 
-  .shape3 {
-    width: 200px;
-    height: 200px;
+  .logoText {
+    font-size: clamp(2.5rem, 6vw, 3rem);
+  }
+
+  .taglineTop {
+    font-size: clamp(1rem, 3vw, 1.25rem);
+  }
+
+  .scrambleText {
+    font-size: clamp(1.75rem, 6vw, 2.5rem);
+    width: 11ch;
+  }
+
+  .ctaWrapper {
+    margin-top: var(--space-comfort);
+  }
+
+  .ctaButton {
+    padding: 1.1rem 2.75rem;
+    font-size: 0.95rem;
   }
 
   .navLinks {
     gap: var(--space-cozy);
   }
 
+  .shape1 {
+    width: 500px;
+    height: 500px;
+    top: -175px;
+    right: -175px;
+  }
+
+  .shape2 {
+    width: 350px;
+    height: 350px;
+  }
+
+  .shape3 {
+    width: 250px;
+    height: 250px;
+  }
+}
+
+/* MacBook Air / Small Laptop responsive design - broader targeting */
+@media (min-width: 1024px) and (max-width: 1680px) and (max-height: 1050px) {
+  .content {
+    padding: var(--space-cozy) 0; /* Moderate padding reduction */
+    padding-top: 4vh; /* Move content down a bit from too aggressive */
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+
+  /* Slightly smaller logo but not too small */
   .logo {
+    width: clamp(110px, 14vw, 150px);
+  }
+
+  .logoText {
+    font-size: clamp(2.5rem, 4.5vw, 3rem);
+  }
+
+  .logoContainer {
+    margin-bottom: var(--space-cozy); /* Add some breathing room */
+    gap: 0.75rem;
+  }
+
+  /* Better tagline spacing */
+  .tagline {
     margin-bottom: var(--space-cozy);
   }
 
-  .tagline {
-    margin-bottom: var(--space-comfort);
+  .taglineTop {
+    font-size: clamp(1rem, 2.2vw, 1.3rem);
+    margin-bottom: 0.5rem;
   }
 
   .scrambleText {
-    display: block;
-    text-align: center;
-    margin-top: 0.5rem;
+    font-size: clamp(1.75rem, 4vw, 2.25rem);
+  }
+
+  /* Comfortable CTA spacing */
+  .ctaWrapper {
+    margin-top: var(--space-cozy);
   }
 
   .ctaButton {
@@ -371,7 +579,15 @@
     font-size: 0.9rem;
   }
 
-  .scrollIndicator {
-    bottom: var(--space-comfort);
+  .loginText {
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+  }
+}
+
+/* Large tablet/small desktop */
+@media (min-width: 1024px) and (max-width: 1439px) {
+  .content {
+    padding-top: 8vh; /* Optimal positioning for larger screens */
   }
 }
