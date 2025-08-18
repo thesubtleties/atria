@@ -78,14 +78,7 @@ export const EventsSection = ({ events }) => {
                   color={getStatusColor(event.status)}
                   variant="light"
                   radius="sm"
-                  styles={{
-                    root: {
-                      textTransform: 'none',
-                      fontWeight: 500,
-                      fontSize: '0.8rem',
-                      padding: '0.3rem 0.8rem',
-                    }
-                  }}
+                  className={styles.responsiveBadge}
                 >
                   {getStatusLabel(event.status)}
                 </Badge>

@@ -1,10 +1,10 @@
 /* Base button styles */
 .btn {
-  padding: 0.75rem 1.5rem;
+  padding: clamp(0.5rem, 2vw, 0.75rem) clamp(1rem, 3vw, 1.5rem);
   border: none;
   border-radius: 6px;
   font-weight: 500;
-  font-size: 0.9rem;
+  font-size: clamp(0.8rem, 2vw, 0.9rem);
   cursor: pointer;
   transition: all 0.2s ease;
   text-decoration: none;
@@ -16,6 +16,8 @@
   outline: none;
   position: relative;
   text-align: center;
+  min-height: 44px; /* Ensure touch-friendly height */
+  white-space: nowrap;
 }
 
 .btn:disabled {
@@ -86,4 +88,47 @@
 
 .btn-danger:active:not(:disabled) {
   background: rgba(220, 38, 38, 0.15);
+}
+
+/* Responsive breakpoints */
+@media (max-width: 429px) {
+  /* iPhone SE and smaller */
+  .btn {
+    padding: 0.5rem 0.875rem;
+    font-size: 0.8rem;
+    min-height: 44px;
+  }
+}
+
+@media (min-width: 430px) and (max-width: 767px) {
+  /* iPhone 15 Pro range */
+  .btn {
+    padding: 0.625rem 1.125rem;
+    font-size: 0.85rem;
+    min-height: 44px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* Tablet range */
+  .btn {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1439px) {
+  /* Small desktop/MacBook Air */
+  .btn {
+    padding: 0.6875rem 1.375rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (min-width: 1440px) {
+  /* Large desktop */
+  .btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+  }
 }

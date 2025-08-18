@@ -2,7 +2,7 @@
 .dashboard {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: clamp(1rem, 4vw, 2rem);
   position: relative;
   min-height: 100vh;
 }
@@ -53,10 +53,16 @@
 .dashboardGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 2rem;
+  gap: clamp(1rem, 3vw, 2rem);
   position: relative;
   z-index: 10;
-  margin-top: 2rem;
+  margin-top: clamp(1rem, 3vw, 2rem);
+  min-width: 0; /* Allow grid items to shrink below content size */
+}
+
+.dashboardGrid > * {
+  min-width: 0; /* Ensure grid items can shrink */
+  overflow: hidden; /* Prevent content from overflowing */
 }
 
 /* Dashboard Sections */
@@ -65,7 +71,7 @@
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-radius: 8px;
-  padding: 2rem;
+  padding: clamp(1rem, 4vw, 2rem);
   border: 1px solid rgba(255, 255, 255, 0.8);
   box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
   position: relative;
@@ -76,14 +82,17 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: clamp(1rem, 3vw, 2rem);
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .sectionTitle {
-  font-size: 1.5rem;
+  font-size: clamp(1.125rem, 3vw, 1.5rem);
   font-weight: 600;
   color: #1e293b;
   margin: 0;
+  line-height: 1.2;
 }
 
 /* Full Width Sections */
@@ -99,20 +108,94 @@
   min-height: 400px;
 }
 
-/* Responsive */
-@media (max-width: 1024px) {
+/* Comprehensive Responsive Strategy */
+@media (max-width: 429px) {
+  /* iPhone SE and smaller */
+  .dashboard {
+    padding: 1rem; /* Ensure consistent padding */
+  }
+
   .dashboardGrid {
     grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-top: 1rem;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .dashboardSection {
+    padding: 1rem;
+  }
+
+  .sectionHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .sectionTitle {
+    font-size: 1.125rem;
+    text-align: center;
+  }
+
+  .bgShape1,
+  .bgShape2 {
+    display: none;
   }
 }
 
-@media (max-width: 768px) {
+@media (min-width: 430px) and (max-width: 767px) {
+  /* iPhone 15 Pro range */
+
+  .dashboardGrid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    margin-top: 1.25rem;
+  }
+
+  .dashboardSection {
+    padding: 1.25rem;
+  }
+
+  .sectionHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .sectionTitle {
+    font-size: 1.1875rem;
+    text-align: center;
+  }
+
+  .bgShape1,
+  .bgShape2 {
+    display: none;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* Tablet range */
   .dashboard {
-    padding: 1rem;
+    padding: 1.5rem;
+  }
+
+  .dashboardGrid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
   }
 
   .dashboardSection {
     padding: 1.5rem;
+  }
+
+  .sectionHeader {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 1.5rem;
   }
 
   .sectionTitle {
@@ -121,6 +204,56 @@
 
   .bgShape1,
   .bgShape2 {
-    display: none;
+    opacity: 0.03;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1439px) {
+  /* Small desktop/MacBook Air */
+  .dashboard {
+    padding: 1.75rem;
+  }
+
+  .dashboardGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.75rem;
+    margin-top: 1.75rem;
+  }
+
+  .dashboardSection {
+    padding: 1.75rem;
+  }
+
+  .sectionHeader {
+    margin-bottom: 1.75rem;
+  }
+
+  .sectionTitle {
+    font-size: 1.375rem;
+  }
+}
+
+@media (min-width: 1440px) {
+  /* Large desktop */
+  .dashboard {
+    padding: 2rem;
+  }
+
+  .dashboardGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+
+  .dashboardSection {
+    padding: 2rem;
+  }
+
+  .sectionHeader {
+    margin-bottom: 2rem;
+  }
+
+  .sectionTitle {
+    font-size: 1.5rem;
   }
 }

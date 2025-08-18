@@ -1,8 +1,8 @@
 .statsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 1rem;
-  margin-bottom: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(clamp(100px, 20vw, 120px), 1fr));
+  gap: clamp(0.75rem, 2vw, 1rem);
+  margin-bottom: clamp(1rem, 3vw, 2rem);
 }
 
 .statCard {
@@ -10,29 +10,138 @@
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-radius: 6px;
-  padding: 1.5rem 1rem;
+  padding: clamp(1rem, 3vw, 1.5rem) clamp(0.75rem, 2vw, 1rem);
   text-align: center;
   border: 1px solid rgba(255, 255, 255, 0.9);
   box-shadow: 0 2px 8px rgba(139, 92, 246, 0.03);
   position: relative;
   overflow: hidden;
+  min-height: clamp(80px, 15vw, 100px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .statNumber {
-  font-size: 2rem;
+  font-size: clamp(1.5rem, 5vw, 2rem);
   font-weight: 700;
   color: #8B5CF6;
-  margin-bottom: 0.25rem;
+  margin-bottom: clamp(0.125rem, 1vw, 0.25rem);
+  line-height: 1.1;
 }
 
 .statLabel {
   color: #64748B;
-  font-size: 0.8rem;
+  font-size: clamp(0.7rem, 2vw, 0.8rem);
   font-weight: 500;
+  line-height: 1.3;
 }
 
-@media (max-width: 768px) {
+/* Comprehensive Responsive Design */
+@media (max-width: 429px) {
+  /* iPhone SE and smaller */
   .statsGrid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .statCard {
+    padding: 1rem 0.75rem;
+    min-height: 80px;
+  }
+
+  .statNumber {
+    font-size: 1.5rem;
+    margin-bottom: 0.125rem;
+  }
+
+  .statLabel {
+    font-size: 0.7rem;
+  }
+}
+
+@media (min-width: 430px) and (max-width: 767px) {
+  /* iPhone 15 Pro range */
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.875rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .statCard {
+    padding: 1.125rem 0.875rem;
+    min-height: 85px;
+  }
+
+  .statNumber {
+    font-size: 1.625rem;
+    margin-bottom: 0.1875rem;
+  }
+
+  .statLabel {
+    font-size: 0.75rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* Tablet range */
+  .statsGrid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .statCard {
+    padding: 1.25rem 1rem;
+    min-height: 90px;
+  }
+
+  .statNumber {
+    font-size: 1.75rem;
+  }
+
+  .statLabel {
+    font-size: 0.75rem;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1439px) {
+  /* Small desktop/MacBook Air */
+  .statsGrid {
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .statCard {
+    padding: 1.375rem 1rem;
+    min-height: 95px;
+  }
+
+  .statNumber {
+    font-size: 1.875rem;
+  }
+}
+
+@media (min-width: 1440px) {
+  /* Large desktop */
+  .statsGrid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .statCard {
+    padding: 1.5rem 1rem;
+    min-height: 100px;
+  }
+
+  .statNumber {
+    font-size: 2rem;
+  }
+
+  .statLabel {
+    font-size: 0.8rem;
   }
 }
