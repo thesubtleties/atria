@@ -28,6 +28,13 @@ export const ProfileHeader = ({ user }) => {
           size={60}
           radius={8}
           className={styles.profileAvatar}
+          styles={{
+            root: {
+              width: 'clamp(50px, 12vw, 60px)',
+              height: 'clamp(50px, 12vw, 60px)',
+              fontSize: 'clamp(1rem, 2.5vw, 1.25rem)'
+            }
+          }}
         >
           {getInitials(user.full_name || user.email)}
         </Avatar>

@@ -78,14 +78,7 @@ export const EventsSection = ({ events }) => {
                   color={getStatusColor(event.status)}
                   variant="light"
                   radius="sm"
-                  styles={{
-                    root: {
-                      textTransform: 'none',
-                      fontWeight: 500,
-                      fontSize: '0.8rem',
-                      padding: '0.3rem 0.8rem',
-                    }
-                  }}
+                  className={styles.responsiveBadge}
                 >
                   {getStatusLabel(event.status)}
                 </Badge>
@@ -100,7 +93,7 @@ export const EventsSection = ({ events }) => {
         <div className={styles.emptyState}>
           <p>You're not registered for any events yet.</p>
           <Button 
-            className={styles.btnPrimary}
+            variant="primary"
             onClick={() => navigate('/app/events')}
           >
             Browse Events

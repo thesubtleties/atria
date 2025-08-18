@@ -75,7 +75,7 @@ export const OrganizationsSection = ({ organizations }) => {
         <div className={styles.emptyState}>
           <p>You're not part of any organizations yet.</p>
           <Button 
-            className={styles.btnPrimary}
+            variant="primary"
             onClick={() => navigate('/app/organizations/new')}
           >
             Create Your First Organization

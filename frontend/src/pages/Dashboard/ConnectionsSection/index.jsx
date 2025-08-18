@@ -130,7 +130,7 @@ export const ConnectionsSection = ({ connections }) => {
         <div className={styles.emptyState}>
           <p>No connections yet. Start networking at events!</p>
           <Button 
-            className={styles.btnPrimary}
+            variant="primary"
             onClick={() => navigate('/app/events')}
           >
             Find Events

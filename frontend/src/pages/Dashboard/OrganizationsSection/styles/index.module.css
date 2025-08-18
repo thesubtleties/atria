@@ -1,113 +1,138 @@
-.dashboardSection {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
-  border-radius: 8px;
-  padding: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
-}
+/* Import shared dashboard styles */
+@import '../../shared/dashboard-base.module.css';
+@import '../../shared/responsive.module.css';
 
-.sectionHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-}
+/* Use shared .dashboardSection, .sectionHeader, .sectionTitle from dashboard-base.module.css */
 
-.sectionTitle {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #1E293B;
-  margin: 0;
-}
+/* Use shared Button component instead of custom CSS */
 
-.btnPrimary {
-  background: #8B5CF6;
-  color: white;
-  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2);
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 6px;
-  font-weight: 500;
-  font-size: 0.9rem;
-  transition: all 0.2s ease;
-}
+/* Use shared .cardList from dashboard-base.module.css */
 
-.btnPrimary:hover {
-  background: #7C3AED;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
-}
-
-.cardList {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
+/* Use shared .cardBase, .cardHeader, .cardTitle, .cardMeta from dashboard-base.module.css */
 .card {
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 6px;
-  padding: 1.5rem;
-  margin-bottom: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.9);
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.03);
-  cursor: pointer;
-}
-
-.card:hover {
-  background: rgba(255, 255, 255, 1);
-  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.06);
-}
-
-.card:last-child {
-  margin-bottom: 0;
-}
-
-.cardHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 0.75rem;
-}
-
-.cardTitle {
-  font-weight: 600;
-  color: #1E293B;
-  font-size: 1.1rem;
-}
-
-.cardSubtitle {
-  color: #64748B;
-  font-size: 0.9rem;
-  margin-bottom: 0.5rem;
-}
-
-.cardMeta {
-  color: #94A3B8;
-  font-size: 0.8rem;
+  composes: cardBase from '../../shared/dashboard-base.module.css';
 }
 
 .orgAvatar {
-  width: 40px;
-  height: 40px;
+  width: clamp(36px, 8vw, 40px);
+  height: clamp(36px, 8vw, 40px);
   border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
   font-weight: 600;
-  margin-right: 1rem;
+  font-size: clamp(0.75rem, 2vw, 0.9rem);
+  margin-right: clamp(0.75rem, 2vw, 1rem);
   flex-shrink: 0;
 }
 
-.emptyState {
-  text-align: center;
-  padding: 2rem;
-  color: #64748B;
+/* Use shared .emptyState from dashboard-base.module.css */
+
+/* Responsive Design */
+@media (max-width: 429px) {
+  /* iPhone SE and smaller */
+  .sectionHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .sectionTitle {
+    text-align: center;
+  }
+
+  .card {
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .cardHeader {
+    margin-bottom: 0.5rem;
+  }
+
+  .orgAvatar {
+    width: 36px;
+    height: 36px;
+    margin-right: 0.75rem;
+    font-size: 0.75rem;
+  }
+
+  .cardTitle {
+    font-size: 1rem;
+  }
+
+  .cardMeta {
+    font-size: 0.75rem;
+  }
+
+  .emptyState {
+    padding: 1.5rem 1rem;
+  }
 }
 
-.emptyState p {
-  margin-bottom: 1rem;
+@media (min-width: 430px) and (max-width: 767px) {
+  /* iPhone 15 Pro range */
+  .sectionHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .sectionTitle {
+    text-align: center;
+  }
+
+  .card {
+    padding: 1.1rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .orgAvatar {
+    width: 38px;
+    height: 38px;
+    margin-right: 0.9rem;
+    font-size: 0.8rem;
+  }
+
+  .cardTitle {
+    font-size: 1.05rem;
+  }
+
+  .emptyState {
+    padding: 1.75rem 1.25rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* Tablet range */
+  .sectionHeader {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  /* font-size handled by clamp() */
+
+  .card {
+    padding: 1.25rem;
+  }
+
+  .orgAvatar {
+    width: 38px;
+    height: 38px;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1439px) {
+  /* Small desktop/MacBook Air */
+  /* font-size handled by clamp() */
+
+  .card {
+    padding: 1.4rem;
+  }
+
+  .orgAvatar {
+    width: 39px;
+    height: 39px;
+  }
 }

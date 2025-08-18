@@ -1,58 +1,10 @@
-.dashboardSection {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
-  border-radius: 8px;
-  padding: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
-}
+/* Import shared dashboard styles */
+@import '../../shared/dashboard-base.module.css';
+@import '../../shared/responsive.module.css';
 
-.sectionHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-}
+/* Use shared .dashboardSection, .sectionHeader, .sectionTitle from dashboard-base.module.css */
 
-.sectionTitle {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #1E293B;
-  margin: 0;
-}
-
-.btnSecondary {
-  background: rgba(139, 92, 246, 0.08);
-  color: #8B5CF6;
-  border: 1px solid rgba(139, 92, 246, 0.15);
-  padding: 0.75rem 1.5rem;
-  border-radius: 6px;
-  font-weight: 500;
-  font-size: 0.9rem;
-  transition: all 0.2s ease;
-}
-
-.btnSecondary:hover {
-  background: rgba(139, 92, 246, 0.12);
-}
-
-.btnPrimary {
-  background: #8B5CF6;
-  color: white;
-  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2);
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 6px;
-  font-weight: 500;
-  font-size: 0.9rem;
-  transition: all 0.2s ease;
-}
-
-.btnPrimary:hover {
-  background: #7C3AED;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
-}
+/* Use shared Button component instead of custom CSS */
 
 .connectionsList {
   display: flex;
@@ -63,9 +15,9 @@
 .connectionItem {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: clamp(0.5rem, 2vw, 0.75rem);
   background: rgba(255, 255, 255, 0.8);
-  padding: 0.75rem;
+  padding: clamp(0.5rem, 2vw, 0.75rem);
   border-radius: 6px;
   border: 1px solid rgba(255, 255, 255, 0.9);
   transition: all 0.2s ease;
@@ -89,11 +41,12 @@
 .connectionName {
   font-weight: 500;
   color: #6366f1;
-  font-size: 0.9rem;
+  font-size: clamp(0.8rem, 2vw, 0.9rem);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   transition: color 0.2s ease;
+  line-height: 1.3;
 }
 
 .connectionName:hover {
@@ -103,10 +56,11 @@
 
 .connectionRole {
   color: #64748B;
-  font-size: 0.8rem;
+  font-size: clamp(0.7rem, 1.8vw, 0.8rem);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: 1.3;
 }
 
 .emptyState {
@@ -137,4 +91,80 @@
   background: #7C3AED;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 429px) {
+  /* iPhone SE and smaller */
+  .sectionHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .sectionTitle {
+    text-align: center;
+  }
+
+  .connectionItem {
+    gap: 0.5rem;
+    padding: 0.5rem;
+  }
+
+  /* font-size handled by clamp() */
+
+  .messageButton {
+    padding: 0.4rem;
+  }
+
+  .emptyState {
+    padding: 1.5rem 1rem;
+  }
+}
+
+@media (min-width: 430px) and (max-width: 767px) {
+  /* iPhone 15 Pro range */
+  .sectionHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .sectionTitle {
+    text-align: center;
+  }
+
+  .connectionItem {
+    gap: 0.6rem;
+    padding: 0.6rem;
+  }
+
+  /* font-size handled by clamp() */
+
+  .emptyState {
+    padding: 1.75rem 1.25rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* Tablet range */
+  .sectionHeader {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  /* font-size handled by clamp() */
+
+  .connectionItem {
+    padding: 0.6rem;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1439px) {
+  /* Small desktop/MacBook Air */
+  /* font-size handled by clamp() */
+
+  .connectionItem {
+    padding: 0.7rem;
+  }
 }

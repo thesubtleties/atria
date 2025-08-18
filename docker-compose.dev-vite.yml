@@ -32,7 +32,7 @@ services:
       - ./frontend:/app
       - /app/node_modules
     environment:
-      - VITE_API_URL=http://localhost:5000/api
+      - VITE_API_URL=http://100.67.207.5:5000/api
     networks:
       - default
     depends_on:
