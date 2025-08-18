@@ -21,7 +21,10 @@ def create_app(testing=False):
     app.config.from_object("api.config")
 
     # Use environment variable or function parameter for TESTING config
-    if testing is True or os.getenv("FLASK_TESTING", "false").lower() == "true":
+    if (
+        testing is True
+        or os.getenv("FLASK_TESTING", "false").lower() == "true"
+    ):
         app.config["TESTING"] = True
 
     configure_extensions(app)
@@ -49,6 +52,7 @@ def configure_extensions(app):
                 "http://localhost:3000",
                 "http://localhost:5173",
                 "http://localhost:8080",
+                "http://100.67.207.5:5173",
             ],
             supports_credentials=True,
             methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
@@ -60,6 +64,7 @@ def configure_extensions(app):
                 "http://localhost:3000",
                 "http://localhost:5173",
                 "http://localhost:8080",
+                "http://100.67.207.5:5173",
             ],
         )
     else:

@@ -97,7 +97,7 @@ export const NewsSection = ({ news }) => {
                         textTransform: 'none',
                         fontWeight: 500,
                         fontSize: '0.75rem',
-                        padding: '0.125rem 0.5rem',
+                        padding: '0.1rem 0.5rem',
                       }
                     }}
                   >

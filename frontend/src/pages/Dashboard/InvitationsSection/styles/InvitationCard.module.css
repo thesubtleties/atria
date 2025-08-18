@@ -59,7 +59,7 @@
 .message {
   color: #64748b;
   font-style: italic;
-  margin-top: clamp(0.125rem, 0.5vw, 0.25rem);
+  margin-top: clamp(0.1rem, 0.5vw, 0.25rem);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -97,7 +97,7 @@
   .cardActions button {
     flex: 1;
     font-size: 0.8rem;
-    padding: 0.5rem 0.875rem;
+    padding: 0.5rem 0.9rem;
   }
   
   .title {
@@ -119,8 +119,8 @@
   .invitationCard {
     flex-direction: column;
     align-items: stretch;
-    padding: 0.875rem;
-    gap: 0.875rem;
+    padding: 0.9rem;
+    gap: 0.9rem;
     min-height: auto;
   }
   
@@ -158,7 +158,7 @@
   .invitationCard {
     flex-direction: row;
     align-items: center;
-    padding: 0.875rem 1.125rem;
+    padding: 0.9rem 1.1rem;
     min-height: 75px;
   }
   
@@ -182,7 +182,7 @@
 @media (min-width: 1024px) and (max-width: 1439px) {
   /* Small desktop/MacBook Air */
   .invitationCard {
-    padding: 0.9375rem 1.1875rem;
+    padding: 0.95rem 1.2rem;
     min-height: 78px;
   }
   
@@ -191,6 +191,6 @@
   }
   
   .title {
-    font-size: 0.975rem;
+    font-size: 1rem;
   }
 }

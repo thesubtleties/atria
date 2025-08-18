@@ -93,7 +93,7 @@ export const EventsSection = ({ events }) => {
         <div className={styles.emptyState}>
           <p>You're not registered for any events yet.</p>
           <Button 
-            className={styles.btnPrimary}
+            variant="primary"
             onClick={() => navigate('/app/events')}
           >
             Browse Events
