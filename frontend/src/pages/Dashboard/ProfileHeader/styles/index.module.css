@@ -1,11 +1,11 @@
 .profileHeader {
   background: rgba(255, 255, 255, 0.6);
   backdrop-filter: blur(10px);
-  border-radius: 8px;
-  padding: clamp(1rem, 3vw, 1.5rem) clamp(1rem, 4vw, 2rem);
-  margin-bottom: clamp(1rem, 3vw, 2rem);
+  border-radius: var(--radius-lg);
+  padding: clamp(var(--space-md), 3vw, var(--space-lg)) clamp(var(--space-md), 4vw, var(--space-xl));
+  margin-bottom: clamp(var(--space-md), 3vw, var(--space-xl));
   border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.03);
+  box-shadow: var(--shadow-sm);
   position: relative;
   z-index: 10;
 }
@@ -19,13 +19,13 @@
 
 .profileAvatar {
   flex-shrink: 0;
-  background: linear-gradient(45deg, #8B5CF6, #A855F7);
+  background: linear-gradient(45deg, var(--color-primary), #A855F7);
 }
 
 .profileDetails h2 {
-  font-size: clamp(1.1rem, 3vw, 1.25rem);
+  font-size: clamp(var(--text-lg), 3vw, var(--text-xl));
   font-weight: 600;
-  color: #1E293B;
+  color: var(--color-text-primary);
   margin: 0 0 clamp(0.1rem, 1vw, 0.25rem) 0;
   line-height: 1.2;
 }
