@@ -16,7 +16,7 @@
 .orgAvatar {
   width: clamp(36px, 8vw, 40px);
   height: clamp(36px, 8vw, 40px);
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;

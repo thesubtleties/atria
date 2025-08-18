@@ -5,13 +5,13 @@
 
 /* Dashboard Section Container */
 .dashboardSection {
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--color-background-glass);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-radius: 8px;
-  padding: clamp(1rem, 4vw, 2rem);
+  border-radius: var(--radius-lg);
+  padding: clamp(var(--space-md), 4vw, var(--space-xl));
   border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
+  box-shadow: var(--shadow-lg);
   box-sizing: border-box;
   position: relative;
   z-index: 10;
@@ -29,28 +29,28 @@
 
 /* Section Title Typography */
 .sectionTitle {
-  font-size: clamp(1.1rem, 3vw, 1.5rem);
+  font-size: clamp(var(--text-lg), 3vw, var(--text-2xl));
   font-weight: 600;
-  color: #1E293B;
+  color: var(--color-text-primary);
   margin: 0;
   line-height: 1.2;
 }
 
 /* Common Card Base */
 .cardBase {
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 6px;
-  padding: clamp(1rem, 3vw, 1.5rem);
-  margin-bottom: clamp(0.75rem, 2vw, 1rem);
+  background: var(--color-background-glass);
+  border-radius: var(--radius-md);
+  padding: clamp(var(--space-md), 3vw, var(--space-lg));
+  margin-bottom: clamp(0.75rem, 2vw, var(--space-md));
   border: 1px solid rgba(255, 255, 255, 0.9);
   transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.03);
+  box-shadow: var(--shadow-sm);
   cursor: pointer;
 }
 
 .cardBase:hover {
   background: rgba(255, 255, 255, 1);
-  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.06);
+  box-shadow: var(--shadow-md);
 }
 
 .cardBase:last-child {
@@ -73,22 +73,22 @@
 
 .cardTitle {
   font-weight: 600;
-  color: #1E293B;
-  font-size: clamp(1rem, 2.5vw, 1.1rem);
+  color: var(--color-text-primary);
+  font-size: clamp(var(--text-base), 2.5vw, var(--text-lg));
   line-height: 1.3;
   margin-bottom: clamp(0.1rem, 0.5vw, 0.25rem);
 }
 
 .cardSubtitle {
-  color: #64748B;
-  font-size: clamp(0.8rem, 2vw, 0.9rem);
+  color: var(--color-text-secondary);
+  font-size: clamp(var(--text-sm), 2vw, 0.9rem);
   line-height: 1.4;
   margin-bottom: clamp(0.4rem, 1vw, 0.5rem);
 }
 
 .cardMeta {
-  color: #94A3B8;
-  font-size: clamp(0.7rem, 1.8vw, 0.8rem);
+  color: var(--color-text-muted);
+  font-size: clamp(var(--text-xs), 1.8vw, 0.8rem);
   line-height: 1.3;
 }
 
@@ -102,8 +102,8 @@
 /* Empty State */
 .emptyState {
   text-align: center;
-  padding: clamp(1.5rem, 4vw, 2rem) clamp(1rem, 3vw, 1.5rem);
-  color: #64748B;
+  padding: clamp(var(--space-lg), 4vw, var(--space-xl)) clamp(var(--space-md), 3vw, var(--space-lg));
+  color: var(--color-text-secondary);
 }
 
 .emptyState p {

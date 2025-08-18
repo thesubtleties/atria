@@ -2,7 +2,7 @@
 .btn {
   padding: clamp(0.5rem, 2vw, 0.75rem) clamp(1rem, 3vw, 1.5rem);
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   font-weight: 500;
   font-size: clamp(0.8rem, 2vw, 0.9rem);
   cursor: pointer;
@@ -27,26 +27,26 @@
 
 /* Primary button variant */
 .btn-primary {
-  background: #8B5CF6;
+  background: var(--color-primary);
   color: white;
-  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2);
+  box-shadow: var(--shadow-md);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: #7C3AED;
+  background: var(--color-primary-hover);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+  box-shadow: var(--shadow-lg);
 }
 
 .btn-primary:active:not(:disabled) {
   transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2);
+  box-shadow: var(--shadow-md);
 }
 
 /* Secondary button variant */
 .btn-secondary {
   background: rgba(139, 92, 246, 0.08);
-  color: #8B5CF6;
+  color: var(--color-primary);
   border: 1px solid rgba(139, 92, 246, 0.15);
 }
 

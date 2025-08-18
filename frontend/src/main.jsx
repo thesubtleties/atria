@@ -9,6 +9,7 @@ import { store } from './app/store';
 import { router } from './app/router/routes';
 
 import './styles/reset.css';
+import './styles/design-tokens.css';
 import '@mantine/core/styles.css';
 import '@mantine/carousel/styles.css';
 import '@mantine/notifications/styles.css';

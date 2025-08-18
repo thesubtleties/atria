@@ -1,0 +1,99 @@
+/**
+ * Atria Design Tokens
+ * Based on actual brand colors from logo and hero section
+ */
+
+:root {
+  /* Brand Colors - From Actual Assets */
+  --color-primary: #8B5CF6;      /* Purple from wave-drape.svg */
+  --color-primary-hover: #7C3AED; /* Darker purple for hover */
+  --color-accent-yellow: #FFD666; /* Yellow from atria-logo.svg */
+  
+  /* Text Colors */
+  --color-text-primary: #1E293B;   /* Dark gray for headings */
+  --color-text-secondary: #64748B; /* Medium gray for body text */
+  --color-text-muted: #94A3B8;     /* Light gray for meta info */
+  
+  /* Background Colors */
+  --color-background: #FBFAFF;           /* Very light purple, almost white */
+  --color-background-glass: rgba(255, 255, 255, 0.8); /* Glass effect */
+  
+  /* Status Colors */
+  --color-success: #16A34A;   /* Green */
+  --color-warning: #F59E0B;   /* Amber */
+  --color-error: #DC2626;     /* Red */
+  --color-info: #06B6D4;      /* Teal */
+  
+  /* Gradient Color Palette - Based on existing app usage */
+  
+  /* Purple Family (Primary Brand Colors) */
+  --gradient-purple-light: #8B5CF6;    /* Our brand purple */
+  --gradient-purple-medium: #A855F7;   /* Medium purple */
+  --gradient-purple-dark: #7C3AED;     /* Dark purple */
+  --gradient-purple-deep: #6D28D9;     /* Deep purple */
+  
+  /* Orange/Yellow Family */
+  --gradient-orange-bright: #FFD93D;   /* Bright yellow (from your logo) */
+  --gradient-orange-light: #FCD34D;    /* Light orange */
+  --gradient-orange-medium: #F59E0B;   /* Medium orange */
+  --gradient-orange-dark: #EAB308;     /* Dark orange */
+  
+  /* Pink Family */
+  --gradient-pink-light: #EC4899;      /* Light pink */
+  --gradient-pink-medium: #F472B6;     /* Medium pink */
+  --gradient-pink-dark: #FF6B9D;       /* Dark pink */
+  
+  /* Blue/Teal Family */
+  --gradient-blue-light: #06B6D4;      /* Light teal */
+  --gradient-blue-medium: #0891B2;     /* Medium teal */
+  --gradient-blue-dark: #0EA5E9;       /* Dark blue */
+  --gradient-blue-bright: #67E8F9;     /* Bright cyan */
+  
+  /* Green Family */
+  --gradient-green-light: #10B981;     /* Light green */
+  --gradient-green-medium: #16A34A;    /* Medium green */
+  --gradient-green-dark: #059669;      /* Dark green */
+  
+  /* Red/Orange Family */
+  --gradient-red-light: #FF6B6B;       /* Light red */
+  --gradient-red-medium: #DF562C;      /* Medium red-orange */
+  --gradient-red-dark: #F86E2E;        /* Dark orange */
+  
+  /* Neutral/Special */
+  --gradient-slate-light: #E2E8F0;     /* Light slate */
+  --gradient-slate-medium: #64748B;    /* Medium slate */
+  --gradient-slate-dark: #1E293B;      /* Dark slate */
+  
+  /* Spacing Scale */
+  --space-xs: 0.25rem;  /* 4px */
+  --space-sm: 0.5rem;   /* 8px */
+  --space-md: 1rem;     /* 16px */
+  --space-lg: 1.5rem;   /* 24px */
+  --space-xl: 2rem;     /* 32px */
+  --space-2xl: 3rem;    /* 48px */
+  
+  /* Typography Scale */
+  --text-xs: 0.75rem;   /* 12px */
+  --text-sm: 0.875rem;  /* 14px */
+  --text-base: 1rem;    /* 16px */
+  --text-lg: 1.125rem;  /* 18px */
+  --text-xl: 1.25rem;   /* 20px */
+  --text-2xl: 1.5rem;   /* 24px */
+  
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(139, 92, 246, 0.05);
+  --shadow-md: 0 2px 8px rgba(139, 92, 246, 0.1);
+  --shadow-lg: 0 4px 16px rgba(139, 92, 246, 0.15);
+  --shadow-xl: 0 8px 32px rgba(139, 92, 246, 0.2);
+
+  /* Purple-tinted variants with CSS custom properties for easy switching */
+  --glass-background: rgba(255, 255, 255, 0.8);
+  --glass-border: rgba(255, 255, 255, 0.8);
+  --primary-alpha-8: rgba(139, 92, 246, 0.08);
+  --primary-alpha-15: rgba(139, 92, 246, 0.15);
+}
