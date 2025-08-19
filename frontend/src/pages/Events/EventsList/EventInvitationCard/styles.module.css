@@ -1,11 +1,11 @@
 .invitationCard {
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--color-background-glass);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(139, 92, 246, 0.1);
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
   transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.03);
   position: relative;
   height: 100%;
   display: flex;
@@ -14,39 +14,39 @@
 
 .invitationCard:hover {
   border-color: rgba(139, 92, 246, 0.2);
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.06);
+  box-shadow: var(--shadow-md);
 }
 
 .invitationBadge {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.75rem;
+  margin-bottom: var(--space-sm);
 }
 
 .eventTitle {
-  color: #1e293b;
+  color: var(--color-text-primary);
   line-height: 1.3;
 }
 
 .icon {
-  color: #64748b;
+  color: var(--color-text-secondary);
   flex-shrink: 0;
 }
 
 .invitationMessage {
-  color: #64748b;
+  color: var(--color-text-secondary);
   font-style: italic;
-  padding: 0.5rem;
+  padding: var(--space-sm);
   background: rgba(139, 92, 246, 0.03);
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   border-left: 3px solid rgba(139, 92, 246, 0.2);
 }
 
 .actionButtons {
   margin-top: auto;
-  padding-top: 0.5rem;
+  padding-top: var(--space-sm);
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.5rem;
+  gap: var(--space-sm);
 }
