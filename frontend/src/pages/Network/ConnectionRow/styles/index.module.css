@@ -1,11 +1,11 @@
 .row td {
-  padding: 1rem;
-  color: #1E293B;
-  font-size: 0.9rem;
+  padding: var(--space-md);
+  color: var(--color-text-primary);
+  font-size: var(--text-sm);
 }
 
 .emailLink {
-  color: #8B5CF6;
+  color: var(--color-primary);
   text-decoration: none;
   transition: opacity 0.2s ease;
 }

@@ -1,0 +1,164 @@
+.card {
+  composes: card-base from '../../../../styles/design-tokens.css';
+  margin-bottom: var(--space-sm);
+}
+
+/* Header with avatar and user info */
+.cardHeader {
+  composes: card-header from '../../../../styles/design-tokens.css';
+  margin-bottom: var(--space-md);
+}
+
+.userInfo {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+}
+
+.avatar {
+  flex-shrink: 0;
+}
+
+.userDetails {
+  flex: 1;
+  min-width: 0;
+}
+
+.userName {
+  composes: card-title from '../../../../styles/design-tokens.css';
+  cursor: pointer;
+  color: var(--color-primary) !important;
+  transition: opacity 0.2s ease;
+  margin-bottom: var(--space-xs);
+}
+
+.userName:hover {
+  opacity: 0.8;
+}
+
+.userTitle {
+  color: var(--color-text-primary);
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.userCompany {
+  color: var(--color-text-secondary);
+}
+
+/* Connection info section */
+.connectionInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-md);
+  padding: var(--space-sm) 0;
+  border-top: 1px solid rgba(139, 92, 246, 0.08);
+  border-bottom: 1px solid rgba(139, 92, 246, 0.08);
+}
+
+.connectionEvent {
+  flex: 1;
+}
+
+.eventBadge {
+  background: rgba(139, 92, 246, 0.08) !important;
+  color: var(--color-primary) !important;
+  border: 1px solid rgba(139, 92, 246, 0.15);
+}
+
+.directConnection {
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.connectionDate {
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  margin-left: var(--space-sm);
+}
+
+/* Contact info section */
+.contactInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-md);
+}
+
+.socialLinks {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.socialLink {
+  background: var(--color-background-glass) !important;
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  color: var(--color-text-secondary) !important;
+  transition: all 0.2s ease;
+}
+
+.socialLink:hover {
+  background: rgba(139, 92, 246, 0.08) !important;
+  color: var(--color-primary) !important;
+  transform: translateY(-1px);
+}
+
+.email {
+  flex: 1;
+  text-align: right;
+  margin-left: var(--space-sm);
+}
+
+.emailLink {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+  font-size: var(--text-xs);
+}
+
+.emailLink:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+/* Card actions */
+.cardActions {
+  margin-top: auto;
+  padding-top: var(--space-sm);
+}
+
+.messageButton {
+  height: 44px; /* Touch-friendly height */
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.messageButton:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .connectionInfo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-xs);
+  }
+  
+  .connectionDate {
+    margin-left: 0;
+  }
+  
+  .contactInfo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-sm);
+  }
+  
+  .email {
+    text-align: left;
+    margin-left: 0;
+  }
+}
