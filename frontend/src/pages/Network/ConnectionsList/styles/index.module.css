@@ -1,11 +1,11 @@
 .table {
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--color-background-glass);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.9);
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.03);
+  box-shadow: var(--shadow-sm);
 }
 
 .table thead tr {
@@ -15,9 +15,9 @@
 
 .table th {
   font-weight: 500;
-  color: #64748B;
-  padding: 1rem;
-  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  padding: var(--space-md);
+  font-size: var(--text-xs);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -35,6 +35,47 @@
   border-bottom: none;
 }
 
+/* Desktop table view - visible on larger screens */
+.desktopView {
+  display: block;
+}
+
+/* Mobile card view - hidden on larger screens */
+.mobileView {
+  display: none;
+}
+
+/* Connection cards grid for mobile */
+.connectionGrid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
 .pagination {
-  margin-top: 2rem;
+  margin-top: var(--space-xl);
+}
+
+/* Responsive behavior */
+@media (max-width: 767px) {
+  .desktopView {
+    display: none;
+  }
+  
+  .mobileView {
+    display: block;
+  }
+  
+  .connectionGrid {
+    gap: var(--space-sm);
+  }
+}
+
+/* Tablet view - 2 columns on larger mobile */
+@media (min-width: 480px) and (max-width: 767px) {
+  .connectionGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+  }
 }
