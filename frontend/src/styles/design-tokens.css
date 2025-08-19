@@ -133,7 +133,7 @@
   font-size: clamp(var(--text-lg), 3vw, var(--text-2xl));
   font-weight: 600;
   color: var(--color-text-primary);
-  margin: 0;
+  margin: 0 0 var(--space-md) 0 !important;
   line-height: 1.2;
 }
 

@@ -1,25 +1,15 @@
 .profileSection {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
-  border-radius: 8px;
-  padding: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
-  position: relative;
-  z-index: 10;
-  margin-top: 2rem;
+  composes: section-container from '../../../../styles/design-tokens.css';
+  margin-top: var(--space-xl);
 }
 
 .sectionTitle {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #1E293B;
-  margin-bottom: 1.5rem;
+  composes: section-title from '../../../../styles/design-tokens.css';
 }
 
 .bioText {
-  color: #64748B;
+  color: var(--color-text-secondary);
   line-height: 1.8;
-  font-size: 0.95rem;
+  font-size: clamp(var(--text-sm), 2vw, 0.95rem);
   white-space: pre-wrap;
 }

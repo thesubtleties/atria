@@ -1,10 +1,10 @@
 .profileContainer {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: clamp(var(--space-md), 4vw, var(--space-xl));
   position: relative;
   min-height: 100vh;
-  background: rgba(251, 250, 255, 1);
+  background: var(--color-background);
 }
 
 /* Background Organic Shapes */
@@ -12,26 +12,28 @@
   position: fixed;
   width: 350px;
   height: 350px;
-  background: linear-gradient(45deg, #8b5cf6, #a855f7);
+  background: linear-gradient(45deg, var(--gradient-purple-light), var(--gradient-purple-medium));
   border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
   top: 150px;
   right: -150px;
   opacity: 0.04;
   animation: float 15s ease-in-out infinite;
   z-index: 1;
+  pointer-events: none;
 }
 
 .bgShape2 {
   position: fixed;
   width: 300px;
   height: 300px;
-  background: linear-gradient(135deg, #f59e0b, #eab308);
+  background: linear-gradient(135deg, var(--gradient-orange-medium), var(--gradient-orange-dark));
   border-radius: 74% 26% 47% 53% / 68% 46% 54% 32%;
   bottom: 100px;
   left: -100px;
   opacity: 0.05;
   animation: float 18s ease-in-out infinite reverse;
   z-index: 1;
+  pointer-events: none;
 }
 
 @keyframes float {
@@ -51,45 +53,36 @@
 .profileGrid {
   display: grid;
   grid-template-columns: 1fr 2fr;
-  gap: 2rem;
+  gap: var(--space-xl);
   position: relative;
   z-index: 10;
 }
 
-/* Section Styles (shared by edit mode) */
+/* Section Styles using global semantic classes */
 .profileSection {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
-  border-radius: 8px;
-  padding: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
-  position: relative;
-  z-index: 10;
+  composes: section-container from '../../../styles/design-tokens.css';
 }
 
 .sectionMarginTop {
-  margin-top: 2rem;
+  margin-top: var(--space-xl);
 }
 
 .sectionTitle {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #1e293b;
-  margin-bottom: 1.5rem;
+  composes: section-title from '../../../styles/design-tokens.css';
 }
 
 /* Edit Actions */
 .editActions {
   position: sticky;
-  bottom: 2rem;
-  background: rgba(255, 255, 255, 0.8);
+  bottom: var(--space-xl);
+  background: var(--color-background-glass);
   backdrop-filter: blur(10px);
-  border-radius: 8px;
-  padding: 1rem 2rem;
-  margin-top: 2rem;
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md) var(--space-xl);
+  margin-top: var(--space-xl);
   border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.08);
+  box-shadow: var(--shadow-lg);
   z-index: 100;
 }
 
@@ -99,7 +92,7 @@
 
 .editButtonGroup {
   display: flex;
-  gap: 1rem;
+  gap: var(--space-md);
   justify-content: flex-end;
   align-items: center;
 }
@@ -107,23 +100,27 @@
 .editButtonGroup button {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--space-sm);
 }
 
-/* Button Styles */
+/* Button Styles - Use shared Button component instead */
 .btnPrimary {
-  background: #8b5cf6;
+  background: var(--color-primary);
   color: white;
   border: none;
+  border-radius: var(--radius-md);
+  padding: clamp(var(--space-sm), 2vw, var(--space-md)) clamp(var(--space-md), 3vw, var(--space-lg));
+  box-shadow: var(--shadow-md);
   transition: all 0.2s ease;
 }
 
 .btnPrimary:hover {
-  background: #7c3aed;
+  background: var(--color-primary-hover);
   transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
 }
 
-/* Responsive */
+/* Responsive Design */
 @media (max-width: 1024px) {
   .profileGrid {
     grid-template-columns: 1fr;
@@ -132,11 +129,7 @@
 
 @media (max-width: 768px) {
   .profileContainer {
-    padding: 1rem;
-  }
-
-  .profileSection {
-    padding: 1.5rem;
+    padding: var(--space-md);
   }
 
   .bgShape1,
