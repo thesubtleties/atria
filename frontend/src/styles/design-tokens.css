@@ -94,8 +94,14 @@
   /* Purple-tinted variants with CSS custom properties for easy switching */
   --glass-background: rgba(255, 255, 255, 0.8);
   --glass-border: rgba(255, 255, 255, 0.8);
+  --primary-alpha-2: rgba(139, 92, 246, 0.02);
+  --primary-alpha-3: rgba(139, 92, 246, 0.03);
+  --primary-alpha-4: rgba(139, 92, 246, 0.04);
+  --primary-alpha-6: rgba(139, 92, 246, 0.06);
   --primary-alpha-8: rgba(139, 92, 246, 0.08);
+  --primary-alpha-10: rgba(139, 92, 246, 0.10);
   --primary-alpha-15: rgba(139, 92, 246, 0.15);
+  --primary-alpha-20: rgba(139, 92, 246, 0.20);
 }
 
 /* 
