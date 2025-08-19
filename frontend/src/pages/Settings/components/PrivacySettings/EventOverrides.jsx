@@ -251,6 +251,15 @@ const EventOverrides = () => {
                 onChange={(event) => handleOverrideToggle(event.currentTarget.checked)}
                 disabled={isDeleting}
                 size="lg"
+                color="var(--color-primary)"
+                styles={{
+                  track: { 
+                    '&[data-checked]': { 
+                      backgroundColor: 'var(--color-primary)',
+                      borderColor: 'var(--color-primary)'
+                    }
+                  }
+                }}
               />
             </Group>
 

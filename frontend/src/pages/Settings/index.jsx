@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Text } from '@mantine/core';
-import { IconLock, IconUser, IconBell, IconShield } from '@tabler/icons-react';
+import { Text, Select } from '@mantine/core';
+import { IconLock, IconUser, IconBell, IconShield, IconChevronDown } from '@tabler/icons-react';
 import { Tabs } from '@mantine/core';
 import PrivacySettings from './components/PrivacySettings';
 import SecuritySettings from './components/SecuritySettings';
@@ -8,6 +8,18 @@ import styles from './styles/index.module.css';
 
 const Settings = () => {
   const [activeTab, setActiveTab] = useState('privacy');
+  
+  // Tab configuration with icons and labels
+  const tabConfig = [
+    { value: 'privacy', label: 'Privacy', icon: IconLock },
+    { value: 'profile', label: 'Profile', icon: IconUser },
+    { value: 'notifications', label: 'Notifications', icon: IconBell, disabled: true },
+    { value: 'security', label: 'Security', icon: IconShield },
+  ];
+  
+  // Get current tab info for mobile dropdown
+  const currentTab = tabConfig.find(tab => tab.value === activeTab);
+  const CurrentIcon = currentTab?.icon;
   
   return (
     <div className={styles.container}>
@@ -18,42 +30,52 @@ const Settings = () => {
       <div className={styles.contentWrapper}>
         {/* Header Section */}
         <section className={styles.headerSection}>
-          <h2 className={styles.pageTitle}>Settings</h2>
+          <h1 className={styles.pageTitle}>Settings</h1>
+          <p className={styles.subtitle}>Manage your privacy, security, and profile settings</p>
         </section>
 
         {/* Main Content Section */}
         <section className={styles.mainContent}>
+          {/* Mobile Dropdown - Only visible on mobile */}
+          <div className={styles.mobileTabSelector}>
+            <Select
+              value={activeTab}
+              onChange={setActiveTab}
+              data={tabConfig.map(tab => ({
+                value: tab.value,
+                label: tab.label,
+                disabled: tab.disabled
+              }))}
+              leftSection={CurrentIcon && <CurrentIcon size={16} />}
+              rightSection={<IconChevronDown size={16} />}
+              className={styles.mobileSelect}
+              classNames={{
+                input: styles.mobileSelectInput,
+                dropdown: styles.mobileSelectDropdown
+              }}
+              placeholder="Select Settings Tab"
+              searchable={false}
+              allowDeselect={false}
+            />
+          </div>
+          
           <Tabs value={activeTab} onChange={setActiveTab} className={styles.tabsContainer}>
+            {/* Desktop Tabs - Hidden on mobile */}
             <Tabs.List className={styles.tabsList}>
-              <Tabs.Tab 
-                value="privacy" 
-                className={styles.tab}
-                leftSection={<IconLock size={16} />}
-              >
-                Privacy
-              </Tabs.Tab>
-              <Tabs.Tab 
-                value="profile" 
-                className={styles.tab}
-                leftSection={<IconUser size={16} />}
-              >
-                Profile
-              </Tabs.Tab>
-              <Tabs.Tab 
-                value="notifications" 
-                className={styles.tab}
-                leftSection={<IconBell size={16} />} 
-                disabled
-              >
-                Notifications
-              </Tabs.Tab>
-              <Tabs.Tab 
-                value="security" 
-                className={styles.tab}
-                leftSection={<IconShield size={16} />}
-              >
-                Security
-              </Tabs.Tab>
+              {tabConfig.map(tab => {
+                const TabIcon = tab.icon;
+                return (
+                  <Tabs.Tab 
+                    key={tab.value}
+                    value={tab.value} 
+                    className={styles.tab}
+                    leftSection={<TabIcon size={16} />}
+                    disabled={tab.disabled}
+                  >
+                    {tab.label}
+                  </Tabs.Tab>
+                );
+              })}
             </Tabs.List>
             
             <Tabs.Panel value="privacy" className={styles.tabPanel}>
