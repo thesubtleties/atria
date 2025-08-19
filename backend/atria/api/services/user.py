@@ -120,12 +120,14 @@ class UserService:
     @staticmethod
     def get_user_events(user_id: int, role: Optional[str] = None, schema=None):
         """Get events a user is participating in (excluding banned), optionally filtered by role"""
+        from api.models.enums import EventStatus
         user = User.query.get_or_404(user_id)
 
-        # Base query that excludes banned users
+        # Base query that excludes banned users and deleted events
         query = Event.query.join(EventUser).filter(
             EventUser.user_id == user_id,
-            EventUser.is_banned.is_(False)  # Exclude banned users
+            EventUser.is_banned.is_(False),  # Exclude banned users
+            Event.status != EventStatus.DELETED  # Exclude soft-deleted events
         )
 
         # Add role filter if specified

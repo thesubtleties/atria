@@ -1,39 +1,39 @@
-/* Header Section - exact copy from PrivacySettings */
+/* Header Section */
 .headerSection {
-  margin-bottom: 0.75rem;
+  margin-bottom: var(--space-sm);
 }
 
 .sectionTitle {
-  font-size: 1.25rem;
+  font-size: var(--text-xl);
   font-weight: 600;
-  color: #1e293b;
-  margin-bottom: 0.5rem;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-sm);
 }
 
 .description {
-  color: #64748b;
-  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
   line-height: 1.5;
 }
 
-/* Form Section Styling - exact copy */
+/* Form Section Styling */
 .formSection {
   padding: 1rem 0;
 }
 
 .sectionLabel {
   font-weight: 500;
-  color: #1e293b;
-  font-size: 0.95rem;
-  margin-bottom: 0.75rem;
+  color: var(--color-text-primary);
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-sm);
   display: block;
 }
 
-/* Form Input Styling - exact copy */
+/* Form Input Styling */
 .formInput input {
   background: rgba(255, 255, 255, 0.8);
   border: 1px solid rgba(139, 92, 246, 0.1);
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
   transition: all 0.2s ease;
 }
 
@@ -42,16 +42,62 @@
   background: rgba(255, 255, 255, 0.9);
 }
 
-/* Button Group - exact copy */
+/* Button Group */
 .buttonGroup {
-  padding-top: 1.5rem;
+  padding-top: var(--space-lg);
   border-top: 1px solid rgba(139, 92, 246, 0.04);
-  margin-top: 1.5rem;
+  margin-top: var(--space-lg);
   background: rgba(251, 250, 255, 0.3);
-  margin-left: -1.5rem;
-  margin-right: -1.5rem;
-  margin-bottom: -1.5rem;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-  padding-bottom: 1.5rem;
+  margin-left: calc(-1 * var(--space-lg));
+  margin-right: calc(-1 * var(--space-lg));
+  margin-bottom: calc(-1 * var(--space-lg));
+  padding-left: var(--space-lg);
+  padding-right: var(--space-lg);
+  padding-bottom: var(--space-lg);
+}
+
+/* Card Styling */
+.passwordCard,
+.tipsCard {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-lg);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.cardTitle {
+  color: var(--color-text-primary);
+  font-size: var(--text-base);
+  display: flex;
+  align-items: center;
+}
+
+/* Password Strength Styling */
+.passwordStrength {
+  margin-top: var(--space-sm);
+  padding: var(--space-sm);
+  background: rgba(139, 92, 246, 0.02);
+  border: 1px solid rgba(139, 92, 246, 0.08);
+  border-radius: var(--radius-md);
+}
+
+/* Mobile Responsive Improvements */
+@media (max-width: 768px) {
+  .buttonGroup {
+    flex-direction: column;
+    gap: var(--space-sm);
+    align-items: stretch;
+  }
+  
+  .buttonGroup > * {
+    width: 100%;
+  }
+  
+  .passwordCard,
+  .tipsCard {
+    padding: var(--space-md);
+  }
 }

@@ -27,6 +27,15 @@ const EmailSection = ({ form }) => {
             label="Use a different email for public display"
             description="Show a different email address to other attendees instead of hiding it completely"
             mb="sm"
+            color="var(--color-primary)"
+            styles={{
+              track: { 
+                '&[data-checked]': { 
+                  backgroundColor: 'var(--color-primary)',
+                  borderColor: 'var(--color-primary)'
+                }
+              }
+            }}
           />
           {form.values.show_public_email && (
             <TextInput
