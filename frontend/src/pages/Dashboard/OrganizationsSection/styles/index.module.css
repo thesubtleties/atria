@@ -1,16 +1,45 @@
-/* Import shared dashboard styles */
-@import '../../shared/dashboard-base.module.css';
-@import '../../shared/responsive.module.css';
+/* Use global semantic classes via CSS Modules composition */
 
-/* Use shared .dashboardSection, .sectionHeader, .sectionTitle from dashboard-base.module.css */
+/* Section Layout Classes */
+.dashboardSection {
+  composes: section-container from '../../../../styles/design-tokens.css';
+}
 
-/* Use shared Button component instead of custom CSS */
+.sectionHeader {
+  composes: section-header from '../../../../styles/design-tokens.css';
+}
 
-/* Use shared .cardList from dashboard-base.module.css */
+.sectionTitle {
+  composes: section-title from '../../../../styles/design-tokens.css';
+}
 
-/* Use shared .cardBase, .cardHeader, .cardTitle, .cardMeta from dashboard-base.module.css */
+/* Card System Classes */
+.cardList {
+  composes: card-list from '../../../../styles/design-tokens.css';
+}
+
 .card {
-  composes: cardBase from '../../shared/dashboard-base.module.css';
+  composes: card-base from '../../../../styles/design-tokens.css';
+}
+
+.cardHeader {
+  composes: card-header from '../../../../styles/design-tokens.css';
+}
+
+.cardContent {
+  composes: card-content from '../../../../styles/design-tokens.css';
+}
+
+.cardTitle {
+  composes: card-title from '../../../../styles/design-tokens.css';
+}
+
+.cardMeta {
+  composes: card-meta from '../../../../styles/design-tokens.css';
+}
+
+.emptyState {
+  composes: empty-state from '../../../../styles/design-tokens.css';
 }
 
 .orgAvatar {

@@ -1,8 +1,17 @@
-/* Import shared dashboard styles */
-@import '../../shared/dashboard-base.module.css';
-@import '../../shared/responsive.module.css';
+/* Use global semantic classes via CSS Modules composition */
 
-/* Use shared .dashboardSection, .sectionHeader, .sectionTitle from dashboard-base.module.css */
+/* Section Layout Classes */
+.dashboardSection {
+  composes: section-container from '../../../../styles/design-tokens.css';
+}
+
+.sectionHeader {
+  composes: section-header from '../../../../styles/design-tokens.css';
+}
+
+.sectionTitle {
+  composes: section-title from '../../../../styles/design-tokens.css';
+}
 
 .newsList {
   display: flex;
@@ -137,9 +146,7 @@
 }
 
 .emptyState {
-  text-align: center;
-  padding: 2rem;
-  color: #64748B;
+  composes: empty-state from '../../../../styles/design-tokens.css';
 }
 
 /* Responsive Design */
