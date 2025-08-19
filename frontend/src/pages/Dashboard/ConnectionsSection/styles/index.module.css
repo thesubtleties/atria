@@ -1,10 +1,17 @@
-/* Import shared dashboard styles */
-@import '../../shared/dashboard-base.module.css';
-@import '../../shared/responsive.module.css';
+/* Use global semantic classes via CSS Modules composition */
 
-/* Use shared .dashboardSection, .sectionHeader, .sectionTitle from dashboard-base.module.css */
+/* Section Layout Classes */
+.dashboardSection {
+  composes: section-container from '../../../../styles/design-tokens.css';
+}
 
-/* Use shared Button component instead of custom CSS */
+.sectionHeader {
+  composes: section-header from '../../../../styles/design-tokens.css';
+}
+
+.sectionTitle {
+  composes: section-title from '../../../../styles/design-tokens.css';
+}
 
 .connectionsList {
   display: flex;
@@ -64,18 +71,14 @@
 }
 
 .emptyState {
-  text-align: center;
-  padding: var(--space-xl);
-  color: var(--color-text-secondary);
-}
-
-.emptyState p {
-  margin-bottom: 1rem;
+  composes: empty-state from '../../../../styles/design-tokens.css';
 }
 
 .messageButton {
   flex-shrink: 0;
-  padding: var(--space-sm);
+  width: 40px;
+  height: 40px;
+  padding: 0;
   background: var(--color-primary);
   color: white;
   border: none;
