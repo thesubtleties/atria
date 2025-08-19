@@ -56,6 +56,34 @@
   padding-bottom: var(--space-lg);
 }
 
+/* Card Styling */
+.passwordCard,
+.tipsCard {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-lg);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.cardTitle {
+  color: var(--color-text-primary);
+  font-size: var(--text-base);
+  display: flex;
+  align-items: center;
+}
+
+/* Password Strength Styling */
+.passwordStrength {
+  margin-top: var(--space-sm);
+  padding: var(--space-sm);
+  background: rgba(139, 92, 246, 0.02);
+  border: 1px solid rgba(139, 92, 246, 0.08);
+  border-radius: var(--radius-md);
+}
+
 /* Mobile Responsive Improvements */
 @media (max-width: 768px) {
   .buttonGroup {
@@ -66,5 +94,10 @@
   
   .buttonGroup > * {
     width: 100%;
+  }
+  
+  .passwordCard,
+  .tipsCard {
+    padding: var(--space-md);
   }
 }
