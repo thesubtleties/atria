@@ -59,3 +59,21 @@
 .sessionRow:has(> :nth-child(4):last-child) > * {
   width: calc(25% - 12px); /* Quarter minus appropriate gap */
 }
+
+/* Mobile Layout Fix - Force single column on mobile only */
+@media (max-width: 480px) {
+  .sessionRow {
+    flex-direction: column !important;
+    gap: var(--space-sm) !important;
+  }
+  
+  .sessionRow > * {
+    width: 100% !important;
+    flex: none !important;
+  }
+  
+  .agendaGrid {
+    gap: var(--space-sm);
+    padding-bottom: var(--space-2xl); /* Reduce excess bottom padding on mobile */
+  }
+}

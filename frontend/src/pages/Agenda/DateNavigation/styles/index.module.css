@@ -3,8 +3,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 3rem;
+  gap: var(--space-sm);
+  margin-bottom: clamp(var(--space-sm), 2vw, var(--space-md));
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   padding: 0;
   position: relative;
@@ -13,9 +13,9 @@
 }
 
 .dayNumber {
-  font-size: 14px;
+  font-size: clamp(var(--text-xs), 2vw, var(--text-sm));
   font-weight: 600;
-  color: #8B5CF6;
+  color: var(--color-primary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -23,29 +23,29 @@
 .dateSelector {
   display: flex;
   align-items: center;
-  gap: 20px;
-  padding: 4px;
+  gap: clamp(var(--space-md), 3vw, var(--space-lg));
+  padding: var(--space-xs);
 }
 
 .currentDate {
-  font-size: 28px;
+  font-size: clamp(var(--text-lg), 4vw, var(--text-2xl));
   font-weight: 300;
-  min-width: 240px;
+  min-width: clamp(200px, 30vw, 240px);
   text-align: center;
-  color: #8B5CF6;
+  color: var(--color-primary);
   letter-spacing: -0.02em;
 }
 
 .navButton {
-  padding: 8px;
+  padding: var(--space-sm);
   border: 1px solid transparent;
   background: transparent;
   cursor: pointer;
-  font-size: 16px;
-  color: #8B5CF6;
-  border-radius: 8px;
-  width: 40px;
-  height: 40px;
+  font-size: var(--text-base);
+  color: var(--color-primary);
+  border-radius: var(--radius-lg);
+  width: clamp(36px, 6vw, 44px);
+  height: clamp(36px, 6vw, 44px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -53,21 +53,21 @@
 }
 
 .navButton:hover:not(:disabled) {
-  background: rgba(139, 92, 246, 0.08);
-  color: #7C3AED;
+  background: var(--primary-alpha-8);
+  color: var(--color-primary-hover);
 }
 
 .navButton:active:not(:disabled) {
-  background: rgba(139, 92, 246, 0.12);
+  background: var(--primary-alpha-10);
 }
 
 .navButton:disabled {
-  color: rgba(0, 0, 0, 0.3);
+  color: var(--color-text-muted);
   cursor: default;
   opacity: 0.5;
 }
 
 .icon {
-  width: 20px;
-  height: 20px;
+  width: clamp(18px, 3vw, 20px);
+  height: clamp(18px, 3vw, 20px);
 }
