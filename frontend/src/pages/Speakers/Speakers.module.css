@@ -1,6 +1,6 @@
 .pageContainer {
   min-height: 100vh;
-  background: rgba(251, 250, 255, 1);
+  background: var(--color-background);
   position: relative;
   overflow: hidden;
 }
@@ -8,29 +8,39 @@
 .contentWrapper {
   position: relative;
   z-index: 10;
-  padding: 2rem 0;
+  padding: clamp(var(--space-lg), 4vw, var(--space-2xl)) 0;
 }
 
 .header {
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: clamp(var(--space-xl), 4vw, var(--space-2xl));
   position: relative;
   z-index: 10;
 }
 
 .pageTitle {
-  font-size: 2.5rem;
+  font-size: clamp(2rem, 5vw, 2.5rem);
   font-weight: 300;
-  color: #8b5cf6;
-  letter-spacing: -0.02em;
-  margin: 0 0 0.5rem 0;
+  background: linear-gradient(135deg, 
+    var(--gradient-purple-light) 0%, 
+    var(--gradient-purple-dark) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.03em;
+  margin: 0 0 clamp(var(--space-sm), 2vw, var(--space-md)) 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  animation: gradientShift 8s ease-in-out infinite;
 }
 
 .pageSubtitle {
-  font-size: 1.1rem;
-  color: #64748b;
+  font-size: clamp(var(--text-base), 2.5vw, 1.125rem);
+  color: var(--color-text-secondary);
   font-weight: 400;
   margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  letter-spacing: 0.02em;
+  opacity: 0.9;
 }
 
 /* Background shapes */
@@ -38,39 +48,42 @@
   position: fixed;
   width: 450px;
   height: 450px;
-  background: linear-gradient(135deg, #8b5cf6, #a855f7);
+  background: linear-gradient(135deg, var(--gradient-purple-light), var(--gradient-purple-medium));
   border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
   top: -150px;
   left: -200px;
   opacity: 0.04;
   animation: float 22s ease-in-out infinite;
   z-index: 1;
+  pointer-events: none;
 }
 
 .bgShape2 {
   position: fixed;
   width: 400px;
   height: 400px;
-  background: linear-gradient(225deg, #ec4899, #f472b6);
+  background: linear-gradient(225deg, var(--gradient-pink-light), var(--gradient-pink-medium));
   border-radius: 41% 59% 41% 59% / 41% 51% 49% 59%;
   bottom: -180px;
   right: -150px;
   opacity: 0.05;
   animation: float 20s ease-in-out infinite reverse;
   z-index: 1;
+  pointer-events: none;
 }
 
 .bgShape3 {
   position: fixed;
   width: 350px;
   height: 350px;
-  background: linear-gradient(45deg, #06b6d4, #0ea5e9);
+  background: linear-gradient(45deg, var(--gradient-blue-light), var(--gradient-blue-dark));
   border-radius: 51% 49% 52% 48% / 42% 58% 42% 58%;
   top: 40%;
   right: 10%;
   opacity: 0.03;
   animation: float 26s ease-in-out infinite;
   z-index: 1;
+  pointer-events: none;
 }
 
 @keyframes float {
@@ -86,48 +99,96 @@
   }
 }
 
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
 /* Loading state */
 .loadingContainer {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(251, 250, 255, 1);
+  background: var(--color-background);
 }
 
 .loadingText {
-  font-size: 1.1rem;
-  color: #8b5cf6;
+  font-size: clamp(var(--text-base), 2.5vw, 1.1rem);
+  color: var(--color-primary);
   font-weight: 500;
 }
 
 /* Empty state */
 .emptyState {
   text-align: center;
-  padding: 4rem 2rem;
-  background: rgba(255, 255, 255, 0.8);
+  padding: clamp(var(--space-xl), 4vw, 4rem) clamp(var(--space-lg), 3vw, var(--space-xl));
+  background: var(--color-background-glass);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-radius: 12px;
-  border: 1px solid rgba(139, 92, 246, 0.08);
-  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--primary-alpha-8);
+  box-shadow: var(--shadow-lg);
   max-width: 500px;
   margin: 0 auto;
+  color: var(--color-text-secondary);
 }
 
 /* Responsive */
-@media (max-width: 768px) {
-  .pageTitle {
-    font-size: 2rem;
+/* Tablet - optimized for iPad and similar */
+@media (min-width: 769px) and (max-width: 1023px) {
+  .contentWrapper {
+    padding: clamp(var(--space-md), 3vw, var(--space-lg)) 0;
   }
+  
+  .bgShape1,
+  .bgShape2,
+  .bgShape3 {
+    opacity: 0.02; /* Even more subtle on tablets */
+  }
+}
 
-  .pageSubtitle {
-    font-size: 1rem;
+/* Mobile - including iPhone SE (375px) and iPhone 15 Pro (430px) */
+@media (max-width: 768px) {
+  .contentWrapper {
+    padding: var(--space-md) 0;
+    padding-bottom: 50px; /* Extra space for messaging tab */
+  }
+  
+  .header {
+    margin-bottom: var(--space-lg);
   }
 
   .bgShape1,
   .bgShape2,
   .bgShape3 {
-    display: none;
+    display: none; /* Hide decorative elements on mobile */
+  }
+  
+  .emptyState {
+    padding: var(--space-lg) var(--space-md);
+  }
+}
+
+/* Small mobile - iPhone SE and similar */
+@media (max-width: 375px) {
+  .pageTitle {
+    font-size: 1.75rem;
+  }
+  
+  .pageSubtitle {
+    font-size: var(--text-sm);
+  }
+}
+
+/* Large desktop and MacBook Air M1 (1440px) */
+@media (min-width: 1440px) {
+  .contentWrapper {
+    max-width: 1400px;
+    margin: 0 auto;
   }
 }

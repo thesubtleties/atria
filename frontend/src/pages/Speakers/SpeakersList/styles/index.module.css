@@ -3,21 +3,13 @@
 }
 
 .speakersGrid {
-  margin-top: 2rem;
+  margin-top: clamp(var(--space-lg), 3vw, var(--space-xl));
 }
 
 /* Optional: Group speakers by role/type */
 .speakerSection {
-  margin-bottom: 3rem;
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 12px;
-  padding: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
-  position: relative;
-  z-index: 10;
+  composes: section-container from '../../../../styles/design-tokens.css';
+  margin-bottom: clamp(var(--space-xl), 4vw, var(--space-2xl));
 }
 
 .speakerSection:last-child {
@@ -25,35 +17,54 @@
 }
 
 .sectionTitle {
-  font-size: 1.5rem;
+  font-size: clamp(var(--text-xl), 3vw, 1.5rem);
   font-weight: 600;
-  color: #1E293B;
+  color: var(--color-text-primary);
   letter-spacing: -0.02em;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+  margin-bottom: clamp(var(--space-md), 3vw, var(--space-lg));
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid var(--primary-alpha-10);
 }
 
 /* No speakers state */
 .noSpeakers {
-  padding: 4rem 2rem;
-  text-align: center;
-  background: rgba(255, 255, 255, 0.8);
+  composes: empty-state from '../../../../styles/design-tokens.css';
+  background: var(--color-background-glass);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-radius: 12px;
-  border: 1px solid rgba(139, 92, 246, 0.08);
-  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--primary-alpha-8);
+  box-shadow: var(--shadow-lg);
 }
 
 /* Responsive */
+/* Tablet */
+@media (min-width: 769px) and (max-width: 1023px) {
+  .speakersGrid {
+    margin-top: var(--space-lg);
+  }
+}
+
+/* Mobile */
 @media (max-width: 768px) {
+  .speakersGrid {
+    margin-top: var(--space-md);
+  }
+  
   .speakerSection {
-    padding: 1.5rem;
-    margin-bottom: 2rem;
+    padding: clamp(var(--space-md), 3vw, var(--space-lg));
+    margin-bottom: var(--space-lg);
   }
   
   .sectionTitle {
-    font-size: 1.25rem;
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-md);
+  }
+}
+
+/* Small mobile - iPhone SE */
+@media (max-width: 375px) {
+  .speakersGrid {
+    gap: var(--space-md);
   }
 }
