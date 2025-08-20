@@ -1,7 +1,7 @@
 /* pages/Agenda/styles/index.module.css */
 .pageContainer {
   min-height: 100vh;
-  background: rgba(251, 250, 255, 1);
+  background: var(--color-background);
   position: relative;
   overflow: hidden;
 }
@@ -11,10 +11,10 @@
   z-index: 10;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: clamp(var(--space-md), 4vw, var(--space-xl));
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: clamp(var(--space-lg), 3vw, var(--space-xl));
 }
 
 /* Animated background shapes */
@@ -22,7 +22,7 @@
   position: fixed;
   width: 350px;
   height: 350px;
-  background: linear-gradient(135deg, #16a34a, #10b981);
+  background: linear-gradient(135deg, var(--gradient-green-medium), var(--gradient-green-light));
   border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
   top: -120px;
   right: -100px;
@@ -36,7 +36,7 @@
   position: fixed;
   width: 400px;
   height: 420px;
-  background: linear-gradient(45deg, #8b5cf6, #a855f7);
+  background: linear-gradient(45deg, var(--gradient-purple-light), var(--gradient-purple-medium));
   border-radius: 30% 70% 53% 47% / 26% 46% 54% 74%;
   bottom: -180px;
   left: -120px;
@@ -50,7 +50,7 @@
   position: fixed;
   width: 300px;
   height: 300px;
-  background: linear-gradient(225deg, #df562c, #f86e2e);
+  background: linear-gradient(225deg, var(--gradient-red-medium), var(--gradient-red-dark));
   border-radius: 45% 55% 62% 38% / 53% 51% 49% 47%;
   top: 40%;
   right: 15%;

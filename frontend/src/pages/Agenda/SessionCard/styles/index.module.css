@@ -2,17 +2,17 @@
 
 /* Base card styles */
 .sessionCard {
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--color-background-glass);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.7);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   box-shadow:
-    0 2px 15px rgba(139, 92, 246, 0.08),
+    0 2px 15px var(--primary-alpha-8),
     inset 0 1px 1px rgba(255, 255, 255, 0.8);
   display: flex;
   flex-direction: column;
-  min-height: 80px;
+  min-height: clamp(70px, 10vw, 80px);
   position: relative;
   z-index: 5;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -34,10 +34,10 @@
 .sessionCard:hover {
   transform: translateY(-3px); /* Remove scale to prevent text blur */
   box-shadow:
-    0 12px 40px rgba(139, 92, 246, 0.12),
-    0 4px 20px rgba(139, 92, 246, 0.08),
+    0 12px 40px var(--primary-alpha-10),
+    0 4px 20px var(--primary-alpha-8),
     inset 0 1px 1px rgba(255, 255, 255, 0.8);
-  border-color: rgba(139, 92, 246, 0.25);
+  border-color: var(--primary-alpha-20);
   z-index: 15;
   /* Add slight delay to prevent accidental triggers */
   transition-delay: 0.05s;
@@ -58,13 +58,13 @@
 
 .sessionType {
   display: inline-block;
-  padding: 6px 14px;
-  font-size: 11px;
+  padding: clamp(4px, 1vw, 6px) clamp(10px, 2vw, 14px);
+  font-size: clamp(10px, 1.5vw, 11px);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  border-top-left-radius: 12px;
-  border-bottom-right-radius: 12px;
+  border-top-left-radius: var(--radius-lg);
+  border-bottom-right-radius: var(--radius-lg);
   color: white;
   position: relative;
   overflow: hidden;
@@ -85,89 +85,89 @@
 .keynote {
   background: linear-gradient(
     135deg,
-    rgba(139, 92, 246, 0.88) 0%,
-    rgba(124, 58, 237, 0.88) 100%
+    var(--session-keynote-from) 0%,
+    var(--session-keynote-to) 100%
   );
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   box-shadow:
-    0 2px 12px rgba(139, 92, 246, 0.25),
+    0 2px 12px var(--session-keynote-shadow),
     inset 0 1px 1px rgba(255, 255, 255, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.15);
 }
 .panel {
   background: linear-gradient(
     135deg,
-    rgba(168, 85, 247, 0.88) 0%,
-    rgba(147, 51, 234, 0.88) 100%
+    var(--session-panel-from) 0%,
+    var(--session-panel-to) 100%
   );
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   box-shadow:
-    0 2px 12px rgba(168, 85, 247, 0.25),
+    0 2px 12px var(--session-panel-shadow),
     inset 0 1px 1px rgba(255, 255, 255, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.15);
 }
 .workshop {
   background: linear-gradient(
     135deg,
-    rgba(20, 184, 166, 0.88) 0%,
-    rgba(13, 148, 136, 0.88) 100%
+    var(--session-workshop-from) 0%,
+    var(--session-workshop-to) 100%
   );
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   box-shadow:
-    0 2px 12px rgba(20, 184, 166, 0.25),
+    0 2px 12px var(--session-workshop-shadow),
     inset 0 1px 1px rgba(255, 255, 255, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.15);
 }
 .presentation {
   background: linear-gradient(
     135deg,
-    rgba(249, 115, 22, 0.88) 0%,
-    rgba(234, 88, 12, 0.88) 100%
+    var(--session-presentation-from) 0%,
+    var(--session-presentation-to) 100%
   );
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   box-shadow:
-    0 2px 12px rgba(249, 115, 22, 0.25),
+    0 2px 12px var(--session-presentation-shadow),
     inset 0 1px 1px rgba(255, 255, 255, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.15);
 }
 .qa {
   background: linear-gradient(
     135deg,
-    rgba(234, 179, 8, 0.88) 0%,
-    rgba(202, 138, 4, 0.88) 100%
+    var(--session-qa-from) 0%,
+    var(--session-qa-to) 100%
   );
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   box-shadow:
-    0 2px 12px rgba(234, 179, 8, 0.25),
+    0 2px 12px var(--session-qa-shadow),
     inset 0 1px 1px rgba(255, 255, 255, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.15);
 }
 .networking {
   background: linear-gradient(
     135deg,
-    rgba(34, 197, 94, 0.88) 0%,
-    rgba(22, 163, 74, 0.88) 100%
+    var(--session-networking-from) 0%,
+    var(--session-networking-to) 100%
   );
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   box-shadow:
-    0 2px 12px rgba(34, 197, 94, 0.25),
+    0 2px 12px var(--session-networking-shadow),
     inset 0 1px 1px rgba(255, 255, 255, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 /* Main content styles */
 .content {
-  padding: 16px 20px;
+  padding: clamp(12px, 2vw, 16px) clamp(16px, 3vw, 20px);
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--space-xs);
   /* Subtle transform for content on hover */
   transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
@@ -178,9 +178,9 @@
 
 .title {
   margin: 0;
-  font-size: 15px;
+  font-size: clamp(var(--text-sm), 2.5vw, 15px);
   font-weight: 600;
-  color: #1e293b;
+  color: var(--color-text-primary);
   line-height: 1.4;
   letter-spacing: -0.01em;
   /* Color transition for hover */
@@ -188,12 +188,12 @@
 }
 
 .sessionCard:hover .title {
-  color: #8b5cf6;
+  color: var(--color-primary);
 }
 
 .time {
-  font-size: 13px;
-  color: #64748b;
+  font-size: clamp(var(--text-xs), 2vw, 13px);
+  color: var(--color-text-secondary);
   font-weight: 500;
   /* Subtle color transition */
   transition: color 0.3s ease-out;
@@ -288,10 +288,10 @@
 }
 
 .roleTitle {
-  font-size: 11px;
+  font-size: clamp(10px, 1.5vw, 11px);
   text-transform: uppercase;
-  color: #8b5cf6;
-  margin: 0 0 6px 0;
+  color: var(--color-primary);
+  margin: 0 0 var(--space-xs) 0;
   font-weight: 700;
   letter-spacing: 0.8px;
 }
@@ -456,28 +456,26 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 768px) {
+@media (max-width: 480px) {
   .sessionCard {
     min-height: 70px;
   }
 
   .content {
-    padding: 12px 16px;
-  }
-
-  .title {
-    font-size: 14px;
-  }
-
-  .time {
-    font-size: 12px;
+    padding: var(--space-sm) var(--space-md);
   }
 
   .expandedContent {
-    padding: 0 16px;
+    padding: 0 var(--space-md);
   }
 
   .sessionCard:hover .expandedContent {
-    padding: 8px 16px 12px 16px;
+    padding: var(--space-sm) var(--space-md) var(--space-sm) var(--space-md);
+  }
+  
+  /* Ensure session type badge remains readable on mobile */
+  .sessionType {
+    padding: 4px 10px;
+    font-size: 10px;
   }
 }
