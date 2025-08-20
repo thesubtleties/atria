@@ -1,44 +1,92 @@
 .container {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  margin-top: 1rem;
+  gap: clamp(var(--space-xs), 1.5vw, var(--space-sm));
+  margin-top: var(--space-md);
 }
 
 /* Admin section title */
 .container :global(.mantine-Text-root) {
-  color: #8B5CF6;
+  color: var(--color-primary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  padding: 0 1rem;
-  font-size: 0.875rem;
+  padding: 0 var(--space-md);
+  font-size: clamp(var(--text-xs), 2.5vw, var(--text-sm));
 }
 
 /* Divider styling */
 .container :global(.mantine-Divider-root) {
-  border-color: rgba(139, 92, 246, 0.08);
+  border-color: var(--primary-alpha-8);
 }
 
 /* Admin NavLink styling */
 .container :global(.mantine-NavLink-root) {
-  border-radius: 6px;
-  padding: 0.75rem 1rem;
-  color: #64748B;
-  font-size: 0.9rem;
+  border-radius: var(--radius-md);
+  padding: clamp(var(--space-sm), 2vw, 0.75rem) var(--space-md);
+  color: var(--color-text-secondary);
+  font-size: clamp(var(--text-sm), 2.5vw, 0.9rem);
   font-weight: 500;
   transition: all 0.2s ease;
   border: 1px solid transparent;
 }
 
 .container :global(.mantine-NavLink-root):hover {
-  background: rgba(139, 92, 246, 0.04);
-  color: #8B5CF6;
+  background: var(--primary-alpha-4);
+  color: var(--color-primary);
   text-decoration: none;
 }
 
 .container :global(.mantine-NavLink-root[data-active]) {
-  background: rgba(139, 92, 246, 0.08);
-  color: #8B5CF6;
-  border: 1px solid rgba(139, 92, 246, 0.15);
+  background: var(--primary-alpha-8);
+  color: var(--color-primary);
+  border: 1px solid var(--primary-alpha-15);
   font-weight: 600;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .container {
+    gap: var(--space-xs);
+    margin-top: var(--space-sm);
+  }
+  
+  .container :global(.mantine-Text-root) {
+    padding: 0 var(--space-sm);
+    font-size: var(--text-xs);
+  }
+  
+  .container :global(.mantine-NavLink-root) {
+    padding: var(--space-sm) var(--space-sm);
+    font-size: var(--text-sm);
+  }
+}
+
+/* Laptop screens - expand width range and add height constraint to catch MacBook Air */
+@media (min-width: 481px) and (max-width: 1600px) and (max-height: 1000px) {
+  .container {
+    gap: var(--space-xs) !important; /* Tighter gaps on laptops */
+    margin-top: var(--space-xs) !important; /* Reduce top margin */
+  }
+  
+  .container :global(.mantine-Text-root) {
+    padding: 0 var(--space-md) !important; /* Match event menu header padding */
+    font-size: clamp(var(--text-xs), 2.5vw, var(--text-sm)) !important; /* Match event menu title size */
+  }
+  
+  .container :global(.mantine-NavLink-root) {
+    padding: 6px var(--space-md) !important; /* A bit more breathing room on laptops */
+    font-size: var(--text-sm) !important; /* Slightly smaller text */
+    min-height: auto !important; /* Remove any min-height from Mantine */
+    line-height: 1.2 !important; /* Tighter line height for less vertical space */
+  }
+}
+
+@media (min-width: 1281px) {
+  .container :global(.mantine-Text-root) {
+    padding: 0 var(--space-xl);
+  }
+  
+  .container :global(.mantine-NavLink-root) {
+    padding: 0.75rem var(--space-xl);
+  }
 }

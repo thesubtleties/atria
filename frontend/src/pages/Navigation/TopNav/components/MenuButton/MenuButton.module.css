@@ -5,15 +5,15 @@
   align-items: center;
   justify-content: center;
   /* Fix for CSS reset affecting button size */
-  width: 40px !important;
-  height: 40px !important;
-  min-width: 40px !important;
-  min-height: 40px !important;
-  padding: 8px !important;
+  width: clamp(40px, 8vw, 44px) !important;
+  height: clamp(40px, 8vw, 44px) !important;
+  min-width: clamp(40px, 8vw, 44px) !important;
+  min-height: clamp(40px, 8vw, 44px) !important;
+  padding: var(--space-sm) !important;
   background: transparent !important;
   border: none !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
-  border-radius: 6px !important;
+  border-radius: var(--radius-md) !important;
   transition: all 0.2s ease !important;
 }
 
@@ -24,10 +24,10 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(45deg, rgba(139, 92, 246, 0.1), rgba(168, 85, 247, 0.1));
+  background: linear-gradient(45deg, var(--primary-alpha-10), var(--primary-alpha-15));
   opacity: 0;
   transition: opacity 0.3s ease;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   pointer-events: none;
   z-index: 1;
 }
@@ -43,69 +43,87 @@
 .menuIcon {
   position: relative;
   z-index: 1;
-  filter: drop-shadow(0 1px 2px rgba(139, 92, 246, 0.1));
+  filter: drop-shadow(0 1px 2px var(--primary-alpha-10));
   display: block;
-  width: 24px;
-  height: 24px;
+  width: clamp(24px, 5vw, 28px);
+  height: clamp(24px, 5vw, 28px);
   object-fit: contain;
 }
 
 /* Menu Dropdown Styles */
 .menuDropdown {
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--color-background-glass);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.95);
-  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.08);
-  padding: 6px;
-  min-width: 200px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-xl);
+  padding: var(--space-sm);
+  min-width: clamp(180px, 40vw, 200px);
 }
 
 .menuArrow {
-  border: 1px solid rgba(255, 255, 255, 0.95);
-  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--glass-border);
+  background: var(--color-background-glass);
 }
 
 .menuItem {
-  font-size: 13px;
-  padding: 8px 10px;
-  border-radius: 6px;
-  color: #1E293B;
+  font-size: clamp(var(--text-xs), 3vw, var(--text-sm));
+  padding: var(--space-sm) var(--space-sm);
+  border-radius: var(--radius-md);
+  color: var(--color-text-primary);
   font-weight: 500;
   transition: all 0.2s ease;
   line-height: 1.4;
 }
 
 .menuItem[data-hovered] {
-  background-color: rgba(139, 92, 246, 0.08);
-  color: #8B5CF6;
+  background-color: var(--primary-alpha-8);
+  color: var(--color-primary);
   transform: translateX(2px);
 }
 
 .menuLabel {
-  font-size: 11px;
+  font-size: clamp(10px, 2.5vw, 11px);
   font-weight: 600;
-  color: #94A3B8;
+  color: var(--color-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  padding: 6px 10px;
+  padding: var(--space-sm) var(--space-sm);
 }
 
 .menuDivider {
-  border-color: rgba(139, 92, 246, 0.08);
-  margin: 6px 0;
+  border-color: var(--primary-alpha-8);
+  margin: var(--space-sm) 0;
 }
 
 .logoutItem {
-  color: #DC2626 !important;
+  color: var(--color-error) !important;
 }
 
 .logoutItem svg {
-  color: #DC2626 !important;
+  color: var(--color-error) !important;
 }
 
 .logoutItem:hover {
   background-color: rgba(220, 38, 38, 0.08) !important;
   color: #B91C1C !important;
+}
+
+/* Responsive menu adjustments */
+@media (max-width: 480px) {
+  .menuDropdown {
+    min-width: 180px; /* Slightly bigger on mobile */
+    padding: var(--space-sm);
+  }
+  
+  .menuItem {
+    font-size: var(--text-sm); /* Bigger text on mobile for better touch targets */
+    padding: var(--space-sm) var(--space-md); /* More padding for better touch targets */
+  }
+  
+  .menuLabel {
+    font-size: 11px; /* Slightly bigger */
+    padding: var(--space-sm) var(--space-md);
+  }
 }

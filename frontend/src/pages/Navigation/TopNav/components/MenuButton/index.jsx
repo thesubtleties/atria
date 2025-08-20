@@ -63,7 +63,7 @@ export const MenuButton = () => {
         <Menu.Item
           leftSection={
             <IconLayoutDashboard
-              style={{ width: rem(14), height: rem(14), color: '#8B5CF6' }}
+              style={{ width: rem(14), height: rem(14), color: 'var(--color-primary)' }}
             />
           }
           onClick={() => navigate('/app/dashboard')}
@@ -74,7 +74,7 @@ export const MenuButton = () => {
         <Menu.Item
           leftSection={
             <IconUser
-              style={{ width: rem(14), height: rem(14), color: '#8B5CF6' }}
+              style={{ width: rem(14), height: rem(14), color: 'var(--color-primary)' }}
             />
           }
           onClick={() => navigate('/app/profile')}
@@ -85,7 +85,7 @@ export const MenuButton = () => {
         <Menu.Item
           leftSection={
             <IconUsers
-              style={{ width: rem(14), height: rem(14), color: '#8B5CF6' }}
+              style={{ width: rem(14), height: rem(14), color: 'var(--color-primary)' }}
             />
           }
           onClick={() => navigate('/app/network')}
@@ -96,7 +96,7 @@ export const MenuButton = () => {
         <Menu.Item
           leftSection={
             <IconCalendarEvent
-              style={{ width: rem(14), height: rem(14), color: '#8B5CF6' }}
+              style={{ width: rem(14), height: rem(14), color: 'var(--color-primary)' }}
             />
           }
           onClick={() => navigate('/app/events')}
@@ -107,7 +107,7 @@ export const MenuButton = () => {
         <Menu.Item
           leftSection={
             <IconSettings
-              style={{ width: rem(14), height: rem(14), color: '#8B5CF6' }}
+              style={{ width: rem(14), height: rem(14), color: 'var(--color-primary)' }}
             />
           }
           onClick={() => navigate('/app/settings')}
