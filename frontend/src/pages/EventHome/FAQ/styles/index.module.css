@@ -1,5 +1,5 @@
 .faq {
-  padding: 0 2rem 3rem;
+  padding: 0 clamp(var(--space-md), 4vw, var(--space-xl)) clamp(var(--space-xl), 4vw, var(--space-2xl));
 }
 
 .container {
@@ -8,35 +8,35 @@
 }
 
 .title {
-  font-size: 2.5rem;
+  composes: section-title from '../../../../styles/design-tokens.css';
   font-weight: 300;
-  margin-bottom: 2rem;
-  color: #8B5CF6;
+  color: var(--color-primary);
   letter-spacing: -0.02em;
   text-align: center;
+  margin-bottom: clamp(var(--space-lg), 3vw, var(--space-xl));
 }
 
 .faqList {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--space-md);
 }
 
 /* Style accordion items */
 .faq :global(.mantine-Accordion-item) {
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--color-background-glass);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.9);
-  border-radius: 6px;
-  margin-bottom: 0.5rem;
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-sm);
   overflow: hidden;
 }
 
 .faq :global(.mantine-Accordion-control) {
-  padding: 1.25rem;
-  font-size: 1.05rem;
-  color: #1E293B;
+  padding: clamp(var(--space-md), 3vw, 1.25rem);
+  font-size: clamp(var(--text-base), 2.5vw, 1.05rem);
+  color: var(--color-text-primary);
   font-weight: 500;
 }
 

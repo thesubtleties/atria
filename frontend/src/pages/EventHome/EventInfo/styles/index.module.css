@@ -1,7 +1,7 @@
 /* pages/EventHome/EventInfo/styles/index.module.css */
 .eventInfo {
-  padding: 0 2rem;
-  margin-bottom: 3rem;
+  padding: 0 clamp(var(--space-md), 4vw, var(--space-xl));
+  margin-bottom: clamp(var(--space-xl), 4vw, var(--space-2xl));
 }
 
 .container {
@@ -12,34 +12,28 @@
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
+  gap: clamp(var(--space-md), 3vw, var(--space-lg));
 }
 
 .infoCard {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  border-radius: 8px;
-  padding: 2rem;
+  composes: card-base from '../../../../styles/design-tokens.css';
   display: flex;
   align-items: flex-start;
-  gap: 1.5rem;
+  gap: clamp(var(--space-md), 3vw, var(--space-lg));
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.02);
 }
 
 .infoCard:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.04);
-  background: rgba(255, 255, 255, 0.8);
+  box-shadow: var(--shadow-md);
+  background: rgba(255, 255, 255, 1);
 }
 
 .iconWrapper {
-  background: rgba(139, 92, 246, 0.08);
-  width: 56px;
-  height: 56px;
-  border-radius: 12px;
+  background: var(--primary-alpha-8);
+  width: clamp(48px, 8vw, 56px);
+  height: clamp(48px, 8vw, 56px);
+  border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -47,7 +41,7 @@
 }
 
 .icon {
-  color: #8B5CF6;
+  color: var(--color-primary);
 }
 
 .cardContent {
@@ -55,31 +49,47 @@
 }
 
 .cardTitle {
-  font-size: 0.9rem;
+  composes: card-meta from '../../../../styles/design-tokens.css';
   font-weight: 500;
-  color: #94A3B8;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 var(--space-sm) 0;
 }
 
 .cardText {
-  font-size: 1.25rem;
+  font-size: clamp(var(--text-base), 2.5vw, var(--text-xl));
   font-weight: 600;
-  color: #1E293B;
-  margin: 0 0 0.25rem 0;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-xs) 0;
   line-height: 1.4;
 }
 
 .cardSubtext {
-  font-size: 0.95rem;
-  color: #64748B;
+  font-size: clamp(var(--text-sm), 2vw, 0.95rem);
+  color: var(--color-text-secondary);
   margin: 0;
   line-height: 1.4;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 480px) {
   .grid {
     grid-template-columns: 1fr;
+  }
+  
+  .infoCard {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--space-md);
+    align-items: center;
+  }
+  
+  .cardContent {
+    text-align: center;
+  }
+  
+  .cardTitle,
+  .cardText,
+  .cardSubtext {
+    text-align: center;
   }
 }

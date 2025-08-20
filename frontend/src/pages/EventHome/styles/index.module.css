@@ -2,9 +2,9 @@
 .container {
   position: relative;
   min-height: 100vh;
-  background: rgba(251, 250, 255, 1);
+  background: var(--color-background);
   margin: -1rem; /* Counteract AppShell padding */
-  padding: 1rem;
+  padding: var(--space-md);
   padding-top: 0;
   overflow-x: hidden;
 }
@@ -14,7 +14,7 @@
   position: fixed;
   width: 400px;
   height: 400px;
-  background: linear-gradient(45deg, #8b5cf6, #a855f7);
+  background: linear-gradient(45deg, var(--gradient-purple-light), var(--gradient-purple-medium));
   border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
   top: 200px;
   right: -200px;
@@ -28,7 +28,7 @@
   position: fixed;
   width: 300px;
   height: 300px;
-  background: linear-gradient(135deg, #ffd666, #f59e0b);
+  background: linear-gradient(135deg, var(--color-accent-yellow), var(--gradient-orange-medium));
   border-radius: 74% 26% 47% 53% / 68% 46% 54% 32%;
   bottom: 100px;
   left: -150px;
