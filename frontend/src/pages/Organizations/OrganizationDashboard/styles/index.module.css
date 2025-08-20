@@ -1,7 +1,7 @@
 /* Page container - Full viewport */
 .container {
   min-height: 100vh;
-  background: rgba(251, 250, 255, 1);
+  background: var(--color-background);
   position: relative;
   overflow: hidden;
 }
@@ -10,9 +10,9 @@
 .contentWrapper {
   position: relative;
   z-index: 10;
-  max-width: 1400px;
+  max-width: var(--container-xl);
   margin: 0 auto;
-  padding: 2rem;
+  padding: clamp(var(--space-md), 4vw, var(--space-xl));
 }
 
 /* Background shapes */
@@ -20,7 +20,7 @@
   position: fixed;
   width: 500px;
   height: 500px;
-  background: linear-gradient(45deg, #8b5cf6, #a855f7);
+  background: linear-gradient(45deg, var(--gradient-purple-light), var(--gradient-purple-medium));
   border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
   top: 100px;
   right: -200px;
@@ -34,7 +34,7 @@
   position: fixed;
   width: 400px;
   height: 400px;
-  background: linear-gradient(135deg, #ffd93d, #f59e0b);
+  background: linear-gradient(135deg, var(--gradient-orange-bright), var(--gradient-orange-medium));
   border-radius: 37% 63% 46% 54% / 48% 55% 45% 52%;
   bottom: 100px;
   left: -150px;
@@ -49,7 +49,7 @@
   position: fixed;
   width: 300px;
   height: 300px;
-  background: linear-gradient(45deg, #ec4899, #f472b6);
+  background: linear-gradient(45deg, var(--gradient-pink-light), var(--gradient-pink-medium));
   border-radius: 54% 46% 63% 37% / 52% 45% 55% 48%;
   top: 50%;
   left: 10%;
@@ -76,13 +76,13 @@
 /* Responsive adjustments */
 @media (max-width: 1024px) {
   .contentWrapper {
-    padding: 1.5rem;
+    padding: clamp(var(--space-md), 3vw, var(--space-lg));
   }
 }
 
 @media (max-width: 768px) {
   .contentWrapper {
-    padding: 1rem;
+    padding: var(--space-md);
   }
 
   /* Hide decorative shapes on mobile */
