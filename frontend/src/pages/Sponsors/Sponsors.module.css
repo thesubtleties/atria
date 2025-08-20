@@ -19,18 +19,22 @@
 }
 
 .pageTitle {
-  composes: section-title from '../../styles/design-tokens.css';
+  font-size: clamp(2rem, 5vw, 2.5rem);
   font-weight: 300;
   color: var(--color-primary);
   letter-spacing: -0.02em;
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 clamp(var(--space-sm), 2vw, var(--space-md)) 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 .pageSubtitle {
-  font-size: clamp(var(--text-base), 2.5vw, var(--text-lg));
+  font-size: clamp(var(--text-base), 2.5vw, 1.125rem);
   color: var(--color-text-secondary);
   font-weight: 400;
   margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  letter-spacing: 0.02em;
+  opacity: 0.9;
 }
 
 /* Background shapes */
@@ -119,6 +123,10 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+  .contentWrapper {
+    padding-bottom: 50px; /* Extra space for messaging tab */
+  }
+  
   .bgShape1,
   .bgShape2,
   .bgShape3 {
