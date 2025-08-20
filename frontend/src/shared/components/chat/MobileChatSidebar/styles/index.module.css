@@ -76,13 +76,13 @@
 .threadListContainer {
   flex: 1;
   overflow-y: auto;
-  padding: var(--space-sm) 0;
+  padding: var(--space-xs) 0;
   display: flex;
   flex-direction: column;
 }
 
 .tabsContainer {
-  padding: var(--space-sm) var(--space-md);
+  padding: var(--space-xs) var(--space-md);
   border-bottom: 1px solid var(--primary-alpha-8);
   background: rgba(255, 255, 255, 0.5);
   flex-shrink: 0;
