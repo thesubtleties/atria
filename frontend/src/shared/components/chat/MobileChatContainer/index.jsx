@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { useGetDirectMessageThreadsQuery } from '../../../../app/features/networking/api';
 import { useGetEventUsersQuery } from '../../../../app/features/events/api';
+import { useThreadFiltering } from '@/shared/hooks/useThreadFiltering';
 import { 
   selectSidebarExpanded,
   selectCurrentEventId,
@@ -57,23 +58,13 @@ function MobileChatContainer() {
     return new Set(eventUsersData.event_users.map(user => user.user_id));
   }, [eventUsersData]);
 
-  // Filter threads based on context (same logic as desktop)
-  const filteredThreads = useMemo(() => {
-    if (!currentEventId) {
-      // General: Show only global threads (event_scope_id is null/undefined)
-      return threadsArray.filter((thread) => !thread.event_scope_id);
-    }
-
-    // Event: Show threads with users who are in the current event
-    return threadsArray.filter((thread) => {
-      const otherUserId = thread.other_user?.id;
-      const isEventScopedThread = thread.event_scope_id === currentEventId;
-      const userInEvent = otherUserId && eventUserIds.has(otherUserId);
-      
-      // Show if: event-scoped thread OR global thread with user in event
-      return isEventScopedThread || (!thread.event_scope_id && userInEvent);
-    });
-  }, [threadsArray, currentEventId, eventUserIds]);
+  // Filter threads based on context using shared hook
+  const filteredThreads = useThreadFiltering(
+    threadsArray, 
+    currentEventId, 
+    eventUserIds, 
+    false // Disable debug logs for mobile version
+  );
 
   const handleThreadClick = (threadId) => {
     setActiveThreadId(threadId);

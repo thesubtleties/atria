@@ -17,6 +17,7 @@ import {
 } from '../../../../app/store/chatSlice';
 import { useGetDirectMessageThreadsQuery } from '../../../../app/features/networking/api';
 import { useGetEventUsersQuery } from '../../../../app/features/events/api';
+import { useThreadFiltering } from '@/shared/hooks/useThreadFiltering';
 import ChatThreadList from '../ChatThreadList';
 import styles from './styles/index.module.css';
 
@@ -56,40 +57,13 @@ function ChatSidebar() {
     return new Set(eventUsersData.event_users.map(user => user.user_id));
   }, [eventUsersData]);
 
-  // Filter threads based on context
-  const filteredThreads = useMemo(() => {
-    console.log('Filtering threads - eventId:', eventId, 'currentEventId:', currentEventId);
-    console.log('All threads:', threadsArray);
-
-    if (!currentEventId) {
-      // General tab: Show only global threads (event_scope_id is null/undefined)
-      // Exclude event-scoped threads from general view
-      return threadsArray.filter((thread) => {
-        const isGlobalThread = !thread.event_scope_id;
-        console.log('General tab - Thread:', thread.id, 'event_scope_id:', thread.event_scope_id, 'isGlobal:', isGlobalThread);
-        return isGlobalThread;
-      });
-    }
-
-    console.log('Event tab - filtering for event:', currentEventId);
-    console.log('Event user IDs:', Array.from(eventUserIds));
-
-    // Event tab: Show threads with users who are in the current event
-    // This includes both global threads (for connected users) and event-scoped threads
-    return threadsArray.filter((thread) => {
-      const otherUserId = thread.other_user?.id;
-      const isEventScopedThread = thread.event_scope_id === currentEventId;
-      const userInEvent = otherUserId && eventUserIds.has(otherUserId);
-      
-      // Show thread if:
-      // 1. It's scoped to this specific event, OR
-      // 2. It's a global thread with a user who's in this event
-      const shouldShow = isEventScopedThread || (!thread.event_scope_id && userInEvent);
-      
-      console.log('Event tab - Thread:', thread.id, 'event_scope_id:', thread.event_scope_id, 'other user:', otherUserId, 'in event:', userInEvent, 'show:', shouldShow);
-      return shouldShow;
-    });
-  }, [threadsArray, currentEventId, eventUserIds]);
+  // Filter threads based on context using shared hook
+  const filteredThreads = useThreadFiltering(
+    threadsArray, 
+    currentEventId, 
+    eventUserIds, 
+    true // Enable debug logs for desktop version
+  );
 
   // Handle thread click
   const handleThreadClick = (threadId) => {
