@@ -20,6 +20,13 @@ function MobileChatSidebar({
   currentEventId, 
   onContextChange 
 }) {
+  
+  // Function to minimize sidebar for delete modal
+  const handleDeleteChatStart = () => {
+    if (expanded && onToggle) {
+      onToggle(); // Minimize the sidebar
+    }
+  };
   const unreadCount = (threads || []).filter(thread => thread.unread_count > 0).length;
 
   return (
@@ -75,6 +82,7 @@ function MobileChatSidebar({
             <ChatThreadList 
               threads={threads} 
               onThreadClick={onThreadClick}
+              onDeleteChatStart={handleDeleteChatStart}
             />
           )}
         </div>

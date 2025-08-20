@@ -32,6 +32,7 @@ export const MenuButton = () => {
       offset={8}
       withArrow
       arrowOffset={16}
+      zIndex={1100}
       transitionProps={{ transition: 'pop-top-right', duration: 150 }}
       classNames={{
         dropdown: styles.menuDropdown,

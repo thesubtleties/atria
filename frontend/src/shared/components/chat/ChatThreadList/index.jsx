@@ -10,12 +10,17 @@ import { useClearThreadMutation } from '../../../../app/features/networking/api'
 import { closeThread } from '../../../../app/store/chatSlice';
 import styles from './styles/index.module.css';
 
-function ChatThreadList({ threads, onThreadClick }) {
+function ChatThreadList({ threads, onThreadClick, onDeleteChatStart }) {
   const dispatch = useDispatch();
   const [clearThread] = useClearThreadMutation();
 
   const handleClearThread = (threadId, otherUserName, event) => {
     event.stopPropagation(); // Prevent thread click
+    
+    // For mobile: minimize sidebar before showing modal
+    if (onDeleteChatStart) {
+      onDeleteChatStart();
+    }
     
     openConfirmationModal({
       title: 'Delete Chat',
