@@ -21,6 +21,7 @@
   align-items: flex-start;
   gap: clamp(var(--space-md), 3vw, var(--space-lg));
   transition: all 0.3s ease;
+  cursor: default;
 }
 
 .infoCard:hover {
