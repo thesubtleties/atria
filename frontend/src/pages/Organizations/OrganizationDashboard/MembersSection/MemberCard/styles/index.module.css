@@ -8,10 +8,11 @@
   margin-bottom: 0;
 }
 
-/* Card Header */
-.cardHeader {
-  composes: card-header from '../../../../../../styles/design-tokens.css';
-  margin-bottom: clamp(0.5rem, 2vw, 0.75rem);
+/* Card Actions - Top right corner */
+.cardActions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: clamp(0.5rem, 1.5vw, 0.75rem);
 }
 
 /* User Info Section */
@@ -19,7 +20,7 @@
   display: flex;
   align-items: flex-start;
   gap: clamp(0.5rem, 1.5vw, 0.75rem);
-  flex: 1;
+  margin-bottom: clamp(0.5rem, 2vw, 0.75rem);
 }
 
 .avatar {
@@ -37,20 +38,20 @@
 }
 
 .userEmail {
-  color: var(--color-text-secondary);
-  font-size: clamp(var(--text-xs), 2vw, var(--text-sm));
+  color: var(--color-text-secondary) !important;
+  font-size: clamp(var(--text-xs), 2vw, var(--text-sm)) !important;
   display: flex;
   align-items: center;
   gap: 0.25rem;
 }
 
 .emailLink {
-  color: var(--color-primary);
-  text-decoration: none;
+  color: var(--color-primary) !important;
+  text-decoration: none !important;
   display: flex;
   align-items: center;
   gap: 0.25rem;
-  font-weight: 500;
+  font-weight: 500 !important;
 }
 
 .emailLink:hover {
@@ -63,53 +64,55 @@
 
 /* Action Button */
 .actionButton {
-  color: var(--color-text-muted);
-  transition: all 0.2s ease;
+  color: var(--color-text-muted) !important;
+  transition: all 0.2s ease !important;
+  background: transparent !important;
+  width: 32px !important;
+  height: 32px !important;
 }
 
 .actionButton:hover {
-  color: var(--color-primary);
-  background: var(--primary-alpha-4);
+  color: var(--color-primary) !important;
+  background: var(--primary-alpha-4) !important;
 }
 
-/* Member Info Section */
+/* Member Info Section - Role and Date on same line */
 .memberInfo {
   display: flex;
-  flex-direction: column;
-  gap: clamp(0.25rem, 1vw, 0.5rem);
-}
-
-.roleSection {
-  display: flex;
+  justify-content: space-between;
   align-items: center;
+  gap: clamp(0.5rem, 2vw, 1rem);
 }
 
 .roleBadge {
-  font-weight: 600;
-  font-size: clamp(var(--text-xs), 1.8vw, 0.8rem);
+  font-weight: 600 !important;
+  font-size: clamp(var(--text-xs), 1.8vw, 0.8rem) !important;
+  flex-shrink: 0;
 }
 
 .roleBadge[data-role="OWNER"] {
-  background: rgba(139, 92, 246, 0.1);
-  color: var(--color-primary);
-  border: 1px solid rgba(139, 92, 246, 0.2);
+  background: rgba(139, 92, 246, 0.1) !important;
+  color: var(--color-primary) !important;
+  border: 1px solid rgba(139, 92, 246, 0.2) !important;
 }
 
 .roleBadge[data-role="ADMIN"] {
-  background: rgba(34, 197, 94, 0.1);
-  color: var(--color-success);
-  border: 1px solid rgba(34, 197, 94, 0.2);
+  background: rgba(34, 197, 94, 0.1) !important;
+  color: var(--color-success) !important;
+  border: 1px solid rgba(34, 197, 94, 0.2) !important;
 }
 
 .roleBadge[data-role="MEMBER"] {
-  background: rgba(100, 116, 139, 0.1);
-  color: var(--color-text-secondary);
-  border: 1px solid rgba(100, 116, 139, 0.2);
+  background: rgba(100, 116, 139, 0.1) !important;
+  color: var(--color-text-secondary) !important;
+  border: 1px solid rgba(100, 116, 139, 0.2) !important;
 }
 
 .joinDate {
   composes: card-meta from '../../../../../../styles/design-tokens.css';
-  color: var(--color-text-muted);
+  color: var(--color-text-muted) !important;
+  text-align: right;
+  flex-shrink: 0;
 }
 
 /* Responsive adjustments */
