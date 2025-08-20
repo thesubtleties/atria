@@ -1,48 +1,33 @@
 /* pages/EventHome/Welcome/styles/index.module.css */
 .welcome {
-  padding: 0 2rem;
-  margin-bottom: 3rem;
+  padding: 0 clamp(var(--space-md), 4vw, var(--space-xl));
+  margin-bottom: clamp(var(--space-xl), 4vw, var(--space-2xl));
 }
 
 .container {
+  composes: section-container from '../../../../styles/design-tokens.css';
   max-width: 1000px;
   margin: 0 auto;
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 8px;
-  padding: 3rem;
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
   text-align: center;
 }
 
 .title {
-  font-size: 2.5rem;
+  composes: section-title from '../../../../styles/design-tokens.css';
   font-weight: 300;
-  margin-bottom: 1.5rem;
-  color: #8b5cf6;
+  color: var(--color-primary);
   letter-spacing: -0.02em;
 }
 
 .content {
-  font-size: 1.1rem;
+  font-size: clamp(var(--text-base), 2.5vw, 1.1rem);
   line-height: 1.8;
-  color: #64748b;
+  color: var(--color-text-secondary);
   max-width: 800px;
   margin: 0 auto;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 480px) {
   .welcome {
-    padding: 3rem 1rem;
-  }
-
-  .title {
-    font-size: 1.75rem;
-  }
-
-  .content {
-    font-size: 1rem;
+    padding: var(--space-lg) var(--space-md);
   }
 }

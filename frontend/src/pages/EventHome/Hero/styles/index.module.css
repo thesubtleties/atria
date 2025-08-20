@@ -2,9 +2,9 @@
 .hero {
   width: calc(100% + 2rem);
   position: relative;
-  height: 500px;
+  height: clamp(400px, 60vh, 500px);
   overflow: hidden;
-  margin-bottom: 3rem;
+  margin-bottom: clamp(var(--space-xl), 4vw, var(--space-2xl));
   margin-left: -1rem;
   margin-right: -1rem;
   z-index: 1;
@@ -35,7 +35,7 @@
   position: relative;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 80px 2rem;
+  padding: clamp(60px, 10vh, 80px) clamp(var(--space-md), 4vw, var(--space-xl));
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -44,34 +44,36 @@
 }
 
 .title {
-  font-size: 4rem;
+  font-size: clamp(2rem, 8vw, 4rem);
   font-weight: 300;
-  margin-bottom: 1.5rem;
+  margin-bottom: clamp(var(--space-md), 3vw, var(--space-lg));
   color: white;
   letter-spacing: -0.02em;
   text-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+  line-height: 1.1;
 }
 
 .description {
-  font-size: 1.5rem;
+  font-size: clamp(var(--text-lg), 3vw, 1.5rem);
   max-width: 800px;
   line-height: 1.6;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.9);
   font-weight: 400;
   text-shadow: 0 1px 10px rgba(0, 0, 0, 0.2);
 }
 
-/* Media query for mobile image */
-@media (max-width: 768px) {
+/* Mobile responsive adjustments */
+@media (max-width: 480px) {
   .heroBackground {
     background-image: var(--mobile-image-url) !important;
   }
-
-  .title {
-    font-size: 2rem;
+  
+  .hero {
+    height: clamp(350px, 50vh, 400px);
+    margin-bottom: var(--space-lg);
   }
-
-  .description {
-    font-size: 1.25rem;
+  
+  .heroContent {
+    padding: clamp(40px, 8vh, 60px) var(--space-md);
   }
 }
