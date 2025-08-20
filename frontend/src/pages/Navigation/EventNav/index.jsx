@@ -5,7 +5,7 @@ import styles from './EventNav.module.css';
 import { EventLinks } from './components/EventLinks';
 import { AdminSection } from './components/AdminSection';
 
-const EventNavComponent = ({ eventId, isAdmin }) => {
+const EventNavComponent = ({ eventId, isAdmin, onMobileNavClick }) => {
   return (
     <div className={styles.navWrapper}>
       <ScrollArea className={styles.container}>
@@ -15,8 +15,8 @@ const EventNavComponent = ({ eventId, isAdmin }) => {
               Event Menu
             </Text>
           </div>
-          <EventLinks eventId={eventId} />
-          {isAdmin && <AdminSection eventId={eventId} />}
+          <EventLinks eventId={eventId} onMobileNavClick={onMobileNavClick} />
+          {isAdmin && <AdminSection eventId={eventId} onMobileNavClick={onMobileNavClick} />}
         </Stack>
       </ScrollArea>
       

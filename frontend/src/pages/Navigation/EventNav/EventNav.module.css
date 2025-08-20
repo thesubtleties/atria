@@ -9,11 +9,11 @@
   background: rgba(251, 250, 255, 0.1);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  box-shadow: 2px 0 8px rgba(139, 92, 246, 0.05);
+  box-shadow: 2px 0 8px var(--primary-alpha-4);
 }
 
 .container {
-  padding: 1.5rem;
+  padding: clamp(var(--space-md), 3vw, var(--space-xl));
   flex: 1;
   overflow: auto;
 }
@@ -27,42 +27,42 @@
 }
 
 .header {
-  padding: 0 1rem;
+  padding: 0 var(--space-md);
 }
 
 .header :global(.mantine-Text-root) {
-  color: #8b5cf6;
+  color: var(--color-primary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  font-size: 0.875rem;
+  font-size: clamp(var(--text-xs), 2.5vw, var(--text-sm));
 }
 
 .attribution {
   position: absolute;
-  bottom: 40px;
+  bottom: clamp(var(--space-lg), 5vw, 40px);
   left: 0;
   right: 0;
-  padding: 1rem;
+  padding: var(--space-md);
   text-align: center;
 }
 
 .attribution :global(.mantine-Text-root) {
-  color: #94a3b8;
-  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  font-size: clamp(10px, 2vw, var(--text-xs));
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.25rem;
+  gap: var(--space-xs);
 }
 
 .heartIcon {
-  color: #8b5cf6;
-  fill: #8b5cf6;
+  color: var(--color-primary);
+  fill: var(--color-primary);
   vertical-align: middle;
 }
 
 .link {
-  color: #8b5cf6;
+  color: var(--color-primary);
   text-decoration: none;
   transition: opacity 0.2s ease;
 }
@@ -70,4 +70,45 @@
 .link:hover {
   opacity: 0.8;
   text-decoration: none;
+}
+
+/* Responsive adjustments for EventNav */
+@media (max-width: 480px) {
+  .container {
+    padding: var(--space-sm);
+  }
+  
+  .header {
+    padding: 0 var(--space-sm);
+  }
+  
+  .attribution {
+    display: none; /* Hide attribution on mobile for cleaner UX */
+  }
+}
+
+/* Laptop screens - expand width range and add height constraint */
+@media (min-width: 481px) and (max-width: 1600px) and (max-height: 1000px) {
+  .container {
+    padding: var(--space-sm); /* Tighter padding on laptops to prevent scroll */
+  }
+  
+  .header {
+    padding: 0 var(--space-md) !important; /* Match admin section padding */
+  }
+  
+  .attribution {
+    bottom: var(--space-sm); /* Reduce bottom space */
+    padding: var(--space-sm);
+  }
+}
+
+@media (min-width: 1281px) {
+  .container {
+    padding: var(--space-xl);
+  }
+  
+  .header {
+    padding: 0 var(--space-xl);
+  }
 }
