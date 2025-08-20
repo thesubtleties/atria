@@ -3,12 +3,13 @@
   width: 100%;
 }
 
-/* Table Container */
+/* Table Container - Desktop */
 .tableContainer {
   background: rgba(255, 255, 255, 0.5);
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   overflow: hidden;
-  border: 1px solid rgba(139, 92, 246, 0.08);
+  border: 1px solid var(--primary-alpha-8);
+  display: block;
 }
 
 /* Members Table */
@@ -18,31 +19,38 @@
 }
 
 .membersTable thead {
-  background: rgba(139, 92, 246, 0.04);
-  border-bottom: 1px solid rgba(139, 92, 246, 0.08);
+  background: var(--primary-alpha-4);
+  border-bottom: 1px solid var(--primary-alpha-8);
 }
 
 .membersTable th {
-  padding: 1rem 1.5rem;
+  padding: clamp(0.75rem, 2vw, 1rem) clamp(1rem, 3vw, 1.5rem);
   text-align: left;
-  font-size: 0.875rem;
+  font-size: clamp(var(--text-xs), 1.8vw, var(--text-sm));
   font-weight: 600;
-  color: #64748b;
+  color: var(--color-text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .membersTable tbody tr {
-  border-bottom: 1px solid rgba(139, 92, 246, 0.04);
+  border-bottom: 1px solid var(--primary-alpha-4);
   transition: background-color 0.2s ease;
 }
 
 .membersTable tbody tr:hover {
-  background: rgba(139, 92, 246, 0.02);
+  background: var(--primary-alpha-2);
 }
 
 .membersTable tbody tr:last-child {
   border-bottom: none;
+}
+
+/* Member Cards - Mobile */
+.memberCards {
+  display: none;
+  flex-direction: column;
+  gap: clamp(0.75rem, 2vw, 1rem);
 }
 
 /* Center Column */
@@ -52,47 +60,54 @@
 
 /* Empty State */
 .emptyState {
+  composes: empty-state from '../../../../../../styles/design-tokens.css';
   min-height: 300px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .emptyContent {
   text-align: center;
-  padding: 2rem;
+  padding: clamp(var(--space-lg), 4vw, var(--space-xl));
 }
 
 /* Pagination */
 .paginationWrapper {
   display: flex;
   justify-content: center;
-  margin-top: 2rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid rgba(139, 92, 246, 0.08);
+  margin-top: clamp(1.5rem, 3vw, 2rem);
+  padding-top: clamp(1rem, 2vw, 1.5rem);
+  border-top: 1px solid var(--primary-alpha-8);
 }
 
 .pagination {
-  --mantine-color-primary: #8b5cf6;
+  --mantine-color-primary: var(--color-primary);
 }
 
 /* Responsive */
-@media (max-width: 768px) {
-  .tableContainer {
-    overflow-x: auto;
-  }
-
-  .membersTable {
-    min-width: 600px;
-  }
-
+@media (max-width: 1024px) {
   .membersTable th,
   .membersTable td {
     padding: 0.75rem 1rem;
   }
+}
 
-  .membersTable th:last-child,
-  .membersTable td:last-child {
-    text-align: right;
+@media (max-width: 768px) {
+  /* Hide table, show cards */
+  .tableContainer {
+    display: none;
+  }
+
+  .memberCards {
+    display: flex;
+  }
+
+  .paginationWrapper {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .emptyContent {
+    padding: var(--space-lg);
   }
 }

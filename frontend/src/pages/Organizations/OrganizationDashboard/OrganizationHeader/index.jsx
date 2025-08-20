@@ -58,7 +58,7 @@ const OrganizationHeader = ({ organization, currentUserRole }) => {
           
           <div className={styles.titleArea}>
             {isEditing ? (
-              <Group spacing="xs" align="center">
+              <div className={styles.editingContainer}>
                 <TextInput
                   value={editedName}
                   onChange={(e) => setEditedName(e.target.value)}
@@ -70,37 +70,36 @@ const OrganizationHeader = ({ organization, currentUserRole }) => {
                     if (e.key === 'Escape') handleCancel();
                   }}
                 />
-                <ActionIcon
-                  variant="filled"
-                  color="green"
-                  onClick={handleSave}
-                  disabled={isLoading}
-                  size="lg"
-                  className={styles.saveButton}
-                >
-                  <IconCheck size={20} />
-                </ActionIcon>
-                <ActionIcon
-                  variant="subtle"
-                  onClick={handleCancel}
-                  disabled={isLoading}
-                  size="lg"
-                  className={styles.cancelButton}
-                >
-                  <IconX size={20} />
-                </ActionIcon>
-              </Group>
+                <div className={styles.editButtons}>
+                  <ActionIcon
+                    variant="filled"
+                    color="green"
+                    onClick={handleSave}
+                    disabled={isLoading}
+                    size="lg"
+                    className={styles.saveButton}
+                  >
+                    <IconCheck size={20} />
+                  </ActionIcon>
+                  <ActionIcon
+                    variant="subtle"
+                    onClick={handleCancel}
+                    disabled={isLoading}
+                    size="lg"
+                    className={styles.cancelButton}
+                  >
+                    <IconX size={20} />
+                  </ActionIcon>
+                </div>
+              </div>
             ) : (
               <Group spacing="sm" align="center">
                 <h1 className={styles.organizationName}>{organization.name}</h1>
                 {canEdit && (
-                  <ActionIcon
-                    variant="subtle"
-                    onClick={() => setIsEditing(true)}
-                    className={styles.editButton}
-                  >
-                    <IconEdit size={20} />
-                  </ActionIcon>
+                  <div className={styles.editContainer} onClick={() => setIsEditing(true)}>
+                    <IconEdit size={16} />
+                    <Text size="sm" className={styles.editText}>Edit Organization Name</Text>
+                  </div>
                 )}
               </Group>
             )}
