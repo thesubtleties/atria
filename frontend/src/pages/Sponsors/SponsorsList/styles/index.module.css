@@ -21,10 +21,12 @@
 }
 
 .tierTitle {
-  font-size: clamp(var(--text-lg), 3vw, var(--text-2xl));
-  font-weight: 600;
-  color: var(--color-text-primary);
+  font-size: clamp(var(--text-lg), 3vw, var(--text-2xl)) !important;
+  font-weight: 600 !important;
+  color: var(--color-text-primary) !important;
   letter-spacing: -0.02em;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+  margin: 0 !important;
 }
 
 .sponsorGrid {
