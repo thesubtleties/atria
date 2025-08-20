@@ -21,13 +21,17 @@
   align-items: flex-start;
   gap: clamp(var(--space-md), 3vw, var(--space-lg));
   transition: all 0.3s ease;
-  cursor: default;
+  cursor: default !important;
 }
 
 .infoCard:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
   background: rgba(255, 255, 255, 1);
+}
+
+.infoCard:last-child {
+  margin-bottom: clamp(.75rem, 2vw, var(--space-md)) !important;
 }
 
 .iconWrapper {
@@ -65,6 +69,10 @@
   line-height: 1.4;
 }
 
+.cardContent > *:last-child {
+  margin-bottom: 0 !important;
+}
+
 .cardSubtext {
   font-size: clamp(var(--text-sm), 2vw, 0.95rem);
   color: var(--color-text-secondary);
@@ -76,18 +84,18 @@
   .grid {
     grid-template-columns: 1fr;
   }
-  
+
   .infoCard {
     flex-direction: column;
     text-align: center;
     gap: var(--space-md);
     align-items: center;
   }
-  
+
   .cardContent {
     text-align: center;
   }
-  
+
   .cardTitle,
   .cardText,
   .cardSubtext {
