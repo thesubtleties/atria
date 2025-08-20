@@ -12,7 +12,7 @@ import {
   fetchInitialData,
 } from '@/app/features/networking/socketClient';
 import { selectUser, selectIsAuthenticated } from '@/app/store/authSlice';
-import ChatContainer from '@/shared/components/chat/ChatContainer';
+import ChatContainer from '@/shared/components/chat';
 import styles from './AppLayout.module.css';
 
 export const AppLayout = () => {
