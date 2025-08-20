@@ -1,6 +1,6 @@
 .pageContainer {
   min-height: 100vh;
-  background: rgba(251, 250, 255, 1);
+  background: var(--color-background);
   position: relative;
   overflow: hidden;
 }
@@ -8,27 +8,27 @@
 .contentWrapper {
   position: relative;
   z-index: 10;
-  padding: 2rem 0;
+  padding: clamp(var(--space-lg), 3vw, var(--space-xl)) 0;
 }
 
 .header {
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: clamp(var(--space-xl), 4vw, var(--space-2xl));
   position: relative;
   z-index: 10;
 }
 
 .pageTitle {
-  font-size: 2.5rem;
+  composes: section-title from '../../styles/design-tokens.css';
   font-weight: 300;
-  color: #8b5cf6;
+  color: var(--color-primary);
   letter-spacing: -0.02em;
   margin: 0 0 0.5rem 0;
 }
 
 .pageSubtitle {
-  font-size: 1.1rem;
-  color: #64748b;
+  font-size: clamp(var(--text-base), 2.5vw, var(--text-lg));
+  color: var(--color-text-secondary);
   font-weight: 400;
   margin: 0;
 }
@@ -38,33 +38,35 @@
   position: fixed;
   width: 400px;
   height: 400px;
-  background: linear-gradient(135deg, #f59e0b, #eab308);
+  background: linear-gradient(135deg, var(--gradient-orange-medium), var(--gradient-orange-dark));
   border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
   top: -200px;
   right: -150px;
   opacity: 0.05;
   animation: float 20s ease-in-out infinite;
   z-index: 1;
+  pointer-events: none;
 }
 
 .bgShape2 {
   position: fixed;
   width: 350px;
   height: 350px;
-  background: linear-gradient(45deg, #8b5cf6, #a855f7);
+  background: linear-gradient(45deg, var(--gradient-purple-light), var(--gradient-purple-medium));
   border-radius: 41% 59% 41% 59% / 41% 51% 49% 59%;
   bottom: -150px;
   left: -100px;
   opacity: 0.04;
   animation: float 18s ease-in-out infinite reverse;
   z-index: 1;
+  pointer-events: none;
 }
 
 .bgShape3 {
   position: fixed;
   width: 300px;
   height: 300px;
-  background: linear-gradient(225deg, #ec4899, #f472b6);
+  background: linear-gradient(225deg, var(--gradient-pink-medium), var(--gradient-pink-light));
   border-radius: 51% 49% 52% 48% / 42% 58% 42% 58%;
   top: 50%;
   left: 50%;
@@ -72,6 +74,7 @@
   opacity: 0.03;
   animation: float 25s ease-in-out infinite;
   z-index: 1;
+  pointer-events: none;
 }
 
 @keyframes float {
@@ -93,14 +96,14 @@
   justify-content: center;
   align-items: center;
   min-height: 50vh;
-  padding: 2rem;
+  padding: clamp(var(--space-md), 4vw, var(--space-xl));
 }
 
 .errorAlert {
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--color-background-glass);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.9);
-  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.08);
+  box-shadow: var(--shadow-lg);
   max-width: 500px;
   width: 100%;
 }
@@ -111,19 +114,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(251, 250, 255, 1);
+  background: var(--color-background);
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .pageTitle {
-    font-size: 2rem;
-  }
-
-  .pageSubtitle {
-    font-size: 1rem;
-  }
-
   .bgShape1,
   .bgShape2,
   .bgShape3 {
