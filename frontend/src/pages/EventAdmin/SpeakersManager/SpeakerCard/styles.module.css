@@ -1,0 +1,260 @@
+/* Mobile Speaker Card - Enhanced glassmorphism and refined polish */
+.card {
+  composes: card-base from '../../../../styles/design-tokens.css';
+  margin-bottom: clamp(0.75rem, 2vw, var(--space-md));
+  position: relative;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(251, 250, 255, 0.9) 100%
+  );
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 
+    0 2px 8px rgba(139, 92, 246, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.card:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 1) 0%,
+    rgba(251, 250, 255, 0.95) 100%
+  );
+  box-shadow: 
+    0 8px 24px rgba(139, 92, 246, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  transform: translateY(-2px) scale(1.01);
+  border-color: rgba(139, 92, 246, 0.1);
+}
+
+/* Subtle gradient accent for visual interest */
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    var(--gradient-purple-light),
+    var(--gradient-purple-medium),
+    var(--gradient-purple-light)
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card:hover::before {
+  opacity: 0.6;
+}
+
+.card:last-child {
+  margin-bottom: 0;
+}
+
+/* Card Actions - Top right corner */
+.cardActions {
+  position: absolute;
+  top: clamp(var(--space-sm), 2vw, var(--space-md));
+  right: clamp(var(--space-sm), 2vw, var(--space-md));
+  z-index: 1;
+}
+
+/* Action Button - Glass effect */
+.actionButton {
+  color: var(--color-text-muted) !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  background: rgba(255, 255, 255, 0.5) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  width: 32px !important;
+  height: 32px !important;
+  border: 1px solid rgba(139, 92, 246, 0.08) !important;
+  border-radius: var(--radius-md) !important;
+}
+
+.actionButton:hover {
+  color: var(--color-primary) !important;
+  background: rgba(139, 92, 246, 0.08) !important;
+  border-color: rgba(139, 92, 246, 0.15) !important;
+  transform: scale(1.05) !important;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.15) !important;
+}
+
+/* User Info Section */
+.userInfo {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(0.75rem, 2vw, var(--space-md));
+  margin-bottom: clamp(var(--space-md), 3vw, var(--space-lg));
+  padding-right: 40px; /* Space for action button */
+}
+
+.avatar {
+  flex-shrink: 0;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 
+    0 2px 8px rgba(139, 92, 246, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  background: linear-gradient(
+    135deg, 
+    var(--gradient-purple-light), 
+    var(--gradient-purple-medium)
+  );
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.card:hover .avatar {
+  transform: scale(1.05);
+  box-shadow: 
+    0 4px 12px rgba(139, 92, 246, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.userDetails {
+  flex: 1;
+  min-width: 0; /* Allow text truncation */
+}
+
+.userName {
+  composes: card-title from '../../../../styles/design-tokens.css';
+  margin-bottom: clamp(0.1rem, 0.5vw, 0.25rem);
+}
+
+.userEmail {
+  color: var(--color-text-secondary) !important;
+  font-size: clamp(var(--text-xs), 2vw, var(--text-sm)) !important;
+  word-break: break-word;
+}
+
+/* Professional Info Section - Enhanced divider */
+.professionalInfo {
+  margin-bottom: clamp(var(--space-sm), 2vw, var(--space-md));
+  padding-bottom: clamp(var(--space-sm), 2vw, var(--space-md));
+  border-bottom: 1px solid transparent;
+  background-image: linear-gradient(
+    90deg,
+    transparent,
+    rgba(139, 92, 246, 0.1) 20%,
+    rgba(139, 92, 246, 0.1) 80%,
+    transparent
+  );
+  background-position: 0 100%;
+  background-size: 100% 1px;
+  background-repeat: no-repeat;
+}
+
+.titleText {
+  color: var(--color-text-primary);
+  font-weight: 500;
+  font-size: clamp(var(--text-sm), 2.5vw, var(--text-base));
+}
+
+.companyText {
+  color: var(--color-text-secondary);
+  font-size: clamp(var(--text-xs), 2vw, var(--text-sm));
+  margin-top: clamp(0.25rem, 1vw, 0.5rem);
+}
+
+.customBadge {
+  font-weight: 500 !important;
+  font-size: 11px !important;
+  padding: 3px 8px !important;
+  height: auto !important;
+  text-transform: none !important;
+  background: linear-gradient(
+    135deg,
+    rgba(139, 92, 246, 0.08),
+    rgba(168, 85, 247, 0.08)
+  ) !important;
+  border: 1px solid rgba(139, 92, 246, 0.15) !important;
+  color: var(--color-primary) !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+}
+
+/* Sessions Section */
+.sessionsSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: clamp(var(--space-sm), 2vw, var(--space-md));
+}
+
+.sessionLabel {
+  color: var(--color-text-secondary);
+  font-size: clamp(var(--text-xs), 2vw, var(--text-sm));
+}
+
+.sessionBadge {
+  font-weight: 600 !important;
+  font-size: clamp(11px, 1.8vw, var(--text-xs)) !important;
+  transition: all 0.2s ease !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+}
+
+.sessionBadge[data-status="active"] {
+  background: linear-gradient(
+    135deg,
+    rgba(34, 197, 94, 0.1),
+    rgba(16, 185, 129, 0.1)
+  ) !important;
+  border: 1px solid rgba(34, 197, 94, 0.2) !important;
+  color: var(--color-success) !important;
+}
+
+.sessionBadge:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.15);
+}
+
+/* Bio Section - Enhanced with glass effect */
+.bioSection {
+  padding-top: clamp(var(--space-sm), 2vw, var(--space-md));
+  margin-top: clamp(var(--space-sm), 2vw, var(--space-md));
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgba(139, 92, 246, 0.02)
+  );
+  border-top: 1px solid transparent;
+  background-image: linear-gradient(
+    90deg,
+    transparent,
+    rgba(139, 92, 246, 0.08) 20%,
+    rgba(139, 92, 246, 0.08) 80%,
+    transparent
+  );
+  background-position: 0 0;
+  background-size: 100% 1px;
+  background-repeat: no-repeat;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  position: relative;
+}
+
+.bioText {
+  color: var(--color-text-secondary);
+  font-size: clamp(var(--text-xs), 2vw, var(--text-sm));
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 0.01em;
+  opacity: 0.9;
+  transition: opacity 0.2s ease;
+}
+
+.card:hover .bioText {
+  opacity: 1;
+}
+
+/* Removed organic shape decoration - keeping cards clean */

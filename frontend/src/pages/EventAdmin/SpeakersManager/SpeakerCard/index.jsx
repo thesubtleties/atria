@@ -1,4 +1,4 @@
-import { Table, Group, Text, Avatar, Menu, ActionIcon, Badge, Tooltip, Stack, Alert } from '@mantine/core';
+import { Group, Text, Avatar, Menu, ActionIcon, Badge, Tooltip, Stack, Alert } from '@mantine/core';
 import {
   IconDots,
   IconUserCircle,
@@ -14,7 +14,7 @@ import { openConfirmationModal } from '@/shared/components/modals/ConfirmationMo
 import { useUpdateEventUserMutation } from '@/app/features/events/api';
 import styles from './styles.module.css';
 
-const SpeakerRow = ({
+const SpeakerCard = ({
   speaker,
   onEditSpeaker,
   currentUserRole,
@@ -22,8 +22,7 @@ const SpeakerRow = ({
 }) => {
   const navigate = useNavigate();
   const [updateUser] = useUpdateEventUserMutation();
-  
-  // Format time from 24hr to 12hr with AM/PM
+
   const formatTime = (timeStr) => {
     if (!timeStr) return '';
     const [hours, minutes] = timeStr.split(':');
@@ -33,7 +32,6 @@ const SpeakerRow = ({
     return `${displayHour}:${minutes} ${ampm}`;
   };
 
-  // Capitalize first letter of each word
   const capitalizeWords = (str) => {
     if (!str) return '';
     return str.split('_').map(word => 
@@ -93,43 +91,99 @@ const SpeakerRow = ({
     });
   };
 
-  // Truncate bio for display
-  const truncateBio = (bio, maxLength = 100) => {
+  const truncateBio = (bio, maxLength = 80) => {
     if (!bio) return 'No bio provided';
     if (bio.length <= maxLength) return bio;
     return bio.substring(0, maxLength) + '...';
   };
 
   const canManage = ['ADMIN', 'ORGANIZER'].includes(currentUserRole);
-
-  // Display the speaker-specific title/bio or fall back to user profile
   const displayTitle = speaker.speaker_title || speaker.title || 'No title';
   const displayBio = speaker.speaker_bio || speaker.bio || '';
 
   return (
-    <Table.Tr>
-      <Table.Td>
-        <Group gap="sm" wrap="nowrap">
-          <Avatar
-            src={speaker.image_url}
-            alt={speaker.full_name}
-            radius="xl"
-            size="md"
-            className={styles.userAvatar}
-          >
-            {speaker.first_name?.[0]}{speaker.last_name?.[0]}
-          </Avatar>
-          <div style={{ minWidth: 0, flex: 1 }}>
-            <Text size="sm" fw={500} truncate>
-              {speaker.full_name}
-            </Text>
-            <Text size="xs" c="dimmed" truncate>
-              {speaker.email}
-            </Text>
-          </div>
-        </Group>
-      </Table.Td>
-      <Table.Td>
+    <div className={styles.card}>
+      {/* Card Actions - Top right corner */}
+      {canManage && (
+        <div className={styles.cardActions}>
+          <Menu position="bottom-end" withinPortal>
+            <Menu.Target>
+              <ActionIcon variant="subtle" className={styles.actionButton}>
+                <IconDots size={16} />
+              </ActionIcon>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Item
+                leftSection={<IconUserCircle size={16} />}
+                onClick={() => navigate(`/app/users/${speaker.user_id}`)}
+              >
+                View Profile
+              </Menu.Item>
+              
+              <Menu.Item
+                leftSection={<IconEdit size={16} />}
+                onClick={() => onEditSpeaker(speaker)}
+              >
+                Edit Speaker Info
+              </Menu.Item>
+              
+              <Menu.Item
+                leftSection={<IconMicrophone size={16} />}
+                onClick={() => navigate(`/app/organizations/${organizationId}/events/${speaker.event_id}/admin/sessions`)}
+              >
+                Manage Sessions
+              </Menu.Item>
+              
+              <Menu.Divider />
+              
+              <Menu.Item
+                leftSection={<IconTrash size={16} />}
+                color="red"
+                onClick={handleRemoveSpeaker}
+              >
+                Remove Speaker Role
+              </Menu.Item>
+              
+              <Menu.Item
+                leftSection={<IconMessage size={16} />}
+                onClick={() => {
+                  notifications.show({
+                    title: 'Coming Soon',
+                    message: 'Direct messaging will be available soon',
+                    color: 'blue',
+                  });
+                }}
+              >
+                Send Message
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
+        </div>
+      )}
+
+      {/* User Info Section */}
+      <div className={styles.userInfo}>
+        <Avatar
+          src={speaker.image_url}
+          alt={speaker.full_name}
+          radius="xl"
+          size={50}
+          className={styles.avatar}
+        >
+          {speaker.first_name?.[0]}{speaker.last_name?.[0]}
+        </Avatar>
+        <div className={styles.userDetails}>
+          <Text fw={600} className={styles.userName}>
+            {speaker.full_name}
+          </Text>
+          <Text size="sm" className={styles.userEmail}>
+            {speaker.email}
+          </Text>
+        </div>
+      </div>
+
+      {/* Title and Company Section */}
+      <div className={styles.professionalInfo}>
         <Group gap="xs" wrap="nowrap">
           <Text size="sm" className={styles.titleText}>
             {displayTitle}
@@ -141,26 +195,25 @@ const SpeakerRow = ({
                 variant="light" 
                 color="blue"
                 radius="sm"
-                styles={{
-                  root: { 
-                    textTransform: 'none',
-                    fontWeight: 400,
-                    fontSize: '11px',
-                    padding: '2px 6px',
-                    height: 'auto'
-                  }
-                }}
+                className={styles.customBadge}
               >
                 Custom
               </Badge>
             </Tooltip>
           )}
         </Group>
-      </Table.Td>
-      <Table.Td>
-        <Text size="sm">{speaker.company_name || '-'}</Text>
-      </Table.Td>
-      <Table.Td style={{ textAlign: 'center' }}>
+        {speaker.company_name && (
+          <Text size="sm" className={styles.companyText}>
+            {speaker.company_name}
+          </Text>
+        )}
+      </div>
+
+      {/* Sessions Section */}
+      <div className={styles.sessionsSection}>
+        <Text size="sm" fw={500} className={styles.sessionLabel}>
+          Sessions
+        </Text>
         {speaker.session_count > 0 ? (
           <Tooltip
             label={
@@ -191,87 +244,33 @@ const SpeakerRow = ({
               className={styles.sessionBadge}
               style={{ cursor: 'pointer' }}
             >
-              {speaker.session_count}
+              {speaker.session_count} Session{speaker.session_count > 1 ? 's' : ''}
             </Badge>
           </Tooltip>
         ) : (
-          <Badge variant="light" color="gray" radius="sm" className={`${styles.sessionBadge} ${styles.unassigned}`}>
-            0
+          <Badge 
+            variant="light" 
+            color="gray" 
+            radius="sm" 
+            className={styles.sessionBadge}
+          >
+            No Sessions
           </Badge>
         )}
-      </Table.Td>
-      <Table.Td>
-        <Tooltip label={displayBio} multiline maw={300}>
-          <Text size="sm" lineClamp={2} className={styles.bioText}>
-            {truncateBio(displayBio)}
-          </Text>
-        </Tooltip>
-      </Table.Td>
-      <Table.Td style={{ textAlign: 'center' }}>
-        <Menu 
-          shadow="md" 
-          width={200} 
-          position="bottom-end"
-        >
-          <Menu.Target>
-            <ActionIcon variant="subtle" color="gray" className={styles.actionButton}>
-              <IconDots size={16} />
-            </ActionIcon>
-          </Menu.Target>
-          <Menu.Dropdown>
-            <Menu.Item
-              leftSection={<IconUserCircle size={16} />}
-              onClick={() => navigate(`/app/users/${speaker.user_id}`)}
-            >
-              View Profile
-            </Menu.Item>
-            
-            {canManage && (
-              <>
-                <Menu.Item
-                  leftSection={<IconEdit size={16} />}
-                  onClick={() => onEditSpeaker(speaker)}
-                >
-                  Edit Speaker Info
-                </Menu.Item>
-                
-                <Menu.Item
-                  leftSection={<IconMicrophone size={16} />}
-                  onClick={() => navigate(`/app/organizations/${organizationId}/events/${speaker.event_id}/admin/sessions`)}
-                >
-                  Manage Sessions
-                </Menu.Item>
-                
-                <Menu.Divider />
-                
-                <Menu.Item
-                  leftSection={<IconTrash size={16} />}
-                  color="red"
-                  onClick={handleRemoveSpeaker}
-                >
-                  Remove Speaker Role
-                </Menu.Item>
-              </>
-            )}
-            
-            <Menu.Item
-              leftSection={<IconMessage size={16} />}
-              onClick={() => {
-                // TODO: Implement direct message
-                notifications.show({
-                  title: 'Coming Soon',
-                  message: 'Direct messaging will be available soon',
-                  color: 'blue',
-                });
-              }}
-            >
-              Send Message
-            </Menu.Item>
-          </Menu.Dropdown>
-        </Menu>
-      </Table.Td>
-    </Table.Tr>
+      </div>
+
+      {/* Bio Section */}
+      {displayBio && (
+        <div className={styles.bioSection}>
+          <Tooltip label={displayBio} multiline maw={300}>
+            <Text size="sm" className={styles.bioText}>
+              {truncateBio(displayBio)}
+            </Text>
+          </Tooltip>
+        </div>
+      )}
+    </div>
   );
 };
 
-export default SpeakerRow;
+export default SpeakerCard;

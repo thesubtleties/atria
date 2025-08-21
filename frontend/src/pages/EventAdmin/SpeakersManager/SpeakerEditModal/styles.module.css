@@ -4,67 +4,101 @@
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   padding: 0;
+  max-height: clamp(400px, 80vh, 700px);
+  display: flex;
+  flex-direction: column;
 }
 
 /* Modal Header */
 .modalHeader {
-  font-size: 1.25rem;
+  font-size: clamp(1rem, 2vw, 1.125rem);
   font-weight: 600;
-  color: #1E293B;
-  padding: 1.5rem;
-  border-bottom: 1px solid rgba(139, 92, 246, 0.04);
+  color: var(--color-text-primary);
+  padding: clamp(0.75rem, 2vw, 1rem);
+  border-bottom: 1px solid var(--primary-alpha-4);
+  flex-shrink: 0;
+}
+
+/* Modal Body */
+.modalBody {
+  padding: 0;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Form Stack */
+.formStack {
+  padding: clamp(0.75rem, 2vw, 1.25rem);
+  gap: clamp(0.5rem, 1.5vw, 1rem);
 }
 
 /* User Info Section */
 .userInfo {
-  background: rgba(139, 92, 246, 0.04);
-  padding: 1rem;
-  border-radius: 6px;
-  border: 1px solid rgba(139, 92, 246, 0.08);
+  background: var(--primary-alpha-4);
+  padding: clamp(0.5rem, 1.5vw, 0.75rem);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--primary-alpha-8);
+  gap: clamp(0.5rem, 1.5vw, 0.75rem);
+}
+
+.userDetails {
+  flex: 1;
+  min-width: 0;
 }
 
 /* Alert Styling */
 .infoAlert {
-  background: rgba(139, 92, 246, 0.04);
-  border: 1px solid rgba(139, 92, 246, 0.1);
-  border-radius: 6px;
+  background: var(--primary-alpha-4) !important;
+  border: 1px solid var(--primary-alpha-10) !important;
+  border-radius: var(--radius-md) !important;
 }
 
 .grayAlert {
-  background: rgba(107, 114, 128, 0.04);
-  border: 1px solid rgba(107, 114, 128, 0.1);
-  border-radius: 6px;
+  background: rgba(107, 114, 128, 0.04) !important;
+  border: 1px solid rgba(107, 114, 128, 0.1) !important;
+  border-radius: var(--radius-md) !important;
 }
 
 /* Form Elements */
 .formInput input,
 .formTextarea textarea {
-  background: rgba(255, 255, 255, 1);
-  border: 1px solid rgba(139, 92, 246, 0.1);
-  transition: all 0.2s ease;
+  background: rgba(255, 255, 255, 1) !important;
+  border: 1px solid var(--primary-alpha-10) !important;
+  transition: all 0.2s ease !important;
+  font-size: clamp(var(--text-sm), 2.5vw, var(--text-base)) !important;
 }
 
 .formInput input:focus,
 .formTextarea textarea:focus {
-  border-color: rgba(139, 92, 246, 0.3);
-  background: rgba(255, 255, 255, 1);
+  border-color: var(--primary-alpha-30) !important;
+  background: rgba(255, 255, 255, 1) !important;
 }
 
 /* Avatar Styling */
 .userAvatar {
   border: 2px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
 }
 
 /* Button Group */
 .buttonGroup {
-  padding: 1.5rem;
-  border-top: 1px solid rgba(139, 92, 246, 0.04);
-  margin-top: 1.5rem;
+  padding: clamp(0.75rem, 2vw, 1rem);
+  border-top: 1px solid var(--primary-alpha-4);
+  margin-top: 0;
   background: rgba(251, 250, 255, 0.5);
   display: flex;
   justify-content: flex-end;
-  gap: 0.75rem;
+  gap: clamp(0.5rem, 1.5vw, 0.75rem);
+  flex-shrink: 0;
+}
+
+/* Mobile Responsive - only iOS zoom prevention */
+@media (max-width: 768px) {
+  .formInput input,
+  .formTextarea textarea {
+    font-size: 16px !important; /* Prevents zoom on iOS */
+  }
 }
 
 /* Override Mantine Modal Styles */
