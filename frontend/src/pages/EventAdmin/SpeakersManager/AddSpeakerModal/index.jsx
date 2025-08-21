@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Modal, Select, Group, Stack, Text, Alert, Loader, Box } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { 
   useGetEventUsersAdminQuery,
@@ -12,6 +13,7 @@ import styles from './styles.module.css';
 const AddSpeakerModal = ({ opened, onClose, eventId, onSuccess }) => {
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [updateUser, { isLoading: isUpdating }] = useUpdateEventUserMutation();
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   // Fetch non-speaker users
   const { data: usersData, isLoading } = useGetEventUsersAdminQuery(
@@ -78,17 +80,27 @@ const AddSpeakerModal = ({ opened, onClose, eventId, onSuccess }) => {
       onClose={handleClose}
       title="Add Speaker"
       size="md"
+      centered
       lockScroll={false}
       classNames={{
         content: styles.modalContent,
         header: styles.modalHeader,
+        body: styles.modalBody,
       }}
     >
-      <Stack p="lg">
-        <Alert icon={<IconInfoCircle size={16} />} color="blue" className={styles.infoAlert}>
-          <Text size="sm">
-            Select an existing attendee or organizer to make them a speaker.
-            You can customize their speaker title and bio after adding them.
+      <Stack className={styles.formStack}>
+        <Alert 
+          icon={<IconInfoCircle size={14} />} 
+          color="blue" 
+          className={styles.infoAlert}
+          styles={{
+            root: { padding: 'var(--space-sm) !important' },
+            message: { fontSize: 'var(--text-xs) !important' }
+          }}
+        >
+          <Text size="xs">
+            Select an attendee to make them a speaker.
+            {!isMobile && ' Customize their info after adding.'}
           </Text>
         </Alert>
 
@@ -116,13 +128,14 @@ const AddSpeakerModal = ({ opened, onClose, eventId, onSuccess }) => {
               required
               leftSection={<IconUserPlus size={16} />}
               className={styles.selectInput}
+              size="sm"
               classNames={{
                 dropdown: styles.selectDropdown,
               }}
               renderOption={({ option }) => (
                 <Group justify="space-between" wrap="nowrap">
                   <div>
-                    <Text size="sm">{option.label}</Text>
+                    <Text size="xs">{option.label}</Text>
                     <Text size="xs" c="dimmed">{option.email}</Text>
                   </div>
                 </Group>

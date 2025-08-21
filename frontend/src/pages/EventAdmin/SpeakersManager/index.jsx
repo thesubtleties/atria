@@ -122,22 +122,22 @@ const SpeakersManager = () => {
       <div className={styles.contentWrapper}>
         {/* Header Section */}
         <section className={styles.headerSection}>
-          <Group justify="space-between" align="flex-start">
-            <div>
+          <div className={styles.headerContent}>
+            <div className={styles.headerLeft}>
               <h2 className={styles.pageTitle}>Speakers Management</h2>
               <div className={styles.badgeGroup}>
-                <Badge className={styles.statsBadge} size="lg" variant="light" radius="sm">
+                <Badge className={styles.statsBadge} size="md" variant="light" radius="sm">
                   {speakerCounts.total} Total
                 </Badge>
-                <Badge size="lg" variant="light" color="green" radius="sm">
+                <Badge className={styles.statsBadge} size="md" variant="light" color="green" radius="sm">
                   {speakerCounts.withSessions} Assigned
                 </Badge>
-                <Badge size="lg" variant="light" color="gray" radius="sm">
+                <Badge className={styles.statsBadge} size="md" variant="light" color="gray" radius="sm">
                   {speakerCounts.withoutSessions} Unassigned
                 </Badge>
               </div>
             </div>
-            <Group>
+            <div className={styles.headerRight}>
               {/* CSV Export - Commented out for post-launch implementation
               <Menu shadow="md" width={200}>
                 <Menu.Target>
@@ -166,12 +166,13 @@ const SpeakersManager = () => {
               <Button
                 variant="primary"
                 onClick={handleAddSpeaker}
+                className={styles.addButton}
               >
                 <IconPlus size={18} />
                 Add Speaker
               </Button>
-            </Group>
-          </Group>
+            </div>
+          </div>
         </section>
 
         {/* Main Content Section */}

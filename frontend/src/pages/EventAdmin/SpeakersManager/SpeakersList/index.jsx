@@ -1,7 +1,9 @@
-import { Table, Group, Text, ActionIcon, UnstyledButton, Badge } from '@mantine/core';
+import { Table, Group, Text, ActionIcon, UnstyledButton, Select } from '@mantine/core';
 import { IconChevronUp, IconChevronDown } from '@tabler/icons-react';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { useMediaQuery } from '@mantine/hooks';
 import SpeakerRow from '../SpeakerRow';
+import SpeakerCard from '../SpeakerCard';
 import { getNameSortValue } from '../../../../shared/utils/sorting';
 import styles from './styles.module.css';
 
@@ -13,6 +15,7 @@ const SpeakersList = ({
 }) => {
   const [sortBy, setSortBy] = useState('name');
   const [sortOrder, setSortOrder] = useState('asc');
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   const handleSort = (field) => {
     if (sortBy === field) {
@@ -23,7 +26,8 @@ const SpeakersList = ({
     }
   };
 
-  const sortedSpeakers = [...speakers].sort((a, b) => {
+  const sortedSpeakers = useMemo(() => {
+    return [...speakers].sort((a, b) => {
     let aVal, bVal;
     switch (sortBy) {
       case 'name':
@@ -61,7 +65,8 @@ const SpeakersList = ({
     } else {
       return aVal < bVal ? 1 : -1;
     }
-  });
+    });
+  }, [speakers, sortBy, sortOrder]);
 
   const SortHeader = ({ field, children }) => (
     <UnstyledButton
@@ -96,25 +101,67 @@ const SpeakersList = ({
     );
   }
 
+  // Mobile: Card layout with sorting dropdown
+  if (isMobile) {
+    return (
+      <div className={styles.mobileContainer}>
+        <div className={styles.mobileSortControls}>
+          <Select
+            label="Sort by"
+            value={`${sortBy}-${sortOrder}`}
+            onChange={(value) => {
+              const [field, order] = value.split('-');
+              setSortBy(field);
+              setSortOrder(order);
+            }}
+            data={[
+              { value: 'name-asc', label: 'Name (A-Z)' },
+              { value: 'name-desc', label: 'Name (Z-A)' },
+              { value: 'title-asc', label: 'Title (A-Z)' },
+              { value: 'title-desc', label: 'Title (Z-A)' },
+              { value: 'company-asc', label: 'Company (A-Z)' },
+              { value: 'company-desc', label: 'Company (Z-A)' },
+              { value: 'sessions-desc', label: 'Most Sessions' },
+              { value: 'sessions-asc', label: 'Least Sessions' },
+            ]}
+            className={styles.sortSelect}
+          />
+        </div>
+        <div className={styles.cardList}>
+          {sortedSpeakers.map((speaker) => (
+            <SpeakerCard
+              key={speaker.user_id}
+              speaker={speaker}
+              onEditSpeaker={onEditSpeaker}
+              currentUserRole={currentUserRole}
+              organizationId={organizationId}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Desktop: Table layout
   return (
     <div className={styles.tableContainer}>
       <Table horizontalSpacing="md" verticalSpacing="sm" striped highlightOnHover>
         <Table.Thead>
           <Table.Tr>
-            <Table.Th>
+            <Table.Th style={{ minWidth: '200px', maxWidth: '300px' }}>
               <SortHeader field="name">Speaker</SortHeader>
             </Table.Th>
-            <Table.Th>
+            <Table.Th style={{ minWidth: '150px' }}>
               <SortHeader field="title">Title</SortHeader>
             </Table.Th>
-            <Table.Th>
+            <Table.Th style={{ minWidth: '120px' }}>
               <SortHeader field="company">Company</SortHeader>
             </Table.Th>
-            <Table.Th style={{ textAlign: 'center' }}>
+            <Table.Th style={{ textAlign: 'center', width: '100px' }}>
               <SortHeader field="sessions">Sessions</SortHeader>
             </Table.Th>
-            <Table.Th>Bio</Table.Th>
-            <Table.Th width={100} style={{ textAlign: 'center' }}>Actions</Table.Th>
+            <Table.Th style={{ minWidth: '150px' }}>Bio</Table.Th>
+            <Table.Th width={80} style={{ textAlign: 'center' }}>Actions</Table.Th>
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>

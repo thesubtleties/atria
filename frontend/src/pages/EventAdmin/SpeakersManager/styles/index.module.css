@@ -62,37 +62,64 @@
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-radius: 8px;
-  padding: 2rem;
+  border-radius: var(--radius-lg);
+  padding: clamp(1.25rem, 3vw, 2rem);
   border: 1px solid rgba(255, 255, 255, 0.8);
   box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
-  margin-bottom: 2rem;
+  margin-bottom: clamp(1rem, 3vw, 2rem);
+}
+
+/* Header Content Layout */
+.headerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: clamp(1rem, 3vw, 2rem);
+  flex-wrap: wrap;
+}
+
+.headerLeft {
+  flex: 1;
+  min-width: 0;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.5rem, 2vw, 1rem);
 }
 
 /* Page Title Styling */
 .pageTitle {
-  font-size: 1.5rem;
+  font-size: clamp(var(--text-xl), 3vw, var(--text-2xl));
   font-weight: 600;
-  color: #1e293b;
-  margin: 0 0 0.75rem 0;
+  color: var(--color-text-primary);
+  margin: 0 0 clamp(0.5rem, 2vw, 0.75rem) 0;
 }
 
 /* Badge Group */
 .badgeGroup {
   display: flex;
-  gap: 0.5rem;
+  gap: clamp(0.375rem, 1.5vw, 0.5rem);
   flex-wrap: wrap;
+  margin-top: clamp(0.5rem, 1.5vw, 0.75rem);
 }
 
 /* Updated Badge Styles */
 .statsBadge {
-  background: rgba(139, 92, 246, 0.08);
-  color: #8b5cf6;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  border: 1px solid rgba(139, 92, 246, 0.15);
+  background: var(--primary-alpha-8) !important;
+  color: var(--color-text-secondary) !important;
+  padding: clamp(0.25rem, 1vw, 0.375rem) clamp(0.5rem, 1.5vw, 0.75rem) !important;
+  border-radius: var(--radius-md) !important;
+  font-size: clamp(0.7rem, 1.8vw, 0.85rem) !important;
+  font-weight: 500 !important;
+  border: 1px solid var(--primary-alpha-15) !important;
+  white-space: nowrap;
+}
+
+/* Add button styling */
+.addButton {
+  white-space: nowrap;
 }
 
 /* Main Content Glass Section */
@@ -113,15 +140,15 @@
 
 /* Search Input Styling */
 .searchInput input {
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(139, 92, 246, 0.1);
-  font-size: 0.95rem;
-  transition: all 0.2s ease;
+  background: rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid var(--primary-alpha-10) !important;
+  font-size: clamp(var(--text-sm), 2vw, var(--text-base)) !important;
+  transition: all 0.2s ease !important;
 }
 
 .searchInput input:focus {
-  border-color: rgba(139, 92, 246, 0.3);
-  background: rgba(255, 255, 255, 0.8);
+  border-color: var(--primary-alpha-30) !important;
+  background: rgba(255, 255, 255, 0.9) !important;
 }
 
 /* Action Icon Styling */
@@ -130,28 +157,28 @@
 }
 
 .actionIcon:hover {
-  background: rgba(139, 92, 246, 0.08);
+  background: var(--primary-alpha-8);
 }
 
 /* Menu Dropdown Styling */
 .menuDropdown {
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.95) !important;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.08);
-  border-radius: 6px;
+  box-shadow: var(--shadow-md);
+  border-radius: var(--radius-md);
 }
 
 .menuItem {
-  color: #475569;
-  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  font-size: clamp(var(--text-sm), 2vw, 0.9rem);
   transition: all 0.2s ease;
 }
 
 .menuItem:hover {
-  background: rgba(139, 92, 246, 0.04);
-  color: #8b5cf6;
+  background: var(--primary-alpha-4);
+  color: var(--color-primary);
 }
 
 /* Table Container - Moved from SpeakersList but kept for reference */
@@ -211,15 +238,42 @@
 
   .headerSection,
   .mainContent {
-    padding: 1.5rem;
+    padding: 1rem;
+  }
+
+  .headerContent {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .headerLeft {
+    width: 100%;
+  }
+
+  .headerRight {
+    width: 100%;
+    justify-content: center;
   }
 
   .pageTitle {
-    font-size: 1.25rem;
+    font-size: clamp(1.25rem, 5vw, 1.5rem);
+    text-align: center;
+    margin-bottom: 0.5rem;
   }
 
   .badgeGroup {
-    gap: 0.25rem;
+    justify-content: center;
+    gap: 0.375rem;
+  }
+
+  .statsBadge {
+    font-size: 0.75rem !important;
+    padding: 0.25rem 0.5rem !important;
+  }
+
+  .addButton {
+    width: 100%;
+    justify-content: center;
   }
 
   .bgShape1,

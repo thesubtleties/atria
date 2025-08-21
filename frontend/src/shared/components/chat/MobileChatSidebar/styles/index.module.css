@@ -12,7 +12,7 @@
   box-shadow: 
     0 -4px 20px rgba(139, 92, 246, 0.04),
     0 -2px 8px rgba(0, 0, 0, 0.04);
-  z-index: 1000;
+  z-index: 100; /* Reduced from 1000 to be below modals */
   transition: height 0.3s ease;
   display: flex;
   flex-direction: column;

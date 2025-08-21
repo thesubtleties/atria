@@ -1,37 +1,37 @@
-/* Table Container - Glass Card Style */
+/* Table Container - Glass Card Style (Desktop) */
 .tableContainer {
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.9);
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.03);
+  box-shadow: var(--shadow-sm);
 }
 
 /* Table Header */
 .tableContainer thead tr {
-  background: rgba(139, 92, 246, 0.04);
-  border-bottom: 1px solid rgba(139, 92, 246, 0.08);
+  background: var(--primary-alpha-4);
+  border-bottom: 1px solid var(--primary-alpha-8);
 }
 
 .tableContainer th {
   font-weight: 500;
-  color: #64748B;
-  padding: 1rem;
-  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  padding: clamp(0.75rem, 2vw, 1rem);
+  font-size: clamp(var(--text-xs), 1.5vw, 0.85rem);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 /* Table Body */
 .tableContainer tbody tr {
-  border-bottom: 1px solid rgba(139, 92, 246, 0.04);
+  border-bottom: 1px solid var(--primary-alpha-4);
   transition: background-color 0.2s ease;
 }
 
 .tableContainer tbody tr:hover {
-  background: rgba(139, 92, 246, 0.02);
+  background: var(--primary-alpha-2);
 }
 
 .tableContainer tbody tr:last-child {
@@ -39,16 +39,16 @@
 }
 
 .tableContainer td {
-  padding: 1rem;
-  color: #1E293B;
-  font-size: 0.9rem;
+  padding: clamp(0.75rem, 2vw, 1rem);
+  color: var(--color-text-primary);
+  font-size: clamp(var(--text-sm), 1.5vw, 0.9rem);
 }
 
 /* Empty State */
 .emptyState {
-  padding: 4rem 2rem;
+  padding: clamp(var(--space-2xl), 5vw, 4rem) clamp(var(--space-lg), 4vw, var(--space-xl));
   text-align: center;
-  color: #64748B;
+  color: var(--color-text-secondary);
 }
 
 /* Sort Header */
@@ -68,6 +68,60 @@
 }
 
 .sortHeader:hover {
-  color: #8B5CF6;
+  color: var(--color-primary);
   background: rgba(139, 92, 246, 0.02);
+}
+
+/* Mobile Container */
+.mobileContainer {
+  display: none;
+}
+
+/* Mobile Sort Controls */
+.mobileSortControls {
+  margin-bottom: clamp(var(--space-md), 3vw, var(--space-lg));
+}
+
+.sortSelect {
+  width: 100%;
+}
+
+.sortSelect input {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid rgba(139, 92, 246, 0.1) !important;
+  font-size: clamp(var(--text-sm), 2.5vw, var(--text-base)) !important;
+}
+
+.sortSelect input:focus {
+  border-color: rgba(139, 92, 246, 0.3) !important;
+}
+
+/* Card List for Mobile */
+.cardList {
+  display: flex;
+  flex-direction: column;
+  gap: 0; /* Gap handled by card margins */
+  padding-bottom: 50px; /* Space for mobile messaging bar */
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  /* Hide desktop table on mobile */
+  .tableContainer {
+    display: none;
+  }
+  
+  /* Show mobile container */
+  .mobileContainer {
+    display: block;
+  }
+}
+
+/* Tablet adjustments for better table readability */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .tableContainer th,
+  .tableContainer td {
+    padding: clamp(0.5rem, 1.5vw, 1rem);
+    font-size: clamp(var(--text-xs), 1.5vw, var(--text-sm));
+  }
 }

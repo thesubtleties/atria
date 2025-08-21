@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Modal, TextInput, Textarea, Group, Stack, Text, Avatar, Alert } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
+import { useMediaQuery } from '@mantine/hooks';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { speakerInfoSchema } from '../schemas/speakerSchemas';
@@ -10,6 +11,7 @@ import styles from './styles.module.css';
 
 const SpeakerEditModal = ({ opened, onClose, speaker, eventId, onSuccess }) => {
   const [updateSpeakerInfo, { isLoading }] = useUpdateEventSpeakerInfoMutation();
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   const form = useForm({
     resolver: zodResolver(speakerInfoSchema),
@@ -62,67 +64,87 @@ const SpeakerEditModal = ({ opened, onClose, speaker, eventId, onSuccess }) => {
     <Modal
       opened={opened}
       onClose={onClose}
-      title="Edit Speaker Information"
+      title="Edit Speaker Info"
       size="lg"
+      centered
       lockScroll={false}
       classNames={{
         content: styles.modalContent,
         header: styles.modalHeader,
+        body: styles.modalBody,
       }}
     >
       <form onSubmit={form.onSubmit(handleSubmit)}>
-        <Stack p="lg">
+        <Stack className={styles.formStack}>
           <Group className={styles.userInfo}>
             <Avatar
               src={speaker.image_url}
               alt={speaker.full_name}
               radius="xl"
-              size="lg"
+              size={isMobile ? 'md' : 'lg'}
               className={styles.userAvatar}
             >
               {speaker.first_name?.[0]}{speaker.last_name?.[0]}
             </Avatar>
-            <div>
-              <Text fw={500}>{speaker.full_name}</Text>
-              <Text size="sm" c="dimmed">{speaker.email}</Text>
+            <div className={styles.userDetails}>
+              <Text fw={500} size={isMobile ? 'sm' : 'md'}>{speaker.full_name}</Text>
+              <Text size={isMobile ? 'xs' : 'sm'} c="dimmed">{speaker.email}</Text>
             </div>
           </Group>
 
-          <Alert icon={<IconInfoCircle size={16} />} color="blue" className={styles.infoAlert}>
-            <Text size="sm">
-              These fields override the speaker's profile information for this event only.
-              Leave blank to use their default profile information.
+          <Alert 
+            icon={<IconInfoCircle size={14} />} 
+            color="blue" 
+            className={styles.infoAlert}
+            styles={{
+              root: { padding: 'var(--space-sm) !important' },
+              message: { fontSize: 'var(--text-xs) !important' }
+            }}
+          >
+            <Text size="xs">
+              Override speaker's profile info for this event only.
+              Leave blank to use defaults.
             </Text>
           </Alert>
 
           <TextInput
             label="Speaker Title"
-            placeholder={speaker.title || "Enter speaker's title for this event"}
-            description="How they should be introduced (e.g., 'CEO @ Atria'). This overrides their profile title and company."
+            placeholder={speaker.title || "Enter title for this event"}
+            description={!isMobile && "How they should be introduced (e.g., 'CEO @ Atria')"}
             className={styles.formInput}
+            size="sm"
             {...form.getInputProps('speaker_title')}
           />
 
           <Textarea
             label="Speaker Bio"
-            placeholder={speaker.bio || "Enter speaker's bio for this event"}
-            description="Biography to display on the speakers page"
-            rows={6}
+            placeholder={speaker.bio || "Enter bio for this event"}
+            description={!isMobile && "Biography to display on the speakers page"}
+            rows={isMobile ? 3 : 4}
             className={styles.formTextarea}
+            size="sm"
             {...form.getInputProps('speaker_bio')}
           />
 
-          {(speaker.title || speaker.bio) && (
-            <Alert color="gray" variant="light" className={styles.grayAlert}>
-              <Stack gap="xs">
-                <Text size="sm" fw={500}>Profile Information:</Text>
+          {!isMobile && (speaker.title || speaker.bio) && (
+            <Alert 
+              color="gray" 
+              variant="light" 
+              className={styles.grayAlert}
+              styles={{
+                root: { padding: 'var(--space-sm) !important' },
+                message: { fontSize: 'var(--text-xs) !important' }
+              }}
+            >
+              <Stack gap={4}>
+                <Text size="xs" fw={500}>Current Profile:</Text>
                 {speaker.title && (
-                  <Text size="sm">
+                  <Text size="xs" lineClamp={1}>
                     <strong>Title:</strong> {speaker.title}
                   </Text>
                 )}
                 {speaker.bio && (
-                  <Text size="sm">
+                  <Text size="xs" lineClamp={2}>
                     <strong>Bio:</strong> {speaker.bio}
                   </Text>
                 )}
