@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
 import { openConfirmationModal } from '@/shared/components/modals/ConfirmationModal';
 import { useUpdateEventUserMutation } from '@/app/features/events/api';
+import { formatTime, capitalizeWords, truncateText } from '@/shared/utils/formatting';
 import styles from './styles.module.css';
 
 const SpeakerRow = ({
@@ -23,24 +24,6 @@ const SpeakerRow = ({
   const navigate = useNavigate();
   const [updateUser] = useUpdateEventUserMutation();
   
-  // Format time from 24hr to 12hr with AM/PM
-  const formatTime = (timeStr) => {
-    if (!timeStr) return '';
-    const [hours, minutes] = timeStr.split(':');
-    const hour = parseInt(hours);
-    const ampm = hour >= 12 ? 'PM' : 'AM';
-    const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
-    return `${displayHour}:${minutes} ${ampm}`;
-  };
-
-  // Capitalize first letter of each word
-  const capitalizeWords = (str) => {
-    if (!str) return '';
-    return str.split('_').map(word => 
-      word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-    ).join(' ');
-  };
-
   const handleRemoveSpeaker = () => {
     openConfirmationModal({
       title: 'Remove Speaker Role',
@@ -91,13 +74,6 @@ const SpeakerRow = ({
         }
       },
     });
-  };
-
-  // Truncate bio for display
-  const truncateBio = (bio, maxLength = 100) => {
-    if (!bio) return 'No bio provided';
-    if (bio.length <= maxLength) return bio;
-    return bio.substring(0, maxLength) + '...';
   };
 
   const canManage = ['ADMIN', 'ORGANIZER'].includes(currentUserRole);
@@ -203,7 +179,7 @@ const SpeakerRow = ({
       <Table.Td>
         <Tooltip label={displayBio} multiline maw={300}>
           <Text size="sm" lineClamp={2} className={styles.bioText}>
-            {truncateBio(displayBio)}
+            {truncateText(displayBio, { maxLength: 100, fallback: 'No bio provided', wordBoundary: true })}
           </Text>
         </Tooltip>
       </Table.Td>

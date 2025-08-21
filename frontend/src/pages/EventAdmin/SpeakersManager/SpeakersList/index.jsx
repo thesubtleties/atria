@@ -1,6 +1,6 @@
-import { Table, Group, Text, ActionIcon, UnstyledButton, Badge, Select } from '@mantine/core';
+import { Table, Group, Text, ActionIcon, UnstyledButton, Select } from '@mantine/core';
 import { IconChevronUp, IconChevronDown } from '@tabler/icons-react';
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useMediaQuery } from '@mantine/hooks';
 import SpeakerRow from '../SpeakerRow';
 import SpeakerCard from '../SpeakerCard';
@@ -26,7 +26,8 @@ const SpeakersList = ({
     }
   };
 
-  const sortedSpeakers = [...speakers].sort((a, b) => {
+  const sortedSpeakers = useMemo(() => {
+    return [...speakers].sort((a, b) => {
     let aVal, bVal;
     switch (sortBy) {
       case 'name':
@@ -64,7 +65,8 @@ const SpeakersList = ({
     } else {
       return aVal < bVal ? 1 : -1;
     }
-  });
+    });
+  }, [speakers, sortBy, sortOrder]);
 
   const SortHeader = ({ field, children }) => (
     <UnstyledButton

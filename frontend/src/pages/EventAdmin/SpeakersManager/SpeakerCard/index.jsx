@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
 import { openConfirmationModal } from '@/shared/components/modals/ConfirmationModal';
 import { useUpdateEventUserMutation } from '@/app/features/events/api';
+import { formatTime, capitalizeWords, truncateBio } from '@/shared/utils/formatting';
 import styles from './styles.module.css';
 
 const SpeakerCard = ({
@@ -26,22 +27,6 @@ const SpeakerCard = ({
   const navigate = useNavigate();
   const [updateUser] = useUpdateEventUserMutation();
   const [sessionsExpanded, setSessionsExpanded] = useState(false);
-
-  const formatTime = (timeStr) => {
-    if (!timeStr) return '';
-    const [hours, minutes] = timeStr.split(':');
-    const hour = parseInt(hours);
-    const ampm = hour >= 12 ? 'PM' : 'AM';
-    const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
-    return `${displayHour}:${minutes} ${ampm}`;
-  };
-
-  const capitalizeWords = (str) => {
-    if (!str) return '';
-    return str.split('_').map(word => 
-      word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-    ).join(' ');
-  };
 
   const handleRemoveSpeaker = () => {
     openConfirmationModal({
@@ -93,12 +78,6 @@ const SpeakerCard = ({
         }
       },
     });
-  };
-
-  const truncateBio = (bio, maxLength = 80) => {
-    if (!bio) return 'No bio provided';
-    if (bio.length <= maxLength) return bio;
-    return bio.substring(0, maxLength) + '...';
   };
 
   const canManage = ['ADMIN', 'ORGANIZER'].includes(currentUserRole);
