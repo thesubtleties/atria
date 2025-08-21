@@ -198,6 +198,9 @@
   transition: all 0.2s ease !important;
   backdrop-filter: blur(4px) !important;
   -webkit-backdrop-filter: blur(4px) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
 }
 
 .sessionBadge[data-status="active"] {
@@ -213,6 +216,40 @@
 .sessionBadge:hover {
   transform: scale(1.05);
   box-shadow: 0 2px 8px rgba(139, 92, 246, 0.15);
+}
+
+/* Expandable Sessions List */
+.sessionsList {
+  margin-top: clamp(var(--space-sm), 2vw, var(--space-md));
+  padding: clamp(var(--space-sm), 2vw, var(--space-md));
+  background: rgba(139, 92, 246, 0.02);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(139, 92, 246, 0.06);
+}
+
+.sessionItem {
+  padding: clamp(0.5rem, 1.5vw, 0.75rem) 0;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.04);
+}
+
+.sessionItem:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.sessionItem:first-child {
+  padding-top: 0;
+}
+
+.sessionTitle {
+  color: var(--color-text-primary);
+  margin-bottom: 0.25rem;
+  line-height: 1.4;
+}
+
+.sessionDetails {
+  line-height: 1.5;
+  color: var(--color-text-muted) !important;
 }
 
 /* Bio Section - Enhanced with glass effect */

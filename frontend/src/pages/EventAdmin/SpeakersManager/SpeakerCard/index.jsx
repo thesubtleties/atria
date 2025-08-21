@@ -1,4 +1,4 @@
-import { Group, Text, Avatar, Menu, ActionIcon, Badge, Tooltip, Stack, Alert } from '@mantine/core';
+import { Group, Text, Avatar, Menu, ActionIcon, Badge, Tooltip, Stack, Alert, Collapse } from '@mantine/core';
 import {
   IconDots,
   IconUserCircle,
@@ -7,7 +7,10 @@ import {
   IconTrash,
   IconMessage,
   IconAlertCircle,
+  IconChevronDown,
+  IconChevronUp,
 } from '@tabler/icons-react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
 import { openConfirmationModal } from '@/shared/components/modals/ConfirmationModal';
@@ -22,6 +25,7 @@ const SpeakerCard = ({
 }) => {
   const navigate = useNavigate();
   const [updateUser] = useUpdateEventUserMutation();
+  const [sessionsExpanded, setSessionsExpanded] = useState(false);
 
   const formatTime = (timeStr) => {
     if (!timeStr) return '';
@@ -215,38 +219,19 @@ const SpeakerCard = ({
           Sessions
         </Text>
         {speaker.session_count > 0 ? (
-          <Tooltip
-            label={
-              <Stack gap="xs">
-                {speaker.sessions?.map((session) => (
-                  <div key={session.id}>
-                    <Text size="sm" fw={500}>{session.title}</Text>
-                    <Text size="xs" c="dimmed">
-                      {session.day_number ? `Day ${session.day_number}` : 'Day TBD'}
-                      {session.start_time && session.end_time && (
-                        <> • {formatTime(session.start_time)} - {formatTime(session.end_time)}</>
-                      )}
-                      {session.session_type && <> • {capitalizeWords(session.session_type)}</>}
-                      {session.role && <> • {capitalizeWords(session.role)}</>}
-                    </Text>
-                  </div>
-                ))}
-              </Stack>
+          <Badge 
+            variant="light" 
+            color="green" 
+            radius="sm" 
+            className={styles.sessionBadge}
+            style={{ cursor: 'pointer' }}
+            onClick={() => setSessionsExpanded(!sessionsExpanded)}
+            rightSection={
+              sessionsExpanded ? <IconChevronUp size={14} /> : <IconChevronDown size={14} />
             }
-            multiline
-            maw={400}
-            withArrow
           >
-            <Badge 
-              variant="light" 
-              color="green" 
-              radius="sm" 
-              className={styles.sessionBadge}
-              style={{ cursor: 'pointer' }}
-            >
-              {speaker.session_count} Session{speaker.session_count > 1 ? 's' : ''}
-            </Badge>
-          </Tooltip>
+            {speaker.session_count} Session{speaker.session_count > 1 ? 's' : ''}
+          </Badge>
         ) : (
           <Badge 
             variant="light" 
@@ -258,6 +243,29 @@ const SpeakerCard = ({
           </Badge>
         )}
       </div>
+
+      {/* Expandable Sessions List */}
+      {speaker.session_count > 0 && (
+        <Collapse in={sessionsExpanded}>
+          <div className={styles.sessionsList}>
+            {speaker.sessions?.map((session) => (
+              <div key={session.id} className={styles.sessionItem}>
+                <Text size="sm" fw={500} className={styles.sessionTitle}>
+                  {session.title}
+                </Text>
+                <Text size="xs" c="dimmed" className={styles.sessionDetails}>
+                  {session.day_number ? `Day ${session.day_number}` : 'Day TBD'}
+                  {session.start_time && session.end_time && (
+                    <> • {formatTime(session.start_time)} - {formatTime(session.end_time)}</>
+                  )}
+                  {session.session_type && <> • {capitalizeWords(session.session_type)}</>}
+                  {session.role && <> • {capitalizeWords(session.role)}</>}
+                </Text>
+              </div>
+            ))}
+          </div>
+        </Collapse>
+      )}
 
       {/* Bio Section */}
       {displayBio && (
