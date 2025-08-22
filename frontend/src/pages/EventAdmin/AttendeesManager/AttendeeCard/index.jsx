@@ -139,8 +139,8 @@ const AttendeeCard = ({
   const handleMessage = async () => {
     try {
       const result = await createThread({
-        user1_id: currentUserId,
-        user2_id: data.user_id,
+        userId: data.user_id,
+        eventId: data.event_id  // Include event context for proper thread creation
       }).unwrap();
       
       dispatch(openThread(result));
@@ -206,7 +206,7 @@ const AttendeeCard = ({
                     disabled={!isConnected && currentUserId !== data.user_id}
                     color={(isConnected || currentUserId === data.user_id) ? undefined : "gray"}
                   >
-                    View Profile {(!isConnected && currentUserId !== data.user_id) && "(Not Connected)"}
+                    View Profile
                   </Menu.Item>
                   
                   {canChangeUserRole(currentUserRole, data.role, adminCount) && (
@@ -303,9 +303,18 @@ const AttendeeCard = ({
           }
         </Avatar>
         <div className={styles.userDetails}>
-          <Text fw={600} className={styles.userName}>
-            {!isInvitation ? data.full_name : data.email}
-          </Text>
+          <Group gap="xs" wrap="nowrap" align="center">
+            <Text fw={600} className={styles.userName}>
+              {!isInvitation ? data.full_name : data.email}
+            </Text>
+            {!isInvitation && isConnected && (
+              <IconUserCheck 
+                size={14} 
+                style={{ color: 'rgba(139, 92, 246, 0.7)', flexShrink: 0 }}
+                title="Connected"
+              />
+            )}
+          </Group>
           <Text size="sm" className={styles.userEmail}>
             {!isInvitation ? data.email : `Invited by: ${data.inviter_name || 'Unknown'}`}
           </Text>
@@ -313,10 +322,8 @@ const AttendeeCard = ({
           <Group gap="xs" mt={4}>
             <Badge 
               className={styles[`${data.role.toLowerCase()}Badge`] || styles.roleBadge}
-              variant="light" 
               radius="sm"
               size="sm"
-              rightSection={!isInvitation && isConnected && <IconUserCheck size={10} />}
             >
               {getRoleDisplayName(data.role)}
             </Badge>

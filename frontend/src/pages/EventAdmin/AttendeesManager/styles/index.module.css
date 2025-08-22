@@ -4,6 +4,7 @@
   background: var(--color-background-base, rgba(251, 250, 255, 1));
   position: relative;
   overflow: hidden; /* Prevent scroll from shapes */
+  padding-bottom: 25px;
 }
 
 /* Background Organic Shapes - Unique orange/blue gradient combination */
