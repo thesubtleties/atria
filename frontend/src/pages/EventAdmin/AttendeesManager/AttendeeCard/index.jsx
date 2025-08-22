@@ -442,12 +442,12 @@ const AttendeeCard = ({
                 <Text size="sm">{formatDate(data.created_at)}</Text>
               </div>
               {data.is_banned && (
-                <Badge color="red" variant="light" leftSection={<IconBan size={14} />}>
+                <Badge className={styles.bannedBadge} radius="sm" size="sm" leftSection={<IconBan size={12} />}>
                   Banned
                 </Badge>
               )}
               {data.is_chat_banned && (
-                <Badge color="orange" variant="light" leftSection={<IconVolumeOff size={14} />}>
+                <Badge className={styles.chatBannedBadge} radius="sm" size="sm" leftSection={<IconVolumeOff size={12} />}>
                   Chat Banned
                 </Badge>
               )}

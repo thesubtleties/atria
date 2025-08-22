@@ -163,6 +163,15 @@
   composes: badge-base badge-neutral from '../../../../styles/design-tokens.css';
 }
 
+/* Moderation status badges */
+.bannedBadge {
+  composes: badge-base badge-banned from '../../../../styles/design-tokens.css';
+}
+
+.chatBannedBadge {
+  composes: badge-base badge-chat-banned from '../../../../styles/design-tokens.css';
+}
+
 /* Expandable Section for Mobile */
 .expandableSection {
   display: none;
