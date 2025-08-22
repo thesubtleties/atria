@@ -316,6 +316,19 @@
   border: 1px solid rgba(139, 92, 246, 0.15) !important;
 }
 
+/* Moderation status badges */
+.badge-banned {
+  background: rgba(239, 68, 68, 0.08) !important;
+  color: #ef4444 !important;
+  border: 1px solid rgba(239, 68, 68, 0.15) !important;
+}
+
+.badge-chat-banned {
+  background: rgba(251, 146, 60, 0.08) !important;
+  color: #fb923c !important;
+  border: 1px solid rgba(251, 146, 60, 0.15) !important;
+}
+
 /* ====================== Pagination Styles ====================== */
 /* Composable pagination class for Mantine overrides */
 .pagination-styled {
