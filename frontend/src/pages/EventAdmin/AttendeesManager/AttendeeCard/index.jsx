@@ -202,9 +202,11 @@ const AttendeeCard = ({
                 <>
                   <Menu.Item
                     leftSection={<IconUserCircle size={16} />}
-                    onClick={() => navigate(`/app/users/${data.user_id}`)}
+                    onClick={(isConnected || currentUserId === data.user_id) ? () => navigate(`/app/users/${data.user_id}`) : undefined}
+                    disabled={!isConnected && currentUserId !== data.user_id}
+                    color={(isConnected || currentUserId === data.user_id) ? undefined : "gray"}
                   >
-                    View Profile
+                    View Profile {(!isConnected && currentUserId !== data.user_id) && "(Not Connected)"}
                   </Menu.Item>
                   
                   {canChangeUserRole(currentUserRole, data.role, adminCount) && (

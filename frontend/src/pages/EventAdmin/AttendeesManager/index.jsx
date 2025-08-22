@@ -237,21 +237,25 @@ const AttendeesManager = () => {
             <div className={styles.headerLeft}>
               <h2 className={styles.pageTitle}>Attendees Management</h2>
               <div className={styles.badgeGroup}>
-                <Badge className={styles.totalBadge} size="md" variant="light" radius="sm">
-                  {roleCounts.total || 0} Total
-                </Badge>
-                <Badge className={styles.adminBadge} size="md" variant="light" radius="sm">
-                  {roleCounts.admins || roleCounts.ADMIN || 0} Admins
-                </Badge>
-                <Badge className={styles.organizerBadge} size="md" variant="light" radius="sm">
-                  {roleCounts.organizers || roleCounts.ORGANIZER || 0} Organizers
-                </Badge>
-                <Badge className={styles.speakerBadge} size="md" variant="light" radius="sm">
-                  {roleCounts.speakers || roleCounts.SPEAKER || 0} Speakers
-                </Badge>
-                <Badge className={styles.attendeeBadge} size="md" variant="light" radius="sm">
-                  {roleCounts.attendees || roleCounts.ATTENDEE || 0} Attendees
-                </Badge>
+                <div className={styles.badgeRow}>
+                  <Badge className={styles.totalBadge} size="md" radius="sm">
+                    {roleCounts.total || 0} Total
+                  </Badge>
+                </div>
+                <div className={styles.badgeRow}>
+                  <Badge className={styles.adminBadge} size="md" radius="sm">
+                    {roleCounts.admins || roleCounts.ADMIN || 0} Admins
+                  </Badge>
+                  <Badge className={styles.organizerBadge} size="md" radius="sm">
+                    {roleCounts.organizers || roleCounts.ORGANIZER || 0} Organizers
+                  </Badge>
+                  <Badge className={styles.speakerBadge} size="md" radius="sm">
+                    {roleCounts.speakers || roleCounts.SPEAKER || 0} Speakers
+                  </Badge>
+                  <Badge className={styles.attendeeBadge} size="md" radius="sm">
+                    {roleCounts.attendees || roleCounts.ATTENDEE || 0} Attendees
+                  </Badge>
+                </div>
               </div>
             </div>
             <div className={styles.headerRight}>

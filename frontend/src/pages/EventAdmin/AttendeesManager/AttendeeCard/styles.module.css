@@ -11,7 +11,7 @@
   border: 1px solid rgba(255, 255, 255, 0.85);
   border-radius: var(--radius-lg);
   padding: clamp(1rem, 2.5vw, 1.25rem);
-  box-shadow: 
+  box-shadow:
     0 2px 8px rgba(139, 92, 246, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.5);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -25,7 +25,7 @@
     rgba(251, 250, 255, 0.95) 100%
   );
   transform: translateY(-2px) scale(1.01);
-  box-shadow: 
+  box-shadow:
     0 8px 24px rgba(139, 92, 246, 0.12),
     inset 0 1px 0 rgba(255, 255, 255, 0.8);
   border-color: rgba(139, 92, 246, 0.1);
@@ -94,12 +94,12 @@
   width: 50px !important;
   height: 50px !important;
   border: 2px solid rgba(255, 255, 255, 0.9) !important;
-  box-shadow: 
+  box-shadow:
     0 2px 8px rgba(139, 92, 246, 0.15),
     inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
   background: linear-gradient(
-    135deg, 
-    var(--gradient-purple-light), 
+    135deg,
+    var(--gradient-purple-light),
     var(--gradient-purple-medium)
   ) !important;
   transition: all 0.3s ease;
@@ -107,7 +107,7 @@
 
 .card:hover .avatar {
   transform: scale(1.05);
-  box-shadow: 
+  box-shadow:
     0 4px 12px rgba(139, 92, 246, 0.25),
     inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
 }
@@ -141,52 +141,26 @@
 
 /* Removed separate role section - badges now inline with user details */
 
-/* Role Badge Base */
-.roleBadge,
-.adminBadge,
-.organizerBadge,
-.speakerBadge,
-.attendeeBadge {
-  padding: 4px 8px !important;
-  border-radius: var(--radius-md) !important;
-  font-size: 0.75rem !important;
-  font-weight: 600 !important;
-  white-space: nowrap;
-}
-
-/* Admin Badge - Deep Blue */
+/* Role Badge Compositions from design tokens */
 .adminBadge {
-  background: rgba(59, 130, 246, 0.08) !important;
-  color: #3b82f6 !important;
-  border: 1px solid rgba(59, 130, 246, 0.15) !important;
+  composes: badge-base badge-admin from '../../../../styles/design-tokens.css';
 }
 
-/* Organizer Badge - Orange */
 .organizerBadge {
-  background: rgba(251, 146, 60, 0.08) !important;
-  color: #fb923c !important;
-  border: 1px solid rgba(251, 146, 60, 0.15) !important;
+  composes: badge-base badge-organizer from '../../../../styles/design-tokens.css';
 }
 
-/* Speaker Badge - Purple variant */
 .speakerBadge {
-  background: rgba(168, 85, 247, 0.08) !important;
-  color: #a855f7 !important;
-  border: 1px solid rgba(168, 85, 247, 0.15) !important;
+  composes: badge-base badge-speaker from '../../../../styles/design-tokens.css';
 }
 
-/* Attendee Badge - Soft Gray */
 .attendeeBadge {
-  background: rgba(100, 116, 139, 0.08) !important;
-  color: #64748b !important;
-  border: 1px solid rgba(100, 116, 139, 0.15) !important;
+  composes: badge-base badge-attendee from '../../../../styles/design-tokens.css';
 }
 
-/* Fallback */
+/* Fallback badge for unknown roles */
 .roleBadge {
-  background: rgba(139, 92, 246, 0.08) !important;
-  color: var(--color-text-secondary) !important;
-  border: 1px solid rgba(139, 92, 246, 0.15) !important;
+  composes: badge-base badge-neutral from '../../../../styles/design-tokens.css';
 }
 
 /* Expandable Section for Mobile */

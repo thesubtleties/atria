@@ -4,52 +4,26 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Role Badge Base */
-.roleBadge,
-.adminBadge,
-.organizerBadge,
-.speakerBadge,
-.attendeeBadge {
-  padding: clamp(0.25rem, 1vw, 0.375rem) clamp(0.5rem, 1.5vw, 0.75rem) !important;
-  border-radius: var(--radius-md) !important;
-  font-size: clamp(0.7rem, 1.8vw, 0.85rem) !important;
-  font-weight: 600 !important;
-  white-space: nowrap;
-}
-
-/* Admin Badge - Deep Blue */
+/* Role Badge Compositions */
 .adminBadge {
-  background: rgba(59, 130, 246, 0.08) !important;
-  color: #3b82f6 !important;
-  border: 1px solid rgba(59, 130, 246, 0.15) !important;
+  composes: badge-base badge-admin from '../../../../styles/design-tokens.css';
 }
 
-/* Organizer Badge - Orange */
 .organizerBadge {
-  background: rgba(251, 146, 60, 0.08) !important;
-  color: #fb923c !important;
-  border: 1px solid rgba(251, 146, 60, 0.15) !important;
+  composes: badge-base badge-organizer from '../../../../styles/design-tokens.css';
 }
 
-/* Speaker Badge - Purple variant */
 .speakerBadge {
-  background: rgba(168, 85, 247, 0.08) !important;
-  color: #a855f7 !important;
-  border: 1px solid rgba(168, 85, 247, 0.15) !important;
+  composes: badge-base badge-speaker from '../../../../styles/design-tokens.css';
 }
 
-/* Attendee Badge - Soft Gray */
 .attendeeBadge {
-  background: rgba(100, 116, 139, 0.08) !important;
-  color: #64748b !important;
-  border: 1px solid rgba(100, 116, 139, 0.15) !important;
+  composes: badge-base badge-attendee from '../../../../styles/design-tokens.css';
 }
 
-/* Fallback */
+/* Fallback badge for unknown roles */
 .roleBadge {
-  background: rgba(139, 92, 246, 0.08) !important;
-  color: var(--color-text-secondary) !important;
-  border: 1px solid rgba(139, 92, 246, 0.15) !important;
+  composes: badge-base badge-neutral from '../../../../styles/design-tokens.css';
 }
 
 /* User Info Group */
@@ -61,17 +35,17 @@
 
 .userName {
   font-weight: 500;
-  color: #1E293B;
+  color: #1e293b;
 }
 
 .userEmail {
-  color: #64748B;
+  color: #64748b;
   font-size: 0.875rem;
 }
 
 /* Company Info */
 .companyInfo {
-  color: #64748B;
+  color: #64748b;
   font-size: 0.875rem;
   line-height: 1.4;
 }
@@ -82,12 +56,12 @@
 }
 
 .companyTitle {
-  color: #64748B;
+  color: #64748b;
 }
 
 /* Date Text */
 .dateText {
-  color: #94A3B8;
+  color: #94a3b8;
   font-size: 0.875rem;
 }
 
@@ -109,18 +83,18 @@
 
 .menuItem:hover {
   background: rgba(139, 92, 246, 0.04);
-  color: #8B5CF6;
+  color: #8b5cf6;
 }
 
 .menuItemDanger {
-  color: #DC2626;
+  color: #dc2626;
   font-size: 0.875rem;
   transition: all 0.2s ease;
 }
 
 .menuItemDanger:hover {
   background: rgba(220, 38, 38, 0.04);
-  color: #DC2626;
+  color: #dc2626;
 }
 
 /* Action Icon Styling */
