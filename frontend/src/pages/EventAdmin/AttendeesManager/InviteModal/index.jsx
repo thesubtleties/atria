@@ -10,6 +10,7 @@ import {
   Alert,
 } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
+import { useMediaQuery } from '@mantine/hooks';
 import { IconAlertCircle, IconUsers, IconUserPlus } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { invitationSchema, getRoleDisplayName } from '../schemas/attendeeSchemas';
@@ -21,6 +22,7 @@ import { Button } from '../../../../shared/components/buttons';
 import styles from './styles.module.css';
 
 const InviteModal = ({ opened, onClose, eventId, currentUserRole, onSuccess }) => {
+  const isMobile = useMediaQuery('(max-width: 768px)');
   const [activeTab, setActiveTab] = useState('single');
   const [bulkEmails, setBulkEmails] = useState('');
   const [sendInvitation, { isLoading: isSending }] = useSendEventInvitationMutation();
@@ -189,25 +191,26 @@ const InviteModal = ({ opened, onClose, eventId, currentUserRole, onSuccess }) =
         header: styles.modalHeader,
       }}
     >
-      <Tabs value={activeTab} onChange={setActiveTab} className={styles.tabsContainer}>
-        <Tabs.List className={styles.tabsList}>
-          <Tabs.Tab 
-            value="single" 
-            leftSection={<IconUserPlus size={16} />}
-            className={styles.tab}
-          >
-            Single Invitation
-          </Tabs.Tab>
-          <Tabs.Tab 
-            value="bulk" 
-            leftSection={<IconUsers size={16} />}
-            className={styles.tab}
-          >
-            Bulk Invitations
-          </Tabs.Tab>
-        </Tabs.List>
+      {!isMobile ? (
+        <Tabs value={activeTab} onChange={setActiveTab} className={styles.tabsContainer}>
+          <Tabs.List className={styles.tabsList}>
+            <Tabs.Tab 
+              value="single" 
+              leftSection={<IconUserPlus size={16} />}
+              className={styles.tab}
+            >
+              Single Invitation
+            </Tabs.Tab>
+            <Tabs.Tab 
+              value="bulk" 
+              leftSection={<IconUsers size={16} />}
+              className={styles.tab}
+            >
+              Bulk Invitations
+            </Tabs.Tab>
+          </Tabs.List>
 
-        <Tabs.Panel value="single" className={styles.tabPanel}>
+          <Tabs.Panel value="single" className={styles.tabPanel}>
           <form onSubmit={singleForm.onSubmit(handleSingleSubmit)}>
             <Stack spacing="md">
               <TextInput
@@ -251,9 +254,9 @@ const InviteModal = ({ opened, onClose, eventId, currentUserRole, onSuccess }) =
               </Button>
             </div>
           </form>
-        </Tabs.Panel>
+          </Tabs.Panel>
 
-        <Tabs.Panel value="bulk" className={styles.tabPanel}>
+          <Tabs.Panel value="bulk" className={styles.tabPanel}>
           <Stack spacing="md">
             <Textarea
               label="Email Addresses"
@@ -299,8 +302,56 @@ const InviteModal = ({ opened, onClose, eventId, currentUserRole, onSuccess }) =
               {isSendingBulk ? 'Sending...' : 'Send Invitations'}
             </Button>
           </div>
-        </Tabs.Panel>
-      </Tabs>
+          </Tabs.Panel>
+        </Tabs>
+      ) : (
+        /* Mobile: Only show single invitation form without tabs */
+        <form onSubmit={singleForm.onSubmit(handleSingleSubmit)}>
+          <Stack spacing="md">
+            <TextInput
+              label="Email Address"
+              placeholder="attendee@example.com"
+              required
+              className={styles.formInput}
+              {...singleForm.getInputProps('email')}
+            />
+
+            <Select
+              label="Role"
+              data={roleOptions}
+              required
+              className={styles.formSelect}
+              {...singleForm.getInputProps('role')}
+            />
+
+            <Textarea
+              label="Personal Message"
+              placeholder="Add a personal message to the invitation (optional)"
+              rows={3}
+              className={styles.formTextarea}
+              {...singleForm.getInputProps('message')}
+            />
+
+            <div className={styles.buttonGroup}>
+              <Button
+                variant="secondary"
+                onClick={handleClose}
+                disabled={isSending}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="primary"
+                loading={isSending}
+                disabled={!singleForm.isValid()}
+              >
+                Send Invitation
+              </Button>
+            </div>
+          </Stack>
+        </form>
+      )}
     </Modal>
   );
 };
