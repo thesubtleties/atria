@@ -202,6 +202,7 @@ const SpeakersManager = () => {
                 value={page}
                 onChange={setPage}
                 total={speakersData.total_pages}
+                className={styles.pagination}
               />
             </Group>
           )}

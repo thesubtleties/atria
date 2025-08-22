@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { useMediaQuery } from '@mantine/hooks';
 import {
   Group,
   TextInput,
@@ -22,6 +23,7 @@ import {
   IconDots,
   IconUsers,
   IconMail,
+  IconChevronDown,
 } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import {
@@ -41,17 +43,19 @@ import styles from './styles/index.module.css';
 
 const AttendeesManager = () => {
   const { eventId } = useParams();
-  const [activeTab, setActiveTab] = useState('attendees');
+  const isMobile = useMediaQuery('(max-width: 768px)');
+  const [viewMode, setViewMode] = useState('attendees');
   
-  const handleTabChange = (value) => {
-    setActiveTab(value);
-    // Reset pagination when switching tabs
+  const handleViewChange = (value) => {
+    setViewMode(value);
+    // Reset pagination when switching views
     if (value === 'invitations') {
       setInvitationsPage(1);
     } else {
       setPage(1);
     }
   };
+  
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
   const [roleUpdateModal, setRoleUpdateModal] = useState({ open: false, user: null });
   const [filters, setFilters] = useState({
@@ -229,28 +233,28 @@ const AttendeesManager = () => {
       <div className={styles.contentWrapper}>
         {/* Header Section */}
         <section className={styles.headerSection}>
-          <Group justify="space-between" align="flex-start">
-            <div>
+          <div className={styles.headerContent}>
+            <div className={styles.headerLeft}>
               <h2 className={styles.pageTitle}>Attendees Management</h2>
               <div className={styles.badgeGroup}>
-                <Badge className={styles.statsBadge} size="lg" variant="light" radius="sm">
+                <Badge className={styles.totalBadge} size="md" variant="light" radius="sm">
                   {roleCounts.total || 0} Total
                 </Badge>
-                <Badge size="lg" variant="light" color="red" radius="sm">
+                <Badge className={styles.adminBadge} size="md" variant="light" radius="sm">
                   {roleCounts.admins || roleCounts.ADMIN || 0} Admins
                 </Badge>
-                <Badge size="lg" variant="light" color="orange" radius="sm">
+                <Badge className={styles.organizerBadge} size="md" variant="light" radius="sm">
                   {roleCounts.organizers || roleCounts.ORGANIZER || 0} Organizers
                 </Badge>
-                <Badge size="lg" variant="light" color="blue" radius="sm">
+                <Badge className={styles.speakerBadge} size="md" variant="light" radius="sm">
                   {roleCounts.speakers || roleCounts.SPEAKER || 0} Speakers
                 </Badge>
-                <Badge size="lg" variant="light" color="gray" radius="sm">
+                <Badge className={styles.attendeeBadge} size="md" variant="light" radius="sm">
                   {roleCounts.attendees || roleCounts.ATTENDEE || 0} Attendees
                 </Badge>
               </div>
             </div>
-            <Group>
+            <div className={styles.headerRight}>
               {/* CSV Import/Export - Commented out for post-launch implementation
               <Menu shadow="md" width={200}>
                 <Menu.Target>
@@ -279,35 +283,63 @@ const AttendeesManager = () => {
               <Button
                 variant="primary"
                 onClick={() => setInviteModalOpen(true)}
+                className={styles.addButton}
               >
                 <IconPlus size={18} />
                 Invite Attendees
               </Button>
-            </Group>
-          </Group>
+            </div>
+          </div>
         </section>
 
         {/* Main Content Section */}
         <section className={styles.mainContent}>
-          <Tabs value={activeTab} onChange={handleTabChange} className={styles.tabsContainer}>
-            <Tabs.List className={styles.tabsList}>
-              <Tabs.Tab 
-                value="attendees" 
-                className={styles.tab}
-                leftSection={<IconUsers size={16} />}
-              >
-                Attendees ({roleCounts.total || 0})
-              </Tabs.Tab>
-              <Tabs.Tab 
-                value="invitations" 
-                className={styles.tab}
-                leftSection={<IconMail size={16} />}
-              >
-                Pending Invitations ({invitationsData?.total_items || 0})
-              </Tabs.Tab>
-            </Tabs.List>
+          {/* Mobile View Selector - Only visible on mobile */}
+          <div className={styles.mobileViewSelector}>
+            <Select
+              value={viewMode}
+              onChange={handleViewChange}
+              data={[
+                { value: 'attendees', label: `Attendees (${roleCounts.total || 0})` },
+                { value: 'invitations', label: `Pending Invitations (${invitationsData?.total_items || 0})` }
+              ]}
+              leftSection={viewMode === 'attendees' ? <IconUsers size={16} /> : <IconMail size={16} />}
+              rightSection={<IconChevronDown size={16} />}
+              className={styles.mobileSelect}
+              classNames={{
+                input: styles.mobileSelectInput,
+                dropdown: styles.mobileSelectDropdown,
+              }}
+              searchable={false}
+              allowDeselect={false}
+            />
+          </div>
 
-            <Tabs.Panel value="attendees" className={styles.tabPanel}>
+          {/* Desktop Tabs - Hidden on mobile */}
+          {!isMobile && (
+            <Tabs value={viewMode} onChange={handleViewChange} className={styles.tabsContainer}>
+              <Tabs.List className={styles.tabsList}>
+                <Tabs.Tab 
+                  value="attendees" 
+                  className={styles.tab}
+                  leftSection={<IconUsers size={16} />}
+                >
+                  Attendees ({roleCounts.total || 0})
+                </Tabs.Tab>
+                <Tabs.Tab 
+                  value="invitations" 
+                  className={styles.tab}
+                  leftSection={<IconMail size={16} />}
+                >
+                  Pending Invitations ({invitationsData?.total_items || 0})
+                </Tabs.Tab>
+              </Tabs.List>
+            </Tabs>
+          )}
+
+          {/* Content based on viewMode */}
+          {viewMode === 'attendees' ? (
+            <div className={styles.tabPanel}>
               <div className={styles.searchFilterContainer}>
                 <TextInput
                   className={styles.searchInput}
@@ -355,12 +387,13 @@ const AttendeesManager = () => {
                     value={page}
                     onChange={setPage}
                     total={attendeesData.total_pages}
+                    className={styles.pagination}
                   />
                 </Group>
               )}
-            </Tabs.Panel>
-
-            <Tabs.Panel value="invitations" className={styles.tabPanel}>
+            </div>
+          ) : (
+            <div className={styles.tabPanel}>
               <LoadingOverlay visible={isLoadingInvitations} />
               <PendingInvitations
                 invitations={invitationsData?.invitations || []}
@@ -372,11 +405,12 @@ const AttendeesManager = () => {
                     value={invitationsPage}
                     onChange={setInvitationsPage}
                     total={invitationsData.total_pages}
+                    className={styles.pagination}
                   />
                 </Group>
               )}
-            </Tabs.Panel>
-          </Tabs>
+            </div>
+          )}
         </section>
 
         <InviteModal

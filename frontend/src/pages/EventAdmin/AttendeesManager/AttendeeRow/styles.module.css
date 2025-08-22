@@ -1,11 +1,55 @@
-/* Role Badge */
+/* Avatar Styling */
+.userAvatar {
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Role Badge Base */
+.roleBadge,
+.adminBadge,
+.organizerBadge,
+.speakerBadge,
+.attendeeBadge {
+  padding: clamp(0.25rem, 1vw, 0.375rem) clamp(0.5rem, 1.5vw, 0.75rem) !important;
+  border-radius: var(--radius-md) !important;
+  font-size: clamp(0.7rem, 1.8vw, 0.85rem) !important;
+  font-weight: 600 !important;
+  white-space: nowrap;
+}
+
+/* Admin Badge - Deep Blue */
+.adminBadge {
+  background: rgba(59, 130, 246, 0.08) !important;
+  color: #3b82f6 !important;
+  border: 1px solid rgba(59, 130, 246, 0.15) !important;
+}
+
+/* Organizer Badge - Orange */
+.organizerBadge {
+  background: rgba(251, 146, 60, 0.08) !important;
+  color: #fb923c !important;
+  border: 1px solid rgba(251, 146, 60, 0.15) !important;
+}
+
+/* Speaker Badge - Purple variant */
+.speakerBadge {
+  background: rgba(168, 85, 247, 0.08) !important;
+  color: #a855f7 !important;
+  border: 1px solid rgba(168, 85, 247, 0.15) !important;
+}
+
+/* Attendee Badge - Soft Gray */
+.attendeeBadge {
+  background: rgba(100, 116, 139, 0.08) !important;
+  color: #64748b !important;
+  border: 1px solid rgba(100, 116, 139, 0.15) !important;
+}
+
+/* Fallback */
 .roleBadge {
-  border-radius: 6px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-size: 0.75rem;
-  padding: 0.25rem 0.75rem;
+  background: rgba(139, 92, 246, 0.08) !important;
+  color: var(--color-text-secondary) !important;
+  border: 1px solid rgba(139, 92, 246, 0.15) !important;
 }
 
 /* User Info Group */

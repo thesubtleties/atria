@@ -6,14 +6,17 @@ import {
   IconClock,
   IconCheck,
 } from '@tabler/icons-react';
+import { useMediaQuery } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { openConfirmationModal } from '@/shared/components/modals/ConfirmationModal';
 import { getRoleBadgeColor, getRoleDisplayName } from '../schemas/attendeeSchemas';
 import { useCancelEventInvitationMutation } from '../../../../app/features/eventInvitations/api';
+import AttendeeCard from '../AttendeeCard';
 import styles from './styles.module.css';
 
 const PendingInvitations = ({ invitations, onRefresh }) => {
   const [cancelInvitation] = useCancelEventInvitationMutation();
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   const handleCancel = (invitation) => {
     openConfirmationModal({
@@ -98,6 +101,27 @@ const PendingInvitations = ({ invitations, onRefresh }) => {
     );
   }
 
+  // Mobile view - cards
+  if (isMobile) {
+    return (
+      <div className={styles.cardsContainer}>
+        {invitations.map((invitation) => (
+          <AttendeeCard
+            key={invitation.id}
+            data={{
+              ...invitation,
+              inviter_name: invitation.invited_by?.full_name || 'System',
+            }}
+            isInvitation={true}
+            onRefresh={onRefresh}
+            currentUserRole="ADMIN"
+          />
+        ))}
+      </div>
+    );
+  }
+
+  // Desktop view - table
   return (
     <div className={styles.tableContainer}>
       <Table horizontalSpacing="md" verticalSpacing="sm" striped highlightOnHover>

@@ -1,6 +1,8 @@
 import { Table, Group, Text, ActionIcon, UnstyledButton } from '@mantine/core';
 import { IconChevronUp, IconChevronDown } from '@tabler/icons-react';
+import { useMediaQuery } from '@mantine/hooks';
 import AttendeeRow from '../AttendeeRow';
+import AttendeeCard from '../AttendeeCard';
 import styles from './styles.module.css';
 
 const AttendeesList = ({
@@ -14,6 +16,7 @@ const AttendeesList = ({
   sortBy,
   sortOrder,
 }) => {
+  const isMobile = useMediaQuery('(max-width: 768px)');
   const SortHeader = ({ field, children }) => (
     <UnstyledButton
       onClick={() => onSort(field)}
@@ -47,16 +50,35 @@ const AttendeesList = ({
     );
   }
 
+  // Mobile view - cards
+  if (isMobile) {
+    return (
+      <div className={styles.cardsContainer}>
+        {attendees.map((attendee) => (
+          <AttendeeCard
+            key={attendee.user_id}
+            data={attendee}
+            isInvitation={false}
+            onUpdateRole={onUpdateRole}
+            currentUserRole={currentUserRole}
+            currentUserId={currentUserId}
+            adminCount={adminCount}
+            eventIcebreakers={eventIcebreakers}
+            onRefresh={() => {}}
+          />
+        ))}
+      </div>
+    );
+  }
+
+  // Desktop view - table
   return (
     <div className={styles.tableContainer}>
       <Table horizontalSpacing="md" verticalSpacing="sm" striped highlightOnHover>
         <Table.Thead>
           <Table.Tr>
             <Table.Th>
-              <SortHeader field="name">Name</SortHeader>
-            </Table.Th>
-            <Table.Th>
-              <SortHeader field="email">Email</SortHeader>
+              <SortHeader field="name">Attendee</SortHeader>
             </Table.Th>
             <Table.Th style={{ textAlign: 'center' }}>
               <SortHeader field="role">Role</SortHeader>
