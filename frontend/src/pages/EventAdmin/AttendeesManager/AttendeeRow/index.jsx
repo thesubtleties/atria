@@ -347,9 +347,18 @@ const AttendeeRow = ({
             {attendee.first_name?.[0]}{attendee.last_name?.[0]}
           </Avatar>
           <div style={{ minWidth: 0, flex: 1 }}>
-            <Text size="sm" fw={500} truncate>
-              {attendee.full_name}
-            </Text>
+            <Group gap="xs" wrap="nowrap">
+              <Text size="sm" fw={500} truncate>
+                {attendee.full_name}
+              </Text>
+              {isConnected && (
+                <IconUserCheck 
+                  size={14} 
+                  style={{ color: 'rgba(139, 92, 246, 0.7)', flexShrink: 0 }}
+                  title="Connected"
+                />
+              )}
+            </Group>
             <Text size="xs" c="dimmed" truncate>
               {attendee.email}
             </Text>
@@ -361,7 +370,6 @@ const AttendeeRow = ({
           size="md"
           radius="sm"
           className={styles[`${attendee.role.toLowerCase()}Badge`] || styles.roleBadge}
-          variant="light"
         >
           {getRoleDisplayName(attendee.role)}
         </Badge>
@@ -392,7 +400,9 @@ const AttendeeRow = ({
             <Menu.Item
               className={styles.menuItem}
               leftSection={<IconUserCircle size={16} />}
-              onClick={() => navigate(`/app/users/${attendee.user_id}`)}
+              onClick={(isConnected || currentUserId === attendee.user_id) ? () => navigate(`/app/users/${attendee.user_id}`) : undefined}
+              disabled={!isConnected && currentUserId !== attendee.user_id}
+              color={(isConnected || currentUserId === attendee.user_id) ? undefined : "gray"}
             >
               View Profile
             </Menu.Item>
