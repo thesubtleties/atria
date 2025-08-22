@@ -90,3 +90,28 @@
   background: rgba(139, 92, 246, 0.08);
   color: #8B5CF6;
 }
+
+/* Cards Container - Mobile View */
+.cardsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.75rem, 2vw, 1rem);
+  padding: clamp(0.5rem, 1vw, 0.75rem) 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .tableContainer {
+    display: none;
+  }
+
+  .cardsContainer {
+    gap: clamp(0.625rem, 2vw, 0.875rem);
+  }
+}
+
+@media (min-width: 769px) {
+  .cardsContainer {
+    display: none;
+  }
+}

@@ -1,0 +1,286 @@
+/* AttendeeCard Component Styles - Enhanced glassmorphism matching SpeakerCard */
+.card {
+  position: relative;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(251, 250, 255, 0.9) 100%
+  );
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: var(--radius-lg);
+  padding: clamp(1rem, 2.5vw, 1.25rem);
+  box-shadow:
+    0 2px 8px rgba(139, 92, 246, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.card:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 1) 0%,
+    rgba(251, 250, 255, 0.95) 100%
+  );
+  transform: translateY(-2px) scale(1.01);
+  box-shadow:
+    0 8px 24px rgba(139, 92, 246, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  border-color: rgba(139, 92, 246, 0.1);
+}
+
+/* Subtle gradient accent for visual interest */
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    var(--gradient-purple-light),
+    var(--gradient-purple-medium),
+    var(--gradient-purple-light)
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card:hover::before {
+  opacity: 0.6;
+}
+
+/* Card Actions - Top right corner */
+.cardActions {
+  position: absolute;
+  top: clamp(0.75rem, 2vw, 1rem);
+  right: clamp(0.75rem, 2vw, 1rem);
+  z-index: 1;
+}
+
+.actionButton {
+  color: var(--color-text-muted) !important;
+  background: rgba(255, 255, 255, 0.5) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  width: 32px !important;
+  height: 32px !important;
+  border: 1px solid rgba(139, 92, 246, 0.08) !important;
+  border-radius: var(--radius-md) !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.actionButton:hover {
+  color: var(--color-primary) !important;
+  background: rgba(139, 92, 246, 0.08) !important;
+  border-color: rgba(139, 92, 246, 0.15) !important;
+  transform: scale(1.05) !important;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.15) !important;
+}
+
+/* User Info Section */
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.75rem, 2vw, 1rem);
+  margin-bottom: clamp(1rem, 2.5vw, 1.25rem);
+}
+
+.avatar {
+  flex-shrink: 0;
+  width: 50px !important;
+  height: 50px !important;
+  border: 2px solid rgba(255, 255, 255, 0.9) !important;
+  box-shadow:
+    0 2px 8px rgba(139, 92, 246, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+  background: linear-gradient(
+    135deg,
+    var(--gradient-purple-light),
+    var(--gradient-purple-medium)
+  ) !important;
+  transition: all 0.3s ease;
+}
+
+.card:hover .avatar {
+  transform: scale(1.05);
+  box-shadow:
+    0 4px 12px rgba(139, 92, 246, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+}
+
+.userDetails {
+  flex: 1;
+  min-width: 0;
+  padding-right: 40px; /* Space for action button */
+}
+
+.userName {
+  font-size: clamp(0.95rem, 2.5vw, 1.05rem);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: clamp(0.1rem, 0.5vw, 0.25rem);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.2;
+}
+
+.userEmail {
+  font-size: clamp(0.8rem, 2vw, 0.875rem);
+  color: var(--color-text-secondary) !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.3;
+  margin-bottom: 0.25rem;
+}
+
+/* Removed separate role section - badges now inline with user details */
+
+/* Role Badge Compositions from design tokens */
+.adminBadge {
+  composes: badge-base badge-admin from '../../../../styles/design-tokens.css';
+}
+
+.organizerBadge {
+  composes: badge-base badge-organizer from '../../../../styles/design-tokens.css';
+}
+
+.speakerBadge {
+  composes: badge-base badge-speaker from '../../../../styles/design-tokens.css';
+}
+
+.attendeeBadge {
+  composes: badge-base badge-attendee from '../../../../styles/design-tokens.css';
+}
+
+/* Fallback badge for unknown roles */
+.roleBadge {
+  composes: badge-base badge-neutral from '../../../../styles/design-tokens.css';
+}
+
+/* Expandable Section for Mobile */
+.expandableSection {
+  display: none;
+  padding: clamp(0.5rem, 1.5vw, 0.75rem);
+  background: rgba(139, 92, 246, 0.02);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.2s ease;
+  margin-top: clamp(1rem, 2vw, 1.25rem);
+  border-top: 1px solid rgba(139, 92, 246, 0.06);
+}
+
+.expandableSection:hover {
+  background: rgba(139, 92, 246, 0.04);
+}
+
+/* Details List */
+.detailsList {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.75rem, 2vw, 1rem);
+  padding: clamp(0.75rem, 2vw, 1rem);
+  background: rgba(139, 92, 246, 0.02);
+  border: 1px solid rgba(139, 92, 246, 0.06);
+  border-radius: var(--radius-md);
+  margin-top: clamp(0.5rem, 1.5vw, 0.75rem);
+}
+
+.detailItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.detailItem > :first-child {
+  font-size: clamp(0.7rem, 1.8vw, 0.75rem);
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+.detailItem > :last-child {
+  font-size: clamp(0.85rem, 2vw, 0.9rem);
+  color: var(--color-text-primary);
+  word-break: break-word;
+}
+
+/* Status Badges */
+.statsBadge {
+  background: rgba(139, 92, 246, 0.08) !important;
+  color: var(--color-primary) !important;
+  font-weight: 500 !important;
+  border: 1px solid rgba(139, 92, 246, 0.15) !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .card {
+    padding: clamp(0.875rem, 2.5vw, 1rem);
+  }
+
+  /* Show expandable section on mobile */
+  .expandableSection {
+    display: block;
+  }
+
+  /* Hide some details by default on mobile */
+  .detailsList {
+    animation: slideDown 0.2s ease;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .userInfo {
+    gap: clamp(0.5rem, 2vw, 0.75rem);
+  }
+
+  .avatar {
+    width: 45px !important;
+    height: 45px !important;
+  }
+
+  .userName {
+    font-size: clamp(0.9rem, 2.5vw, 1rem);
+  }
+
+  .userEmail {
+    font-size: clamp(0.75rem, 2vw, 0.825rem);
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: clamp(0.75rem, 2.5vw, 0.875rem);
+  }
+
+  .cardActions {
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+
+  .roleSection {
+    padding: clamp(0.5rem, 2vw, 0.75rem);
+  }
+
+  .detailsList {
+    gap: clamp(0.5rem, 2vw, 0.75rem);
+  }
+}
+
+/* Removed dark mode support - maintaining consistent light theme */

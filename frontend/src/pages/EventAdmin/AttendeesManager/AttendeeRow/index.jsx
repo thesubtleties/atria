@@ -16,7 +16,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
 import { openConfirmationModal } from '@/shared/components/modals/ConfirmationModal';
-import { getRoleBadgeColor, getRoleDisplayName, canChangeUserRole } from '../schemas/attendeeSchemas';
+import { getRoleDisplayName, canChangeUserRole } from '../schemas/attendeeSchemas';
 import { useRemoveEventUserMutation } from '../../../../app/features/events/api';
 import { 
   useBanEventUserMutation,
@@ -336,34 +336,32 @@ const AttendeeRow = ({
     <>
       <Table.Tr style={getRowStyle()}>
       <Table.Td>
-        <Group gap="sm">
+        <Group gap="sm" wrap="nowrap">
           <Avatar
             src={attendee.image_url}
             alt={attendee.full_name}
             radius="xl"
             size="md"
+            className={styles.userAvatar}
           >
             {attendee.first_name?.[0]}{attendee.last_name?.[0]}
           </Avatar>
-          <div>
-            <Text size="sm" fw={500}>
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <Text size="sm" fw={500} truncate>
               {attendee.full_name}
+            </Text>
+            <Text size="xs" c="dimmed" truncate>
+              {attendee.email}
             </Text>
           </div>
         </Group>
-      </Table.Td>
-      <Table.Td>
-        <Text size="sm" c="dimmed">
-          {attendee.email}
-        </Text>
       </Table.Td>
       <Table.Td style={{ textAlign: 'center' }}>
         <Badge
           size="md"
           radius="sm"
-          color={getRoleBadgeColor(attendee.role)}
+          className={styles[`${attendee.role.toLowerCase()}Badge`] || styles.roleBadge}
           variant="light"
-          className={styles.roleBadge}
         >
           {getRoleDisplayName(attendee.role)}
         </Badge>

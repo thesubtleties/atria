@@ -1,38 +1,40 @@
 /* Page Container - Full viewport */
 .container {
   min-height: 100vh;
-  background: rgba(251, 250, 255, 1);
+  background: var(--color-background-base, rgba(251, 250, 255, 1));
   position: relative;
   overflow: hidden; /* Prevent scroll from shapes */
 }
 
-/* Background Organic Shapes */
+/* Background Organic Shapes - Unique orange/blue gradient combination */
 .bgShape1 {
   position: fixed;
-  width: 320px;
-  height: 320px;
-  background: linear-gradient(135deg, #8b5cf6, #a855f7);
-  border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
-  top: 100px;
-  right: -160px;
-  opacity: 0.04;
-  animation: float 18s ease-in-out infinite;
+  width: 400px;
+  height: 400px;
+  background: linear-gradient(120deg, #3b82f6 0%, #60a5fa 50%, #93c5fd 100%);
+  border-radius: 42% 58% 70% 30% / 45% 30% 70% 55%;
+  top: -120px;
+  right: -100px;
+  opacity: 0.05;
+  animation: float 25s ease-in-out infinite;
   z-index: 1;
   pointer-events: none;
+  transform: rotate(15deg);
 }
 
 .bgShape2 {
   position: fixed;
-  width: 280px;
-  height: 300px;
-  background: linear-gradient(45deg, #f59e0b, #fcd34d);
-  border-radius: 30% 70% 53% 47% / 26% 46% 54% 74%;
-  bottom: 200px;
-  left: -140px;
-  opacity: 0.03;
-  animation: float 22s ease-in-out infinite reverse;
+  width: 350px;
+  height: 350px;
+  background: linear-gradient(225deg, #fb923c 0%, #fed7aa 50%, #ffedd5 100%);
+  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  bottom: 50px;
+  left: -150px;
+  opacity: 0.04;
+  animation: float 30s ease-in-out infinite reverse;
   z-index: 1;
   pointer-events: none;
+  transform: rotate(-20deg);
 }
 
 @keyframes float {
@@ -54,56 +56,94 @@
   z-index: 10;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: clamp(1rem, 3vw, 2rem);
 }
 
 /* Glass Section for Header */
 .headerSection {
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--color-background-glass);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-radius: 8px;
-  padding: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
-  margin-bottom: 2rem;
+  border-radius: var(--radius-lg);
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid var(--primary-alpha-10);
+  box-shadow: var(--shadow-md);
+  margin-bottom: clamp(1.25rem, 3vw, 2rem);
+}
+
+/* Header content layout */
+.headerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: clamp(1rem, 3vw, 2rem);
+  flex-wrap: wrap;
+}
+
+.headerLeft {
+  flex: 1;
+  min-width: 0;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.75rem, 2vw, 1rem);
 }
 
 /* Page Title Styling */
 .pageTitle {
-  font-size: 1.5rem;
+  font-size: clamp(1.25rem, 3vw, 1.5rem);
   font-weight: 600;
-  color: #1e293b;
-  margin: 0 0 0.75rem 0;
+  color: var(--color-text-primary);
+  margin: 0 0 clamp(0.5rem, 2vw, 0.75rem) 0;
 }
 
 /* Badge Group */
 .badgeGroup {
   display: flex;
-  gap: 0.5rem;
+  gap: clamp(0.375rem, 1.5vw, 0.5rem);
   flex-wrap: wrap;
+  margin-top: clamp(0.5rem, 1.5vw, 0.75rem);
 }
 
-/* Updated Badge Styles */
-.statsBadge {
-  background: rgba(139, 92, 246, 0.08);
-  color: #8b5cf6;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  border: 1px solid rgba(139, 92, 246, 0.15);
+/* Badge Row Container - Desktop shows inline */
+.badgeRow {
+  display: flex;
+  gap: clamp(0.375rem, 1.5vw, 0.5rem);
+  align-items: center;
+}
+
+/* Badge Compositions with responsive overrides */
+.totalBadge {
+  composes: badge-base badge-neutral from '../../../../styles/design-tokens.css' !important;
+}
+
+.adminBadge {
+  composes: badge-base badge-admin from '../../../../styles/design-tokens.css' !important;
+}
+
+.organizerBadge {
+  composes: badge-base badge-organizer from '../../../../styles/design-tokens.css' !important;
+}
+
+.speakerBadge {
+  composes: badge-base badge-speaker from '../../../../styles/design-tokens.css' !important;
+}
+
+.attendeeBadge {
+  composes: badge-base badge-attendee from '../../../../styles/design-tokens.css' !important;
 }
 
 /* Main Content Glass Section */
 .mainContent {
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--color-background-glass);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   padding: 0;
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
+  border: 1px solid var(--primary-alpha-10);
+  box-shadow: var(--shadow-md);
   overflow: hidden;
 }
 
@@ -111,8 +151,8 @@
 .searchFilterContainer {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  gap: 1rem;
-  margin-bottom: 2rem;
+  gap: clamp(0.75rem, 2vw, 1rem);
+  margin-bottom: clamp(1.25rem, 3vw, 2rem);
 }
 
 /* Search Input Styling */
@@ -138,20 +178,9 @@
   background: rgba(255, 255, 255, 0.8);
 }
 
-/* Button Styles */
-.primaryButton {
-  background: #8b5cf6;
-  color: white;
-  border: none;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2);
-}
-
-.primaryButton:hover {
-  background: #7c3aed;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+/* Add button styling */
+.addButton {
+  white-space: nowrap;
 }
 
 /* Action Icon Styling */
@@ -161,6 +190,32 @@
 
 .actionIcon:hover {
   background: rgba(139, 92, 246, 0.08);
+}
+
+/* Mobile View Selector */
+.mobileViewSelector {
+  display: none;
+  padding: 1rem;
+  background: rgba(139, 92, 246, 0.04);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(139, 92, 246, 0.08);
+}
+
+.mobileSelect {
+  width: 100%;
+}
+
+.mobileSelectInput {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border: 1px solid rgba(139, 92, 246, 0.15) !important;
+  font-weight: 500 !important;
+}
+
+.mobileSelectDropdown {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(139, 92, 246, 0.1) !important;
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.08) !important;
 }
 
 /* Tab Container */
@@ -207,6 +262,11 @@
   padding: 1.5rem;
 }
 
+/* Pagination */
+.pagination {
+  composes: pagination-styled from '../../../../styles/design-tokens.css';
+}
+
 /* Menu Dropdown Styling */
 .menuDropdown {
   background: rgba(255, 255, 255, 0.8);
@@ -244,17 +304,66 @@
     padding: 1rem;
   }
 
-  .headerSection,
-  .mainContent {
+  .headerSection {
     padding: 1.5rem;
+  }
+
+  /* Center header on mobile */
+  .headerContent {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .headerLeft {
+    width: 100%;
+  }
+
+  .headerRight {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .mainContent {
+    padding: 0;
   }
 
   .pageTitle {
     font-size: 1.25rem;
+    text-align: center;
   }
 
+  /* Two-row layout on mobile for badges */
   .badgeGroup {
-    gap: 0.25rem;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0.75rem auto 0;
+  }
+  
+  /* Badge rows center their content and wrap on mobile */
+  .badgeRow {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+  }
+  
+  /* First row (total) stays solo */
+  .badgeRow:first-child {
+    margin-bottom: 0.25rem;
+  }
+
+  /* Show mobile dropdown, hide desktop tabs */
+  .mobileViewSelector {
+    display: block;
+  }
+
+  .tabsList {
+    display: none !important;
+  }
+
+  .tabPanel {
+    padding: 1rem;
   }
 
   .bgShape1,

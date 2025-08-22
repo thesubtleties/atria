@@ -126,15 +126,19 @@ const SpeakersManager = () => {
             <div className={styles.headerLeft}>
               <h2 className={styles.pageTitle}>Speakers Management</h2>
               <div className={styles.badgeGroup}>
-                <Badge className={styles.statsBadge} size="md" variant="light" radius="sm">
-                  {speakerCounts.total} Total
-                </Badge>
-                <Badge className={styles.statsBadge} size="md" variant="light" color="green" radius="sm">
-                  {speakerCounts.withSessions} Assigned
-                </Badge>
-                <Badge className={styles.statsBadge} size="md" variant="light" color="gray" radius="sm">
-                  {speakerCounts.withoutSessions} Unassigned
-                </Badge>
+                <div className={styles.badgeRow}>
+                  <Badge className={styles.totalBadge} size="md" radius="sm">
+                    {speakerCounts.total} Total
+                  </Badge>
+                </div>
+                <div className={styles.badgeRow}>
+                  <Badge className={styles.assignedBadge} size="md" radius="sm">
+                    {speakerCounts.withSessions} Assigned
+                  </Badge>
+                  <Badge className={styles.unassignedBadge} size="md" radius="sm">
+                    {speakerCounts.withoutSessions} Unassigned
+                  </Badge>
+                </div>
               </div>
             </div>
             <div className={styles.headerRight}>
@@ -202,6 +206,7 @@ const SpeakersManager = () => {
                 value={page}
                 onChange={setPage}
                 total={speakersData.total_pages}
+                className={styles.pagination}
               />
             </Group>
           )}

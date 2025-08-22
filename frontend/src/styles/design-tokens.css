@@ -5,86 +5,86 @@
 
 :root {
   /* Brand Colors - From Actual Assets */
-  --color-primary: #8B5CF6;      /* Purple from wave-drape.svg */
-  --color-primary-hover: #7C3AED; /* Darker purple for hover */
-  --color-accent-yellow: #FFD666; /* Yellow from atria-logo.svg */
-  
+  --color-primary: #8b5cf6; /* Purple from wave-drape.svg */
+  --color-primary-hover: #7c3aed; /* Darker purple for hover */
+  --color-accent-yellow: #ffd666; /* Yellow from atria-logo.svg */
+
   /* Text Colors */
-  --color-text-primary: #1E293B;   /* Dark gray for headings */
-  --color-text-secondary: #64748B; /* Medium gray for body text */
-  --color-text-muted: #94A3B8;     /* Light gray for meta info */
-  
+  --color-text-primary: #1e293b; /* Dark gray for headings */
+  --color-text-secondary: #64748b; /* Medium gray for body text */
+  --color-text-muted: #94a3b8; /* Light gray for meta info */
+
   /* Background Colors */
-  --color-background: #FBFAFF;           /* Very light purple, almost white */
+  --color-background: #fbfaff; /* Very light purple, almost white */
   --color-background-glass: rgba(255, 255, 255, 0.8); /* Glass effect */
-  
+
   /* Status Colors */
-  --color-success: #16A34A;   /* Green */
-  --color-warning: #F59E0B;   /* Amber */
-  --color-error: #DC2626;     /* Red */
-  --color-info: #06B6D4;      /* Teal */
-  
+  --color-success: #16a34a; /* Green */
+  --color-warning: #f59e0b; /* Amber */
+  --color-error: #dc2626; /* Red */
+  --color-info: #06b6d4; /* Teal */
+
   /* Gradient Color Palette - Based on existing app usage */
-  
+
   /* Purple Family (Primary Brand Colors) */
-  --gradient-purple-light: #8B5CF6;    /* Our brand purple */
-  --gradient-purple-medium: #A855F7;   /* Medium purple */
-  --gradient-purple-dark: #7C3AED;     /* Dark purple */
-  --gradient-purple-deep: #6D28D9;     /* Deep purple */
-  
+  --gradient-purple-light: #8b5cf6; /* Our brand purple */
+  --gradient-purple-medium: #a855f7; /* Medium purple */
+  --gradient-purple-dark: #7c3aed; /* Dark purple */
+  --gradient-purple-deep: #6d28d9; /* Deep purple */
+
   /* Orange/Yellow Family */
-  --gradient-orange-bright: #FFD93D;   /* Bright yellow (from your logo) */
-  --gradient-orange-light: #FCD34D;    /* Light orange */
-  --gradient-orange-medium: #F59E0B;   /* Medium orange */
-  --gradient-orange-dark: #EAB308;     /* Dark orange */
-  
+  --gradient-orange-bright: #ffd93d; /* Bright yellow (from your logo) */
+  --gradient-orange-light: #fcd34d; /* Light orange */
+  --gradient-orange-medium: #f59e0b; /* Medium orange */
+  --gradient-orange-dark: #eab308; /* Dark orange */
+
   /* Pink Family */
-  --gradient-pink-light: #EC4899;      /* Light pink */
-  --gradient-pink-medium: #F472B6;     /* Medium pink */
-  --gradient-pink-dark: #FF6B9D;       /* Dark pink */
-  
+  --gradient-pink-light: #ec4899; /* Light pink */
+  --gradient-pink-medium: #f472b6; /* Medium pink */
+  --gradient-pink-dark: #ff6b9d; /* Dark pink */
+
   /* Blue/Teal Family */
-  --gradient-blue-light: #06B6D4;      /* Light teal */
-  --gradient-blue-medium: #0891B2;     /* Medium teal */
-  --gradient-blue-dark: #0EA5E9;       /* Dark blue */
-  --gradient-blue-bright: #67E8F9;     /* Bright cyan */
-  
+  --gradient-blue-light: #06b6d4; /* Light teal */
+  --gradient-blue-medium: #0891b2; /* Medium teal */
+  --gradient-blue-dark: #0ea5e9; /* Dark blue */
+  --gradient-blue-bright: #67e8f9; /* Bright cyan */
+
   /* Green Family */
-  --gradient-green-light: #10B981;     /* Light green */
-  --gradient-green-medium: #16A34A;    /* Medium green */
-  --gradient-green-dark: #059669;      /* Dark green */
-  
+  --gradient-green-light: #10b981; /* Light green */
+  --gradient-green-medium: #16a34a; /* Medium green */
+  --gradient-green-dark: #059669; /* Dark green */
+
   /* Red/Orange Family */
-  --gradient-red-light: #FF6B6B;       /* Light red */
-  --gradient-red-medium: #DF562C;      /* Medium red-orange */
-  --gradient-red-dark: #F86E2E;        /* Dark orange */
-  
+  --gradient-red-light: #ff6b6b; /* Light red */
+  --gradient-red-medium: #df562c; /* Medium red-orange */
+  --gradient-red-dark: #f86e2e; /* Dark orange */
+
   /* Neutral/Special */
-  --gradient-slate-light: #E2E8F0;     /* Light slate */
-  --gradient-slate-medium: #64748B;    /* Medium slate */
-  --gradient-slate-dark: #1E293B;      /* Dark slate */
-  
+  --gradient-slate-light: #e2e8f0; /* Light slate */
+  --gradient-slate-medium: #64748b; /* Medium slate */
+  --gradient-slate-dark: #1e293b; /* Dark slate */
+
   /* Spacing Scale */
-  --space-xs: 0.25rem;  /* 4px */
-  --space-sm: 0.5rem;   /* 8px */
-  --space-md: 1rem;     /* 16px */
-  --space-lg: 1.5rem;   /* 24px */
-  --space-xl: 2rem;     /* 32px */
-  --space-2xl: 3rem;    /* 48px */
-  
+  --space-xs: 0.25rem; /* 4px */
+  --space-sm: 0.5rem; /* 8px */
+  --space-md: 1rem; /* 16px */
+  --space-lg: 1.5rem; /* 24px */
+  --space-xl: 2rem; /* 32px */
+  --space-2xl: 3rem; /* 48px */
+
   /* Typography Scale */
-  --text-xs: 0.75rem;   /* 12px */
-  --text-sm: 0.875rem;  /* 14px */
-  --text-base: 1rem;    /* 16px */
-  --text-lg: 1.125rem;  /* 18px */
-  --text-xl: 1.25rem;   /* 20px */
-  --text-2xl: 1.5rem;   /* 24px */
-  
+  --text-xs: 0.75rem; /* 12px */
+  --text-sm: 0.875rem; /* 14px */
+  --text-base: 1rem; /* 16px */
+  --text-lg: 1.125rem; /* 18px */
+  --text-xl: 1.25rem; /* 20px */
+  --text-2xl: 1.5rem; /* 24px */
+
   /* Border Radius */
   --radius-sm: 4px;
   --radius-md: 6px;
   --radius-lg: 8px;
-  
+
   /* Shadows */
   --shadow-sm: 0 1px 2px rgba(139, 92, 246, 0.05);
   --shadow-md: 0 2px 8px rgba(139, 92, 246, 0.1);
@@ -99,9 +99,9 @@
   --primary-alpha-4: rgba(139, 92, 246, 0.04);
   --primary-alpha-6: rgba(139, 92, 246, 0.06);
   --primary-alpha-8: rgba(139, 92, 246, 0.08);
-  --primary-alpha-10: rgba(139, 92, 246, 0.10);
+  --primary-alpha-10: rgba(139, 92, 246, 0.1);
   --primary-alpha-15: rgba(139, 92, 246, 0.15);
-  --primary-alpha-20: rgba(139, 92, 246, 0.20);
+  --primary-alpha-20: rgba(139, 92, 246, 0.2);
 
   /* Session Type Colors - Preserving existing beautiful gradients from Agenda */
   --session-keynote-from: rgba(139, 92, 246, 0.88);
@@ -234,8 +234,165 @@
 /* Empty State */
 .empty-state {
   text-align: center;
-  padding: clamp(var(--space-lg), 4vw, var(--space-xl)) clamp(var(--space-md), 3vw, var(--space-lg));
+  padding: clamp(var(--space-lg), 4vw, var(--space-xl))
+    clamp(var(--space-md), 3vw, var(--space-lg));
   color: var(--color-text-secondary);
+}
+
+/* ====================== Badge Styles ====================== */
+/* Base badge style - compose this first for common properties */
+.badge-base {
+  padding: 6px 10px !important;
+  border-radius: var(--radius-md) !important;
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+}
+
+/* Role-specific badge styles - compose after badge-base */
+.badge-admin {
+  background: rgba(59, 130, 246, 0.08) !important;
+  color: #3b82f6 !important;
+  border: 1px solid rgba(59, 130, 246, 0.15) !important;
+}
+
+.badge-organizer {
+  background: rgba(251, 146, 60, 0.08) !important;
+  color: #fb923c !important;
+  border: 1px solid rgba(251, 146, 60, 0.15) !important;
+}
+
+.badge-speaker {
+  background: rgba(168, 85, 247, 0.08) !important;
+  color: #a855f7 !important;
+  border: 1px solid rgba(168, 85, 247, 0.15) !important;
+}
+
+.badge-attendee {
+  background: rgba(100, 116, 139, 0.08) !important;
+  color: #64748b !important;
+  border: 1px solid rgba(100, 116, 139, 0.15) !important;
+}
+
+/* Generic colored badges */
+.badge-primary {
+  background: rgba(139, 92, 246, 0.08) !important;
+  color: var(--color-primary) !important;
+  border: 1px solid rgba(139, 92, 246, 0.15) !important;
+}
+
+.badge-success {
+  background: rgba(22, 163, 74, 0.08) !important;
+  color: #16a34a !important;
+  border: 1px solid rgba(22, 163, 74, 0.15) !important;
+}
+
+.badge-warning {
+  background: rgba(245, 158, 11, 0.08) !important;
+  color: #f59e0b !important;
+  border: 1px solid rgba(245, 158, 11, 0.15) !important;
+}
+
+.badge-danger {
+  background: rgba(220, 38, 38, 0.08) !important;
+  color: #dc2626 !important;
+  border: 1px solid rgba(220, 38, 38, 0.15) !important;
+}
+
+.badge-info {
+  background: rgba(6, 182, 212, 0.08) !important;
+  color: #06b6d4 !important;
+  border: 1px solid rgba(6, 182, 212, 0.15) !important;
+}
+
+/* Neutral/fallback badge */
+.badge-neutral {
+  background: rgba(139, 92, 246, 0.08) !important;
+  color: var(--color-text-secondary) !important;
+  border: 1px solid rgba(139, 92, 246, 0.15) !important;
+}
+
+/* ====================== Pagination Styles ====================== */
+/* Composable pagination class for Mantine overrides */
+.pagination-styled {
+  /* Container placeholder for composition */
+}
+
+/* All pagination controls - base state */
+.pagination-styled :global(.mantine-Pagination-control),
+.pagination-styled :global(button.mantine-Pagination-control) {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(139, 92, 246, 0.1) !important;
+  color: #64748b !important;
+  transition: all 0.2s ease !important;
+  min-width: 36px !important;
+  height: 36px !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  border-radius: 6px !important;
+}
+
+/* Hover state - not disabled */
+.pagination-styled
+  :global(
+    .mantine-Pagination-control:hover:not([data-disabled]):not([data-active])
+  ),
+.pagination-styled
+  :global(
+    button.mantine-Pagination-control:hover:not([data-disabled]):not(
+        [data-active]
+      )
+  ) {
+  background: rgba(139, 92, 246, 0.08) !important;
+  border-color: rgba(139, 92, 246, 0.15) !important;
+  color: #8b5cf6 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.15) !important;
+}
+
+/* Active page */
+.pagination-styled :global(.mantine-Pagination-control[data-active]),
+.pagination-styled :global(button.mantine-Pagination-control[data-active]) {
+  background: rgba(139, 92, 246, 0.9) !important;
+  color: white !important;
+  border-color: rgba(139, 92, 246, 0.2) !important;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2) !important;
+  font-weight: 600 !important;
+}
+
+/* Active page hover - maintain active state */
+.pagination-styled :global(.mantine-Pagination-control[data-active]:hover),
+.pagination-styled
+  :global(button.mantine-Pagination-control[data-active]:hover) {
+  background: rgba(124, 58, 237, 0.95) !important;
+  color: white !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3) !important;
+}
+
+/* Disabled controls */
+.pagination-styled :global(.mantine-Pagination-control[data-disabled]),
+.pagination-styled :global(button.mantine-Pagination-control[data-disabled]) {
+  background: rgba(255, 255, 255, 0.5) !important;
+  border-color: rgba(139, 92, 246, 0.05) !important;
+  color: #cbd5e1 !important;
+  cursor: not-allowed !important;
+  opacity: 0.5 !important;
+}
+
+/* Dots/ellipsis styles */
+.pagination-styled :global(.mantine-Pagination-dots) {
+  color: #94a3b8 !important;
+  font-size: 0.875rem !important;
+  background: transparent !important;
+  border: none !important;
+  cursor: default !important;
 }
 
 .empty-state p {
