@@ -30,6 +30,7 @@ import {
   useCreateDirectMessageThreadMutation,
 } from '../../../../app/features/networking/api';
 import { IcebreakerModal } from '../../../../shared/components/IcebreakerModal';
+import { getModerationPermissions, getModerationRowStyles, createModerationHandlers } from '@/shared/utils/moderation';
 import { useDispatch } from 'react-redux';
 import { openThread } from '../../../../app/store/chatSlice';
 import styles from './styles.module.css';
@@ -298,43 +299,17 @@ const AttendeeRow = ({
     ((currentUserRole === 'ADMIN') || 
      (currentUserRole === 'ORGANIZER' && ['ATTENDEE', 'SPEAKER'].includes(attendee.role)));
 
-  // Moderation permissions: Organizers can ban/mute, Admins can do everything including remove
-  const canModerateUser = currentUserId !== attendee.user_id && 
-    (currentUserRole === 'ADMIN' || currentUserRole === 'ORGANIZER') &&
-    !attendee.is_banned; // Can't moderate already banned users
-  
-  const canUnbanUser = currentUserId !== attendee.user_id && 
-    (currentUserRole === 'ADMIN' || currentUserRole === 'ORGANIZER') &&
-    attendee.is_banned;
-  
-  const canChatModerateUser = currentUserId !== attendee.user_id && 
-    (currentUserRole === 'ADMIN' || currentUserRole === 'ORGANIZER') &&
-    !attendee.is_banned; // Can't chat moderate banned users
-  
-  const canChatUnmuteUser = currentUserId !== attendee.user_id && 
-    (currentUserRole === 'ADMIN' || currentUserRole === 'ORGANIZER') &&
-    attendee.is_chat_banned;
-
-  // Row styling based on moderation status
-  const getRowStyle = () => {
-    if (attendee.is_banned) {
-      return {
-        backgroundColor: '#FFFAFA',
-        borderLeft: '3px solid #FFF0F0',
-      };
-    }
-    if (attendee.is_chat_banned) {
-      return {
-        backgroundColor: '#FFFEFA',
-        borderLeft: '3px solid #FFF8F0',
-      };
-    }
-    return {};
-  };
+  // Get moderation permissions using shared utility
+  const {
+    canModerateUser,
+    canUnbanUser,
+    canChatModerateUser,
+    canChatUnmuteUser,
+  } = getModerationPermissions(currentUserId, currentUserRole, attendee);
 
   return (
     <>
-      <Table.Tr style={getRowStyle()}>
+      <Table.Tr style={getModerationRowStyles(attendee)}>
       <Table.Td>
         <Group gap="sm" wrap="nowrap">
           <Avatar
