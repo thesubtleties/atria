@@ -40,6 +40,7 @@ import { IcebreakerModal } from '../../../../shared/components/IcebreakerModal';
 import { useDispatch } from 'react-redux';
 import { openThread } from '../../../../app/store/chatSlice';
 import { formatTime, capitalizeWords } from '@/shared/utils/formatting';
+import { getModerationPermissions, getModerationStyles, createModerationHandlers } from '@/shared/utils/moderation';
 import styles from './styles.module.css';
 
 const AttendeeCard = ({
@@ -76,6 +77,29 @@ const AttendeeCard = ({
     conn => (conn.requester.id === data.user_id || conn.recipient.id === data.user_id) && 
              conn.status === 'ACCEPTED'
   );
+
+  // Get moderation permissions
+  const {
+    canModerateUser,
+    canUnbanUser,
+    canChatModerateUser,
+    canChatUnmuteUser,
+  } = getModerationPermissions(currentUserId, currentUserRole, data);
+  
+  // Create moderation handlers
+  const {
+    handleBan,
+    handleUnban,
+    handleChatBan,
+    handleChatUnban,
+  } = createModerationHandlers({
+    user: data,
+    currentUserRole,
+    banUser,
+    unbanUser,
+    chatBanUser,
+    chatUnbanUser,
+  });
 
   // Format date for display
   const formatDate = (dateString) => {
@@ -187,7 +211,7 @@ const AttendeeCard = ({
   };
 
   return (
-    <div className={styles.card}>
+    <div className={styles.card} style={getModerationStyles(data)}>
       {/* Card Actions - Top right corner */}
       {canManage && (
         <div className={styles.cardActions}>
@@ -200,14 +224,15 @@ const AttendeeCard = ({
             <Menu.Dropdown>
               {!isInvitation ? (
                 <>
-                  <Menu.Item
-                    leftSection={<IconUserCircle size={16} />}
-                    onClick={(isConnected || currentUserId === data.user_id) ? () => navigate(`/app/users/${data.user_id}`) : undefined}
-                    disabled={!isConnected && currentUserId !== data.user_id}
-                    color={(isConnected || currentUserId === data.user_id) ? undefined : "gray"}
-                  >
-                    View Profile
-                  </Menu.Item>
+                  {/* Only show View Profile if connected or own profile */}
+                  {(isConnected || currentUserId === data.user_id) && (
+                    <Menu.Item
+                      leftSection={<IconUserCircle size={16} />}
+                      onClick={() => navigate(`/app/users/${data.user_id}`)}
+                    >
+                      View Profile
+                    </Menu.Item>
+                  )}
                   
                   {canChangeUserRole(currentUserRole, data.role, adminCount) && (
                     <Menu.Item
@@ -227,26 +252,75 @@ const AttendeeCard = ({
                     </Menu.Item>
                   )}
                   
-                  <Menu.Divider />
+                  {/* Moderation Actions */}
+                  {(canModerateUser || canUnbanUser || canChatModerateUser || canChatUnmuteUser) && (
+                    <Menu.Divider />
+                  )}
                   
-                  <Menu.Item
-                    leftSection={<IconTrash size={16} />}
-                    color="red"
-                    onClick={handleRemove}
-                  >
-                    Remove from Event
-                  </Menu.Item>
+                  {canUnbanUser && (
+                    <Menu.Item
+                      leftSection={<IconUserCheck size={16} />}
+                      onClick={handleUnban}
+                    >
+                      Unban from Event
+                    </Menu.Item>
+                  )}
                   
+                  {canModerateUser && (
+                    <Menu.Item
+                      leftSection={<IconBan size={16} />}
+                      onClick={handleBan}
+                      color="red"
+                    >
+                      Ban from Event
+                    </Menu.Item>
+                  )}
+                  
+                  {canChatModerateUser && !data.is_chat_banned && (
+                    <Menu.Item
+                      leftSection={<IconVolumeOff size={16} />}
+                      onClick={handleChatBan}
+                      color="yellow"
+                    >
+                      Mute Chat
+                    </Menu.Item>
+                  )}
+                  
+                  {canChatUnmuteUser && (
+                    <Menu.Item
+                      leftSection={<IconVolume3 size={16} />}
+                      onClick={handleChatUnban}
+                    >
+                      Unmute Chat
+                    </Menu.Item>
+                  )}
+                  
+                  {/* Admin Actions */}
+                  {currentUserRole === 'ADMIN' && (
+                    <>
+                      <Menu.Divider />
+                      <Menu.Item
+                        leftSection={<IconTrash size={16} />}
+                        color="red"
+                        onClick={handleRemove}
+                      >
+                        Remove from Event
+                      </Menu.Item>
+                    </>
+                  )}
+                  
+                  {/* Connection Actions */}
                   {currentUserId !== data.user_id && (
                     <>
-                      <Menu.Item
-                        leftSection={<IconMessage size={16} />}
-                        onClick={handleMessage}
-                      >
-                        Send Message
-                      </Menu.Item>
-                      
-                      {!isConnected && (
+                      <Menu.Divider />
+                      {isConnected ? (
+                        <Menu.Item
+                          leftSection={<IconMessage size={16} />}
+                          onClick={handleMessage}
+                        >
+                          Send Message
+                        </Menu.Item>
+                      ) : (
                         <Menu.Item
                           leftSection={<IconUserPlus size={16} />}
                           onClick={handleConnect}
