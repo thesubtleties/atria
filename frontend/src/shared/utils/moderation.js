@@ -49,19 +49,20 @@ export const getModerationStyles = (user) => {
 };
 
 /**
- * Get row styling for table (slightly different opacity)
+ * Get row styling for table (more visible while still subtle)
  */
 export const getModerationRowStyles = (user) => {
+  // Full ban takes precedence over chat ban
   if (user.is_banned) {
     return {
-      backgroundColor: '#FFFAFA',
-      borderLeft: '3px solid #FFF0F0',
+      backgroundColor: 'rgba(254, 242, 242, 0.6)',
+      borderLeft: '4px solid rgba(239, 68, 68, 0.4)',
     };
   }
-  if (user.is_chat_banned) {
+  if (user.is_chat_banned && !user.is_banned) {
     return {
-      backgroundColor: '#FFFEFA',
-      borderLeft: '3px solid #FFF8F0',
+      backgroundColor: 'rgba(254, 252, 232, 0.6)',
+      borderLeft: '4px solid rgba(251, 146, 60, 0.4)',
     };
   }
   return {};
