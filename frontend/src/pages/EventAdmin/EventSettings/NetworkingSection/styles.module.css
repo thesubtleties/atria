@@ -1,37 +1,24 @@
 /* Glass sections - additional styling to complement parent */
-
 .glassSection {
-  /* Parent already provides the glass effect, we just add any extra styling */
+  /* Parent already provides the glass effect */
+  position: relative;
 }
 
-/* Section titles - removed since using parent styles */
-
+/* Section titles */
 .subsectionTitle {
-  font-size: 1.1rem;
+  font-size: clamp(1rem, 2.5vw, 1.1rem);
   font-weight: 600;
-  color: #1E293B;
-  margin-bottom: 0.5rem;
-}
-
-/* Form inputs */
-.formTextarea {
-  background: rgba(255, 255, 255, 1);
-  border: 1px solid rgba(139, 92, 246, 0.1);
-  transition: all 0.2s ease;
-}
-
-.formTextarea:focus {
-  border-color: rgba(139, 92, 246, 0.3);
-  background: rgba(255, 255, 255, 1);
+  color: var(--color-text-primary);
+  margin-bottom: clamp(0.75rem, 2vw, 1rem);
 }
 
 /* Draggable list container */
 .draggableList {
   position: relative;
-  min-height: 100px;
+  min-height: 80px;
   background: rgba(255, 255, 255, 0.3);
-  border-radius: 6px;
-  padding: 0.5rem;
+  border-radius: var(--radius-md);
+  padding: clamp(0.375rem, 1.5vw, 0.5rem);
   border: 2px dashed transparent;
   transition: all 0.2s ease;
 }
@@ -41,12 +28,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 90px;
-  color: #94A3B8;
-  font-size: 0.9rem;
+  height: 70px;
+  color: var(--color-text-muted);
+  font-size: clamp(0.875rem, 2vw, 0.9rem);
   font-weight: 500;
   background: rgba(248, 250, 252, 0.5);
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   border: 2px dashed rgba(148, 163, 184, 0.3);
 }
 
@@ -56,11 +43,13 @@
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.9);
-  border-radius: 6px;
-  padding: 1rem;
-  margin-bottom: 0.5rem;
-  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.03);
+  border-radius: var(--radius-md);
+  margin-bottom: clamp(0.375rem, 1.5vw, 0.5rem);
+  box-shadow: var(--shadow-sm);
   transition: all 0.2s ease;
+  user-select: none; /* Prevent text selection during drag */
+  -webkit-user-select: none;
+  overflow: hidden;
 }
 
 .draggableCard:last-child {
@@ -68,64 +57,134 @@
 }
 
 .draggableCard:hover {
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.06);
+  box-shadow: var(--shadow-md);
   transform: translateY(-1px);
 }
 
 .draggableCard.dragging {
   opacity: 0.5;
-  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.12);
+  box-shadow: var(--shadow-lg);
   transform: scale(1.02);
+}
+
+/* Card inner structure */
+.cardInner {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Card header */
+.cardHeader {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: var(--space-sm);
+  padding: clamp(0.25rem, 1vw, 0.5rem) clamp(0.75rem, 2vw, 1rem) !important;
+  min-height: 20px !important;
+}
+
+/* Removed icebreaker ID and divider - not needed */
+
+/* Card body */
+.cardBody {
+  padding: clamp(1rem, 3vw, 1.5rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60px;
+}
+
+/* Message text - styled as italic quote */
+.messageText {
+  font-size: clamp(0.75rem, 1.6vw, 0.825rem) !important;
+  line-height: 1.5;
+  word-break: break-word;
+  color: var(--color-text-muted) !important;
+  font-style: italic;
+  position: relative;
+  padding: 0 clamp(0.75rem, 2vw, 1rem);
+  text-align: center;
+}
+
+/* Add quotation marks */
+.messageText::before,
+.messageText::after {
+  font-size: clamp(1.25rem, 2.5vw, 1.5rem);
+  color: var(--color-primary);
+  opacity: 0.6;
+  font-style: normal;
+  position: absolute;
+  font-weight: 600;
+}
+
+.messageText::before {
+  content: '"';
+  left: -0.25rem;
+  top: -0.25rem;
+}
+
+.messageText::after {
+  content: '"';
+  right: -0.25rem;
+  bottom: -0.25rem;
+}
+
+/* Drag handle wrapper for better touch targets */
+.dragHandleWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px; /* Touch-friendly minimum */
+  min-height: 44px;
+  flex-shrink: 0;
 }
 
 /* Drag handle */
 .dragHandle {
   cursor: move;
-  color: #94A3B8;
-  transition: color 0.2s ease;
+  color: var(--color-text-muted);
+  transition: all 0.2s ease;
   flex-shrink: 0;
+  width: 44px !important; /* Override Mantine size */
+  height: 44px !important;
 }
 
 .dragHandle:hover {
-  color: #64748B;
+  color: var(--color-text-secondary);
+  background: var(--primary-alpha-4) !important;
 }
 
-/* Message icon */
-.messageIcon {
-  color: #8B5CF6;
-  flex-shrink: 0;
+.dragHandle:active {
+  color: var(--color-primary);
+  background: var(--primary-alpha-8) !important;
 }
 
-/* ActionIcon Button Styling */
-.editButton {
+/* Menu button styling */
+.menuButton {
+  color: var(--color-text-muted) !important;
   transition: all 0.2s ease;
-  color: #94A3B8 !important;
+  padding: 0.25rem !important;
+  min-width: 28px !important;
+  min-height: 28px !important;
+  width: 28px !important;
+  height: 28px !important;
 }
 
-.editButton:hover {
-  background: rgba(139, 92, 246, 0.08) !important;
-  color: #8B5CF6 !important;
+.menuButton:hover {
+  background: var(--primary-alpha-4) !important;
+  color: var(--color-text-secondary) !important;
 }
 
-.deleteButton {
-  transition: all 0.2s ease;
-  color: #94A3B8 !important;
-}
-
-.deleteButton:hover {
-  background: rgba(220, 38, 38, 0.08) !important;
-  color: #DC2626 !important;
-}
+/* Remove old button styles - using menu dropdown now */
 
 /* Count badge */
 .countBadge {
-  background: rgba(139, 92, 246, 0.08) !important;
-  color: #8B5CF6 !important;
-  border: 1px solid rgba(139, 92, 246, 0.15) !important;
-  border-radius: 6px !important;
-  padding: 0.5rem 1rem;
-  font-size: 0.9rem;
-  font-weight: 500;
+  background: var(--primary-alpha-8) !important;
+  color: var(--color-primary) !important;
+  border: 1px solid var(--primary-alpha-15) !important;
+  padding: 0.5rem 1rem !important;
+  font-weight: 500 !important;
+  font-size: clamp(0.75rem, 2vw, 0.875rem) !important;
 }
 
 /* Modal styles */
@@ -134,27 +193,139 @@
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.08);
+  box-shadow: var(--shadow-xl);
 }
 
 .modalHeader {
-  font-size: 1.25rem;
+  font-size: clamp(1.125rem, 2.5vw, 1.25rem);
   font-weight: 600;
-  color: #1E293B;
-  padding: 1.5rem;
-  border-bottom: 1px solid rgba(139, 92, 246, 0.04);
+  color: var(--color-text-primary);
+  padding: var(--space-lg);
+  border-bottom: 1px solid var(--primary-alpha-4);
 }
 
-/* Animation */
+/* Form inputs in modal */
+.formTextarea {
+  background: rgba(255, 255, 255, 1);
+  border: 1px solid var(--primary-alpha-10);
+  transition: all 0.2s ease;
+  font-size: clamp(0.875rem, 2vw, 1rem);
+}
+
+.formTextarea:focus {
+  border-color: var(--color-primary);
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 0 0 2px var(--primary-alpha-10);
+}
+
+/* Helper text */
+.helperText {
+  font-size: clamp(0.7rem, 1.8vw, 0.75rem);
+  color: var(--color-text-muted);
+  font-style: italic;
+  margin-top: var(--space-xs);
+}
+
+/* Drag hint text */
+.dragHint {
+  font-size: clamp(0.625rem, 1.5vw, 0.7rem) !important;
+  color: var(--color-text-muted) !important;
+  font-style: italic !important;
+  text-align: center !important;
+  margin-bottom: clamp(0.5rem, 2vw, 0.75rem) !important;
+  opacity: 0.65 !important;
+  display: block !important;
+}
+
+/* Mobile center styles */
+.mobileCenter {
+  text-align: center;
+}
+
+.centerButton {
+  margin-top: var(--space-md);
+}
+
+/* Section header on mobile */
+.sectionHeader {
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .subsectionTitle {
     font-size: 1rem;
+    text-align: center;
   }
-
-  .draggableCard {
+  
+  /* Hide drag handle on mobile */
+  .dragHandleWrapper {
+    display: none !important;
+  }
+  
+  /* Center section header on mobile */
+  .sectionHeader {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: var(--space-md);
+  }
+  
+  .mobileCenter {
+    text-align: center;
+    width: 100%;
+  }
+  
+  .centerButton {
+    width: auto;
+    margin-top: var(--space-md);
+  }
+  
+  /* Optimize card spacing for mobile */
+  .draggableList {
+    padding: 0.375rem;
+  }
+  
+  .cardHeader {
     padding: 0.75rem;
+  }
+  
+  .cardBody {
+    padding: 0.75rem;
+  }
+  
+  /* Menu button on mobile */
+  .menuButton {
+    min-width: 36px !important;
+    min-height: 36px !important;
+  }
+  
+  /* Adjust message text for mobile */
+  .messageText {
+    font-size: 0.875rem;
+    padding: 0 0.5rem;
+  }
+  
+  .messageText::before,
+  .messageText::after {
+    font-size: 1.125rem;
+  }
+}
+
+/* Small mobile devices (iPhone SE) */
+@media (max-width: 375px) {
+  .draggableCard {
+    padding: 0.625rem;
+  }
+  
+  .messageText {
+    font-size: 0.75rem;
+  }
+  
+  .countBadge {
+    font-size: 0.75rem !important;
+    padding: 0.375rem 0.75rem !important;
   }
 }
 
@@ -164,12 +335,12 @@
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.08);
+  box-shadow: var(--shadow-xl);
 }
 
 :global(.mantine-Modal-header) {
   background: transparent;
-  border-bottom: 1px solid rgba(139, 92, 246, 0.04);
+  border-bottom: 1px solid var(--primary-alpha-4);
 }
 
 :global(.mantine-Modal-overlay) {

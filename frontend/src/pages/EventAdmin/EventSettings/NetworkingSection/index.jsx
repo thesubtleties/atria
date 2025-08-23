@@ -7,16 +7,18 @@ import {
   Text,
   ActionIcon,
   Badge,
-  Modal
+  Modal,
+  Menu
 } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
+import { useMediaQuery } from '@mantine/hooks';
 import { 
   IconPlus, 
   IconTrash, 
   IconEdit,
   IconGripVertical,
-  IconMessageCircle
+  IconDots
 } from '@tabler/icons-react';
 import { DragDropProvider } from '@dnd-kit/react';
 import { move } from '@dnd-kit/helpers';
@@ -28,7 +30,7 @@ import styles from './styles.module.css';
 import parentStyles from '../styles/index.module.css';
 
 // Draggable Icebreaker Card Component
-const DraggableIcebreaker = ({ id, message, icebreakerId, onEdit, onDelete, canDelete }) => {
+const DraggableIcebreaker = ({ id, message, icebreakerId, onEdit, onDelete, canDelete, isMobile }) => {
   const { ref, isDragging } = useSortable({ 
     id,
     type: 'icebreaker',
@@ -39,41 +41,55 @@ const DraggableIcebreaker = ({ id, message, icebreakerId, onEdit, onDelete, canD
     <div
       ref={ref}
       className={`${styles.draggableCard} ${isDragging ? styles.dragging : ''}`}
-      style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+      style={{ 
+        cursor: isMobile ? 'default' : (isDragging ? 'grabbing' : 'grab')
+      }}
     >
-      <Group justify="space-between" align="flex-start">
-        <Group align="flex-start" style={{ flex: 1 }}>
-          <ActionIcon 
-            variant="subtle" 
-            size="sm" 
-            className={styles.dragHandle}
-            style={{ cursor: 'grab' }}
-          >
-            <IconGripVertical size={16} />
-          </ActionIcon>
-          <IconMessageCircle size={20} className={styles.messageIcon} />
-          <Text size="sm" style={{ flex: 1 }}>
+      <div className={styles.cardInner}>
+        <div className={styles.cardHeader}>
+          {!isMobile && (
+            <div className={styles.dragHandleWrapper}>
+              <ActionIcon 
+                variant="subtle" 
+                size="lg" 
+                className={styles.dragHandle}
+                style={{ cursor: 'grab' }}
+              >
+                <IconGripVertical size={20} />
+              </ActionIcon>
+            </div>
+          )}
+          <div style={{ flex: 1 }} />
+          <Menu position="bottom-end" withinPortal>
+            <Menu.Target>
+              <ActionIcon variant="subtle" className={styles.menuButton}>
+                <IconDots size={16} />
+              </ActionIcon>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Item
+                leftSection={<IconEdit size={16} />}
+                onClick={() => onEdit(icebreakerId)}
+              >
+                Edit
+              </Menu.Item>
+              <Menu.Item
+                leftSection={<IconTrash size={16} />}
+                onClick={() => onDelete(icebreakerId)}
+                disabled={!canDelete}
+                color="red"
+              >
+                Delete
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
+        </div>
+        <div className={styles.cardBody}>
+          <Text className={styles.messageText}>
             {message}
           </Text>
-        </Group>
-        <Group gap="xs">
-          <ActionIcon
-            variant="subtle"
-            onClick={() => onEdit(icebreakerId)}
-            className={styles.editButton}
-          >
-            <IconEdit size={16} />
-          </ActionIcon>
-          <ActionIcon
-            variant="subtle"
-            onClick={() => onDelete(icebreakerId)}
-            disabled={!canDelete}
-            className={styles.deleteButton}
-          >
-            <IconTrash size={16} />
-          </ActionIcon>
-        </Group>
-      </Group>
+        </div>
+      </div>
     </div>
   );
 };
@@ -81,6 +97,7 @@ const DraggableIcebreaker = ({ id, message, icebreakerId, onEdit, onDelete, canD
 const NetworkingSection = ({ event, eventId }) => {
   const [updateEvent, { isLoading }] = useUpdateEventMutation();
   const [hasChanges, setHasChanges] = useState(false);
+  const isMobile = useMediaQuery('(max-width: 768px)');
   
   // State for icebreakers with stable IDs
   const [icebreakers, setIcebreakers] = useState(() => {
@@ -258,8 +275,8 @@ const NetworkingSection = ({ event, eventId }) => {
         
         <Stack spacing="lg">
               <div>
-                <Group justify="space-between" mb="md">
-                  <div>
+                <Group justify={isMobile ? "center" : "space-between"} mb="md" className={styles.sectionHeader}>
+                  <div className={isMobile ? styles.mobileCenter : ""}>
                     <Title order={4} className={styles.subsectionTitle}>Icebreaker Messages</Title>
                     <Text size="sm" c="dimmed" mt="xs">
                       Pre-written messages attendees can use to start conversations
@@ -268,11 +285,14 @@ const NetworkingSection = ({ event, eventId }) => {
                   <Button
                     variant="primary"
                     onClick={handleAddIcebreaker}
+                    className={isMobile ? styles.centerButton : ""}
                   >
                     <IconPlus size={16} />
                     Add Message
                   </Button>
                 </Group>
+                
+                <Text className={styles.dragHint}>Press down on cards and drag to reorder</Text>
 
                 <DragDropProvider onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
                   <div className={styles.draggableList}>
@@ -296,6 +316,7 @@ const NetworkingSection = ({ event, eventId }) => {
                             onEdit={handleEditIcebreaker}
                             onDelete={handleDeleteIcebreaker}
                             canDelete={icebreakers.length > 1}
+                            isMobile={isMobile}
                           />
                         );
                       })
