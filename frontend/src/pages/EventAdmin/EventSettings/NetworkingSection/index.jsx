@@ -59,7 +59,6 @@ const DraggableIcebreaker = ({ id, message, icebreakerId, onEdit, onDelete, canD
               </ActionIcon>
             </div>
           )}
-          <div style={{ flex: 1 }} />
           <Menu position="bottom-end" withinPortal>
             <Menu.Target>
               <ActionIcon variant="subtle" className={styles.menuButton}>

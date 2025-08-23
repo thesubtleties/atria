@@ -57,7 +57,6 @@ const DraggableHighlight = ({ id, highlight, onEdit, onDelete, isMobile }) => {
               <IconGripVertical size={20} />
             </ActionIcon>
           )}
-          <div style={{ flex: 1 }} />
           <Menu position="bottom-end" withinPortal>
             <Menu.Target>
               <ActionIcon variant="subtle" className={styles.menuButton}>
@@ -121,7 +120,6 @@ const DraggableFAQ = ({ id, faq, onEdit, onDelete, isMobile }) => {
               <IconGripVertical size={20} />
             </ActionIcon>
           )}
-          <div style={{ flex: 1 }} />
           <Menu position="bottom-end" withinPortal>
             <Menu.Target>
               <ActionIcon variant="subtle" className={styles.menuButton}>
