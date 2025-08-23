@@ -166,6 +166,76 @@ Base class for page sections with glassmorphism:
 }
 ```
 
+### Page Header Layout Pattern
+Structured layout for management page headers with responsive mobile adaptation:
+
+```css
+/* Header container with glass effect */
+.headerSection {
+  background: var(--color-background-glass);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius-lg);
+  padding: clamp(1.25rem, 3vw, 2rem);
+  margin-bottom: clamp(1.25rem, 3vw, 2rem);
+}
+
+/* Flex wrapper for header content */
+.headerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: clamp(1rem, 3vw, 2rem);
+  flex-wrap: wrap;
+}
+
+/* Left side: title and badges */
+.headerLeft {
+  flex: 1;
+  min-width: 0; /* Prevent flex item overflow */
+}
+
+/* Right side: action buttons */
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.75rem, 2vw, 1rem);
+}
+
+/* Mobile responsive (< 768px) */
+@media (max-width: 768px) {
+  .headerContent {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .headerLeft, .headerRight {
+    width: 100%;
+  }
+  
+  .headerRight {
+    justify-content: center;
+  }
+}
+```
+
+**Usage Example:**
+```jsx
+<div className={styles.headerSection}>
+  <div className={styles.headerContent}>
+    <div className={styles.headerLeft}>
+      <h1 className={styles.pageTitle}>Page Title</h1>
+      <div className={styles.badgeGroup}>
+        {/* Badge components */}
+      </div>
+    </div>
+    <div className={styles.headerRight}>
+      <Button>Action</Button>
+    </div>
+  </div>
+</div>
+```
+
 ### Section Header Layout
 ```css
 .section-header {
@@ -214,6 +284,145 @@ Base class for page sections with glassmorphism:
 }
 ```
 
+**Important Note on Card Variations:**
+Cards are currently implemented as context-specific custom components rather than a single modular system. Each card type is optimized for its specific use case:
+
+- **AttendeeCard** (`EventAdmin/AttendeesManager`) - Adaptive for attendees/invitations, moderation actions
+- **SpeakerCard** (`EventAdmin/SpeakersManager`) - Speaker role badges, session info
+- **MemberCard** (`Organizations/OrganizationDashboard`) - Organization role management
+- **ConnectionCard** (`Network`) - Large message button, social links, connection context
+- **EventCard** (`Events/EventsList`) - Event type indicators, date ranges
+- **OrganizationCard** - Organization-specific actions
+
+Each card prioritizes different information and actions based on user needs in that context. Future consideration: Create a modular card system if pattern convergence emerges.
+
+### Badge Composition System
+Badge styling using CSS Modules composition pattern for consistent role and status indicators:
+
+```css
+/* In design-tokens.css */
+.badge-base {
+  padding: 6px 10px !important;
+  border-radius: var(--radius-md) !important;
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  /* ... base properties */
+}
+
+/* Role-specific badges */
+.badge-admin {
+  background: rgba(59, 130, 246, 0.08) !important;
+  color: #3b82f6 !important;
+  border: 1px solid rgba(59, 130, 246, 0.15) !important;
+}
+
+.badge-organizer {
+  background: rgba(251, 146, 60, 0.08) !important;
+  color: #fb923c !important;
+  border: 1px solid rgba(251, 146, 60, 0.15) !important;
+}
+
+/* Moderation state badges */
+.badge-banned {
+  background: rgba(239, 68, 68, 0.08) !important;
+  color: #ef4444 !important;
+  border: 1px solid rgba(239, 68, 68, 0.15) !important;
+}
+
+.badge-chat-banned {
+  background: rgba(251, 146, 60, 0.08) !important;
+  color: #fb923c !important;
+  border: 1px solid rgba(251, 146, 60, 0.15) !important;
+}
+```
+
+**Usage with Composition:**
+```css
+/* In component CSS module */
+.adminBadge {
+  composes: badge-base badge-admin from '../../../../styles/design-tokens.css' !important;
+}
+
+.organizerBadge {
+  composes: badge-base badge-organizer from '../../../../styles/design-tokens.css' !important;
+}
+```
+
+**Why !important:** Required to override Mantine's inline styles and ensure consistent appearance across all badge instances.
+
+**Available Badge Types:**
+- Role badges: `badge-admin`, `badge-organizer`, `badge-speaker`, `badge-attendee`
+- Status badges: `badge-success`, `badge-warning`, `badge-danger`, `badge-info`
+- Moderation badges: `badge-banned`, `badge-chat-banned`
+- Generic: `badge-primary`, `badge-neutral`
+
+### Two-Row Badge Layout for Mobile
+Mobile-optimized badge layout that separates total count from role breakdowns:
+
+```css
+/* Badge group container */
+.badgeGroup {
+  display: flex;
+  gap: clamp(0.375rem, 1.5vw, 0.5rem);
+  flex-wrap: wrap;
+  margin-top: clamp(0.5rem, 1.5vw, 0.75rem);
+}
+
+/* Badge row for grouping related badges */
+.badgeRow {
+  display: flex;
+  gap: clamp(0.375rem, 1.5vw, 0.5rem);
+  align-items: center;
+}
+
+/* Mobile layout (< 768px) */
+@media (max-width: 768px) {
+  .badgeGroup {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0.75rem auto 0;
+  }
+  
+  /* Center content and allow wrapping */
+  .badgeRow {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+  }
+  
+  /* Separate total from other badges */
+  .badgeRow:first-child {
+    margin-bottom: 0.25rem;
+  }
+}
+```
+
+**Usage Pattern:**
+```jsx
+<div className={styles.badgeGroup}>
+  {/* First row: Total count */}
+  <div className={styles.badgeRow}>
+    <Badge className={styles.totalBadge}>
+      {total} Total
+    </Badge>
+  </div>
+  
+  {/* Second row: Role breakdowns */}
+  <div className={styles.badgeRow}>
+    <Badge className={styles.adminBadge}>
+      {adminCount} Admins
+    </Badge>
+    <Badge className={styles.speakerBadge}>
+      {speakerCount} Speakers
+    </Badge>
+    {/* More role badges... */}
+  </div>
+</div>
+```
+
+This pattern provides visual hierarchy on mobile by emphasizing the total count while keeping role breakdowns accessible but secondary.
+
 ### Empty State
 ```css
 .empty-state {
@@ -222,6 +431,132 @@ Base class for page sections with glassmorphism:
   color: var(--color-text-secondary);
 }
 ```
+
+### Mobile View Selector Pattern
+Replace desktop tabs with dropdown on mobile for better space utilization:
+
+```css
+/* Mobile dropdown container - hidden on desktop */
+.mobileViewSelector {
+  display: none;
+  padding: 1rem;
+  background: rgba(139, 92, 246, 0.04);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(139, 92, 246, 0.08);
+}
+
+/* Mantine Select overrides for consistent styling */
+.mobileSelectInput {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border: 1px solid rgba(139, 92, 246, 0.15) !important;
+  font-weight: 500 !important;
+}
+
+.mobileSelectDropdown {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(139, 92, 246, 0.1) !important;
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.08) !important;
+}
+
+/* Mobile breakpoint */
+@media (max-width: 768px) {
+  /* Show dropdown, hide tabs */
+  .mobileViewSelector {
+    display: block;
+  }
+  
+  .tabsList {
+    display: none !important;
+  }
+}
+```
+
+**Implementation Pattern:**
+```jsx
+{isMobile ? (
+  <div className={styles.mobileViewSelector}>
+    <Select
+      value={activeView}
+      onChange={setActiveView}
+      data={[
+        { value: 'attendees', label: 'Attendees' },
+        { value: 'invitations', label: 'Pending Invitations' }
+      ]}
+      className={styles.mobileSelect}
+      classNames={{
+        input: styles.mobileSelectInput,
+        dropdown: styles.mobileSelectDropdown
+      }}
+    />
+  </div>
+) : (
+  <Tabs value={activeView} onChange={setActiveView}>
+    {/* Desktop tabs */}
+  </Tabs>
+)}
+```
+
+**Key Points:**
+- No null/empty option in dropdown - always show a view
+- Maintains same state as tabs for consistency
+- Custom styling to match glassmorphic theme
+
+### Adaptive Card Components
+Pattern for single component handling multiple data types with conditional rendering:
+
+```jsx
+const AttendeeCard = ({ 
+  data, 
+  isInvitation = false,  // Prop to determine data type
+  onUpdateRole,
+  currentUserRole,
+  // ... other props
+}) => {
+  // Adaptive data extraction
+  const displayName = isInvitation 
+    ? data.email 
+    : data.full_name;
+    
+  const roleInfo = isInvitation
+    ? data.role
+    : data.event_role;
+    
+  // Conditional feature availability
+  const canMessage = !isInvitation && data.user_id;
+  const showConnectionStatus = !isInvitation && data.is_connected;
+  
+  return (
+    <div className={styles.card}>
+      {/* Common elements */}
+      <Avatar>
+        {isInvitation ? <IconMail /> : getInitials(displayName)}
+      </Avatar>
+      
+      {/* Type-specific elements */}
+      {isInvitation ? (
+        <Badge>Invitation Pending</Badge>
+      ) : (
+        <>
+          {showConnectionStatus && <IconCheck />}
+          {canMessage && <Button>Message</Button>}
+        </>
+      )}
+    </div>
+  );
+};
+```
+
+**Benefits:**
+- Single component maintains consistency
+- Reduces code duplication
+- Easier to maintain styling
+- Graceful handling of different data shapes
+
+**When to Use:**
+- Entities share most UI/UX patterns
+- Data shapes are similar but not identical
+- Actions differ based on state/type
 
 ## Usage Examples
 
@@ -338,6 +673,40 @@ Use `clamp()` for fluid typography that scales with viewport:
 }
 ```
 
+**Management Page Patterns:**
+```css
+/* Page titles - reduced on mobile for better fit */
+.pageTitle {
+  font-size: clamp(1.25rem, 3vw, 1.5rem);  /* Mobile: 20px, Desktop: 24px */
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+/* Mobile-specific overrides */
+@media (max-width: 768px) {
+  .pageTitle {
+    font-size: 1.25rem;  /* Fixed size on mobile */
+    text-align: center;  /* Center for mobile layouts */
+  }
+}
+
+/* Card titles with fluid scaling */
+.cardTitle {
+  font-size: clamp(var(--text-base), 2.5vw, var(--text-lg));
+}
+
+/* Badge text stays consistent */
+.badge {
+  font-size: 0.75rem !important;  /* Always 12px for readability */
+}
+```
+
+**Typography Scale Reference:**
+- Headers: `clamp(1.25rem, 3vw, 1.5rem)` 
+- Subheaders: `clamp(1rem, 2.5vw, 1.125rem)`
+- Body: `clamp(0.875rem, 2vw, 1rem)`
+- Small text: `0.75rem` (fixed for legibility)
+
 ### Responsive Spacing
 ```css
 .responsivePadding {
@@ -407,6 +776,200 @@ import { Button } from 'shared/components/buttons/Button';
   height: 8px;
   border-radius: 50%;
   background: var(--color-success);
+}
+```
+
+### Moderation Visual Indicators
+Visual cues for banned and muted users with different treatments for cards vs tables:
+
+```javascript
+// Utility functions from /shared/utils/moderation.js
+
+// Card styling (subtle)
+export const getModerationStyles = (user) => {
+  if (user.is_banned) {
+    return {
+      backgroundColor: 'rgba(255, 250, 250, 0.95)',
+      borderLeft: '3px solid rgba(239, 68, 68, 0.5)',
+    };
+  }
+  if (user.is_chat_banned) {
+    return {
+      backgroundColor: 'rgba(255, 254, 250, 0.95)',
+      borderLeft: '3px solid rgba(251, 191, 36, 0.5)',
+    };
+  }
+  return {};
+};
+
+// Table row styling (more visible)
+export const getModerationRowStyles = (user) => {
+  if (user.is_banned) {
+    return {
+      backgroundColor: 'rgba(254, 242, 242, 0.6)',
+      borderLeft: '4px solid rgba(239, 68, 68, 0.4)',
+    };
+  }
+  if (user.is_chat_banned && !user.is_banned) {
+    return {
+      backgroundColor: 'rgba(254, 252, 232, 0.6)',
+      borderLeft: '4px solid rgba(251, 146, 60, 0.4)',
+    };
+  }
+  return {};
+};
+```
+
+**Visual Hierarchy:**
+- **Banned (Red)**: Most severe, blocks all event access
+- **Chat Banned (Orange/Yellow)**: Can view but not participate in chat
+- **Table rows**: More visible indicators for admin scanning
+- **Cards**: Subtle indicators to avoid stigmatization
+
+**Badge Usage:**
+```jsx
+{user.is_banned && (
+  <Badge className={styles.bannedBadge}>BANNED</Badge>
+)}
+{user.is_chat_banned && !user.is_banned && (
+  <Badge className={styles.chatBannedBadge}>CHAT BANNED</Badge>
+)}
+```
+
+### Pagination Styling
+Glassmorphic pagination controls with consistent hover states:
+
+```css
+/* Usage - wrap Mantine Pagination with this class */
+.pagination {
+  composes: pagination-styled from '../../../../styles/design-tokens.css';
+}
+```
+
+**Applied Styles (from design-tokens.css):**
+- Glass effect with backdrop blur
+- Purple-tinted hover states
+- Active page with solid purple background (no gradient)
+- Smooth transitions and elevation changes on hover
+- Disabled states with reduced opacity
+
+```jsx
+// Component usage
+<div className={styles.pagination}>
+  <Pagination 
+    value={currentPage} 
+    onChange={setCurrentPage}
+    total={totalPages}
+  />
+</div>
+```
+
+**Design Decisions:**
+- Uses `:global()` selectors to override Mantine's internal classes
+- All controls styled uniformly (prev/next/page numbers)
+- `!important` required due to Mantine's specificity
+- Maintains accessibility with proper disabled states
+
+### Shared Utility Functions Pattern
+Extract common logic to `/shared/utils/` for consistency and reusability:
+
+```javascript
+// Example: /shared/utils/moderation.js
+export const getModerationPermissions = (currentUserId, currentUserRole, targetUser) => {
+  const isInvitation = !targetUser.user_id;
+  const userId = targetUser.user_id;
+  const isBanned = targetUser.is_banned;
+  
+  return {
+    canModerateUser: !isInvitation && currentUserId !== userId && 
+      (currentUserRole === 'ADMIN' || currentUserRole === 'ORGANIZER') &&
+      !isBanned,
+    canUnbanUser: !isInvitation && currentUserId !== userId && 
+      (currentUserRole === 'ADMIN' || currentUserRole === 'ORGANIZER') &&
+      isBanned,
+    // ... more permissions
+  };
+};
+
+// Create reusable handlers
+export const createModerationHandlers = ({ user, currentUserRole, banUser, unbanUser }) => {
+  const handleBan = () => {
+    openConfirmationModal({
+      title: 'Ban User from Event',
+      message: `Ban ${user.full_name} from the event?`,
+      onConfirm: async () => {
+        await banUser({ eventId: user.event_id, userId: user.user_id });
+      }
+    });
+  };
+  
+  return { handleBan, handleUnban, handleChatBan, handleChatUnban };
+};
+```
+
+**Benefits:**
+- Single source of truth for business logic
+- Consistent behavior across components
+- Easier testing and maintenance
+- Reduced duplication
+
+**Common Utility Categories:**
+- **Formatting** (`/shared/utils/formatting.js`) - dates, names, numbers
+- **Validation** (`/shared/utils/validation.js`) - form rules, data checks
+- **Permissions** (`/shared/utils/permissions.js`) - role-based access
+- **Moderation** (`/shared/utils/moderation.js`) - user management
+- **Sorting** (`/shared/utils/sorting.js`) - reusable comparators
+
+### Mobile-First Component Simplification
+Reduce complexity on mobile to improve UX and performance:
+
+```jsx
+// Example: InviteModal - Desktop has tabs, mobile has single form
+const InviteModal = ({ opened, onClose }) => {
+  const isMobile = useMediaQuery('(max-width: 768px)');
+  
+  return (
+    <Modal opened={opened} onClose={onClose}>
+      {!isMobile ? (
+        <Tabs>
+          <Tabs.List>
+            <Tabs.Tab value="single">Single Invitation</Tabs.Tab>
+            <Tabs.Tab value="bulk">Bulk Invitations</Tabs.Tab>
+          </Tabs.List>
+          {/* Both tab panels */}
+        </Tabs>
+      ) : (
+        /* Mobile: Only single invitation form */
+        <form onSubmit={handleSingleSubmit}>
+          {/* Simplified single form */}
+        </form>
+      )}
+    </Modal>
+  );
+};
+```
+
+**Simplification Patterns:**
+- **Remove secondary features**: Hide bulk operations, advanced filters
+- **Consolidate actions**: Group related actions in single menu
+- **Reduce visual complexity**: Hide non-essential badges/indicators
+- **Optimize interactions**: Larger touch targets, fewer nested menus
+
+**Common Simplifications:**
+- Tabs → Single view or dropdown
+- Multi-column → Single column
+- Inline editing → Separate modal
+- Multiple CTAs → Primary action + menu
+
+**Implementation:**
+```jsx
+const isMobile = useMediaQuery('(max-width: 768px)');
+
+// Conditional rendering based on device
+if (isMobile) {
+  // Simplified mobile version
+} else {
+  // Full desktop version
 }
 ```
 
