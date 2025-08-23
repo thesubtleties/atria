@@ -7,17 +7,18 @@ import {
   Title,
   Text,
   ActionIcon,
-  Modal
+  Modal,
+  Menu
 } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
+import { useMediaQuery } from '@mantine/hooks';
 import { 
   IconPlus, 
   IconTrash, 
   IconEdit,
   IconGripVertical,
-  IconStarFilled,
-  IconQuestionMark
+  IconDots
 } from '@tabler/icons-react';
 import { DragDropProvider } from '@dnd-kit/react';
 import { move } from '@dnd-kit/helpers';
@@ -29,7 +30,7 @@ import styles from './styles.module.css';
 import parentStyles from '../styles/index.module.css';
 
 // Draggable Highlight Card Component
-const DraggableHighlight = ({ id, highlight, onEdit, onDelete }) => {
+const DraggableHighlight = ({ id, highlight, onEdit, onDelete, isMobile }) => {
   const { ref, isDragging } = useSortable({ 
     id,
     type: 'highlight',
@@ -40,47 +41,59 @@ const DraggableHighlight = ({ id, highlight, onEdit, onDelete }) => {
     <div
       ref={ref}
       className={`${styles.draggableCard} ${isDragging ? styles.dragging : ''}`}
-      style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+      style={{ 
+        cursor: isMobile ? 'default' : (isDragging ? 'grabbing' : 'grab')
+      }}
     >
-      <Group justify="space-between">
-        <Group>
-          <ActionIcon 
-            variant="subtle" 
-            size="sm" 
-            className={styles.dragHandle}
-            style={{ cursor: 'grab' }}
-          >
-            <IconGripVertical size={16} />
-          </ActionIcon>
-          <IconStarFilled size={20} className={styles.highlightIcon} />
-          <div>
-            <Text fw={500}>{highlight.title}</Text>
-            <Text size="sm" c="dimmed">{highlight.description}</Text>
-          </div>
-        </Group>
-        <Group gap="xs">
-          <ActionIcon
-            variant="subtle"
-            onClick={() => onEdit(id)}
-            className={styles.editButton}
-          >
-            <IconEdit size={16} />
-          </ActionIcon>
-          <ActionIcon
-            variant="subtle"
-            onClick={() => onDelete(id)}
-            className={styles.deleteButton}
-          >
-            <IconTrash size={16} />
-          </ActionIcon>
-        </Group>
-      </Group>
+      <div className={styles.cardInner}>
+        <div className={styles.cardTopRow}>
+          {!isMobile && (
+            <ActionIcon 
+              variant="subtle" 
+              size="lg" 
+              className={styles.dragHandle}
+              style={{ cursor: 'grab' }}
+            >
+              <IconGripVertical size={20} />
+            </ActionIcon>
+          )}
+          <Menu position="bottom-end" withinPortal>
+            <Menu.Target>
+              <ActionIcon variant="subtle" className={styles.menuButton}>
+                <IconDots size={16} />
+              </ActionIcon>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Item
+                leftSection={<IconEdit size={16} />}
+                onClick={() => onEdit(id)}
+              >
+                Edit
+              </Menu.Item>
+              <Menu.Item
+                leftSection={<IconTrash size={16} />}
+                onClick={() => onDelete(id)}
+                color="red"
+              >
+                Delete
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
+        </div>
+        <Text fw={600} className={styles.cardTitle}>
+          {highlight.title}
+        </Text>
+        <div className={styles.cardDivider} />
+        <Text size="sm" c="dimmed" className={styles.cardDescription}>
+          {highlight.description}
+        </Text>
+      </div>
     </div>
   );
 };
 
 // Draggable FAQ Card Component
-const DraggableFAQ = ({ id, faq, onEdit, onDelete }) => {
+const DraggableFAQ = ({ id, faq, onEdit, onDelete, isMobile }) => {
   const { ref, isDragging } = useSortable({ 
     id,
     type: 'faq',
@@ -91,41 +104,53 @@ const DraggableFAQ = ({ id, faq, onEdit, onDelete }) => {
     <div
       ref={ref}
       className={`${styles.draggableCard} ${isDragging ? styles.dragging : ''}`}
-      style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+      style={{ 
+        cursor: isMobile ? 'default' : (isDragging ? 'grabbing' : 'grab')
+      }}
     >
-      <Group justify="space-between" align="flex-start">
-        <Group align="flex-start">
-          <ActionIcon 
-            variant="subtle" 
-            size="sm" 
-            className={styles.dragHandle}
-            style={{ cursor: 'grab' }}
-          >
-            <IconGripVertical size={16} />
-          </ActionIcon>
-          <IconQuestionMark size={20} className={styles.faqIcon} />
-          <div style={{ flex: 1 }}>
-            <Text fw={500}>{faq.question}</Text>
-            <Text size="sm" c="dimmed" mt="xs">{faq.answer}</Text>
-          </div>
-        </Group>
-        <Group gap="xs">
-          <ActionIcon
-            variant="subtle"
-            onClick={() => onEdit(id)}
-            className={styles.editButton}
-          >
-            <IconEdit size={16} />
-          </ActionIcon>
-          <ActionIcon
-            variant="subtle"
-            onClick={() => onDelete(id)}
-            className={styles.deleteButton}
-          >
-            <IconTrash size={16} />
-          </ActionIcon>
-        </Group>
-      </Group>
+      <div className={styles.cardInner}>
+        <div className={styles.cardTopRow}>
+          {!isMobile && (
+            <ActionIcon 
+              variant="subtle" 
+              size="lg" 
+              className={styles.dragHandle}
+              style={{ cursor: 'grab' }}
+            >
+              <IconGripVertical size={20} />
+            </ActionIcon>
+          )}
+          <Menu position="bottom-end" withinPortal>
+            <Menu.Target>
+              <ActionIcon variant="subtle" className={styles.menuButton}>
+                <IconDots size={16} />
+              </ActionIcon>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Item
+                leftSection={<IconEdit size={16} />}
+                onClick={() => onEdit(id)}
+              >
+                Edit
+              </Menu.Item>
+              <Menu.Item
+                leftSection={<IconTrash size={16} />}
+                onClick={() => onDelete(id)}
+                color="red"
+              >
+                Delete
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
+        </div>
+        <Text fw={600} className={styles.cardTitle}>
+          {faq.question}
+        </Text>
+        <div className={styles.cardDivider} />
+        <Text size="sm" c="dimmed" className={styles.cardDescription}>
+          {faq.answer}
+        </Text>
+      </div>
     </div>
   );
 };
@@ -133,6 +158,7 @@ const DraggableFAQ = ({ id, faq, onEdit, onDelete }) => {
 const ContentSections = ({ event, eventId }) => {
   const [updateEvent, { isLoading }] = useUpdateEventMutation();
   const [hasChanges, setHasChanges] = useState(false);
+  const isMobile = useMediaQuery('(max-width: 768px)');
   
   // Modal states
   const [highlightModal, setHighlightModal] = useState({ open: false, mode: 'create', id: null });
@@ -451,17 +477,25 @@ const ContentSections = ({ event, eventId }) => {
               <div className={styles.divider} />
 
               {/* Highlights Section */}
-              <div>
-                <Group justify="space-between" mb="md">
-                  <Title order={4} className={styles.subsectionTitle}>Event Highlights</Title>
+              <div className={styles.sectionWrapper}>
+                <Group justify={isMobile ? "center" : "space-between"} mb="md" className={styles.sectionHeader}>
+                  <div className={isMobile ? styles.mobileCenter : ""}>
+                    <Title order={4} className={styles.subsectionTitle}>Event Highlights</Title>
+                    <Text size="sm" c="dimmed" mt="xs">
+                      Key points attendees should know about your event
+                    </Text>
+                  </div>
                   <Button
                     variant="primary"
                     onClick={handleAddHighlight}
+                    className={isMobile ? styles.centerButton : ""}
                   >
                     <IconPlus size={16} />
                     Add Highlight
                   </Button>
                 </Group>
+                
+                <Text className={styles.dragHint}>Press down on cards and drag to reorder</Text>
 
                 <DragDropProvider onDragOver={handleHighlightDragOver} onDragEnd={handleHighlightDragEnd}>
                   <div className={styles.draggableList}>
@@ -494,17 +528,25 @@ const ContentSections = ({ event, eventId }) => {
               <div className={styles.divider} />
 
               {/* FAQs Section */}
-              <div>
-                <Group justify="space-between" mb="md">
-                  <Title order={4} className={styles.subsectionTitle}>Frequently Asked Questions</Title>
+              <div className={styles.sectionWrapper}>
+                <Group justify={isMobile ? "center" : "space-between"} mb="md" className={styles.sectionHeader}>
+                  <div className={isMobile ? styles.mobileCenter : ""}>
+                    <Title order={4} className={styles.subsectionTitle}>Frequently Asked Questions</Title>
+                    <Text size="sm" c="dimmed" mt="xs">
+                      Common questions and answers about your event
+                    </Text>
+                  </div>
                   <Button
                     variant="primary"
                     onClick={handleAddFAQ}
+                    className={isMobile ? styles.centerButton : ""}
                   >
                     <IconPlus size={16} />
                     Add FAQ
                   </Button>
                 </Group>
+                
+                <Text className={styles.dragHint}>Press down on cards and drag to reorder</Text>
 
                 <DragDropProvider onDragOver={handleFAQDragOver} onDragEnd={handleFAQDragEnd}>
                   <div className={styles.draggableList}>

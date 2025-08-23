@@ -5,24 +5,25 @@
 
 /* Form Label Styling */
 .formLabel {
-  color: #1E293B;
+  color: var(--color-text-primary) !important;
   font-weight: 500;
-  font-size: 0.9rem;
+  font-size: clamp(0.8125rem, 2vw, 0.9rem) !important;
   margin-bottom: 0.25rem;
 }
 
 /* Form Input Styling */
 .formInput {
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(139, 92, 246, 0.1);
+  background: rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid var(--primary-alpha-10) !important;
   transition: all 0.2s ease;
-  font-size: 0.95rem;
+  font-size: clamp(0.875rem, 2vw, 0.95rem) !important;
+  min-height: 44px !important; /* Touch-friendly size */
 }
 
 .formInput:focus {
-  border-color: rgba(139, 92, 246, 0.3);
-  background: rgba(255, 255, 255, 0.8);
-  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.05);
+  border-color: var(--color-primary) !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  box-shadow: 0 0 0 3px var(--primary-alpha-10) !important;
 }
 
 /* Privacy Section */
@@ -33,84 +34,111 @@
 
 .switchWrapper {
   margin-top: 0.5rem;
-  padding: 1rem;
-  background: rgba(139, 92, 246, 0.04);
-  border-radius: 6px;
-  border: 1px solid rgba(139, 92, 246, 0.08);
+  padding: clamp(0.75rem, 2vw, 1rem);
+  background: var(--primary-alpha-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--primary-alpha-8);
 }
 
 /* Switch Styling */
 .switchTrack {
-  background-color: rgba(139, 92, 246, 0.2);
-  border: 1px solid rgba(139, 92, 246, 0.1);
+  background-color: var(--primary-alpha-20) !important;
+  border: 1px solid var(--primary-alpha-10) !important;
 }
 
 .switchTrack[data-checked] {
-  background-color: #8B5CF6;
-  border-color: #8B5CF6;
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
 }
 
 .switchLabel {
   font-weight: 500;
-  color: #1E293B;
-  font-size: 0.95rem;
+  color: var(--color-text-primary);
+  font-size: clamp(0.875rem, 2vw, 0.95rem);
 }
 
 .switchDescription {
-  color: #64748B;
-  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  font-size: clamp(0.75rem, 2vw, 0.85rem);
   margin-top: 0.25rem;
 }
 
 /* Info Alert */
 .infoAlert {
-  background: rgba(139, 92, 246, 0.04);
-  border: 1px solid rgba(139, 92, 246, 0.1);
-  color: #1E293B;
+  background: var(--primary-alpha-4);
+  border: 1px solid var(--primary-alpha-10);
+  color: var(--color-text-primary);
 }
 
 .infoAlert svg {
-  color: #8B5CF6;
+  color: var(--color-primary);
 }
 
 /* Subsection Title */
 .subsectionTitle {
-  font-size: 1.1rem;
+  font-size: clamp(1rem, 2.5vw, 1.1rem);
   font-weight: 600;
-  color: #1E293B;
-  margin-top: 1.5rem;
-  margin-bottom: 1rem;
+  color: var(--color-text-primary);
+  margin-top: clamp(1rem, 3vw, 1.5rem);
+  margin-bottom: clamp(0.75rem, 2vw, 1rem);
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid rgba(139, 92, 246, 0.08);
+  border-bottom: 1px solid var(--primary-alpha-8);
 }
 
 /* Format Badge Styles */
 .formatVirtual {
   background: rgba(6, 182, 212, 0.08);
-  color: #06B6D4;
+  color: var(--color-info);
   padding: 0.25rem 0.75rem;
-  border-radius: 4px;
-  font-size: 0.8rem;
+  border-radius: var(--radius-sm);
+  font-size: clamp(0.75rem, 2vw, 0.8rem);
   font-weight: 500;
   display: inline-block;
 }
 
 .formatInPerson {
   background: rgba(245, 158, 11, 0.08);
-  color: #F59E0B;
+  color: var(--color-warning);
   padding: 0.25rem 0.75rem;
-  border-radius: 4px;
-  font-size: 0.8rem;
+  border-radius: var(--radius-sm);
+  font-size: clamp(0.75rem, 2vw, 0.8rem);
   font-weight: 500;
   display: inline-block;
 }
 
 .formatHybrid {
-  background: rgba(139, 92, 246, 0.08);
-  color: #8B5CF6;
+  background: var(--primary-alpha-8);
+  color: var(--color-primary);
   padding: 0.25rem 0.75rem;
-  border-radius: 4px;
-  font-size: 0.8rem;
+  border-radius: var(--radius-sm);
+  font-size: clamp(0.75rem, 2vw, 0.8rem);
   font-weight: 500;
   display: inline-block;
+}
+
+/* Responsive form groups - Stack on mobile */
+@media (max-width: 768px) {
+  /* Override Mantine's Group grow behavior on mobile to stack fields */
+  :global(.mantine-Group-root[data-grow]) {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: var(--space-md) !important;
+  }
+  
+  :global(.mantine-Group-root[data-grow] > *) {
+    flex: 1 1 100% !important;
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+  
+  /* Ensure proper spacing between stacked fields */
+  :global(.mantine-InputWrapper-root) {
+    width: 100% !important;
+  }
+  
+  /* Stack location fields (city, state, country) on mobile */
+  :global(.mantine-Select-root),
+  :global(.mantine-TextInput-root) {
+    width: 100% !important;
+  }
 }

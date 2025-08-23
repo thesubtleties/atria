@@ -1,23 +1,23 @@
 /* Glass sections - additional styling to complement parent */
 .glassSection {
-  /* Parent already provides the glass effect, we just add any extra styling */
+  /* Parent already provides the glass effect */
+  position: relative;
 }
 
-/* Section titles - removed since using parent styles */
-
+/* Section titles */
 .subsectionTitle {
-  font-size: 1.1rem;
+  font-size: clamp(1rem, 2.5vw, 1.1rem);
   font-weight: 600;
-  color: #1E293B;
-  margin-bottom: 1rem;
+  color: var(--color-text-primary);
+  margin-bottom: clamp(0.75rem, 2vw, 1rem);
 }
 
 /* Welcome section */
 .welcomeSection {
-  background: rgba(139, 92, 246, 0.02);
-  padding: 1.5rem;
-  border-radius: 6px;
-  border: 1px solid rgba(139, 92, 246, 0.04);
+  background: var(--primary-alpha-2);
+  padding: clamp(var(--space-md), 3vw, var(--space-lg));
+  border-radius: var(--radius-md);
+  border: 1px solid var(--primary-alpha-4);
 }
 
 /* Form inputs */
@@ -25,22 +25,24 @@
 .formTextarea,
 .formSelect {
   background: rgba(255, 255, 255, 1);
-  border: 1px solid rgba(139, 92, 246, 0.1);
+  border: 1px solid var(--primary-alpha-10);
   transition: all 0.2s ease;
+  font-size: clamp(0.875rem, 2vw, 1rem);
 }
 
 .formInput:focus,
 .formTextarea:focus,
 .formSelect:focus {
-  border-color: rgba(139, 92, 246, 0.3);
+  border-color: var(--color-primary);
   background: rgba(255, 255, 255, 1);
+  box-shadow: 0 0 0 2px var(--primary-alpha-10);
 }
 
 /* Divider */
 .divider {
   height: 1px;
-  background: linear-gradient(to right, transparent, rgba(139, 92, 246, 0.1), transparent);
-  margin: 2rem 0;
+  background: linear-gradient(to right, transparent, var(--primary-alpha-10), transparent);
+  margin: clamp(var(--space-lg), 4vw, var(--space-xl)) 0;
 }
 
 /* Draggable list container */
@@ -48,8 +50,8 @@
   position: relative;
   min-height: 80px;
   background: rgba(255, 255, 255, 0.3);
-  border-radius: 6px;
-  padding: 0.5rem;
+  border-radius: var(--radius-md);
+  padding: clamp(0.375rem, 1.5vw, 0.5rem);
   border: 2px dashed transparent;
   transition: all 0.2s ease;
 }
@@ -60,11 +62,11 @@
   align-items: center;
   justify-content: center;
   height: 70px;
-  color: #94A3B8;
-  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  font-size: clamp(0.875rem, 2vw, 0.9rem);
   font-weight: 500;
   background: rgba(248, 250, 252, 0.5);
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   border: 2px dashed rgba(148, 163, 184, 0.3);
 }
 
@@ -74,11 +76,14 @@
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.9);
-  border-radius: 6px;
-  padding: 1rem;
-  margin-bottom: 0.5rem;
-  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.03);
+  border-radius: var(--radius-md);
+  margin-bottom: clamp(0.5rem, 2vw, 0.75rem);
+  box-shadow: var(--shadow-sm);
   transition: all 0.2s ease;
+  user-select: none; /* Prevent text selection during drag */
+  -webkit-user-select: none;
+  overflow: hidden;
+  position: relative;
 }
 
 .draggableCard:last-child {
@@ -86,58 +91,153 @@
 }
 
 .draggableCard:hover {
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.06);
+  box-shadow: var(--shadow-md);
   transform: translateY(-1px);
 }
 
 .draggableCard.dragging {
   opacity: 0.5;
-  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.12);
+  box-shadow: var(--shadow-lg);
   transform: scale(1.02);
+}
+
+/* Card inner structure */
+.cardInner {
+  padding: clamp(0.75rem, 2vw, 1rem);
+  padding-top: clamp(2rem, 3vw, 2.5rem); /* Extra top padding to avoid menu overlap */
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.25rem, 1vw, 0.5rem);
+}
+
+/* Card top row - menu button in top right */
+.cardTopRow {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+  min-height: 20px !important;
+  margin-bottom: clamp(0.125rem, 0.5vw, 0.25rem) !important;
+  padding: 0 !important;
+}
+
+/* Card divider */
+.cardDivider {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(139, 92, 246, 0.1) 20%,
+    rgba(139, 92, 246, 0.1) 80%,
+    transparent
+  );
+  margin: clamp(0.375rem, 1vw, 0.5rem) 0;
+}
+
+/* Card text styles */
+.cardTitle {
+  font-size: clamp(0.9rem, 2vw, 1rem);
+  line-height: 1.4;
+  word-break: break-word;
+  color: var(--color-text-primary);
+  font-weight: 600;
+  text-align: center;
+}
+
+.cardDescription {
+  font-size: clamp(0.8rem, 1.8vw, 0.875rem);
+  line-height: 1.5;
+  word-break: break-word;
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+
+/* Drag handle wrapper for better touch targets */
+.dragHandleWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px; /* Touch-friendly minimum */
+  min-height: 44px;
+  flex-shrink: 0;
 }
 
 /* Drag handle */
 .dragHandle {
   cursor: move;
-  color: #94A3B8;
-  transition: color 0.2s ease;
+  color: var(--color-text-muted);
+  transition: all 0.2s ease;
   flex-shrink: 0;
+  width: 44px !important; /* Override Mantine size */
+  height: 44px !important;
 }
 
 .dragHandle:hover {
-  color: #64748B;
+  color: var(--color-text-secondary);
+  background: var(--primary-alpha-4) !important;
 }
 
-/* Icons */
-.highlightIcon {
-  color: #FFD666;
-  flex-shrink: 0;
+.dragHandle:active {
+  color: var(--color-primary);
+  background: var(--primary-alpha-8) !important;
 }
 
-.faqIcon {
-  color: #8B5CF6;
-  flex-shrink: 0;
-}
-
-/* ActionIcon Button Styling */
-.editButton {
+/* Menu button styling */
+.menuButton {
+  color: var(--color-text-muted) !important;
   transition: all 0.2s ease;
-  color: #94A3B8 !important;
+  padding: 0 !important;
+  min-width: 28px !important;
+  min-height: 28px !important;
+  width: 28px !important;
+  height: 28px !important;
+  position: absolute !important;
+  top: 0 !important;
+  right: 0 !important;
+  z-index: 10;
+  border-radius: 0 var(--radius-md) 0 var(--radius-md);
 }
 
-.editButton:hover {
-  background: rgba(139, 92, 246, 0.08) !important;
-  color: #8B5CF6 !important;
+.menuButton:hover {
+  background: var(--primary-alpha-4) !important;
+  color: var(--color-text-secondary) !important;
 }
 
-.deleteButton {
-  transition: all 0.2s ease;
-  color: #94A3B8 !important;
+/* Section header styles */
+.sectionHeader {
+  margin-bottom: var(--space-md);
 }
 
-.deleteButton:hover {
-  background: rgba(220, 38, 38, 0.08) !important;
-  color: #DC2626 !important;
+.sectionWrapper {
+  margin-bottom: var(--space-xl);
+}
+
+/* Helper text */
+.helperText {
+  font-size: clamp(0.7rem, 1.8vw, 0.75rem);
+  color: var(--color-text-muted);
+  font-style: italic;
+  margin-top: var(--space-xs);
+}
+
+/* Mobile center styles */
+.mobileCenter {
+  text-align: center;
+  width: 100%;
+}
+
+.centerButton {
+  margin-top: var(--space-md);
+}
+
+/* Drag hint text */
+.dragHint {
+  font-size: clamp(0.625rem, 1.5vw, 0.7rem) !important;
+  color: var(--color-text-muted) !important;
+  font-style: italic !important;
+  text-align: center !important;
+  margin-bottom: clamp(0.5rem, 2vw, 0.75rem) !important;
+  opacity: 0.65 !important;
+  display: block !important;
 }
 
 /* Modal styles */
@@ -163,10 +263,72 @@
 @media (max-width: 768px) {
   .subsectionTitle {
     font-size: 1rem;
+    text-align: center;
   }
-
-  .draggableCard {
+  
+  /* Hide drag handle on mobile */
+  .dragHandle {
+    display: none !important;
+  }
+  
+  /* Center section header on mobile */
+  .sectionHeader {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: var(--space-md);
+  }
+  
+  .mobileCenter {
+    text-align: center;
+    width: 100%;
+  }
+  
+  .centerButton {
+    width: auto;
+    margin-top: var(--space-md);
+  }
+  
+  /* Optimize spacing for mobile */
+  .welcomeSection {
+    padding: var(--space-md);
+  }
+  
+  .draggableList {
+    padding: 0.375rem;
+  }
+  
+  .cardInner {
     padding: 0.75rem;
+  }
+  
+  /* Menu button on mobile */
+  .menuButton {
+    min-width: 36px !important;
+    min-height: 36px !important;
+  }
+  
+  /* Adjust card text for mobile */
+  .cardTitle {
+    font-size: 0.875rem;
+  }
+  
+  .cardDescription {
+    font-size: 0.8125rem;
+  }
+}
+
+/* Small mobile devices (iPhone SE) */
+@media (max-width: 375px) {
+  .draggableCard {
+    padding: 0.625rem;
+  }
+  
+  .cardTitle {
+    font-size: 0.875rem;
+  }
+  
+  .cardDescription {
+    font-size: 0.75rem;
   }
 }
 

@@ -1,7 +1,7 @@
 /* Page Container - Full viewport */
 .container {
   min-height: 100vh;
-  background: rgba(251, 250, 255, 1);
+  background: var(--color-background);
   position: relative;
   overflow: hidden; /* Prevent scroll from shapes */
 }
@@ -11,7 +11,7 @@
   position: fixed;
   width: 350px;
   height: 350px;
-  background: linear-gradient(135deg, #8b5cf6, #a855f7);
+  background: linear-gradient(135deg, var(--gradient-purple-light), var(--gradient-purple-medium));
   border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
   top: 120px;
   right: -175px;
@@ -25,7 +25,7 @@
   position: fixed;
   width: 300px;
   height: 320px;
-  background: linear-gradient(45deg, #f59e0b, #ffd93d);
+  background: linear-gradient(45deg, var(--gradient-orange-medium), var(--gradient-orange-bright));
   border-radius: 42% 58% 70% 30% / 45% 30% 70% 55%;
   bottom: 150px;
   left: -150px;
@@ -54,44 +54,44 @@
   z-index: 10;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: clamp(var(--space-md), 4vw, var(--space-xl));
 }
 
 /* Glass Section for Header */
 .headerSection {
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--color-background-glass);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-radius: 8px;
-  padding: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
-  margin-bottom: 2rem;
+  border-radius: var(--radius-lg);
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-lg);
+  margin-bottom: clamp(1.25rem, 3vw, 2rem);
 }
 
 /* Page Title Styling */
 .pageTitle {
-  font-size: 1.5rem;
+  font-size: clamp(1.25rem, 3vw, 1.5rem);
   font-weight: 600;
-  color: #1e293b;
+  color: var(--color-text-primary);
   margin: 0 0 0.5rem 0;
 }
 
 .pageSubtitle {
-  color: #64748b;
-  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  font-size: clamp(0.875rem, 2vw, 0.9rem);
   margin: 0;
 }
 
 /* Main Content Glass Section */
 .mainContent {
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--color-background-glass);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   padding: 0;
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-lg);
   overflow: hidden;
 }
 
@@ -102,9 +102,9 @@
 
 /* Tab Styling */
 .tabsList {
-  background: rgba(139, 92, 246, 0.04);
+  background: var(--primary-alpha-4);
   backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(139, 92, 246, 0.08);
+  border-bottom: 1px solid var(--primary-alpha-8);
   padding: 0;
   margin: 0;
   display: flex;
@@ -113,59 +113,90 @@
 
 .tab {
   flex: 1;
-  padding: 1rem 1.5rem;
+  padding: clamp(0.75rem, 2vw, 1rem) clamp(1rem, 2.5vw, 1.5rem);
   transition: all 0.2s ease;
-  color: #64748b;
+  color: var(--color-text-secondary);
   font-weight: 500;
   border: none;
   border-bottom: 2px solid transparent;
   background: transparent;
   position: relative;
-  font-size: 0.9rem;
+  font-size: clamp(0.85rem, 2vw, 0.9rem);
 }
 
 .tab:hover {
-  color: #8b5cf6;
-  background: rgba(139, 92, 246, 0.02);
+  color: var(--color-primary);
+  background: var(--primary-alpha-2);
 }
 
 .tab[data-active] {
-  color: #8b5cf6;
-  border-bottom-color: #8b5cf6;
-  background: rgba(255, 255, 255, 0.8);
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+  background: var(--color-background-glass);
 }
 
 /* Tab Panel */
 .tabPanel {
-  padding: 2rem;
+  padding: clamp(var(--space-md), 4vw, var(--space-xl));
+}
+
+/* Mobile dropdown selector - hidden on desktop */
+.mobileViewSelector {
+  display: none;
+  padding: var(--space-md);
+  background: var(--primary-alpha-4);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--primary-alpha-8);
+}
+
+/* Mantine Select overrides for consistent styling */
+.mobileSelectInput {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border: 1px solid var(--primary-alpha-15) !important;
+  font-weight: 500 !important;
+  font-size: clamp(0.875rem, 2.5vw, 1rem) !important;
+  color: var(--color-text-primary) !important;
+  min-height: 44px !important; /* Touch-friendly size */
+}
+
+.mobileSelectInput:focus {
+  border-color: var(--color-primary) !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+}
+
+.mobileSelectDropdown {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--primary-alpha-10) !important;
+  box-shadow: var(--shadow-lg) !important;
 }
 
 /* Form Actions - For section buttons */
 .formActions {
   display: flex;
-  gap: 0.75rem;
+  gap: clamp(0.5rem, 2vw, 0.75rem);
   justify-content: flex-end;
-  margin-top: 2rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid rgba(139, 92, 246, 0.04);
+  margin-top: clamp(var(--space-lg), 3vw, var(--space-xl));
+  padding-top: clamp(var(--space-md), 3vw, var(--space-lg));
+  border-top: 1px solid var(--primary-alpha-4);
 }
 
 /* Section Styles - Used by child components */
 .section {
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--color-background-glass);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-radius: 6px;
-  padding: 2rem;
+  border-radius: var(--radius-md);
+  padding: clamp(var(--space-lg), 4vw, var(--space-xl));
   border: 1px solid rgba(255, 255, 255, 0.9);
-  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.03);
+  box-shadow: var(--shadow-sm);
 }
 
 .sectionTitle {
-  font-size: 1.25rem;
+  font-size: clamp(var(--text-lg), 3vw, var(--text-xl));
   font-weight: 600;
-  color: #1e293b;
-  margin-bottom: 1.5rem;
+  color: var(--color-text-primary);
+  margin-bottom: clamp(var(--space-md), 3vw, var(--space-lg));
 }
 
 /* Form Input Overrides */
@@ -186,35 +217,37 @@
 
 /* Button Styles */
 .primaryButton {
-  background: #8b5cf6;
+  background: var(--color-primary);
   color: white;
   border: none;
   font-weight: 500;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2);
-  padding: 0.75rem 1.5rem;
-  border-radius: 6px;
+  box-shadow: var(--shadow-md);
+  padding: clamp(0.625rem, 2vw, 0.75rem) clamp(1.25rem, 3vw, 1.5rem);
+  border-radius: var(--radius-md);
+  min-height: 44px; /* Touch-friendly size */
 }
 
 .primaryButton:hover {
-  background: #7c3aed;
+  background: var(--color-primary-hover);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+  box-shadow: var(--shadow-lg);
 }
 
 .secondaryButton {
-  background: rgba(139, 92, 246, 0.08);
-  color: #8b5cf6;
-  border: 1px solid rgba(139, 92, 246, 0.15);
+  background: var(--primary-alpha-8);
+  color: var(--color-primary);
+  border: 1px solid var(--primary-alpha-15);
   font-weight: 500;
   transition: all 0.2s ease;
-  padding: 0.75rem 1.5rem;
-  border-radius: 6px;
+  padding: clamp(0.625rem, 2vw, 0.75rem) clamp(1.25rem, 3vw, 1.5rem);
+  border-radius: var(--radius-md);
+  min-height: 44px; /* Touch-friendly size */
 }
 
 .secondaryButton:hover {
-  background: rgba(139, 92, 246, 0.12);
-  border-color: rgba(139, 92, 246, 0.25);
+  background: var(--primary-alpha-10);
+  border-color: var(--primary-alpha-20);
 }
 
 /* Status Badge */
@@ -234,34 +267,49 @@
 /* Responsive Design */
 @media (max-width: 1024px) {
   .contentWrapper {
-    padding: 1.5rem;
+    padding: var(--space-lg);
   }
 
   .tabPanel {
-    padding: 1.5rem;
+    padding: var(--space-lg);
+  }
+  
+  /* Adjust tab sizing for laptop */
+  .tab {
+    padding: 0.875rem 1.25rem;
   }
 }
 
 @media (max-width: 768px) {
   .contentWrapper {
-    padding: 1rem;
+    padding: var(--space-md);
   }
 
   .headerSection {
-    padding: 1.5rem;
+    padding: var(--space-lg);
+    text-align: center;
   }
 
   .tabPanel {
-    padding: 1rem;
+    padding: var(--space-md);
   }
 
   .pageTitle {
     font-size: 1.25rem;
+    text-align: center;
+  }
+  
+  .pageSubtitle {
+    text-align: center;
   }
 
-  .tab {
-    font-size: 0.85rem;
-    padding: 0.75rem 1rem;
+  /* Show mobile dropdown, hide desktop tabs */
+  .mobileViewSelector {
+    display: block;
+  }
+  
+  .tabsList {
+    display: none !important;
   }
 
   /* Hide decorative shapes on mobile */
@@ -273,10 +321,40 @@
   /* Stack form actions on mobile */
   .formActions {
     flex-direction: column-reverse;
+    gap: var(--space-sm);
   }
 
   .formActions button {
     width: 100%;
+  }
+  
+  /* Optimize section spacing for mobile */
+  .section {
+    padding: var(--space-md);
+  }
+  
+  .sectionTitle {
+    font-size: var(--text-lg);
+    margin-bottom: var(--space-md);
+  }
+}
+
+/* Small mobile devices (iPhone SE) */
+@media (max-width: 375px) {
+  .contentWrapper {
+    padding: var(--space-sm);
+  }
+  
+  .headerSection {
+    padding: var(--space-md);
+  }
+  
+  .tabPanel {
+    padding: var(--space-sm);
+  }
+  
+  .pageTitle {
+    font-size: 1.125rem;
   }
 }
 

@@ -323,10 +323,12 @@ const BrandingSection = ({ event, eventId }) => {
               >
                 <Tabs.List>
                   <Tabs.Tab value="desktop" leftSection={<IconDeviceDesktop size={16} />}>
-                    Desktop Image
+                    <span className={styles.tabTextFull}>Desktop Image</span>
+                    <span className={styles.tabTextShort}>Desktop</span>
                   </Tabs.Tab>
                   <Tabs.Tab value="mobile" leftSection={<IconDeviceMobile size={16} />}>
-                    Mobile Image
+                    <span className={styles.tabTextFull}>Mobile Image</span>
+                    <span className={styles.tabTextShort}>Mobile</span>
                   </Tabs.Tab>
                 </Tabs.List>
 
