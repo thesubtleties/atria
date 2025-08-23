@@ -5,24 +5,25 @@
 
 /* Form Label Styling */
 .formLabel {
-  color: #1E293B;
+  color: var(--color-text-primary) !important;
   font-weight: 500;
-  font-size: 0.9rem;
+  font-size: clamp(0.8125rem, 2vw, 0.9rem) !important;
   margin-bottom: 0.25rem;
 }
 
 /* Form Input Styling */
 .formInput {
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(139, 92, 246, 0.1);
+  background: rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid var(--primary-alpha-10) !important;
   transition: all 0.2s ease;
-  font-size: 0.95rem;
+  font-size: clamp(0.875rem, 2vw, 0.95rem) !important;
+  min-height: 44px !important; /* Touch-friendly size */
 }
 
 .formInput:focus {
-  border-color: rgba(139, 92, 246, 0.3);
-  background: rgba(255, 255, 255, 0.8);
-  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.05);
+  border-color: var(--color-primary) !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  box-shadow: 0 0 0 3px var(--primary-alpha-10) !important;
 }
 
 /* Select Dropdown Styling */
@@ -40,28 +41,49 @@
   background: rgba(107, 114, 128, 0.08);
   color: #6B7280;
   padding: 0.25rem 0.75rem;
-  border-radius: 4px;
-  font-size: 0.8rem;
+  border-radius: var(--radius-sm);
+  font-size: clamp(0.75rem, 2vw, 0.8rem);
   font-weight: 500;
   display: inline-block;
 }
 
 .statusPublished {
   background: rgba(34, 197, 94, 0.08);
-  color: #16A34A;
+  color: var(--color-success);
   padding: 0.25rem 0.75rem;
-  border-radius: 4px;
-  font-size: 0.8rem;
+  border-radius: var(--radius-sm);
+  font-size: clamp(0.75rem, 2vw, 0.8rem);
   font-weight: 500;
   display: inline-block;
 }
 
 .statusArchived {
   background: rgba(239, 68, 68, 0.08);
-  color: #EF4444;
+  color: var(--color-error);
   padding: 0.25rem 0.75rem;
-  border-radius: 4px;
-  font-size: 0.8rem;
+  border-radius: var(--radius-sm);
+  font-size: clamp(0.75rem, 2vw, 0.8rem);
   font-weight: 500;
   display: inline-block;
+}
+
+/* Responsive form groups - Stack on mobile */
+@media (max-width: 768px) {
+  /* Override Mantine's Group grow behavior on mobile to stack fields */
+  :global(.mantine-Group-root[data-grow]) {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: var(--space-md) !important;
+  }
+  
+  :global(.mantine-Group-root[data-grow] > *) {
+    flex: 1 1 100% !important;
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+  
+  /* Ensure proper spacing between stacked fields */
+  :global(.mantine-InputWrapper-root) {
+    width: 100% !important;
+  }
 }
