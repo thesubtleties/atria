@@ -1,57 +1,101 @@
-/* Sponsor Card */
+/* Desktop Sponsor Card */
 .sponsorCard {
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 1);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(139, 92, 246, 0.08);
-  border-radius: 6px;
-  padding: 1rem 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: var(--radius-md);
+  padding: clamp(0.75rem, 2vw, 1rem) clamp(1rem, 2.5vw, 1.5rem);
+  margin-bottom: clamp(0.5rem, 1.5vw, 0.75rem);
+  transition: all 0.2s ease;
+  cursor: grab;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Mobile Sponsor Card */
+.sponsorCardMobile {
+  background: rgba(255, 255, 255, 1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  position: relative;
   margin-bottom: 0.75rem;
   transition: all 0.2s ease;
   cursor: grab;
 }
 
-.sponsorCard:hover {
-  background: rgba(255, 255, 255, 0.8);
+.mobileCardInner {
+  padding: clamp(0.75rem, 2vw, 1rem);
+  padding-top: clamp(2.5rem, 3vw, 3rem);
+  position: relative;
+}
+
+.mobileCardContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.5rem, 1.5vw, 0.75rem);
+  text-align: center;
+}
+
+/* Mobile Menu positioned in corner */
+.mobileCardMenu {
+  position: absolute !important;
+  top: 0.5rem !important;
+  right: 0.5rem !important;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.9);
+  transition: all 0.2s ease;
+}
+
+.mobileCardMenu:hover {
+  background: rgba(139, 92, 246, 0.08);
+}
+
+.sponsorCard:hover,
+.sponsorCardMobile:hover {
   box-shadow: 0 4px 12px rgba(139, 92, 246, 0.06);
   border-color: rgba(139, 92, 246, 0.12);
 }
 
-.sponsorCard.dragging {
+.sponsorCard.dragging,
+.sponsorCardMobile.dragging {
   opacity: 0.7;
   cursor: grabbing;
-}
-
-.sponsorCard.overlay {
-  cursor: grabbing;
-  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.2);
-  /* Remove transform scale as it interferes with drag positioning */
+  box-shadow: var(--shadow-lg);
 }
 
 /* Drag Handle */
 .dragHandle {
   cursor: grab;
   transition: all 0.2s ease;
-  color: #94A3B8;
+  color: #94A3B8 !important; /* Gray color for the dots */
   touch-action: none;
   user-select: none;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .dragHandle:hover {
-  background: rgba(139, 92, 246, 0.08);
-  color: #8B5CF6;
+  background: rgba(139, 92, 246, 0.08) !important; /* Purple background on hover */
+  color: #94A3B8 !important; /* Keep dots gray on hover */
 }
 
 .dragHandle:active {
   cursor: grabbing;
 }
 
-/* Logo */
+/* Desktop Logo */
 .logoContainer {
   flex-shrink: 0;
   width: 50px;
   height: 50px;
-  flex-shrink: 0;
 }
 
 .logo {
@@ -59,42 +103,78 @@
   width: 50px !important;
   height: 50px !important;
   object-fit: contain;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
 }
 
 .logoPlaceholder {
   width: 50px;
   height: 50px;
   background: linear-gradient(135deg, #F1F5F9 0%, #E2E8F0 100%);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   display: block;
 }
 
-/* Sponsor Info */
+/* Mobile Logo */
+.logoContainerMobile {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+}
+
+.logoMobile {
+  display: block;
+  width: 40px !important;
+  height: 40px !important;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+}
+
+.logoPlaceholderMobile {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #F1F5F9 0%, #E2E8F0 100%);
+  border-radius: var(--radius-sm);
+  display: block;
+}
+
+/* Desktop Sponsor Info */
 .sponsorInfo {
   flex: 1;
   min-width: 0;
 }
 
 .sponsorName {
-  color: #1E293B;
+  color: var(--color-text-primary);
   font-weight: 600;
   line-height: 1.3;
+  font-size: clamp(0.9rem, 2vw, 1rem);
 }
 
 .sponsorUrl {
-  color: #64748B;
-  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  font-size: clamp(0.75rem, 1.8vw, 0.85rem);
   margin-top: 0.25rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-/* Status Container */
+/* Mobile Sponsor Info */
+.sponsorInfoMobile {
+  text-align: center;
+}
+
+.sponsorNameMobile {
+  color: var(--color-text-primary);
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1.3;
+}
+
+/* Status Container (Desktop only) */
 .statusContainer {
   flex-shrink: 0;
-  min-width: 100px; /* Fixed width to accommodate "Inactive" without layout shift */
+  min-width: 100px;
 }
 
 .statusSwitch {
@@ -102,8 +182,8 @@
 }
 
 .switchLabel {
-  font-size: 0.85rem;
-  color: #64748B;
+  font-size: clamp(0.8rem, 1.8vw, 0.85rem);
+  color: var(--color-text-secondary);
   font-weight: 500;
 }
 
@@ -129,53 +209,44 @@
 
 /* Menu Dropdown */
 .menuDropdown {
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.08);
-  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: var(--shadow-lg);
+  border-radius: var(--radius-md);
 }
 
 .menuItem {
-  color: #475569;
-  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  font-size: clamp(0.85rem, 2vw, 0.9rem);
   transition: all 0.2s ease;
 }
 
 .menuItem:hover {
   background: rgba(139, 92, 246, 0.04);
-  color: #8B5CF6;
+  color: var(--color-primary);
 }
 
 .menuItemDanger:hover {
   background: rgba(220, 38, 38, 0.04);
-  color: #DC2626;
+  color: var(--color-error);
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+/* Tablet/Small Laptop Adjustments */
+@media (min-width: 769px) and (max-width: 1023px) {
   .sponsorCard {
-    padding: 0.75rem 1rem;
-  }
-  
-  .statusContainer,
-  .featuredButton {
-    display: none;
-  }
-  
-  .sponsorUrl {
-    display: none;
+    padding: 0.875rem 1.25rem;
   }
   
   .logoContainer {
-    width: 40px;
-    height: 40px;
+    width: 45px;
+    height: 45px;
   }
   
-  .logoPlaceholder,
-  .logo {
-    width: 40px !important;
-    height: 40px !important;
+  .logo,
+  .logoPlaceholder {
+    width: 45px !important;
+    height: 45px !important;
   }
 }
