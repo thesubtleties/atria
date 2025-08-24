@@ -10,6 +10,7 @@
   font-weight: 600;
   color: var(--color-text-primary);
   margin-bottom: clamp(0.75rem, 2vw, 1rem);
+  text-align: left; /* Left align on desktop */
 }
 
 /* Draggable list container */
@@ -186,7 +187,84 @@
   color: var(--color-text-secondary) !important;
 }
 
-/* Remove old button styles - using menu dropdown now */
+/* Desktop card styles */
+.desktopCard {
+  background: rgba(255, 255, 255, 1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: var(--radius-md);
+  margin-bottom: clamp(0.5rem, 2vw, 0.75rem);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.desktopCard:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.desktopCard.dragging {
+  opacity: 0.5;
+  box-shadow: var(--shadow-lg);
+  transform: scale(1.02);
+}
+
+.desktopCardInner {
+  padding: clamp(0.75rem, 2vw, 1rem);
+}
+
+.desktopCardIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Desktop message text with quotes */
+.desktopMessageText {
+  flex: 1;
+  font-size: clamp(0.8125rem, 1.6vw, 0.875rem) !important; /* Smaller text */
+  line-height: 1.5;
+  color: var(--color-text-muted) !important; /* Gray instead of black */
+  font-style: italic;
+  position: relative;
+  padding: 0 clamp(1rem, 1.5vw, 1.25rem) !important; /* Reduced padding - quotes closer */
+}
+
+.desktopMessageText::before,
+.desktopMessageText::after {
+  font-size: clamp(1.125rem, 2vw, 1.25rem);
+  color: var(--color-primary);
+  opacity: 0.4; /* Slightly more subtle */
+  font-style: normal;
+  position: absolute;
+  font-weight: 600;
+}
+
+.desktopMessageText::before {
+  content: '"';
+  left: 0;
+  top: -0.125rem;
+}
+
+.desktopMessageText::after {
+  content: '"';
+  right: 0;
+  bottom: -0.125rem;
+}
+
+.desktopMenuButton {
+  color: var(--color-text-muted) !important;
+  transition: all 0.2s ease;
+}
+
+.desktopMenuButton:hover {
+  background: var(--primary-alpha-4) !important;
+  color: var(--color-text-secondary) !important;
+}
 
 /* Count badge */
 .countBadge {
@@ -262,6 +340,11 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
+}
+
+/* Desktop left alignment */
+.desktopLeft {
+  text-align: left;
 }
 
 /* Responsive adjustments */

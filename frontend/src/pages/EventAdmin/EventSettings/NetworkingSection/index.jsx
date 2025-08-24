@@ -18,7 +18,8 @@ import {
   IconTrash, 
   IconEdit,
   IconGripVertical,
-  IconDots
+  IconDots,
+  IconMessageCircle
 } from '@tabler/icons-react';
 import { DragDropProvider } from '@dnd-kit/react';
 import { move } from '@dnd-kit/helpers';
@@ -29,7 +30,61 @@ import { icebreakersSchema } from '../schemas/eventSettingsSchemas';
 import styles from './styles.module.css';
 import parentStyles from '../styles/index.module.css';
 
-// Draggable Icebreaker Card Component
+// Desktop Icebreaker Card Component
+const DesktopIcebreakerCard = ({ id, message, icebreakerId, onEdit, onDelete, canDelete }) => {
+  const { ref, isDragging } = useSortable({ 
+    id,
+    type: 'icebreaker',
+    accept: ['icebreaker'],
+  });
+
+  return (
+    <div
+      ref={ref}
+      className={`${styles.desktopCard} ${isDragging ? styles.dragging : ''}`}
+      style={{ 
+        cursor: isDragging ? 'grabbing' : 'grab'
+      }}
+    >
+      <Group align="center" justify="space-between" wrap="nowrap" className={styles.desktopCardInner}>
+        <Group wrap="nowrap" gap="md" align="center">
+          <div className={styles.desktopCardIcon}>
+            <IconMessageCircle size={24} style={{ color: 'var(--color-primary)' }} />
+          </div>
+          <Text className={styles.desktopMessageText}>
+            {message}
+          </Text>
+        </Group>
+        
+        <Menu position="bottom-end" withinPortal>
+          <Menu.Target>
+            <ActionIcon variant="subtle" className={styles.desktopMenuButton}>
+              <IconDots size={18} />
+            </ActionIcon>
+          </Menu.Target>
+          <Menu.Dropdown>
+            <Menu.Item
+              leftSection={<IconEdit size={16} />}
+              onClick={() => onEdit(icebreakerId)}
+            >
+              Edit
+            </Menu.Item>
+            <Menu.Item
+              leftSection={<IconTrash size={16} />}
+              onClick={() => onDelete(icebreakerId)}
+              disabled={!canDelete}
+              color="red"
+            >
+              Delete
+            </Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
+      </Group>
+    </div>
+  );
+};
+
+// Draggable Icebreaker Card Component (Mobile)
 const DraggableIcebreaker = ({ id, message, icebreakerId, onEdit, onDelete, canDelete, isMobile }) => {
   const { ref, isDragging } = useSortable({ 
     id,
@@ -275,7 +330,7 @@ const NetworkingSection = ({ event, eventId }) => {
         <Stack spacing="lg">
               <div>
                 <Group justify={isMobile ? "center" : "space-between"} mb="md" className={styles.sectionHeader}>
-                  <div className={isMobile ? styles.mobileCenter : ""}>
+                  <div className={isMobile ? styles.mobileCenter : styles.desktopLeft}>
                     <Title order={4} className={styles.subsectionTitle}>Icebreaker Messages</Title>
                     <Text size="sm" c="dimmed" mt="xs">
                       Pre-written messages attendees can use to start conversations
@@ -306,7 +361,7 @@ const NetworkingSection = ({ event, eventId }) => {
                         const icebreaker = icebreakerLookup[id];
                         if (!icebreaker) return null;
                         
-                        return (
+                        return isMobile ? (
                           <DraggableIcebreaker
                             key={id}
                             id={id}
@@ -316,6 +371,16 @@ const NetworkingSection = ({ event, eventId }) => {
                             onDelete={handleDeleteIcebreaker}
                             canDelete={icebreakers.length > 1}
                             isMobile={isMobile}
+                          />
+                        ) : (
+                          <DesktopIcebreakerCard
+                            key={id}
+                            id={id}
+                            message={icebreaker.message}
+                            icebreakerId={id}
+                            onEdit={handleEditIcebreaker}
+                            onDelete={handleDeleteIcebreaker}
+                            canDelete={icebreakers.length > 1}
                           />
                         );
                       })
