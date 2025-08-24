@@ -113,14 +113,19 @@
 
 .dragHandle {
   cursor: grab !important;
-  color: #94A3B8;
-  transition: color 0.2s ease;
+  color: #94A3B8 !important; /* Gray color for the dots */
+  transition: all 0.2s ease;
+  min-width: 40px;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .dragHandle:hover {
   cursor: grab !important;
-  color: #64748B;
-  background: rgba(139, 92, 246, 0.04);
+  background: rgba(139, 92, 246, 0.08) !important; /* Light purple background on hover */
+  color: #94A3B8 !important; /* Keep dots gray on hover */
 }
 
 /* Drag overlay for table rows */
@@ -134,26 +139,77 @@
   min-width: 400px;
 }
 
+/* Mobile Card Styles */
+.dragHint {
+  font-size: clamp(0.625rem, 1.5vw, 0.7rem) !important;
+  color: var(--color-text-muted) !important;
+  font-style: italic !important;
+  text-align: center !important;
+  margin-bottom: clamp(0.5rem, 2vw, 0.75rem) !important;
+  opacity: 0.65 !important;
+}
+
+.mobileCardList {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.5rem, 2vw, 0.75rem);
+}
+
+.mobileCard {
+  background: rgba(255, 255, 255, 1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.mobileCard:active {
+  cursor: grabbing;
+}
+
+.mobileCard.dragging {
+  opacity: 0.5;
+  box-shadow: var(--shadow-lg);
+  transform: scale(1.02);
+  cursor: grabbing !important;
+}
+
 /* Responsive Table */
 @media (max-width: 768px) {
   .typeSection {
-    padding: 1rem;
+    padding: var(--space-md);
+    background: var(--color-background-glass);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-sm);
   }
   
-  .typeSection th {
-    padding: 0.5rem;
+  .typeHeader {
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid var(--primary-alpha-8);
+  }
+  
+  .typeHeader h4 {
+    font-size: 1rem;
+    color: var(--color-text-primary);
+  }
+  
+  .typeHeader p {
     font-size: 0.75rem;
+    color: var(--color-text-muted);
   }
   
-  /* Hide description column on mobile */
-  .typeSection th:nth-child(3),
-  .typeSection td:nth-child(3) {
-    display: none;
-  }
-  
-  /* Hide drag handle on mobile */
-  .dragHandleCell,
-  .typeSection th:first-child {
+  /* Hide table on mobile */
+  .typeSection table {
     display: none;
   }
 }

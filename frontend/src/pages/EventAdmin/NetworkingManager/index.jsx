@@ -65,7 +65,7 @@ const NetworkingManager = () => {
       <div className={styles.contentWrapper}>
         {/* Header Section */}
         <section className={styles.headerSection}>
-          <Group justify="space-between" align="flex-start">
+          <div className={styles.headerContent}>
             <h2 className={styles.pageTitle}>Networking & Chat Management</h2>
             <Group className={styles.buttonGroup}>
               <Button
@@ -85,7 +85,7 @@ const NetworkingManager = () => {
                 Add Chat Room
               </Button>
             </Group>
-          </Group>
+          </div>
         </section>
 
         {/* Main Content Section */}

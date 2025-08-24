@@ -1,7 +1,7 @@
 /* Page Container - Full viewport */
 .container {
   min-height: 100vh;
-  background: rgba(251, 250, 255, 1);
+  background: var(--color-background);
   position: relative;
   overflow-x: hidden;
 }
@@ -11,7 +11,7 @@
   position: fixed;
   width: 350px;
   height: 350px;
-  background: linear-gradient(135deg, #8b5cf6, #a855f7);
+  background: linear-gradient(135deg, var(--gradient-purple-light), var(--gradient-purple-medium));
   border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
   top: 120px;
   right: -175px;
@@ -25,7 +25,7 @@
   position: fixed;
   width: 320px;
   height: 340px;
-  background: linear-gradient(45deg, #06b6d4, #67e8f9);
+  background: linear-gradient(45deg, var(--gradient-blue-light), var(--gradient-blue-medium));
   border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
   bottom: 150px;
   left: -160px;
@@ -52,40 +52,50 @@
 .contentWrapper {
   position: relative;
   z-index: 10;
-  max-width: 1400px;
+  max-width: var(--container-xl);
   margin: 0 auto;
-  padding: 2rem;
+  padding: clamp(var(--space-md), 4vw, var(--space-xl));
+  padding-bottom: calc(clamp(var(--space-md), 4vw, var(--space-xl)) + 25px);
 }
 
 /* Glass Section for Header */
 .headerSection {
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--color-background-glass);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-radius: 8px;
-  padding: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
-  margin-bottom: 2rem;
+  border-radius: var(--radius-lg);
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-lg);
+  margin-bottom: clamp(1.25rem, 3vw, 2rem);
+}
+
+/* Header Content Layout */
+.headerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-lg);
+  flex-wrap: wrap;
 }
 
 /* Page Title Styling */
 .pageTitle {
-  font-size: 1.5rem;
+  font-size: clamp(1.25rem, 3vw, 1.5rem);
   font-weight: 600;
-  color: #1e293b;
+  color: var(--color-text-primary);
   margin: 0;
 }
 
 /* Main Content Glass Section */
 .mainContent {
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--color-background-glass);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-radius: 8px;
-  padding: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
+  border-radius: var(--radius-lg);
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-lg);
   position: relative;
   min-height: 400px;
 }
@@ -97,38 +107,86 @@
   align-items: center;
 }
 
-/* Responsive */
-@media (max-width: 1024px) {
+/* Tablet/Small Laptop (768px - 1024px) */
+@media (min-width: 769px) and (max-width: 1023px) {
   .contentWrapper {
-    padding: 1.5rem;
+    padding: var(--space-lg);
   }
-}
-
-@media (max-width: 768px) {
-  .contentWrapper {
-    padding: 1rem;
-  }
-
+  
   .headerSection,
   .mainContent {
     padding: 1.5rem;
   }
+}
+
+/* Mobile Responsive (< 768px) */
+@media (max-width: 768px) {
+  .contentWrapper {
+    padding: var(--space-md);
+    padding-bottom: calc(var(--space-md) + 50px);
+  }
+
+  .headerSection {
+    padding: var(--space-lg);
+  }
+  
+  /* Stack header content on mobile */
+  .headerContent {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .mainContent {
+    padding: var(--space-md);
+    min-height: 300px;
+  }
 
   .pageTitle {
     font-size: 1.25rem;
+    text-align: center;
+    margin-bottom: var(--space-md);
   }
 
+  /* Hide decorative shapes on mobile */
   .bgShape1,
   .bgShape2 {
     display: none;
   }
 
+  /* Stack buttons vertically on mobile */
   .buttonGroup {
     flex-direction: column;
     width: 100%;
+    gap: var(--space-sm);
   }
 
   .buttonGroup > * {
-    width: 100%;
+    width: 100% !important;
+    justify-content: center !important;
+  }
+  
+  /* Ensure buttons are touch-friendly */
+  .buttonGroup button {
+    min-height: 44px !important;
+  }
+}
+
+/* Small mobile devices (iPhone SE) */
+@media (max-width: 375px) {
+  .contentWrapper {
+    padding: var(--space-sm);
+  }
+  
+  .headerSection {
+    padding: var(--space-md);
+  }
+  
+  .mainContent {
+    padding: var(--space-sm);
+  }
+  
+  .pageTitle {
+    font-size: 1.125rem;
   }
 }
