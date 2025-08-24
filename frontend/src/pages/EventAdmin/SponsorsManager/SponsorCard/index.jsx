@@ -6,8 +6,8 @@ import {
   Switch,
   Menu,
   Box,
-  Badge,
 } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import {
   IconEdit,
   IconTrash,
@@ -34,6 +34,7 @@ const SponsorCard = ({
   index,
   onEdit,
 }) => {
+  const isMobile = useMediaQuery('(max-width: 768px)');
   const [deleteSponsor] = useDeleteSponsorMutation();
   const [toggleActive] = useToggleSponsorActiveMutation();
   const [toggleFeatured] = useToggleSponsorFeaturedMutation();
@@ -96,6 +97,111 @@ const SponsorCard = ({
     }
   };
 
+  // Mobile card layout - vertical and centered
+  if (isMobile) {
+    return (
+      <div
+        ref={ref}
+        className={`${styles.sponsorCardMobile} ${isDragging ? styles.dragging : ''}`}
+        style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+      >
+        <div className={styles.mobileCardInner}>
+          {/* Logo and Info */}
+          <div className={styles.mobileCardContent}>
+            <div className={styles.logoContainerMobile}>
+              {sponsor.logo_url ? (
+                <PrivateImage
+                  objectKey={sponsor.logo_url}
+                  alt={sponsor.name}
+                  width={40}
+                  height={40}
+                  fit="contain"
+                  className={styles.logoMobile}
+                  placeholder={<Box className={styles.logoPlaceholderMobile} />}
+                />
+              ) : (
+                <Box className={styles.logoPlaceholderMobile} />
+              )}
+            </div>
+            
+            <div className={styles.sponsorInfoMobile}>
+              <Text fw={600} size="md" className={styles.sponsorNameMobile}>
+                {sponsor.name}
+              </Text>
+            </div>
+          </div>
+
+          {/* Menu in top-right corner */}
+          <Menu position="bottom-end" withinPortal>
+            <Menu.Target>
+              <ActionIcon 
+                variant="subtle" 
+                color="gray" 
+                className={styles.mobileCardMenu}
+                size="md"
+              >
+                <IconDots size={18} />
+              </ActionIcon>
+            </Menu.Target>
+            <Menu.Dropdown className={styles.menuDropdown}>
+              <Menu.Item
+                className={styles.menuItem}
+                leftSection={<IconEdit size={14} />}
+                onClick={() => onEdit(sponsor)}
+              >
+                Edit
+              </Menu.Item>
+              {sponsor.is_active ? (
+                <Menu.Item
+                  className={styles.menuItem}
+                  leftSection={<Switch size="xs" checked={true} readOnly />}
+                  onClick={handleToggleActive}
+                >
+                  Active
+                </Menu.Item>
+              ) : (
+                <Menu.Item
+                  className={styles.menuItem}
+                  leftSection={<Switch size="xs" checked={false} readOnly />}
+                  onClick={handleToggleActive}
+                >
+                  Inactive
+                </Menu.Item>
+              )}
+              {sponsor.featured ? (
+                <Menu.Item
+                  className={styles.menuItem}
+                  leftSection={<IconStarFilled size={14} color="#FFD666" />}
+                  onClick={handleToggleFeatured}
+                >
+                  Featured
+                </Menu.Item>
+              ) : (
+                <Menu.Item
+                  className={styles.menuItem}
+                  leftSection={<IconStar size={14} />}
+                  onClick={handleToggleFeatured}
+                >
+                  Not Featured
+                </Menu.Item>
+              )}
+              <Menu.Divider />
+              <Menu.Item
+                className={`${styles.menuItem} ${styles.menuItemDanger}`}
+                leftSection={<IconTrash size={14} />}
+                color="red"
+                onClick={handleDelete}
+              >
+                Delete
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
+        </div>
+      </div>
+    );
+  }
+
+  // Desktop card layout - horizontal
   return (
     <div
       ref={ref}
@@ -103,14 +209,14 @@ const SponsorCard = ({
       style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
     >
       <Group align="center" justify="space-between" wrap="nowrap">
-        <Group wrap="nowrap">
+        <Group wrap="nowrap" gap="md">
           <ActionIcon 
             variant="subtle" 
-            size="sm" 
+            size="lg" 
             className={styles.dragHandle}
             style={{ cursor: 'grab' }}
           >
-            <IconGripVertical size={16} />
+            <IconGripVertical size={20} />
           </ActionIcon>
 
           <div className={styles.logoContainer}>

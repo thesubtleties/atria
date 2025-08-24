@@ -1,7 +1,7 @@
 /* Page Container - Full viewport */
 .container {
   min-height: 100vh;
-  background: rgba(251, 250, 255, 1);
+  background: var(--color-background);
   position: relative;
   overflow-x: hidden; /* Only hide horizontal overflow */
   /* Allow vertical overflow for proper DragOverlay positioning */
@@ -12,7 +12,7 @@
   position: fixed;
   width: 350px;
   height: 350px;
-  background: linear-gradient(135deg, #8b5cf6, #a855f7);
+  background: linear-gradient(135deg, var(--gradient-purple-light), var(--gradient-purple-medium));
   border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
   top: 120px;
   right: -175px;
@@ -26,7 +26,7 @@
   position: fixed;
   width: 320px;
   height: 340px;
-  background: linear-gradient(45deg, #f59e0b, #ffd93d);
+  background: linear-gradient(45deg, var(--gradient-orange-medium), var(--gradient-orange-bright));
   border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
   bottom: 150px;
   left: -160px;
@@ -53,44 +53,51 @@
 .contentWrapper {
   position: relative;
   z-index: 10;
-  max-width: 1400px;
+  max-width: var(--container-xl);
   margin: 0 auto;
-  padding: 2rem;
+  padding: clamp(1rem, 4vw, 2rem);
 }
 
 
 /* Main Content Glass Section */
 .mainContent {
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--color-background-glass);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-radius: 8px;
-  padding: 2rem;
+  border-radius: var(--radius-lg);
+  padding: clamp(1.25rem, 3vw, 2rem);
   border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
+  box-shadow: var(--shadow-lg);
   position: relative;
   min-height: 400px;
 }
 
 
-/* Responsive */
-@media (max-width: 1024px) {
-  .contentWrapper {
-    padding: 1.5rem;
-  }
-}
-
+/* Mobile Responsive (< 768px) */
 @media (max-width: 768px) {
   .contentWrapper {
     padding: 1rem;
   }
 
   .mainContent {
-    padding: 1.5rem;
+    padding: 1rem;
+    min-height: 300px;
   }
 
+  /* Hide decorative shapes on mobile */
   .bgShape1,
   .bgShape2 {
     display: none;
+  }
+}
+
+/* Tablet/Small Laptop (768px - 1024px) */
+@media (min-width: 769px) and (max-width: 1023px) {
+  .contentWrapper {
+    padding: 1.5rem;
+  }
+  
+  .mainContent {
+    padding: 1.5rem;
   }
 }

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { LoadingOverlay, Text } from '@mantine/core';
 import { useParams } from 'react-router-dom';
-import { notifications } from '@mantine/notifications';
 import { useGetSponsorsQuery } from '../../../app/features/sponsors/api';
 import { Button } from '../../../shared/components/buttons';
 import SponsorsHeader from './SponsorsHeader';
@@ -19,24 +18,6 @@ const SponsorsManager = () => {
     eventId: parseInt(eventId), 
     activeOnly: false 
   });
-
-  const handleExport = () => {
-    // TODO: Implement CSV export
-    notifications.show({
-      title: 'Export Started',
-      message: 'Preparing sponsors list for download...',
-      color: 'blue',
-    });
-  };
-
-  const handleImport = () => {
-    // TODO: Implement CSV import modal
-    notifications.show({
-      title: 'Import',
-      message: 'CSV import feature coming soon',
-      color: 'yellow',
-    });
-  };
 
   if (error) {
     return (
@@ -71,12 +52,9 @@ const SponsorsManager = () => {
 
       <div className={styles.contentWrapper}>
         <SponsorsHeader
-          eventId={parseInt(eventId)}
           sponsors={sponsors}
           onCreateClick={() => setCreateModalOpen(true)}
           onTierManageClick={() => setTierModalOpen(true)}
-          onExport={handleExport}
-          onImport={handleImport}
         />
 
         {/* Main Content Section */}

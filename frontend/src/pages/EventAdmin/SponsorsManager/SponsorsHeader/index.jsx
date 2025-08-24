@@ -1,18 +1,17 @@
 import React from 'react';
-import { Group, Badge, ActionIcon, Menu } from '@mantine/core';
-import { IconDots, IconDownload, IconUpload, IconTags, IconPlus } from '@tabler/icons-react';
+import { Badge } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
+import { IconTags, IconPlus } from '@tabler/icons-react';
 import { Button } from '../../../../shared/components/buttons';
 import { getGradientBadgeStyles } from '../../../../shared/hooks/useGradientBadge';
 import styles from './SponsorsHeader.module.css';
 
 const SponsorsHeader = ({ 
-  eventId, 
   sponsors, 
   onCreateClick, 
-  onTierManageClick, 
-  onExport, 
-  onImport 
+  onTierManageClick
 }) => {
+  const isMobile = useMediaQuery('(max-width: 768px)');
   // Count sponsors by tier and collect tier colors
   const tierCounts = sponsors.reduce((acc, sponsor) => {
     const tierName = sponsor.tier_name || 'No Tier';
@@ -40,38 +39,46 @@ const SponsorsHeader = ({
 
   return (
     <section className={styles.headerSection}>
-      <Group justify="space-between" align="flex-start">
-        <div>
+      <div className={styles.headerContent}>
+        <div className={styles.headerLeft}>
           <h2 className={styles.pageTitle}>Sponsors Management</h2>
           <div className={styles.badgeGroup}>
-            <Badge 
-              className={styles.totalBadge} 
-              size="lg" 
-              radius="sm"
-            >
-              {tierCounts.total || 0} Total
-            </Badge>
+            {/* First row: Total count */}
+            <div className={styles.badgeRow}>
+              <Badge 
+                className={styles.totalBadge} 
+                size={isMobile ? 'md' : 'lg'} 
+                radius="sm"
+              >
+                {tierCounts.total || 0} Total
+              </Badge>
+            </div>
             
-            {sortedTiers.map(([tierName, tierData]) => {
-              const color = tierData.tierColor;
-              const badgeStyles = color ? getGradientBadgeStyles(color) : {};
-              
-              return (
-                <Badge 
-                  key={tierName} 
-                  className={styles.tierBadge} 
-                  size="lg" 
-                  radius="sm"
-                  style={badgeStyles}
-                >
-                  {tierData.count} {tierName}
-                </Badge>
-              );
-            })}
+            {/* Second row: Tier breakdowns */}
+            {sortedTiers.length > 0 && (
+              <div className={styles.badgeRow}>
+                {sortedTiers.map(([tierName, tierData]) => {
+                  const color = tierData.tierColor;
+                  const badgeStyles = color ? getGradientBadgeStyles(color) : {};
+                  
+                  return (
+                    <Badge 
+                      key={tierName} 
+                      className={styles.tierBadge} 
+                      size={isMobile ? 'md' : 'lg'} 
+                      radius="sm"
+                      style={badgeStyles}
+                    >
+                      {tierData.count} {tierName}
+                    </Badge>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
         
-        <Group>
+        <div className={styles.headerRight}>
           {/* CSV Import/Export - Commented out for post-launch implementation
           <Menu shadow="md" width={200}>
             <Menu.Target>
@@ -98,13 +105,15 @@ const SponsorsHeader = ({
           </Menu>
           */}
           
-          <Button
-            variant="secondary"
-            onClick={onTierManageClick}
-          >
-            <IconTags size={18} />
-            Manage Tiers
-          </Button>
+          {!isMobile && (
+            <Button
+              variant="secondary"
+              onClick={onTierManageClick}
+            >
+              <IconTags size={18} />
+              Manage Tiers
+            </Button>
+          )}
           
           <Button
             variant="primary"
@@ -113,8 +122,18 @@ const SponsorsHeader = ({
             <IconPlus size={18} />
             Add Sponsor
           </Button>
-        </Group>
-      </Group>
+          
+          {isMobile && (
+            <Button
+              variant="secondary"
+              onClick={onTierManageClick}
+              size="sm"
+            >
+              <IconTags size={18} />
+            </Button>
+          )}
+        </div>
+      </div>
     </section>
   );
 };

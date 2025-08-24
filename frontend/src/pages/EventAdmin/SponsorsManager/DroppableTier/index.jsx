@@ -1,11 +1,13 @@
 import React from 'react';
-import { Title, Badge } from '@mantine/core';
+import { Title, Badge, Text } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import { useDroppable } from '@dnd-kit/react';
 import { CollisionPriority } from '@dnd-kit/abstract';
 import { getGradientBadgeStyles } from '../../../../shared/hooks/useGradientBadge';
 import styles from './styles/index.module.css';
 
 const DroppableTier = ({ id, tier, children }) => {
+  const isMobile = useMediaQuery('(max-width: 768px)');
   const { ref, isOver } = useDroppable({
     id,
     type: 'tier',
@@ -24,7 +26,7 @@ const DroppableTier = ({ id, tier, children }) => {
           {tier.name}
         </Title>
         <Badge 
-          size="lg" 
+          size={isMobile ? "md" : "lg"} 
           radius="sm"
           className={styles.tierBadge}
           style={badgeStyles}
@@ -32,6 +34,14 @@ const DroppableTier = ({ id, tier, children }) => {
           {tier.sponsors.length} sponsor{tier.sponsors.length !== 1 ? 's' : ''}
         </Badge>
       </div>
+      
+      {/* Mobile drag hint */}
+      {isMobile && tier.sponsors.length > 0 && (
+        <Text className={styles.dragHint}>
+          Press down on cards and drag to reorder
+        </Text>
+      )}
+      
       <div 
         ref={ref}
         className={`${styles.sponsorCards} ${isOver ? styles.dragOver : ''}`}
@@ -39,7 +49,7 @@ const DroppableTier = ({ id, tier, children }) => {
         {children}
         {tier.sponsors.length === 0 && (
           <div className={styles.emptyTier}>
-            Drop sponsors here
+            {isMobile ? 'Drag sponsors here' : 'Drop sponsors here'}
           </div>
         )}
       </div>
