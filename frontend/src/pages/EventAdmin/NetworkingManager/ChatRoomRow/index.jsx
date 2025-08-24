@@ -8,9 +8,10 @@ import {
   useToggleChatRoomMutation, 
   useDeleteChatRoomMutation 
 } from '@/app/features/chat/api';
+import MobileCard from './MobileCard';
 import styles from './styles.module.css';
 
-const ChatRoomRow = ({ room, color, onEdit, isTableRow }) => {
+const ChatRoomRow = ({ room, color, onEdit, isTableRow, isMobile }) => {
   const navigate = useNavigate();
   const [toggleRoom] = useToggleChatRoomMutation();
   const [deleteRoom] = useDeleteChatRoomMutation();
@@ -71,7 +72,21 @@ const ChatRoomRow = ({ room, color, onEdit, isTableRow }) => {
   const hasRecentActivity = room.last_activity && 
     new Date(room.last_activity) > new Date(Date.now() - 3600000); // Within last hour
 
-  // If isTableRow is true, render just the cells (parent provides the row wrapper)
+  // Mobile card layout
+  if (isMobile) {
+    return (
+      <MobileCard
+        room={room}
+        color={color}
+        onEdit={onEdit}
+        onViewChat={handleViewChat}
+        onToggle={handleToggle}
+        onDelete={handleDelete}
+      />
+    );
+  }
+
+  // Desktop table row content
   const content = (
     <>
       <Table.Td>

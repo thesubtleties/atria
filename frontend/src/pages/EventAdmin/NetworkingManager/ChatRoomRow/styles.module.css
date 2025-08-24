@@ -38,3 +38,121 @@
   color: #14B8A6;
   border-color: rgba(20, 184, 166, 0.15);
 }
+
+/* Mobile Card Styles */
+.mobileCardInner {
+  padding: clamp(1rem, 2.5vw, 1.25rem) !important;
+  padding-right: clamp(2.5rem, 4vw, 3rem) !important; /* Extra padding to avoid menu overlap */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: var(--space-md) !important;
+  position: relative !important;
+}
+
+.mobileCardContent {
+  display: flex !important;
+  align-items: center !important;
+  gap: clamp(0.75rem, 2vw, 1rem) !important;
+  flex: 1 !important;
+  min-width: 0 !important; /* Allow text truncation */
+}
+
+.mobileCardIcon {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+  margin-right: clamp(0.25rem, 1vw, 0.5rem) !important;
+}
+
+.mobileCardInfo {
+  flex: 1 !important;
+  min-width: 0 !important;
+}
+
+.mobileCardTitle {
+  font-size: clamp(0.875rem, 2.5vw, 1rem) !important;
+  font-weight: 600 !important;
+  color: var(--color-text-primary) !important;
+  margin-bottom: clamp(0.25rem, 1vw, 0.375rem) !important;
+  line-height: 1.2 !important;
+}
+
+.mobileCardStats {
+  margin-top: clamp(0.125rem, 0.5vw, 0.25rem) !important;
+  color: var(--color-text-muted) !important;
+  font-size: 0.75rem !important;
+}
+
+.mobileCardMenu {
+  position: absolute !important;
+  top: 0 !important;
+  right: 0 !important;
+  min-width: 32px !important;
+  min-height: 32px !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 0 var(--radius-md) 0 var(--radius-md) !important;
+  color: var(--color-text-muted) !important;
+  transition: all 0.2s ease !important;
+  z-index: 10 !important;
+}
+
+.mobileCardMenu:hover {
+  background: var(--primary-alpha-4) !important;
+  color: var(--color-text-secondary) !important;
+}
+
+/* Action icon for desktop */
+.actionIcon {
+  transition: all 0.2s ease;
+}
+
+.actionIcon:hover {
+  background: var(--primary-alpha-4) !important;
+}
+
+/* Mobile-only Menu Dropdown Styles */
+@media (max-width: 768px) {
+  .menuDropdown {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--primary-alpha-10) !important;
+    box-shadow: var(--shadow-lg) !important;
+  }
+
+  .menuItem {
+    font-size: 0.875rem !important;
+    padding: 0.5rem 0.75rem !important;
+    transition: background 0.2s ease;
+  }
+
+  .menuItem:hover {
+    background: var(--primary-alpha-4) !important;
+  }
+}
+
+/* Badge Styles - compose from design tokens */
+.activeBadge {
+  composes: badge-base badge-success from '../../../../styles/design-tokens.css';
+}
+
+.inactiveBadge {
+  composes: badge-base badge-neutral from '../../../../styles/design-tokens.css';
+}
+
+.activityBadge {
+  composes: badge-base badge-info from '../../../../styles/design-tokens.css';
+}
+
+/* Mobile Overrides */
+@media (max-width: 768px) {
+  /* Ensure menu button has proper touch target */
+  .mobileCardMenu {
+    min-width: 36px !important;
+    min-height: 36px !important;
+    width: 36px !important;
+    height: 36px !important;
+  }
+}
