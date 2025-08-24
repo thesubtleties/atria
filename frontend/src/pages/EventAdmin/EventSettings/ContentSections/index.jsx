@@ -18,7 +18,9 @@ import {
   IconTrash, 
   IconEdit,
   IconGripVertical,
-  IconDots
+  IconDots,
+  IconBolt,
+  IconQuestionMark
 } from '@tabler/icons-react';
 import { DragDropProvider } from '@dnd-kit/react';
 import { move } from '@dnd-kit/helpers';
@@ -92,7 +94,123 @@ const DraggableHighlight = ({ id, highlight, onEdit, onDelete, isMobile }) => {
   );
 };
 
-// Draggable FAQ Card Component
+// Desktop Highlight Card Component
+const DesktopHighlightCard = ({ id, highlight, onEdit, onDelete }) => {
+  const { ref, isDragging } = useSortable({ 
+    id,
+    type: 'highlight',
+    accept: ['highlight'],
+  });
+
+  return (
+    <div
+      ref={ref}
+      className={`${styles.desktopCard} ${isDragging ? styles.dragging : ''}`}
+      style={{ 
+        cursor: isDragging ? 'grabbing' : 'grab'
+      }}
+    >
+      <Group align="center" justify="space-between" wrap="nowrap" className={styles.desktopCardInner}>
+        <Group wrap="nowrap" gap="md" align="center">
+          <div className={styles.desktopCardIcon}>
+            <IconBolt size={24} style={{ color: '#FFC107' }} />
+          </div>
+          <div className={styles.desktopCardTextContent}>
+            <Text fw={600} size="md" className={styles.desktopCardTitle}>
+              {highlight.title}
+            </Text>
+            <Text size="sm" c="dimmed" className={styles.desktopCardDescription}>
+              {highlight.description}
+            </Text>
+          </div>
+        </Group>
+        
+        <Menu position="bottom-end" withinPortal>
+          <Menu.Target>
+            <ActionIcon variant="subtle" className={styles.desktopMenuButton}>
+              <IconDots size={18} />
+            </ActionIcon>
+          </Menu.Target>
+          <Menu.Dropdown>
+            <Menu.Item
+              leftSection={<IconEdit size={16} />}
+              onClick={() => onEdit(id)}
+            >
+              Edit
+            </Menu.Item>
+            <Menu.Item
+              leftSection={<IconTrash size={16} />}
+              onClick={() => onDelete(id)}
+              color="red"
+            >
+              Delete
+            </Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
+      </Group>
+    </div>
+  );
+};
+
+// Desktop FAQ Card Component
+const DesktopFAQCard = ({ id, faq, onEdit, onDelete }) => {
+  const { ref, isDragging } = useSortable({ 
+    id,
+    type: 'faq',
+    accept: ['faq'],
+  });
+
+  return (
+    <div
+      ref={ref}
+      className={`${styles.desktopCard} ${isDragging ? styles.dragging : ''}`}
+      style={{ 
+        cursor: isDragging ? 'grabbing' : 'grab'
+      }}
+    >
+      <Group align="center" justify="space-between" wrap="nowrap" className={styles.desktopCardInner}>
+        <Group wrap="nowrap" gap="md" align="center">
+          <div className={styles.desktopCardIcon}>
+            <IconQuestionMark size={24} style={{ color: 'var(--color-primary)' }} />
+          </div>
+          <div className={styles.desktopCardTextContent}>
+            <Text fw={600} size="md" className={styles.desktopCardTitle}>
+              {faq.question}
+            </Text>
+            <Text size="sm" c="dimmed" className={styles.desktopCardDescription}>
+              {faq.answer}
+            </Text>
+          </div>
+        </Group>
+        
+        <Menu position="bottom-end" withinPortal>
+          <Menu.Target>
+            <ActionIcon variant="subtle" className={styles.desktopMenuButton}>
+              <IconDots size={18} />
+            </ActionIcon>
+          </Menu.Target>
+          <Menu.Dropdown>
+            <Menu.Item
+              leftSection={<IconEdit size={16} />}
+              onClick={() => onEdit(id)}
+            >
+              Edit
+            </Menu.Item>
+            <Menu.Item
+              leftSection={<IconTrash size={16} />}
+              onClick={() => onDelete(id)}
+              color="red"
+            >
+              Delete
+            </Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
+      </Group>
+    </div>
+  );
+};
+
+// Draggable FAQ Card Component (Mobile)
 const DraggableFAQ = ({ id, faq, onEdit, onDelete, isMobile }) => {
   const { ref, isDragging } = useSortable({ 
     id,
@@ -510,8 +628,17 @@ const ContentSections = ({ event, eventId }) => {
                         const highlight = highlightLookup[id];
                         if (!highlight) return null;
                         
-                        return (
+                        return isMobile ? (
                           <DraggableHighlight
+                            key={id}
+                            id={id}
+                            highlight={highlight}
+                            onEdit={handleEditHighlight}
+                            onDelete={handleDeleteHighlight}
+                            isMobile={isMobile}
+                          />
+                        ) : (
+                          <DesktopHighlightCard
                             key={id}
                             id={id}
                             highlight={highlight}
@@ -561,8 +688,17 @@ const ContentSections = ({ event, eventId }) => {
                         const faq = faqLookup[id];
                         if (!faq) return null;
                         
-                        return (
+                        return isMobile ? (
                           <DraggableFAQ
+                            key={id}
+                            id={id}
+                            faq={faq}
+                            onEdit={handleEditFAQ}
+                            onDelete={handleDeleteFAQ}
+                            isMobile={isMobile}
+                          />
+                        ) : (
+                          <DesktopFAQCard
                             key={id}
                             id={id}
                             faq={faq}

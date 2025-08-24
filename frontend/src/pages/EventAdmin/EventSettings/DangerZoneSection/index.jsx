@@ -70,6 +70,7 @@ const DangerZoneSection = ({ event }) => {
             onClick={() => setModalOpened(true)}
             disabled={!isDeleteEnabled}
             className={styles.deleteButton}
+            fullWidth
           >
             Delete Event Permanently
           </Button>

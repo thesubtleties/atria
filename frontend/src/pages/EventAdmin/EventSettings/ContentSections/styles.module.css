@@ -181,6 +181,68 @@
   background: var(--primary-alpha-8) !important;
 }
 
+/* Desktop card styles */
+.desktopCard {
+  background: rgba(255, 255, 255, 1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: var(--radius-md);
+  margin-bottom: clamp(0.5rem, 2vw, 0.75rem);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.desktopCard:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.desktopCard.dragging {
+  opacity: 0.5;
+  box-shadow: var(--shadow-lg);
+  transform: scale(1.02);
+}
+
+.desktopCardInner {
+  padding: clamp(0.75rem, 2vw, 1rem);
+}
+
+.desktopCardIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.desktopCardTextContent {
+  flex: 1;
+  min-width: 0; /* Prevent text overflow */
+}
+
+.desktopCardTitle {
+  color: var(--color-text-primary);
+  line-height: 1.3;
+  margin-bottom: 0.25rem;
+}
+
+.desktopCardDescription {
+  line-height: 1.4;
+  color: var(--color-text-secondary);
+}
+
+.desktopMenuButton {
+  color: var(--color-text-muted) !important;
+  transition: all 0.2s ease;
+}
+
+.desktopMenuButton:hover {
+  background: var(--primary-alpha-4) !important;
+  color: var(--color-text-secondary) !important;
+}
+
 /* Menu button styling */
 .menuButton {
   color: var(--color-text-muted) !important;
