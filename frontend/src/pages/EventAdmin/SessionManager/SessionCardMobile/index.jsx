@@ -8,12 +8,17 @@ import {
   ActionIcon,
   Menu,
   Badge,
+  Collapse,
+  Stack,
 } from '@mantine/core';
 import { TimeSelect } from '@/shared/components/forms/TimeSelect';
 import { 
   IconDots, 
   IconTrash, 
-  IconAlertCircle 
+  IconAlertCircle,
+  IconChevronDown,
+  IconChevronUp,
+  IconClock,
 } from '@tabler/icons-react';
 import { useDebouncedValue } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
@@ -38,9 +43,10 @@ const CHAT_MODES = [
   { value: 'DISABLED', label: 'Chat Disabled' },
 ];
 
-export const SessionCard = ({ session, eventId, hasConflict }) => {
+export const SessionCardMobile = ({ session, eventId, hasConflict }) => {
   const [updateSession] = useUpdateSessionMutation();
   const [deleteSession] = useDeleteSessionMutation();
+  const [detailsExpanded, setDetailsExpanded] = useState(false);
 
   // Local state for immediate UI updates
   const [title, setTitle] = useState(session.title);
@@ -167,7 +173,6 @@ export const SessionCard = ({ session, eventId, hasConflict }) => {
     });
     
     // Always send both times when clearing a time order error to ensure backend is in sync
-    // This handles the case where user had invalid times and is now fixing them
     const updates = errors.time_order 
       ? { start_time: newStartTime, end_time: newEndTime }
       : { [field]: value };
@@ -202,11 +207,37 @@ export const SessionCard = ({ session, eventId, hasConflict }) => {
     });
   };
 
+  const getSessionTypeLabel = (type) => {
+    return SESSION_TYPES.find(t => t.value === type)?.label || type;
+  };
 
   return (
     <div className={`${styles.sessionCard} ${hasConflict ? styles.hasConflict : ''}`}>
-      {/* Header with title and actions */}
-      <div className={styles.header}>
+      {/* Actions Menu - Top right corner */}
+      <Menu position="bottom-end" withinPortal>
+        <Menu.Target>
+          <ActionIcon 
+            variant="subtle" 
+            color="gray"
+            style={{ position: 'absolute', top: '0.75rem', right: '0.75rem' }}
+          >
+            <IconDots size={16} />
+          </ActionIcon>
+        </Menu.Target>
+        <Menu.Dropdown>
+          <Menu.Item 
+            color="red" 
+            leftSection={<IconTrash size={14} />}
+            onClick={handleDelete}
+          >
+            Delete
+          </Menu.Item>
+        </Menu.Dropdown>
+      </Menu>
+
+      {/* Collapsed View - Always Visible */}
+      <Stack gap="xs">
+        {/* Title Input */}
         <TextInput
           value={title}
           onChange={(e) => setTitle(e.target.value)}
@@ -214,51 +245,26 @@ export const SessionCard = ({ session, eventId, hasConflict }) => {
           className={styles.titleInput}
           placeholder="Session Title"
           error={errors.title}
+          style={{ paddingRight: '2.5rem' }}
         />
-        
-        {/* Actions Menu */}
-        <Menu position="bottom-end" withinPortal>
-          <Menu.Target>
-            <ActionIcon variant="subtle" color="gray" className={styles.actionButton}>
-              <IconDots size={16} />
-            </ActionIcon>
-          </Menu.Target>
-          <Menu.Dropdown>
-            <Menu.Item 
-              color="red" 
-              leftSection={<IconTrash size={14} />}
-              onClick={handleDelete}
-            >
-              Delete
-            </Menu.Item>
-          </Menu.Dropdown>
-        </Menu>
-      </div>
 
-      {/* Time Block */}
-      <div className={styles.timeBlock}>
-        <Group>
-          <TimeSelect
-            value={startTime}
-            onChange={(value) => handleTimeChange('start_time', value)}
-            placeholder="Start time"
-            classNames={{ input: styles.timeInput }}
-            error={errors.start_time}
-          />
-          <Text size="sm" c="dimmed">to</Text>
-          <TimeSelect
-            value={endTime}
-            onChange={(value) => handleTimeChange('end_time', value)}
-            placeholder="End time"
-            classNames={{ input: styles.timeInput }}
-            error={errors.end_time || errors.time_order}
-          />
+        {/* Time and Basic Info */}
+        <Group justify="space-between" wrap="nowrap">
+          <div className={styles.mobileTimeDisplay}>
+            <IconClock size={16} />
+            <Text size="sm">
+              {startTime} - {endTime}
+            </Text>
+            <Badge size="sm" className={styles.durationPill}>
+              {calculateDuration(startTime, endTime)}
+            </Badge>
+          </div>
         </Group>
-        
-        {/* Pills - pushed to the right */}
-        <Group ml="auto" gap="sm">
-          <Badge className={styles.durationPill} size="sm">
-            {calculateDuration(startTime, endTime)}
+
+        {/* Session Type and Conflict Badge */}
+        <Group gap="xs">
+          <Badge className={styles.sessionTypeBadge} size="sm">
+            {getSessionTypeLabel(sessionType)}
           </Badge>
           {hasConflict && (
             <Badge className={styles.conflictPill} size="sm" leftSection={<IconAlertCircle size={12} />}>
@@ -266,83 +272,118 @@ export const SessionCard = ({ session, eventId, hasConflict }) => {
             </Badge>
           )}
         </Group>
-      </div>
 
-      {/* Content */}
-      <div className={styles.content}>
-
-        {/* Info Bar */}
-        <Group className={styles.infoBar}>
-          <Select
-            value={sessionType}
-            onChange={(value) => {
-              setSessionType(value);
-              handleUpdate({ session_type: value });
-            }}
-            data={SESSION_TYPES}
-            size="sm"
-            style={{ width: 160 }}
-            styles={{
-              input: { cursor: 'pointer' },
-              rightSection: { pointerEvents: 'none' }
-            }}
-          />
-          <Select
-            value={chatMode}
-            onChange={(value) => {
-              setChatMode(value);
-              handleUpdate({ chat_mode: value });
-            }}
-            data={CHAT_MODES}
-            size="sm"
-            style={{ width: 160 }}
-            styles={{
-              input: { cursor: 'pointer' },
-              rightSection: { pointerEvents: 'none' }
-            }}
-          />
-          <TextInput
-            placeholder="Stream URL (e.g., Vimeo URL)"
-            size="sm"
-            style={{ flex: 1 }}
-            value={streamUrl}
-            onChange={(e) => setStreamUrl(e.target.value)}
-            error={errors.stream_url}
-          />
-        </Group>
-
-        {/* Speakers */}
-        <div className={styles.speakersSection}>
-          <SessionSpeakers 
-            sessionId={session.id} 
-            canEdit={true}
-          />
+        {/* Expandable Section Trigger */}
+        <div 
+          className={styles.expandableSection}
+          onClick={() => setDetailsExpanded(!detailsExpanded)}
+        >
+          <Group justify="space-between" wrap="nowrap">
+            <Text size="sm" fw={500}>
+              Session Details
+            </Text>
+            <ActionIcon size="xs" variant="transparent">
+              {detailsExpanded ? <IconChevronUp size={14} /> : <IconChevronDown size={14} />}
+            </ActionIcon>
+          </Group>
         </div>
+      </Stack>
 
-        {/* Short Description */}
-        <Textarea
-          value={shortDescription}
-          onChange={(e) => setShortDescription(e.target.value)}
-          placeholder="Short description for agenda (max 200 characters)"
-          maxLength={200}
-          autosize
-          minRows={1}
-          maxRows={3}
-          size="sm"
-          error={errors.short_description}
-        />
+      {/* Expanded Content */}
+      <Collapse in={detailsExpanded}>
+        <div className={styles.collapsedContent}>
+          <Stack gap="md" mt="md">
+            {/* Time Selection */}
+            <Group grow>
+              <TimeSelect
+                value={startTime}
+                onChange={(value) => handleTimeChange('start_time', value)}
+                placeholder="Start time"
+                label="Start Time"
+                error={errors.start_time}
+                size="sm"
+              />
+              <TimeSelect
+                value={endTime}
+                onChange={(value) => handleTimeChange('end_time', value)}
+                placeholder="End time"
+                label="End Time"
+                error={errors.end_time || errors.time_order}
+                size="sm"
+              />
+            </Group>
 
-        {/* Full Description */}
-        <Textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="Full session description"
-          autosize
-          minRows={2}
-          maxRows={6}
-          className={styles.descriptionTextarea}
-        />
-      </div>
+            {/* Session Type */}
+            <Select
+              label="Session Type"
+              value={sessionType}
+              onChange={(value) => {
+                setSessionType(value);
+                handleUpdate({ session_type: value });
+              }}
+              data={SESSION_TYPES}
+              size="sm"
+            />
+
+            {/* Chat Mode */}
+            <Select
+              label="Chat Mode"
+              value={chatMode}
+              onChange={(value) => {
+                setChatMode(value);
+                handleUpdate({ chat_mode: value });
+              }}
+              data={CHAT_MODES}
+              size="sm"
+            />
+
+            {/* Stream URL */}
+            <TextInput
+              label="Stream URL"
+              placeholder="e.g., Vimeo URL"
+              size="sm"
+              value={streamUrl}
+              onChange={(e) => setStreamUrl(e.target.value)}
+              error={errors.stream_url}
+            />
+
+            {/* Speakers */}
+            <div className={styles.speakersSection}>
+              <Text size="sm" fw={500} mb="xs">Speakers</Text>
+              <SessionSpeakers 
+                sessionId={session.id} 
+                canEdit={true}
+              />
+            </div>
+
+            {/* Short Description */}
+            <Textarea
+              label="Short Description"
+              value={shortDescription}
+              onChange={(e) => setShortDescription(e.target.value)}
+              placeholder="Brief description for agenda (max 200 characters)"
+              maxLength={200}
+              autosize
+              minRows={2}
+              maxRows={3}
+              size="sm"
+              error={errors.short_description}
+            />
+
+            {/* Full Description */}
+            <Textarea
+              label="Full Description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Detailed session description"
+              autosize
+              minRows={3}
+              maxRows={6}
+              size="sm"
+            />
+          </Stack>
+        </div>
+      </Collapse>
     </div>
   );
 };

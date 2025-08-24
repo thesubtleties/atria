@@ -1,8 +1,12 @@
 import { Text } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import { SessionCard } from '../SessionCard';
+import { SessionCardMobile } from '../SessionCardMobile';
 import styles from './styles/index.module.css';
 
 export const SessionList = ({ sessions, currentDay, eventId }) => {
+  const isMobile = useMediaQuery('(max-width: 768px)');
+  
   if (!sessions || sessions.length === 0) {
     return (
       <div className={styles.emptyState}>
@@ -44,10 +48,13 @@ export const SessionList = ({ sessions, currentDay, eventId }) => {
     return { ...session, hasConflict };
   });
 
+  // Choose the appropriate card component based on viewport
+  const CardComponent = isMobile ? SessionCardMobile : SessionCard;
+  
   return (
     <div className={styles.sessionsList}>
       {sessionsWithConflicts.map((session) => (
-        <SessionCard
+        <CardComponent
           key={session.id}
           session={session}
           eventId={eventId}

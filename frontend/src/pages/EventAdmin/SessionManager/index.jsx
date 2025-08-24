@@ -157,24 +157,41 @@ export const SessionManager = () => {
       <div className={styles.contentWrapper}>
         {/* Header Section */}
         <section className={styles.headerSection}>
-          <Group justify="space-between" align="flex-start">
-            <div>
+          <div className={styles.headerContent}>
+            <div className={styles.headerLeft}>
               <h2 className={styles.pageTitle}>Session Manager</h2>
               <div className={styles.badgeGroup}>
-                <Badge size="lg" variant="light" color="blue" radius="sm" leftSection={<IconCalendar size={14} />}>
-                  Day {currentDay}
-                </Badge>
-                <Badge className={styles.statsBadge} size="lg" variant="light" radius="sm">
-                  {sessionStats.total} Sessions
-                </Badge>
-                {sessionStats.overlapping > 0 && (
-                  <Badge size="lg" variant="light" color="yellow" radius="sm">
-                    {sessionStats.overlapping} Overlapping
+                {/* First row: Day indicator */}
+                <div className={styles.badgeRow}>
+                  <Badge 
+                    size="lg" 
+                    variant="light" 
+                    color="blue" 
+                    radius="sm" 
+                    leftSection={<IconCalendar size={14} />}
+                  >
+                    Day {currentDay}
                   </Badge>
-                )}
+                </div>
+                {/* Second row: Stats */}
+                <div className={styles.badgeRow}>
+                  <Badge className={styles.statsBadge} size="lg" radius="sm">
+                    {sessionStats.total} Total
+                  </Badge>
+                  {sessionStats.speakers > 0 && (
+                    <Badge size="lg" variant="light" color="grape" radius="sm">
+                      {sessionStats.speakers} Speakers
+                    </Badge>
+                  )}
+                  {sessionStats.overlapping > 0 && (
+                    <Badge size="lg" variant="light" color="yellow" radius="sm">
+                      {sessionStats.overlapping} Overlapping
+                    </Badge>
+                  )}
+                </div>
               </div>
             </div>
-            <Group>
+            <div className={styles.headerRight}>
               {/* CSV Import/Export - Commented out for post-launch implementation
               <Menu shadow="md" width={200}>
                 <Menu.Target>
@@ -207,8 +224,8 @@ export const SessionManager = () => {
                 <IconPlus size={18} />
                 New Session
               </Button>
-            </Group>
-          </Group>
+            </div>
+          </div>
         </section>
 
         {/* Main Content Section */}
