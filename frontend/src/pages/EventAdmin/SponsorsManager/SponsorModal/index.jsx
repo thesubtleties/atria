@@ -11,8 +11,11 @@ import {
   FileButton,
   Image,
   Box,
+  Collapse,
+  Badge,
 } from '@mantine/core';
-import { IconUpload } from '@tabler/icons-react';
+import { useMediaQuery } from '@mantine/hooks';
+import { IconUpload, IconChevronDown, IconChevronUp } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { Button } from '../../../../shared/components/buttons';
 import {
@@ -26,10 +29,13 @@ import PrivateImage from '../../../../shared/components/PrivateImage';
 import styles from './styles/index.module.css';
 
 const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }) => {
+  const isMobile = useMediaQuery('(max-width: 768px)');
   const [logoFile, setLogoFile] = useState(null);
   const [logoPreview, setLogoPreview] = useState(null);
   const [existingLogoKey, setExistingLogoKey] = useState(null);
   const [errors, setErrors] = useState({});
+  const [contactExpanded, setContactExpanded] = useState(false);
+  const [socialExpanded, setSocialExpanded] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -272,9 +278,9 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }
         header: styles.modalHeader,
       }}
     >
-      <Stack spacing="md" p="lg">
+      <Stack spacing={isMobile ? "sm" : "md"} p={isMobile ? "md" : "lg"}>
         <Grid>
-          <Grid.Col span={8}>
+          <Grid.Col span={isMobile ? 12 : 8}>
             <TextInput
               label="Sponsor Name"
               placeholder="Enter sponsor name"
@@ -284,7 +290,7 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }
               classNames={{ input: styles.formInput }}
             />
           </Grid.Col>
-          <Grid.Col span={4}>
+          <Grid.Col span={isMobile ? 12 : 4}>
             <Select
               label="Tier"
               placeholder="Select tier"
@@ -339,8 +345,8 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }
             <Image
               src={logoPreview}
               alt="Logo preview"
-              width={100}
-              height={100}
+              width={isMobile ? 60 : 80}
+              height={isMobile ? 60 : 80}
               fit="contain"
               className={styles.logoPreview}
             />
@@ -348,18 +354,36 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }
             <PrivateImage
               objectKey={existingLogoKey}
               alt="Current logo"
-              width={100}
-              height={100}
+              width={isMobile ? 60 : 80}
+              height={isMobile ? 60 : 80}
               fit="contain"
               className={styles.logoPreview}
             />
           ) : null}
         </Group>
 
-        <Text className={styles.sectionTitle}>Contact Information</Text>
+        {/* Contact Information Section */}
+        {isMobile ? (
+          <Badge
+            variant="light"
+            color="gray"
+            radius="sm"
+            className={styles.collapsibleHeader}
+            onClick={() => setContactExpanded(!contactExpanded)}
+            rightSection={
+              contactExpanded ? <IconChevronUp size={14} /> : <IconChevronDown size={14} />
+            }
+            fullWidth
+          >
+            Contact Information
+          </Badge>
+        ) : (
+          <Text className={styles.sectionTitle}>Contact Information</Text>
+        )}
         
-        <Grid>
-          <Grid.Col span={4}>
+        <Collapse in={!isMobile || contactExpanded}>
+        <Grid gutter={isMobile ? "xs" : "md"}>
+          <Grid.Col span={isMobile ? 12 : 4}>
             <TextInput
               label="Contact Name"
               placeholder="John Doe"
@@ -369,7 +393,7 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }
               classNames={{ input: styles.formInput }}
             />
           </Grid.Col>
-          <Grid.Col span={4}>
+          <Grid.Col span={isMobile ? 12 : 4}>
             <TextInput
               label="Contact Email"
               placeholder="contact@example.com"
@@ -379,7 +403,7 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }
               classNames={{ input: styles.formInput }}
             />
           </Grid.Col>
-          <Grid.Col span={4}>
+          <Grid.Col span={isMobile ? 12 : 4}>
             <TextInput
               label="Contact Phone"
               placeholder="+1234567890"
@@ -390,11 +414,30 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }
             />
           </Grid.Col>
         </Grid>
+        </Collapse>
 
-        <Text className={styles.sectionTitle}>Social Media Links</Text>
+        {/* Social Media Links Section */}
+        {isMobile ? (
+          <Badge
+            variant="light"
+            color="gray"
+            radius="sm"
+            className={styles.collapsibleHeader}
+            onClick={() => setSocialExpanded(!socialExpanded)}
+            rightSection={
+              socialExpanded ? <IconChevronUp size={14} /> : <IconChevronDown size={14} />
+            }
+            fullWidth
+          >
+            Social Media Links
+          </Badge>
+        ) : (
+          <Text className={styles.sectionTitle}>Social Media Links</Text>
+        )}
 
-        <Grid>
-          <Grid.Col span={6}>
+        <Collapse in={!isMobile || socialExpanded}>
+        <Grid gutter={isMobile ? "xs" : "md"}>
+          <Grid.Col span={isMobile ? 12 : 6}>
             <TextInput
               label="Twitter"
               placeholder="https://twitter.com/username"
@@ -404,7 +447,7 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }
               classNames={{ input: styles.formInput }}
             />
           </Grid.Col>
-          <Grid.Col span={6}>
+          <Grid.Col span={isMobile ? 12 : 6}>
             <TextInput
               label="LinkedIn"
               placeholder="https://linkedin.com/company/name"
@@ -414,7 +457,7 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }
               classNames={{ input: styles.formInput }}
             />
           </Grid.Col>
-          <Grid.Col span={6}>
+          <Grid.Col span={isMobile ? 12 : 6}>
             <TextInput
               label="Facebook"
               placeholder="https://facebook.com/page"
@@ -424,7 +467,7 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }
               classNames={{ input: styles.formInput }}
             />
           </Grid.Col>
-          <Grid.Col span={6}>
+          <Grid.Col span={isMobile ? 12 : 6}>
             <TextInput
               label="Instagram"
               placeholder="https://instagram.com/username"
@@ -435,6 +478,7 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }
             />
           </Grid.Col>
         </Grid>
+        </Collapse>
 
         <div className={styles.buttonGroup}>
           <Button variant="subtle" onClick={handleClose}>
