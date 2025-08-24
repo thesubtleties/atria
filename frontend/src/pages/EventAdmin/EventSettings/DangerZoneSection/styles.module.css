@@ -3,30 +3,33 @@
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(220, 38, 38, 0.1);
-  border-radius: 8px;
-  padding: 2rem;
+  border-radius: var(--radius-md);
+  padding: clamp(1.25rem, 4vw, 2rem);
   box-shadow: 0 4px 20px rgba(220, 38, 38, 0.04);
 }
 
 .warningSection {
-  margin-bottom: 2rem;
-  padding-bottom: 1.5rem;
+  margin-bottom: clamp(1.25rem, 4vw, 2rem);
+  padding-bottom: clamp(1rem, 3vw, 1.5rem);
   border-bottom: 1px solid rgba(220, 38, 38, 0.08);
 }
 
 .warningHeader {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+  gap: clamp(0.375rem, 1vw, 0.5rem);
+  margin-bottom: clamp(0.75rem, 2vw, 1rem);
 }
 
 .warningIcon {
   color: #dc2626;
+  flex-shrink: 0;
+  width: clamp(18px, 4vw, 20px);
+  height: clamp(18px, 4vw, 20px);
 }
 
 .sectionTitle {
-  font-size: 1.25rem;
+  font-size: clamp(1.1rem, 3vw, 1.25rem);
   font-weight: 600;
   color: #dc2626;
   margin: 0;
@@ -34,7 +37,7 @@
 
 .warningText {
   color: #991b1b;
-  font-size: 0.9rem;
+  font-size: clamp(0.825rem, 2vw, 0.9rem);
   line-height: 1.6;
 }
 
@@ -42,22 +45,23 @@
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  padding: 1.5rem;
-  border-radius: 6px;
+  padding: clamp(1rem, 3vw, 1.5rem);
+  border-radius: var(--radius-sm);
   border: 1px solid rgba(220, 38, 38, 0.08);
 }
 
 .deleteLabel {
   color: #374151;
+  font-size: clamp(0.8125rem, 2vw, 0.875rem) !important;
 }
 
 .deleteCode {
   background: rgba(220, 38, 38, 0.1);
   color: #dc2626;
-  padding: 0.25rem 0.5rem;
+  padding: clamp(0.2rem, 0.5vw, 0.25rem) clamp(0.4rem, 1vw, 0.5rem);
   border-radius: 4px;
   font-family: 'Monaco', 'Menlo', monospace;
-  font-size: 0.85rem;
+  font-size: clamp(0.75rem, 2vw, 0.85rem);
   font-weight: 600;
 }
 
@@ -66,6 +70,7 @@
   font-family: 'Monaco', 'Menlo', monospace;
   font-weight: 600;
   letter-spacing: 0.05em;
+  font-size: clamp(0.875rem, 2vw, 1rem);
 }
 
 .deleteInput input:focus {
@@ -74,4 +79,50 @@
 
 .deleteButton {
   align-self: flex-start;
+  width: 100%;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .dangerZone {
+    padding: 1rem;
+  }
+  
+  .warningSection {
+    margin-bottom: 1rem;
+    padding-bottom: 0.875rem;
+  }
+  
+  .deleteSection {
+    padding: 0.875rem;
+  }
+  
+  .deleteButton {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .warningText {
+    font-size: 0.8125rem;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 375px) {
+  .dangerZone {
+    padding: 0.875rem;
+  }
+  
+  .sectionTitle {
+    font-size: 1rem;
+  }
+  
+  .warningText {
+    font-size: 0.75rem;
+  }
+  
+  .deleteCode {
+    font-size: 0.7rem;
+    padding: 0.15rem 0.3rem;
+  }
 }

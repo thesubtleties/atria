@@ -423,6 +423,165 @@ Mobile-optimized badge layout that separates total count from role breakdowns:
 
 This pattern provides visual hierarchy on mobile by emphasizing the total count while keeping role breakdowns accessible but secondary.
 
+### Mobile vs Desktop Card Patterns
+
+Atria uses distinct card layouts optimized for different viewport sizes:
+
+#### Mobile Cards (Vertical/Centered)
+Cards on mobile devices follow a vertical, centered layout pattern for better readability and touch interaction:
+
+```css
+/* Mobile card pattern - vertical/centered layout */
+.mobileCard {
+  background: rgba(255, 255, 255, 1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  position: relative;
+}
+
+.mobileCardInner {
+  padding: clamp(0.75rem, 2vw, 1rem);
+  padding-top: clamp(2rem, 3vw, 2.5rem); /* Extra top padding for menu */
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.25rem, 1vw, 0.5rem);
+  text-align: center; /* Center text content */
+}
+
+/* Menu positioned in top-right corner */
+.mobileCardMenu {
+  position: absolute !important;
+  top: 0 !important;
+  right: 0 !important;
+  z-index: 10;
+  border-radius: 0 var(--radius-md) 0 var(--radius-md);
+}
+```
+
+#### Desktop Cards (Horizontal Layout)
+Desktop cards use horizontal layouts with left-aligned content and inline actions:
+
+```css
+/* Desktop card pattern - horizontal layout */
+.desktopCard {
+  background: rgba(255, 255, 255, 1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.desktopCardInner {
+  padding: clamp(0.75rem, 2vw, 1rem);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.desktopCardContent {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex: 1;
+}
+
+/* Icon as visual anchor on desktop */
+.desktopCardIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+```
+
+**Implementation Pattern:**
+```jsx
+const isMobile = useMediaQuery('(max-width: 768px)');
+
+return isMobile ? (
+  <MobileCard data={data} />
+) : (
+  <DesktopCard data={data} />
+);
+```
+
+**Key Differences:**
+- **Mobile**: Vertical stacking, centered text, absolute-positioned menu
+- **Desktop**: Horizontal layout, left-aligned text, inline menu
+- **Mobile**: Larger touch targets (44px minimum)
+- **Desktop**: More compact, hover-optimized interactions
+
+### Drag and Drop UI Patterns
+
+Interactive drag-and-drop lists with responsive behavior:
+
+#### Draggable Container
+```css
+.draggableList {
+  position: relative;
+  min-height: 80px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-md);
+  padding: clamp(0.375rem, 1.5vw, 0.5rem);
+  border: 2px dashed transparent;
+  transition: all 0.2s ease;
+}
+
+/* Empty state with dashed border */
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 70px;
+  background: rgba(248, 250, 252, 0.5);
+  border-radius: var(--radius-md);
+  border: 2px dashed rgba(148, 163, 184, 0.3);
+}
+```
+
+#### Draggable Cards
+```css
+.draggableCard {
+  background: rgba(255, 255, 255, 1);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: grab;
+}
+
+.draggableCard.dragging {
+  opacity: 0.5;
+  box-shadow: var(--shadow-lg);
+  transform: scale(1.02);
+  cursor: grabbing;
+}
+```
+
+#### Drag Hint Text
+```css
+.dragHint {
+  font-size: clamp(0.625rem, 1.5vw, 0.7rem) !important;
+  color: var(--color-text-muted) !important;
+  font-style: italic !important;
+  text-align: center !important;
+  margin-bottom: clamp(0.5rem, 2vw, 0.75rem) !important;
+  opacity: 0.65 !important;
+}
+```
+
+**Mobile Considerations:**
+- Hide drag handles on mobile (use long-press instead)
+- Show hint text: "Press down on cards and drag to reorder"
+- Disable drag cursor on mobile devices
+- Maintain larger touch targets for mobile dragging
+
 ### Empty State
 ```css
 .empty-state {
@@ -708,15 +867,46 @@ Use `clamp()` for fluid typography that scales with viewport:
 - Small text: `0.75rem` (fixed for legibility)
 
 ### Responsive Spacing
+
+#### Advanced Responsive Spacing with clamp()
+Using `clamp()` for fluid spacing that scales smoothly:
+
 ```css
-.responsivePadding {
+/* Section padding - scales from mobile to desktop */
+.responsiveSection {
   padding: clamp(var(--space-md), 4vw, var(--space-xl));
+  /* Mobile: 16px, Desktop: 32px, Fluid between */
 }
 
+/* Card padding - more subtle scaling */
+.responsiveCard {
+  padding: clamp(0.75rem, 2vw, 1rem);
+  /* Mobile: 12px, Desktop: 16px */
+}
+
+/* Gap between elements */
 .responsiveGap {
-  gap: clamp(0.75rem, 2vw, 1rem);
+  gap: clamp(0.5rem, 2vw, 0.75rem);
+  /* Mobile: 8px, Desktop: 12px */
+}
+
+/* Margin patterns */
+.responsiveMargin {
+  margin-bottom: clamp(1.25rem, 3vw, 2rem);
+  /* Mobile: 20px, Desktop: 32px */
 }
 ```
+
+**Clamp Formula Guide:**
+- First value: Minimum (mobile)
+- Middle value: Viewport-relative (scaling factor)
+- Last value: Maximum (desktop)
+
+**Recommended Scaling Factors:**
+- Padding: 3-4vw
+- Gaps: 2vw
+- Margins: 3vw
+- Text: 2-3vw
 
 ### Breakpoints
 Use these standard breakpoints:
@@ -755,6 +945,37 @@ import { Button } from 'shared/components/buttons/Button';
   border: 1px solid rgba(255, 255, 255, 0.8);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
+}
+```
+
+### Glass Morphism Styling Variations
+
+#### Primary Glass (Sections)
+```css
+.glassSection {
+  background: var(--color-background-glass); /* rgba(255, 255, 255, 0.8) */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border); /* rgba(255, 255, 255, 0.9) */
+  box-shadow: var(--shadow-lg);
+}
+```
+
+#### Secondary Glass (Nested Elements)
+```css
+.glassCard {
+  background: rgba(255, 255, 255, 1); /* More opaque for nested elements */
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: var(--shadow-sm); /* Lighter shadow for hierarchy */
+}
+```
+
+#### Subtle Glass (Backgrounds)
+```css
+.glassBackground {
+  background: rgba(255, 255, 255, 0.3); /* Very transparent */
+  border: 2px dashed transparent; /* Dashed for empty states */
 }
 ```
 
@@ -869,6 +1090,94 @@ Glassmorphic pagination controls with consistent hover states:
 - All controls styled uniformly (prev/next/page numbers)
 - `!important` required due to Mantine's specificity
 - Maintains accessibility with proper disabled states
+
+### Icon Usage Patterns
+
+Icons serve two distinct purposes in Atria: decorative and functional.
+
+#### Decorative Icons (Color-Coded)
+Used as visual anchors in cards to indicate content type:
+
+```css
+/* Highlight icon - yellow/amber */
+.highlightIcon {
+  color: #FFC107;
+  size: 24px;
+}
+
+/* FAQ icon - primary purple */
+.faqIcon {
+  color: var(--color-primary);
+  size: 24px;
+}
+
+/* Networking icon - primary purple */
+.networkingIcon {
+  color: var(--color-primary);
+  size: 24px;
+}
+```
+
+#### Functional Icons
+Used for actions and navigation:
+
+```css
+/* Menu actions - muted by default */
+.menuIcon {
+  color: var(--color-text-muted);
+  size: 16px;
+}
+
+/* Drag handle - larger for touch */
+.dragHandle {
+  color: var(--color-text-muted);
+  size: 20px;
+  min-width: 44px; /* Touch-friendly */
+  min-height: 44px;
+}
+```
+
+**Color Coding Guidelines:**
+- **Yellow/Amber**: Highlights, important information
+- **Primary Purple**: FAQ, networking, brand-related
+- **Muted Gray**: Actions, handles, menus
+- **Red**: Danger actions only (delete, remove)
+- **Green**: Success states only
+
+### Menu and Action Patterns
+
+#### Corner Menu Pattern (Mobile Cards)
+For mobile cards with centered content:
+
+```css
+.cornerMenu {
+  position: absolute !important;
+  top: 0 !important;
+  right: 0 !important;
+  z-index: 10;
+  border-radius: 0 var(--radius-md) 0 var(--radius-md);
+  min-width: 36px !important;
+  min-height: 36px !important;
+}
+```
+
+#### Inline Menu Pattern (Desktop Cards)
+For desktop horizontal layouts:
+
+```css
+.inlineMenu {
+  position: relative;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+```
+
+**Menu Dropdown Positioning:**
+```jsx
+<Menu position="bottom-end" withinPortal>
+  {/* Ensures dropdown doesn't get cut off */}
+</Menu>
+```
 
 ### Shared Utility Functions Pattern
 Extract common logic to `/shared/utils/` for consistency and reusability:
