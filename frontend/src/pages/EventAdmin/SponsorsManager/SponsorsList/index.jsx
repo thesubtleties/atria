@@ -3,7 +3,10 @@ import { Text, Box } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { DragDropProvider } from '@dnd-kit/react';
 import { move } from '@dnd-kit/helpers';
-import { useUpdateSponsorMutation } from '../../../../app/features/sponsors/api';
+import { 
+  useUpdateSponsorMutation,
+  useGetSponsorTiersQuery 
+} from '../../../../app/features/sponsors/api';
 import SponsorCard from '../SponsorCard';
 import DroppableTier from '../DroppableTier';
 import SponsorModal from '../SponsorModal';
@@ -13,11 +16,19 @@ const SponsorsList = ({ sponsors, eventId }) => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedSponsor, setSelectedSponsor] = useState(null);
   const [updateSponsor] = useUpdateSponsorMutation();
+  const { data: allTiers = [] } = useGetSponsorTiersQuery({ eventId });
   const [localItems, setLocalItems] = useState({});
 
-  // Initialize local items from sponsors
+  // Initialize local items from sponsors and all tiers
   useEffect(() => {
     const grouped = {};
+    
+    // First, initialize all tiers (even empty ones)
+    allTiers.forEach((tier) => {
+      grouped[tier.id] = [];
+    });
+    
+    // Then add sponsors to their respective tiers
     const sortedSponsors = [...sponsors].sort((a, b) => {
       const tierDiff = (a.tier_order || 999) - (b.tier_order || 999);
       if (tierDiff !== 0) return tierDiff;
@@ -28,31 +39,46 @@ const SponsorsList = ({ sponsors, eventId }) => {
     });
 
     sortedSponsors.forEach((sponsor) => {
-      const tierKey = sponsor.tier_id || 'no-tier';
-      if (!grouped[tierKey]) {
-        grouped[tierKey] = [];
+      // Only add sponsors that have a tier assigned
+      if (sponsor.tier_id) {
+        const tierKey = sponsor.tier_id;
+        if (!grouped[tierKey]) {
+          grouped[tierKey] = [];
+        }
+        grouped[tierKey].push(sponsor.id);
       }
-      grouped[tierKey].push(sponsor.id);
     });
     
     setLocalItems(grouped);
-  }, [sponsors]);
+  }, [sponsors, allTiers]);
 
   // Create lookups
   const tierInfo = useMemo(() => {
     const info = {};
+    
+    // Add all tiers from API
+    allTiers.forEach((tier) => {
+      info[tier.id] = {
+        id: tier.id,
+        name: tier.name,
+        tier_order: tier.order_index || 999,
+        tier_color: tier.color || null,
+      };
+    });
+    
+    // Also include any tier info from sponsors (in case of data mismatch)
     sponsors.forEach((sponsor) => {
-      const tierKey = sponsor.tier_id || 'no-tier';
-      if (!info[tierKey]) {
-        info[tierKey] = {
+      if (sponsor.tier_id && !info[sponsor.tier_id]) {
+        info[sponsor.tier_id] = {
           id: sponsor.tier_id,
-          name: sponsor.tier_name || 'No Tier',
+          name: sponsor.tier_name || 'Unknown Tier',
           tier_order: sponsor.tier_order || 999,
         };
       }
     });
+    
     return info;
-  }, [sponsors]);
+  }, [sponsors, allTiers]);
 
   const sponsorLookup = useMemo(() => {
     const lookup = {};

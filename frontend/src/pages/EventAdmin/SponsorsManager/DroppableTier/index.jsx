@@ -15,8 +15,8 @@ const DroppableTier = ({ id, tier, children }) => {
     collisionPriority: CollisionPriority.Low,
   });
 
-  // Get the tier color from the first sponsor (they all have the same tier)
-  const tierColor = tier.sponsors.length > 0 ? tier.sponsors[0].tier_color : null;
+  // Get the tier color from the tier itself
+  const tierColor = tier.tier_color || (tier.sponsors.length > 0 ? tier.sponsors[0].tier_color : null);
   const badgeStyles = tierColor ? getGradientBadgeStyles(tierColor) : {};
 
   return (
