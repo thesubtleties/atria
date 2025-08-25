@@ -316,6 +316,7 @@ export const SessionCard = ({ session, eventId, hasConflict }) => {
           <SessionSpeakers 
             sessionId={session.id} 
             canEdit={true}
+            variant="card"
           />
         </div>
 

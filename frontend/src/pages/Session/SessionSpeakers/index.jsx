@@ -16,7 +16,7 @@ import { SPEAKER_ROLE_ORDER, formatSpeakerRole } from '@/shared/constants/speake
 import styles from './styles/index.module.css';
 
 // Draggable speaker wrapper component - now includes role for scoped dragging
-const DraggableSpeakerCard = ({ id, speaker, canEdit, onRemove, role }) => {
+const DraggableSpeakerCard = ({ id, speaker, canEdit, onRemove, role, variant = 'flow', isLast }) => {
   // Only enable drag-and-drop if canEdit is true
   const { ref, isDragging } = canEdit 
     ? useSortable({ 
@@ -31,7 +31,7 @@ const DraggableSpeakerCard = ({ id, speaker, canEdit, onRemove, role }) => {
   return (
     <div
       {...wrapperProps}
-      className={`${styles.speakerWrapper} ${isDragging ? styles.dragging : ''}`}
+      className={`${styles.speakerWrapper} ${isDragging ? styles.dragging : ''} ${variant === 'flow' && !isLast ? styles.withDivider : ''}`}
       style={{
         opacity: isDragging ? 0.5 : 1,
         cursor: canEdit ? (isDragging ? 'grabbing' : 'grab') : 'default',
@@ -41,12 +41,13 @@ const DraggableSpeakerCard = ({ id, speaker, canEdit, onRemove, role }) => {
         speaker={speaker} 
         canEdit={canEdit}
         onRemove={onRemove}
+        variant={variant}
       />
     </div>
   );
 };
 
-export const SessionSpeakers = ({ sessionId, canEdit }) => {
+export const SessionSpeakers = ({ sessionId, canEdit, variant = 'flow' }) => {
   const [showAddModal, setShowAddModal] = useState(false);
   
   const { data: speakersData, isLoading } = useGetSessionSpeakersQuery({
@@ -180,12 +181,12 @@ export const SessionSpeakers = ({ sessionId, canEdit }) => {
             return (
               <div key={role} className={styles.roleGroup}>
                 <h4 className={styles.roleTitle}>{formatSpeakerRole(role)}</h4>
-                <div className={styles.speakersRow}>
+                <div className={`${styles.speakersRow} ${variant === 'flow' ? styles.flowRow : ''}`}>
                   <DragDropProvider
                     onDragOver={handleDragOver(role)}
                     onDragEnd={handleDragEnd(role)}
                   >
-                    {roleSpeakerIds.map((speakerId) => {
+                    {roleSpeakerIds.map((speakerId, index) => {
                       const speaker = speakers.find(s => `speaker-${s.user_id}` === speakerId);
                       if (!speaker) return null;
                       
@@ -197,6 +198,8 @@ export const SessionSpeakers = ({ sessionId, canEdit }) => {
                           canEdit={canEdit}
                           onRemove={handleRemoveSpeaker}
                           role={role}
+                          variant={variant}
+                          isLast={index === roleSpeakerIds.length - 1}
                         />
                       );
                     })}

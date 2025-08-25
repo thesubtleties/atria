@@ -2,13 +2,13 @@
 import { IconTrash, IconBrandLinkedin, IconWorld } from '@tabler/icons-react';
 import styles from './styles/index.module.css';
 
-export const SpeakerCard = ({ speaker, canEdit, onRemove }) => {
+export const SpeakerCard = ({ speaker, canEdit, onRemove, variant = 'flow' }) => {
   const getAvatarInitial = (name) => {
     return name ? name[0].toUpperCase() : '?';
   };
 
   return (
-    <div className={styles.card}>
+    <div className={`${styles.card} ${styles[variant]}`}>
       <div className={styles.speakerLayout}>
         {speaker.image_url ? (
           <img 
