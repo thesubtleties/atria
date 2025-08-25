@@ -100,7 +100,7 @@
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
   border-radius: 12px;
-  padding: 2rem; /* Standard padding */
+  padding: 0; /* Remove padding - let container handle sizing */
   border: none;
   box-shadow: none;
   position: relative;
@@ -112,12 +112,14 @@
   background: rgba(255, 255, 255, 0.8); /* Stronger white glass background */
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-radius: 10px;
+  border-radius: 12px; /* Match aboutSection radius */
   overflow: hidden;
   position: relative;
   width: 100%;
-  border: 1px solid rgba(255, 255, 255, 0.9);
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08); /* Subtle shadow for cinematic floating effect */
+  border: 1px solid rgba(255, 255, 255, 0.8); /* Match aboutSection border */
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04); /* Match aboutSection shadow */
+  padding: 2rem; /* Move padding here to match aboutSection */
+  container-type: inline-size; /* Enable container queries */
 }
 
 /* Section header within video container */
@@ -125,39 +127,36 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.5rem 2rem;
-  background: rgba(255, 255, 255, 0.8); /* White glass for floating effect */
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  padding: 0 0 1.5rem 0; /* No horizontal padding, just bottom */
+  background: transparent; /* Remove separate background */
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   border-bottom: 1px solid rgba(139, 92, 246, 0.08);
+  margin: -2rem -2rem 0 -2rem; /* Negative margins to extend to container edges */
+  padding: 2rem 0.75rem 1.5rem 0.75rem !important; /* Reduced horizontal padding to 0.75rem */
 }
 
 /* Video wrapper within the container */
 .videoWrapper {
-  width: 100%;
+  width: calc(100% + 4rem); /* Extend to edges of container */
+  margin: 0 -2rem; /* Pull out to edges */
   position: relative;
-  background: rgba(
-    255,
-    255,
-    255,
-    0.8
-  ); /* Changed from black to match white glass */
-  /* Remove any padding to make video fill the space */
+  background: rgba(0, 0, 0, 0.9); /* Dark background for video */
   padding: 0;
-  margin: 0;
 }
 
 /* Video footer for session details */
 .videoFooter {
-  padding: 0.75rem 2rem; /* Reduced from 1.5rem to tighten vertical space */
-  background: rgba(255, 255, 255, 0.8); /* White glass for floating effect */
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: transparent; /* Remove separate background */
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   border-top: 1px solid rgba(139, 92, 246, 0.08);
+  margin: 0 -2rem -2rem -2rem; /* Negative margins to extend to container edges */
+  padding: 0.75rem 0.75rem 1rem 0.75rem !important; /* Reduced horizontal padding to 0.75rem */
 }
 
 .title {
-  font-size: 1.75rem;
+  font-size: clamp(1.25rem, 3vw, 1.75rem); /* Responsive sizing based on viewport/container */
   font-weight: 600;
   color: #1e293b; /* Dark text for white background */
   margin-bottom: 0;
@@ -332,6 +331,36 @@
   box-shadow: 0 6px 16px rgba(139, 92, 246, 0.3);
 }
 
+/* Container queries for responsive title and padding */
+@container (min-width: 768px) {
+  /* Add more padding when container is wide */
+  .sectionHeader {
+    padding: 2rem 1.5rem 1.5rem 1.5rem !important;
+  }
+  
+  .videoFooter {
+    padding: 0.75rem 1.5rem 1rem 1.5rem !important;
+  }
+}
+
+@container (max-width: 800px) {
+  .title {
+    font-size: 1.5rem !important;
+  }
+}
+
+@container (max-width: 600px) {
+  .title {
+    font-size: 1.25rem !important;
+  }
+}
+
+@container (max-width: 400px) {
+  .title {
+    font-size: 1.125rem !important;
+  }
+}
+
 /* Responsive design */
 @media (max-width: 1400px) {
   .layoutGrid {
@@ -392,7 +421,7 @@
   }
 
   .videoSection {
-    padding: clamp(var(--space-sm), 3vw, var(--space-md));
+    padding: 0; /* Keep at 0 for consistent width */
   }
   
   .videoContainer {
@@ -421,9 +450,19 @@
     display: none;
   }
 
-  .sectionHeader,
+  .sectionHeader {
+    margin: calc(-1 * clamp(var(--space-md), 3vw, var(--space-lg))) calc(-1 * clamp(var(--space-md), 3vw, var(--space-lg))) 0 calc(-1 * clamp(var(--space-md), 3vw, var(--space-lg)));
+    padding: clamp(var(--space-md), 3vw, var(--space-lg)) clamp(var(--space-md), 3vw, var(--space-lg)) clamp(var(--space-sm), 2vw, var(--space-md)) clamp(var(--space-md), 3vw, var(--space-lg));
+  }
+  
+  .videoWrapper {
+    width: calc(100% + 2 * clamp(var(--space-md), 3vw, var(--space-lg)));
+    margin: 0 calc(-1 * clamp(var(--space-md), 3vw, var(--space-lg)));
+  }
+  
   .videoFooter {
-    padding: clamp(var(--space-sm), 3vw, var(--space-md));
+    margin: 0 calc(-1 * clamp(var(--space-md), 3vw, var(--space-lg))) calc(-1 * clamp(var(--space-md), 3vw, var(--space-lg))) calc(-1 * clamp(var(--space-md), 3vw, var(--space-lg)));
+    padding: clamp(var(--space-sm), 2vw, var(--space-md)) clamp(var(--space-md), 3vw, var(--space-lg)) clamp(var(--space-md), 3vw, var(--space-lg)) clamp(var(--space-md), 3vw, var(--space-lg));
   }
   
   /* Floating chat button positioning on mobile */

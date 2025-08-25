@@ -1,9 +1,10 @@
 /* pages/Session/SessionDisplay/styles/index.module.css */
 .displayContainer {
   width: 100%;
-  background: rgba(255, 255, 255, 0.8);
+  background: #000; /* Black background for video */
   overflow: hidden;
-  min-height: 480px;
+  /* Maintain 16:9 aspect ratio */
+  aspect-ratio: 16 / 9;
   /* No border radius or border - video should fill completely */
 }
 
