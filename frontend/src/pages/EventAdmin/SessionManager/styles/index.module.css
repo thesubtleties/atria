@@ -392,12 +392,34 @@
   color: var(--color-text-secondary);
 }
 
-/* Session Type Badge */
+/* Session Type Badges - Compose base + type-specific styling */
 .sessionTypeBadge {
   composes: badge-base from '../../../../styles/design-tokens.css' !important;
-  background: rgba(139, 92, 246, 0.08) !important;
-  color: var(--color-primary) !important;
-  border: 1px solid rgba(139, 92, 246, 0.15) !important;
+}
+
+/* Session type specific badge classes */
+.badgeKeynote {
+  composes: badge-base badge-keynote from '../../../../styles/design-tokens.css' !important;
+}
+
+.badgeWorkshop {
+  composes: badge-base badge-workshop from '../../../../styles/design-tokens.css' !important;
+}
+
+.badgePanel {
+  composes: badge-base badge-panel from '../../../../styles/design-tokens.css' !important;
+}
+
+.badgePresentation {
+  composes: badge-base badge-presentation from '../../../../styles/design-tokens.css' !important;
+}
+
+.badgeQa {
+  composes: badge-base badge-qa from '../../../../styles/design-tokens.css' !important;
+}
+
+.badgeNetworking {
+  composes: badge-base badge-networking from '../../../../styles/design-tokens.css' !important;
 }
 
 /* Mobile Card Simplified Layout */

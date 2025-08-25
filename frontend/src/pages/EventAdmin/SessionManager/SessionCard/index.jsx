@@ -175,6 +175,23 @@ export const SessionCard = ({ session, eventId, hasConflict }) => {
     handleUpdate(updates);
   };
 
+  // Get the appropriate badge class based on session type
+  const getSessionTypeBadgeClass = (type) => {
+    const typeClassMap = {
+      'KEYNOTE': styles.badgeKeynote,
+      'WORKSHOP': styles.badgeWorkshop,
+      'PANEL': styles.badgePanel,
+      'PRESENTATION': styles.badgePresentation,
+      'NETWORKING': styles.badgeNetworking,
+      'QA': styles.badgeQa,
+    };
+    return typeClassMap[type] || styles.sessionTypeBadge;
+  };
+
+  const getSessionTypeLabel = (type) => {
+    return SESSION_TYPES.find(t => t.value === type)?.label || type;
+  };
+
   const handleDelete = () => {
     openConfirmationModal({
       title: 'Delete Session',
@@ -273,20 +290,25 @@ export const SessionCard = ({ session, eventId, hasConflict }) => {
 
         {/* Info Bar */}
         <Group className={styles.infoBar}>
-          <Select
-            value={sessionType}
-            onChange={(value) => {
-              setSessionType(value);
-              handleUpdate({ session_type: value });
-            }}
-            data={SESSION_TYPES}
-            size="sm"
-            style={{ width: 160 }}
-            styles={{
-              input: { cursor: 'pointer' },
-              rightSection: { pointerEvents: 'none' }
-            }}
-          />
+          <Group gap="xs" align="center">
+            <Badge className={getSessionTypeBadgeClass(sessionType)} size="sm">
+              {getSessionTypeLabel(sessionType)}
+            </Badge>
+            <Select
+              value={sessionType}
+              onChange={(value) => {
+                setSessionType(value);
+                handleUpdate({ session_type: value });
+              }}
+              data={SESSION_TYPES}
+              size="sm"
+              style={{ width: 140 }}
+              styles={{
+                input: { cursor: 'pointer' },
+                rightSection: { pointerEvents: 'none' }
+              }}
+            />
+          </Group>
           <Select
             value={chatMode}
             onChange={(value) => {

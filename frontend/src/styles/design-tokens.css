@@ -412,3 +412,48 @@
   margin-bottom: 1rem;
   line-height: 1.5;
 }
+
+/* ====================== Session Type Badges ====================== */
+/* Subtle badge styling for admin contexts using session type colors */
+
+/* Keynote - Purple (brand color) */
+.badge-keynote {
+  background: rgba(139, 92, 246, 0.08) !important;
+  color: #8b5cf6 !important;
+  border: 1px solid rgba(139, 92, 246, 0.15) !important;
+}
+
+/* Workshop - Teal */
+.badge-workshop {
+  background: rgba(20, 184, 166, 0.08) !important;
+  color: #14b8a6 !important;
+  border: 1px solid rgba(20, 184, 166, 0.15) !important;
+}
+
+/* Panel - Violet */
+.badge-panel {
+  background: rgba(168, 85, 247, 0.08) !important;
+  color: #a855f7 !important;
+  border: 1px solid rgba(168, 85, 247, 0.15) !important;
+}
+
+/* Presentation - Orange */
+.badge-presentation {
+  background: rgba(249, 115, 22, 0.08) !important;
+  color: #f97316 !important;
+  border: 1px solid rgba(249, 115, 22, 0.15) !important;
+}
+
+/* Q&A - Yellow */
+.badge-qa {
+  background: rgba(234, 179, 8, 0.08) !important;
+  color: #eab308 !important;
+  border: 1px solid rgba(234, 179, 8, 0.15) !important;
+}
+
+/* Networking - Green */
+.badge-networking {
+  background: rgba(34, 197, 94, 0.08) !important;
+  color: #22c55e !important;
+  border: 1px solid rgba(34, 197, 94, 0.15) !important;
+}
