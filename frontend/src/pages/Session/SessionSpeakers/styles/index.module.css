@@ -60,12 +60,23 @@
   letter-spacing: 0.8px;
 }
 
-/* Speakers row - horizontal layout for each role */
+/* Speakers row - default grid layout for card variant */
 .speakersRow {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 10px;
   width: 100%;
+}
+
+/* Flow layout - inline display with wrapping */
+.speakersRow.flowRow {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 0 !important;
+  align-items: center !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
 }
 
 /* Legacy grid support - keep for backward compatibility */
@@ -80,8 +91,43 @@
   transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
+/* Flow variant wrapper styling */
+.flowRow .speakerWrapper {
+  display: inline-flex !important;
+  align-items: center !important;
+  margin-right: 16px !important;
+  margin-bottom: 4px !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Divider for flow variant */
+.flowRow .speakerWrapper.withDivider::after {
+  content: '|';
+  position: absolute;
+  right: -10px;
+  color: rgba(139, 92, 246, 0.15);
+  font-weight: 200;
+  font-size: 14px;
+  opacity: 0.6;
+  pointer-events: none;
+  user-select: none;
+}
+
 .speakerWrapper[draggable="true"] {
   cursor: grab;
+}
+
+/* Adjust cursor for flow variant */
+.flowRow .speakerWrapper[draggable="true"] {
+  cursor: move;
+}
+
+/* Remove any transform on flow variant during drag */
+.flowRow .speakerWrapper.dragging {
+  transform: none !important;
+  opacity: 0.5 !important;
 }
 
 .dragging {
@@ -115,5 +161,32 @@
   }
   100% {
     opacity: 0.6;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  /* Card variant on mobile - single column */
+  .speakersRow {
+    grid-template-columns: 1fr;
+  }
+  
+  /* Flow variant on mobile - vertical list without dividers */
+  .speakersRow.flowRow {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100% !important;
+  }
+  
+  .flowRow .speakerWrapper {
+    width: 100% !important;
+    margin-right: 0 !important;
+    margin-bottom: 6px !important;
+    display: block !important;
+  }
+  
+  /* Hide dividers on mobile for better layout */
+  .flowRow .speakerWrapper.withDivider::after {
+    display: none !important;
   }
 }

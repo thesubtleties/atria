@@ -1,16 +1,44 @@
-/* Refined speaker item - not a heavy card, more integrated */
+/* Base card styles - common to both variants */
 .card {
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: stretch;
+  position: relative;
+}
+
+/* Flow variant - minimal, inline display */
+.card.flow {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 4px 8px !important;
+  min-height: auto !important;
+  width: fit-content !important;
+  max-width: 100%;
+  box-shadow: none !important;
+}
+
+/* Card variant - traditional card appearance */
+.card.card {
   background: rgba(255, 255, 255, 0.5);
   border: 1px solid rgba(139, 92, 246, 0.08);
   border-radius: 8px;
   padding: 12px;
-  transition: all 0.2s ease;
-  min-height: 88px; /* Ensure uniform height */
-  display: flex;
-  align-items: stretch;
+  min-height: 88px;
+  width: 100%;
+  max-width: 100%; /* Prevent overflow on mobile */
 }
 
-.card:hover {
+/* Flow variant hover - very subtle */
+.card.flow:hover {
+  background: rgba(139, 92, 246, 0.03) !important;
+  border-radius: 4px !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Card variant hover - more prominent */
+.card.card:hover {
   background: rgba(255, 255, 255, 0.7);
   border-color: rgba(139, 92, 246, 0.15);
   transform: translateY(-1px);
@@ -25,6 +53,14 @@
   width: 100%;
 }
 
+/* Flow variant adjustments */
+.flow .speakerLayout {
+  gap: 6px !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+}
+
 /* Avatar styles - smaller and tighter */
 .avatar {
   width: 40px;
@@ -36,8 +72,20 @@
   transition: border-color 0.2s ease;
 }
 
-.card:hover .avatar {
+/* Flow variant - even smaller avatar */
+.flow .avatar {
+  width: 32px !important;
+  height: 32px !important;
+  border: 1px solid rgba(139, 92, 246, 0.1) !important;
+}
+
+.card.card:hover .avatar {
   border-color: rgba(139, 92, 246, 0.3);
+}
+
+.card.flow:hover .avatar {
+  border-color: rgba(139, 92, 246, 0.2) !important;
+  transform: none !important;
 }
 
 .avatarPlaceholder {
@@ -54,13 +102,28 @@
   flex-shrink: 0;
 }
 
+/* Flow variant - smaller placeholder */
+.flow .avatarPlaceholder {
+  width: 32px !important;
+  height: 32px !important;
+  font-size: 12px !important;
+}
+
 /* Speaker info - compact and refined */
 .speakerInfo {
   flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* Distribute space evenly */
+  justify-content: space-between;
+}
+
+/* Flow variant - more compact info */
+.flow .speakerInfo {
+  flex: 1 1 auto !important; /* Allow it to grow but not push the delete button */
+  justify-content: center !important;
+  gap: 0 !important; /* No flex gap, using margins instead */
+  min-width: 0 !important; /* Allow text truncation */
 }
 
 /* Typography - smaller, tighter, more refined */
@@ -73,8 +136,19 @@
   transition: color 0.2s ease;
 }
 
-.card:hover .speakerName {
+/* Flow variant - more subtle text */
+.flow .speakerName {
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  line-height: 1.2 !important; /* More breathing room */
+}
+
+.card.card:hover .speakerName {
   color: #8b5cf6;
+}
+
+.card.flow:hover .speakerName {
+  color: #8b5cf6 !important;
 }
 
 .speakerDetails {
@@ -82,6 +156,14 @@
   color: #64748b;
   line-height: 1.3;
   margin: 2px 0 0 0;
+}
+
+/* Flow variant - even smaller details */
+.flow .speakerDetails {
+  font-size: 11px !important;
+  color: #94a3b8 !important;
+  margin: 1px 0 0 0 !important; /* Just a tiny bit of space */
+  line-height: 1.15 !important; /* Slightly tighter than 1.2 */
 }
 
 .speakerBio {
@@ -96,12 +178,29 @@
   opacity: 0.9;
 }
 
+/* Hide bio in flow variant for cleaner look */
+.flow .speakerBio {
+  display: none;
+}
+
 /* Social links - subtle and integrated */
 .socialLinks {
   display: flex;
   gap: 6px;
-  margin-top: 3px; /* Reduced from 6px for tighter spacing */
-  min-height: 20px; /* Reserve space even when no links */
+  margin-top: 3px;
+  min-height: 20px;
+}
+
+/* Flow variant - inline social links */
+.flow .socialLinks {
+  /* Hiding social links in flow variant for cleaner appearance */
+  /* Uncomment below to show social links again */
+  /* margin-top: 2px !important;
+  margin-left: 4px !important;
+  display: inline-flex !important;
+  min-height: auto !important;
+  gap: 4px !important; */
+  display: none !important;
 }
 
 .socialLink {
@@ -114,10 +213,30 @@
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
+/* Flow variant - more visible social icons like Agenda */
+/* Commented out since social links are hidden in flow variant */
+/* .flow .socialLink {
+  opacity: 0.7 !important;
+  height: 20px !important;
+}
+
+.flow .socialLink svg {
+  width: 18px !important;
+  height: 18px !important;
+} */
+
 .socialLink:hover {
   opacity: 1;
   transform: translateY(-1px);
 }
+
+/* Flow variant - subtle hover like Agenda */
+/* Commented out since social links are hidden in flow variant */
+/* .flow .socialLink:hover {
+  opacity: 1 !important;
+  transform: translateY(-1px) !important;
+  color: #7c3aed !important;
+} */
 
 /* Action buttons - minimal and integrated */
 .actions {
@@ -129,6 +248,23 @@
 
 .card:hover .actions {
   opacity: 1;
+}
+
+/* Flow variant - actions always visible on hover */
+.flow .actions {
+  margin-left: auto !important; /* Push to the end */
+  flex-shrink: 0 !important; /* Prevent shrinking */
+}
+
+.flow .actionButton {
+  width: 24px !important;
+  height: 24px !important;
+  padding: 2px !important;
+}
+
+.flow .actionButton svg {
+  width: 12px !important;
+  height: 12px !important;
 }
 
 .actionButton {
@@ -162,6 +298,28 @@
     padding: 10px;
   }
   
+  /* Flow variant - full width on mobile */
+  .card.flow {
+    width: 100% !important;
+    padding: 8px 12px !important;
+    margin-bottom: 4px !important;
+    display: flex !important;
+  }
+  
+  /* Ensure layout spans full width on mobile */
+  .flow .speakerLayout {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: space-between !important;
+  }
+  
+  /* Ensure actions stay at the end on mobile */
+  .flow .actions {
+    margin-left: auto !important;
+    position: relative !important;
+    right: 0 !important;
+  }
+  
   .avatar,
   .avatarPlaceholder {
     width: 36px;
@@ -175,4 +333,14 @@
   .speakerDetails {
     font-size: 11px;
   }
+  
+  /* Ensure social icons are touch-friendly on mobile */
+  /* Commented out since social links are hidden in flow variant */
+  /* .flow .socialLink {
+    min-width: 32px !important;
+    min-height: 32px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  } */
 }
