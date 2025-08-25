@@ -3,15 +3,10 @@ import {
   Group, 
   Text, 
   LoadingOverlay, 
-  Badge, 
-  ActionIcon, 
-  Menu 
+  Badge
 } from '@mantine/core';
 import { 
-  IconPlus, 
-  IconDots, 
-  IconDownload, 
-  IconUpload,
+  IconPlus,
   IconCalendar
 } from '@tabler/icons-react';
 import { useParams } from 'react-router-dom';
@@ -157,49 +152,41 @@ export const SessionManager = () => {
       <div className={styles.contentWrapper}>
         {/* Header Section */}
         <section className={styles.headerSection}>
-          <Group justify="space-between" align="flex-start">
-            <div>
+          <div className={styles.headerContent}>
+            <div className={styles.headerLeft}>
               <h2 className={styles.pageTitle}>Session Manager</h2>
               <div className={styles.badgeGroup}>
-                <Badge size="lg" variant="light" color="blue" radius="sm" leftSection={<IconCalendar size={14} />}>
-                  Day {currentDay}
-                </Badge>
-                <Badge className={styles.statsBadge} size="lg" variant="light" radius="sm">
-                  {sessionStats.total} Sessions
-                </Badge>
-                {sessionStats.overlapping > 0 && (
-                  <Badge size="lg" variant="light" color="yellow" radius="sm">
-                    {sessionStats.overlapping} Overlapping
+                {/* First row: Day indicator */}
+                <div className={styles.badgeRow}>
+                  <Badge 
+                    size="lg" 
+                    variant="light" 
+                    color="blue" 
+                    radius="sm" 
+                    leftSection={<IconCalendar size={14} />}
+                  >
+                    Day {currentDay}
                   </Badge>
-                )}
+                </div>
+                {/* Second row: Stats */}
+                <div className={styles.badgeRow}>
+                  <Badge className={styles.statsBadge} size="lg" radius="sm">
+                    {sessionStats.total} Total
+                  </Badge>
+                  {sessionStats.speakers > 0 && (
+                    <Badge size="lg" variant="light" color="grape" radius="sm">
+                      {sessionStats.speakers} Speakers
+                    </Badge>
+                  )}
+                  {sessionStats.overlapping > 0 && (
+                    <Badge size="lg" variant="light" color="yellow" radius="sm" className={styles.warningBadge}>
+                      {sessionStats.overlapping} Overlapping
+                    </Badge>
+                  )}
+                </div>
               </div>
             </div>
-            <Group>
-              {/* CSV Import/Export - Commented out for post-launch implementation
-              <Menu shadow="md" width={200}>
-                <Menu.Target>
-                  <ActionIcon className={styles.actionIcon} variant="subtle" size="lg">
-                    <IconDots size={20} />
-                  </ActionIcon>
-                </Menu.Target>
-                <Menu.Dropdown className={styles.menuDropdown}>
-                  <Menu.Item
-                    className={styles.menuItem}
-                    leftSection={<IconDownload size={16} />}
-                    onClick={handleExport}
-                  >
-                    Export to CSV
-                  </Menu.Item>
-                  <Menu.Item
-                    className={styles.menuItem}
-                    leftSection={<IconUpload size={16} />}
-                    onClick={handleImport}
-                  >
-                    Import from CSV
-                  </Menu.Item>
-                </Menu.Dropdown>
-              </Menu>
-              */}
+            <div className={styles.headerRight}>
               <Button
                 variant="primary"
                 onClick={() => setShowCreateModal(true)}
@@ -207,8 +194,8 @@ export const SessionManager = () => {
                 <IconPlus size={18} />
                 New Session
               </Button>
-            </Group>
-          </Group>
+            </div>
+          </div>
         </section>
 
         {/* Main Content Section */}

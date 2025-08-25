@@ -1,10 +1,9 @@
 .sessionsList {
   display: flex;
   flex-direction: column;
-  gap: var(--mantine-spacing-md);
+  gap: clamp(0.75rem, 2vw, 1rem);
 }
 
 .emptyState {
-  text-align: center;
-  padding: calc(var(--mantine-spacing-xl) * 3) 0;
+  composes: empty-state from '../../../../../styles/design-tokens.css';
 }
