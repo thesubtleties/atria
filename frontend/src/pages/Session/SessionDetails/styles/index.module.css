@@ -3,65 +3,211 @@
   background: transparent;
   padding: 0.5rem 0; /* Reduced from 1rem to tighten vertical space */
   margin-top: 0;
+  width: 100% !important;
+  container-type: inline-size; /* Enable container queries */
 }
 
 .detailsGrid {
-  flex-wrap: wrap;
-  align-items: center;
+  display: flex !important;
+  justify-content: flex-start !important; /* Push everything to the left */
+  align-items: center !important;
+  flex-wrap: nowrap !important; /* Prevent wrapping on desktop */
+  width: 100% !important;
+  gap: clamp(0.375rem, 2vw, var(--space-lg)) !important; /* Slightly more breathing room (6px minimum) */
 }
 
-/* Modern type tag styling */
+/* Push edit button to the far right on desktop */
+.editButton {
+  margin-left: auto !important; /* This pushes it to the right */
+}
+
+/* Base type tag styling */
 .typeTag {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  font-size: 0.8rem;
-  font-weight: 600;
+  composes: badge-base from '../../../../styles/design-tokens.css' !important;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  background: rgba(139, 92, 246, 0.08);
-  color: #8B5CF6;
-  border: 1px solid rgba(139, 92, 246, 0.15);
+  flex-shrink: 0; /* Prevent badge from shrinking */
+  white-space: nowrap;
 }
 
-/* Session type colors matching the main page */
+/* Prevent Groups from shrinking too much on desktop */
+.detailsGrid > :global(.mantine-Group-root) {
+  flex-shrink: 0;
+  white-space: nowrap;
+  gap: clamp(0.1875rem, 1vw, 0.5rem) !important; /* Slightly more gap within groups (3px minimum) */
+}
+
+/* Responsive text sizing for tight spaces */
+.detailsGrid :global(.mantine-Text-root) {
+  font-size: clamp(0.75rem, 1.5vw, 0.875rem) !important; /* Shrink text when space is tight */
+}
+
+/* Responsive icon sizing */
+.detailsGrid svg {
+  width: clamp(14px, 2vw, 16px) !important;
+  height: clamp(14px, 2vw, 16px) !important;
+}
+
+/* Session type colors using our new badge system */
 .keynote {
-  background-color: var(--mantine-color-grape-1);
-  color: var(--mantine-color-grape-7);
+  composes: badge-base badge-keynote from '../../../../styles/design-tokens.css' !important;
 }
 
 .panel {
-  background-color: var(--mantine-color-blue-1);
-  color: var(--mantine-color-blue-7);
+  composes: badge-base badge-panel from '../../../../styles/design-tokens.css' !important;
 }
 
 .workshop {
-  background-color: var(--mantine-color-teal-1);
-  color: var(--mantine-color-teal-7);
+  composes: badge-base badge-workshop from '../../../../styles/design-tokens.css' !important;
 }
 
 .presentation {
-  background-color: var(--mantine-color-orange-1);
-  color: var(--mantine-color-orange-7);
+  composes: badge-base badge-presentation from '../../../../styles/design-tokens.css' !important;
 }
 
 .qa, .q_a {
-  background-color: var(--mantine-color-pink-1);
-  color: var(--mantine-color-pink-7);
+  composes: badge-base badge-qa from '../../../../styles/design-tokens.css' !important;
 }
 
 .networking {
-  background-color: var(--mantine-color-green-1);
-  color: var(--mantine-color-green-7);
+  composes: badge-base badge-networking from '../../../../styles/design-tokens.css' !important;
 }
 
-@media (max-width: 768px) {
+/* Edit button styling - already has margin-left: auto above */
+.editButton {
+  color: var(--color-text-muted) !important;
+  background: transparent !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  border-radius: var(--radius-md) !important;
+  flex-shrink: 0; /* Prevent edit button from shrinking */
+}
+
+.editButton:hover {
+  background: rgba(139, 92, 246, 0.08) !important;
+  color: var(--color-primary) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Handle narrow containers (like when chat is open) */
+@container (max-width: 800px) {
   .detailsGrid {
-    gap: var(--mantine-spacing-sm);
+    gap: 0.25rem !important; /* A bit more gap in narrow containers (4px) */
   }
   
-  .detailsGrid > div[style*="vertical"] {
-    display: none;
+  .detailsGrid > :global(.mantine-Group-root) {
+    gap: 0.1875rem !important; /* Slight gap within groups (3px) */
+  }
+}
+
+@container (max-width: 600px) {
+  .detailsGrid {
+    flex-wrap: wrap !important;
+    gap: 0.1875rem !important; /* Small gap when wrapped (3px) */
+  }
+  
+  .typeTag {
+    font-size: 0.65rem !important;
+    padding: 3px 6px !important;
+  }
+}
+
+/* Fallback for browsers without container queries */
+/* When container gets narrow, allow wrapping */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .detailsGrid {
+    flex-wrap: wrap !important;
+    gap: var(--space-sm) !important;
+  }
+}
+
+/* Very narrow desktop view (chat open) */
+@media (min-width: 769px) {
+  .detailsSection:has(+ * + * + *) .detailsGrid,
+  .detailsSection[data-narrow="true"] .detailsGrid {
+    flex-wrap: wrap !important;
+    gap: 0.25rem !important;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  /* Make the section relative for absolute positioning of edit button */
+  .detailsSection {
+    position: relative;
+  }
+  
+  .detailsGrid {
+    gap: 0 !important; /* No gap - we'll use margin instead for finer control */
+    flex-direction: column;
+    align-items: flex-start !important; /* Force left alignment */
+    padding-right: 40px; /* Make room for the edit button */
+  }
+  
+  /* Add small bottom margin to each item except last */
+  .detailsGrid > *:not(:last-child) {
+    margin-bottom: 0.25rem !important;
+  }
+  
+  /* Hide ALL dividers on mobile - both vertical and any others */
+  .detailsGrid :global(.mantine-Divider-root) {
+    display: none !important;
+  }
+  
+  /* Force each Group to be block-level so they stack vertically */
+  .detailsGrid > :global(.mantine-Group-root) {
+    display: flex !important;
+    width: 100% !important;
+    justify-content: flex-start !important;
+  }
+  
+  /* Stack items vertically on mobile - but let typeTag be natural width */
+  .detailsGrid > * {
+    width: 100%; /* Full width to ensure each item gets its own line */
+  }
+  
+  /* Session type badge should only be as wide as needed */
+  .typeTag {
+    width: auto !important;
+    display: inline-block !important;
+  }
+  
+  /* Position edit button absolutely in top right on mobile */
+  .editButton {
+    position: absolute !important;
+    top: 0 !important;
+    right: 0 !important;
+    margin: 0 !important;
+  }
+}
+
+/* Small mobile adjustments */
+@media (max-width: 480px) {
+  .detailsSection {
+    padding: var(--space-xs) 0;
+    position: relative;
+  }
+  
+  .detailsGrid {
+    gap: 0 !important;
+    padding-right: 36px; /* Slightly less room needed for smaller edit button */
+  }
+  
+  /* Even tighter spacing on very small screens */
+  .detailsGrid > *:not(:last-child) {
+    margin-bottom: 0.2rem !important;
+  }
+  
+  /* Smaller text on very small screens */
+  .typeTag {
+    font-size: 0.7rem !important;
+    padding: 4px 8px !important;
+  }
+  
+  /* Slightly smaller edit button on very small screens */
+  .editButton {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    min-height: 28px !important;
   }
 }

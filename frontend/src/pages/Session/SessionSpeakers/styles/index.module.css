@@ -19,14 +19,21 @@
 }
 
 .addButton {
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  color: #8B5CF6;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  color: var(--color-text-muted) !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 6px !important;
+  border-radius: var(--radius-md) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 .addButton:hover {
-  background: rgba(139, 92, 246, 0.08);
-  color: #7C3AED;
-  transform: scale(1.1);
+  background: rgba(139, 92, 246, 0.08) !important;
+  color: var(--color-primary) !important;
+  transform: translateY(-1px) !important;
 }
 
 /* Role-based layout container */

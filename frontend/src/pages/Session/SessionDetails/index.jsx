@@ -45,6 +45,13 @@ export const SessionDetails = ({ session, canEdit }) => {
   return (
     <div className={styles.detailsSection}>
       <Group gap="xl" className={styles.detailsGrid}>
+        {/* Type - moved to first position */}
+        <div className={`${styles.typeTag} ${styles[session.session_type.toLowerCase()]}`}>
+          {session.session_type.replace(/_/g, ' ')}
+        </div>
+
+        <Divider orientation="vertical" />
+
         {/* Date */}
         <Group gap="xs" align="center">
           <IconCalendar size={16} stroke={1.5} color="#8B5CF6" />
@@ -64,13 +71,6 @@ export const SessionDetails = ({ session, canEdit }) => {
           </Text>
         </Group>
 
-        <Divider orientation="vertical" />
-
-        {/* Type */}
-        <div className={`${styles.typeTag} ${styles[session.session_type.toLowerCase()]}`}>
-          {session.session_type.replace(/_/g, ' ')}
-        </div>
-
         {session.location && (
           <>
             <Divider orientation="vertical" />
@@ -82,16 +82,14 @@ export const SessionDetails = ({ session, canEdit }) => {
         )}
         
         {canEdit && (
-          <>
-            <Divider orientation="vertical" />
-            <ActionIcon
-              size="sm"
-              variant="subtle"
-              onClick={() => setShowEditModal(true)}
-            >
-              <IconEdit size={14} />
-            </ActionIcon>
-          </>
+          <ActionIcon
+            size="sm"
+            variant="subtle"
+            onClick={() => setShowEditModal(true)}
+            className={styles.editButton}
+          >
+            <IconEdit size={14} />
+          </ActionIcon>
         )}
       </Group>
 
