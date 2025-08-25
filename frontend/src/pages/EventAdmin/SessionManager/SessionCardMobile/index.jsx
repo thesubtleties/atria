@@ -212,6 +212,19 @@ export const SessionCardMobile = ({ session, eventId, hasConflict }) => {
     return SESSION_TYPES.find(t => t.value === type)?.label || type;
   };
 
+  // Get the appropriate badge class based on session type
+  const getSessionTypeBadgeClass = (type) => {
+    const typeClassMap = {
+      'KEYNOTE': styles.badgeKeynote,
+      'WORKSHOP': styles.badgeWorkshop,
+      'PANEL': styles.badgePanel,
+      'PRESENTATION': styles.badgePresentation,
+      'NETWORKING': styles.badgeNetworking,
+      'QA': styles.badgeQa,
+    };
+    return typeClassMap[type] || styles.sessionTypeBadge;
+  };
+
   return (
     <div className={`${styles.sessionCard} ${hasConflict ? styles.hasConflict : ''}`}>
       {/* Actions Menu - Top right corner */}
@@ -271,7 +284,7 @@ export const SessionCardMobile = ({ session, eventId, hasConflict }) => {
 
         {/* Session Type and Conflict Badge */}
         <Group gap="xs">
-          <Badge className={styles.sessionTypeBadge} size="sm">
+          <Badge className={getSessionTypeBadgeClass(sessionType)} size="sm">
             {getSessionTypeLabel(sessionType)}
           </Badge>
           {hasConflict && (
