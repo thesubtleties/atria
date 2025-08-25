@@ -1,12 +1,13 @@
 .speakersSection {
   margin-bottom: var(--mantine-spacing-lg);
+  margin-top: 0; /* No extra top margin */
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--mantine-spacing-md);
+  margin-bottom: clamp(0.75rem, 2vw, var(--mantine-spacing-md)); /* Responsive bottom margin */
   padding-bottom: 12px;
   border-bottom: 1px solid rgba(139, 92, 246, 0.1);
 }
