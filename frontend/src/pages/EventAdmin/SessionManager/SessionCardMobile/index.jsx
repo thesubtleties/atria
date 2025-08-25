@@ -26,6 +26,7 @@ import { useUpdateSessionMutation, useDeleteSessionMutation } from '@/app/featur
 import { SessionSpeakers } from '@/pages/Session/SessionSpeakers';
 import { openConfirmationModal } from '@/shared/components/modals/ConfirmationModal';
 import { validateField, validateTimeOrder } from '../schemas/sessionCardSchema';
+import { formatTime } from '@/shared/utils/formatting';
 import styles from '../styles/index.module.css';
 
 const SESSION_TYPES = [
@@ -219,7 +220,14 @@ export const SessionCardMobile = ({ session, eventId, hasConflict }) => {
           <ActionIcon 
             variant="subtle" 
             color="gray"
-            style={{ position: 'absolute', top: '0.75rem', right: '0.75rem' }}
+            className={styles.mobileActionButton}
+            style={{ 
+              position: 'absolute', 
+              top: '0.75rem', 
+              right: '0.75rem',
+              opacity: 1,
+              visibility: 'visible'
+            }}
           >
             <IconDots size={16} />
           </ActionIcon>
@@ -253,7 +261,7 @@ export const SessionCardMobile = ({ session, eventId, hasConflict }) => {
           <div className={styles.mobileTimeDisplay}>
             <IconClock size={16} />
             <Text size="sm">
-              {startTime} - {endTime}
+              {formatTime(startTime)} - {formatTime(endTime)}
             </Text>
             <Badge size="sm" className={styles.durationPill}>
               {calculateDuration(startTime, endTime)}
@@ -282,7 +290,7 @@ export const SessionCardMobile = ({ session, eventId, hasConflict }) => {
             <Text size="sm" fw={500}>
               Session Details
             </Text>
-            <ActionIcon size="xs" variant="transparent">
+            <ActionIcon size="xs" variant="transparent" style={{ color: 'var(--color-text-muted)' }}>
               {detailsExpanded ? <IconChevronUp size={14} /> : <IconChevronDown size={14} />}
             </ActionIcon>
           </Group>

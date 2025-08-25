@@ -3,15 +3,10 @@ import {
   Group, 
   Text, 
   LoadingOverlay, 
-  Badge, 
-  ActionIcon, 
-  Menu 
+  Badge
 } from '@mantine/core';
 import { 
-  IconPlus, 
-  IconDots, 
-  IconDownload, 
-  IconUpload,
+  IconPlus,
   IconCalendar
 } from '@tabler/icons-react';
 import { useParams } from 'react-router-dom';
@@ -184,7 +179,7 @@ export const SessionManager = () => {
                     </Badge>
                   )}
                   {sessionStats.overlapping > 0 && (
-                    <Badge size="lg" variant="light" color="yellow" radius="sm">
+                    <Badge size="lg" variant="light" color="yellow" radius="sm" className={styles.warningBadge}>
                       {sessionStats.overlapping} Overlapping
                     </Badge>
                   )}
@@ -192,31 +187,6 @@ export const SessionManager = () => {
               </div>
             </div>
             <div className={styles.headerRight}>
-              {/* CSV Import/Export - Commented out for post-launch implementation
-              <Menu shadow="md" width={200}>
-                <Menu.Target>
-                  <ActionIcon className={styles.actionIcon} variant="subtle" size="lg">
-                    <IconDots size={20} />
-                  </ActionIcon>
-                </Menu.Target>
-                <Menu.Dropdown className={styles.menuDropdown}>
-                  <Menu.Item
-                    className={styles.menuItem}
-                    leftSection={<IconDownload size={16} />}
-                    onClick={handleExport}
-                  >
-                    Export to CSV
-                  </Menu.Item>
-                  <Menu.Item
-                    className={styles.menuItem}
-                    leftSection={<IconUpload size={16} />}
-                    onClick={handleImport}
-                  >
-                    Import from CSV
-                  </Menu.Item>
-                </Menu.Dropdown>
-              </Menu>
-              */}
               <Button
                 variant="primary"
                 onClick={() => setShowCreateModal(true)}

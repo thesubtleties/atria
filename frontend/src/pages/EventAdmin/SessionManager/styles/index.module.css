@@ -131,17 +131,39 @@
   font-weight: 600 !important;
 }
 
+/* Warning Badge for Overlapping Sessions */
+.warningBadge {
+  composes: badge-base badge-warning from '../../../../styles/design-tokens.css' !important;
+}
+
 /* Action Icon (3 dots menu) */
 .actionIcon,
-.actionButton {
+.actionButton,
+.mobileActionButton {
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   color: var(--color-text-muted) !important;
 }
 
 .actionIcon:hover,
-.actionButton:hover {
-  background-color: rgba(139, 92, 246, 0.08);
+.actionButton:hover,
+.mobileActionButton:hover {
+  background-color: rgba(139, 92, 246, 0.08) !important;
   color: var(--color-primary) !important;
+}
+
+/* Mobile touch states */
+.mobileActionButton:active {
+  background-color: rgba(139, 92, 246, 0.12) !important;
+  color: var(--color-primary) !important;
+}
+
+/* Always show action buttons on mobile */
+@media (max-width: 768px) {
+  .actionButton,
+  .mobileActionButton {
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
 }
 
 /* Menu Dropdown */
@@ -223,6 +245,7 @@
   composes: card-base from '../../../../styles/design-tokens.css' !important;
   margin-bottom: clamp(0.75rem, 2vw, 1rem);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
 }
 
 .sessionCard:hover {
