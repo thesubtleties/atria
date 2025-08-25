@@ -386,34 +386,76 @@
 
 @media (max-width: 768px) {
   .contentWrapper {
-    padding: 1rem;
-    gap: 2rem; /* Smaller gap on mobile */
+    padding: clamp(var(--space-sm), 3vw, var(--space-md));
+    gap: clamp(var(--space-lg), 4vw, 2rem);
+    max-width: 100%;
   }
 
   .videoSection {
-    padding: 1rem; /* Minimal padding on mobile */
+    padding: clamp(var(--space-sm), 3vw, var(--space-md));
+  }
+  
+  .videoContainer {
+    padding: clamp(var(--space-md), 3vw, var(--space-lg));
+    border-radius: var(--radius-lg);
   }
 
   .aboutSection {
-    padding: 1.5rem;
+    padding: clamp(var(--space-md), 3vw, var(--space-lg));
+    border-radius: var(--radius-lg);
   }
-
-  .videoContainer {
-    /* Removed box-shadow on mobile as well */
+  
+  .sectionTitle {
+    font-size: clamp(1.125rem, 4vw, 1.25rem);
+    margin-bottom: clamp(var(--space-md), 3vw, var(--space-lg));
   }
-
-  .sectionHeader,
-  .videoFooter {
-    padding: 1rem; /* Reduce padding in dark sections */
-  }
-
+  
   .title {
-    font-size: 1.25rem;
+    font-size: clamp(1.25rem, 5vw, 1.75rem);
   }
-
+  
+  /* Hide background shapes on mobile to improve performance */
   .bgShape1,
   .bgShape2,
   .bgShape3 {
     display: none;
+  }
+
+  .sectionHeader,
+  .videoFooter {
+    padding: clamp(var(--space-sm), 3vw, var(--space-md));
+  }
+  
+  /* Floating chat button positioning on mobile */
+  .floatingChatButton {
+    right: 1rem;
+    bottom: 2rem;
+    top: auto;
+    width: 48px;
+    height: 48px;
+    border-radius: 24px;
+  }
+}
+
+/* Very small mobile adjustments */
+@media (max-width: 480px) {
+  .contentWrapper {
+    padding: var(--space-sm);
+    gap: var(--space-lg);
+  }
+  
+  .videoContainer,
+  .aboutSection {
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+  }
+  
+  .sectionTitle {
+    font-size: 1.125rem;
+  }
+  
+  .title {
+    font-size: 1.25rem;
+    line-height: 1.3;
   }
 }
