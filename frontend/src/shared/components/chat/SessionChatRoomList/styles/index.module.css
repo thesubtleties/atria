@@ -5,31 +5,32 @@
 }
 
 .sessionHeader {
-  padding: 0.75rem;
-  border-bottom: 1px solid rgba(139, 92, 246, 0.08);
-  background: rgba(139, 92, 246, 0.02);
+  padding: var(--space-sm);
+  border-bottom: 1px solid var(--primary-alpha-8);
+  background: var(--primary-alpha-2);
 }
 
 .roomList {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-  padding: 0.5rem;
+  gap: var(--space-xs);
+  padding: var(--space-sm);
   overflow-y: auto;
   flex: 1;
 }
 
 .loadingContainer {
-  padding: 2rem;
+  padding: var(--space-xl);
 }
 
 .emptyState,
 .restrictedState {
-  padding: 2rem 1rem;
+  padding: var(--space-xl) var(--space-md);
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 100px;
+  color: var(--color-text-muted);
 }
 
 /* Custom scrollbar for room list */
@@ -38,26 +39,26 @@
 }
 
 .roomList::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.05);
-  border-radius: 3px;
+  background: var(--primary-alpha-4);
+  border-radius: var(--radius-sm);
 }
 
 .roomList::-webkit-scrollbar-thumb {
-  background: rgba(139, 92, 246, 0.3);
-  border-radius: 3px;
+  background: var(--primary-alpha-30);
+  border-radius: var(--radius-sm);
 }
 
 .roomList::-webkit-scrollbar-thumb:hover {
-  background: rgba(139, 92, 246, 0.5);
+  background: var(--primary-alpha-50);
 }
 
 /* Mobile optimizations */
 @media (max-width: 768px) {
   .sessionHeader {
-    padding: 0.625rem;
+    padding: clamp(var(--space-sm), 2vw, var(--space-md));
   }
 
   .roomList {
-    padding: 0.375rem;
+    padding: clamp(0.375rem, 1.5vw, var(--space-sm));
   }
 }

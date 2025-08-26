@@ -102,6 +102,9 @@
   --primary-alpha-10: rgba(139, 92, 246, 0.1);
   --primary-alpha-15: rgba(139, 92, 246, 0.15);
   --primary-alpha-20: rgba(139, 92, 246, 0.2);
+  --primary-alpha-5: rgba(139, 92, 246, 0.05);
+  --primary-alpha-30: rgba(139, 92, 246, 0.3);
+  --primary-alpha-50: rgba(139, 92, 246, 0.5);
 
   /* Session Type Colors - Preserving existing beautiful gradients from Agenda */
   --session-keynote-from: rgba(139, 92, 246, 0.88);

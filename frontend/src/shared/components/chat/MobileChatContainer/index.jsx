@@ -2,6 +2,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useParams, useLocation } from 'react-router-dom';
+import { store } from '../../../../app/store';
 import { useGetDirectMessageThreadsQuery } from '../../../../app/features/networking/api';
 import { useGetEventUsersQuery, useGetEventQuery } from '../../../../app/features/events/api';
 import { useThreadFiltering } from '@/shared/hooks/useThreadFiltering';
@@ -9,11 +10,9 @@ import {
   selectSidebarExpanded,
   selectCurrentEventId,
   selectActiveChatRoomId,
-  selectLastSessionId,
   toggleSidebar,
   setCurrentEventId,
   setActiveChatRoomId,
-  setLastSessionId,
   setActiveTab
 } from '../../../../app/store/chatSlice';
 import MobileChatSidebar from '../MobileChatSidebar';
@@ -34,7 +33,6 @@ function MobileChatContainer() {
   const sidebarExpanded = useSelector(selectSidebarExpanded);
   const currentEventId = useSelector(selectCurrentEventId);
   const activeChatRoomId = useSelector(selectActiveChatRoomId);
-  const lastSessionId = useSelector(selectLastSessionId);
   const [activeThreadId, setActiveThreadId] = useState(null);
   const [activeRoom, setActiveRoom] = useState(null);
   
@@ -42,27 +40,30 @@ function MobileChatContainer() {
   const isSessionPage = location.pathname.includes('/sessions/');
   const sessionIdFromUrl = isSessionPage ? location.pathname.split('/sessions/')[1]?.split('/')[0] : null;
   
-  // Parse sessionId to ensure it's a number (only use lastSessionId if we're still in an event)
-  const currentSessionId = sessionIdFromUrl ? parseInt(sessionIdFromUrl, 10) : (eventId ? lastSessionId : null);
+  // Parse sessionId to ensure it's a number (only use sessionId from URL, not lastSessionId)
+  const currentSessionId = sessionIdFromUrl ? parseInt(sessionIdFromUrl, 10) : null;
 
-  // Update current event ID and session ID when route changes
+  // Update current event ID and handle tab switching
   useEffect(() => {
     if (eventId) {
       dispatch(setCurrentEventId(parseInt(eventId, 10)));
+      
+      // If we're in an event but not in a session, and currently on session tab, switch to event tab
+      if (!sessionIdFromUrl) {
+        const currentTab = store.getState().chat.activeTab;
+        if (currentTab === 'session') {
+          dispatch(setActiveTab('event'));
+        }
+      }
     } else {
       dispatch(setCurrentEventId(null));
-      // When leaving event context, clear session and default back to general tab
-      dispatch(setLastSessionId(null));
+      // When leaving event context, default back to general tab
       dispatch(setActiveTab('general'));
     }
     
     if (sessionIdFromUrl) {
-      dispatch(setLastSessionId(parseInt(sessionIdFromUrl, 10)));
       // Auto-switch to session tab when in a session
       dispatch(setActiveTab('session'));
-    } else if (!eventId) {
-      // Clear session when not in a session and not in an event
-      dispatch(setLastSessionId(null));
     }
   }, [eventId, sessionIdFromUrl, dispatch]);
 

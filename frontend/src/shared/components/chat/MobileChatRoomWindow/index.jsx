@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { ActionIcon, Text, Badge, Group, ScrollArea, Loader, Center } from '@mantine/core';
-import { IconArrowLeft, IconLock, IconGlobe, IconMicrophone, IconMessage } from '@tabler/icons-react';
+import { IconX, IconLock, IconGlobe, IconMicrophone, IconMessage } from '@tabler/icons-react';
 import { useSelector } from 'react-redux';
 import { 
   useGetChatRoomMessagesQuery, 
@@ -260,16 +260,18 @@ function MobileChatRoomWindow({ room, eventData, onClose }) {
     return (
       <div className={styles.chatWindow}>
         <div className={styles.header}>
-          <ActionIcon 
-            variant="subtle" 
-            onClick={onClose}
-            className={styles.backButton}
-          >
-            <IconArrowLeft size={20} />
-          </ActionIcon>
           <div className={styles.headerInfo}>
             <Text size="sm" fw={600}>{room.name}</Text>
           </div>
+          <ActionIcon 
+            variant="subtle" 
+            onClick={onClose}
+            className={styles.closeButton}
+            color="gray"
+            size="lg"
+          >
+            <IconX size={20} />
+          </ActionIcon>
         </div>
         <Center className={styles.loadingContainer}>
           <Loader size="sm" />
@@ -282,14 +284,6 @@ function MobileChatRoomWindow({ room, eventData, onClose }) {
     <div className={styles.chatWindow}>
       {/* Header */}
       <div className={styles.header}>
-        <ActionIcon 
-          variant="subtle" 
-          onClick={onClose}
-          className={styles.backButton}
-        >
-          <IconArrowLeft size={20} />
-        </ActionIcon>
-        
         <div className={styles.headerInfo}>
           <Group gap="xs">
             {getRoomIcon()}
@@ -304,6 +298,16 @@ function MobileChatRoomWindow({ room, eventData, onClose }) {
             </Text>
           )}
         </div>
+        
+        <ActionIcon 
+          variant="subtle" 
+          onClick={onClose}
+          className={styles.closeButton}
+          color="gray"
+          size="lg"
+        >
+          <IconX size={20} />
+        </ActionIcon>
       </div>
 
       {/* Messages */}
