@@ -83,7 +83,7 @@
   border: 1px solid var(--primary-alpha-15);
   border-radius: var(--radius-lg);
   padding: var(--space-sm) var(--space-md);
-  font-size: var(--text-sm);
+  font-size: 16px; /* Prevent zoom on iOS */
   font-family: inherit;
   resize: none;
   outline: none;
