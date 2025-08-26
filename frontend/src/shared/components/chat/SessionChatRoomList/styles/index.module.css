@@ -1,0 +1,63 @@
+.sessionInfo {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.sessionHeader {
+  padding: 0.75rem;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.08);
+  background: rgba(139, 92, 246, 0.02);
+}
+
+.roomList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.5rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.loadingContainer {
+  padding: 2rem;
+}
+
+.emptyState,
+.restrictedState {
+  padding: 2rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100px;
+}
+
+/* Custom scrollbar for room list */
+.roomList::-webkit-scrollbar {
+  width: 6px;
+}
+
+.roomList::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 3px;
+}
+
+.roomList::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.3);
+  border-radius: 3px;
+}
+
+.roomList::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 92, 246, 0.5);
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .sessionHeader {
+    padding: 0.625rem;
+  }
+
+  .roomList {
+    padding: 0.375rem;
+  }
+}

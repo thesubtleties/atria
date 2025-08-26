@@ -1,0 +1,190 @@
+.chatWindow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+  overflow: hidden; /* Prevent background scrolling */
+  touch-action: none; /* Prevent touch events from passing through */
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  pointer-events: auto; /* Ensure clicks work */
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%);
+  backdrop-filter: blur(10px);
+  flex-shrink: 0;
+}
+
+.backButton {
+  flex-shrink: 0;
+}
+
+.headerInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.roomName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Messages Area */
+.messagesArea {
+  flex: 1;
+  overflow-y: auto;
+  background: #f8f9fa;
+  touch-action: pan-y; /* Allow vertical scrolling only */
+  -webkit-overflow-scrolling: touch;
+  pointer-events: auto;
+}
+
+.messagesList {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.loadingMore {
+  text-align: center;
+  padding: 0.5rem;
+}
+
+.loadingContainer {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Message Styles */
+.message {
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.messageContent {
+  background: white;
+  padding: 0.75rem;
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  max-width: 85%;
+}
+
+.ownMessage .messageContent {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  align-self: flex-end;
+  margin-left: auto;
+}
+
+.deletedMessage .messageContent {
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+}
+
+.messageHeader {
+  margin-bottom: 0.25rem;
+}
+
+.senderName {
+  color: #334155;
+}
+
+.ownMessage .senderName {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.messageText {
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+.ownMessage .messageText {
+  color: white;
+}
+
+.emptyMessages {
+  padding: 3rem 1rem;
+  text-align: center;
+}
+
+/* Input Area */
+.inputArea {
+  padding: 0.75rem;
+  background: white;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  flex-shrink: 0;
+  
+  /* Safe area for devices with notches */
+  padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
+}
+
+.inputGroup {
+  width: 100%;
+  align-items: flex-end;
+}
+
+.messageInput {
+  flex: 1;
+}
+
+.messageInput textarea {
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  background: rgba(139, 92, 246, 0.02);
+  /* Prevent zoom on iOS devices */
+  font-size: 16px !important;
+}
+
+.messageInput textarea:focus {
+  border-color: #8b5cf6;
+  background: white;
+  /* Ensure font size stays consistent */
+  font-size: 16px !important;
+}
+
+.sendButton {
+  margin-bottom: 2px;
+}
+
+.restrictedInput {
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 8px;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .messageContent {
+    max-width: 90%;
+  }
+
+  .messagesList {
+    padding: 0.75rem;
+  }
+}
