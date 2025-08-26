@@ -1,7 +1,11 @@
 // src/shared/components/chat/MobileChatSidebar/index.jsx
 import { ActionIcon, Text, Tabs } from '@mantine/core';
-import { IconChevronUp, IconChevronDown, IconMessage } from '@tabler/icons-react';
+import { IconChevronUp, IconChevronDown, IconMessage, IconMessages, IconUsers } from '@tabler/icons-react';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectActiveTab, setActiveTab } from '@/app/store/chatSlice';
 import ChatThreadList from '../ChatThreadList';
+import ChatRoomList from '../ChatRoomList';
+import SessionChatRoomList from '../SessionChatRoomList';
 import styles from './styles/index.module.css';
 
 /**
@@ -18,8 +22,13 @@ function MobileChatSidebar({
   onToggle, 
   eventId, 
   currentEventId, 
-  onContextChange 
+  onContextChange,
+  onRoomClick,
+  activeChatRoomId,
+  sessionId 
 }) {
+  const dispatch = useDispatch();
+  const activeTab = useSelector(selectActiveTab);
   
   // Function to minimize sidebar for delete modal
   const handleDeleteChatStart = () => {
@@ -57,34 +66,85 @@ function MobileChatSidebar({
       {/* Thread List - Only visible when expanded */}
       {expanded && (
         <div className={styles.threadListContainer}>
-          {/* Context Tabs - only show if in event */}
-          {eventId && (
-            <div className={styles.tabsContainer}>
-              <Tabs
-                value={currentEventId ? 'event' : 'general'}
-                onChange={onContextChange}
-                variant="pills"
-                size="xs"
-              >
-                <Tabs.List>
-                  <Tabs.Tab value="event">Event</Tabs.Tab>
-                  <Tabs.Tab value="general">General</Tabs.Tab>
-                </Tabs.List>
-              </Tabs>
-            </div>
-          )}
+          {/* Enhanced Tabs */}
+          <div className={styles.tabsContainer}>
+            <Tabs
+              value={activeTab}
+              onChange={(value) => {
+                dispatch(setActiveTab(value));
+                // Handle context change for DM tabs
+                if (value === 'general' || value === 'event') {
+                  onContextChange(value);
+                }
+              }}
+              variant="pills"
+              size="xs"
+            >
+              <Tabs.List>
+                {/* Always show General tab */}
+                <Tabs.Tab value="general" leftSection={<IconMessage size={14} />}>
+                  Global
+                </Tabs.Tab>
+                
+                {/* Show Event tab if in event context */}
+                {eventId && (
+                  <Tabs.Tab value="event" leftSection={<IconUsers size={14} />}>
+                    Event
+                  </Tabs.Tab>
+                )}
+                
+                {/* Show Chat tab if in event context */}
+                {eventId && (
+                  <Tabs.Tab value="chat" leftSection={<IconMessages size={14} />}>
+                    Rooms
+                  </Tabs.Tab>
+                )}
+                
+                {/* Show Session tab if in session context */}
+                {sessionId && (
+                  <Tabs.Tab value="session" leftSection={<IconMessage size={14} />}>
+                    Session
+                  </Tabs.Tab>
+                )}
+              </Tabs.List>
+            </Tabs>
+          </div>
 
-          {threadsLoading ? (
-            <div className={styles.loadingState}>
-              <Text size="sm" c="dimmed">Loading conversations...</Text>
-            </div>
-          ) : (
-            <ChatThreadList 
-              threads={threads} 
-              onThreadClick={onThreadClick}
-              onDeleteChatStart={handleDeleteChatStart}
-            />
-          )}
+          {/* Tab Content */}
+          <div className={styles.tabContent}>
+            {/* General/Event DM tabs */}
+            {(activeTab === 'general' || activeTab === 'event') && (
+              threadsLoading ? (
+                <div className={styles.loadingState}>
+                  <Text size="sm" c="dimmed">Loading conversations...</Text>
+                </div>
+              ) : (
+                <ChatThreadList 
+                  threads={threads} 
+                  onThreadClick={onThreadClick}
+                  onDeleteChatStart={handleDeleteChatStart}
+                />
+              )
+            )}
+            
+            {/* Chat rooms tab */}
+            {activeTab === 'chat' && eventId && (
+              <ChatRoomList
+                eventId={eventId}
+                onRoomClick={onRoomClick}
+                activeChatRoomId={activeChatRoomId}
+              />
+            )}
+            
+            {/* Session chat rooms tab */}
+            {activeTab === 'session' && sessionId && (
+              <SessionChatRoomList
+                sessionId={sessionId}
+                onRoomClick={onRoomClick}
+                activeChatRoomId={activeChatRoomId}
+              />
+            )}
+          </div>
         </div>
       )}
     </div>
