@@ -282,26 +282,37 @@
   font-size: 0.95rem;
 }
 
-/* Chat Wrapper - Part of grid layout */
-.chatWrapper {
+/* Ghost spacer element - maintains grid space for chat */
+.chatGhost {
   position: relative;
-  height: calc(100vh - 120px);
-  padding-top: 16px;
-  overflow: hidden;
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start; /* Align to start so chat stays in place */
-  width: 100%;
-  transition:
+  width: 370px;
+  min-width: 0;
+  transition: 
     opacity 0.3s ease,
-    visibility 0.3s ease;
+    visibility 0.3s ease,
+    width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Hide chat wrapper when closed but keep in layout for animation */
-.layoutGrid.chatClosed .chatWrapper {
+/* When chat is closed, collapse the ghost element */
+.layoutGrid.chatClosed .chatGhost {
+  width: 0;
   opacity: 0;
   visibility: hidden;
-  pointer-events: none;
+}
+
+/* Fixed chat container - outside of grid */
+.fixedChatContainer {
+  position: fixed;
+  top: 80px; /* Right at bottom of nav header */
+  right: 0; /* Flush with viewport edge */
+  bottom: calc(2rem + 25px); /* 25px higher than before */
+  width: 370px;
+  z-index: 50; /* Above content but below floating button */
+  pointer-events: none; /* Allow clicks to pass through container */
+}
+
+.fixedChatContainer > * {
+  pointer-events: auto; /* But allow clicks on chat itself */
 }
 
 /* Chat animation is handled by the SessionChat component itself */
@@ -397,6 +408,14 @@
   .videoContainer {
     max-width: 800px; /* Slightly smaller on medium screens */
   }
+  
+  .chatGhost {
+    width: 350px;
+  }
+  
+  .fixedChatContainer {
+    width: 350px;
+  }
 }
 
 @media (max-width: 1200px) {
@@ -411,6 +430,14 @@
   .videoContainer {
     max-width: 700px; /* Even smaller */
   }
+  
+  .chatGhost {
+    width: 320px;
+  }
+  
+  .fixedChatContainer {
+    width: 320px;
+  }
 }
 
 @media (max-width: 1024px) {
@@ -423,7 +450,8 @@
     padding: 1.5rem;
   }
 
-  .chatWrapper {
+  .chatGhost,
+  .fixedChatContainer {
     display: none;
   }
 

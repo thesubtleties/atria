@@ -1,15 +1,15 @@
 .chatContainer {
-  width: 370px; /* Fixed width, not percentage */
+  width: 100%; /* Full width of container */
   height: 100%;
-  position: absolute; /* Position absolute to escape grid constraints */
-  right: 0;
+  position: relative; /* Changed from absolute since parent is now fixed */
   overflow: hidden;
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
 }
 
 .chatContainer.chatClosed {
   transform: translateX(100%);
   opacity: 0;
+  pointer-events: none;
 }
 
 .chatSidebar {
@@ -62,13 +62,13 @@
 }
 
 @media (max-width: 1200px) {
-  .chatSidebar {
-    width: 320px;
+  .chatContainer {
+    width: 100%; /* Responsive to parent container */
   }
 }
 
 @media (max-width: 1024px) {
-  .chatSidebar {
+  .chatContainer {
     display: none;
   }
 }
