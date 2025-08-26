@@ -4,6 +4,7 @@ import { ActionIcon, Text, Group, Avatar, Loader } from '@mantine/core';
 import { IconX, IconSend } from '@tabler/icons-react';
 import { useSocketMessages } from '../../../hooks/useSocketMessages';
 import { useChatScroll } from '../../../hooks/useChatScroll';
+import { useMobileInputHandler } from '@/shared/hooks/useMobileInputHandler';
 import ChatMessage from '../ChatMessage';
 import { selectUser } from '@/app/store/authSlice';
 import styles from './styles/index.module.css';
@@ -45,12 +46,13 @@ function MobileChatWindow({ threadId, onClose }) {
     }
   };
 
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
-    }
-  };
+  // Use mobile input handler hook
+  const { 
+    handleKeyDown, 
+    handleSendClick, 
+    handleFocus, 
+    handleBlur 
+  } = useMobileInputHandler(handleSendMessage, messageInput, !!otherUser);
 
   if (isLoading && messages.length === 0) {
     return (
@@ -125,7 +127,9 @@ function MobileChatWindow({ threadId, onClose }) {
         <textarea
           value={messageInput}
           onChange={(e) => setMessageInput(e.target.value)}
-          onKeyDown={handleKeyPress}
+          onKeyDown={handleKeyDown}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           placeholder={`Message ${otherUser?.first_name || ''}...`}
           className={styles.input}
           rows={1}
@@ -135,7 +139,7 @@ function MobileChatWindow({ threadId, onClose }) {
           color="gray"
           variant="light"
           radius="xl"
-          onClick={handleSendMessage}
+          onClick={handleSendClick}
           disabled={!messageInput.trim() || !otherUser}
           className={styles.sendButton}
         >

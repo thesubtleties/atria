@@ -6,14 +6,19 @@ import { ChatArea } from './ChatArea';
 import { AttendeesGrid } from './AttendeesGrid';
 import { RequestsList } from './RequestsList';
 import { useGetPendingConnectionsQuery } from '@/app/features/networking/api';
+import { useIsMobile } from '@/shared/hooks/useIsMobile';
 import styles from './styles/index.module.css';
 
 export function Networking() {
   const { eventId } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
+  const isMobile = useIsMobile();
   const [activeTab, setActiveTab] = useState(() => {
-    // Initialize from URL param or default to 'chat'
-    return searchParams.get('tab') || 'chat';
+    // Initialize from URL param or default based on device
+    const tabParam = searchParams.get('tab');
+    // On mobile, default to 'attendees' since chat is in mobile container
+    // On desktop, default to 'chat'
+    return tabParam || (isMobile ? 'attendees' : 'chat');
   });
   
   // Get pending connections count for badge
@@ -62,13 +67,16 @@ export function Networking() {
           <div className={styles.customTabsContainer}>
             {/* Custom Tab List */}
             <div className={styles.customTabsList}>
-              <button 
-                className={`${styles.customTab} ${activeTab === 'chat' ? styles.customTabActive : ''}`}
-                onClick={() => handleTabChange('chat')}
-              >
-                <IconMessages size={18} />
-                <span>Chat</span>
-              </button>
+              {/* Only show Chat tab on desktop */}
+              {!isMobile && (
+                <button 
+                  className={`${styles.customTab} ${activeTab === 'chat' ? styles.customTabActive : ''}`}
+                  onClick={() => handleTabChange('chat')}
+                >
+                  <IconMessages size={18} />
+                  <span>Chat</span>
+                </button>
+              )}
               <button 
                 className={`${styles.customTab} ${activeTab === 'attendees' ? styles.customTabActive : ''}`}
                 onClick={() => handleTabChange('attendees')}

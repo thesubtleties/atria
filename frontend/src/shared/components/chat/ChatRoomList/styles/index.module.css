@@ -1,0 +1,48 @@
+.roomList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding: var(--space-sm);
+  overflow-y: auto;
+  flex: 1;
+}
+
+.loadingContainer {
+  padding: var(--space-xl);
+}
+
+.emptyState,
+.restrictedState {
+  padding: var(--space-xl) var(--space-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100px;
+  color: var(--color-text-muted);
+}
+
+/* Custom scrollbar for room list */
+.roomList::-webkit-scrollbar {
+  width: 6px;
+}
+
+.roomList::-webkit-scrollbar-track {
+  background: var(--primary-alpha-4);
+  border-radius: var(--radius-sm);
+}
+
+.roomList::-webkit-scrollbar-thumb {
+  background: var(--primary-alpha-30);
+  border-radius: var(--radius-sm);
+}
+
+.roomList::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-alpha-50);
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .roomList {
+    padding: clamp(0.375rem, 1.5vw, var(--space-sm));
+  }
+}

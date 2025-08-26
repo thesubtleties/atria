@@ -1,18 +1,23 @@
 // src/shared/components/chat/MobileChatContainer/index.jsx
 import { useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
+import { store } from '../../../../app/store';
 import { useGetDirectMessageThreadsQuery } from '../../../../app/features/networking/api';
-import { useGetEventUsersQuery } from '../../../../app/features/events/api';
+import { useGetEventUsersQuery, useGetEventQuery } from '../../../../app/features/events/api';
 import { useThreadFiltering } from '@/shared/hooks/useThreadFiltering';
 import { 
   selectSidebarExpanded,
   selectCurrentEventId,
+  selectActiveChatRoomId,
   toggleSidebar,
-  setCurrentEventId
+  setCurrentEventId,
+  setActiveChatRoomId,
+  setActiveTab
 } from '../../../../app/store/chatSlice';
 import MobileChatSidebar from '../MobileChatSidebar';
 import MobileChatWindow from '../MobileChatWindow';
+import MobileChatRoomWindow from '../MobileChatRoomWindow';
 import styles from './styles/index.module.css';
 
 /**
@@ -24,18 +29,43 @@ import styles from './styles/index.module.css';
 function MobileChatContainer() {
   const dispatch = useDispatch();
   const { eventId } = useParams();
+  const location = useLocation();
   const sidebarExpanded = useSelector(selectSidebarExpanded);
   const currentEventId = useSelector(selectCurrentEventId);
+  const activeChatRoomId = useSelector(selectActiveChatRoomId);
   const [activeThreadId, setActiveThreadId] = useState(null);
+  const [activeRoom, setActiveRoom] = useState(null);
+  
+  // Detect if we're in a session
+  const isSessionPage = location.pathname.includes('/sessions/');
+  const sessionIdFromUrl = isSessionPage ? location.pathname.split('/sessions/')[1]?.split('/')[0] : null;
+  
+  // Parse sessionId to ensure it's a number (only use sessionId from URL, not lastSessionId)
+  const currentSessionId = sessionIdFromUrl ? parseInt(sessionIdFromUrl, 10) : null;
 
-  // Update current event ID when route changes
+  // Update current event ID and handle tab switching
   useEffect(() => {
     if (eventId) {
       dispatch(setCurrentEventId(parseInt(eventId, 10)));
+      
+      // If we're in an event but not in a session, and currently on session tab, switch to event tab
+      if (!sessionIdFromUrl) {
+        const currentTab = store.getState().chat.activeTab;
+        if (currentTab === 'session') {
+          dispatch(setActiveTab('event'));
+        }
+      }
     } else {
       dispatch(setCurrentEventId(null));
+      // When leaving event context, default back to general tab
+      dispatch(setActiveTab('general'));
     }
-  }, [eventId, dispatch]);
+    
+    if (sessionIdFromUrl) {
+      // Auto-switch to session tab when in a session
+      dispatch(setActiveTab('session'));
+    }
+  }, [eventId, sessionIdFromUrl, dispatch]);
 
   // Get threads for sidebar
   const { 
@@ -48,6 +78,11 @@ function MobileChatContainer() {
     { eventId: currentEventId },
     { skip: !currentEventId }
   );
+  
+  // Fetch event data for permissions
+  const { data: eventData } = useGetEventQuery(currentEventId, {
+    skip: !currentEventId
+  });
 
   // Extract threads array from the response
   const threadsArray = data?.threads || data || [];
@@ -68,7 +103,18 @@ function MobileChatContainer() {
 
   const handleThreadClick = (threadId) => {
     setActiveThreadId(threadId);
+    setActiveRoom(null);
     // Close sidebar when opening a chat on mobile
+    if (sidebarExpanded) {
+      dispatch(toggleSidebar());
+    }
+  };
+  
+  const handleRoomClick = (room) => {
+    setActiveRoom(room);
+    setActiveThreadId(null);
+    dispatch(setActiveChatRoomId(room.id));
+    // Close sidebar when opening a room on mobile
     if (sidebarExpanded) {
       dispatch(toggleSidebar());
     }
@@ -76,6 +122,8 @@ function MobileChatContainer() {
 
   const handleCloseChat = () => {
     setActiveThreadId(null);
+    setActiveRoom(null);
+    dispatch(setActiveChatRoomId(null));
     // Show thread list when closing a chat
     if (!sidebarExpanded) {
       dispatch(toggleSidebar());
@@ -94,9 +142,12 @@ function MobileChatContainer() {
         threads={filteredThreads}
         threadsLoading={threadsLoading}
         onThreadClick={handleThreadClick}
+        onRoomClick={handleRoomClick}
         onToggle={handleToggleSidebar}
         eventId={eventId}
         currentEventId={currentEventId}
+        activeChatRoomId={activeChatRoomId}
+        sessionId={currentSessionId}
         onContextChange={(context) => {
           if (context === 'general') {
             dispatch(setCurrentEventId(null));
@@ -106,10 +157,19 @@ function MobileChatContainer() {
         }}
       />
 
-      {/* Full-Screen Chat Window */}
+      {/* Full-Screen Chat Window for DMs */}
       {activeThreadId && (
         <MobileChatWindow
           threadId={activeThreadId}
+          onClose={handleCloseChat}
+        />
+      )}
+      
+      {/* Full-Screen Chat Room Window */}
+      {activeRoom && (
+        <MobileChatRoomWindow
+          room={activeRoom}
+          eventData={eventData}
           onClose={handleCloseChat}
         />
       )}

@@ -1,0 +1,215 @@
+.chatWindow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--color-background);
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+  overflow: hidden; /* Prevent background scrolling */
+  touch-action: none; /* Prevent touch events from passing through */
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  pointer-events: auto; /* Ensure clicks work */
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: var(--space-sm);
+  border-bottom: 1px solid var(--primary-alpha-8);
+  background: var(--primary-alpha-4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  flex-shrink: 0;
+}
+
+.headerInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.closeButton {
+  flex-shrink: 0;
+  color: var(--color-text-secondary);
+  transition: all 0.2s ease;
+}
+
+.closeButton:hover {
+  background: var(--primary-alpha-8) !important;
+  color: var(--color-primary) !important;
+}
+
+.roomName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Active/pressed state for mobile */
+.closeButton:active {
+  background: var(--primary-alpha-10) !important;
+  transform: scale(0.98);
+}
+
+/* Messages Area */
+.messagesArea {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--color-background);
+  touch-action: pan-y; /* Allow vertical scrolling only */
+  -webkit-overflow-scrolling: touch;
+  pointer-events: auto;
+}
+
+.messagesList {
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.loadingMore {
+  text-align: center;
+  padding: var(--space-sm);
+}
+
+.loadingContainer {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Message Styles */
+.message {
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.messageContent {
+  background: var(--color-background-glass);
+  padding: var(--space-sm);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  max-width: 85%;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+}
+
+.ownMessage .messageContent {
+  background: var(--primary-alpha-8);
+  color: var(--color-text-primary);
+  align-self: flex-end;
+  margin-left: auto;
+  border: 1px solid var(--primary-alpha-15);
+}
+
+.deletedMessage .messageContent {
+  background: rgba(239, 68, 68, 0.04);
+  border: 1px solid rgba(239, 68, 68, 0.15);
+}
+
+.messageHeader {
+  margin-bottom: var(--space-xs);
+}
+
+.senderName {
+  color: var(--color-text-primary);
+}
+
+.ownMessage .senderName {
+  color: var(--color-text-secondary);
+}
+
+.messageText {
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+.ownMessage .messageText {
+  color: var(--color-text-primary);
+}
+
+.emptyMessages {
+  padding: var(--space-2xl) var(--space-md);
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+/* Input Area */
+.inputArea {
+  padding: var(--space-sm);
+  background: var(--color-background-glass);
+  border-top: 1px solid var(--primary-alpha-8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  flex-shrink: 0;
+  
+  /* Safe area for devices with notches */
+  padding-bottom: calc(var(--space-sm) + env(safe-area-inset-bottom));
+}
+
+.inputGroup {
+  width: 100%;
+  align-items: flex-end;
+}
+
+.messageInput {
+  flex: 1;
+}
+
+.messageInput textarea {
+  border: 1px solid var(--primary-alpha-20);
+  background: var(--primary-alpha-2);
+  /* Prevent zoom on iOS devices */
+  font-size: 16px !important;
+}
+
+.messageInput textarea:focus {
+  border-color: var(--color-primary);
+  background: var(--color-background-glass);
+  box-shadow: 0 0 0 3px var(--primary-alpha-10);
+  /* Ensure font size stays consistent */
+  font-size: 16px !important;
+}
+
+.sendButton {
+  margin-bottom: 2px;
+}
+
+.restrictedInput {
+  padding: var(--space-md);
+  background: var(--primary-alpha-2);
+  border-radius: var(--radius-lg);
+  color: var(--color-text-muted);
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .messageContent {
+    max-width: 90%;
+  }
+
+  .messagesList {
+    padding: clamp(var(--space-sm), 2vw, var(--space-md));
+    gap: clamp(var(--space-xs), 2vw, var(--space-sm));
+  }
+}

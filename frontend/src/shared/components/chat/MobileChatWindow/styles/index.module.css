@@ -34,13 +34,20 @@
 }
 
 .closeButton {
-  transition: all 0.2s ease;
   flex-shrink: 0;
+  color: var(--color-text-secondary);
+  transition: all 0.2s ease;
 }
 
 .closeButton:hover {
-  background: rgba(239, 68, 68, 0.08) !important;
-  color: #ef4444 !important;
+  background: var(--primary-alpha-8) !important;
+  color: var(--color-primary) !important;
+}
+
+/* Active/pressed state for mobile */
+.closeButton:active {
+  background: var(--primary-alpha-10) !important;
+  transform: scale(0.98);
 }
 
 .loadingState {
@@ -83,7 +90,7 @@
   border: 1px solid var(--primary-alpha-15);
   border-radius: var(--radius-lg);
   padding: var(--space-sm) var(--space-md);
-  font-size: var(--text-sm);
+  font-size: 16px; /* Prevent zoom on iOS */
   font-family: inherit;
   resize: none;
   outline: none;

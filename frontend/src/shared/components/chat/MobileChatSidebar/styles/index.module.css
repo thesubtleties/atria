@@ -75,8 +75,7 @@
 
 .threadListContainer {
   flex: 1;
-  overflow-y: auto;
-  padding: var(--space-xs) 0;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
@@ -88,25 +87,73 @@
   flex-shrink: 0;
 }
 
+.tabContent {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-xs) 0;
+  min-height: 0;
+}
+
 .loadingState {
   padding: var(--space-lg);
   text-align: center;
 }
 
-/* Scroll styling for thread list */
-.threadListContainer::-webkit-scrollbar {
+/* Scroll styling for tab content */
+.tabContent::-webkit-scrollbar {
   width: 4px;
 }
 
-.threadListContainer::-webkit-scrollbar-track {
+.tabContent::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.threadListContainer::-webkit-scrollbar-thumb {
+.tabContent::-webkit-scrollbar-thumb {
   background: rgba(139, 92, 246, 0.2);
   border-radius: var(--radius-sm);
 }
 
-.threadListContainer::-webkit-scrollbar-thumb:hover {
+.tabContent::-webkit-scrollbar-thumb:hover {
   background: rgba(139, 92, 246, 0.3);
+}
+
+/* Mobile-specific tab styling */
+@media (max-width: 768px) {
+  .tabsContainer :global(.mantine-Tabs-list) {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.25rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Single tab list - don't stretch */
+  .singleTabList :global(.mantine-Tabs-tab) {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.5rem;
+    min-width: auto;
+    flex: 0 0 auto;
+    white-space: nowrap;
+    gap: 0.25rem !important;
+  }
+  
+  /* Multiple tabs list - stretch to fill */
+  .multipleTabsList :global(.mantine-Tabs-tab) {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.5rem;
+    min-width: auto;
+    flex: 1;
+    white-space: nowrap;
+    gap: 0.25rem !important;
+  }
+  
+  .tabsContainer :global(.mantine-Tabs-tab) svg {
+    width: 12px;
+    height: 12px;
+  }
+  
+  /* Hide scrollbar but keep functionality */
+  .tabsContainer :global(.mantine-Tabs-list)::-webkit-scrollbar {
+    display: none;
+  }
 }

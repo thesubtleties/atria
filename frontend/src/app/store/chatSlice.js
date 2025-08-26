@@ -6,6 +6,10 @@ const initialState = {
   activeThreads: [], // IDs of open chat windows
   minimizedThreads: [], // IDs of minimized chat windows
   currentEventId: null,
+  // Mobile chat state
+  activeTab: 'general', // 'general', 'event', 'chat', 'session'
+  activeChatRoomId: null, // Currently open chat room ID
+  lastSessionId: null, // Remember last viewed session
 };
 
 const chatSlice = createSlice({
@@ -69,6 +73,16 @@ const chatSlice = createSlice({
     setCurrentEventId: (state, action) => {
       state.currentEventId = action.payload;
     },
+    // Mobile chat tab actions
+    setActiveTab: (state, action) => {
+      state.activeTab = action.payload;
+    },
+    setActiveChatRoomId: (state, action) => {
+      state.activeChatRoomId = action.payload;
+    },
+    setLastSessionId: (state, action) => {
+      state.lastSessionId = action.payload;
+    },
   },
 });
 
@@ -79,6 +93,9 @@ export const {
   minimizeThread,
   maximizeThread,
   setCurrentEventId,
+  setActiveTab,
+  setActiveChatRoomId,
+  setLastSessionId,
 } = chatSlice.actions;
 
 // Selectors
@@ -86,5 +103,8 @@ export const selectSidebarExpanded = (state) => state.chat.sidebarExpanded;
 export const selectActiveThreads = (state) => state.chat.activeThreads;
 export const selectMinimizedThreads = (state) => state.chat.minimizedThreads;
 export const selectCurrentEventId = (state) => state.chat.currentEventId;
+export const selectActiveTab = (state) => state.chat.activeTab;
+export const selectActiveChatRoomId = (state) => state.chat.activeChatRoomId;
+export const selectLastSessionId = (state) => state.chat.lastSessionId;
 
 export default chatSlice.reducer;
