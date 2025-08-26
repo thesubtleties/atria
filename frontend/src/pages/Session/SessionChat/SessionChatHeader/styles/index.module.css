@@ -2,13 +2,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem 1.5rem;
+  padding: 0.75rem 1.5rem 0.5rem 1.5rem !important; /* Tighter vertical padding */
   background: rgba(255, 255, 255, 0.8); /* White glass, slightly more opaque for header */
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.3);
   flex-shrink: 0;
-  min-height: 60px;
+  min-height: 48px !important; /* Reduced from 60px */
 }
 
 /* Style close button to match EventNav patterns */

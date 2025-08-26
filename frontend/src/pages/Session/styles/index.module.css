@@ -303,9 +303,9 @@
 /* Fixed chat container - outside of grid */
 .fixedChatContainer {
   position: fixed;
-  top: 100px; /* Below header */
-  right: 2rem;
-  bottom: 2rem;
+  top: 80px; /* Right at bottom of nav header */
+  right: 0; /* Flush with viewport edge */
+  bottom: calc(2rem + 25px); /* 25px higher than before */
   width: 370px;
   z-index: 50; /* Above content but below floating button */
   pointer-events: none; /* Allow clicks to pass through container */
