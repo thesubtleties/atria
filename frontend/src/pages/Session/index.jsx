@@ -176,18 +176,23 @@ export const SessionPage = () => {
           </section>
         </div>
 
-        {/* Chat Sidebar - part of grid */}
+        {/* Ghost spacer element - maintains grid space for chat */}
         {chatEnabled && (
-          <div className={styles.chatWrapper}>
-            <SessionChat
-              sessionId={sessionId}
-              isEnabled={true}
-              isOpen={isChatOpen}
-              onToggle={setIsChatOpen}
-            />
-          </div>
+          <div className={styles.chatGhost} aria-hidden="true" />
         )}
       </div>
+      
+      {/* Fixed position chat - outside of grid */}
+      {chatEnabled && (
+        <div className={styles.fixedChatContainer}>
+          <SessionChat
+            sessionId={sessionId}
+            isEnabled={true}
+            isOpen={isChatOpen}
+            onToggle={setIsChatOpen}
+          />
+        </div>
+      )}
       
       {/* Floating chat button - outside grid */}
       {chatEnabled && !isChatOpen && (
