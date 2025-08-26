@@ -42,8 +42,8 @@ function MobileChatContainer() {
   const isSessionPage = location.pathname.includes('/sessions/');
   const sessionIdFromUrl = isSessionPage ? location.pathname.split('/sessions/')[1]?.split('/')[0] : null;
   
-  // Parse sessionId to ensure it's a number
-  const currentSessionId = sessionIdFromUrl ? parseInt(sessionIdFromUrl, 10) : lastSessionId;
+  // Parse sessionId to ensure it's a number (only use lastSessionId if we're still in an event)
+  const currentSessionId = sessionIdFromUrl ? parseInt(sessionIdFromUrl, 10) : (eventId ? lastSessionId : null);
 
   // Update current event ID and session ID when route changes
   useEffect(() => {
@@ -51,12 +51,18 @@ function MobileChatContainer() {
       dispatch(setCurrentEventId(parseInt(eventId, 10)));
     } else {
       dispatch(setCurrentEventId(null));
+      // When leaving event context, clear session and default back to general tab
+      dispatch(setLastSessionId(null));
+      dispatch(setActiveTab('general'));
     }
     
     if (sessionIdFromUrl) {
       dispatch(setLastSessionId(parseInt(sessionIdFromUrl, 10)));
       // Auto-switch to session tab when in a session
       dispatch(setActiveTab('session'));
+    } else if (!eventId) {
+      // Clear session when not in a session and not in an event
+      dispatch(setLastSessionId(null));
     }
   }, [eventId, sessionIdFromUrl, dispatch]);
 

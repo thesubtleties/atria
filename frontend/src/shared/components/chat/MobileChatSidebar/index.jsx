@@ -79,6 +79,9 @@ function MobileChatSidebar({
               }}
               variant="pills"
               size="xs"
+              classNames={{
+                list: eventId || sessionId ? styles.multipleTabsList : styles.singleTabList
+              }}
             >
               <Tabs.List>
                 {/* Always show General tab */}
