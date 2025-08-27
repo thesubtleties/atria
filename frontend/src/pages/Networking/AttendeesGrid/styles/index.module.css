@@ -1,30 +1,26 @@
-/* Main container with glass effect */
+/* Main container - no constraints for natural scrolling */
 .container {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header section with filters - connects to tab bar */
+.header {
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.8);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
   box-shadow: 0 2px 8px rgba(139, 92, 246, 0.03);
-  padding: 0;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-/* Header section with filters */
-.header {
-  background: rgba(139, 92, 246, 0.02);
-  backdrop-filter: blur(5px);
-  border-bottom: 1px solid rgba(139, 92, 246, 0.08);
-  padding: 1.5rem;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  margin: 0 0 1.5rem 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
   flex-wrap: wrap;
-  flex-shrink: 0;
 }
 
 .filterGroup {
@@ -90,10 +86,7 @@
 
 /* Grid container */
 .gridContainer {
-  flex: 1;
-  padding: 1.5rem;
-  overflow-y: auto;
-  min-height: 0;
+  padding: 0 1.5rem 1.5rem;
 }
 
 /* Attendee grid */
@@ -125,19 +118,16 @@
 
 /* Pagination container */
 .paginationContainer {
-  padding: 1.5rem;
-  border-top: 1px solid rgba(139, 92, 246, 0.06);
-  background: rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(5px);
+  padding: 2rem 1.5rem;
   display: flex;
   justify-content: center;
-  flex-shrink: 0;
 }
 
 /* Responsive design */
 @media (max-width: 768px) {
   .header {
     padding: 1rem;
+    margin: 0 0 1rem 0;
   }
 
   .filterGroup {
@@ -165,7 +155,7 @@
   }
 
   .gridContainer {
-    padding: 1rem;
+    padding: 0 1rem 1rem;
   }
 
   .attendeeGrid {
@@ -174,6 +164,6 @@
   }
 
   .paginationContainer {
-    padding: 1rem;
+    padding: 1.5rem 1rem;
   }
 }

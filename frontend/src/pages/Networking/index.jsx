@@ -48,7 +48,7 @@ export function Networking() {
   };
 
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${activeTab === 'chat' && !isMobile ? styles.chatActive : ''}`}>
       {/* Background Shapes */}
       <div className={styles.bgShape1} />
       <div className={styles.bgShape2} />
@@ -65,38 +65,81 @@ export function Networking() {
         {/* Main Content Section */}
         <section className={styles.mainContent}>
           <div className={styles.customTabsContainer}>
-            {/* Custom Tab List */}
-            <div className={styles.customTabsList}>
-              {/* Only show Chat tab on desktop */}
-              {!isMobile && (
-                <button 
-                  className={`${styles.customTab} ${activeTab === 'chat' ? styles.customTabActive : ''}`}
-                  onClick={() => handleTabChange('chat')}
-                >
-                  <IconMessages size={18} />
-                  <span>Chat</span>
-                </button>
-              )}
-              <button 
-                className={`${styles.customTab} ${activeTab === 'attendees' ? styles.customTabActive : ''}`}
-                onClick={() => handleTabChange('attendees')}
-              >
-                <IconUsers size={18} />
-                <span>Attendees</span>
-              </button>
-              <button
-                className={`${styles.customTab} ${activeTab === 'requests' ? styles.customTabActive : ''}`}
-                onClick={() => handleTabChange('requests')}
-              >
-                <IconUserPlus size={18} />
-                <span>Requests</span>
-                {pendingCount > 0 && (
-                  <Badge size="xs" variant="light" className={styles.customBadge}>
-                    {pendingCount}
-                  </Badge>
+            {/* Conditionally wrap tabs: glass wrapper for non-chat tabs */}
+            {activeTab !== 'chat' || isMobile ? (
+              <div className={styles.tabBarWrapper}>
+                <div className={styles.customTabsList}>
+                  {/* Only show Chat tab on desktop */}
+                  {!isMobile && (
+                    <button 
+                      type="button"
+                      className={`${styles.customTab} ${activeTab === 'chat' ? styles.customTabActive : ''}`}
+                      onClick={() => handleTabChange('chat')}
+                    >
+                      <IconMessages size={18} />
+                      <span>Chat</span>
+                    </button>
+                  )}
+                  <button 
+                    type="button"
+                    className={`${styles.customTab} ${activeTab === 'attendees' ? styles.customTabActive : ''}`}
+                    onClick={() => handleTabChange('attendees')}
+                  >
+                    <IconUsers size={18} />
+                    <span>Attendees</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`${styles.customTab} ${activeTab === 'requests' ? styles.customTabActive : ''}`}
+                    onClick={() => handleTabChange('requests')}
+                  >
+                    <IconUserPlus size={18} />
+                    <span>Requests</span>
+                    {pendingCount > 0 && (
+                      <Badge size="xs" variant="light" className={styles.customBadge}>
+                        {pendingCount}
+                      </Badge>
+                    )}
+                  </button>
+                </div>
+              </div>
+            ) : (
+              // Chat: tabs directly in container (no wrapper)
+              <div className={styles.customTabsList}>
+                {/* Only show Chat tab on desktop */}
+                {!isMobile && (
+                  <button 
+                    type="button"
+                    className={`${styles.customTab} ${activeTab === 'chat' ? styles.customTabActive : ''}`}
+                    onClick={() => handleTabChange('chat')}
+                  >
+                    <IconMessages size={18} />
+                    <span>Chat</span>
+                  </button>
                 )}
-              </button>
-            </div>
+                <button 
+                  type="button"
+                  className={`${styles.customTab} ${activeTab === 'attendees' ? styles.customTabActive : ''}`}
+                  onClick={() => handleTabChange('attendees')}
+                >
+                  <IconUsers size={18} />
+                  <span>Attendees</span>
+                </button>
+                <button
+                  type="button"
+                  className={`${styles.customTab} ${activeTab === 'requests' ? styles.customTabActive : ''}`}
+                  onClick={() => handleTabChange('requests')}
+                >
+                  <IconUserPlus size={18} />
+                  <span>Requests</span>
+                  {pendingCount > 0 && (
+                    <Badge size="xs" variant="light" className={styles.customBadge}>
+                      {pendingCount}
+                    </Badge>
+                  )}
+                </button>
+              </div>
+            )}
 
             {/* Custom Tab Panels */}
             <div className={styles.customTabPanel}>
