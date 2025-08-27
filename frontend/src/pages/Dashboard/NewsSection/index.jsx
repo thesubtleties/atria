@@ -25,18 +25,18 @@ export const NewsSection = ({ news }) => {
     return styles.older;
   };
 
-  const getTagClass = (type) => {
+  const getBadgeClass = (type) => {
     switch (type) {
       case 'platform_update':
-        return styles.platformUpdate;
+        return styles.platformUpdateBadge;
       case 'product_launch':
-        return styles.productLaunch;
+        return styles.productLaunchBadge;
       case 'feature_release':
-        return styles.featureRelease;
+        return styles.featureReleaseBadge;
       case 'security':
-        return styles.security;
+        return styles.securityBadge;
       default:
-        return '';
+        return styles.platformUpdateBadge;
     }
   };
 
@@ -87,19 +87,8 @@ export const NewsSection = ({ news }) => {
                 <div className={styles.newsMeta}>
                   <span>{getTimeDifference(item.date)}</span>
                   <Badge 
-                    color={item.type === 'platform_update' ? 'violet' : 
-                           item.type === 'product_launch' ? 'green' :
-                           item.type === 'feature_release' ? 'yellow' : 'red'}
-                    variant="light"
-                    radius="sm"
-                    styles={{
-                      root: {
-                        textTransform: 'none',
-                        fontWeight: 500,
-                        fontSize: '0.75rem',
-                        padding: '0.1rem 0.5rem',
-                      }
-                    }}
+                    className={getBadgeClass(item.type)}
+                    styles={{ root: { textTransform: 'none' } }}
                   >
                     {getTagLabel(item.type)}
                   </Badge>
