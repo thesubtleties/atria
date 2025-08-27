@@ -72,6 +72,7 @@ export function Networking() {
                   {/* Only show Chat tab on desktop */}
                   {!isMobile && (
                     <button 
+                      type="button"
                       className={`${styles.customTab} ${activeTab === 'chat' ? styles.customTabActive : ''}`}
                       onClick={() => handleTabChange('chat')}
                     >
@@ -80,6 +81,7 @@ export function Networking() {
                     </button>
                   )}
                   <button 
+                    type="button"
                     className={`${styles.customTab} ${activeTab === 'attendees' ? styles.customTabActive : ''}`}
                     onClick={() => handleTabChange('attendees')}
                   >
@@ -87,6 +89,7 @@ export function Networking() {
                     <span>Attendees</span>
                   </button>
                   <button
+                    type="button"
                     className={`${styles.customTab} ${activeTab === 'requests' ? styles.customTabActive : ''}`}
                     onClick={() => handleTabChange('requests')}
                   >
@@ -106,6 +109,7 @@ export function Networking() {
                 {/* Only show Chat tab on desktop */}
                 {!isMobile && (
                   <button 
+                    type="button"
                     className={`${styles.customTab} ${activeTab === 'chat' ? styles.customTabActive : ''}`}
                     onClick={() => handleTabChange('chat')}
                   >
@@ -114,6 +118,7 @@ export function Networking() {
                   </button>
                 )}
                 <button 
+                  type="button"
                   className={`${styles.customTab} ${activeTab === 'attendees' ? styles.customTabActive : ''}`}
                   onClick={() => handleTabChange('attendees')}
                 >
@@ -121,6 +126,7 @@ export function Networking() {
                   <span>Attendees</span>
                 </button>
                 <button
+                  type="button"
                   className={`${styles.customTab} ${activeTab === 'requests' ? styles.customTabActive : ''}`}
                   onClick={() => handleTabChange('requests')}
                 >
