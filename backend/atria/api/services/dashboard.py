@@ -250,35 +250,19 @@ class DashboardService:
         return [
             {
                 'id': 1,
-                'title': 'New Analytics Dashboard',
-                'description': 'Get deeper insights into your event performance with our enhanced analytics suite.',
-                'date': datetime(2025, 1, 20, tzinfo=timezone.utc),
+                'title': 'Early Access Release',
+                'description': 'Atria is now live in early access! Experience our event management and networking platform today.',
+                'date': datetime(2025, 8, 26, tzinfo=timezone.utc),
                 'type': 'platform_update',
                 'is_new': True
             },
             {
                 'id': 2,
-                'title': 'Mobile App Beta Launch',
-                'description': 'Take Atria on the go with our new mobile experience. Join the beta program today.',
-                'date': datetime(2025, 1, 15, tzinfo=timezone.utc),
-                'type': 'product_launch',
-                'is_new': False
-            },
-            {
-                'id': 3,
-                'title': 'Enhanced Networking Features',
-                'description': 'New AI-powered connection recommendations and improved messaging capabilities.',
-                'date': datetime(2025, 1, 8, tzinfo=timezone.utc),
+                'title': 'Mobile Chat Enhancement',
+                'description': 'Unified and context-aware chat interface for seamless communication on mobile devices.',
+                'date': datetime(2025, 8, 26, tzinfo=timezone.utc),
                 'type': 'feature_release',
-                'is_new': False
-            },
-            {
-                'id': 4,
-                'title': 'Security Updates',
-                'description': 'Latest security enhancements and two-factor authentication improvements.',
-                'date': datetime(2025, 1, 1, tzinfo=timezone.utc),
-                'type': 'security',
-                'is_new': False
+                'is_new': True
             }
         ]
 
