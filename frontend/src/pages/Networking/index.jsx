@@ -48,7 +48,7 @@ export function Networking() {
   };
 
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${activeTab === 'chat' && !isMobile ? styles.chatActive : ''}`}>
       {/* Background Shapes */}
       <div className={styles.bgShape1} />
       <div className={styles.bgShape2} />
