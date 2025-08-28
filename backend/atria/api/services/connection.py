@@ -248,7 +248,23 @@ class ConnectionService:
 
     @staticmethod
     def remove_connection(connection_id, user_id):
-        """Remove an accepted connection (soft delete by changing status)"""
+        """
+        Remove an accepted connection (soft delete by changing status).
+        Also deletes the global thread to reactivate event-scoped threads.
+        
+        Args:
+            connection_id: ID of the connection to remove
+            user_id: ID of the user performing the removal
+            
+        Returns:
+            The updated connection object
+            
+        Raises:
+            ValueError: If user is not authorized or connection is not accepted
+        """
+        # Import here to avoid circular dependency with DirectMessageThread model
+        from api.models.direct_message_thread import DirectMessageThread
+        
         connection = Connection.query.get_or_404(connection_id)
         
         # Verify user is part of the connection
@@ -259,15 +275,34 @@ class ConnectionService:
         if connection.status != ConnectionStatus.ACCEPTED:
             raise ValueError("Can only remove accepted connections")
         
-        # Update status to removed
-        connection.status = ConnectionStatus.REMOVED
-        connection.updated_at = datetime.utcnow()
-        
-        # Note: We don't delete the DirectMessageThread, it just becomes inaccessible
-        # This preserves message history in case they reconnect later
-        
-        db.session.commit()
-        return connection
+        # Use transaction to ensure atomic operation
+        try:
+            with db.session.begin_nested():
+                # Update status to removed
+                connection.status = ConnectionStatus.REMOVED
+                connection.updated_at = datetime.utcnow()
+                
+                # Delete the global thread between these users
+                # This will make any event-scoped threads visible again
+                global_thread = DirectMessageThread.query.filter(
+                    ((DirectMessageThread.user1_id == connection.requester_id) &
+                     (DirectMessageThread.user2_id == connection.recipient_id)) |
+                    ((DirectMessageThread.user1_id == connection.recipient_id) &
+                     (DirectMessageThread.user2_id == connection.requester_id)),
+                    DirectMessageThread.event_scope_id.is_(None)  # Global thread only
+                ).first()
+                
+                if global_thread:
+                    # Delete the global thread and its messages (cascade delete)
+                    # Event-scoped threads remain intact with their original messages
+                    db.session.delete(global_thread)
+            
+            db.session.commit()
+            return connection
+            
+        except Exception as e:
+            db.session.rollback()
+            raise ValueError(f"Failed to remove connection: {str(e)}")
 
     @staticmethod
     def get_event_connections(user_id, event_id):

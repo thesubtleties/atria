@@ -11,9 +11,31 @@ from api.commons.pagination import paginate
 class DirectMessageService:
     @staticmethod
     def get_user_threads(user_id: int, schema=None):
-        """Get all direct message threads for a user, respecting thread hiding"""
+        """
+        Get direct message threads for a user with multi-layer filtering.
+        
+        SQL filtering (efficient, reduces data loaded):
+        - Only threads where user is participant (user1_id or user2_id)
+        - Only threads with no cutoff OR messages after cutoff time
+        
+        Python filtering (complex business logic):
+        - Remove global threads where connection.status = REMOVED
+        - Hide event threads when an active global thread exists
+        
+        This two-stage approach balances performance with complex logic that
+        would be difficult to express in SQL.
+        
+        Args:
+            user_id: ID of the user requesting threads
+            schema: Optional Marshmallow schema for serialization
+            
+        Returns:
+            Filtered list of threads with pagination metadata if schema provided
+        """
         from sqlalchemy import case, and_, or_, func
         from sqlalchemy.orm import aliased
+        from api.models.user import User
+        from api.models.enums import ConnectionStatus
         
         # Create an alias for the messages table to check for messages after cutoff
         dm_alias = aliased(DirectMessage)
@@ -47,12 +69,56 @@ class DirectMessageService:
                     has_messages_after_cutoff.is_not(None)
                 )
             )
-        ).order_by(DirectMessageThread.last_message_at.desc())
-
+        )
+        
+        # Fetch all threads then filter in Python
+        # This is more efficient than complex SQL for typical thread counts
+        all_threads = query.all()
+        
+        # Quick lookup for current user
+        current_user = User.query.get(user_id)
+        
+        # Build a set of user pairs with active global threads
+        # This lets us hide event threads when global exists
+        active_global_pairs = set()
+        visible_threads = []
+        
+        # First pass: identify global threads with active connections
+        for thread in all_threads:
+            if thread.event_scope_id is None:  # Global thread
+                other_user_id = thread.user2_id if thread.user1_id == user_id else thread.user1_id
+                connection = current_user.get_connection_with(other_user_id)
+                
+                # Include global thread only if connection is not removed
+                if not connection or connection.status != ConnectionStatus.REMOVED:
+                    user_pair = tuple(sorted([user_id, other_user_id]))
+                    active_global_pairs.add(user_pair)
+                    visible_threads.append(thread)
+        
+        # Second pass: add event threads only if no global thread exists
+        for thread in all_threads:
+            if thread.event_scope_id is not None:  # Event thread
+                other_user_id = thread.user2_id if thread.user1_id == user_id else thread.user1_id
+                user_pair = tuple(sorted([user_id, other_user_id]))
+                
+                # Show event thread only if no active global thread exists
+                if user_pair not in active_global_pairs:
+                    visible_threads.append(thread)
+        
+        # Sort by last message time
+        visible_threads.sort(key=lambda t: t.last_message_at or t.created_at, reverse=True)
+        
         if schema:
-            return paginate(query, schema, collection_name="threads")
+            # Return in expected format for pagination
+            return {
+                "threads": schema.dump(visible_threads),
+                "total_items": len(visible_threads),
+                "total_pages": 1,
+                "current_page": 1,
+                "per_page": len(visible_threads) or 1
+            }
 
-        return query.all()
+        return visible_threads
 
     @staticmethod
     def get_thread(thread_id: int, user_id: int):
@@ -308,6 +374,25 @@ class DirectMessageService:
             },
             "unread_count": unread_count,
         }
+        
+        # Include list of shared events (events where both users are members)
+        # This allows frontend to filter without fetching all event users
+        from api.models.event_user import EventUser
+        
+        # Use a single query to find shared events more efficiently
+        from sqlalchemy import and_
+        
+        # Find events where both users are members with a single query
+        shared_events = db.session.query(EventUser.event_id).filter(
+            EventUser.user_id == user_id
+        ).intersect(
+            db.session.query(EventUser.event_id).filter(
+                EventUser.user_id == other_user.id
+            )
+        ).all()
+        
+        shared_event_ids = [event_id for (event_id,) in shared_events]
+        thread_data["shared_event_ids"] = shared_event_ids
 
         if last_message:
             thread_data["last_message"] = {
@@ -486,7 +571,8 @@ class DirectMessageService:
     @staticmethod
     def merge_event_threads_on_connection(user1_id: int, user2_id: int):
         """
-        When users connect, merge all their event-scoped threads into one global thread.
+        When users connect, copy all their event-scoped thread messages into one global thread.
+        Event threads are preserved (not deleted) so they can be reactivated if connection is removed.
         Called after connection is accepted.
         """
         from api.models.direct_message import DirectMessage
@@ -512,19 +598,43 @@ class DirectMessageService:
             user1_id, user2_id, event_scope_id=None
         )
         
-        # Move all messages from event threads to global thread
+        # Copy all messages from event threads to global thread
+        # We COPY instead of MOVE to preserve the event context
         for event_thread in event_threads:
-            DirectMessage.query.filter_by(thread_id=event_thread.id).update({
-                'thread_id': global_thread.id
-            })
+            messages = DirectMessage.query.filter_by(thread_id=event_thread.id).all()
+            
+            # Sort messages by created_at to maintain chronological order
+            messages.sort(key=lambda m: m.created_at)
+            
+            for message in messages:
+                # Check if this message already exists in global thread (avoid duplicates on re-merge)
+                existing = DirectMessage.query.filter_by(
+                    thread_id=global_thread.id,
+                    sender_id=message.sender_id,
+                    content=message.content,
+                    created_at=message.created_at
+                ).first()
+                
+                if not existing:
+                    # Create a copy of the message in the global thread
+                    new_message = DirectMessage(
+                        thread_id=global_thread.id,
+                        sender_id=message.sender_id,
+                        content=message.content,
+                        encrypted_content=message.encrypted_content,
+                        status=message.status,
+                        created_at=message.created_at  # Preserve original timestamp
+                    )
+                    db.session.add(new_message)
             
             # Update global thread's last_message_at if needed
-            if event_thread.last_message_at > global_thread.last_message_at:
+            if event_thread.last_message_at and (not global_thread.last_message_at or 
+                                                  event_thread.last_message_at > global_thread.last_message_at):
                 global_thread.last_message_at = event_thread.last_message_at
         
-        # Delete the empty event threads
-        for event_thread in event_threads:
-            db.session.delete(event_thread)
+        # NOTE: We intentionally do NOT delete the event threads
+        # They will be hidden by get_user_threads when a global thread exists
+        # but can be reactivated if the connection is removed
         
         db.session.commit()
 
