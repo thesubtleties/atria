@@ -45,7 +45,15 @@ export function useThreadFiltering(threadsArray, currentEventId, eventUserIds, e
     const filtered = threadsArray.filter((thread) => {
       const otherUserId = thread.other_user?.id;
       const isEventScopedThread = thread.event_scope_id === currentEventId;
-      const userInEvent = otherUserId && eventUserIds.has(otherUserId);
+      
+      // Use shared_event_ids if available (more efficient than checking eventUserIds)
+      let userInEvent;
+      if (thread.shared_event_ids) {
+        userInEvent = thread.shared_event_ids.includes(currentEventId);
+      } else {
+        // Fallback to old method if backend hasn't been updated
+        userInEvent = otherUserId && eventUserIds.has(otherUserId);
+      }
       
       // Show thread if:
       // 1. It's scoped to this specific event, OR
@@ -53,7 +61,7 @@ export function useThreadFiltering(threadsArray, currentEventId, eventUserIds, e
       const shouldShow = isEventScopedThread || (!thread.event_scope_id && userInEvent);
       
       if (enableDebugLogs) {
-        console.log('Event - Thread:', thread.id, 'event_scope_id:', thread.event_scope_id, 'other user:', otherUserId, 'in event:', userInEvent, 'show:', shouldShow);
+        console.log('Event - Thread:', thread.id, 'event_scope_id:', thread.event_scope_id, 'other user:', otherUserId, 'shared events:', thread.shared_event_ids, 'in event:', userInEvent, 'show:', shouldShow);
       }
       
       return shouldShow;

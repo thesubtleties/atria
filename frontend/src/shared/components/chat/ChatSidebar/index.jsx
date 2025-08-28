@@ -1,5 +1,5 @@
 // src/shared/components/chat/ChatSidebar/index.jsx
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { Tabs, ActionIcon, Text, Group } from '@mantine/core';
@@ -16,7 +16,6 @@ import {
   selectCurrentEventId,
 } from '../../../../app/store/chatSlice';
 import { useGetDirectMessageThreadsQuery } from '../../../../app/features/networking/api';
-import { useGetEventUsersQuery } from '../../../../app/features/events/api';
 import { useThreadFiltering } from '@/shared/hooks/useThreadFiltering';
 import ChatThreadList from '../ChatThreadList';
 import styles from './styles/index.module.css';
@@ -39,29 +38,16 @@ function ChatSidebar() {
   // Fetch threads
   const { data, isLoading, error } = useGetDirectMessageThreadsQuery();
 
-  // Fetch event users when in event context
-  const { data: eventUsersData } = useGetEventUsersQuery(
-    { eventId: currentEventId },
-    { skip: !currentEventId }
-  );
-
   // Extract threads array from the response
   // The backend sends { threads: [...] }
   const threadsArray = data?.threads || data || [];
 
-  // Create a set of user IDs who are in the current event
-  const eventUserIds = useMemo(() => {
-    if (!eventUsersData?.event_users) return new Set();
-    console.log('Event users data:', eventUsersData);
-    // event_users have user_id field, not id
-    return new Set(eventUsersData.event_users.map(user => user.user_id));
-  }, [eventUsersData]);
-
   // Filter threads based on context using shared hook
+  // Note: Backend now includes shared_event_ids in each thread, so we don't need to fetch event users
   const filteredThreads = useThreadFiltering(
     threadsArray, 
     currentEventId, 
-    eventUserIds, 
+    new Set(), // Empty set since we use shared_event_ids from backend
     true // Enable debug logs for desktop version
   );
 
