@@ -10,7 +10,7 @@
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.9);
   border-radius: 8px 8px 0 0;
-  box-shadow: 
+  box-shadow:
     0 -2px 8px rgba(139, 92, 246, 0.03),
     0 2px 12px rgba(0, 0, 0, 0.08),
     0 1px 3px rgba(0, 0, 0, 0.04);
@@ -23,7 +23,7 @@
 .maximized {
   width: 400px;
   height: 500px;
-  box-shadow: 
+  box-shadow:
     0 -4px 16px rgba(139, 92, 246, 0.06),
     0 4px 24px rgba(0, 0, 0, 0.1),
     0 2px 6px rgba(0, 0, 0, 0.05);
@@ -44,7 +44,9 @@
 
 /* Header action buttons */
 .headerAction {
-  transition: all 0.2s ease;
+  color: #64748b !important;
+  background: transparent !important;
+  transition: all 0.2s ease !important;
 }
 
 .headerAction:hover {
@@ -54,6 +56,7 @@
 
 /* Send button styling */
 .sendButton {
+  color: #64748b;
   transition: all 0.2s ease;
 }
 

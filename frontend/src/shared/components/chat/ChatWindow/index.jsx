@@ -45,7 +45,6 @@ function ChatWindow({ threadId }) {
     threadId,
   });
 
-
   // Handle window controls
   const handleClose = () => {
     dispatch(closeThread(threadId));
@@ -82,8 +81,8 @@ function ChatWindow({ threadId }) {
         <div className={styles.header}>
           <Text size="sm">Loading...</Text>
           <Group gap="xs">
-            <ActionIcon size="xs" onClick={handleClose}>
-              <IconX size={14} />
+            <ActionIcon size="xs" className={styles.headerAction} onClick={handleClose}>
+              <IconX size={14} className={styles.headerAction} />
             </ActionIcon>
           </Group>
         </div>
@@ -110,7 +109,6 @@ function ChatWindow({ threadId }) {
           <ActionIcon
             size="xs"
             variant="subtle"
-            color="gray"
             className={styles.headerAction}
             onClick={(e) => {
               e.stopPropagation();
@@ -118,22 +116,21 @@ function ChatWindow({ threadId }) {
             }}
           >
             {isMaximized ? (
-              <IconMinimize size={14} />
+              <IconMinimize size={14} className={styles.headerAction} />
             ) : (
-              <IconMaximize size={14} />
+              <IconMaximize size={14} className={styles.headerAction} />
             )}
           </ActionIcon>
           <ActionIcon
             size="xs"
             variant="subtle"
-            color="gray"
             className={styles.headerAction}
             onClick={(e) => {
               e.stopPropagation();
               handleClose();
             }}
           >
-            <IconX size={14} />
+            <IconX size={14} className={styles.headerAction} />
           </ActionIcon>
         </Group>
       </div>
@@ -175,7 +172,7 @@ function ChatWindow({ threadId }) {
           disabled={!messageInput.trim()}
           className={styles.sendButton}
         >
-          <IconSend size={16} />
+          <IconSend size={16} className={styles.sendButton} />
         </ActionIcon>
       </div>
     </div>
