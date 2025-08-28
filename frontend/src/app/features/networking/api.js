@@ -305,6 +305,18 @@ export const networkingApi = baseApi.injectEndpoints({
       invalidatesTags: ['Connection', 'Thread', 'EventUsers'],
     }),
 
+    // Remove connection (soft delete)
+    // HTTP only: DELETE /connections/:connectionId
+    removeConnection: builder.mutation({
+      query: (connectionId) => ({
+        url: `/connections/${connectionId}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Connection', 'Thread', 'EventUsers'],
+      // Handle 204 No Content response
+      transformResponse: (response) => response || { success: true },
+    }),
+
     // Get connections within an event
     // HTTP only: GET /events/:eventId/connections?page=Y&per_page=Z
     getEventConnections: builder.query({
@@ -369,6 +381,7 @@ export const {
   useCreateConnectionMutation,
   useGetConnectionsQuery,
   useUpdateConnectionStatusMutation,
+  useRemoveConnectionMutation,
   useGetEventConnectionsQuery,
   useGetPendingConnectionsQuery,
   useClearThreadMutation,

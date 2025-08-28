@@ -1,10 +1,19 @@
 import React from 'react';
-import { Avatar, Group, Stack, Text } from '@mantine/core';
-import { IconEdit, IconRefresh } from '@tabler/icons-react';
+import { Avatar, Group, Stack, Text, Menu, ActionIcon } from '@mantine/core';
+import { IconEdit, IconRefresh, IconDots, IconUserMinus } from '@tabler/icons-react';
 import { Button } from '@/shared/components/buttons';
 import styles from './styles/index.module.css';
 
-export const ProfileHero = ({ user, onEditClick, isOwnProfile = true, isEditing = false, onAvatarReroll }) => {
+export const ProfileHero = ({ 
+  user, 
+  onEditClick, 
+  isOwnProfile = true, 
+  isEditing = false, 
+  onAvatarReroll,
+  connection = null,
+  onRemoveConnection,
+  isRemovingConnection = false
+}) => {
   if (!user) return null;
 
   const getInitials = (name) => {
@@ -25,6 +34,47 @@ export const ProfileHero = ({ user, onEditClick, isOwnProfile = true, isEditing 
 
   return (
     <section className={styles.profileHero}>
+      {/* Connection Menu in top right for other users' profiles */}
+      {!isOwnProfile && connection && (
+        <div style={{ 
+          position: 'absolute', 
+          top: '1rem', 
+          right: '1rem', 
+          zIndex: 10 
+        }}>
+          <Menu 
+            shadow="md" 
+            width={200} 
+            position="bottom-end"
+            disabled={isRemovingConnection}
+          >
+            <Menu.Target>
+              <ActionIcon 
+                variant="subtle" 
+                color="gray" 
+                size="lg"
+                style={{ 
+                  backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                  backdropFilter: 'blur(10px)',
+                }}
+              >
+                <IconDots size={20} />
+              </ActionIcon>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Item 
+                leftSection={<IconUserMinus size={16} />}
+                color="red"
+                onClick={onRemoveConnection}
+                disabled={isRemovingConnection}
+              >
+                Remove Connection
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
+        </div>
+      )}
+      
       <div className={styles.profileHeroContent}>
         <div className={styles.avatarContainer}>
           <Avatar
