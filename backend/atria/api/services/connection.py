@@ -235,6 +235,29 @@ class ConnectionService:
         return connection, thread_id
 
     @staticmethod
+    def remove_connection(connection_id, user_id):
+        """Remove an accepted connection (soft delete by changing status)"""
+        connection = Connection.query.get_or_404(connection_id)
+        
+        # Verify user is part of the connection
+        if connection.requester_id != user_id and connection.recipient_id != user_id:
+            raise ValueError("Not authorized to remove this connection")
+        
+        # Only accepted connections can be removed
+        if connection.status != ConnectionStatus.ACCEPTED:
+            raise ValueError("Can only remove accepted connections")
+        
+        # Update status to removed
+        connection.status = ConnectionStatus.REMOVED
+        connection.updated_at = datetime.utcnow()
+        
+        # Note: We don't delete the DirectMessageThread, it just becomes inaccessible
+        # This preserves message history in case they reconnect later
+        
+        db.session.commit()
+        return connection
+
+    @staticmethod
     def get_event_connections(user_id, event_id):
         """Get connected users in an event"""
         # Check if user is in event

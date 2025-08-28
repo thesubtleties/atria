@@ -1,6 +1,7 @@
 .profileHero {
   composes: section-container from '../../../../styles/design-tokens.css';
   margin-bottom: var(--space-xl);
+  position: relative;
 }
 
 .profileHeroContent {

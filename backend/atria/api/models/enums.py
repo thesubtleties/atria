@@ -69,6 +69,7 @@ class ConnectionStatus(str, Enum):
     PENDING = "pending"
     ACCEPTED = "accepted"
     REJECTED = "rejected"
+    REMOVED = "removed"  # User voluntarily removed connection
     BLOCKED = "blocked"
 
 

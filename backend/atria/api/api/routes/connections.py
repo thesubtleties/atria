@@ -132,6 +132,28 @@ class ConnectionDetail(MethodView):
             return connection
         except ValueError as e:
             abort(400, message=str(e))
+    
+    @blp.response(204)
+    @blp.doc(
+        summary="Remove connection",
+        description="Remove an accepted connection. Either party can remove the connection.",
+        responses={
+            204: {"description": "Connection removed successfully"},
+            400: {"description": "Can only remove accepted connections"},
+            403: {"description": "Not authorized to remove this connection"},
+            404: {"description": "Connection not found"},
+        },
+    )
+    @jwt_required()
+    def delete(self, connection_id):
+        """Remove connection"""
+        user_id = int(get_jwt_identity())
+
+        try:
+            ConnectionService.remove_connection(connection_id, user_id)
+            return '', 204
+        except ValueError as e:
+            abort(400, message=str(e))
 
 
 @blp.route("/connections/pending")

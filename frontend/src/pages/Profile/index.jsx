@@ -9,8 +9,12 @@ import {
 } from '@mantine/core';
 import { IconCheck, IconX, IconUserPlus } from '@tabler/icons-react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useGetUserQuery, useUpdateUserMutation } from '@/app/features/users/api';
+import { 
+  useGetConnectionsQuery, 
+  useRemoveConnectionMutation 
+} from '@/app/features/networking/api';
 import { useForm, zodResolver } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { updateUserProfile } from '@/app/store/authSlice';
@@ -21,10 +25,12 @@ import { SocialLinks } from './SocialLinks';
 import { ActivityOverview } from './ActivityOverview';
 import { AboutSection } from './AboutSection';
 import { Button } from '@/shared/components/buttons';
+import { openConfirmationModal } from '@/shared/components/modals/ConfirmationModal';
 import styles from './styles/index.module.css';
 
 export const ProfilePage = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const currentUser = useSelector((state) => state.auth.user);
   const { userId } = useParams(); // Get userId from URL params
   const [isEditing, setIsEditing] = useState(false);
@@ -41,6 +47,23 @@ export const ProfilePage = () => {
   });
   
   const [updateUser, { isLoading: isUpdating }] = useUpdateUserMutation();
+  const [removeConnection, { isLoading: isRemovingConnection }] = useRemoveConnectionMutation();
+  
+  // Check connection status if viewing another user's profile  
+  const { data: connectionsData } = useGetConnectionsQuery(
+    { page: 1, perPage: 1000 },
+    { skip: isOwnProfile }
+  );
+  
+  // Find the connection object if it exists
+  const connection = !isOwnProfile && connectionsData?.connections?.find(
+    conn => {
+      const isRequester = conn.requester.id === profileUserId;
+      const isRecipient = conn.recipient.id === profileUserId;
+      const isAccepted = conn.status === 'accepted' || conn.status === 'ACCEPTED';
+      return (isRequester || isRecipient) && isAccepted;
+    }
+  );
   
   const form = useForm({
     initialValues: {
@@ -175,6 +198,41 @@ export const ProfilePage = () => {
     }
     return seed;
   };
+  
+  const handleRemoveConnection = () => {
+    if (!connection) return;
+    
+    openConfirmationModal({
+      title: 'Remove Connection',
+      message: `Are you sure you want to remove your connection with ${userProfile?.full_name || 'this user'}? You will no longer be able to send direct messages to each other.`,
+      confirmLabel: 'Remove Connection',
+      cancelLabel: 'Cancel',
+      isDangerous: true,
+      onConfirm: async () => {
+        try {
+          await removeConnection(connection.id).unwrap();
+          notifications.show({
+            title: 'Connection Removed',
+            message: 'You are no longer connected with this user',
+            color: 'blue',
+          });
+          
+          // Navigate back to previous page or dashboard
+          if (window.history.length > 1) {
+            navigate(-1); // Go back to previous page
+          } else {
+            navigate('/app/dashboard'); // Fallback to dashboard
+          }
+        } catch (error) {
+          notifications.show({
+            title: 'Error',
+            message: error.data?.message || 'Failed to remove connection',
+            color: 'red',
+          });
+        }
+      },
+    });
+  };
 
   const handleAvatarReroll = () => {
     const newSeed = generateRandomSeed();
@@ -234,6 +292,9 @@ export const ProfilePage = () => {
         isOwnProfile={isOwnProfile}
         isEditing={isEditing}
         onAvatarReroll={handleAvatarReroll}
+        connection={connection}
+        onRemoveConnection={handleRemoveConnection}
+        isRemovingConnection={isRemovingConnection}
       />
       
       {/* Content Grid */}
