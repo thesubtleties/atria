@@ -125,7 +125,19 @@ class ConnectionService:
         ).first()
 
         if existing:
-            raise ValueError("Connection already exists")
+            # Allow new connection request if previous was removed
+            if existing.status == ConnectionStatus.REMOVED:
+                # Update the existing connection instead of creating a new one
+                existing.requester_id = requester_id
+                existing.recipient_id = recipient_id
+                existing.status = ConnectionStatus.PENDING
+                existing.icebreaker_message = icebreaker_message
+                existing.originating_event_id = originating_event_id
+                existing.updated_at = datetime.utcnow()
+                db.session.commit()
+                return existing
+            else:
+                raise ValueError("Connection already exists")
 
         # If event_id is provided, verify both users are part of the event
         if originating_event_id:
