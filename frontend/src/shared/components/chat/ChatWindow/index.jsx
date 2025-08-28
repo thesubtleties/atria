@@ -1,7 +1,7 @@
 // src/shared/components/chat/ChatWindow/index.jsx
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { ActionIcon, Avatar, Text, Group, Loader } from '@mantine/core';
+import { ActionIcon, Avatar, Text, Group } from '@mantine/core';
 import {
   IconX,
   IconMinimize,
@@ -13,6 +13,7 @@ import {
   minimizeThread,
   maximizeThread,
 } from '../../../../app/store/chatSlice';
+import { LoadingSpinner } from '../../loading';
 import { useSocketMessages } from '../../../hooks/useSocketMessages';
 import { useChatScroll } from '../../../hooks/useChatScroll';
 import ChatMessage from '../ChatMessage';
@@ -79,7 +80,7 @@ function ChatWindow({ threadId }) {
         className={`${styles.chatWindow} ${isMaximized ? styles.maximized : ''}`}
       >
         <div className={styles.header}>
-          <Text size="sm">Loading...</Text>
+          <Text size="sm">Loading chat...</Text>
           <Group gap="xs">
             <ActionIcon size="xs" className={styles.headerAction} onClick={handleClose}>
               <IconX size={14} className={styles.headerAction} />
@@ -87,7 +88,7 @@ function ChatWindow({ threadId }) {
           </Group>
         </div>
         <div className={styles.loading}>
-          <Loader size="sm" />
+          <LoadingSpinner size="sm" />
         </div>
       </div>
     );
@@ -140,7 +141,7 @@ function ChatWindow({ threadId }) {
         {/* Loading indicator for pagination */}
         {isFetching && hasMore && (
           <div className={styles.loadingMore}>
-            <Loader size="xs" />
+            <LoadingSpinner size="xs" />
           </div>
         )}
 

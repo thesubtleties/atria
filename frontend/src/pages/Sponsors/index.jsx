@@ -1,7 +1,8 @@
 import { useParams } from 'react-router-dom';
-import { Title, Text, LoadingOverlay, Alert, Container } from '@mantine/core';
+import { Title, Text, Alert, Container } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { useGetSponsorsQuery, useGetSponsorTiersQuery } from '../../app/features/sponsors/api';
+import { LoadingPage } from '../../shared/components/loading';
 import SponsorsList from './SponsorsList';
 import styles from './Sponsors.module.css';
 
@@ -40,11 +41,7 @@ export const SponsorsPage = () => {
   }
 
   if (isLoading) {
-    return (
-      <div className={styles.loadingContainer}>
-        <LoadingOverlay visible={true} overlayProps={{ radius: "sm", blur: 2 }} />
-      </div>
-    );
+    return <LoadingPage message="Loading sponsors..." />;
   }
 
   if (sponsorsError) {
