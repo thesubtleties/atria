@@ -1,0 +1,61 @@
+/* Loading State Styles - Consistent with Atria Design System */
+
+/* Centered loading content container */
+.loadingContent {
+  padding: var(--space-xl);
+  min-height: 100px;
+}
+
+/* Loading text styling */
+.loadingText {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+/* Section loading container with glass effect */
+.loadingSection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-background-glass);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+}
+
+/* Card skeleton container */
+.loadingCard {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Full page loading state */
+.loadingPage {
+  min-height: 50vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(251, 250, 255, 0.5);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .loadingContent {
+    padding: var(--space-lg);
+  }
+  
+  .loadingSection {
+    padding: var(--space-md);
+  }
+  
+  .loadingCard {
+    padding: var(--space-md);
+  }
+}
