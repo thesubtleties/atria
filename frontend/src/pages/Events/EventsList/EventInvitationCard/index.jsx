@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Card, Text, Badge, Group, Stack, Loader } from '@mantine/core';
+import { Card, Text, Badge, Group, Stack } from '@mantine/core';
+import { LoadingSpinner } from '../../../../shared/components/loading';
 import { IconCalendar, IconMapPin, IconUsers, IconClock } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
@@ -159,7 +160,7 @@ export const EventInvitationCard = ({ invitation }) => {
 
         <Group spacing="sm" className={styles.actionButtons}>
           {isProcessing ? (
-            <Loader size="sm" />
+            <LoadingSpinner size="sm" />
           ) : (
             <>
               <Button

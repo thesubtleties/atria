@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
-import { Tabs, Badge, Center, Text, Loader } from '@mantine/core';
+import { Tabs, Badge, Center, Text } from '@mantine/core';
+import { LoadingContent } from '../../../../shared/components/loading';
 import { IconUsers, IconUserShield } from '@tabler/icons-react';
 import { useSendMessageMutation } from '@/app/features/chat/api';
 import { ChatRoomView } from '../ChatRoomView';
@@ -46,7 +47,7 @@ export function ChatTabs({
   if (isLoading) {
     return (
       <Center className={styles.loadingState} py="xl">
-        <Loader size="sm" />
+        <LoadingContent message="Loading chat rooms..." size="sm" />
       </Center>
     );
   }

@@ -265,7 +265,7 @@ const EventOverrides = () => {
 
             {overridesLoading ? (
               <Center h={100}>
-                <Loader size="sm" />
+                <LoadingSpinner size="sm" />
               </Center>
             ) : overrideEnabled && (
               <form onSubmit={form.onSubmit(handleSubmit)}>

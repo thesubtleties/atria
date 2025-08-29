@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Badge, Text, Group, Loader } from '@mantine/core';
+import { Badge, Text, Group } from '@mantine/core';
+import { LoadingSpinner } from '../../../shared/components/loading';
 import { notifications } from '@mantine/notifications';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -164,7 +165,7 @@ function InvitationCard({ invitation, type, userId }) {
       
       <Group spacing="xs" className={styles.cardActions}>
         {isProcessing ? (
-          <Loader size="sm" />
+          <LoadingSpinner size="sm" />
         ) : (
           <>
             <Button 

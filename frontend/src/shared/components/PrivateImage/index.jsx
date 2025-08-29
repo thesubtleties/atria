@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Image, Box, Loader } from '@mantine/core';
+import { Image, Box } from '@mantine/core';
+import { LoadingSpinner } from '../loading';
 import { useGetPrivateContentQuery } from '../../../app/features/uploads/api';
 
 const PrivateImage = ({ 
@@ -38,7 +39,7 @@ const PrivateImage = ({
           justifyContent: 'center' 
         }}
       >
-        <Loader size="sm" />
+        <LoadingSpinner size="sm" />
       </Box>
     );
   }

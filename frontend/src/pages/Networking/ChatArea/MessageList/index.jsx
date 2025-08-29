@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react';
-import { Text, Center, Loader } from '@mantine/core';
+import { Text, Center } from '@mantine/core';
+import { LoadingSpinner } from '../../../../shared/components/loading';
 import { MessageBubble } from '../MessageBubble';
 import styles from './styles/index.module.css';
 
@@ -211,7 +212,7 @@ export function MessageList({
         {/* Loading indicator at the top when fetching older messages */}
         {isLoadingMore && (
           <div style={{ display: 'flex', justifyContent: 'center', padding: '0.5rem' }}>
-            <Loader size="xs" color="gray" />
+            <LoadingSpinner size="xs" />
           </div>
         )}
         
