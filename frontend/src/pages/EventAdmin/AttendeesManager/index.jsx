@@ -6,7 +6,6 @@ import {
   Group,
   TextInput,
   Select,
-  LoadingOverlay,
   Tabs,
   Badge,
   ActionIcon,
@@ -14,6 +13,7 @@ import {
   Text,
   Pagination,
 } from '@mantine/core';
+import { LoadingOverlay } from '../../../shared/components/loading';
 import {
   IconPlus,
   IconSearch,

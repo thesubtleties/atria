@@ -1,5 +1,4 @@
 import {
-  LoadingOverlay,
   Alert,
   Title,
   Text,
@@ -13,6 +12,7 @@ import {
   useUpdateSessionStatusMutation,
   useUpdateSessionMutation,
 } from '@/app/features/sessions/api';
+import { LoadingPage } from '../../shared/components/loading';
 import { useGetEventQuery } from '@/app/features/events/api';
 import { SessionDisplay } from './SessionDisplay';
 import { SessionSpeakers } from './SessionSpeakers';
@@ -57,7 +57,7 @@ export const SessionPage = () => {
   // No timing logic needed for CSS approach
 
   if (isLoading) {
-    return <LoadingOverlay visible />;
+    return <LoadingPage message="Loading session details..." />;
   }
 
   if (!session) {
