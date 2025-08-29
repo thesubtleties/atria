@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { ActionIcon, Text, Badge, Group, ScrollArea, Loader, Center } from '@mantine/core';
+import { ActionIcon, Text, Badge, Group, ScrollArea, Center } from '@mantine/core';
 import { IconX, IconLock, IconGlobe, IconMicrophone, IconMessage } from '@tabler/icons-react';
+import { LoadingSpinner } from '../../loading';
 import { useSelector } from 'react-redux';
 import { 
   useGetChatRoomMessagesQuery, 
@@ -274,7 +275,7 @@ function MobileChatRoomWindow({ room, eventData, onClose }) {
           </ActionIcon>
         </div>
         <Center className={styles.loadingContainer}>
-          <Loader size="sm" />
+          <LoadingSpinner size="sm" />
         </Center>
       </div>
     );

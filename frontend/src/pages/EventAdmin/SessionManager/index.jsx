@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { 
   Group, 
   Text, 
-  LoadingOverlay, 
   Badge
 } from '@mantine/core';
+import { LoadingOverlay } from '../../../shared/components/loading';
 import { 
   IconPlus,
   IconCalendar

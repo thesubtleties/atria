@@ -1,6 +1,6 @@
 import React from 'react';
-import { Loader } from '@mantine/core';
 import { useGetUserDashboardQuery } from '@/app/features/users/api';
+import { LoadingSpinner } from '../../../shared/components/loading';
 import styles from './styles/index.module.css';
 
 export const ActivityOverview = ({ userId }) => {
@@ -13,7 +13,7 @@ export const ActivityOverview = ({ userId }) => {
       <section className={styles.profileSection}>
         <h2 className={styles.sectionTitle}>Activity Overview</h2>
         <div className={styles.loadingState}>
-          <Loader size="sm" />
+          <LoadingSpinner size="sm" />
         </div>
       </section>
     );

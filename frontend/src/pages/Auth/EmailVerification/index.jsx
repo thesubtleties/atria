@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Container, Paper, Stack, Title, Text, Button, Alert, Loader, Center } from '@mantine/core';
+import { Container, Paper, Stack, Title, Text, Button, Alert, Center } from '@mantine/core';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { useVerifyEmailQuery } from '@/app/features/auth/api';
+import { LoadingContent } from '../../../shared/components/loading';
 import styles from './styles/index.module.css';
 
 export const EmailVerification = () => {
@@ -25,11 +26,10 @@ export const EmailVerification = () => {
     <Container size="sm" className={styles.container}>
       <Paper radius="md" p="xl" className={styles.paper}>
         {isLoading && (
-          <Stack align="center" gap="md">
-            <Loader size="lg" />
-            <Title order={2}>Verifying your email...</Title>
-            <Text c="dimmed">Please wait while we verify your email address.</Text>
-          </Stack>
+          <LoadingContent 
+            message="Please wait while we verify your email address" 
+            size="lg" 
+          />
         )}
 
         {data && (

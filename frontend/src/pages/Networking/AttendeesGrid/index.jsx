@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import {
   TextInput,
   Select,
-  Loader,
   Center,
   Text,
 } from '@mantine/core';
+import { LoadingSpinner } from '../../../shared/components/loading';
 import { IconSearch, IconFilter } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import {
@@ -231,7 +231,7 @@ export function AttendeesGrid({ eventId }) {
   if (isInitialLoading && currentPage === 1) {
     return (
       <Center className={styles.loader}>
-        <Loader size="lg" />
+        <LoadingSpinner size="lg" />
       </Center>
     );
   }
@@ -362,7 +362,7 @@ export function AttendeesGrid({ eventId }) {
           >
             {isFetchingMore ? (
               <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Loader size="xs" color="gray" />
+                <LoadingSpinner size="xs" />
                 Loading more...
               </span>
             ) : (

@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import {
   Text,
-  Loader,
   Center,
   Pagination,
   Alert,
 } from '@mantine/core';
+import { LoadingSpinner } from '../../../shared/components/loading';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { useGetPendingConnectionsQuery } from '@/app/features/networking/api';
 import { RequestCard } from './RequestCard';
@@ -23,7 +23,7 @@ export function RequestsList({ eventId }) {
   if (isLoading) {
     return (
       <Center className={styles.loader}>
-        <Loader size="lg" />
+        <LoadingSpinner size="lg" />
       </Center>
     );
   }

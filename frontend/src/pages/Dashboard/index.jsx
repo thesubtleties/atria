@@ -1,7 +1,8 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Container, LoadingOverlay, Text } from '@mantine/core';
+import { Container, Text } from '@mantine/core';
 import { useGetUserDashboardQuery } from '@/app/features/users/api';
+import { LoadingPage } from '../../shared/components/loading';
 import { ProfileHeader } from './ProfileHeader';
 import { StatsGrid } from './StatsGrid';
 import { OrganizationsSection } from './OrganizationsSection';
@@ -19,7 +20,7 @@ export const Dashboard = () => {
   });
 
   if (isLoading) {
-    return <LoadingOverlay visible />;
+    return <LoadingPage message="Loading dashboard..." />;
   }
 
   if (error) {

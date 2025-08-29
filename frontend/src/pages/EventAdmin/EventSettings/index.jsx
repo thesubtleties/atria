@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useMediaQuery } from '@mantine/hooks';
-import { Tabs, LoadingOverlay, Alert, Text, Select } from '@mantine/core';
+import { Tabs, Alert, Text, Select } from '@mantine/core';
+import { LoadingOverlay } from '../../../shared/components/loading';
 import { 
   IconInfoCircle, 
   IconMapPin, 

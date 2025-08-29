@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom';
 import { useGetEventQuery } from '../../app/features/events/api';
+import { LoadingPage } from '../../shared/components/loading';
 import Hero from './Hero';
 import Welcome from './Welcome';
 import Highlights from './Highlights';
@@ -14,7 +15,7 @@ export const EventHome = () => {
   });
 
   console.log(event);
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <LoadingPage message="Loading event home..." />;
   if (isError) return <div>Error loading event</div>;
   if (!event) return <div>Event not found</div>;
 

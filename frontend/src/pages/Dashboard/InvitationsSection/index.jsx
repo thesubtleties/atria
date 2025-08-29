@@ -1,7 +1,8 @@
 import React from 'react';
 import { useGetUserInvitationsQuery } from '../../../app/features/users/api';
-import { Skeleton, Alert, Text } from '@mantine/core';
+import { Alert, Text } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
+import { LoadingCard } from '../../../shared/components/loading';
 import InvitationCard from './InvitationCard';
 import styles from './styles/index.module.css';
 import dashboardStyles from '../styles/index.module.css';
@@ -16,8 +17,8 @@ function InvitationsSection({ userId }) {
           <h2 className={dashboardStyles.sectionTitle}>Pending Invitations</h2>
         </div>
         <div className={styles.invitationsContainer}>
-          <Skeleton height={80} radius="md" mb="md" />
-          <Skeleton height={80} radius="md" />
+          <LoadingCard />
+          <LoadingCard />
         </div>
       </section>
     );

@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { LoadingOverlay } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { useGetOrganizationQuery } from '../../../app/features/organizations/api';
+import { LoadingPage } from '../../../shared/components/loading';
 import OrganizationHeader from './OrganizationHeader';
 import MembersSection from './MembersSection';
 import EventsSection from './EventsSection';
@@ -27,7 +27,7 @@ const OrganizationDashboard = () => {
   }, [error, navigate]);
 
   if (isLoading) {
-    return <LoadingOverlay visible />;
+    return <LoadingPage message="Loading organization..." />;
   }
 
   if (!organization) {

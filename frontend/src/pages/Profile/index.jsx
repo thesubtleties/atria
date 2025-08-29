@@ -4,7 +4,6 @@ import {
   Stack,
   Group,
   TextInput,
-  LoadingOverlay,
   Alert,
 } from '@mantine/core';
 import { IconCheck, IconX, IconUserPlus } from '@tabler/icons-react';
@@ -18,6 +17,7 @@ import {
 import { useForm, zodResolver } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { updateUserProfile } from '@/app/store/authSlice';
+import { LoadingPage } from '../../shared/components/loading';
 import { profileSchema } from './schemas/profileSchema';
 import { ProfileHero } from './ProfileHero';
 import { ProfessionalInfo } from './ProfessionalInfo';
@@ -242,7 +242,7 @@ export const ProfilePage = () => {
   };
   
   if (isLoading) {
-    return <LoadingOverlay visible />;
+    return <LoadingPage message="Loading profile..." />;
   }
   
   if (error) {

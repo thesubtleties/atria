@@ -1,5 +1,6 @@
 import { useMemo, useState, useEffect } from 'react';
-import { Table, Text, Box, ActionIcon, LoadingOverlay } from '@mantine/core';
+import { Table, Text, Box, ActionIcon } from '@mantine/core';
+import { LoadingOverlay } from '../../../../shared/components/loading';
 import { IconGripVertical } from '@tabler/icons-react';
 import { useMediaQuery } from '@mantine/hooks';
 import { DragDropProvider } from '@dnd-kit/react';

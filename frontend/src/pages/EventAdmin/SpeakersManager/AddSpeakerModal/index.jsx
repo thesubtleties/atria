@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Modal, Select, Group, Stack, Text, Alert, Loader, Box } from '@mantine/core';
+import { Modal, Select, Group, Stack, Text, Alert, Box } from '@mantine/core';
+import { LoadingContent } from '../../../../shared/components/loading';
 import { useMediaQuery } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { 
@@ -106,8 +107,7 @@ const AddSpeakerModal = ({ opened, onClose, eventId, onSuccess }) => {
 
         {isLoading ? (
           <Box p="xl" ta="center">
-            <Loader />
-            <Text size="sm" c="dimmed" mt="md">Loading attendees...</Text>
+            <LoadingContent message="Loading attendees..." />
           </Box>
         ) : availableUsers.length === 0 ? (
           <Alert color="yellow" className={styles.warningAlert}>

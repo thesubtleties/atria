@@ -6,10 +6,10 @@ import {
   Text,
   Divider,
   Group,
-  Loader,
   Center,
   Tabs,
 } from '@mantine/core';
+import { LoadingContent } from '../../../../shared/components/loading';
 import { useForm, zodResolver } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { IconCheck, IconX, IconWorld, IconCalendarEvent } from '@tabler/icons-react';
@@ -108,7 +108,7 @@ const PrivacySettings = () => {
   if (isLoading) {
     return (
       <Center h={400}>
-        <Loader size="lg" />
+        <LoadingContent message="Loading privacy settings..." size="lg" />
       </Center>
     );
   }

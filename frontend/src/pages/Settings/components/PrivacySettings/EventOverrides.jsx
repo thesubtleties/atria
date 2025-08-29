@@ -8,9 +8,9 @@ import {
   Stack,
   Card,
   Divider,
-  Loader,
   Center,
 } from '@mantine/core';
+import { LoadingSpinner } from '../../../../shared/components/loading';
 import { IconAlertCircle, IconCalendarEvent } from '@tabler/icons-react';
 import { useSelector } from 'react-redux';
 import { useForm, zodResolver } from '@mantine/form';
@@ -196,7 +196,7 @@ const EventOverrides = () => {
   if (eventsLoading) {
     return (
       <Center h={200}>
-        <Loader size="lg" />
+        <LoadingSpinner size="lg" />
       </Center>
     );
   }
@@ -265,7 +265,7 @@ const EventOverrides = () => {
 
             {overridesLoading ? (
               <Center h={100}>
-                <Loader size="sm" />
+                <LoadingSpinner size="sm" />
               </Center>
             ) : overrideEnabled && (
               <form onSubmit={form.onSubmit(handleSubmit)}>

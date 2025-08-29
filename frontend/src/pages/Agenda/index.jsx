@@ -2,6 +2,7 @@
 import { useParams, useLocation, useSearchParams } from 'react-router-dom';
 import { useGetEventQuery } from '../../app/features/events/api';
 import { useGetSessionsQuery } from '../../app/features/sessions/api';
+import { LoadingSection } from '../../shared/components/loading';
 import { DateNavigation } from './DateNavigation';
 import { AgendaView } from './AgendaView';
 import { useEffect } from 'react';
@@ -42,7 +43,7 @@ export const AgendaPage = () => {
   }, [event?.day_count, currentDay, setSearchParams]);
 
   if (eventLoading || sessionsLoading) {
-    return <div>Loading...</div>;
+    return <LoadingSection message="Loading event agenda..." height={400} />;
   }
 
   if (!event?.start_date || !event?.day_count) {

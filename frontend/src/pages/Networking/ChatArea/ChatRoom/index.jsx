@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
-import { Center, Loader } from '@mantine/core';
+import { Center } from '@mantine/core';
+import { LoadingSpinner } from '../../../../shared/components/loading';
 import { useSelector } from 'react-redux';
 import { useGetChatRoomMessagesQuery, useDeleteMessageMutation } from '@/app/features/chat/api';
 import { 
@@ -224,7 +225,7 @@ export function ChatRoom({
   if (isLoading && currentPage === 1) {
     return (
       <Center className={styles.chatContainer}>
-        <Loader size="sm" />
+        <LoadingSpinner size="sm" />
       </Center>
     );
   }

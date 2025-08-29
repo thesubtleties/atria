@@ -1,9 +1,10 @@
 // src/pages/Events/EventsList/index.jsx
 import { useMemo } from 'react';
 import { useGetUserEventsQuery, useGetUserInvitationsQuery } from '@/app/features/users/api';
-import { Text, LoadingOverlay } from '@mantine/core';
+import { Text } from '@mantine/core';
 import { useSelector } from 'react-redux';
 import { IconCalendar, IconClock, IconHistory, IconMail } from '@tabler/icons-react';
+import { LoadingSection } from '../../../shared/components/loading';
 import { AttendeeEventCard } from './AttendeeEventCard';
 import { EventInvitationCard } from './EventInvitationCard';
 import { categorizeEvents } from './utils/eventCategorization';
@@ -39,7 +40,7 @@ export const EventsList = () => {
         <div className={styles.bgShape3} />
         
         <div className={styles.contentWrapper}>
-          <LoadingOverlay visible />
+          <LoadingSection message="Loading your events..." height={400} />
         </div>
       </div>
     );
