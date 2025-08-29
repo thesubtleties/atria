@@ -195,6 +195,7 @@
 
 .featuredButton:hover {
   transform: scale(1.1);
+  background: rgba(255, 214, 102, 0.1) !important; /* Transparent yellow matching #FFD666 */
 }
 
 /* Action Button */
