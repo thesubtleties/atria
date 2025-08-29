@@ -329,6 +329,24 @@
   min-height: 60px;
 }
 
+/* Form inputs within modals - Subtle and clean */
+.formInput,
+.formSelect,
+.formTextarea,
+.formTimeInput {
+  background: rgba(255, 255, 255, 1) !important;
+  border: 1px solid rgba(139, 92, 246, 0.1) !important;
+  transition: all 0.2s ease;
+}
+
+.formInput:focus,
+.formSelect:focus,
+.formTextarea:focus,
+.formTimeInput:focus {
+  border-color: rgba(139, 92, 246, 0.3) !important;
+  background: rgba(255, 255, 255, 1) !important;
+}
+
 .actions {
   margin-top: var(--mantine-spacing-sm);
   padding-top: var(--mantine-spacing-sm);

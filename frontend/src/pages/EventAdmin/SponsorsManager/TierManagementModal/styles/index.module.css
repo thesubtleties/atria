@@ -15,16 +15,16 @@
   border-bottom: 1px solid rgba(139, 92, 246, 0.04);
 }
 
-/* Form Inputs */
-.formInput input {
-  background: rgba(255, 255, 255, 1);
-  border: 1px solid rgba(139, 92, 246, 0.1);
+/* Form inputs within modals - Subtle and clean */
+.formInput {
+  background: rgba(255, 255, 255, 1) !important;
+  border: 1px solid rgba(139, 92, 246, 0.1) !important;
   transition: all 0.2s ease;
 }
 
-.formInput input:focus {
-  border-color: rgba(139, 92, 246, 0.3);
-  background: rgba(255, 255, 255, 1);
+.formInput:focus {
+  border-color: rgba(139, 92, 246, 0.3) !important;
+  background: rgba(255, 255, 255, 1) !important;
 }
 
 /* Order text styling */

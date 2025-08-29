@@ -1,6 +1,6 @@
 import { TextInput, ActionIcon, Text } from '@mantine/core';
 import { IconSend, IconVolumeOff } from '@tabler/icons-react';
-import styles from '../styles/index.module.css';
+import styles from './styles/index.module.css';
 
 export function MessageInput({ roomName, value, onChange, onSend, canSendMessages = true, muteReason }) {
   const handleKeyDown = (e) => {
@@ -41,11 +41,15 @@ export function MessageInput({ roomName, value, onChange, onSend, canSendMessage
             onClick={onSend}
             disabled={!value?.trim()}
             size="lg"
+            className={styles.sendButton}
+            radius="xl"
+            variant="light"
           >
             <IconSend size={18} />
           </ActionIcon>
         }
         className={styles.input}
+        classNames={{ input: styles.input }}
       />
     </div>
   );

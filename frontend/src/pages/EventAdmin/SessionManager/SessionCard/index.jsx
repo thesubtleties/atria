@@ -259,7 +259,7 @@ export const SessionCard = ({ session, eventId, hasConflict }) => {
             value={startTime}
             onChange={(value) => handleTimeChange('start_time', value)}
             placeholder="Start time"
-            classNames={{ input: styles.timeInput }}
+            classNames={{ input: styles.formTimeInput }}
             error={errors.start_time}
           />
           <Text size="sm" c="dimmed">to</Text>
@@ -267,13 +267,16 @@ export const SessionCard = ({ session, eventId, hasConflict }) => {
             value={endTime}
             onChange={(value) => handleTimeChange('end_time', value)}
             placeholder="End time"
-            classNames={{ input: styles.timeInput }}
+            classNames={{ input: styles.formTimeInput }}
             error={errors.end_time || errors.time_order}
           />
         </Group>
         
         {/* Pills - pushed to the right */}
         <Group ml="auto" gap="sm">
+          <Badge className={getSessionTypeBadgeClass(sessionType)} size="sm">
+            {getSessionTypeLabel(sessionType)}
+          </Badge>
           <Badge className={styles.durationPill} size="sm">
             {calculateDuration(startTime, endTime)}
           </Badge>
@@ -291,9 +294,6 @@ export const SessionCard = ({ session, eventId, hasConflict }) => {
         {/* Info Bar */}
         <Group className={styles.infoBar}>
           <Group gap="xs" align="center">
-            <Badge className={getSessionTypeBadgeClass(sessionType)} size="sm">
-              {getSessionTypeLabel(sessionType)}
-            </Badge>
             <Select
               value={sessionType}
               onChange={(value) => {
@@ -303,10 +303,7 @@ export const SessionCard = ({ session, eventId, hasConflict }) => {
               data={SESSION_TYPES}
               size="sm"
               style={{ width: 140 }}
-              styles={{
-                input: { cursor: 'pointer' },
-                rightSection: { pointerEvents: 'none' }
-              }}
+              classNames={{ input: styles.formSelect }}
             />
           </Group>
           <Select
@@ -318,10 +315,7 @@ export const SessionCard = ({ session, eventId, hasConflict }) => {
             data={CHAT_MODES}
             size="sm"
             style={{ width: 160 }}
-            styles={{
-              input: { cursor: 'pointer' },
-              rightSection: { pointerEvents: 'none' }
-            }}
+            classNames={{ input: styles.formSelect }}
           />
           <TextInput
             placeholder="Stream URL (e.g., Vimeo URL)"
@@ -330,6 +324,7 @@ export const SessionCard = ({ session, eventId, hasConflict }) => {
             value={streamUrl}
             onChange={(e) => setStreamUrl(e.target.value)}
             error={errors.stream_url}
+            classNames={{ input: styles.formInput }}
           />
         </Group>
 
@@ -353,6 +348,7 @@ export const SessionCard = ({ session, eventId, hasConflict }) => {
           maxRows={3}
           size="sm"
           error={errors.short_description}
+          classNames={{ input: styles.formTextarea }}
         />
 
         {/* Full Description */}
@@ -363,6 +359,7 @@ export const SessionCard = ({ session, eventId, hasConflict }) => {
           autosize
           minRows={2}
           maxRows={6}
+          classNames={{ input: styles.formTextarea }}
           className={styles.descriptionTextarea}
         />
       </div>

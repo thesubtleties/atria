@@ -13,3 +13,15 @@
   font-size: clamp(var(--text-sm), 2vw, 0.95rem);
   white-space: pre-wrap;
 }
+
+/* Form inputs within modals - Subtle and clean */
+.formTextarea {
+  background: rgba(255, 255, 255, 1) !important;
+  border: 1px solid rgba(139, 92, 246, 0.1) !important;
+  transition: all 0.2s ease;
+}
+
+.formTextarea:focus {
+  border-color: rgba(139, 92, 246, 0.3) !important;
+  background: rgba(255, 255, 255, 1) !important;
+}

@@ -14,12 +14,7 @@ export const AboutSection = ({ bio, isEditing, value, onChange }) => {
           maxRows={10}
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          styles={{
-            input: {
-              backgroundColor: 'rgba(255, 255, 255, 0.8)',
-              border: '1px solid rgba(139, 92, 246, 0.1)',
-            }
-          }}
+          classNames={{ input: styles.formTextarea }}
         />
       ) : (
         <p className={styles.bioText}>

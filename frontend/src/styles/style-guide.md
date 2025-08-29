@@ -936,6 +936,44 @@ import { Button } from 'shared/components/buttons/Button';
 </Button>
 ```
 
+### Form Input Styling
+
+Our form inputs use a subtle, clean approach that maintains readability while fitting our overall aesthetic:
+
+```css
+/* Form Elements - Subtle and Clean */
+.formInput input,
+.formSelect input,
+.formTextarea textarea {
+  background: rgba(255, 255, 255, 1);
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  transition: all 0.2s ease;
+}
+
+.formInput input:focus,
+.formSelect input:focus,
+.formTextarea textarea:focus {
+  border-color: rgba(139, 92, 246, 0.3);
+  background: rgba(255, 255, 255, 1);
+}
+```
+
+**⚠️ Important Implementation Note:**
+When applying these styles, check how your form library applies classes:
+- **Mantine forms**: Classes are applied directly to inputs via `classNames={{ input: styles.formInput }}`, so use `.formInput` (not `.formInput input`)
+- **Basic HTML forms**: If wrapping inputs in divs with classes, use `.formInput input`
+- **Always verify**: Check the rendered HTML to ensure your selectors match the actual DOM structure
+- **Use `!important`** when overriding Mantine defaults to ensure styles take precedence
+
+**Key Design Decisions:**
+- **Solid white background** instead of transparency for better readability and contrast
+- **Very subtle purple border** (0.1 opacity) for a clean, minimal look
+- **Gentle focus state** (0.3 opacity border) without shadow for minimal visual distraction
+- **Smooth transitions** for polished interactions
+- **No focus ring/shadow** to maintain the subtle aesthetic
+
+This approach provides just enough visual feedback without overwhelming the interface, keeping focus on the content rather than the form elements themselves.
+
 ### Glass Effect Pattern
 ```css
 .glassElement {

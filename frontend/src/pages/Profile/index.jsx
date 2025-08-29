@@ -312,11 +312,13 @@ export const ProfilePage = () => {
                       label="First Name"
                       {...form.getInputProps('first_name')}
                       required
+                      classNames={{ input: styles.formInput }}
                     />
                     <TextInput
                       label="Last Name"
                       {...form.getInputProps('last_name')}
                       required
+                      classNames={{ input: styles.formInput }}
                     />
                   </Group>
                   <TextInput
@@ -324,16 +326,19 @@ export const ProfilePage = () => {
                     value={userProfile?.email}
                     disabled
                     description="Email cannot be changed"
+                    classNames={{ input: styles.formInput }}
                   />
                   <TextInput
                     label="Job Title"
                     placeholder="e.g., Software Engineer"
                     {...form.getInputProps('title')}
+                    classNames={{ input: styles.formInput }}
                   />
                   <TextInput
                     label="Company"
                     placeholder="e.g., Acme Corp"
                     {...form.getInputProps('company_name')}
+                    classNames={{ input: styles.formInput }}
                   />
                 </Stack>
               </form>
@@ -351,16 +356,19 @@ export const ProfilePage = () => {
                   label="LinkedIn"
                   placeholder="https://linkedin.com/in/username"
                   {...form.getInputProps('social_links.linkedin')}
+                  classNames={{ input: styles.formInput }}
                 />
                 <TextInput
                   label="Twitter"
                   placeholder="https://twitter.com/username"
                   {...form.getInputProps('social_links.twitter')}
+                  classNames={{ input: styles.formInput }}
                 />
                 <TextInput
                   label="Website"
                   placeholder="https://example.com"
                   {...form.getInputProps('social_links.website')}
+                  classNames={{ input: styles.formInput }}
                 />
               </Stack>
             </section>
