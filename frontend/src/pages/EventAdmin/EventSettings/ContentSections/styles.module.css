@@ -20,12 +20,12 @@
   border: 1px solid var(--primary-alpha-4);
 }
 
-/* Form inputs */
+/* Form inputs within modals - Subtle and clean */
 .formInput,
 .formTextarea,
 .formSelect {
-  background: rgba(255, 255, 255, 1);
-  border: 1px solid var(--primary-alpha-10);
+  background: rgba(255, 255, 255, 1) !important;
+  border: 1px solid rgba(139, 92, 246, 0.1) !important;
   transition: all 0.2s ease;
   font-size: clamp(0.875rem, 2vw, 1rem);
 }
@@ -33,9 +33,8 @@
 .formInput:focus,
 .formTextarea:focus,
 .formSelect:focus {
-  border-color: var(--color-primary);
-  background: rgba(255, 255, 255, 1);
-  box-shadow: 0 0 0 2px var(--primary-alpha-10);
+  border-color: rgba(139, 92, 246, 0.3) !important;
+  background: rgba(255, 255, 255, 1) !important;
 }
 
 /* Divider */

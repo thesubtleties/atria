@@ -34,25 +34,24 @@
   margin-top: 0;
 }
 
-/* Form Inputs */
-.formInput input,
-.formSelect input,
-.formTextarea textarea,
-.shortDescriptionTextarea textarea,
-.formTimeInput input {
-  background: rgba(255, 255, 255, 0.5);
-  border: 1px solid rgba(139, 92, 246, 0.1);
+/* Form inputs within modals - Subtle and clean */
+.formInput,
+.formSelect,
+.formTextarea,
+.shortDescriptionTextarea,
+.formTimeInput {
+  background: rgba(255, 255, 255, 1) !important;
+  border: 1px solid rgba(139, 92, 246, 0.1) !important;
   transition: all 0.2s ease;
 }
 
-.formInput input:focus,
-.formSelect input:focus,
-.formTextarea textarea:focus,
-.shortDescriptionTextarea textarea:focus,
-.formTimeInput input:focus {
-  border-color: rgba(139, 92, 246, 0.3);
-  background: rgba(255, 255, 255, 1);
-  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.05);
+.formInput:focus,
+.formSelect:focus,
+.formTextarea:focus,
+.shortDescriptionTextarea:focus,
+.formTimeInput:focus {
+  border-color: rgba(139, 92, 246, 0.3) !important;
+  background: rgba(255, 255, 255, 1) !important;
 }
 
 /* Short description textarea - compact size */

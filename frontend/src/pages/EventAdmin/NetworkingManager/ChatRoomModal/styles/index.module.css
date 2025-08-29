@@ -17,20 +17,20 @@
   border-bottom: 1px solid rgba(139, 92, 246, 0.04);
 }
 
-/* Form Inputs */
-.formInput input,
-.formSelect input,
-.formTextarea textarea {
-  background: rgba(255, 255, 255, 1);
-  border: 1px solid rgba(139, 92, 246, 0.1);
+/* Form inputs within modals - Subtle and clean */
+.formInput,
+.formSelect,
+.formTextarea {
+  background: rgba(255, 255, 255, 1) !important;
+  border: 1px solid rgba(139, 92, 246, 0.1) !important;
   transition: all 0.2s ease;
 }
 
-.formInput input:focus,
-.formSelect input:focus,
-.formTextarea textarea:focus {
-  border-color: rgba(139, 92, 246, 0.3);
-  background: rgba(255, 255, 255, 1);
+.formInput:focus,
+.formSelect:focus,
+.formTextarea:focus {
+  border-color: rgba(139, 92, 246, 0.3) !important;
+  background: rgba(255, 255, 255, 1) !important;
 }
 
 /* Form Labels */

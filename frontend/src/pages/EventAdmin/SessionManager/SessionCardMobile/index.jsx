@@ -323,6 +323,7 @@ export const SessionCardMobile = ({ session, eventId, hasConflict }) => {
                 label="Start Time"
                 error={errors.start_time}
                 size="sm"
+                classNames={{ input: styles.formTimeInput }}
               />
               <TimeSelect
                 value={endTime}
@@ -331,6 +332,7 @@ export const SessionCardMobile = ({ session, eventId, hasConflict }) => {
                 label="End Time"
                 error={errors.end_time || errors.time_order}
                 size="sm"
+                classNames={{ input: styles.formTimeInput }}
               />
             </Group>
 
@@ -344,6 +346,7 @@ export const SessionCardMobile = ({ session, eventId, hasConflict }) => {
               }}
               data={SESSION_TYPES}
               size="sm"
+              classNames={{ input: styles.formSelect }}
             />
 
             {/* Chat Mode */}
@@ -356,6 +359,7 @@ export const SessionCardMobile = ({ session, eventId, hasConflict }) => {
               }}
               data={CHAT_MODES}
               size="sm"
+              classNames={{ input: styles.formSelect }}
             />
 
             {/* Stream URL */}
@@ -366,6 +370,7 @@ export const SessionCardMobile = ({ session, eventId, hasConflict }) => {
               value={streamUrl}
               onChange={(e) => setStreamUrl(e.target.value)}
               error={errors.stream_url}
+              classNames={{ input: styles.formInput }}
             />
 
             {/* Speakers */}
@@ -389,6 +394,7 @@ export const SessionCardMobile = ({ session, eventId, hasConflict }) => {
               maxRows={3}
               size="sm"
               error={errors.short_description}
+              classNames={{ input: styles.formTextarea }}
             />
 
             {/* Full Description */}
@@ -401,6 +407,7 @@ export const SessionCardMobile = ({ session, eventId, hasConflict }) => {
               minRows={3}
               maxRows={6}
               size="sm"
+              classNames={{ input: styles.formTextarea }}
             />
           </Stack>
         </div>
