@@ -42,7 +42,7 @@ export function MessageInput({ roomName, value, onChange, onSend, canSendMessage
             disabled={!value?.trim()}
             size="lg"
             className={styles.sendButton}
-            radius="xl"
+            radius="sm"
             variant="light"
           >
             <IconSend size={18} />

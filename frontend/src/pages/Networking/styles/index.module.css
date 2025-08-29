@@ -205,9 +205,18 @@
   min-height: 0;
 }
 
-/* Custom Badge */
+/* Custom Badge - Purple with 0.8 opacity and yellow text */
 .customBadge {
   margin-left: 0.5rem;
+  background: rgba(139, 92, 246, 0.8) !important; /* 0.8 opacity */
+  color: #FFD666 !important; /* Yellow from logo */
+  border: none !important; /* No border */
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace !important;
+  font-weight: 600 !important;
+  height: 22px !important;
+  min-width: 22px !important;
+  padding: 0 8px !important;
+  font-size: 12px !important;
 }
 
 /* Chat Wrapper - Forces proper height */
