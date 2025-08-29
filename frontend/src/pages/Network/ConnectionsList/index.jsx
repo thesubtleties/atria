@@ -1,4 +1,5 @@
-import { Table, ScrollArea, LoadingOverlay, Alert, Center, Pagination } from '@mantine/core';
+import { Table, ScrollArea, Alert, Center, Pagination } from '@mantine/core';
+import { LoadingOverlay } from '../../../shared/components/loading';
 import { ConnectionRow } from '../ConnectionRow';
 import { ConnectionCard } from '../ConnectionCard';
 import styles from './styles/index.module.css';
