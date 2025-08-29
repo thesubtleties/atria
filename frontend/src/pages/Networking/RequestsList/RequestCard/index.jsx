@@ -6,8 +6,8 @@ import {
   Avatar,
   Text,
   ActionIcon,
-  Loader,
 } from '@mantine/core';
+import { LoadingSpinner } from '../../../../shared/components/loading';
 import { IconCheck, IconX, IconBrandLinkedin, IconWorld } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { useUpdateConnectionStatusMutation } from '@/app/features/networking/api';
@@ -154,7 +154,7 @@ export function RequestCard({ request, eventId }) {
               className={styles.acceptButton}
             >
               {isAccepting ? (
-                <Loader size="xs" color="#16A34A" />
+                <LoadingSpinner size="xs" color="#16A34A" />
               ) : (
                 <>
                   <IconCheck size={16} />
@@ -168,7 +168,7 @@ export function RequestCard({ request, eventId }) {
               className={styles.declineButton}
             >
               {isRejecting ? (
-                <Loader size="xs" color="#64748B" />
+                <LoadingSpinner size="xs" color="#64748B" />
               ) : (
                 <>
                   <IconX size={16} />
