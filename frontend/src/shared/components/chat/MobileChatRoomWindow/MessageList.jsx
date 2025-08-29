@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { ScrollArea, Text, Group, ActionIcon, Badge } from '@mantine/core';
 import { IconTrash } from '@tabler/icons-react';
 import { useSelector } from 'react-redux';
+import { LoadingContent } from '../../loading';
 import styles from './styles/index.module.css';
 
 /**
@@ -70,7 +71,7 @@ function MessageList({
       <div className={styles.messagesList}>
         {isLoadingMore && hasMore && (
           <div className={styles.loadingMore}>
-            <Text size="xs" c="dimmed">Loading more messages...</Text>
+            <LoadingContent message="Loading more messages..." size="xs" showMessage={true} />
           </div>
         )}
         

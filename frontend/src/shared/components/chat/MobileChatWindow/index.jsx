@@ -1,7 +1,8 @@
 // src/shared/components/chat/MobileChatWindow/index.jsx
 import { useSelector } from 'react-redux';
-import { ActionIcon, Text, Group, Avatar, Loader } from '@mantine/core';
+import { ActionIcon, Text, Group, Avatar } from '@mantine/core';
 import { IconX, IconSend } from '@tabler/icons-react';
+import { LoadingSpinner, LoadingContent } from '../../loading';
 import { useSocketMessages } from '../../../hooks/useSocketMessages';
 import { useChatScroll } from '../../../hooks/useChatScroll';
 import { useMobileInputHandler } from '@/shared/hooks/useMobileInputHandler';
@@ -58,13 +59,13 @@ function MobileChatWindow({ threadId, onClose }) {
     return (
       <div className={styles.mobileWindow}>
         <div className={styles.header}>
-          <Text size="sm">Loading...</Text>
+          <Text size="sm">Loading chat...</Text>
           <ActionIcon variant="subtle" color="gray" onClick={onClose}>
             <IconX size={20} />
           </ActionIcon>
         </div>
         <div className={styles.loadingState}>
-          <Loader size="lg" />
+          <LoadingContent showMessage={false} size="lg" />
         </div>
       </div>
     );
@@ -82,7 +83,7 @@ function MobileChatWindow({ threadId, onClose }) {
           />
           <div className={styles.userInfo}>
             <Text size="sm" fw={500} lineClamp={1}>
-              {otherUser?.full_name || 'Loading...'}
+              {otherUser?.full_name || 'Loading chat...'}
             </Text>
             {isEncrypted && (
               <Text size="xs" c="dimmed">
@@ -108,7 +109,7 @@ function MobileChatWindow({ threadId, onClose }) {
         {/* Loading indicator for pagination */}
         {isFetching && hasMore && (
           <div className={styles.loadingMore}>
-            <Loader size="sm" />
+            <LoadingSpinner size="sm" />
           </div>
         )}
 

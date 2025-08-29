@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Text, Loader, Center } from '@mantine/core';
+import { Text, Center } from '@mantine/core';
 import { useGetSessionChatRoomsQuery } from '@/app/features/chat/api';
 import { useGetSessionQuery } from '@/app/features/sessions/api';
 import { useGetEventQuery } from '@/app/features/events/api';
@@ -7,6 +7,7 @@ import {
   joinSessionChatRooms, 
   leaveSessionChatRooms 
 } from '@/app/features/networking/socketClient';
+import { LoadingSpinner } from '../../loading';
 import ChatRoomPreview from '../ChatRoomPreview';
 import styles from './styles/index.module.css';
 
@@ -73,7 +74,7 @@ function SessionChatRoomList({ sessionId, onRoomClick, activeChatRoomId }) {
   if (isLoading) {
     return (
       <Center className={styles.loadingContainer}>
-        <Loader size="sm" />
+        <LoadingSpinner size="sm" />
       </Center>
     );
   }

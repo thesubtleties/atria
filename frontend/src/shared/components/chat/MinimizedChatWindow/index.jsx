@@ -12,7 +12,7 @@ function MinimizedChatWindow({ threadId, onClick, zIndex }) {
       style={{ zIndex }}
     >
       <div className={styles.minimizedContent}>
-        {isLoading ? 'Loading...' : otherUser?.full_name || 'Chat'}
+        {isLoading ? 'Loading chat...' : otherUser?.full_name || 'Chat'}
       </div>
     </div>
   );
