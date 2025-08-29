@@ -60,14 +60,14 @@
 
 /* Glass Section for Header */
 .headerSection {
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--color-background-glass);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-radius: var(--radius-lg);
   padding: clamp(1.25rem, 3vw, 2rem);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
-  margin-bottom: clamp(1rem, 3vw, 2rem);
+  border: 1px solid var(--primary-alpha-10);
+  box-shadow: var(--shadow-md);
+  margin-bottom: clamp(1.25rem, 3vw, 2rem);
 }
 
 /* Header Content Layout */
@@ -138,13 +138,13 @@
 
 /* Main Content Glass Section */
 .mainContent {
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--color-background-glass);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   padding: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
+  border: 1px solid var(--primary-alpha-10);
+  box-shadow: var(--shadow-md);
 }
 
 /* Search Container */
