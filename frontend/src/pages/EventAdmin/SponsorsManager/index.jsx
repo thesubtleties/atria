@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { LoadingOverlay, Text } from '@mantine/core';
+import { Text } from '@mantine/core';
+import { LoadingOverlay } from '../../../shared/components/loading';
 import { useParams } from 'react-router-dom';
 import { useGetSponsorsQuery } from '../../../app/features/sponsors/api';
 import { Button } from '../../../shared/components/buttons';

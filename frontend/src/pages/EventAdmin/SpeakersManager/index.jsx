@@ -3,13 +3,13 @@ import { useParams } from 'react-router-dom';
 import {
   Group,
   TextInput,
-  LoadingOverlay,
   Badge,
   ActionIcon,
   Menu,
   Text,
   Pagination,
 } from '@mantine/core';
+import { LoadingOverlay } from '../../../shared/components/loading';
 import {
   IconPlus,
   IconSearch,
