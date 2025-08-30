@@ -65,21 +65,25 @@
   z-index: 2;
 }
 
-/* Role colors matching sponsor tier style */
-.admin,
+/* Role colors using design tokens */
+.admin {
+  background: rgba(236, 72, 153, 0.08);
+  color: #ec4899;
+}
+
 .organizer {
-  background: rgba(168, 85, 247, 0.08);
-  color: #8B5CF6;
+  background: rgba(251, 146, 60, 0.08);
+  color: #fb923c;
 }
 
 .speaker {
-  background: rgba(6, 182, 212, 0.08);
-  color: #0891B2;
+  background: rgba(168, 85, 247, 0.08);
+  color: #a855f7;
 }
 
 .attendee {
   background: rgba(100, 116, 139, 0.08);
-  color: #64748B;
+  color: #64748b;
 }
 
 .content {
@@ -112,11 +116,10 @@
   padding-top: var(--mantine-spacing-sm);
   border-top: 1px solid rgba(139, 92, 246, 0.06);
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   width: 100%;
   min-height: 36px; /* Match icon height */
-  gap: 0.5rem;
 }
 
 .actions {
@@ -255,6 +258,39 @@
 
 .linkedinIcon :global(.mantine-ActionIcon-root:hover) {
   color: #0077B5;
+  background: transparent;
+  transform: scale(1.1);
+}
+
+/* Twitter specific hover color */
+.twitterIcon {
+  display: inline-flex;
+}
+
+.twitterIcon :global(.mantine-ActionIcon-root:hover) {
+  color: #1DA1F2;
+  background: transparent;
+  transform: scale(1.1);
+}
+
+/* Website icon - purple color without background */
+.websiteIcon {
+  display: inline-flex;
+}
+
+.websiteIcon :global(.mantine-ActionIcon-root:hover) {
+  color: #8B5CF6;
+  background: transparent;
+  transform: scale(1.1);
+}
+
+/* Email icon - purple color without background */
+.emailIcon {
+  display: inline-flex;
+}
+
+.emailIcon :global(.mantine-ActionIcon-root:hover) {
+  color: #8B5CF6;
   background: transparent;
   transform: scale(1.1);
 }

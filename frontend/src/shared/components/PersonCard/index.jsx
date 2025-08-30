@@ -1,5 +1,5 @@
 import { Text, Avatar, Group, Button, ActionIcon, Stack } from '@mantine/core';
-import { IconBrandLinkedin, IconWorld, IconMail, IconMessageCircle, IconUserPlus } from '@tabler/icons-react';
+import { IconBrandLinkedin, IconBrandTwitter, IconWorld, IconMail, IconMessageCircle, IconUserPlus } from '@tabler/icons-react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import styles from './styles/index.module.css';
@@ -22,6 +22,7 @@ export function PersonCard({
     bio, 
     avatarUrl,
     linkedin,
+    twitter,
     website,
     email,
     connectionStatus,
@@ -43,7 +44,8 @@ export function PersonCard({
   };
   
   // Privacy controls - what info to show
-  const showEmail = privacySettings.showEmail ?? (variant === 'speaker');
+  // Trust backend filtering - if email is provided, it's allowed to be shown
+  const showEmail = email ? true : false;
   const showCompany = privacySettings.showCompany ?? true;
   const showSocials = privacySettings.showSocials ?? true;
 
@@ -94,7 +96,7 @@ export function PersonCard({
           </Text>
         )}
 
-        <Group gap="xs" className={styles.socials}>
+        <Group gap={0} className={styles.socials}>
           {showSocials && (
             <>
               {linkedin && (
@@ -112,30 +114,49 @@ export function PersonCard({
                   </ActionIcon>
                 </div>
               )}
+              {twitter && (
+                <div className={styles.twitterIcon}>
+                  <ActionIcon 
+                    size="md" 
+                    variant="subtle" 
+                    component="a" 
+                    href={twitter} 
+                    target="_blank"
+                    aria-label="Twitter"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <IconBrandTwitter size={20} />
+                  </ActionIcon>
+                </div>
+              )}
               {website && (
-                <ActionIcon 
-                  size="md" 
-                  variant="subtle" 
-                  component="a" 
-                  href={website} 
-                  target="_blank"
-                  aria-label="Website"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <IconWorld size={20} />
-                </ActionIcon>
+                <div className={styles.websiteIcon}>
+                  <ActionIcon 
+                    size="md" 
+                    variant="subtle" 
+                    component="a" 
+                    href={website} 
+                    target="_blank"
+                    aria-label="Website"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <IconWorld size={20} />
+                  </ActionIcon>
+                </div>
               )}
               {showEmail && email && (
-                <ActionIcon 
-                  size="md" 
-                  variant="subtle" 
-                  component="a" 
-                  href={`mailto:${email}`}
-                  aria-label="Email"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <IconMail size={20} />
-                </ActionIcon>
+                <div className={styles.emailIcon}>
+                  <ActionIcon 
+                    size="md" 
+                    variant="subtle" 
+                    component="a" 
+                    href={`mailto:${email}`}
+                    aria-label="Email"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <IconMail size={20} />
+                  </ActionIcon>
+                </div>
               )}
             </>
           )}

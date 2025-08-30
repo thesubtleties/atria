@@ -85,7 +85,7 @@ class PrivacyService:
         return context
     
     @staticmethod
-    def _determine_email_visibility(user: User, context: Dict[str, Any], privacy: Dict, email_visibility: str) -> Dict[str, Any]:
+    def _determine_email_visibility(user: User, context: Dict[str, Any], privacy: Dict, email_visibility: str, event_id: Optional[int] = None) -> Dict[str, Any]:
         """
         Determine email visibility based on context and privacy settings.
         
@@ -183,7 +183,7 @@ class PrivacyService:
         allow_connection_requests = privacy.get('allow_connection_requests', 'event_attendees')
         
         # Apply email visibility rules
-        email_data = PrivacyService._determine_email_visibility(user, context, privacy, email_visibility)
+        email_data = PrivacyService._determine_email_visibility(user, context, privacy, email_visibility, event_id)
         
         # Set email field (explicit None if hidden)
         if email_data['show_real_email']:

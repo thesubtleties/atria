@@ -263,11 +263,6 @@
   letter-spacing: 0.01em;
 }
 
-.card :global(.mantine-Anchor-root) {
-  color: var(--gradient-purple-medium) !important;
-  text-decoration: none !important;
-}
-
 /* Icon color fixes */
 .websiteLink svg {
   stroke: var(--color-primary) !important;

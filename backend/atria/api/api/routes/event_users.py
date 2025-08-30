@@ -11,6 +11,7 @@ from api.api.schemas import (
     EventSpeakerInfoUpdateSchema,
     AddUserToEventSchema,
     EventUserAdminSchema,
+    EventUserNetworkingSchema,
 )
 from api.commons.pagination import (
     PAGINATION_PARAMETERS,
@@ -97,11 +98,12 @@ class EventUserList(MethodView):
     @jwt_required()
     @event_member_required()
     def get(self, event_id):
-        """Get list of event users"""
+        """Get list of event users for networking - privacy-filtered view"""
         role = request.args.get("role")
-        # Use the new method that includes connection status
+        # Always use networking schema for consistent privacy-filtered view
+        # Even admins see the public view here - they have AttendeesManager for full data
         return EventUserService.get_event_users_with_connection_status(
-            event_id, role, EventUserSchema(many=True)
+            event_id, role, EventUserNetworkingSchema(many=True)
         )
 
     @blp.arguments(EventUserCreateSchema)
