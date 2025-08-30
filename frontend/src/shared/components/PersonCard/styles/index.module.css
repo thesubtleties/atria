@@ -116,11 +116,10 @@
   padding-top: var(--mantine-spacing-sm);
   border-top: 1px solid rgba(139, 92, 246, 0.06);
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   width: 100%;
   min-height: 36px; /* Match icon height */
-  gap: 0.5rem;
 }
 
 .actions {
@@ -259,6 +258,28 @@
 
 .linkedinIcon :global(.mantine-ActionIcon-root:hover) {
   color: #0077B5;
+  background: transparent;
+  transform: scale(1.1);
+}
+
+/* Twitter specific hover color */
+.twitterIcon {
+  display: inline-flex;
+}
+
+.twitterIcon :global(.mantine-ActionIcon-root:hover) {
+  color: #1DA1F2;
+  background: transparent;
+  transform: scale(1.1);
+}
+
+/* Website icon - purple color without background */
+.websiteIcon {
+  display: inline-flex;
+}
+
+.websiteIcon :global(.mantine-ActionIcon-root:hover) {
+  color: #8B5CF6;
   background: transparent;
   transform: scale(1.1);
 }

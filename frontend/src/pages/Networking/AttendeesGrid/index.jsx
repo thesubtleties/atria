@@ -321,6 +321,7 @@ export function AttendeesGrid({ eventId }) {
                 bio: '', // TODO: Add bio
                 avatarUrl: attendee.image_url,
                 linkedin: attendee.social_links?.linkedin,
+                twitter: attendee.social_links?.twitter,
                 website: attendee.social_links?.website,
                 email: '', // TODO: Add if needed based on privacy
                 connectionStatus: attendee.connection_status || null,
