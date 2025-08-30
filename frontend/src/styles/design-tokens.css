@@ -258,9 +258,9 @@
 
 /* Role-specific badge styles - compose after badge-base */
 .badge-admin {
-  background: rgba(59, 130, 246, 0.08) !important;
-  color: #3b82f6 !important;
-  border: 1px solid rgba(59, 130, 246, 0.15) !important;
+  background: rgba(236, 72, 153, 0.08) !important;
+  color: #ec4899 !important;
+  border: 1px solid rgba(236, 72, 153, 0.15) !important;
 }
 
 .badge-organizer {

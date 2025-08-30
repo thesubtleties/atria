@@ -7,25 +7,17 @@ import {
   TextInput,
   Select,
   Tabs,
-  Badge,
-  ActionIcon,
-  Menu,
   Text,
   Pagination,
 } from '@mantine/core';
 import { LoadingOverlay } from '../../../shared/components/loading';
 import {
-  IconPlus,
   IconSearch,
-  IconDownload,
-  IconUpload,
   IconFilter,
-  IconDots,
   IconUsers,
   IconMail,
   IconChevronDown,
 } from '@tabler/icons-react';
-import { notifications } from '@mantine/notifications';
 import {
   useGetEventInvitationsQuery,
 } from '../../../app/features/eventInvitations/api';
@@ -35,6 +27,7 @@ import {
 } from '../../../app/features/events/api';
 import { Button } from '../../../shared/components/buttons';
 import { getNameSortValue } from '../../../shared/utils/sorting';
+import HeaderSection from './HeaderSection';
 import AttendeesList from './AttendeesList';
 import PendingInvitations from './PendingInvitations';
 import InviteModal from './InviteModal';
@@ -117,25 +110,6 @@ const AttendeesManager = () => {
       sortOrder: prev.sortBy === field && prev.sortOrder === 'asc' ? 'desc' : 'asc',
     }));
   };
-
-  const handleExport = () => {
-    // TODO: Implement CSV export
-    notifications.show({
-      title: 'Export Started',
-      message: 'Preparing attendee list for download...',
-      color: 'blue',
-    });
-  };
-
-  const handleImport = () => {
-    // TODO: Implement CSV import modal
-    notifications.show({
-      title: 'Import',
-      message: 'CSV import feature coming soon',
-      color: 'yellow',
-    });
-  };
-
 
   const filteredAttendees = attendeesData?.event_users?.filter((user) => {
     if (!filters.search) return true;
@@ -232,69 +206,10 @@ const AttendeesManager = () => {
 
       <div className={styles.contentWrapper}>
         {/* Header Section */}
-        <section className={styles.headerSection}>
-          <div className={styles.headerContent}>
-            <div className={styles.headerLeft}>
-              <h2 className={styles.pageTitle}>Attendees Management</h2>
-              <div className={styles.badgeGroup}>
-                <div className={styles.badgeRow}>
-                  <Badge className={styles.totalBadge} size="md" radius="sm">
-                    {roleCounts.total || 0} Total
-                  </Badge>
-                </div>
-                <div className={styles.badgeRow}>
-                  <Badge className={styles.adminBadge} size="md" radius="sm">
-                    {roleCounts.admins || roleCounts.ADMIN || 0} Admins
-                  </Badge>
-                  <Badge className={styles.organizerBadge} size="md" radius="sm">
-                    {roleCounts.organizers || roleCounts.ORGANIZER || 0} Organizers
-                  </Badge>
-                  <Badge className={styles.speakerBadge} size="md" radius="sm">
-                    {roleCounts.speakers || roleCounts.SPEAKER || 0} Speakers
-                  </Badge>
-                  <Badge className={styles.attendeeBadge} size="md" radius="sm">
-                    {roleCounts.attendees || roleCounts.ATTENDEE || 0} Attendees
-                  </Badge>
-                </div>
-              </div>
-            </div>
-            <div className={styles.headerRight}>
-              {/* CSV Import/Export - Commented out for post-launch implementation
-              <Menu shadow="md" width={200}>
-                <Menu.Target>
-                  <ActionIcon className={styles.actionIcon} variant="subtle" size="lg">
-                    <IconDots size={20} />
-                  </ActionIcon>
-                </Menu.Target>
-                <Menu.Dropdown className={styles.menuDropdown}>
-                  <Menu.Item
-                    className={styles.menuItem}
-                    leftSection={<IconDownload size={16} />}
-                    onClick={handleExport}
-                  >
-                    Export to CSV
-                  </Menu.Item>
-                  <Menu.Item
-                    className={styles.menuItem}
-                    leftSection={<IconUpload size={16} />}
-                    onClick={handleImport}
-                  >
-                    Import from CSV
-                  </Menu.Item>
-                </Menu.Dropdown>
-              </Menu>
-              */}
-              <Button
-                variant="primary"
-                onClick={() => setInviteModalOpen(true)}
-                className={styles.addButton}
-              >
-                <IconPlus size={18} />
-                Invite Attendees
-              </Button>
-            </div>
-          </div>
-        </section>
+        <HeaderSection 
+          roleCounts={roleCounts}
+          onInviteClick={() => setInviteModalOpen(true)}
+        />
 
         {/* Main Content Section */}
         <section className={styles.mainContent}>

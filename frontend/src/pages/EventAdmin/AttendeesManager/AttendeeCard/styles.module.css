@@ -143,33 +143,33 @@
 
 /* Role Badge Compositions from design tokens */
 .adminBadge {
-  composes: badge-base badge-admin from '../../../../styles/design-tokens.css';
+  composes: badge-base badge-admin from '../../../../styles/design-tokens.css' !important;
 }
 
 .organizerBadge {
-  composes: badge-base badge-organizer from '../../../../styles/design-tokens.css';
+  composes: badge-base badge-organizer from '../../../../styles/design-tokens.css' !important;
 }
 
 .speakerBadge {
-  composes: badge-base badge-speaker from '../../../../styles/design-tokens.css';
+  composes: badge-base badge-speaker from '../../../../styles/design-tokens.css' !important;
 }
 
 .attendeeBadge {
-  composes: badge-base badge-attendee from '../../../../styles/design-tokens.css';
+  composes: badge-base badge-attendee from '../../../../styles/design-tokens.css' !important;
 }
 
 /* Fallback badge for unknown roles */
 .roleBadge {
-  composes: badge-base badge-neutral from '../../../../styles/design-tokens.css';
+  composes: badge-base badge-neutral from '../../../../styles/design-tokens.css' !important;
 }
 
 /* Moderation status badges */
 .bannedBadge {
-  composes: badge-base badge-banned from '../../../../styles/design-tokens.css';
+  composes: badge-base badge-banned from '../../../../styles/design-tokens.css' !important;
 }
 
 .chatBannedBadge {
-  composes: badge-base badge-chat-banned from '../../../../styles/design-tokens.css';
+  composes: badge-base badge-chat-banned from '../../../../styles/design-tokens.css' !important;
 }
 
 /* Expandable Section for Mobile */

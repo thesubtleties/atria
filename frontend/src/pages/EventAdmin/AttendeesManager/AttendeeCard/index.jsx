@@ -395,7 +395,7 @@ const AttendeeCard = ({
           {/* Role badges inline */}
           <Group gap="xs" mt={4}>
             <Badge 
-              className={styles[`${data.role.toLowerCase()}Badge`] || styles.roleBadge}
+              className={styles[`${data.role?.toLowerCase()}Badge`] || styles.roleBadge}
               radius="sm"
               size="sm"
             >
