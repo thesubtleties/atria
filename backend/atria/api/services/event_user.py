@@ -78,7 +78,7 @@ class EventUserService:
     
     @staticmethod
     def get_event_users_with_connection_status(event_id, role=None, schema=None):
-        """Get list of event users with privacy filtering based on viewer's role - excludes banned users for networking"""
+        """Get list of event users with privacy filtering - excludes banned users for networking"""
         current_user_id = get_jwt_identity()
         
         if not current_user_id:
@@ -86,17 +86,6 @@ class EventUserService:
             abort(401, message="Authentication required")
             
         current_user_id = int(current_user_id)
-        
-        # Check if current user is admin/organizer for this event
-        current_event_user = EventUser.query.filter_by(
-            event_id=event_id, 
-            user_id=current_user_id
-        ).first()
-        
-        is_event_admin = current_event_user and current_event_user.role in [
-            EventUserRole.ADMIN, 
-            EventUserRole.ORGANIZER
-        ]
         
         # Get base query with eager loading for efficiency
         query = EventUser.query.filter_by(event_id=event_id)
@@ -106,7 +95,7 @@ class EventUserService:
         # Filter out banned users for networking purposes
         query = query.filter(EventUser.is_banned.is_(False))
         
-        # Eager load users and session data to prevent N+1 queries when accessing session_count/sessions properties
+        # Eager load users and session data to prevent N+1 queries
         query = query.options(
             joinedload(EventUser.user).joinedload(User.session_speakers).joinedload(SessionSpeaker.session)
         ).join(EventUser.user).order_by(User.last_name, User.first_name)
@@ -114,48 +103,20 @@ class EventUserService:
         # Get all event users
         event_users = query.all()
         
-        # Process each user with appropriate privacy filtering
-        result = []
+        # Add privacy-filtered user data and connection status to each event_user
         for event_user in event_users:
-            if is_event_admin:
-                # Admins get full data with real email for event management
-                user_data = {
-                    'id': event_user.user.id,
-                    'first_name': event_user.user.first_name,
-                    'last_name': event_user.user.last_name,
-                    'full_name': event_user.user.full_name,
-                    'email': event_user.user.email,  # Always real email for admins
-                    'company_name': event_user.user.company_name,
-                    'title': event_user.user.title,
-                    'bio': event_user.user.bio,
-                    'image_url': event_user.user.image_url,
-                    'social_links': event_user.user.social_links,
-                    '_admin_view': True  # Indicator for frontend
-                }
-            else:
-                # Regular users get privacy-filtered data
-                user_data = UserService.get_user_for_viewer(
-                    event_user.user_id,
-                    current_user_id,
-                    event_id=event_id,  # Pass event context for overrides
-                    require_connection=False  # No connection required in event context
-                )
-                user_data['_admin_view'] = False
+            # Get privacy-filtered user data for networking view
+            # Everyone gets the same privacy-filtered view
+            user_data = UserService.get_user_for_viewer(
+                event_user.user_id,
+                current_user_id,
+                event_id=event_id,  # Pass event context for overrides
+                require_connection=False  # No connection required in event context
+            )
             
-            # Build event user response
-            event_user_data = {
-                'event_id': event_user.event_id,
-                'user_id': event_user.user_id,
-                'role': event_user.role.value,
-                'created_at': event_user.created_at.isoformat() if event_user.created_at else None,
-                'is_speaker': event_user.role == EventUserRole.SPEAKER,
-                'is_organizer': event_user.role == EventUserRole.ORGANIZER,
-                # Include speaker-specific fields if this is a speaker
-                'speaker_bio': event_user.speaker_bio if event_user.role == EventUserRole.SPEAKER else None,
-                'speaker_title': event_user.speaker_title if event_user.role == EventUserRole.SPEAKER else None,
-                # Merge user data (admin or filtered)
-                **user_data
-            }
+            # Store the filtered email as a custom attribute (not a model property)
+            # The schema will pick this up during serialization
+            event_user._filtered_email = user_data.get('email')  # May be None based on privacy
             
             # Add connection status for non-self users
             if event_user.user_id != current_user_id:
@@ -163,12 +124,23 @@ class EventUserService:
                     current_user_id, 
                     event_user.user_id
                 )
-                event_user_data.update(connection)
-            
-            result.append(event_user_data)
+                event_user.connection_status = connection.get('connection_status')
+                event_user.connection_id = connection.get('connection_id')
+                event_user.connection_direction = connection.get('connection_direction')
+            else:
+                event_user.connection_status = None
+                event_user.connection_id = None
+                event_user.connection_direction = None
         
-        # Apply pagination to the processed results
-        return EventUserService._paginate_list(result, "event_users")
+        # Use the schema to serialize the EventUser objects
+        if schema:
+            # Schema handles all the serialization
+            serialized_data = schema.dump(event_users)
+            # Apply pagination to the serialized results
+            return EventUserService._paginate_list(serialized_data, "event_users")
+        
+        # Fallback if no schema provided (shouldn't happen with our updates)
+        return event_users
 
     @staticmethod
     def add_user_to_event(event_id, data):

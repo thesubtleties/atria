@@ -284,6 +284,17 @@
   transform: scale(1.1);
 }
 
+/* Email icon - purple color without background */
+.emailIcon {
+  display: inline-flex;
+}
+
+.emailIcon :global(.mantine-ActionIcon-root:hover) {
+  color: #8B5CF6;
+  background: transparent;
+  transform: scale(1.1);
+}
+
 /* Larger icon size */
 .socials :global(.mantine-ActionIcon-root svg) {
   width: 20px;

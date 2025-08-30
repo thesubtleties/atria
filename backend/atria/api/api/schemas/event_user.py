@@ -111,3 +111,33 @@ class EventUserAdminSchema(EventUserSchema):
         if hasattr(obj, 'can_use_chat'):
             return obj.can_use_chat()
         return not obj.is_banned and not obj.is_chat_banned
+
+
+class EventUserNetworkingSchema(EventUserSchema):
+    """Schema for viewing event attendees in networking area - respects privacy settings"""
+    
+    class Meta(EventUserSchema.Meta):
+        name = "EventUserNetworking"
+    
+    # User data fields with privacy filtering
+    # Note: email may be None based on privacy settings
+    # Even admins see privacy-filtered data here to understand what's public
+    email = ma.Method("get_filtered_email", dump_only=True, allow_none=True)
+    full_name = ma.String(dump_only=True)
+    bio = ma.String(dump_only=True, allow_none=True)
+    
+    def get_filtered_email(self, obj):
+        """Get the privacy-filtered email from the custom attribute"""
+        return getattr(obj, '_filtered_email', None)
+    
+    # These fields already come from base EventUserSchema:
+    # first_name, last_name, image_url, social_links, company_name, title
+    # connection_status, connection_id, connection_direction
+    
+    # Session info for speakers
+    session_count = ma.Integer(dump_only=True, allow_none=True)
+    sessions = ma.List(ma.Dict(), dump_only=True, allow_none=True)
+    
+    # Speaker-specific fields (from base schema, shown when role is SPEAKER)
+    speaker_bio = ma.String(dump_only=True, allow_none=True)
+    speaker_title = ma.String(dump_only=True, allow_none=True)

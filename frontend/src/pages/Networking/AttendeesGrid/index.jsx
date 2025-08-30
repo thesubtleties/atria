@@ -323,7 +323,7 @@ export function AttendeesGrid({ eventId }) {
                 linkedin: attendee.social_links?.linkedin,
                 twitter: attendee.social_links?.twitter,
                 website: attendee.social_links?.website,
-                email: '', // TODO: Add if needed based on privacy
+                email: attendee.email || '', // Now provided by backend with privacy filtering
                 connectionStatus: attendee.connection_status || null,
                 privacySettings: {},
               }}

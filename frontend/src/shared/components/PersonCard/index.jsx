@@ -44,7 +44,8 @@ export function PersonCard({
   };
   
   // Privacy controls - what info to show
-  const showEmail = privacySettings.showEmail ?? (variant === 'speaker');
+  // Trust backend filtering - if email is provided, it's allowed to be shown
+  const showEmail = email ? true : false;
   const showCompany = privacySettings.showCompany ?? true;
   const showSocials = privacySettings.showSocials ?? true;
 
@@ -144,16 +145,18 @@ export function PersonCard({
                 </div>
               )}
               {showEmail && email && (
-                <ActionIcon 
-                  size="md" 
-                  variant="subtle" 
-                  component="a" 
-                  href={`mailto:${email}`}
-                  aria-label="Email"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <IconMail size={20} />
-                </ActionIcon>
+                <div className={styles.emailIcon}>
+                  <ActionIcon 
+                    size="md" 
+                    variant="subtle" 
+                    component="a" 
+                    href={`mailto:${email}`}
+                    aria-label="Email"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <IconMail size={20} />
+                  </ActionIcon>
+                </div>
               )}
             </>
           )}
