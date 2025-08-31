@@ -179,7 +179,7 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }
         contact_name: formData.contactName || null,
         contact_email: formData.contactEmail || null,
         contact_phone: formData.contactPhone || null,
-        tier_id: formData.tierId || null,
+        tier_id: formData.tierId, // Required field, no null fallback
         social_links: formData.socialLinks,
         ...(logoUrl && { logo_url: logoUrl }),
       };
@@ -294,13 +294,13 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }
             <Select
               label="Tier"
               placeholder="Select tier"
+              required
               data={sponsorTiers.map(tier => ({
                 value: tier.id,
                 label: tier.name,
               }))}
               value={formData.tierId}
               onChange={(value) => handleFieldChange('tierId', value)}
-              clearable
               error={errors.tierId}
               classNames={{ input: styles.formSelect }}
             />

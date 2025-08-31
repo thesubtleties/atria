@@ -12,9 +12,14 @@ const SponsorsHeader = ({
   onTierManageClick
 }) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
-  // Count sponsors by tier and collect tier colors
+  // Count sponsors by tier and collect tier colors (exclude sponsors without tiers)
   const tierCounts = sponsors.reduce((acc, sponsor) => {
-    const tierName = sponsor.tier_name || 'No Tier';
+    // Skip sponsors without a tier
+    if (!sponsor.tier_id) {
+      return acc;
+    }
+    
+    const tierName = sponsor.tier_name;
     const tierId = sponsor.tier_id;
     const tierColor = sponsor.tier_color; // This comes from the sponsor's computed property
     
