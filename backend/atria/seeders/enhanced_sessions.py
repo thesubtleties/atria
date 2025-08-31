@@ -7,8 +7,8 @@ def generate_enhanced_sessions() -> List[Dict[str, Any]]:
     sessions = []
     session_id = 1
     
-    # Event 1 - Full 3-day conference schedule
-    # Day 1 - March 15 - Opening Day (15 sessions)
+    # Event 1 - Full 3-day conference schedule  
+    # Day 1 - September 15, 2025 - Opening Day (15 sessions)
     day1_sessions = [
         # Morning
         {"type": "KEYNOTE", "title": "Opening Keynote: The Future of Software Development", 
@@ -59,7 +59,7 @@ def generate_enhanced_sessions() -> List[Dict[str, Any]]:
          "short": "Evening networking event", "start": time(17, 0), "end": time(19, 0)},
     ]
     
-    # Day 2 - March 16 - Deep Dive Day (18 sessions)
+    # Day 2 - September 16, 2025 - Deep Dive Day (18 sessions)
     day2_sessions = [
         # Morning Keynote
         {"type": "KEYNOTE", "title": "Security in the Age of AI", 
@@ -118,7 +118,7 @@ def generate_enhanced_sessions() -> List[Dict[str, Any]]:
          "short": "Meet our sponsors", "start": time(17, 0), "end": time(19, 0)},
     ]
     
-    # Day 3 - March 17 - Innovation Day (12 sessions)
+    # Day 3 - September 17, 2025 - Innovation Day (12 sessions)
     day3_sessions = [
         # Morning Keynote
         {"type": "KEYNOTE", "title": "Closing Keynote: Building the Future Together", 
@@ -176,7 +176,7 @@ def generate_enhanced_sessions() -> List[Dict[str, Any]]:
             })
             session_id += 1
     
-    # Event 2 - Cloud Native Summit (8 sessions)
+    # Event 2 - Cloud Native Summit - October 22, 2025 (8 sessions)
     event2_sessions = [
         {"type": "KEYNOTE", "title": "Cloud Native Architecture Patterns", 
          "short": "Modern cloud-native design", "start": time(9, 0), "end": time(10, 0)},
@@ -212,7 +212,7 @@ def generate_enhanced_sessions() -> List[Dict[str, Any]]:
         })
         session_id += 1
     
-    # Event 3 - AI/ML Workshop (1 intensive session)
+    # Event 3 - AI/ML Workshop - November 14, 2025 (1 intensive session)
     sessions.append({
         "id": session_id,
         "event_id": 3,
@@ -226,5 +226,141 @@ def generate_enhanced_sessions() -> List[Dict[str, Any]]:
         "stream_url": None,
         "day_number": 1,
     })
+    session_id += 1  # Increment for Event 3
+    
+    # Event 4 - Frontend Masters Conference - December 5-6, 2025 (12 sessions)
+    event4_sessions = [
+        # Day 1 - Modern Frontend
+        {"type": "KEYNOTE", "title": "The State of Frontend 2025", 
+         "short": "What's next in frontend development", "start": time(9, 0), "end": time(10, 0), "day": 1},
+        {"type": "PRESENTATION", "title": "React Server Components in Production", 
+         "short": "Real-world RSC implementation", "start": time(10, 30), "end": time(11, 30), "day": 1},
+        {"type": "WORKSHOP", "title": "Advanced CSS Grid Techniques", 
+         "short": "Modern layout patterns", "start": time(10, 30), "end": time(12, 30), "day": 1},
+        {"type": "PRESENTATION", "title": "Web Performance in 2025", 
+         "short": "Optimizing for Core Web Vitals", "start": time(11, 45), "end": time(12, 45), "day": 1},
+        {"type": "NETWORKING", "title": "Lunch & Frontend Showcase", 
+         "short": "Demo your projects", "start": time(12, 45), "end": time(14, 0), "day": 1},
+        {"type": "PANEL", "title": "Framework Wars: React vs Vue vs Angular", 
+         "short": "Framework maintainers debate", "start": time(14, 0), "end": time(15, 30), "day": 1},
+        
+        # Day 2 - Tools & Ecosystem
+        {"type": "KEYNOTE", "title": "The Future of Web Development Tools", 
+         "short": "Next-gen developer experience", "start": time(9, 0), "end": time(10, 0), "day": 2},
+        {"type": "WORKSHOP", "title": "Building Design Systems with Storybook", 
+         "short": "Component-driven development", "start": time(10, 30), "end": time(12, 30), "day": 2},
+        {"type": "PRESENTATION", "title": "TypeScript Advanced Patterns", 
+         "short": "Type-level programming", "start": time(10, 30), "end": time(11, 30), "day": 2},
+        {"type": "PRESENTATION", "title": "Micro-frontends Architecture", 
+         "short": "Scaling frontend teams", "start": time(11, 45), "end": time(12, 45), "day": 2},
+        {"type": "PRESENTATION", "title": "WebAssembly for Frontend Developers", 
+         "short": "High-performance web applications", "start": time(14, 0), "end": time(15, 0), "day": 2},
+        {"type": "KEYNOTE", "title": "Closing: The Next Decade of Web", 
+         "short": "Future predictions and trends", "start": time(15, 30), "end": time(16, 30), "day": 2},
+    ]
+    
+    for session in event4_sessions:
+        sessions.append({
+            "id": session_id,
+            "event_id": 4,
+            "status": "SCHEDULED",
+            "session_type": session["type"],
+            "title": session["title"],
+            "short_description": session["short"],
+            "description": f"{session['title']} - {session['short']}. Join frontend experts for this insightful session on modern web development.",
+            "start_time": session["start"],
+            "end_time": session["end"],
+            "stream_url": f"https://frontend.stream.com/session{session_id}" if session["type"] != "NETWORKING" else None,
+            "day_number": session["day"],
+        })
+        session_id += 1
+    
+    # Event 5 - DevOps & Security Summit - January 20-21, 2026 (10 sessions)
+    event5_sessions = [
+        # Day 1 - DevOps Evolution
+        {"type": "KEYNOTE", "title": "Platform Engineering: Beyond DevOps", 
+         "short": "The next evolution of DevOps", "start": time(9, 0), "end": time(10, 0), "day": 1},
+        {"type": "WORKSHOP", "title": "GitOps with ArgoCD", 
+         "short": "Kubernetes deployment automation", "start": time(10, 30), "end": time(12, 30), "day": 1},
+        {"type": "PRESENTATION", "title": "Infrastructure as Code with Terraform", 
+         "short": "Managing cloud resources", "start": time(10, 30), "end": time(11, 30), "day": 1},
+        {"type": "PRESENTATION", "title": "Monitoring and Observability", 
+         "short": "OpenTelemetry in production", "start": time(11, 45), "end": time(12, 45), "day": 1},
+        {"type": "PANEL", "title": "Container Security Best Practices", 
+         "short": "Securing containerized applications", "start": time(14, 0), "end": time(15, 30), "day": 1},
+        
+        # Day 2 - Security Focus
+        {"type": "KEYNOTE", "title": "Zero Trust Security in 2026", 
+         "short": "Never trust, always verify", "start": time(9, 0), "end": time(10, 0), "day": 2},
+        {"type": "WORKSHOP", "title": "Kubernetes Security Hardening", 
+         "short": "Securing K8s clusters", "start": time(10, 30), "end": time(12, 30), "day": 2},
+        {"type": "PRESENTATION", "title": "Supply Chain Security", 
+         "short": "Securing your dependencies", "start": time(10, 30), "end": time(11, 30), "day": 2},
+        {"type": "PRESENTATION", "title": "API Security Patterns", 
+         "short": "Protecting your APIs", "start": time(11, 45), "end": time(12, 45), "day": 2},
+        {"type": "PRESENTATION", "title": "Incident Response Automation", 
+         "short": "Faster security response", "start": time(14, 0), "end": time(15, 0), "day": 2},
+    ]
+    
+    for session in event5_sessions:
+        sessions.append({
+            "id": session_id,
+            "event_id": 5,
+            "status": "SCHEDULED",
+            "session_type": session["type"],
+            "title": session["title"],
+            "short_description": session["short"],
+            "description": f"{session['title']} - {session['short']}. Learn from DevOps and security experts about modern practices.",
+            "start_time": session["start"],
+            "end_time": session["end"],
+            "stream_url": f"https://devops.stream.com/session{session_id}" if session["type"] != "NETWORKING" else None,
+            "day_number": session["day"],
+        })
+        session_id += 1
+    
+    # Event 6 - Data & AI Conference - February 18-19, 2026 (11 sessions)
+    event6_sessions = [
+        # Day 1 - Data Engineering
+        {"type": "KEYNOTE", "title": "The Future of Data Infrastructure", 
+         "short": "Next-gen data platforms", "start": time(9, 0), "end": time(10, 0), "day": 1},
+        {"type": "WORKSHOP", "title": "Real-time Data Pipelines with Kafka", 
+         "short": "Streaming data processing", "start": time(10, 30), "end": time(12, 30), "day": 1},
+        {"type": "PRESENTATION", "title": "Data Mesh Architecture", 
+         "short": "Decentralized data architecture", "start": time(10, 30), "end": time(11, 30), "day": 1},
+        {"type": "PRESENTATION", "title": "Vector Databases for AI", 
+         "short": "Storing and querying embeddings", "start": time(11, 45), "end": time(12, 45), "day": 1},
+        {"type": "PANEL", "title": "Data Privacy and Ethics", 
+         "short": "Responsible data use", "start": time(14, 0), "end": time(15, 30), "day": 1},
+        
+        # Day 2 - AI & Machine Learning
+        {"type": "KEYNOTE", "title": "AI in Production: Lessons Learned", 
+         "short": "Real-world AI deployment", "start": time(9, 0), "end": time(10, 0), "day": 2},
+        {"type": "WORKSHOP", "title": "LLM Fine-tuning Workshop", 
+         "short": "Customizing large language models", "start": time(10, 30), "end": time(12, 30), "day": 2},
+        {"type": "PRESENTATION", "title": "MLOps Best Practices", 
+         "short": "ML model lifecycle management", "start": time(10, 30), "end": time(11, 30), "day": 2},
+        {"type": "PRESENTATION", "title": "AI Model Monitoring", 
+         "short": "Detecting model drift", "start": time(11, 45), "end": time(12, 45), "day": 2},
+        {"type": "PRESENTATION", "title": "Ethical AI Development", 
+         "short": "Building responsible AI systems", "start": time(14, 0), "end": time(15, 0), "day": 2},
+        {"type": "KEYNOTE", "title": "The AI-Powered Future", 
+         "short": "What's next for AI technology", "start": time(15, 30), "end": time(16, 30), "day": 2},
+    ]
+    
+    for session in event6_sessions:
+        sessions.append({
+            "id": session_id,
+            "event_id": 6,
+            "status": "SCHEDULED",
+            "session_type": session["type"],
+            "title": session["title"],
+            "short_description": session["short"],
+            "description": f"{session['title']} - {session['short']}. Explore the latest in data science and AI with industry experts.",
+            "start_time": session["start"],
+            "end_time": session["end"],
+            "stream_url": f"https://data.stream.com/session{session_id}" if session["type"] != "NETWORKING" else None,
+            "day_number": session["day"],
+        })
+        session_id += 1
     
     return sessions
