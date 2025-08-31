@@ -51,6 +51,9 @@ class StorageService:
     
     def __init__(self):
         """Initialize MinIO client."""
+        # IMPORTANT: In production, MINIO_ENDPOINT must be set to the external URL (storage.sbtl.dev)
+        # so that presigned URLs work correctly. The signature is calculated based on the endpoint
+        # used here, so it must match what browsers will use to access the files.
         self.endpoint = os.getenv('MINIO_ENDPOINT', 'minio-api.infrastructure.svc.cluster.local:9000')
         self.access_key = os.getenv('MINIO_ACCESS_KEY')
         self.secret_key = os.getenv('MINIO_SECRET_KEY')
@@ -303,25 +306,6 @@ class StorageService:
                 object_name,
                 expires=expires
             )
-            
-            # Replace internal URL with external URL for browser access
-            if self.external_url:
-                # Parse the internal URL to preserve the path and query parameters
-                from urllib.parse import urlparse, urlunparse
-                parsed = urlparse(url)
-                external_parsed = urlparse(self.external_url)
-                
-                # Replace scheme, netloc with external values, keep path and params
-                external_url = urlunparse((
-                    external_parsed.scheme,
-                    external_parsed.netloc,
-                    parsed.path,
-                    parsed.params,
-                    parsed.query,
-                    parsed.fragment
-                ))
-                return external_url
-            
             return url
         except S3Error as e:
             raise Exception(f"Failed to generate URL: {str(e)}")
