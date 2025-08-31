@@ -3,28 +3,24 @@ import SponsorCard from '@/shared/components/SponsorCard';
 import styles from './styles/index.module.css';
 
 export default function SponsorsList({ sponsors, tiers }) {
-  // Group sponsors by tier (handle snake_case from API)
-  const sponsorsByTier = sponsors.reduce((acc, sponsor) => {
-    const tierId = sponsor.tier_id || 'other';
-    if (!acc[tierId]) {
-      acc[tierId] = [];
-    }
-    acc[tierId].push(sponsor);
-    return acc;
-  }, {});
+  // Filter out sponsors without tiers and group by tier
+  const sponsorsByTier = sponsors
+    .filter(sponsor => sponsor.tier_id) // Only include sponsors with tiers
+    .reduce((acc, sponsor) => {
+      const tierId = sponsor.tier_id;
+      if (!acc[tierId]) {
+        acc[tierId] = [];
+      }
+      acc[tierId].push(sponsor);
+      return acc;
+    }, {});
 
   // Sort tiers by order (create a copy first to avoid mutating read-only array)
   const sortedTiers = [...tiers].sort((a, b) => a.order - b.order);
 
-  // Add "Other" tier at the end if there are sponsors without a tier
-  const tiersToDisplay = [
-    ...sortedTiers,
-    ...(sponsorsByTier.other ? [{ id: 'other', name: 'Other Sponsors', order: 999 }] : [])
-  ];
-
   return (
     <div className={styles.container}>
-      {tiersToDisplay.map((tier) => {
+      {sortedTiers.map((tier) => {
         const tiersSponsors = sponsorsByTier[tier.id];
         if (!tiersSponsors || tiersSponsors.length === 0) return null;
 

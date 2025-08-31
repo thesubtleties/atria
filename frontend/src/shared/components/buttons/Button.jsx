@@ -1,4 +1,5 @@
 import React from 'react';
+import { ButtonLoader } from '../loading';
 import styles from './Button.module.css';
 
 export const Button = ({ 
@@ -7,6 +8,7 @@ export const Button = ({
   onClick, 
   type = 'button',
   disabled = false,
+  loading = false,
   className = '',
   ...props 
 }) => {
@@ -16,11 +18,18 @@ export const Button = ({
     <button
       type={type}
       onClick={onClick}
-      disabled={disabled}
+      disabled={disabled || loading}
       className={buttonClass}
       {...props}
     >
-      {children}
+      {loading ? (
+        <>
+          <ButtonLoader />
+          <span style={{ marginLeft: '8px' }}>{children}</span>
+        </>
+      ) : (
+        children
+      )}
     </button>
   );
 };

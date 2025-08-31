@@ -20,7 +20,7 @@ export const sponsorFieldSchemas = {
     .or(z.literal('')),
   
   // Sponsorship details
-  tier_id: z.string().optional(),
+  tier_id: z.string().min(1, 'Tier selection is required'),
   
   // Social links
   social_links: z.object({
