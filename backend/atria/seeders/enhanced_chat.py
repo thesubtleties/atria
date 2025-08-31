@@ -3,28 +3,34 @@ import random
 from typing import List, Dict, Any
 
 def generate_enhanced_chat_messages() -> List[Dict[str, Any]]:
-    """Generate 50+ messages in popular chat rooms for realistic feel"""
+    """Generate 200+ messages in popular chat rooms for realistic feel with 150+ users"""
     messages = []
     message_id = 1
     
-    # Room 1 - General Chat (Event 1) - Very active with 75+ messages
+    # Room 1 - General Chat (Event 1) - Very active with 150+ messages
+    # Using expanded user base (user IDs 1-151) and realistic timestamps
     general_chat_messages = [
-        # Morning messages
-        (16, "Good morning everyone! Excited for day 1! 🎉"),
-        (23, "Can't wait for the opening keynote!"),
-        (35, "Anyone know if coffee is available yet?"),
-        (42, "Coffee station is open near the main entrance!"),
+        # Early Morning - September 15, 2025 (Day 1)
+        (16, "Good morning everyone! Excited for day 1 of Atria TechConf! 🎉"),
+        (23, "Can't wait for the opening keynote at 9 AM!"),
+        (87, "Flying in from Berlin, just landed! Coffee recommendations?"),
+        (142, "Welcome! There's a great cafe across from the convention center"),
+        (35, "Anyone know if the conference coffee is any good this year?"),
+        (42, "Coffee station is already open near the main entrance - much better than last year!"),
         (35, "Thanks! Heading there now"),
-        (18, "The venue is amazing! So much bigger than last year"),
-        (45, "First time at this conference, any tips?"),
-        (16, "@User45 Don't miss the networking sessions, great for connections!"),
-        (52, "WiFi password anyone?"),
-        (42, "ATRIA2025 - all caps"),
-        (52, "Thanks!"),
-        (19, "Which track are you all planning to attend?"),
-        (27, "I'm going for the microservices talk"),
-        (33, "Kubernetes workshop for me!"),
-        (48, "Same here, K8s workshop looks great"),
+        (91, "The venue setup looks incredible this year!"),
+        (128, "So much bigger than 2024! Love the new layout"),
+        (18, "Registration was so smooth, props to the organizers"),
+        (103, "First time at Atria conf, any veteran tips?"),
+        (16, "@User103 Don't miss the networking sessions, and grab lunch early!"),
+        (145, "WiFi password anyone? The QR codes aren't working for me"),
+        (42, "ATRIATECH2025 - all caps, no spaces"),
+        (145, "Perfect, thanks!"),
+        (67, "Which tracks are you all planning? So many good options"),
+        (84, "Microservices track for me, then the AI panel"),
+        (119, "Kubernetes workshop is a must-attend!"),
+        (133, "Same! Heard Marcus Rodriguez is incredible"),
+        (27, "The full stack of sessions today looks amazing"),
         
         # Mid-morning buzz
         (1, "Welcome everyone! I'm one of the organizers. Feel free to ask any questions!"),
@@ -99,57 +105,62 @@ def generate_enhanced_chat_messages() -> List[Dict[str, Any]]:
         (1, "Doors open at 8:30 AM"),
         (73, "Perfect, thanks!"),
         
-        # Day 2 Morning - Add 50+ more messages for pagination testing
-        (19, "Good morning day 2! Who's ready?"),
-        (31, "Already caffeinated and excited!"),
-        (42, "The security keynote this morning should be interesting"),
-        (54, "I'm heading to the React performance talk after"),
-        (66, "Same! Netflix's scale insights will be valuable"),
-        (23, "Anyone tried the breakfast yet?"),
-        (35, "Yes! Great selection today"),
-        (47, "The pastries are amazing"),
-        (59, "Conference food has really improved"),
-        (20, "True! Remember when it was just bagels?"),
-        (32, "Those were dark times 😂"),
-        (44, "Security keynote starting soon!"),
-        (56, "Already heading to the main hall"),
-        (68, "Save me a seat!"),
-        (21, "The sponsor booths have great swag today"),
-        (33, "Got some nice t-shirts!"),
-        (45, "The GitHub booth has stickers"),
-        (57, "Love conference stickers"),
-        (69, "My laptop is running out of space for them"),
-        (22, "First world problems!"),
+        # Day 2 Morning - September 16, 2025 - Add 80+ more messages with more users
+        (89, "Good morning day 2! Who's pumped for the deep dive sessions?"),
+        (106, "Already on my third espresso and ready to roll!"),
+        (31, "Emily's security keynote should be game-changing"),
+        (127, "Then straight to the React Server Components talk"),
+        (54, "RSC is the future, can't wait to see the Netflix implementation"),
+        (66, "Their scale stories are always mind-blowing"),
+        (92, "Anyone tried the breakfast spread today?"),
+        (23, "Yes! The Belgian waffles are incredible"),
+        (149, "And they have oat milk for the coffee now!"),
+        (35, "Conference catering has seriously leveled up"),
+        (113, "Remember the sad sandwich days of 2023?"),
+        (47, "Those were truly dark times 😂"),
+        (134, "Security keynote starting in 15 minutes!"),
+        (59, "Getting seats now, don't want to miss this one"),
+        (81, "AI security is such a hot topic right now"),
+        (98, "The sponsor expo is amazing this year"),
+        (68, "Got some incredible swag from the Postgres booth"),
+        (21, "The GitHub booth has limited edition Octocat pins!"),
+        (125, "And React has some sweet new hoodies"),
+        (33, "My backpack is getting heavy with all this swag"),
+        (148, "Good problems to have! 😄"),
+        (45, "Love how the community comes together at these events"),
         
-        # Day 2 Sessions
-        (34, "React Server Components talk was mind-blowing"),
-        (46, "The performance gains are incredible"),
-        (58, "But the mental model shift is real"),
-        (70, "Worth it for the UX improvements"),
-        (24, "Go vs Rust debate was heated!"),
-        (36, "Both have their place IMO"),
-        (48, "Rust for systems, Go for services"),
-        (60, "Why not both? 🤷"),
-        (25, "GitOps workshop is hands-on gold"),
-        (37, "ArgoCD is a game changer"),
-        (49, "Finally understanding the workflow"),
-        (61, "This will save us so much time"),
+        # Day 2 Sessions - More diverse user participation
+        (34, "Marcus's RSC talk completely changed how I think about React"),
+        (96, "The performance metrics he showed were insane - 60% faster TTI"),
+        (46, "But that mental model shift from client-side rendering is tough"),
+        (117, "Worth every minute of learning curve for the UX wins"),
+        (58, "The Go vs Rust panel got spicy! 🌶️"),
+        (139, "Both languages have such passionate communities"),
+        (70, "Honestly, choose the right tool for the job"),
+        (24, "Rust for performance-critical systems, Go for rapid development"),
+        (101, "Why not polyglot? Use whatever solves the problem best"),
+        (36, "The GitOps workshop is pure hands-on gold"),
+        (122, "ArgoCD just clicked for me after that demo"),
+        (48, "The declarative approach finally makes sense"),
+        (85, "Our deployment pipeline is about to get so much cleaner"),
+        (60, "GitOps + Kubernetes = DevOps nirvana"),
         
-        # Lunch discussions
-        (26, "Lightning talks during lunch were brilliant"),
-        (38, "5 minute talks are perfect format"),
-        (50, "Got more value than some hour-long sessions"),
-        (62, "Should do this every day"),
-        (27, "Multi-cloud panel starting"),
-        (39, "Vendor lock-in discussion should be spicy"),
-        (51, "AWS vs Azure vs GCP - fight!"),
-        (63, "Plot twist: they all have trade-offs"),
-        (28, "Serverless talk is packed!"),
-        (40, "Standing room only"),
-        (52, "The cold start problem discussion was great"),
-        (64, "Edge computing is the future"),
+        # Lunch discussions - Day 2 networking
+        (26, "Those lightning talks during lunch were absolutely brilliant"),
+        (111, "5-minute format keeps everyone engaged and sharp"),
+        (38, "Honestly got more actionable insights than some keynotes"),
+        (130, "We should pitch this format to other conferences"),
+        (50, "Multi-cloud panel is starting - this should be interesting"),
+        (88, "Vendor lock-in is the elephant in the room for most companies"),
+        (62, "AWS vs Azure vs GCP - may the best cloud win! 🥊"),
+        (104, "Plot twist: hybrid and multi-cloud is the real answer"),
+        (27, "Serverless session is completely packed!"),
+        (143, "They opened overflow room C for streaming"),
+        (39, "Cold start latency discussion was eye-opening"),
+        (75, "Edge computing is going to change everything"),
+        (116, "Especially for real-time applications like gaming and IoT"),
         
-        # Afternoon buzz
+        # Afternoon sessions - Peak engagement
         (29, "Real-time data pipeline workshop is intense"),
         (41, "Kafka + Flink is powerful"),
         (53, "But complex to operate"),
@@ -164,62 +175,63 @@ def generate_enhanced_chat_messages() -> List[Dict[str, Any]]:
         (43, "CI/CD integration is key"),
         
         # Day 3 anticipation
-        (55, "Can't believe it's the last day tomorrow"),
-        (67, "Quantum computing session will be interesting"),
-        (75, "Blockchain workshop too"),
-        (32, "AR/VR with WebXR sounds fun"),
-        (44, "The closing keynote speaker is amazing"),
-        (56, "Awards ceremony should be good"),
-        (68, "Best conference in years"),
-        (19, "Agreed! So much practical knowledge"),
-        (33, "The networking alone was worth it"),
-        (45, "Made so many connections"),
-        (57, "Already planning for next year"),
-        (69, "Early bird tickets?"),
-        (1, "We'll announce soon! 😉"),
-        (34, "Can't wait!"),
-        (46, "This community is the best"),
-        (58, "See everyone tomorrow for the finale!"),
-        (70, "Last day, let's make it count!"),
-        (21, "Meeting up for drinks after?"),
-        (35, "Absolutely!"),
-        (47, "Count me in"),
-        (59, "Let's celebrate a great conference"),
-        (22, "Perfect way to end it"),
-        (36, "What a journey this has been"),
-        (48, "Learned more in 3 days than 3 months"),
-        (60, "Implementation ideas overflowing"),
-        (23, "My notebook is completely full"),
-        (37, "Thank goodness for session recordings"),
-        (49, "Going to rewatch so many"),
-        (61, "The workshops especially"),
-        (24, "Team is going to love these insights"),
-        (38, "Monday standup will be interesting"),
-        (50, "So many things to try"),
-        (62, "Prioritization will be key"),
-        (25, "Start small, iterate fast"),
-        (39, "Best advice from the conference"),
-        (51, "Ship it!"),
-        (63, "But test first 😄"),
-        (26, "Anyone doing the certification exam?"),
-        (40, "Thinking about it"),
-        (52, "The cloud native cert looks valuable"),
-        (64, "Study group?"),
-        (27, "I'm in!"),
-        (41, "Me too"),
-        (53, "Let's ace it together"),
-        (65, "Community learning is the best"),
-        (28, "This chat has been so helpful"),
-        (42, "Better than Slack!"),
-        (54, "Real-time conference chat is brilliant"),
-        (66, "Should be standard at every event"),
-        (1, "Thanks everyone! You make it special"),
-        (29, "Thank YOU for organizing!"),
-        (43, "Incredible event"),
-        (55, "See you all tomorrow!"),
-        (67, "Bright and early"),
-        (74, "Worth every minute"),
-        (75, "💯"),
+        # Day 3 anticipation - September 17, 2025
+        (55, "Can't believe tomorrow is already the finale!"),
+        (129, "The quantum computing session is going to blow minds"),
+        (67, "And the WebXR demos look incredible"),
+        (141, "AR/VR in the browser is finally getting real"),
+        (75, "Blockchain workshop should be practical this year"),
+        (93, "Less hype, more real-world implementation"),
+        (32, "The closing keynote lineup is absolutely stacked"),
+        (110, "Awards ceremony always gives me chills"),
+        (44, "This has been the best Atria conference yet"),
+        (135, "The quality of content this year is unmatched"),
+        (56, "Agreed! Every session has been practical and actionable"),
+        (82, "The networking opportunities have been incredible"),
+        (68, "Made connections that will last years"),
+        (147, "Already planning collaborations with people I've met"),
+        (19, "The community aspect is what makes this conference special"),
+        (99, "Speaking of community, drinks after tomorrow's closing?"),
+        (33, "Absolutely! Let's celebrate properly"),
+        (124, "I know a great spot near the venue"),
+        (45, "Count me in! Been looking forward to it"),
+        (86, "This conference has literally changed my perspective on tech"),
+        (57, "Same here - going back to work with so many new ideas"),
+        (112, "My team is going to think I joined a cult 😂"),
+        (69, "The good kind of cult - the learning and growing kind!"),
+        (137, "Early bird tickets for next year better be announced soon"),
+        (1, "Stay tuned... big announcements coming! 😉"),
+        (34, "The suspense is killing us!"),
+        (108, "This community truly is something special"),
+        (46, "See everyone bright and early for the grand finale!"),
+        (131, "Last day - let's make every minute count"),
+        
+        # Additional diverse voices from the expanded user base
+        (78, "Data pipeline workshop yesterday changed my entire approach"),
+        (95, "Kafka + Flink combo is powerful but complex - worth the learning curve"),
+        (114, "Vector databases talk was perfectly timed for our AI project"),
+        (146, "Zero trust security is no longer optional in 2025"),
+        (72, "Supply chain security discussion was genuinely scary but necessary"),
+        (105, "Penetration testing automation will save our team weeks of work"),
+        (123, "The ML model monitoring insights were gold"),
+        (90, "Edge computing demos made the future feel tangible"),
+        (107, "Quantum algorithms for developers was surprisingly accessible"),
+        (140, "IoT architecture patterns session filled a major knowledge gap"),
+        (77, "The ethics in AI panel was thought-provoking"),
+        (100, "Open source sustainability is such an important topic"),
+        (121, "Building inclusive tech teams should be required viewing"),
+        (136, "Career growth workshop gave me concrete next steps"),
+        (74, "This conference consistently delivers on its promise"),
+        (94, "Three days of pure learning and connection"),
+        (115, "Already looking forward to implementing everything I've learned"),
+        (144, "The real work starts Monday - but I'm ready! 💪"),
+        (73, "Thank you to all the speakers, organizers, and fellow attendees"),
+        (97, "This community makes the tech world a better place"),
+        (118, "Until next year, Atria family! 🚀"),
+        (150, "Can't wait to see what everyone builds with these new insights!"),
+        (80, "The innovation happening here will shape the industry"),
+        (102, "Proud to be part of this incredible tech community"),
+        (126, "See you all tomorrow for the grand finale! 🎉"),
     ]
     
     for user_id, content in general_chat_messages:
@@ -270,6 +282,73 @@ def generate_enhanced_chat_messages() -> List[Dict[str, Any]]:
         messages.append({
             "id": message_id,
             "room_id": 2,  # Green Room
+            "user_id": user_id,
+            "content": content,
+        })
+        message_id += 1
+    
+    # Add messages for new events with expanded user base
+    # Event 4 - Frontend Masters Conference (December 2025)
+    frontend_messages = [
+        (89, "Welcome to Frontend Masters! Excited to dive deep into modern frontend"),
+        (134, "The React Server Components workshop is going to be incredible"),
+        (76, "CSS Grid techniques session can't come soon enough"),
+        (118, "Web performance in 2025 - finally addressing the elephant in the room"),
+        (102, "Framework wars panel should be entertaining 😄"),
+        (147, "TypeScript patterns workshop is exactly what our team needs"),
+        (91, "Micro-frontends architecture - been waiting for this topic"),
+        (125, "WebAssembly for frontend devs is the future"),
+    ]
+    
+    # Event 4 General Chat - room ID 170 (calculated exactly)
+    for user_id, content in frontend_messages:
+        messages.append({
+            "id": message_id,
+            "room_id": 170,  # Event 4 General Chat
+            "user_id": user_id,
+            "content": content,
+        })
+        message_id += 1
+    
+    # Event 5 - DevOps & Security Summit (January 2026)
+    devops_messages = [
+        (95, "Platform engineering is definitely the evolution beyond traditional DevOps"),
+        (142, "GitOps with ArgoCD workshop - this is what we've been waiting for"),
+        (83, "Infrastructure as Code with Terraform never gets old"),
+        (129, "OpenTelemetry observability is becoming the standard"),
+        (107, "Container security can't be an afterthought anymore"),
+        (151, "Zero trust in 2026 - about time this became mainstream"),
+        (88, "Kubernetes security hardening is critical knowledge"),
+        (116, "Supply chain security keeps me up at night"),
+    ]
+    
+    for user_id, content in devops_messages:
+        messages.append({
+            "id": message_id,
+            "room_id": 173,  # Event 5 General Chat
+            "user_id": user_id,
+            "content": content,
+        })
+        message_id += 1
+    
+    # Event 6 - Data & AI Conference (February 2026)
+    data_ai_messages = [
+        (104, "The future of data infrastructure is here and it's beautiful"),
+        (138, "Real-time pipelines with Kafka - still the gold standard"),
+        (79, "Data mesh architecture is finally making sense to me"),
+        (120, "Vector databases for AI - this is where the magic happens"),
+        (96, "Data privacy and ethics panel should be mandatory viewing"),
+        (143, "AI in production lessons are exactly what we need"),
+        (81, "LLM fine-tuning workshop - practical AI implementation"),
+        (113, "MLOps best practices will transform our workflow"),
+        (149, "AI model monitoring - detecting drift before it's too late"),
+        (87, "Ethical AI development isn't optional anymore"),
+    ]
+    
+    for user_id, content in data_ai_messages:
+        messages.append({
+            "id": message_id,
+            "room_id": 176,  # Event 6 General Chat
             "user_id": user_id,
             "content": content,
         })
