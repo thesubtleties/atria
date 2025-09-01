@@ -47,7 +47,7 @@ function ChatRoomPreview({ room, isActive, onClick, messageCount = 0 }) {
         }
         return { label: 'Public', color: 'blue' };
       case 'GLOBAL':
-        return { label: 'General', color: 'gray' };
+        return null; // No badge for general/global rooms
       default:
         return null;
     }
