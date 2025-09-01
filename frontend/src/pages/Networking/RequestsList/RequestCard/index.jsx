@@ -8,7 +8,7 @@ import {
   ActionIcon,
 } from '@mantine/core';
 import { LoadingSpinner } from '../../../../shared/components/loading';
-import { IconCheck, IconX, IconBrandLinkedin, IconWorld } from '@tabler/icons-react';
+import { IconCheck, IconX, IconBrandLinkedin, IconBrandTwitter, IconWorld, IconMail } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { useUpdateConnectionStatusMutation } from '@/app/features/networking/api';
 import { useNavigate } from 'react-router-dom';
@@ -93,60 +93,99 @@ export function RequestCard({ request, eventId }) {
             {!requester.image_url && initial}
           </Avatar>
           
-          <div style={{ flex: 1 }}>
-            <Text size="lg" weight={600} className={styles.name}>
-              {requester.full_name}
-            </Text>
-            {requester.title && (
-              <Text size="sm" className={styles.title}>
-                {requester.title}
+          <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem' }}>
+            <div style={{ flex: 1 }}>
+              <Text size="lg" weight={600} className={styles.name}>
+                {requester.full_name}
               </Text>
-            )}
-            {requester.company_name && (
-              <Text size="sm" className={styles.company}>
-                {requester.company_name}
-              </Text>
+              {requester.title && (
+                <Text size="sm" c="dimmed" className={styles.title}>
+                  {requester.title}
+                </Text>
+              )}
+              {requester.company_name && (
+                <Text size="sm" c="dimmed" className={styles.company}>
+                  {requester.company_name}
+                </Text>
+              )}
+            </div>
+            
+            {/* Social links aligned to the right */}
+            {(requester.social_links?.linkedin || requester.social_links?.twitter || requester.social_links?.website || requester.email) && (
+              <Group gap={0} className={styles.socialsRight}>
+                {requester.social_links?.linkedin && (
+                  <div className={styles.linkedinIcon}>
+                    <ActionIcon
+                      size="sm"
+                      variant="subtle"
+                      component="a"
+                      href={requester.social_links.linkedin}
+                      target="_blank"
+                      aria-label="LinkedIn"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <IconBrandLinkedin size={20} />
+                    </ActionIcon>
+                  </div>
+                )}
+                {requester.social_links?.twitter && (
+                  <div className={styles.twitterIcon}>
+                    <ActionIcon
+                      size="sm"
+                      variant="subtle"
+                      component="a"
+                      href={requester.social_links.twitter}
+                      target="_blank"
+                      aria-label="Twitter"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <IconBrandTwitter size={20} />
+                    </ActionIcon>
+                  </div>
+                )}
+                {requester.social_links?.website && (
+                  <div className={styles.websiteIcon}>
+                    <ActionIcon
+                      size="sm"
+                      variant="subtle"
+                      component="a"
+                      href={requester.social_links.website}
+                      target="_blank"
+                      aria-label="Website"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <IconWorld size={20} />
+                    </ActionIcon>
+                  </div>
+                )}
+                {requester.email && (
+                  <div className={styles.emailIcon}>
+                    <ActionIcon
+                      size="sm"
+                      variant="subtle"
+                      component="a"
+                      href={`mailto:${requester.email}`}
+                      target="_blank"
+                      aria-label="Email"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <IconMail size={20} />
+                    </ActionIcon>
+                  </div>
+                )}
+              </Group>
             )}
           </div>
         </Group>
 
 
-        <Card.Section className={styles.messageSection} px="lg" py="sm">
-          <Text size="sm" style={{ fontStyle: 'italic' }}>
+        <Card.Section className={styles.messageSection} px="lg">
+          <Text className={styles.messageText}>
             "{request.icebreaker_message}"
           </Text>
         </Card.Section>
 
-        <Group justify="space-between" align="center">
-          <Group gap="xs" className={styles.socialLinks}>
-            {requester.social_links?.linkedin && (
-              <span className={styles.linkedinIcon}>
-                <ActionIcon
-                  size="lg"
-                  variant="subtle"
-                  component="a"
-                  href={requester.social_links.linkedin}
-                  target="_blank"
-                  aria-label="LinkedIn"
-                >
-                  <IconBrandLinkedin size={20} />
-                </ActionIcon>
-              </span>
-            )}
-            {requester.social_links?.website && (
-              <ActionIcon
-                size="lg"
-                variant="subtle"
-                component="a"
-                href={requester.social_links.website}
-                target="_blank"
-                aria-label="Website"
-              >
-                <IconWorld size={20} />
-              </ActionIcon>
-            )}
-          </Group>
-
+        <Group justify="flex-end" align="center">
           <Group gap="xs">
             <button
               onClick={handleAccept}

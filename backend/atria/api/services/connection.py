@@ -91,13 +91,47 @@ class ConnectionService:
 
     @staticmethod
     def get_pending_requests(user_id, schema=None):
-        """Get pending connection requests received by a user"""
+        """Get pending connection requests received by a user with privacy filtering"""
+        from api.models import User
+        
         query = Connection.query.filter_by(
             recipient_id=user_id, status=ConnectionStatus.PENDING
         ).order_by(Connection.created_at.desc())
 
         if schema:
-            return paginate(query, schema, collection_name="connections")
+            # Get all connections first to apply privacy filtering
+            connections = query.all()
+            
+            # Apply privacy filtering to each connection's requester
+            viewer = User.query.get(user_id)
+            for connection in connections:
+                # Apply privacy filtering to requester WITH EVENT CONTEXT
+                # Pending requests always have an originating event
+                ConnectionService._apply_user_privacy_filtering_with_event(
+                    connection, 'requester', viewer, connection.originating_event_id
+                )
+            
+            # Now paginate with the filtered data
+            from api.commons.pagination import paginate
+            # Note: paginate expects a query, but we have a list now
+            # So we'll manually construct the pagination response
+            from flask import request
+            page = int(request.args.get('page', 1))
+            per_page = int(request.args.get('per_page', 50))
+            
+            # Calculate pagination
+            total = len(connections)
+            start = (page - 1) * per_page
+            end = start + per_page
+            items = connections[start:end]
+            
+            return {
+                "total_items": total,
+                "total_pages": (total + per_page - 1) // per_page,
+                "current_page": page,
+                "per_page": per_page,
+                "connections": schema.dump(items),
+            }
 
         return query.all()
 
@@ -458,6 +492,31 @@ class ConnectionService:
         
         # Apply privacy filtering
         filtered_data = PrivacyService.filter_user_data(user, context, None)
+        
+        # Store filtered data as temporary attributes
+        user._filtered_email = filtered_data.get('email')
+        user._filtered_title = filtered_data.get('title')
+        user._filtered_company_name = filtered_data.get('company_name')
+        user._filtered_social_links = filtered_data.get('social_links')
+        user._filtered_bio = filtered_data.get('bio')
+        user._privacy_filtered = True
+    
+    @staticmethod
+    def _apply_user_privacy_filtering_with_event(connection, user_attr, viewer, event_id):
+        """Apply privacy filtering to a user in a connection WITH EVENT CONTEXT"""
+        from api.services.privacy import PrivacyService
+        
+        # Get the user object from the connection
+        user = getattr(connection, user_attr)
+        if not user:
+            return
+        
+        # Get the privacy context WITH EVENT ID
+        # This is important because it checks if viewer is an event attendee
+        context = PrivacyService.get_viewer_context(user, viewer, event_id)
+        
+        # Apply privacy filtering with event context
+        filtered_data = PrivacyService.filter_user_data(user, context, event_id)
         
         # Store filtered data as temporary attributes
         user._filtered_email = filtered_data.get('email')
