@@ -4,7 +4,7 @@
 
 Atria is a comprehensive event management platform designed for organizations that understand the true value of events lies in the connections made. Whether you're running corporate conferences, nonprofit galas, educational workshops, or community meetups, Atria provides the sophisticated tools needed to create memorable experiences that extend far beyond the event itself.
 
-## 🎯 Why Choose Atria?
+## Why Choose Atria?
 
 ### **Event-Focused, Not Platform-Focused**
 
@@ -45,7 +45,7 @@ Unlike complex enterprise tools that require months of training, Atria is laser-
 - **Pre-Event Connection** - Start building relationships before the event through virtual lead-up sessions
 - **Focused Experience** - No social media distractions - just your event and the people who matter for your professional goals
 
-## 🏢 Perfect For
+## Perfect For
 
 - **Corporations** - Annual conferences, product launches, training events, and executive retreats
 - **Nonprofits** - Fundraising galas, awareness campaigns, volunteer coordination, and donor events
@@ -53,9 +53,9 @@ Unlike complex enterprise tools that require months of training, Atria is laser-
 - **Professional Associations** - Industry conferences, certification programs, and member events
 - **Community Organizations** - Local meetups, social events, and community building initiatives
 
-## ✨ Key Features
+## Key Features
 
-### 🎪 **Advanced Event Management**
+### **Advanced Event Management**
 
 - Multi-day event support with complex scheduling
 - Session-specific chat rooms (public and backstage)
@@ -63,7 +63,7 @@ Unlike complex enterprise tools that require months of training, Atria is laser-
 - Real-time session status updates and conflict detection
 - Hybrid event support for virtual and in-person attendance
 
-### 🤝 **Intelligent Networking**
+### **Intelligent Networking**
 
 - **Event-Context Connections** - Network based on shared interests within specific events
 - **Icebreaker System** - Start conversations with personalized connection requests
@@ -71,7 +71,7 @@ Unlike complex enterprise tools that require months of training, Atria is laser-
 - **Attendee Discovery** - Find and connect with relevant professionals based on roles and interests
 - **Connection Management** - Track and manage your professional network growth
 
-### 💬 **Real-Time Communication**
+### **Real-Time Communication**
 
 - **Multi-Level Chat System** - General, Q&A, networking, and session-specific rooms
 - **Direct Messaging** - Private conversations between attendees
@@ -79,21 +79,21 @@ Unlike complex enterprise tools that require months of training, Atria is laser-
 - **Live Session Chat** - Real-time discussion during presentations
 - **Socket.IO Integration** - Instant messaging with reliable delivery
 
-### 🎭 **Multi-Tenant Architecture**
+### **Multi-Tenant Architecture**
 
 - **Organization Management** - Support multiple entities with isolated data
 - **Role-Based Permissions** - Granular access control at organization and event levels
 - **Cross-Organization Events** - Host events with attendees from multiple organizations
 - **Flexible User Roles** - From owners and admins to speakers and general attendees
 
-### 🏆 **Professional Sponsor Management**
+### **Professional Sponsor Management**
 
 - **Multi-Tier System** - Platinum, Gold, Silver, Bronze, and custom sponsor levels
 - **Rich Sponsor Profiles** - Logos, descriptions, contact information, and social links
 - **Visual Organization** - Drag-and-drop reordering with professional presentation
 - **Image Optimization** - Automatic WebP conversion with 80-90% file size reduction
 
-### 🔐 **Security**
+### **Security**
 
 - **HTTPOnly Cookie Authentication** - Enhanced security against XSS attacks
 - **JWT with Automatic Refresh** - Seamless session management
@@ -101,17 +101,17 @@ Unlike complex enterprise tools that require months of training, Atria is laser-
 - **Secure File Storage** - MinIO integration with three-tier security model
 - **Data Isolation** - Complete multi-tenant data separation
 
-## 🛠 Technology Stack
+## Technology Stack
 
-### **Backend Excellence**
+### **Backend**
 
 - **Python 3.13** with **Flask** framework for robust, scalable APIs
 - **PostgreSQL** database with SQLAlchemy ORM for reliable data management
 - **Flask-SocketIO** for real-time communication features
-- **MinIO** object storage for secure, scalable file management
+- Connects with **[MinIO](https://github.com/minio/minio)** object storage for secure, scalable file management
 - **SMTP2GO** integration for reliable transactional emails
 
-### **Modern Frontend**
+### **Frontend**
 
 - **React 18** with **Vite** for lightning-fast development and builds
 - **Mantine UI** components for professional, accessible interfaces
@@ -119,7 +119,7 @@ Unlike complex enterprise tools that require months of training, Atria is laser-
 - **Socket.IO Client** for real-time features
 - **TypeScript** support for enhanced development experience
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Using Docker (Recommended)
 
@@ -141,6 +141,8 @@ docker-compose -f docker-compose.dev-vite.yml up
 # API Docs: http://localhost:5000/new-swagger
 ```
 
+**Note**: This setup connects to **[MinIO](https://github.com/minio/minio)** for file storage. You can configure your own S3-compatible storage provider in the environment settings.
+
 The development environment includes:
 
 - **Hot reload** for both frontend and backend development
@@ -148,13 +150,13 @@ The development environment includes:
 - **Volume mounting** for live code updates
 - **Automatic dependency installation**
 
-## 📈 Current Status
+## Current Status
 
 Atria is in **early access** with all core features implemented and tested. The platform is currently in final CSS refinement phase, with plans for continuous feature enhancements based on user feedback.
 
 **Planning a large-scale event or have special requirements?** Please [contact us](mailto:steven@sbtl.dev) to discuss your needs and ensure optimal performance for your specific use case.
 
-### ✅ **Fully Implemented**
+### **Fully Implemented**
 
 - Complete authentication and authorization system
 - Multi-tenant organization and event management
@@ -166,26 +168,21 @@ Atria is in **early access** with all core features implemented and tested. The 
 - File upload and storage with security controls
 - Email notifications and transactional messaging
 
-### 🔄 **In Progress**
+### **Planned Features**
 
-- Mobile responsiveness optimizations
-- Advanced connection management UI
 - Enhanced dashboard analytics
-
-### 📋 **Planned Features**
-
 - Advanced reporting and analytics
 - Mobile application
 - Enhanced integration APIs
 - Advanced security features (2FA, SSO)
 
-## 💼 Deployment Options
+## Deployment Options
 
 ### **Self-Hosted**
 
 - Complete control over your data and customizations
-- One-time setup cost with ongoing maintenance
-- Perfect for organizations with specific compliance requirements
+- Free to use - you provide infrastructure and comply with AGPL-3.0 license
+- Perfect for organizations with specific compliance requirements or nonprofits with limited budgets
 - Full access to source code for custom modifications
 
 ### **Commercial Support**
@@ -199,7 +196,7 @@ For organizations requiring professional support, custom features, or consultati
 
 Contact: [steven@sbtl.dev](mailto:steven@sbtl.dev)
 
-## 💛 Contributing
+## Contributing
 
 We welcome contributions from the community! Whether you're fixing bugs, adding features, or improving documentation, your help makes Atria better for everyone.
 
@@ -217,7 +214,7 @@ All contributors must sign our [Contributor License Agreement](CLA.md) to mainta
 
 See our [Contributing Guidelines](CONTRIBUTING.md) for detailed information on development setup, coding standards, and the contribution process.
 
-## 📄 Licensing
+## Licensing
 
 ### **Open Source (AGPL-3.0)**
 
@@ -247,7 +244,7 @@ Open source users must retain the attribution in the event navigation sidebar:
 
 See [LICENSE-ATTRIBUTION.md](LICENSE-ATTRIBUTION.md) for complete details.
 
-## 🏗 Architecture
+## Architecture
 
 Atria follows modern software architecture principles with clear separation of concerns:
 
@@ -274,7 +271,7 @@ Atria follows modern software architecture principles with clear separation of c
 - **Relationship-Rich**: Proper associations between users, events, and organizations
 - **Privacy-Aware**: Granular privacy controls built into the data model
 
-## 📞 Support
+## Support
 
 - **Documentation**: Comprehensive API docs at `/new-swagger`
 - **Community Support**: GitHub Issues and Discussions
