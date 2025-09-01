@@ -72,6 +72,13 @@
   text-decoration: none;
 }
 
+/* Mobile - when navbar covers full page (Mantine sm breakpoint) */
+@media (max-width: 768px) {
+  .navWrapper {
+    background: rgba(251, 250, 255, 0.8); /* Increased opacity for mobile full-page coverage */
+  }
+}
+
 /* Responsive adjustments for EventNav */
 @media (max-width: 480px) {
   .container {
