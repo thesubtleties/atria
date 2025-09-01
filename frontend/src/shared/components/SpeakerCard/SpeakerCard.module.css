@@ -290,19 +290,4 @@
   letter-spacing: 0.01em;
 }
 
-/* Add subtle animation to gradient background */
-@keyframes shimmer {
-  0% {
-    opacity: 0.8;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0.8;
-  }
-}
-
-.card:hover .avatarSection {
-  animation: shimmer 3s ease-in-out infinite;
-}
+/* Removed shimmer animation - keeping static hover effects only */
