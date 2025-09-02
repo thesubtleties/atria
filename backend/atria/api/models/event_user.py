@@ -47,6 +47,10 @@ class EventUser(db.Model):
         foreign_keys=[banned_by]
     )
 
+    __table_args__ = (
+        db.Index('idx_event_users_user_event', 'user_id', 'event_id'),
+    )
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         # Auto-fill speaker info if role is speaker and we do not directly apply a bio
