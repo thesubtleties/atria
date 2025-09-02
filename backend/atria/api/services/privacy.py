@@ -140,7 +140,7 @@ class PrivacyService:
         return result
     
     @staticmethod
-    def filter_user_data(user: User, context: Dict[str, Any], event_id: Optional[int] = None) -> Dict[str, Any]:
+    def filter_user_data(user: User, context: Dict[str, Any], event_id: Optional[int] = None, event_user=None) -> Dict[str, Any]:
         """
         Apply privacy rules to user data based on viewer context.
         
@@ -148,6 +148,7 @@ class PrivacyService:
             user: The user whose data is being filtered
             context: Viewer context from get_viewer_context()
             event_id: Optional event ID for event-specific privacy overrides
+            event_user: Optional pre-loaded EventUser to avoid extra query
             
         Returns:
             Filtered user data dictionary with appropriate fields
@@ -166,10 +167,12 @@ class PrivacyService:
         
         # Check for event-specific overrides
         if event_id:
-            event_user = EventUser.query.filter_by(
-                event_id=event_id,
-                user_id=user.id
-            ).first()
+            # Use pre-loaded event_user if provided, otherwise query
+            if not event_user:
+                event_user = EventUser.query.filter_by(
+                    event_id=event_id,
+                    user_id=user.id
+                ).first()
             
             if event_user and event_user.privacy_overrides:
                 # Merge event overrides with global settings
