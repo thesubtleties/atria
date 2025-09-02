@@ -103,6 +103,15 @@ class EventUserService:
         # Get all event users
         event_users = query.all()
         
+        # Collect all user IDs (excluding current user) for batch connection lookup
+        other_user_ids = [eu.user_id for eu in event_users if eu.user_id != current_user_id]
+        
+        # Get all connection statuses in a single query
+        connection_map = EventUserService._get_bulk_connection_status(
+            current_user_id, 
+            other_user_ids
+        ) if other_user_ids else {}
+        
         # Add privacy-filtered user data and connection status to each event_user
         for event_user in event_users:
             # Get privacy-filtered user data for networking view
@@ -120,10 +129,11 @@ class EventUserService:
             
             # Add connection status for non-self users
             if event_user.user_id != current_user_id:
-                connection = EventUserService._get_connection_status(
-                    current_user_id, 
-                    event_user.user_id
-                )
+                connection = connection_map.get(event_user.user_id, {
+                    'connection_status': None,
+                    'connection_id': None,
+                    'connection_direction': None
+                })
                 event_user.connection_status = connection.get('connection_status')
                 event_user.connection_id = connection.get('connection_id')
                 event_user.connection_direction = connection.get('connection_direction')
@@ -343,6 +353,51 @@ class EventUserService:
             'connection_id': None,
             'connection_direction': None
         }
+    
+    @staticmethod
+    def _get_bulk_connection_status(current_user_id, target_user_ids):
+        """Get connection status between current user and multiple target users in a single query"""
+        if not target_user_ids:
+            return {}
+        
+        # Single query to get all connections involving current user and any target users
+        connections = Connection.query.filter(
+            (
+                (Connection.requester_id == current_user_id) & 
+                (Connection.recipient_id.in_(target_user_ids))
+            ) | (
+                (Connection.requester_id.in_(target_user_ids)) & 
+                (Connection.recipient_id == current_user_id)
+            )
+        ).all()
+        
+        # Build a map of user_id -> connection info
+        connection_map = {}
+        for conn in connections:
+            # Determine which user is the "other" user from current user's perspective
+            if conn.requester_id == current_user_id:
+                other_user_id = conn.recipient_id
+                direction = 'sent'
+            else:
+                other_user_id = conn.requester_id
+                direction = 'received'
+            
+            connection_map[other_user_id] = {
+                'connection_status': conn.status.value,
+                'connection_id': conn.id,
+                'connection_direction': direction
+            }
+        
+        # Fill in None for users without connections
+        for user_id in target_user_ids:
+            if user_id not in connection_map:
+                connection_map[user_id] = {
+                    'connection_status': None,
+                    'connection_id': None,
+                    'connection_direction': None
+                }
+        
+        return connection_map
     
     @staticmethod
     def _paginate_list(items, collection_name):

@@ -49,6 +49,8 @@ class EventUser(db.Model):
 
     __table_args__ = (
         db.Index('idx_event_users_user_event', 'user_id', 'event_id'),
+        # For attendees page - optimizes WHERE event_id = ? AND is_banned = ? AND role = ?
+        db.Index('idx_event_users_event_banned_role', 'event_id', 'is_banned', 'role'),
     )
 
     def __init__(self, **kwargs):

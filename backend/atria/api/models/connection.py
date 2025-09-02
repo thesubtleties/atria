@@ -51,6 +51,10 @@ class Connection(db.Model):
         db.UniqueConstraint(
             "requester_id", "recipient_id", name="uix_connection_users"
         ),
+        # For batch connection lookups in reverse direction (complements unique constraint)
+        db.Index('idx_connections_recipient_requester', 'recipient_id', 'requester_id'),
+        # For pending requests page - optimizes WHERE recipient_id = ? AND status = ? ORDER BY created_at DESC
+        db.Index('idx_connections_recipient_status_created', 'recipient_id', 'status', 'created_at'),
     )
 
     def __repr__(self):
