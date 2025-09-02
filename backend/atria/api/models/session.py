@@ -55,6 +55,10 @@ class Session(db.Model):
         passive_deletes=True,
     )
 
+    __table_args__ = (
+        db.Index('idx_sessions_event_day_time', 'event_id', 'day_number', 'start_time'),
+    )
+
     def __repr__(self):
         return (
             f"Session(id={self.id}, "

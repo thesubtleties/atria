@@ -32,6 +32,10 @@ class SessionSpeaker(db.Model):
         overlaps="speakers,speaking_sessions",
     )
 
+    __table_args__ = (
+        db.Index('idx_session_speakers_session_order', 'session_id', 'order'),
+    )
+
     def __init__(self, **kwargs):
         if "order" in kwargs and kwargs["order"] is not None:
             session_id = kwargs["session_id"]
