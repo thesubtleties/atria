@@ -92,7 +92,7 @@
   }
 
   .atriaTitle {
-    font-size: var(--text-lg); /* Bigger on mobile for better readability */
+    font-size: 1.375rem; /* 22px - slightly bigger on mobile for better readability */
   }
 }
 
