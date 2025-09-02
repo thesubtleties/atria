@@ -123,7 +123,10 @@ class EventUserService:
             
             # Get privacy context without re-fetching users
             context = PrivacyService.get_viewer_context(user, viewer, event_id)
-            user_data = PrivacyService.filter_user_data(user, context, event_id)
+            
+            # Pass the event_user object to avoid another query for privacy overrides
+            # We'll need to modify filter_user_data to accept this
+            user_data = PrivacyService.filter_user_data(user, context, event_id, event_user)
             
             # Store the filtered email as a custom attribute (not a model property)
             # The schema will pick this up during serialization
