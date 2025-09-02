@@ -112,16 +112,18 @@ class EventUserService:
             other_user_ids
         ) if other_user_ids else {}
         
+        # Get the viewer once (not 50 times!)
+        from api.services.privacy import PrivacyService
+        viewer = User.query.get(current_user_id) if current_user_id else None
+        
         # Add privacy-filtered user data and connection status to each event_user
         for event_user in event_users:
-            # Get privacy-filtered user data for networking view
-            # Everyone gets the same privacy-filtered view
-            user_data = UserService.get_user_for_viewer(
-                event_user.user_id,
-                current_user_id,
-                event_id=event_id,  # Pass event context for overrides
-                require_connection=False  # No connection required in event context
-            )
+            # Use the already-loaded user object instead of fetching again!
+            user = event_user.user  # This is already eager-loaded via joinedload
+            
+            # Get privacy context without re-fetching users
+            context = PrivacyService.get_viewer_context(user, viewer, event_id)
+            user_data = PrivacyService.filter_user_data(user, context, event_id)
             
             # Store the filtered email as a custom attribute (not a model property)
             # The schema will pick this up during serialization
