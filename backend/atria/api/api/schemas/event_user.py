@@ -118,6 +118,14 @@ class EventUserNetworkingSchema(EventUserSchema):
     
     class Meta(EventUserSchema.Meta):
         name = "EventUserNetworking"
+        # Exclude admin/moderation fields from networking view
+        exclude = (
+            "ban_reason", "banned_at", "banned_by",
+            "chat_ban_reason", "chat_ban_until", 
+            "is_banned", "is_chat_banned",
+            "moderation_notes", "created_at",
+            "privacy_overrides"  # Internal field, not for public
+        )
     
     # User data fields with privacy filtering
     # Note: email may be None based on privacy settings
