@@ -2,15 +2,13 @@
 
 **Transform your events into powerful networking experiences with real-time engagement and meaningful connections.**
 
-🌐 **[Live Demo](https://atria.gg)** - Experience Atria in action
+**[Live Demo](https://atria.gg)** - Experience Atria in action
 
 Atria is a comprehensive event management platform designed for organizations that understand the true value of events lies in the connections made. Whether you're running corporate conferences, nonprofit galas, educational workshops, or community meetups, Atria provides the sophisticated tools needed to create memorable experiences that extend far beyond the event itself.
 
 ## Screenshots
 
-<p align="center">
-  <img src="https://storage.sbtl.dev/spookyspot/atriaslideshow.webp" alt="Atria Platform Overview" width="100%" />
-</p>
+![Atria Platform Overview](https://storage.sbtl.dev/spookyspot/atriaslideshow.webp)
 
 ## Why Choose Atria?
 
