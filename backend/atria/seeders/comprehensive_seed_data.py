@@ -264,8 +264,8 @@ def generate_events() -> List[Dict[str, Any]]:
         "venue_address": "747 Howard Street",
         "venue_city": "San Francisco",
         "venue_country": "United States",
-        "start_date": date(2025, 9, 15),
-        "end_date": date(2025, 9, 17),
+        "start_date": date(2025, 8, 25),  # Past event - late August
+        "end_date": date(2025, 8, 27),
         "company_name": "Atria Events",
         "slug": "atria-techconf-2025",
         "status": "PUBLISHED",
@@ -376,7 +376,7 @@ def generate_events() -> List[Dict[str, Any]]:
         "venue_address": None,
         "venue_city": None,
         "venue_country": None,
-        "start_date": date(2025, 10, 22),
+        "start_date": date(2025, 10, 22),  # Future event - October
         "end_date": date(2025, 10, 22),
         "company_name": "TechConf Global",
         "slug": "cloud-native-summit-2025",
@@ -423,7 +423,7 @@ def generate_events() -> List[Dict[str, Any]]:
         "venue_address": "123 Tech Street",
         "venue_city": "Seattle",
         "venue_country": "United States",
-        "start_date": date(2025, 11, 14),
+        "start_date": date(2025, 11, 14),  # Future event - November
         "end_date": date(2025, 11, 14),
         "company_name": "Developer Summit Org",
         "slug": "ai-ml-workshop-2025",
@@ -468,7 +468,7 @@ def generate_events() -> List[Dict[str, Any]]:
         "venue_address": "500 E Cesar Chavez St",
         "venue_city": "Austin",
         "venue_country": "United States",
-        "start_date": date(2025, 12, 5),
+        "start_date": date(2025, 12, 5),  # Future event - December
         "end_date": date(2025, 12, 6),
         "company_name": "Frontend Masters",
         "slug": "frontend-masters-conf-2025",
@@ -515,7 +515,7 @@ def generate_events() -> List[Dict[str, Any]]:
         "venue_address": "705 Pike Street",
         "venue_city": "Seattle",
         "venue_country": "United States",
-        "start_date": date(2026, 1, 20),
+        "start_date": date(2026, 1, 20),  # Future event - January 2026
         "end_date": date(2026, 1, 21),
         "company_name": "DevSecOps Alliance",
         "slug": "devops-security-summit-2026",
@@ -562,7 +562,7 @@ def generate_events() -> List[Dict[str, Any]]:
         "venue_address": "415 Summer Street",
         "venue_city": "Boston",
         "venue_country": "United States",
-        "start_date": date(2026, 2, 18),
+        "start_date": date(2026, 2, 18),  # Future event - February 2026
         "end_date": date(2026, 2, 19),
         "company_name": "Data Science Society",
         "slug": "data-ai-conference-2026",
