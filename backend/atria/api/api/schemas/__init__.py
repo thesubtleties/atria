@@ -19,6 +19,7 @@ from api.api.schemas.event import (
 from api.api.schemas.session import (
     SessionSchema,
     SessionDetailSchema,
+    SessionAdminListSchema,
     SessionCreateSchema,
     SessionUpdateSchema,
     SessionTimesUpdateSchema,
@@ -150,6 +151,7 @@ __all__ = [
     # Session schemas
     "SessionSchema",
     "SessionDetailSchema",
+    "SessionAdminListSchema",
     "SessionCreateSchema",
     "SessionUpdateSchema",
     "SessionTimesUpdateSchema",

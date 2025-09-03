@@ -139,3 +139,17 @@ class SessionSpeakerAddSchema(ma.Schema):
     user_id = ma.Integer(required=True)
     role = ma.Enum(SessionSpeakerRole, load_default=SessionSpeakerRole.SPEAKER)
     order = ma.Integer(allow_none=True)
+
+
+class SessionAdminListSchema(SessionSchema):
+    """Optimized schema for admin session list - excludes unnecessary relationships"""
+    
+    class Meta(SessionSchema.Meta):
+        name = "SessionAdminList"
+    
+    # Include only the speaker data we need for the admin view
+    session_speakers = ma.Nested(
+        "SessionSpeakerSchema", many=True, dump_only=True
+    )
+    # Explicitly exclude event relationship - not needed in admin list
+    # Chat rooms already excluded in base schema
