@@ -14,6 +14,11 @@ SECRET_KEY = os.getenv("SECRET_KEY", "changeme")
 SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI")
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+# SQL Query Logging - can be enabled via environment variable
+# Set SQLALCHEMY_ECHO=true to see all SQL queries in console
+# Useful for debugging query performance and optimization
+SQLALCHEMY_ECHO = os.getenv("SQLALCHEMY_ECHO", "false").lower() == "true"
+
 # JWT settings
 JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "jwt-secret-key")
 JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
