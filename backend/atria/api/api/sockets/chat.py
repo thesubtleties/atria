@@ -33,7 +33,7 @@ def handle_join_chat_room(user_id, data):
     join_room(f"room_{room_id}")
 
     # Get recent messages
-    messages = ChatRoomService.get_recent_messages(room_id)
+    messages = ChatRoomService.get_recent_messages(room_id, user_id)
 
     emit(
         "chat_room_joined",
