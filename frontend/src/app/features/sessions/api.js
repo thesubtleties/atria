@@ -71,7 +71,7 @@ export const sessionsApi = baseApi.injectEndpoints({
         method: 'POST',
         body: speakerData,
       }),
-      invalidatesTags: ['SessionSpeakers', 'EventUsers'],
+      invalidatesTags: ['SessionSpeakers', 'Sessions', 'EventUsers'],
     }),
     updateSessionSpeaker: builder.mutation({
       query: ({ sessionId, userId, ...updates }) => ({
@@ -79,7 +79,7 @@ export const sessionsApi = baseApi.injectEndpoints({
         method: 'PUT',
         body: updates,
       }),
-      invalidatesTags: ['SessionSpeakers'],
+      invalidatesTags: ['SessionSpeakers', 'Sessions'],
     }),
     reorderSessionSpeaker: builder.mutation({
       query: ({ sessionId, userId, order }) => ({
@@ -87,14 +87,14 @@ export const sessionsApi = baseApi.injectEndpoints({
         method: 'PUT',
         body: { order },
       }),
-      invalidatesTags: ['SessionSpeakers'],
+      invalidatesTags: ['SessionSpeakers', 'Sessions'],
     }),
     removeSessionSpeaker: builder.mutation({
       query: ({ sessionId, userId }) => ({
         url: `/sessions/${sessionId}/speakers/${userId}`,
         method: 'DELETE',
       }),
-      invalidatesTags: ['SessionSpeakers', 'EventUsers'],
+      invalidatesTags: ['SessionSpeakers', 'Sessions', 'EventUsers'],
     }),
     deleteSession: builder.mutation({
       query: (id) => ({

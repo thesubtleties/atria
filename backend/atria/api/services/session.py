@@ -17,10 +17,10 @@ class SessionService:
         # Verify event exists
         event = Event.query.get_or_404(event_id)
 
-        # Build query with eager loading of relationships
+        # Build query with optimized eager loading
+        # Load session_speakers with their user relationships in one query
         query = Session.query.options(
-            db.joinedload(Session.speakers),
-            db.joinedload(Session.session_speakers),
+            db.joinedload(Session.session_speakers).joinedload(SessionSpeaker.user),
         ).filter_by(event_id=event_id)
 
         # Apply day filter if provided
@@ -78,8 +78,7 @@ class SessionService:
     def get_session(session_id: int):
         """Get a session by ID with privacy-filtered speaker data"""
         session = Session.query.options(
-            db.joinedload(Session.speakers),
-            db.joinedload(Session.session_speakers),
+            db.joinedload(Session.session_speakers).joinedload(SessionSpeaker.user),
         ).get_or_404(session_id)
         
         # Apply privacy filtering to session speakers
@@ -292,20 +291,20 @@ class SessionService:
         """Apply privacy filtering to session speakers based on viewer context"""
         from flask_jwt_extended import get_jwt_identity
         from api.services.privacy import PrivacyService
-        from api.models import User, EventUser
-        from api.models.enums import EventUserRole
+        from api.models import User
         
         viewer_id = get_jwt_identity()
         viewer_id = int(viewer_id) if viewer_id else None
+        
+        # Get viewer once (not for each speaker)
+        viewer = User.query.get(viewer_id) if viewer_id else None
         
         # Apply privacy filtering to each speaker
         for speaker in session.session_speakers:
             if not speaker.user:
                 continue
             
-            # Apply privacy filtering for all viewers
-            # This ensures social links respect 'hidden' setting even for organizers
-            viewer = User.query.get(viewer_id) if viewer_id else None
+            # Get context and filter data
             context = PrivacyService.get_viewer_context(
                 speaker.user,
                 viewer,

@@ -12,17 +12,28 @@ import { useMemo } from 'react';
 import { SPEAKER_ROLES, SPEAKER_ROLE_OPTIONS } from '@/shared/constants/speakerRoles';
 import styles from './styles/index.module.css';
 
-export const AddSpeakerModal = ({ sessionId, opened, onClose }) => {
+export const AddSpeakerModal = ({ sessionId, eventId, opened, onClose, currentSpeakers }) => {
   const [addSpeaker, { isLoading }] = useAddSessionSpeakerMutation();
-  const { data: session } = useGetSessionQuery(sessionId, { skip: !sessionId });
+  
+  // Use passed eventId if available, otherwise fetch session to get it
+  const { data: session } = useGetSessionQuery(sessionId, { 
+    skip: !sessionId || !!eventId // Skip if we have eventId passed
+  });
+  
+  const finalEventId = eventId || session?.event_id;
+  
   const { data: eventSpeakers } = useGetEventUsersQuery(
-    { eventId: session?.event_id, role: 'SPEAKER' },
-    { skip: !session?.event_id }
+    { eventId: finalEventId, role: 'SPEAKER' },
+    { skip: !finalEventId }
   );
-  const { data: currentSpeakers } = useGetSessionSpeakersQuery(
+  
+  // Use passed currentSpeakers if available, otherwise fetch them
+  const { data: fetchedSpeakers } = useGetSessionSpeakersQuery(
     { sessionId },
-    { skip: !sessionId }
+    { skip: !sessionId || !!currentSpeakers } // Skip if we have passed speakers
   );
+  
+  const speakersData = currentSpeakers || fetchedSpeakers?.session_speakers;
 
   const form = useForm({
     initialValues: {
@@ -35,7 +46,7 @@ export const AddSpeakerModal = ({ sessionId, opened, onClose }) => {
   const availableSpeakers = useMemo(() => {
     if (!eventSpeakers?.event_users) return [];
     
-    const currentSpeakerIds = currentSpeakers?.session_speakers?.map(s => s.user_id) || [];
+    const currentSpeakerIds = speakersData?.map(s => s.user_id) || [];
     
     return eventSpeakers.event_users
       .filter(user => !currentSpeakerIds.includes(user.user_id))
@@ -43,7 +54,7 @@ export const AddSpeakerModal = ({ sessionId, opened, onClose }) => {
         value: user.user_id.toString(),
         label: `${user.first_name} ${user.last_name}${user.title ? ` - ${user.title}` : ''}`,
       }));
-  }, [eventSpeakers, currentSpeakers]);
+  }, [eventSpeakers, speakersData]);
 
   const handleSubmit = async (values) => {
     try {

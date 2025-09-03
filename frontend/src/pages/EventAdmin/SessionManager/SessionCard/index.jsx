@@ -332,8 +332,10 @@ export const SessionCard = ({ session, eventId, hasConflict }) => {
         <div className={styles.speakersSection}>
           <SessionSpeakers 
             sessionId={session.id} 
+            eventId={session.event_id}
             canEdit={true}
             variant="card"
+            preloadedSpeakers={session.session_speakers}
           />
         </div>
 

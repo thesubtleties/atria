@@ -47,19 +47,20 @@ const DraggableSpeakerCard = ({ id, speaker, canEdit, onRemove, role, variant = 
   );
 };
 
-export const SessionSpeakers = ({ sessionId, canEdit, variant = 'flow' }) => {
+export const SessionSpeakers = ({ sessionId, eventId, canEdit, variant = 'flow', preloadedSpeakers }) => {
   const [showAddModal, setShowAddModal] = useState(false);
-  
-  const { data: speakersData, isLoading } = useGetSessionSpeakersQuery({
-    sessionId,
-  });
   const [removeSpeaker] = useRemoveSessionSpeakerMutation();
   const [reorderSpeaker] = useReorderSessionSpeakerMutation();
 
-  // The API returns paginated data with session_speakers array
-  const speakers = Array.isArray(speakersData?.session_speakers)
-    ? speakersData?.session_speakers
-    : [];
+  // If preloadedSpeakers is provided, use it directly (SessionManager case)
+  // Otherwise fetch the data (Session detail page case)
+  const { data: speakersData, isLoading } = useGetSessionSpeakersQuery(
+    { sessionId },
+    { skip: !!preloadedSpeakers } // Skip the query entirely if we have preloaded data
+  );
+
+  // Use preloaded speakers if available, otherwise use fetched data
+  const speakers = preloadedSpeakers || speakersData?.session_speakers || [];
 
   // Group speakers by role
   const speakersByRole = SPEAKER_ROLE_ORDER.reduce((acc, role) => {
@@ -213,8 +214,10 @@ export const SessionSpeakers = ({ sessionId, canEdit, variant = 'flow' }) => {
 
       <AddSpeakerModal
         sessionId={sessionId}
+        eventId={eventId}
         opened={showAddModal}
         onClose={() => setShowAddModal(false)}
+        currentSpeakers={speakers}
       />
     </div>
   );

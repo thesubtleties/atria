@@ -7,6 +7,7 @@ from flask import request
 from api.api.schemas import (
     SessionSchema,
     SessionDetailSchema,
+    SessionAdminListSchema,
     SessionCreateSchema,
     SessionUpdateSchema,
     SessionTimesUpdateSchema,
@@ -69,9 +70,11 @@ class SessionList(MethodView):
     def get(self, event_id):
         """Get event's sessions"""
         day_number = request.args.get("day_number", type=int)
-
+        
+        # Use optimized schema for admin list view
+        # This excludes event details and focuses on what the admin UI needs
         return SessionService.get_event_sessions(
-            event_id, day_number, SessionDetailSchema(many=True)
+            event_id, day_number, SessionAdminListSchema(many=True)
         )
 
     @blp.arguments(SessionCreateSchema)

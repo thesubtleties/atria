@@ -378,7 +378,9 @@ export const SessionCardMobile = ({ session, eventId, hasConflict }) => {
               <Text size="sm" fw={500} mb="xs">Speakers</Text>
               <SessionSpeakers 
                 sessionId={session.id} 
+                eventId={session.event_id}
                 canEdit={true}
+                preloadedSpeakers={session.session_speakers}
               />
             </div>
 
