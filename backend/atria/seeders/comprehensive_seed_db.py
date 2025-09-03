@@ -5,6 +5,7 @@ from api.app import create_app
 from sqlalchemy import text
 from sqlalchemy.sql import quoted_name
 import json
+import random
 from datetime import datetime, timedelta
 
 # Import all comprehensive seed functions
@@ -284,10 +285,43 @@ def seed_comprehensive_database():
             # Seed chat messages with incremental timestamps
             print("\n[11/14] Seeding chat messages...")
             chat_messages = generate_chat_messages()
-            base_time = datetime.now() - timedelta(hours=2)  # Start messages 2 hours ago
-            for i, message_data in enumerate(chat_messages):
-                # Add 30 seconds between each message for realistic timing
-                message_timestamp = base_time + timedelta(seconds=i * 30)
+            
+            # Create room-to-event mapping for timestamp logic
+            # Rooms 1-10 belong to Event 1 (Aug 25-27, past)
+            # Rooms 11-14 belong to Event 2 (Oct 22, future)
+            # Rooms 15-18 belong to Event 3 (Nov 14, future)
+            # etc.
+            
+            # Track message count per room to avoid timestamps going too far
+            room_message_count = {}
+            
+            for message_data in chat_messages:
+                room_id = message_data["room_id"]
+                
+                # Track messages per room
+                if room_id not in room_message_count:
+                    room_message_count[room_id] = 0
+                room_message_count[room_id] += 1
+                
+                # Determine base time based on room's event
+                if room_id <= 10:  # Event 1 (Aug 25-27) - past event
+                    # Messages during the event
+                    base_time = datetime(2025, 8, 26, 10, 0, 0)
+                elif room_id <= 14:  # Event 2 (Oct 22) - future
+                    # Pre-event planning messages from early Sept
+                    base_time = datetime(2025, 9, 1, 14, 0, 0)
+                elif room_id <= 18:  # Event 3 (Nov 14) - future
+                    # Pre-event messages from early Sept
+                    base_time = datetime(2025, 9, 2, 9, 0, 0)
+                else:
+                    # Other future events - recent activity
+                    base_time = datetime(2025, 8, 30, 11, 0, 0)
+                
+                # Add random time offset (1-20 minutes) per message in this room
+                random_minutes = random.randint(1, 20)
+                total_minutes = room_message_count[room_id] * random_minutes
+                message_timestamp = base_time + timedelta(minutes=total_minutes)
+                
                 db.session.execute(
                     text("""
                         INSERT INTO chat_messages (id, room_id, user_id, content, created_at)
@@ -348,13 +382,40 @@ def seed_comprehensive_database():
             # Seed direct messages with incremental timestamps
             print("\n[14/14] Seeding direct messages...")
             direct_messages = generate_direct_messages()
-            dm_base_time = datetime.now() - timedelta(days=1)  # Start DMs 1 day ago
-            for i, message_data in enumerate(direct_messages):
+            
+            # DM threads context:
+            # Thread 1-5: Main event networking (Event 1)
+            # Thread 6-10: Cross-event networking
+            
+            # Track message count per thread
+            thread_message_count = {}
+            
+            for message_data in direct_messages:
                 if "encrypted_content" not in message_data:
                     message_data["encrypted_content"] = None
                 
-                # Add 2 hours between each DM for realistic timing
-                dm_timestamp = dm_base_time + timedelta(hours=i * 2)
+                thread_id = message_data["thread_id"]
+                
+                # Track messages per thread
+                if thread_id not in thread_message_count:
+                    thread_message_count[thread_id] = 0
+                thread_message_count[thread_id] += 1
+                
+                # Set timestamps based on thread context
+                if thread_id <= 5:  # Event 1 related threads
+                    # During/after the past event (Aug 25-27)
+                    dm_base_time = datetime(2025, 8, 26, 14, 0, 0)
+                elif thread_id <= 8:  # Pre-event networking for upcoming events
+                    # Recent activity (early Sept)  
+                    dm_base_time = datetime(2025, 9, 1, 10, 0, 0)
+                else:  # General networking
+                    # Very recent (late Aug)
+                    dm_base_time = datetime(2025, 8, 29, 16, 0, 0)
+                
+                # Add random spacing between messages (1-20 minutes) per thread
+                random_minutes = random.randint(1, 20)
+                total_minutes = thread_message_count[thread_id] * random_minutes
+                dm_timestamp = dm_base_time + timedelta(minutes=total_minutes)
                 
                 db.session.execute(
                     text("""
