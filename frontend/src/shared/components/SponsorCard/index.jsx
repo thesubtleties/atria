@@ -55,6 +55,8 @@ export const SponsorCard = ({ sponsor }) => {
           <PrivateImage 
             objectKey={logo_url} 
             alt={`${name} logo`}
+            width={100}
+            height={100}
             fit="contain"
             className={styles.logo}
             placeholder={
