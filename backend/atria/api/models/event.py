@@ -189,17 +189,46 @@ class Event(db.Model):
         )
 
     def has_user(self, user) -> bool:
-        """Check if user is in event"""
-        return user in self.users
+        """Check if user is in event
+        
+        #! SPECIAL CASE: Organization owners are considered to have access to all events
+        #! in their organization, even if not explicitly added as event members.
+        #! This grants org owners de facto admin privileges on all their org's events.
+        """
+        # Check event membership first (faster)
+        if user in self.users:
+            return True
+        
+        # Check if user is organization owner
+        from api.models.enums import OrganizationUserRole
+        if self.organization.get_user_role(user) == OrganizationUserRole.OWNER:
+            return True
+        
+        return False
 
     def get_user_role(self, user) -> EventUserRole:
-        """Get user's role in event"""
+        """Get user's role in event
+        
+        #! SPECIAL CASE: Organization owners who are not event members are
+        #! treated as having ADMIN role in all their organization's events.
+        #! This provides org owners with full control over their events.
+        """
         from api.models import EventUser
+        from api.models.enums import OrganizationUserRole
 
+        # Check actual event role first
         event_user = EventUser.query.filter_by(
             event_id=self.id, user_id=user.id
         ).first()
-        return event_user.role if event_user else None
+        
+        if event_user:
+            return event_user.role
+        
+        # Check if user is organization owner - treat as ADMIN
+        if self.organization.get_user_role(user) == OrganizationUserRole.OWNER:
+            return EventUserRole.ADMIN
+        
+        return None
 
     def get_users_by_role(self, *roles: EventUserRole):
         """Get all users with specific roles"""
@@ -447,9 +476,14 @@ class Event(db.Model):
         )
 
     def can_user_edit(self, user) -> bool:
-        """Check if user can edit event"""
+        """Check if user can edit event
+        
+        #! NOTE: Organization owners can edit via get_user_role() returning ADMIN.
+        #! This method checks for ORGANIZER/MODERATOR, but ADMIN (including org owners)
+        #! have separate, higher-level permissions.
+        """
         role = self.get_user_role(user)
-        return role in [EventUserRole.ORGANIZER, EventUserRole.MODERATOR]
+        return role in [EventUserRole.ADMIN, EventUserRole.ORGANIZER, EventUserRole.MODERATOR]
 
     def validate_dates(self, new_start_date=None, new_end_date=None):
         """Validate event dates and session conflicts"""
