@@ -113,35 +113,38 @@ class EventUserService:
         ) if other_user_ids else {}
         
         # Get the viewer once (not 50 times!)
-        from api.services.privacy import PrivacyService
         viewer = User.query.get(current_user_id) if current_user_id else None
         
-        # Add privacy-filtered user data and connection status to each event_user
+        # Get viewer's event role once
+        viewer_event_user = next((eu for eu in event_users if eu.user_id == current_user_id), None)
+        
+        # Build privacy contexts in batch
+        privacy_contexts = EventUserService._build_batch_privacy_contexts(
+            event_users, viewer, viewer_event_user, connection_map, event_id
+        )
+        
+        # Apply privacy filtering using pre-built contexts
+        from api.services.privacy import PrivacyService
         for event_user in event_users:
-            # Use the already-loaded user object instead of fetching again!
-            user = event_user.user  # This is already eager-loaded via joinedload
-            
-            # Get privacy context without re-fetching users
-            context = PrivacyService.get_viewer_context(user, viewer, event_id)
+            # Use pre-built context
+            context = privacy_contexts[event_user.user_id]
             
             # Pass the event_user object to avoid another query for privacy overrides
-            # We'll need to modify filter_user_data to accept this
-            user_data = PrivacyService.filter_user_data(user, context, event_id, event_user)
+            user_data = PrivacyService.filter_user_data(
+                event_user.user,  # Already eager-loaded
+                context, 
+                event_id, 
+                event_user  # Pass the pre-loaded EventUser
+            )
             
-            # Store the filtered email as a custom attribute (not a model property)
-            # The schema will pick this up during serialization
-            event_user._filtered_email = user_data.get('email')  # May be None based on privacy
+            # Store the filtered email as a custom attribute
+            event_user._filtered_email = user_data.get('email')
             
-            # Add connection status for non-self users
+            # Add connection status (already computed)
             if event_user.user_id != current_user_id:
-                connection = connection_map.get(event_user.user_id, {
-                    'connection_status': None,
-                    'connection_id': None,
-                    'connection_direction': None
-                })
-                event_user.connection_status = connection.get('connection_status')
-                event_user.connection_id = connection.get('connection_id')
-                event_user.connection_direction = connection.get('connection_direction')
+                event_user.connection_status = context.get('connection_status')
+                event_user.connection_id = context.get('connection_id')
+                event_user.connection_direction = context.get('connection_direction')
             else:
                 event_user.connection_status = None
                 event_user.connection_id = None
@@ -149,12 +152,9 @@ class EventUserService:
         
         # Use the schema to serialize the EventUser objects
         if schema:
-            # Schema handles all the serialization
             serialized_data = schema.dump(event_users)
-            # Apply pagination to the serialized results
             return EventUserService._paginate_list(serialized_data, "event_users")
         
-        # Fallback if no schema provided (shouldn't happen with our updates)
         return event_users
 
     @staticmethod
@@ -358,6 +358,51 @@ class EventUserService:
             'connection_id': None,
             'connection_direction': None
         }
+    
+    @staticmethod
+    def _build_batch_privacy_contexts(event_users, viewer, viewer_event_user, connection_map, event_id):
+        """
+        Build privacy contexts for all users in a single pass without additional queries.
+        
+        Returns a dict mapping user_id -> context
+        """
+        contexts = {}
+        
+        # Determine viewer's role once
+        is_viewer_organizer = False
+        if viewer_event_user:
+            is_viewer_organizer = viewer_event_user.role in [EventUserRole.ADMIN, EventUserRole.ORGANIZER]
+        
+        for event_user in event_users:
+            user = event_user.user
+            
+            context = {
+                'is_self': viewer.id == user.id if viewer else False,
+                'is_connected': False,
+                'is_organizer': is_viewer_organizer,
+                'is_co_speaker': False,
+                'is_event_attendee': viewer_event_user is not None and not viewer_event_user.is_banned,
+                'shared_events': []  # Skip for performance - not used in current implementation
+            }
+            
+            # Add connection info from pre-fetched map
+            if user.id in connection_map:
+                conn_info = connection_map[user.id]
+                context['is_connected'] = (
+                    conn_info.get('connection_status') == ConnectionStatus.ACCEPTED.value
+                )
+                # Also store raw connection info for later use
+                context['connection_status'] = conn_info.get('connection_status')
+                context['connection_id'] = conn_info.get('connection_id')
+                context['connection_direction'] = conn_info.get('connection_direction')
+            
+            # Check if both are speakers (using pre-loaded data)
+            if viewer_event_user and event_user.role == EventUserRole.SPEAKER:
+                context['is_co_speaker'] = viewer_event_user.role == EventUserRole.SPEAKER
+            
+            contexts[user.id] = context
+        
+        return contexts
     
     @staticmethod
     def _get_bulk_connection_status(current_user_id, target_user_ids):
