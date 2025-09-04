@@ -8,7 +8,9 @@ Atria is a comprehensive event management platform designed for organizations th
 
 ## Screenshots
 
-![Atria Platform Overview](https://storage.sbtl.dev/spookyspot/atriaslideshow.webp)
+<p align="center">
+  <img src="https://storage.sbtl.dev/spookyspot/atriaslideshowsmall.webp" alt="Atria Platform Overview" width="100%" />
+</p>
 
 ## Why Choose Atria?
 
