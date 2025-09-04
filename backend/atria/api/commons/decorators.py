@@ -93,7 +93,11 @@ def org_member_required():
 
 
 def event_member_required():
-    """Check if user has any role in event and is not banned"""
+    """Check if user has any role in event and is not banned
+    
+    #! NOTE: Organization owners automatically pass this check via Event.has_user()
+    #! which grants them access to all events in their organization.
+    """
 
     def decorator(f):
         @wraps(f)
@@ -131,7 +135,11 @@ def event_member_required():
 
 
 def event_member_or_admin_required():
-    """Check if user has any role in event - admins/organizers can access even if banned"""
+    """Check if user has any role in event - admins/organizers can access even if banned
+    
+    #! NOTE: Organization owners automatically pass this check via Event.has_user()
+    #! and are treated as ADMINs via Event.get_user_role().
+    """
 
     def decorator(f):
         @wraps(f)
@@ -174,7 +182,11 @@ def event_member_or_admin_required():
 
 # check if organizer or admin of event (ie. can edit)
 def event_organizer_required():
-    """Check if user is organizer or admin of event"""
+    """Check if user is organizer or admin of event
+    
+    #! NOTE: Organization owners automatically pass this check as Event.get_user_role()
+    #! returns EventUserRole.ADMIN for org owners, granting them full event control.
+    """
 
     def decorator(f):
         @wraps(f)
@@ -205,7 +217,11 @@ def event_organizer_required():
 
 # check if admin of event (ie. can delete)
 def event_admin_required():
-    """Check if user is admin of event"""
+    """Check if user is admin of event
+    
+    #! NOTE: Organization owners automatically pass this check as Event.get_user_role()
+    #! returns EventUserRole.ADMIN for org owners.
+    """
 
     def decorator(f):
         @wraps(f)
@@ -228,7 +244,11 @@ def event_admin_required():
 
 
 def session_access_required():
-    """Check if user has access to session's event"""
+    """Check if user has access to session's event
+    
+    #! NOTE: Organization owners have access via Event.has_user() which includes
+    #! org owner checks.
+    """
 
     def decorator(f):
         @wraps(f)
@@ -251,7 +271,11 @@ def session_access_required():
 
 
 def chat_room_access_required():
-    """Check if user has access to chat room's event"""
+    """Check if user has access to chat room's event
+    
+    #! NOTE: Organization owners have access via Event.has_user() which includes
+    #! org owner checks.
+    """
 
     def decorator(f):
         @wraps(f)
