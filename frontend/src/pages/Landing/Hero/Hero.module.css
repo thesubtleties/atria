@@ -343,9 +343,14 @@
 
   /* Adjust navigation for mobile */
   .nav {
-    padding: var(--space-tight) 0; /* Keep minimal padding - closer to top */
+    padding: calc(env(safe-area-inset-top, 0) + var(--space-cozy)) var(--space-tight) var(--space-tight); /* Add safe area + extra space on top */
     position: relative;
     z-index: 25; /* Higher z-index to ensure clickability */
+    overflow: visible; /* Allow buttons to extend beyond container */
+  }
+  
+  .navContent {
+    overflow: visible; /* Allow buttons to extend to top edge */
   }
 
   /* Adjust content distribution for mobile */
@@ -421,18 +426,26 @@
   /* Navigation touch-friendly */
   .navLinks {
     gap: var(--space-tight);
-    margin-top: env(safe-area-inset-top, 0); /* Account for iOS notch */
+    margin-top: calc(-1 * (env(safe-area-inset-top, 0) + var(--space-cozy))); /* Pull buttons up to edge */
   }
 
   .navLink {
-    padding: 1rem 1.25rem; /* Larger touch targets */
-    min-height: 48px; /* Increase minimum touch target */
-    min-width: 48px; /* Ensure square touch target */
+    padding-top: calc(env(safe-area-inset-top, 0) + var(--space-cozy) + 0.75rem); /* Extend padding to top edge */
+    padding-bottom: 0.75rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    min-height: 44px; /* Standard mobile touch target */
     font-size: 0.85rem;
     position: relative;
     z-index: 30; /* Ensure buttons are above any overlays */
     cursor: pointer;
     -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1); /* iOS tap feedback */
+    display: flex;
+    align-items: flex-end; /* Keep text at bottom of extended button */
+    justify-content: center;
+    border-radius: 0 0 var(--radius-small) var(--radius-small); /* Tab-like: no top rounding */
+    border-top-left-radius: 1px; /* Tiny radius to avoid sharp edges */
+    border-top-right-radius: 1px;
   }
 
   /* Scroll indicator positioning */
