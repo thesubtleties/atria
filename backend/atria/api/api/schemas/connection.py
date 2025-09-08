@@ -44,8 +44,7 @@ class ConnectionSchema(ma.SQLAlchemyAutoSchema):
         # SAFETY: If no privacy filtering was applied, return minimal safe data
         # This should only happen if called from a different context
         # Log this as it indicates a potential security issue
-        import logging
-        logging.warning(f"ConnectionSchema: Privacy filtering not applied for user {user.id}")
+        logging.warning(f"ConnectionSchema: Privacy filtering not applied for user {user.id}, connection_id={obj.id if obj else 'None'}")
         return {
             "id": user.id,
             "full_name": user.full_name,
@@ -75,10 +74,22 @@ class ConnectionSchema(ma.SQLAlchemyAutoSchema):
             }
         
         # SAFETY: If no privacy filtering was applied, return minimal safe data
-        # This should only happen if called from a different context
-        # Log this as it indicates a potential security issue
+        # Check if this is expected (recipient viewing their own pending connections)
+        from flask_jwt_extended import get_jwt_identity, verify_jwt_in_request_optional
         import logging
-        logging.warning(f"ConnectionSchema: Privacy filtering not applied for user {user.id}")
+        
+        try:
+            verify_jwt_in_request_optional()
+            current_user_id = get_jwt_identity()
+            if current_user_id and int(current_user_id) == user.id:
+                # This is expected - recipient is viewing their own pending connections
+                logging.debug(f"ConnectionSchema.get_recipient: User {user.id} viewing self (expected for /connections/pending)")
+            else:
+                # This is unexpected - warn about it
+                logging.warning(f"ConnectionSchema: Privacy filtering not applied for recipient user {user.id} (viewer is user {current_user_id})")
+        except:
+            # Can't determine current user - warn to be safe
+            logging.warning(f"ConnectionSchema: Privacy filtering not applied for recipient user {user.id} (couldn't determine viewer)")
         return {
             "id": user.id,
             "full_name": user.full_name,
