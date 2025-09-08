@@ -505,6 +505,7 @@ class ConnectionService:
     def _apply_user_privacy_filtering_with_event(connection, user_attr, viewer, event_id):
         """Apply privacy filtering to a user in a connection WITH EVENT CONTEXT"""
         from api.services.privacy import PrivacyService
+        import logging
         
         # Get the user object from the connection
         user = getattr(connection, user_attr)
