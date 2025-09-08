@@ -124,7 +124,7 @@ export const SessionPage = () => {
       <div className={styles.bgShape3} />
       
       {/* Grid Layout Container */}
-      <div className={`${styles.layoutGrid} ${chatEnabled && !isChatOpen ? styles.chatClosed : ''}`}>
+      <div className={`${styles.layoutGrid} ${!chatEnabled || (chatEnabled && !isChatOpen) ? styles.chatClosed : ''}`}>
         {/* Content Wrapper */}
         <div className={styles.contentWrapper}>
           {/* Section 1 - Video Section (wrapped video player) */}
