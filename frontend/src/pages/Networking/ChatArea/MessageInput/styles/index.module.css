@@ -23,6 +23,13 @@
   background: transparent !important;
   border: none !important;
   padding: 8px 12px !important;
+  padding-right: 50px !important; /* Space for send button */
+}
+
+.input input::placeholder {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
 }
 
 .input:focus-within {
