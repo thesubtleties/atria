@@ -177,6 +177,18 @@ export const initializeSocket = (token = null) => {
     console.log('🔵 Thread ID:', data.thread_id, 'Type:', typeof data.thread_id);
 
     if (data && data.thread_id) {
+      const threadId = parseInt(data.thread_id);
+      
+      // Notify registered callbacks for this thread (for useSocketMessages hook)
+      const callback = directMessageCallbacks.get(threadId);
+      if (callback) {
+        console.log('🔵 Notifying DM callback for thread:', threadId);
+        callback({
+          type: 'new_message',
+          message: data
+        });
+      }
+      
       // Update thread list to show latest message
       console.log('🔵 Updating thread list...');
       store.dispatch(
@@ -301,46 +313,6 @@ export const initializeSocket = (token = null) => {
     }
   });
 
-  socket.on('new_direct_message', (data) => {
-    console.log('🔵 SOCKET EVENT: new_direct_message received:', data);
-    
-    if (data && data.thread_id) {
-      const threadId = parseInt(data.thread_id);
-      
-      // Notify the registered callback for this thread
-      const callback = directMessageCallbacks.get(threadId);
-      if (callback) {
-        console.log('🔵 Notifying DM callback for thread:', threadId);
-        callback({
-          type: 'new_message',
-          message: data
-        });
-      }
-      
-      // Also update thread list to show latest message/timestamp
-      store.dispatch(
-        networkingApi.util.updateQueryData(
-          'getDirectMessageThreads',
-          undefined,
-          (draft) => {
-            if (!Array.isArray(draft)) return draft;
-            const thread = draft.find(t => t.id === threadId);
-            if (thread) {
-              thread.last_message = data;
-              thread.last_message_at = data.created_at;
-              // Move thread to top of list
-              const index = draft.indexOf(thread);
-              if (index > 0) {
-                draft.splice(index, 1);
-                draft.unshift(thread);
-              }
-            }
-            return draft;
-          }
-        )
-      );
-    }
-  });
 
   // ============================================
   // CHAT ROOM EVENT HANDLERS
