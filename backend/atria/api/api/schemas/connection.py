@@ -1,4 +1,5 @@
 # api/api/schemas/connection.py
+import logging
 from api.extensions import ma, db
 from api.models import Connection
 from api.models.enums import ConnectionStatus
@@ -76,7 +77,6 @@ class ConnectionSchema(ma.SQLAlchemyAutoSchema):
         # SAFETY: If no privacy filtering was applied, return minimal safe data
         # Check if this is expected (recipient viewing their own pending connections)
         from flask_jwt_extended import get_jwt_identity, verify_jwt_in_request_optional
-        import logging
         
         try:
             verify_jwt_in_request_optional()
