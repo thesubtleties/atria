@@ -76,20 +76,22 @@ class ConnectionSchema(ma.SQLAlchemyAutoSchema):
         
         # SAFETY: If no privacy filtering was applied, return minimal safe data
         # Check if this is expected (recipient viewing their own pending connections)
-        from flask_jwt_extended import get_jwt_identity, verify_jwt_in_request_optional
+        from flask_jwt_extended import get_jwt_identity
         
         try:
-            verify_jwt_in_request_optional()
             current_user_id = get_jwt_identity()
             if current_user_id and int(current_user_id) == user.id:
                 # This is expected - recipient is viewing their own pending connections
                 logging.debug(f"ConnectionSchema.get_recipient: User {user.id} viewing self (expected for /connections/pending)")
-            else:
+            elif current_user_id:
                 # This is unexpected - warn about it
                 logging.warning(f"ConnectionSchema: Privacy filtering not applied for recipient user {user.id} (viewer is user {current_user_id})")
-        except:
+            else:
+                # No JWT present - warn to be safe
+                logging.warning(f"ConnectionSchema: Privacy filtering not applied for recipient user {user.id} (no JWT present)")
+        except Exception as e:
             # Can't determine current user - warn to be safe
-            logging.warning(f"ConnectionSchema: Privacy filtering not applied for recipient user {user.id} (couldn't determine viewer)")
+            logging.warning(f"ConnectionSchema: Privacy filtering not applied for recipient user {user.id} (error: {str(e)})")
         return {
             "id": user.id,
             "full_name": user.full_name,
