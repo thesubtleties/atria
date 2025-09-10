@@ -42,37 +42,12 @@ def handle_get_direct_messages(user_id, data):
         return
 
     try:
-        # Get thread and messages
-        thread = DirectMessageService.get_thread(thread_id, user_id)
-        result = DirectMessageService.get_thread_messages(
+        # Use the unified service method for consistency with HTTP
+        result = DirectMessageService.get_thread_messages_with_context(
             thread_id, user_id, page=page, per_page=per_page
         )
-
-        # Format messages for response
-        message_list = DirectMessageService.format_messages_for_response(
-            result["messages"], reverse=True
-        )
-
-        # Get the other user in the conversation
-        other_user_id = (
-            thread.user2_id if thread.user1_id == user_id else thread.user1_id
-        )
-        other_user = User.query.get(other_user_id)
-
-        emit(
-            "direct_messages",
-            {
-                "thread_id": thread_id,
-                "messages": message_list,
-                "pagination": result["pagination"],
-                "other_user": {
-                    "id": other_user.id,
-                    "full_name": other_user.full_name,
-                    "image_url": other_user.image_url,
-                },
-                "is_encrypted": thread.is_encrypted,
-            },
-        )
+        
+        emit("direct_messages", result)
 
     except ValueError as e:
         emit("error", {"message": str(e)})

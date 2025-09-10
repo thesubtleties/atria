@@ -176,8 +176,11 @@ class DirectMessageService:
         if thread.user1_id != user_id and thread.user2_id != user_id:
             raise ValueError("Not authorized to view these messages")
 
-        # Base query
-        query = DirectMessage.query.filter_by(thread_id=thread_id)
+        # Base query with eager loading to avoid N+1
+        from sqlalchemy.orm import joinedload
+        query = DirectMessage.query.options(
+            joinedload(DirectMessage.sender)
+        ).filter_by(thread_id=thread_id)
         
         # Apply cutoff filter if user has cleared their history
         cutoff_time = thread.get_user_cutoff(user_id)
@@ -450,6 +453,43 @@ class DirectMessageService:
 
         return thread_data
 
+    @staticmethod
+    def get_thread_messages_with_context(
+        thread_id: int, user_id: int, page=1, per_page=50
+    ) -> Dict[str, Any]:
+        """
+        Get thread messages with full context including other_user info.
+        This is the unified method for both HTTP and WebSocket responses.
+        """
+        # Get the thread and validate access
+        thread = DirectMessageService.get_thread(thread_id, user_id)
+        
+        # Get the other user efficiently (already have thread, just need user)
+        other_user = thread.get_other_user(user_id)
+        
+        # Get paginated messages
+        messages_result = DirectMessageService.get_thread_messages(
+            thread_id, user_id, page=page, per_page=per_page
+        )
+        
+        # Format messages for response
+        message_list = DirectMessageService.format_messages_for_response(
+            messages_result["messages"], reverse=True
+        )
+        
+        # Build the complete response
+        return {
+            "thread_id": thread_id,
+            "messages": message_list,
+            "pagination": messages_result["pagination"],
+            "other_user": {
+                "id": other_user.id,
+                "full_name": other_user.full_name,
+                "image_url": other_user.image_url,
+            },
+            "is_encrypted": thread.is_encrypted,
+        }
+    
     @staticmethod
     def format_message_for_response(message: DirectMessage) -> Dict[str, Any]:
         """Format message data for API/socket response"""
