@@ -12,8 +12,16 @@ let messageCallbacks = new Map(); // Map of roomId -> callback function for chat
 let directMessageCallbacks = new Map(); // Map of threadId -> callback function for DMs
 
 export const initializeSocket = (token = null) => {
+  // If socket exists and is connected, return it
   if (socket && socket.connected) {
     console.log('🔌 Socket already exists and connected, returning existing socket');
+    return socket;
+  }
+  
+  // If socket exists but is disconnected, reconnect it (don't create new one!)
+  if (socket && !socket.connected) {
+    console.log('🔌 Socket exists but disconnected, reconnecting...');
+    socket.connect();
     return socket;
   }
   
@@ -37,6 +45,11 @@ export const initializeSocket = (token = null) => {
     path: '/socket.io',
     transports: ['websocket', 'polling'],
     withCredentials: true, // This will send cookies for polling transport
+    reconnection: true, // Enable auto-reconnection
+    reconnectionAttempts: 5, // Try 5 times
+    reconnectionDelay: 1000, // Start with 1 second delay
+    reconnectionDelayMax: 5000, // Max 5 seconds between attempts
+    timeout: 20000, // Connection timeout (20 seconds)
   };
 
   // If token is provided, add it to auth object for WebSocket
