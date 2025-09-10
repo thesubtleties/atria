@@ -146,10 +146,13 @@ class DirectMessageList(MethodView):
     def get(self, thread_id):
         """Get thread messages"""
         user_id = int(get_jwt_identity())
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 50, type=int)
 
         try:
-            return DirectMessageService.get_thread_messages(
-                thread_id, user_id, DirectMessageSchema(many=True)
+            # Use the new unified service method that includes thread context
+            return DirectMessageService.get_thread_messages_with_context(
+                thread_id, user_id, page=page, per_page=per_page
             )
         except ValueError as e:
             return {"message": str(e)}, 403
