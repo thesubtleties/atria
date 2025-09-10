@@ -260,9 +260,9 @@ export const networkingApi = baseApi.injectEndpoints({
           extraOptions
         );
       },
-      invalidatesTags: (result, error, threadId) => [
-        { type: 'DirectMessage', id: threadId },
-      ],
+      // Don't invalidate - read status updates are handled via socket events
+      // The 'messages_read' socket event updates message statuses locally
+      // No need to refetch all messages just for read status changes
     }),
     // Connection endpoints
     // Create connection request
