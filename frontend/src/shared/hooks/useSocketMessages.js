@@ -86,12 +86,31 @@ export function useSocketMessages(threadId) {
 
     const handleSocketUpdate = (update) => {
       if (update.type === 'new_message') {
-        // Add new message to the end
         setLoadedMessages(prev => {
-          // Check if message already exists (prevent duplicates)
+          // Check if message already exists with real ID (prevent duplicates)
           if (prev.some(msg => msg.id === update.message.id)) {
+            console.log('Message already exists, skipping:', update.message.id);
             return prev;
           }
+          
+          // Check if this is our own message replacing a temp message
+          if (update.message.sender_id === currentUser?.id) {
+            // Find temp message with same content sent in last 5 seconds
+            const tempIndex = prev.findIndex(msg => 
+              msg.id.startsWith('temp-') &&
+              msg.content === update.message.content &&
+              msg.sender_id === currentUser?.id
+            );
+            
+            if (tempIndex !== -1) {
+              console.log('Replacing temp message with real one');
+              const newMessages = [...prev];
+              newMessages[tempIndex] = update.message;
+              return newMessages;
+            }
+          }
+          
+          // Otherwise add the new message
           return [...prev, update.message];
         });
       }

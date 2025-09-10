@@ -283,7 +283,25 @@ export const initializeSocket = (token = null) => {
     console.log('Messages read notification:', data);
 
     if (data && data.thread_id) {
-      // Update message status
+      // Update message status for page 1 (most common case)
+      store.dispatch(
+        networkingApi.util.updateQueryData(
+          'getDirectMessages',
+          { threadId: data.thread_id, page: 1 },
+          (draft) => {
+            if (!draft || !draft.messages) return draft;
+
+            draft.messages.forEach((msg) => {
+              if (msg.sender_id !== data.reader_id) {
+                msg.status = 'read';  // lowercase to match backend enum and UI
+              }
+            });
+            return draft;
+          }
+        )
+      );
+      
+      // Also update cache without page (for backwards compatibility)
       store.dispatch(
         networkingApi.util.updateQueryData(
           'getDirectMessages',
@@ -293,7 +311,7 @@ export const initializeSocket = (token = null) => {
 
             draft.messages.forEach((msg) => {
               if (msg.sender_id !== data.reader_id) {
-                msg.status = 'READ';
+                msg.status = 'read';  // lowercase to match backend enum and UI
               }
             });
             return draft;
