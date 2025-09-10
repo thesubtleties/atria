@@ -1,10 +1,10 @@
 // src/shared/components/chat/MobileChatContainer/index.jsx
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useParams, useLocation } from 'react-router-dom';
 import { store } from '../../../../app/store';
 import { useGetDirectMessageThreadsQuery } from '../../../../app/features/networking/api';
-import { useGetEventUsersQuery, useGetEventQuery } from '../../../../app/features/events/api';
+import { useGetEventQuery } from '../../../../app/features/events/api';
 import { useThreadFiltering } from '@/shared/hooks/useThreadFiltering';
 import { 
   selectSidebarExpanded,
@@ -67,17 +67,16 @@ function MobileChatContainer() {
     }
   }, [eventId, sessionIdFromUrl, dispatch]);
 
-  // Get threads for sidebar
+  // Get threads for sidebar - pass eventId when in event context for efficient filtering
   const { 
     data, 
     isLoading: threadsLoading 
-  } = useGetDirectMessageThreadsQuery();
-
-  // Fetch event users when in event context
-  const { data: eventUsersData } = useGetEventUsersQuery(
-    { eventId: currentEventId },
-    { skip: !currentEventId }
+  } = useGetDirectMessageThreadsQuery(
+    currentEventId ? { eventId: currentEventId } : undefined
   );
+
+  // No longer need to fetch event users separately since backend provides shared_event_ids
+  // when we pass the event_id parameter to getDirectMessageThreads
   
   // Fetch event data for permissions
   const { data: eventData } = useGetEventQuery(currentEventId, {
@@ -87,11 +86,8 @@ function MobileChatContainer() {
   // Extract threads array from the response
   const threadsArray = data?.threads || data || [];
 
-  // Create a set of user IDs who are in the current event
-  const eventUserIds = useMemo(() => {
-    if (!eventUsersData?.event_users) return new Set();
-    return new Set(eventUsersData.event_users.map(user => user.user_id));
-  }, [eventUsersData]);
+  // No longer need eventUserIds since backend provides shared_event_ids
+  const eventUserIds = new Set();
 
   // Filter threads based on context using shared hook
   const filteredThreads = useThreadFiltering(

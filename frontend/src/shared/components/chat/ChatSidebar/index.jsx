@@ -35,8 +35,10 @@ function ChatSidebar() {
     }
   }, [eventId, dispatch]);
 
-  // Fetch threads
-  const { data, isLoading, error } = useGetDirectMessageThreadsQuery();
+  // Fetch threads - pass eventId when in event context for efficient filtering
+  const { data, isLoading, error } = useGetDirectMessageThreadsQuery(
+    currentEventId ? { eventId: currentEventId } : undefined
+  );
 
   // Extract threads array from the response
   // The backend sends { threads: [...] }
