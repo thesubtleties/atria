@@ -39,8 +39,10 @@ class DirectMessageThreadList(MethodView):
     def get(self):
         """Get user's message threads"""
         user_id = int(get_jwt_identity())
+        # Get optional event_id from query params for event-specific enrichment
+        event_id = request.args.get('event_id', type=int)
         return DirectMessageService.get_user_threads(
-            user_id, DirectMessageThreadSchema(many=True)
+            user_id, DirectMessageThreadSchema(many=True), event_id=event_id
         )
 
     @blp.arguments(DirectMessageThreadCreateSchema)

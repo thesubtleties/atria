@@ -10,7 +10,7 @@ from api.commons.pagination import paginate
 
 class DirectMessageService:
     @staticmethod
-    def get_user_threads(user_id: int, schema=None):
+    def get_user_threads(user_id: int, schema=None, include_enrichment=False, event_id=None):
         """
         Get direct message threads for a user with multi-layer filtering.
         
@@ -28,6 +28,7 @@ class DirectMessageService:
         Args:
             user_id: ID of the user requesting threads
             schema: Optional Marshmallow schema for serialization
+            include_enrichment: If True, enrich threads with service data like shared_event_ids
             
         Returns:
             Filtered list of threads with pagination metadata if schema provided
@@ -107,6 +108,39 @@ class DirectMessageService:
         
         # Sort by last message time
         visible_threads.sort(key=lambda t: t.last_message_at or t.created_at, reverse=True)
+        
+        # Add event-specific enrichment if event_id is provided
+        if event_id:
+            from api.models.event_user import EventUser
+            
+            # Get all other user IDs from visible threads
+            other_user_ids = []
+            for thread in visible_threads:
+                other_id = thread.user2_id if thread.user1_id == user_id else thread.user1_id
+                other_user_ids.append(other_id)
+            
+            # Single query to check which users are in the event
+            event_users = set(
+                row[0] for row in 
+                db.session.query(EventUser.user_id)
+                .filter(
+                    EventUser.event_id == event_id,
+                    EventUser.user_id.in_(other_user_ids)
+                )
+                .all()
+            ) if other_user_ids else set()
+            
+            # Add the event membership info to each thread
+            for thread in visible_threads:
+                other_id = thread.user2_id if thread.user1_id == user_id else thread.user1_id
+                # Add as a transient attribute (won't be persisted to DB)
+                thread.other_user_in_event = other_id in event_users
+                # For backwards compatibility, also add shared_event_ids 
+                # but only include the current event if user is in it
+                if other_id in event_users:
+                    thread.shared_event_ids = [event_id]
+                else:
+                    thread.shared_event_ids = []
         
         if schema:
             # Return in expected format for pagination
@@ -334,6 +368,32 @@ class DirectMessageService:
         return thread, True
 
     @staticmethod
+    def get_shared_event_ids(user1_id: int, user2_id: int) -> List[int]:
+        """
+        Get IDs of events where both users are members.
+        Uses an efficient single query with intersect for optimal performance.
+        
+        Args:
+            user1_id: ID of first user
+            user2_id: ID of second user
+            
+        Returns:
+            List of event IDs where both users are members
+        """
+        from api.models.event_user import EventUser
+        
+        # Use intersect for efficient query - finds events where both users are members
+        shared_events = db.session.query(EventUser.event_id).filter(
+            EventUser.user_id == user1_id
+        ).intersect(
+            db.session.query(EventUser.event_id).filter(
+                EventUser.user_id == user2_id
+            )
+        ).all()
+        
+        return [event_id for (event_id,) in shared_events]
+
+    @staticmethod
     def format_thread_for_response(
         thread: DirectMessageThread, user_id: int
     ) -> Dict[str, Any]:
@@ -375,23 +435,8 @@ class DirectMessageService:
             "unread_count": unread_count,
         }
         
-        # Include list of shared events (events where both users are members)
-        # This allows frontend to filter without fetching all event users
-        from api.models.event_user import EventUser
-        
-        # Use a single query to find shared events more efficiently
-        from sqlalchemy import and_
-        
-        # Find events where both users are members with a single query
-        shared_events = db.session.query(EventUser.event_id).filter(
-            EventUser.user_id == user_id
-        ).intersect(
-            db.session.query(EventUser.event_id).filter(
-                EventUser.user_id == other_user.id
-            )
-        ).all()
-        
-        shared_event_ids = [event_id for (event_id,) in shared_events]
+        # Include list of shared events using the reusable method
+        shared_event_ids = DirectMessageService.get_shared_event_ids(user_id, other_user.id)
         thread_data["shared_event_ids"] = shared_event_ids
 
         if last_message:

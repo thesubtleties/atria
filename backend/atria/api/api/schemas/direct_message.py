@@ -29,6 +29,11 @@ class DirectMessageThreadSchema(ma.SQLAlchemyAutoSchema):
     last_message = ma.Method("get_last_message")
     unread_count = ma.Method("get_unread_count")
     other_user = ma.Method("get_other_user")
+    
+    # Optional event-specific fields (added by service when event_id provided)
+    # These are transient attributes set by the service layer
+    shared_event_ids = ma.List(ma.Integer(), dump_only=True, required=False)
+    other_user_in_event = ma.Boolean(dump_only=True, required=False)
 
     def get_last_message(self, obj):
         message = (
@@ -69,6 +74,7 @@ class DirectMessageThreadSchema(ma.SQLAlchemyAutoSchema):
                 "image_url": other_user.image_url,
             }
         return None
+
 
 
 class DirectMessageSchema(ma.SQLAlchemyAutoSchema):

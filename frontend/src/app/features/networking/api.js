@@ -135,10 +135,13 @@ export const networkingApi = baseApi.injectEndpoints({
     // HTTP: GET /direct-messages/threads
     getDirectMessageThreads: builder.query({
       queryFn: async (arg, api, extraOptions) => {
+        // arg can be undefined or an object with eventId
+        const eventId = arg?.eventId;
         return queryWithFallback(
           {
             url: 'direct-message-threads',
             method: 'GET',
+            params: eventId ? { event_id: eventId } : undefined,
           },
           api,
           extraOptions
