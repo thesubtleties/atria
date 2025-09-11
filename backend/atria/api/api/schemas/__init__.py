@@ -103,6 +103,7 @@ from api.api.schemas.direct_message import (
     DirectMessageSchema,
     DirectMessageCreateSchema,
     DirectMessageThreadCreateSchema,
+    DirectMessagesWithContextSchema,
 )
 from api.api.schemas.sponsor import (
     SponsorSchema,

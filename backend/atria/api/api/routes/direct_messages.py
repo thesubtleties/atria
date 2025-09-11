@@ -9,6 +9,7 @@ from api.api.schemas import (
     DirectMessageSchema,
     DirectMessageCreateSchema,
     DirectMessageThreadCreateSchema,
+    DirectMessagesWithContextSchema,
 )
 from api.commons.pagination import (
     PAGINATION_PARAMETERS,
@@ -121,10 +122,10 @@ class DirectMessageThreadDetail(MethodView):
 
 @blp.route("/direct-messages/threads/<int:thread_id>/messages")
 class DirectMessageList(MethodView):
-    @blp.response(200)
+    @blp.response(200, DirectMessagesWithContextSchema)
     @blp.doc(
-        summary="List thread messages",
-        description="Get messages for a thread with pagination",
+        summary="List thread messages with context",
+        description="Get messages for a thread with pagination and thread context (other user, encryption status)",
         parameters=[
             {
                 "in": "path",
@@ -137,7 +138,7 @@ class DirectMessageList(MethodView):
             *PAGINATION_PARAMETERS,
         ],
         responses={
-            200: get_pagination_schema("messages", "DirectMessageBase"),
+            200: {"description": "Messages with thread context"},
             403: {"description": "Not authorized to view these messages"},
             404: {"description": "Thread not found"},
         },

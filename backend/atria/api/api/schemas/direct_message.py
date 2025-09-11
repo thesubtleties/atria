@@ -111,3 +111,61 @@ class DirectMessageThreadCreateSchema(ma.Schema):
 
     user_id = ma.Integer(required=True)
     event_id = ma.Integer(required=False, allow_none=True)
+
+
+# Response schemas for the enriched messages endpoint
+# TODO: Consider moving these to a common schemas file if reused elsewhere
+
+class MessagePaginationSchema(ma.Schema):
+    """Pagination metadata for message responses
+    Note: This is simpler than commons pagination (no links)"""
+    
+    class Meta:
+        name = "MessagePagination"
+    
+    page = ma.Integer(dump_only=True)
+    per_page = ma.Integer(dump_only=True)
+    total = ma.Integer(dump_only=True)
+    total_pages = ma.Integer(dump_only=True)
+
+
+class ThreadUserSchema(ma.Schema):
+    """Minimal user info for thread context
+    TODO: Could be moved to user.py as SimpleUserSchema if reused"""
+    
+    class Meta:
+        name = "ThreadUser"
+    
+    id = ma.Integer(dump_only=True)
+    full_name = ma.String(dump_only=True)
+    image_url = ma.String(dump_only=True, allow_none=True)
+
+
+class FormattedMessageSchema(ma.Schema):
+    """Schema for already-formatted message dictionaries from service layer"""
+    
+    class Meta:
+        name = "FormattedMessage"
+    
+    id = ma.Integer(dump_only=True)
+    thread_id = ma.Integer(dump_only=True)
+    sender_id = ma.Integer(dump_only=True)
+    sender = ma.Dict(dump_only=True)  # Already formatted as dict with id, full_name, image_url
+    content = ma.String(dump_only=True)
+    encrypted_content = ma.String(dump_only=True, allow_none=True)
+    status = ma.String(dump_only=True)
+    created_at = ma.String(dump_only=True)  # Already formatted as ISO string
+
+
+class DirectMessagesWithContextSchema(ma.Schema):
+    """Response schema for GET /direct-messages/threads/<id>/messages
+    Includes messages, pagination, and thread context (other_user, encryption status)"""
+    
+    class Meta:
+        name = "DirectMessagesWithContext"
+    
+    thread_id = ma.Integer(dump_only=True, required=True)
+    messages = ma.List(ma.Nested(FormattedMessageSchema), dump_only=True, required=True)
+    pagination = ma.Nested(MessagePaginationSchema, dump_only=True, required=True)
+    other_user = ma.Nested(ThreadUserSchema, dump_only=True, required=True)
+    is_encrypted = ma.Boolean(dump_only=True, required=True)

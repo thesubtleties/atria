@@ -12,6 +12,15 @@ let messageCallbacks = new Map(); // Map of roomId -> callback function for chat
 let directMessageCallbacks = new Map(); // Map of threadId -> callback function for DMs
 
 export const initializeSocket = (token = null) => {
+  // Check environment variable to force HTTP fallback (for testing)
+  // Defaults to false in production where env var won't exist
+  const FORCE_HTTP_FALLBACK = import.meta.env.VITE_FORCE_HTTP_FALLBACK === 'true';
+  
+  if (FORCE_HTTP_FALLBACK) {
+    console.log('⚠️ WebSocket disabled via VITE_FORCE_HTTP_FALLBACK - using HTTP fallback');
+    return null;
+  }
+  
   // If socket exists and is connected, return it
   if (socket && socket.connected) {
     console.log('🔌 Socket already exists and connected, returning existing socket');
@@ -643,6 +652,14 @@ export const initializeSocket = (token = null) => {
 };
 
 export const getSocket = () => {
+  // Check same env variable as initializeSocket
+  const FORCE_HTTP_FALLBACK = import.meta.env.VITE_FORCE_HTTP_FALLBACK === 'true';
+  
+  if (FORCE_HTTP_FALLBACK) {
+    console.log('⚠️ getSocket: WebSocket disabled via env - returning null');
+    return null;
+  }
+  
   console.log('🔌 getSocket called, socket is:', socket ? 'EXISTS' : 'NULL', 'connected:', socket?.connected);
   return socket;
 };
