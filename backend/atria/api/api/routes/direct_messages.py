@@ -218,6 +218,11 @@ class DirectMessageMarkRead(MethodView):
                 thread_id, user_id
             )
             
+            # If there were unread messages, notify the other user via WebSocket (if connected)
+            if had_unread:
+                from api.api.sockets.dm_notifications import emit_messages_read
+                emit_messages_read(thread_id, user_id, other_user_id)
+            
             # Return success response matching socket response format
             return {
                 "thread_id": thread_id,
