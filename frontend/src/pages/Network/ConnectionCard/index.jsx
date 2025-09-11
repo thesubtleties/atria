@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Avatar, Group, Text, Badge, Button, ActionIcon } from '@mantine/core';
-import { IconBrandLinkedin, IconWorld, IconMessageCircle } from '@tabler/icons-react';
+import { IconBrandLinkedin, IconBrandTwitter, IconWorld, IconMessageCircle } from '@tabler/icons-react';
 import { useCreateDirectMessageThreadMutation } from '@/app/features/networking/api';
 import { useDispatch, useSelector } from 'react-redux';
 import { openThread } from '@/app/store/chatSlice';
@@ -126,30 +126,46 @@ export function ConnectionCard({ connection }) {
         {/* Social Links */}
         <div className={styles.socialLinks}>
           {otherUser.social_links?.linkedin && (
-            <ActionIcon
-              size="sm"
-              variant="subtle"
-              component="a"
-              href={otherUser.social_links.linkedin}
-              target="_blank"
-              aria-label="LinkedIn"
-              className={styles.socialLink}
-            >
-              <IconBrandLinkedin size={16} />
-            </ActionIcon>
+            <div className={styles.linkedinIcon}>
+              <ActionIcon
+                size="md"
+                variant="subtle"
+                component="a"
+                href={otherUser.social_links.linkedin}
+                target="_blank"
+                aria-label="LinkedIn"
+              >
+                <IconBrandLinkedin size={18} />
+              </ActionIcon>
+            </div>
+          )}
+          {otherUser.social_links?.twitter && (
+            <div className={styles.twitterIcon}>
+              <ActionIcon
+                size="md"
+                variant="subtle"
+                component="a"
+                href={otherUser.social_links.twitter}
+                target="_blank"
+                aria-label="Twitter"
+              >
+                <IconBrandTwitter size={18} />
+              </ActionIcon>
+            </div>
           )}
           {otherUser.social_links?.website && (
-            <ActionIcon
-              size="sm"
-              variant="subtle"
-              component="a"
-              href={otherUser.social_links.website}
-              target="_blank"
-              aria-label="Website"
-              className={styles.socialLink}
-            >
-              <IconWorld size={16} />
-            </ActionIcon>
+            <div className={styles.websiteIcon}>
+              <ActionIcon
+                size="md"
+                variant="subtle"
+                component="a"
+                href={otherUser.social_links.website}
+                target="_blank"
+                aria-label="Website"
+              >
+                <IconWorld size={18} />
+              </ActionIcon>
+            </div>
           )}
         </div>
 

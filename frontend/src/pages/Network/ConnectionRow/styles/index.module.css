@@ -14,3 +14,66 @@
   opacity: 0.8;
   text-decoration: underline;
 }
+
+/* Social links group */
+.socialLinks {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+/* Social media icon styling */
+.socialLinks :global(.mantine-ActionIcon-root) {
+  color: #64748B;
+  transition: all 0.2s ease;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+}
+
+.socialLinks :global(.mantine-ActionIcon-root:hover) {
+  transform: translateY(-1px);
+}
+
+/* LinkedIn specific hover color */
+.linkedinIcon {
+  display: inline-flex;
+}
+
+.linkedinIcon :global(.mantine-ActionIcon-root:hover) {
+  color: #0077B5;
+  background: transparent;
+  transform: scale(1.1);
+}
+
+/* Twitter specific hover color */
+.twitterIcon {
+  display: inline-flex;
+}
+
+.twitterIcon :global(.mantine-ActionIcon-root:hover) {
+  color: #1DA1F2;
+  background: transparent;
+  transform: scale(1.1);
+}
+
+/* Website icon - purple color */
+.websiteIcon {
+  display: inline-flex;
+}
+
+.websiteIcon :global(.mantine-ActionIcon-root:hover) {
+  color: #8B5CF6;
+  background: transparent;
+  transform: scale(1.1);
+}
+
+/* Placeholder for missing social icons */
+.iconPlaceholder {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  display: inline-flex;
+}
