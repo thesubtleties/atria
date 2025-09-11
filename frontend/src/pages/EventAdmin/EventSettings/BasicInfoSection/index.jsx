@@ -12,6 +12,7 @@ import { DateInput } from '@mantine/dates';
 import { notifications } from '@mantine/notifications';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { useUpdateEventMutation } from '@/app/features/events/api';
+import { useGetSessionsQuery } from '@/app/features/sessions/api';
 import { eventUpdateSchema } from '../schemas/eventSettingsSchemas';
 import { Button } from '@/shared/components/buttons';
 import styles from './styles.module.css';
@@ -20,6 +21,12 @@ import parentStyles from '../styles/index.module.css';
 const BasicInfoSection = ({ event, eventId }) => {
   const [updateEvent, { isLoading }] = useUpdateEventMutation();
   const [hasChanges, setHasChanges] = useState(false);
+  
+  // Fetch sessions when event_type is single_session
+  const { data: sessionsData } = useGetSessionsQuery(
+    { eventId: parseInt(eventId) },
+    { skip: event?.event_type !== 'SINGLE_SESSION' }
+  );
 
   const form = useForm({
     initialValues: {
@@ -30,6 +37,7 @@ const BasicInfoSection = ({ event, eventId }) => {
       end_date: event?.end_date ? new Date(event.end_date) : null,
       company_name: event?.company_name || '',
       status: event?.status || 'DRAFT',
+      main_session_id: event?.main_session_id || null,
     },
     resolver: zodResolver(eventUpdateSchema),
   });
@@ -50,6 +58,12 @@ const BasicInfoSection = ({ event, eventId }) => {
 
     checkChanges();
   }, [form.values, event]);
+  
+  // Prepare session options for dropdown
+  const sessionOptions = sessionsData?.sessions?.map(session => ({
+    value: session.id.toString(),
+    label: `Day ${session.day_number}: ${session.title} (${session.start_time})`
+  })) || [];
 
   const handleSubmit = async (values) => {
     try {
@@ -58,6 +72,7 @@ const BasicInfoSection = ({ event, eventId }) => {
         ...values,
         start_date: values.start_date?.toISOString().split('T')[0],
         end_date: values.end_date?.toISOString().split('T')[0],
+        main_session_id: values.main_session_id ? parseInt(values.main_session_id) : null,
       }).unwrap();
 
       notifications.show({
@@ -84,6 +99,7 @@ const BasicInfoSection = ({ event, eventId }) => {
       end_date: event?.end_date ? new Date(event.end_date) : null,
       company_name: event?.company_name || '',
       status: event?.status || 'DRAFT',
+      main_session_id: event?.main_session_id || null,
     });
     setHasChanges(false);
   };
@@ -184,6 +200,24 @@ const BasicInfoSection = ({ event, eventId }) => {
             }}
             {...form.getInputProps('company_name')}
           />
+          
+          {form.values.event_type === 'SINGLE_SESSION' && sessionOptions.length > 0 && (
+            <Select
+              label="Main Session"
+              placeholder="Select the main session to link to"
+              description="For single-session events, this session will be directly linked from the navigation"
+              data={sessionOptions}
+              clearable
+              searchable
+              classNames={{
+                input: styles.formInput,
+                label: styles.formLabel
+              }}
+              {...form.getInputProps('main_session_id')}
+              value={form.values.main_session_id?.toString() || null}
+              onChange={(value) => form.setFieldValue('main_session_id', value)}
+            />
+          )}
 
           {hasChanges && (
             <Group justify="flex-end" className={parentStyles.formActions}>

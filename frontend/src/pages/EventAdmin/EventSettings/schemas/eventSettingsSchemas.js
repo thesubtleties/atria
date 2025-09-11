@@ -12,6 +12,7 @@ export const eventUpdateSchema = z.object({
   }),
   company_name: z.string().min(1, 'Company name is required'),
   status: z.enum(['DRAFT', 'PUBLISHED', 'ARCHIVED']),
+  main_session_id: z.string().nullable().optional(),
 }).refine((data) => data.end_date >= data.start_date, {
   message: 'End date must be after start date',
   path: ['end_date'],
