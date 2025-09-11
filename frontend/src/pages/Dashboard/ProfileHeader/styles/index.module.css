@@ -5,7 +5,7 @@
   padding: clamp(var(--space-md), 3vw, var(--space-lg)) clamp(var(--space-md), 4vw, var(--space-xl));
   margin-bottom: clamp(var(--space-md), 3vw, var(--space-xl));
   border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-lg);
   position: relative;
   z-index: 10;
 }

@@ -1,0 +1,14 @@
+/* Use global semantic classes via CSS Modules composition */
+
+/* Section Layout Classes */
+.dashboardSection {
+  composes: section-container from '../../../../styles/design-tokens.css';
+}
+
+.sectionHeader {
+  composes: section-header from '../../../../styles/design-tokens.css';
+}
+
+.sectionTitle {
+  composes: section-title from '../../../../styles/design-tokens.css';
+}

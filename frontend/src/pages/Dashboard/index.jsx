@@ -4,7 +4,7 @@ import { Container, Text } from '@mantine/core';
 import { useGetUserDashboardQuery } from '@/app/features/users/api';
 import { LoadingPage } from '../../shared/components/loading';
 import { ProfileHeader } from './ProfileHeader';
-import { StatsGrid } from './StatsGrid';
+import { StatsSection } from './StatsSection';
 import { OrganizationsSection } from './OrganizationsSection';
 import { EventsSection } from './EventsSection';
 import { ConnectionsSection } from './ConnectionsSection';
@@ -47,12 +47,7 @@ export const Dashboard = () => {
       <ProfileHeader user={user} />
 
       {/* Dashboard Stats */}
-      <section className={`${styles.dashboardSection} ${styles.fullWidth}`}>
-        <div className={styles.sectionHeader}>
-          <h2 className={styles.sectionTitle}>Your Impact</h2>
-        </div>
-        <StatsGrid stats={stats} />
-      </section>
+      <StatsSection stats={stats} />
 
       {/* Invitations */}
       <InvitationsSection userId={userId} />
