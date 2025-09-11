@@ -69,6 +69,9 @@ class Event(db.Model):
     deleted_by_id = db.Column(
         db.BigInteger, db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True
     )
+    main_session_id = db.Column(
+        db.BigInteger, db.ForeignKey("sessions.id", ondelete="SET NULL"), nullable=True
+    )
 
     icebreakers = db.Column(
         db.JSON,
@@ -99,9 +102,11 @@ class Event(db.Model):
 
     # Relationships
     organization = db.relationship("Organization", back_populates="events")
+    main_session = db.relationship("Session", foreign_keys=[main_session_id], post_update=True)
 
     sessions = db.relationship(
         "Session",
+        foreign_keys="Session.event_id",
         back_populates="event",
         cascade="all, delete-orphan",
         passive_deletes=True,

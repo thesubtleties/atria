@@ -34,7 +34,7 @@ class Session(db.Model):
     )
 
     # Relationships
-    event = db.relationship("Event", back_populates="sessions")
+    event = db.relationship("Event", foreign_keys=[event_id], back_populates="sessions")
     speakers = db.relationship(
         "User",
         secondary="session_speakers",

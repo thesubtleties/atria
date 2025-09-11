@@ -136,7 +136,7 @@ export const AppLayout = () => {
 
       {showEventNav && (
         <AppShell.Navbar>
-          <EventNav eventId={eventId} isAdmin={isAdmin} onMobileNavClick={toggleMobile} />
+          <EventNav eventId={eventId} event={event} isAdmin={isAdmin} onMobileNavClick={toggleMobile} />
         </AppShell.Navbar>
       )}
 

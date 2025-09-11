@@ -57,6 +57,9 @@ class EventService:
     @staticmethod
     def update_event(event_id, update_data):
         """Update event details"""
+        from api.models import Session
+        from flask_smorest import abort
+        
         event = Event.query.get_or_404(event_id)
 
         # Validate dates first if they're being updated
@@ -64,6 +67,15 @@ class EventService:
             event.validate_dates(
                 update_data.get("start_date"), update_data.get("end_date")
             )
+        
+        # Validate main_session_id if provided
+        if "main_session_id" in update_data and update_data["main_session_id"] is not None:
+            session = Session.query.filter_by(
+                id=update_data["main_session_id"],
+                event_id=event_id
+            ).first()
+            if not session:
+                abort(400, message="Selected session does not belong to this event")
 
         # If validation passed, update all fields
         for key, value in update_data.items():

@@ -153,3 +153,16 @@ class SessionAdminListSchema(SessionSchema):
     )
     # Explicitly exclude event relationship - not needed in admin list
     # Chat rooms already excluded in base schema
+
+
+class SessionMinimalSchema(ma.Schema):
+    """Minimal session schema for dropdowns and lists"""
+    
+    class Meta:
+        name = "SessionMinimal"
+    
+    id = ma.Integer(dump_only=True)
+    title = ma.String(dump_only=True)
+    day_number = ma.Integer(dump_only=True)
+    start_time = ma.Time(dump_only=True)
+    end_time = ma.Time(dump_only=True)

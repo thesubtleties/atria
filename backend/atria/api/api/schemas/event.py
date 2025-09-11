@@ -25,6 +25,7 @@ class EventSchema(ma.SQLAlchemyAutoSchema):
     last_session_time = ma.String(dump_only=True)
     event_hours = ma.Dict(dump_only=True)
     user_role = ma.String(dump_only=True)  # Current user's role in the event
+    main_session_id = ma.Integer(dump_only=True)  # For single_session events
 
 
 # Detailed Schema - Used for GET /events/<id> with all relationships
@@ -74,6 +75,12 @@ class EventDetailSchema(EventSchema):
         "UserSchema",
         many=True,
         only=("id", "full_name", "title", "company_name"),
+        dump_only=True,
+        dump_default=None,
+    )
+
+    main_session = ma.Nested(
+        "SessionMinimalSchema",
         dump_only=True,
         dump_default=None,
     )
@@ -156,6 +163,9 @@ class EventUpdateSchema(ma.Schema):
     
     # Networking
     icebreakers = ma.List(ma.String(), allow_none=True)
+    
+    # Single session navigation
+    main_session_id = ma.Integer(allow_none=True)
 
     @validates_schema
     def validate_dates(self, data, **kwargs):

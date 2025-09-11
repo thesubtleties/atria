@@ -1,8 +1,9 @@
 import { NavLink } from '@mantine/core';
 import { NavLink as RouterNavLink, useLocation } from 'react-router-dom';
+import { useMemo } from 'react';
 import styles from './EventLinks.module.css';
 
-export const EventLinks = ({ eventId, onMobileNavClick }) => {
+export const EventLinks = ({ eventId, event, onMobileNavClick }) => {
   const location = useLocation();
   
   const isActive = (path) => {
@@ -20,6 +21,39 @@ export const EventLinks = ({ eventId, onMobileNavClick }) => {
       onMobileNavClick();
     }
   };
+  
+  // Determine the main session for single_session events
+  const mainSessionInfo = useMemo(() => {
+    if (event?.event_type !== 'SINGLE_SESSION') {
+      return null;
+    }
+    
+    // Use main_session_id if available
+    if (event.main_session_id) {
+      return {
+        id: event.main_session_id,
+        label: 'Main Stage'
+      };
+    }
+    
+    // Fallback: find first session chronologically
+    if (event.sessions && event.sessions.length > 0) {
+      const sortedSessions = [...event.sessions].sort((a, b) => {
+        // Sort by day_number first, then by start_time
+        if (a.day_number !== b.day_number) {
+          return a.day_number - b.day_number;
+        }
+        return a.start_time.localeCompare(b.start_time);
+      });
+      
+      return {
+        id: sortedSessions[0].id,
+        label: 'Main Stage'
+      };
+    }
+    
+    return null;
+  }, [event]);
 
   return (
     <div className={styles.container}>
@@ -30,13 +64,23 @@ export const EventLinks = ({ eventId, onMobileNavClick }) => {
         active={isActive(`/app/events/${eventId}`)}
         onClick={handleNavClick}
       />
-      <NavLink
-        component={RouterNavLink}
-        to={`/app/events/${eventId}/agenda`}
-        label="Agenda"
-        active={isActive(`/app/events/${eventId}/agenda`)}
-        onClick={handleNavClick}
-      />
+      {event?.event_type === 'SINGLE_SESSION' && mainSessionInfo ? (
+        <NavLink
+          component={RouterNavLink}
+          to={`/app/events/${eventId}/sessions/${mainSessionInfo.id}`}
+          label={mainSessionInfo.label}
+          active={isActive(`/app/events/${eventId}/sessions/${mainSessionInfo.id}`)}
+          onClick={handleNavClick}
+        />
+      ) : (
+        <NavLink
+          component={RouterNavLink}
+          to={`/app/events/${eventId}/agenda`}
+          label="Agenda"
+          active={isActive(`/app/events/${eventId}/agenda`)}
+          onClick={handleNavClick}
+        />
+      )}
       <NavLink
         component={RouterNavLink}
         to={`/app/events/${eventId}/speakers`}
