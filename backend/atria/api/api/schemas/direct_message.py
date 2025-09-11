@@ -169,3 +169,14 @@ class DirectMessagesWithContextSchema(ma.Schema):
     pagination = ma.Nested(MessagePaginationSchema, dump_only=True, required=True)
     other_user = ma.Nested(ThreadUserSchema, dump_only=True, required=True)
     is_encrypted = ma.Boolean(dump_only=True, required=True)
+
+
+class MarkMessagesReadResponseSchema(ma.Schema):
+    """Response schema for POST /direct-messages/threads/<id>/read"""
+    
+    class Meta:
+        name = "MarkMessagesReadResponse"
+    
+    thread_id = ma.Integer(dump_only=True, required=True)
+    marked_read = ma.Boolean(dump_only=True, required=True)
+    message = ma.String(dump_only=True, required=True)
