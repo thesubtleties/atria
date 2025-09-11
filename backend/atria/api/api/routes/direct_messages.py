@@ -9,6 +9,8 @@ from api.api.schemas import (
     DirectMessageSchema,
     DirectMessageCreateSchema,
     DirectMessageThreadCreateSchema,
+    DirectMessagesWithContextSchema,
+    MarkMessagesReadResponseSchema,
 )
 from api.commons.pagination import (
     PAGINATION_PARAMETERS,
@@ -121,10 +123,10 @@ class DirectMessageThreadDetail(MethodView):
 
 @blp.route("/direct-messages/threads/<int:thread_id>/messages")
 class DirectMessageList(MethodView):
-    @blp.response(200)
+    @blp.response(200, DirectMessagesWithContextSchema)
     @blp.doc(
-        summary="List thread messages",
-        description="Get messages for a thread with pagination",
+        summary="List thread messages with context",
+        description="Get messages for a thread with pagination and thread context (other user, encryption status)",
         parameters=[
             {
                 "in": "path",
@@ -137,7 +139,7 @@ class DirectMessageList(MethodView):
             *PAGINATION_PARAMETERS,
         ],
         responses={
-            200: get_pagination_schema("messages", "DirectMessageBase"),
+            200: {"description": "Messages with thread context"},
             403: {"description": "Not authorized to view these messages"},
             404: {"description": "Thread not found"},
         },
@@ -189,6 +191,40 @@ class DirectMessageList(MethodView):
 
             return message, 201
 
+        except ValueError as e:
+            return {"message": str(e)}, 403
+
+
+@blp.route("/direct-messages/threads/<int:thread_id>/read")
+class DirectMessageMarkRead(MethodView):
+    @blp.response(200, MarkMessagesReadResponseSchema)
+    @blp.doc(
+        summary="Mark messages as read",
+        description="Mark all unread messages in a thread as read",
+        responses={
+            200: {"description": "Messages marked as read"},
+            403: {"description": "Not authorized to access this thread"},
+            404: {"description": "Thread not found"},
+        },
+    )
+    @jwt_required()
+    def post(self, thread_id):
+        """Mark all messages in thread as read"""
+        user_id = int(get_jwt_identity())
+        
+        try:
+            # Mark messages and get info about what was marked
+            thread_id, other_user_id, had_unread = DirectMessageService.mark_messages_read(
+                thread_id, user_id
+            )
+            
+            # Return success response matching socket response format
+            return {
+                "thread_id": thread_id,
+                "marked_read": had_unread,
+                "message": "Messages marked as read" if had_unread else "No unread messages"
+            }, 200
+            
         except ValueError as e:
             return {"message": str(e)}, 403
 
