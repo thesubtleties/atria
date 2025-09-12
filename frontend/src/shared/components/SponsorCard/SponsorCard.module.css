@@ -194,18 +194,69 @@
 .socialLinks {
   display: flex;
   gap: var(--space-xs);
+  align-items: center;
 }
 
+/* Base social icon style */
 .socialIcon {
-  color: var(--color-text-muted) !important;
-  transition: all 0.2s ease;
+  composes: social-link-base from '../../../styles/design-tokens.css' !important;
+}
+
+/* Override Mantine's ActionIcon hover background and size */
+.socialIcon:global(.mantine-ActionIcon-root) {
+  background: transparent !important;
+  transition: all 0.2s ease !important;
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  min-height: 32px !important;
+}
+
+.socialIcon:global(.mantine-ActionIcon-root:hover) {
+  background: transparent !important;
+  transform: translateY(-2px) scale(1.05) !important;
+}
+
+.socialIcon:global(.mantine-ActionIcon-root svg) {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+/* Platform-specific styles using design tokens */
+.socialIconLinkedin {
+  composes: social-link-linkedin from '../../../styles/design-tokens.css' !important;
+}
+
+.socialIconLinkedin:global(.mantine-ActionIcon-root:hover) {
+  color: var(--social-linkedin) !important;
   background: transparent !important;
 }
 
-.socialIcon:hover {
-  color: var(--color-primary) !important;
-  background: rgba(139, 92, 246, 0.08) !important;
-  transform: translateY(-2px);
+.socialIconTwitter {
+  composes: social-link-twitter from '../../../styles/design-tokens.css';
+}
+
+.socialIconTwitter:global(.mantine-ActionIcon-root:hover) {
+  color: var(--social-twitter) !important;
+  background: transparent !important;
+}
+
+.socialIconFacebook {
+  composes: social-link-facebook from '../../../styles/design-tokens.css';
+}
+
+.socialIconFacebook:global(.mantine-ActionIcon-root:hover) {
+  color: var(--social-facebook) !important;
+  background: transparent !important;
+}
+
+.socialIconInstagram {
+  composes: social-link-instagram from '../../../styles/design-tokens.css';
+}
+
+.socialIconInstagram:global(.mantine-ActionIcon-root:hover) {
+  color: var(--social-instagram) !important;
+  background: transparent !important;
 }
 
 /* Responsive design */

@@ -64,6 +64,12 @@
   --gradient-slate-medium: #64748b; /* Medium slate */
   --gradient-slate-dark: #1e293b; /* Dark slate */
 
+  /* Social Media Brand Colors */
+  --social-linkedin: #0077b5; /* LinkedIn blue */
+  --social-twitter: #1da1f2; /* Twitter/X blue */
+  --social-facebook: #1877f2; /* Facebook blue */
+  --social-instagram: #e4405f; /* Instagram pink/red */
+
   /* Spacing Scale */
   --space-xs: 0.25rem; /* 4px */
   --space-sm: 0.5rem; /* 8px */
@@ -336,6 +342,7 @@
 /* Composable pagination class for Mantine overrides */
 .pagination-styled {
   /* Container placeholder for composition */
+  display: contents; /* Allow child selectors to work */
 }
 
 /* All pagination controls - base state */
@@ -459,4 +466,87 @@
   background: rgba(34, 197, 94, 0.08) !important;
   color: #22c55e !important;
   border: 1px solid rgba(34, 197, 94, 0.15) !important;
+}
+
+/* ====================== Social Link Styles ====================== */
+/* Reusable social media icon styles for consistent UX across components */
+
+/* Base social link icon style */
+.social-link-base {
+  color: var(--color-text-muted) !important;
+  transition: all 0.2s ease !important;
+  background: transparent !important;
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  min-height: 32px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: var(--radius-md) !important;
+}
+
+.social-link-base:hover {
+  transform: translateY(-2px) scale(1.05) !important;
+  background: transparent !important;
+}
+
+/* LinkedIn specific */
+.social-link-linkedin {
+  composes: social-link-base !important;
+}
+
+.social-link-linkedin:hover {
+  color: var(--social-linkedin) !important;
+  /* background: rgba(0, 119, 181, 0.08) !important; */
+}
+
+/* Twitter/X specific */
+.social-link-twitter {
+  composes: social-link-base;
+}
+
+.social-link-twitter:hover {
+  color: var(--social-twitter) !important;
+  background: rgba(29, 161, 242, 0.08) !important;
+}
+
+/* Facebook specific */
+.social-link-facebook {
+  composes: social-link-base;
+}
+
+.social-link-facebook:hover {
+  color: var(--social-facebook) !important;
+  background: rgba(24, 119, 242, 0.08) !important;
+}
+
+/* Instagram specific */
+.social-link-instagram {
+  composes: social-link-base;
+}
+
+.social-link-instagram:hover {
+  color: var(--social-instagram) !important;
+  background: rgba(228, 64, 95, 0.08) !important;
+}
+
+/* Generic website link */
+.social-link-website {
+  composes: social-link-base;
+}
+
+.social-link-website:hover {
+  color: var(--color-primary) !important;
+  background: rgba(139, 92, 246, 0.08) !important;
+}
+
+/* Email link */
+.social-link-email {
+  composes: social-link-base;
+}
+
+.social-link-email:hover {
+  color: var(--color-primary) !important;
+  background: rgba(139, 92, 246, 0.08) !important;
 }

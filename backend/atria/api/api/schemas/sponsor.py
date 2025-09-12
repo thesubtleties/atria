@@ -141,6 +141,7 @@ class SponsorListSchema(ma.Schema):
 
     id = ma.Integer()
     name = ma.String()
+    description = ma.String()  # Include description for display
     logo_url = ma.String()
     website_url = ma.String()
     tier_id = ma.String()
@@ -150,6 +151,11 @@ class SponsorListSchema(ma.Schema):
     display_order = ma.Float()
     featured = ma.Boolean()
     is_active = ma.Boolean()
+    social_links = ma.Dict()  # Include social links in listing
+    # Contact info (for admin view)
+    contact_name = ma.String()
+    contact_email = ma.String()
+    contact_phone = ma.String()
 
 
 class SponsorTierSchema(ma.Schema):

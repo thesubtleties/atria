@@ -100,7 +100,7 @@ export const SponsorCard = ({ sponsor }) => {
           )}
 
           {social_links && Object.keys(social_links).length > 0 && (
-            <Group gap={4} className={styles.socialLinks}>
+            <Group gap={0} className={styles.socialLinks}>
               {Object.entries(social_links).map(([platform, url]) => {
                 if (!url) return null;
                 const Icon = socialIcons[platform];
@@ -110,11 +110,12 @@ export const SponsorCard = ({ sponsor }) => {
                     component="a"
                     href={url}
                     target="_blank"
-                    size="sm"
+                    size="md"
                     variant="subtle"
-                    className={styles.socialIcon}
+                    className={`${styles.socialIcon} ${styles[`socialIcon${platform.charAt(0).toUpperCase() + platform.slice(1)}`]}`}
+                    aria-label={`${name} on ${platform}`}
                   >
-                    <Icon size={16} />
+                    <Icon size={20} />
                   </ActionIcon>
                 ) : null;
               })}
