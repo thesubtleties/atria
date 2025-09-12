@@ -1,14 +1,26 @@
 import { Card, Text, Group, ActionIcon, Anchor } from '@mantine/core';
-import { IconExternalLink, IconBrandTwitter, IconBrandLinkedin, IconBrandFacebook, IconBrandInstagram } from '@tabler/icons-react';
+import { 
+  IconExternalLink, 
+  IconBrandTwitter, 
+  IconBrandLinkedin, 
+  IconBrandFacebook, 
+  IconBrandInstagram,
+  IconBrandYoutubeFilled,
+  IconBrandTiktok,
+  IconWorld
+} from '@tabler/icons-react';
 import PrivateImage from '../PrivateImage';
 import { useGradientBadge } from '../../hooks/useGradientBadge';
 import styles from './SponsorCard.module.css';
 
 const socialIcons = {
-  twitter: IconBrandTwitter,
   linkedin: IconBrandLinkedin,
+  twitter: IconBrandTwitter,
+  youtube: IconBrandYoutubeFilled,
+  tiktok: IconBrandTiktok,
+  instagram: IconBrandInstagram,
   facebook: IconBrandFacebook,
-  instagram: IconBrandInstagram
+  other: IconWorld
 };
 
 export const SponsorCard = ({ sponsor }) => {
@@ -99,28 +111,36 @@ export const SponsorCard = ({ sponsor }) => {
             </Anchor>
           )}
 
-          {social_links && Object.keys(social_links).length > 0 && (
-            <Group gap={0} className={styles.socialLinks}>
-              {Object.entries(social_links).map(([platform, url]) => {
-                if (!url) return null;
-                const Icon = socialIcons[platform];
-                return Icon ? (
-                  <ActionIcon
-                    key={platform}
-                    component="a"
-                    href={url}
-                    target="_blank"
-                    size="md"
-                    variant="subtle"
-                    className={`${styles.socialIcon} ${styles[`socialIcon${platform.charAt(0).toUpperCase() + platform.slice(1)}`]}`}
-                    aria-label={`${name} on ${platform}`}
-                  >
-                    <Icon size={20} />
-                  </ActionIcon>
-                ) : null;
-              })}
-            </Group>
-          )}
+          {social_links && Object.keys(social_links).length > 0 && (() => {
+            // Count how many social links are actually populated
+            const activeSocialCount = Object.values(social_links).filter(url => url).length;
+            // Use smaller size only when we have all 7 social links
+            const isCompact = activeSocialCount >= 7;
+            
+            return (
+              <Group gap={0} className={`${styles.socialLinks} ${isCompact ? styles.socialLinksCompact : ''}`}>
+                {['linkedin', 'twitter', 'youtube', 'tiktok', 'instagram', 'facebook', 'other'].map((platform) => {
+                  const url = social_links[platform];
+                  if (!url) return null;
+                  const Icon = socialIcons[platform];
+                  return Icon ? (
+                    <ActionIcon
+                      key={platform}
+                      component="a"
+                      href={url}
+                      target="_blank"
+                      size={isCompact ? "sm" : "md"}
+                      variant="subtle"
+                      className={`${styles.socialIcon} ${styles[`socialIcon${platform.charAt(0).toUpperCase() + platform.slice(1)}`]}`}
+                      aria-label={`${name} on ${platform}`}
+                    >
+                      <Icon size={isCompact ? 16 : 20} />
+                    </ActionIcon>
+                  ) : null;
+                })}
+              </Group>
+            );
+          })()}
         </div>
       </div>
     </Card>

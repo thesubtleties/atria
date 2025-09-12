@@ -74,7 +74,7 @@ class SponsorCreateSchema(ma.Schema):
         if not value:
             return
 
-        valid_platforms = {"twitter", "linkedin", "facebook", "instagram"}
+        valid_platforms = {"twitter", "linkedin", "facebook", "instagram", "youtube", "tiktok", "other"}
         for platform, url in value.items():
             if platform not in valid_platforms:
                 raise ValidationError(f"Invalid social platform: {platform}")
@@ -122,7 +122,7 @@ class SponsorUpdateSchema(ma.Schema):
         if not value:
             return
 
-        valid_platforms = {"twitter", "linkedin", "facebook", "instagram"}
+        valid_platforms = {"twitter", "linkedin", "facebook", "instagram", "youtube", "tiktok", "other"}
         for platform, url in value.items():
             if platform not in valid_platforms:
                 raise ValidationError(f"Invalid social platform: {platform}")

@@ -69,6 +69,8 @@
   --social-twitter: #1da1f2; /* Twitter/X blue */
   --social-facebook: #1877f2; /* Facebook blue */
   --social-instagram: #e4405f; /* Instagram pink/red */
+  --social-youtube: #ff0000; /* YouTube red */
+  --social-tiktok: #000000; /* TikTok black */
 
   /* Spacing Scale */
   --space-xs: 0.25rem; /* 4px */
@@ -547,6 +549,36 @@
 }
 
 .social-link-email:hover {
+  color: var(--color-primary) !important;
+  background: rgba(139, 92, 246, 0.08) !important;
+}
+
+/* YouTube specific */
+.social-link-youtube {
+  composes: social-link-base;
+}
+
+.social-link-youtube:hover {
+  color: var(--social-youtube) !important;
+  background: rgba(255, 0, 0, 0.08) !important;
+}
+
+/* TikTok specific */
+.social-link-tiktok {
+  composes: social-link-base;
+}
+
+.social-link-tiktok:hover {
+  color: var(--social-tiktok) !important;
+  background: rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Other/Generic link */
+.social-link-other {
+  composes: social-link-base;
+}
+
+.social-link-other:hover {
   color: var(--color-primary) !important;
   background: rgba(139, 92, 246, 0.08) !important;
 }

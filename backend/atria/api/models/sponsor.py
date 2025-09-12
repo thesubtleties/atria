@@ -40,10 +40,13 @@ class Sponsor(db.Model):
     social_links = db.Column(
         db.JSON,
         default=lambda: {
-            "twitter": None,
             "linkedin": None,
-            "facebook": None,
+            "twitter": None,
+            "youtube": None,
+            "tiktok": None,
             "instagram": None,
+            "facebook": None,
+            "other": None,
         },
     )
 
@@ -97,7 +100,7 @@ class Sponsor(db.Model):
 
     def update_social_links(self, **kwargs):
         """Update social media links"""
-        valid_platforms = {"twitter", "linkedin", "facebook", "instagram"}
+        valid_platforms = {"twitter", "linkedin", "facebook", "instagram", "youtube", "tiktok", "other"}
 
         # Create a new dict to ensure SQLAlchemy detects the change
         social = dict(self.social_links or {})

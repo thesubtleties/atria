@@ -45,10 +45,13 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }
     contactPhone: '',
     tierId: '',
     socialLinks: {
-      twitter: '',
       linkedin: '',
-      facebook: '',
+      twitter: '',
+      youtube: '',
+      tiktok: '',
       instagram: '',
+      facebook: '',
+      other: '',
     },
   });
 
@@ -68,10 +71,13 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }
         contactPhone: sponsor.contact_phone || '',
         tierId: sponsor.tier_id || '',
         socialLinks: sponsor.social_links || {
-          twitter: '',
           linkedin: '',
-          facebook: '',
+          twitter: '',
+          youtube: '',
+          tiktok: '',
           instagram: '',
+          facebook: '',
+          other: '',
         },
       });
       setExistingLogoKey(sponsor.logo_url);
@@ -244,10 +250,13 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }
       contactPhone: '',
       tierId: '',
       socialLinks: {
-        twitter: '',
         linkedin: '',
-        facebook: '',
+        twitter: '',
+        youtube: '',
+        tiktok: '',
         instagram: '',
+        facebook: '',
+        other: '',
       },
     });
     setLogoFile(null);
@@ -439,6 +448,16 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }
         <Grid gutter={isMobile ? "xs" : "md"}>
           <Grid.Col span={isMobile ? 12 : 6}>
             <TextInput
+              label="LinkedIn"
+              placeholder="https://linkedin.com/company/name"
+              value={formData.socialLinks.linkedin}
+              onChange={(e) => handleSocialLinkChange('linkedin', e.target.value)}
+              error={errors.social_linkedin}
+              classNames={{ input: styles.formInput }}
+            />
+          </Grid.Col>
+          <Grid.Col span={isMobile ? 12 : 6}>
+            <TextInput
               label="Twitter"
               placeholder="https://twitter.com/username"
               value={formData.socialLinks.twitter}
@@ -449,11 +468,31 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }
           </Grid.Col>
           <Grid.Col span={isMobile ? 12 : 6}>
             <TextInput
-              label="LinkedIn"
-              placeholder="https://linkedin.com/company/name"
-              value={formData.socialLinks.linkedin}
-              onChange={(e) => handleSocialLinkChange('linkedin', e.target.value)}
-              error={errors.social_linkedin}
+              label="YouTube"
+              placeholder="https://youtube.com/@channel"
+              value={formData.socialLinks.youtube}
+              onChange={(e) => handleSocialLinkChange('youtube', e.target.value)}
+              error={errors.social_youtube}
+              classNames={{ input: styles.formInput }}
+            />
+          </Grid.Col>
+          <Grid.Col span={isMobile ? 12 : 6}>
+            <TextInput
+              label="TikTok"
+              placeholder="https://tiktok.com/@username"
+              value={formData.socialLinks.tiktok}
+              onChange={(e) => handleSocialLinkChange('tiktok', e.target.value)}
+              error={errors.social_tiktok}
+              classNames={{ input: styles.formInput }}
+            />
+          </Grid.Col>
+          <Grid.Col span={isMobile ? 12 : 6}>
+            <TextInput
+              label="Instagram"
+              placeholder="https://instagram.com/username"
+              value={formData.socialLinks.instagram}
+              onChange={(e) => handleSocialLinkChange('instagram', e.target.value)}
+              error={errors.social_instagram}
               classNames={{ input: styles.formInput }}
             />
           </Grid.Col>
@@ -469,11 +508,11 @@ const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }
           </Grid.Col>
           <Grid.Col span={isMobile ? 12 : 6}>
             <TextInput
-              label="Instagram"
-              placeholder="https://instagram.com/username"
-              value={formData.socialLinks.instagram}
-              onChange={(e) => handleSocialLinkChange('instagram', e.target.value)}
-              error={errors.social_instagram}
+              label="Other"
+              placeholder="https://example.com/profile"
+              value={formData.socialLinks.other}
+              onChange={(e) => handleSocialLinkChange('other', e.target.value)}
+              error={errors.social_other}
               classNames={{ input: styles.formInput }}
             />
           </Grid.Col>
