@@ -39,7 +39,7 @@ class Sponsor(db.Model):
     # Social media links (optional)
     social_links = db.Column(
         db.JSON,
-        default={
+        default=lambda: {
             "twitter": None,
             "linkedin": None,
             "facebook": None,
@@ -99,11 +99,17 @@ class Sponsor(db.Model):
         """Update social media links"""
         valid_platforms = {"twitter", "linkedin", "facebook", "instagram"}
 
-        social = self.social_links or {}
+        # Create a new dict to ensure SQLAlchemy detects the change
+        social = dict(self.social_links or {})
         for platform, url in kwargs.items():
             if platform in valid_platforms:
                 social[platform] = url
+        
+        # Force SQLAlchemy to detect the change by reassigning
         self.social_links = social
+        # Mark the field as modified explicitly
+        from sqlalchemy.orm.attributes import flag_modified
+        flag_modified(self, "social_links")
 
     @classmethod
     def get_active_by_event(cls, event_id):
