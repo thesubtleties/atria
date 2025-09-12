@@ -292,6 +292,17 @@
   padding: 0;
 }
 
+/* Limited vertical space (laptops like MacBook Air) */
+@media (min-width: 769px) and (max-height: 1050px) {
+  .headerSection {
+    display: none; /* Remove header entirely to save vertical space */
+  }
+  
+  .contentWrapper {
+    padding-top: 1rem; /* Reduce top padding since header is gone */
+  }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .headerSection {
