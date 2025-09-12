@@ -10,10 +10,12 @@ import {
   selectSidebarExpanded,
   selectCurrentEventId,
   selectActiveChatRoomId,
+  selectMobileActiveThreadId,
   toggleSidebar,
   setCurrentEventId,
   setActiveChatRoomId,
-  setActiveTab
+  setActiveTab,
+  closeThreadMobile
 } from '../../../../app/store/chatSlice';
 import MobileChatSidebar from '../MobileChatSidebar';
 import MobileChatWindow from '../MobileChatWindow';
@@ -33,6 +35,7 @@ function MobileChatContainer() {
   const sidebarExpanded = useSelector(selectSidebarExpanded);
   const currentEventId = useSelector(selectCurrentEventId);
   const activeChatRoomId = useSelector(selectActiveChatRoomId);
+  const mobileActiveThreadId = useSelector(selectMobileActiveThreadId);
   const [activeThreadId, setActiveThreadId] = useState(null);
   const [activeRoom, setActiveRoom] = useState(null);
   
@@ -42,6 +45,20 @@ function MobileChatContainer() {
   
   // Parse sessionId to ensure it's a number (only use sessionId from URL, not lastSessionId)
   const currentSessionId = sessionIdFromUrl ? parseInt(sessionIdFromUrl, 10) : null;
+
+  // Respond to Redux state changes for mobile thread opening
+  useEffect(() => {
+    if (mobileActiveThreadId && mobileActiveThreadId !== activeThreadId) {
+      setActiveThreadId(mobileActiveThreadId);
+      setActiveRoom(null);
+      // Switch to appropriate tab based on context
+      if (currentEventId) {
+        dispatch(setActiveTab('event'));
+      } else {
+        dispatch(setActiveTab('general'));
+      }
+    }
+  }, [mobileActiveThreadId, activeThreadId, currentEventId, dispatch]);
 
   // Update current event ID and handle tab switching
   useEffect(() => {
@@ -120,6 +137,7 @@ function MobileChatContainer() {
     setActiveThreadId(null);
     setActiveRoom(null);
     dispatch(setActiveChatRoomId(null));
+    dispatch(closeThreadMobile());
     // Show thread list when closing a chat
     if (!sidebarExpanded) {
       dispatch(toggleSidebar());

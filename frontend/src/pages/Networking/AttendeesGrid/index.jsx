@@ -5,6 +5,7 @@ import {
   Center,
   Text,
 } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import { LoadingSpinner } from '../../../shared/components/loading';
 import { IconSearch, IconFilter } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
@@ -18,8 +19,7 @@ import {
 } from '@/app/features/networking/api';
 import { PersonCard } from '@/shared/components/PersonCard';
 import { IcebreakerModal } from '@/shared/components/IcebreakerModal';
-import { useDispatch } from 'react-redux';
-import { openThread } from '@/app/store/chatSlice';
+import { useOpenThread } from '@/shared/hooks/useOpenThread';
 import styles from './styles/index.module.css';
 
 export function AttendeesGrid({ eventId }) {
@@ -30,6 +30,7 @@ export function AttendeesGrid({ eventId }) {
   const [hasMore, setHasMore] = useState(true);
   const [modalOpened, setModalOpened] = useState(false);
   const [selectedAttendee, setSelectedAttendee] = useState(null);
+  const isMobile = useMediaQuery('(max-width: 768px)');
   const perPage = 50;
 
   // Fetch event data for icebreakers
@@ -145,7 +146,7 @@ export function AttendeesGrid({ eventId }) {
   const [createConnection, { isLoading: isCreatingConnection }] =
     useCreateConnectionMutation();
   const [createThread] = useCreateDirectMessageThreadMutation();
-  const dispatch = useDispatch();
+  const openThread = useOpenThread();
 
   const handleConnect = (attendee) => {
     setSelectedAttendee({
@@ -192,16 +193,17 @@ export function AttendeesGrid({ eventId }) {
       // Create or get thread with this user
       const result = await createThread(attendee.user_id).unwrap();
 
-      // Open the thread in the chat sidebar
-      dispatch(openThread(result.thread_id || result.id));
+      // Open the thread using unified hook (works for both desktop and mobile)
+      openThread(result.thread_id || result.id);
 
-      // Optionally navigate to a dedicated messaging page
-      // For now, just open the sidebar which should show the conversation
-      notifications.show({
-        title: 'Message opened',
-        message: `Chat with ${attendee.first_name} is ready`,
-        color: 'blue',
-      });
+      // Only show notification on desktop - mobile makes it obvious with full screen
+      if (!isMobile) {
+        notifications.show({
+          title: 'Message opened',
+          message: `Chat with ${attendee.first_name} is ready`,
+          color: 'blue',
+        });
+      }
     } catch (error) {
       console.error('Failed to create/get thread:', error);
       notifications.show({

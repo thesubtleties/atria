@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Avatar } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
+import { useMediaQuery } from '@mantine/hooks';
 import { useCreateDirectMessageThreadMutation } from '@/app/features/networking/api';
-import { useDispatch } from 'react-redux';
-import { openThread } from '@/app/store/chatSlice';
+import { useOpenThread } from '@/shared/hooks/useOpenThread';
 import { notifications } from '@mantine/notifications';
 import { IconMessageCircle } from '@tabler/icons-react';
 import { Button } from '@/shared/components/buttons';
@@ -11,7 +11,8 @@ import styles from './styles/index.module.css';
 
 export const ConnectionsSection = ({ connections }) => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const openThread = useOpenThread();
+  const isMobile = useMediaQuery('(max-width: 768px)');
   const [createThread, { isLoading: isCreatingThread }] = useCreateDirectMessageThreadMutation();
   const [messagingUserId, setMessagingUserId] = useState(null);
 
@@ -42,12 +43,15 @@ export const ConnectionsSection = ({ connections }) => {
       const threadId = result.thread_id || result.id || result.data?.thread_id || result.data?.id;
       
       if (threadId) {
-        dispatch(openThread(threadId));
-        notifications.show({
-          title: 'Success',
-          message: `Started conversation with ${userName}`,
-          color: 'green',
-        });
+        openThread(threadId);
+        // Only show notification on desktop - mobile makes it obvious with full screen
+        if (!isMobile) {
+          notifications.show({
+            title: 'Success',
+            message: `Started conversation with ${userName}`,
+            color: 'green',
+          });
+        }
       } else {
         throw new Error('Failed to get thread ID');
       }

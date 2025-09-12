@@ -1,17 +1,19 @@
 import { useState } from 'react';
 import { Avatar, Group, Text, Badge, Button, ActionIcon } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import { IconBrandLinkedin, IconBrandTwitter, IconWorld, IconMessageCircle } from '@tabler/icons-react';
 import { useCreateDirectMessageThreadMutation } from '@/app/features/networking/api';
-import { useDispatch, useSelector } from 'react-redux';
-import { openThread } from '@/app/store/chatSlice';
+import { useSelector } from 'react-redux';
+import { useOpenThread } from '@/shared/hooks/useOpenThread';
 import { notifications } from '@mantine/notifications';
 import { useNavigate } from 'react-router-dom';
 import styles from './styles/index.module.css';
 
 export function ConnectionCard({ connection }) {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const currentUser = useSelector((state) => state.auth.user);
+  const openThread = useOpenThread();
+  const isMobile = useMediaQuery('(max-width: 768px)');
   const [createThread, { isLoading: isCreatingThread }] = useCreateDirectMessageThreadMutation();
   const [isMessaging, setIsMessaging] = useState(false);
 
@@ -30,13 +32,16 @@ export function ConnectionCard({ connection }) {
       const threadId = result.thread_id || result.id || result.data?.thread_id || result.data?.id;
       
       if (threadId) {
-        dispatch(openThread(threadId));
+        openThread(threadId);
         
-        notifications.show({
-          title: 'Success',
-          message: `Started conversation with ${otherUser.full_name}`,
-          color: 'green',
-        });
+        // Only show notification on desktop - mobile makes it obvious with full screen
+        if (!isMobile) {
+          notifications.show({
+            title: 'Success',
+            message: `Started conversation with ${otherUser.full_name}`,
+            color: 'green',
+          });
+        }
       } else {
         console.error('No thread ID in result:', result);
         throw new Error('Failed to get thread ID');

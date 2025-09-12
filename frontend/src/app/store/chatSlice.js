@@ -10,6 +10,7 @@ const initialState = {
   activeTab: 'general', // 'general', 'event', 'chat', 'session'
   activeChatRoomId: null, // Currently open chat room ID
   lastSessionId: null, // Remember last viewed session
+  mobileActiveThreadId: null, // Active thread ID for mobile view
 };
 
 const chatSlice = createSlice({
@@ -83,6 +84,16 @@ const chatSlice = createSlice({
     setLastSessionId: (state, action) => {
       state.lastSessionId = action.payload;
     },
+    // Mobile-specific action for opening threads
+    openThreadMobile: (state, action) => {
+      const threadId = action.payload;
+      state.mobileActiveThreadId = threadId;
+      // Automatically expand sidebar when opening a thread on mobile
+      state.sidebarExpanded = true;
+    },
+    closeThreadMobile: (state) => {
+      state.mobileActiveThreadId = null;
+    },
   },
 });
 
@@ -96,6 +107,8 @@ export const {
   setActiveTab,
   setActiveChatRoomId,
   setLastSessionId,
+  openThreadMobile,
+  closeThreadMobile,
 } = chatSlice.actions;
 
 // Selectors
@@ -106,5 +119,6 @@ export const selectCurrentEventId = (state) => state.chat.currentEventId;
 export const selectActiveTab = (state) => state.chat.activeTab;
 export const selectActiveChatRoomId = (state) => state.chat.activeChatRoomId;
 export const selectLastSessionId = (state) => state.chat.lastSessionId;
+export const selectMobileActiveThreadId = (state) => state.chat.mobileActiveThreadId;
 
 export default chatSlice.reducer;
