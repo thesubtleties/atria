@@ -74,7 +74,7 @@ class SponsorCreateSchema(ma.Schema):
         if not value:
             return
 
-        valid_platforms = {"twitter", "linkedin", "facebook", "instagram"}
+        valid_platforms = {"twitter", "linkedin", "facebook", "instagram", "youtube", "tiktok", "other"}
         for platform, url in value.items():
             if platform not in valid_platforms:
                 raise ValidationError(f"Invalid social platform: {platform}")
@@ -122,7 +122,7 @@ class SponsorUpdateSchema(ma.Schema):
         if not value:
             return
 
-        valid_platforms = {"twitter", "linkedin", "facebook", "instagram"}
+        valid_platforms = {"twitter", "linkedin", "facebook", "instagram", "youtube", "tiktok", "other"}
         for platform, url in value.items():
             if platform not in valid_platforms:
                 raise ValidationError(f"Invalid social platform: {platform}")
@@ -141,6 +141,7 @@ class SponsorListSchema(ma.Schema):
 
     id = ma.Integer()
     name = ma.String()
+    description = ma.String()  # Include description for display
     logo_url = ma.String()
     website_url = ma.String()
     tier_id = ma.String()
@@ -150,6 +151,11 @@ class SponsorListSchema(ma.Schema):
     display_order = ma.Float()
     featured = ma.Boolean()
     is_active = ma.Boolean()
+    social_links = ma.Dict()  # Include social links in listing
+    # Contact info (for admin view)
+    contact_name = ma.String()
+    contact_email = ma.String()
+    contact_phone = ma.String()
 
 
 class SponsorTierSchema(ma.Schema):

@@ -28,6 +28,9 @@ export const sponsorFieldSchemas = {
     linkedin: z.string().url('Invalid LinkedIn URL').optional().or(z.literal('')),
     facebook: z.string().url('Invalid Facebook URL').optional().or(z.literal('')),
     instagram: z.string().url('Invalid Instagram URL').optional().or(z.literal('')),
+    youtube: z.string().url('Invalid YouTube URL').optional().or(z.literal('')),
+    tiktok: z.string().url('Invalid TikTok URL').optional().or(z.literal('')),
+    other: z.string().url('Invalid URL').optional().or(z.literal('')),
   }).optional(),
 };
 

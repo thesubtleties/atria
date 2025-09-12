@@ -167,10 +167,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-md);
+  gap: var(--space-xs); /* Reduced gap */
   margin-top: auto;
   padding-top: var(--space-md);
   border-top: 1px solid rgba(139, 92, 246, 0.06);
+  flex-wrap: nowrap;
 }
 
 .websiteLink {
@@ -178,12 +179,17 @@
   align-items: center;
   gap: var(--space-xs);
   color: var(--color-primary) !important;
-  font-size: clamp(var(--text-xs), 2vw, var(--text-sm)) !important;
+  font-size: clamp(0.7rem, 1.5vw, 0.875rem) !important; /* Smaller text */
   font-weight: 500 !important;
   text-decoration: none !important;
   transition: all 0.2s ease;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
   letter-spacing: 0.01em;
+  flex-shrink: 1; /* Allow shrinking */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 
 .websiteLink:hover {
@@ -193,19 +199,119 @@
 
 .socialLinks {
   display: flex;
-  gap: var(--space-xs);
+  gap: 0;
+  align-items: center;
+  flex-wrap: nowrap;
+  flex-shrink: 0; /* Don't allow the container to shrink */
 }
 
+/* Base social icon style */
 .socialIcon {
-  color: var(--color-text-muted) !important;
-  transition: all 0.2s ease;
+  composes: social-link-base from '../../../styles/design-tokens.css' !important;
+}
+
+/* Override Mantine's ActionIcon hover background and size */
+.socialIcon:global(.mantine-ActionIcon-root) {
+  background: transparent !important;
+  transition: all 0.2s ease !important;
+  /* Default size for fewer icons */
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  min-height: 32px !important;
+  flex-shrink: 0;
+}
+
+.socialIcon:global(.mantine-ActionIcon-root:hover) {
+  background: transparent !important;
+  transform: translateY(-2px) scale(1.05) !important;
+}
+
+.socialIcon:global(.mantine-ActionIcon-root svg) {
+  /* Default icon size */
+  width: 20px !important;
+  height: 20px !important;
+}
+
+/* Compact mode when there are many social links (5+) */
+.socialLinksCompact .socialIcon:global(.mantine-ActionIcon-root) {
+  width: 26px !important;
+  height: 26px !important;
+  min-width: 26px !important;
+  min-height: 26px !important;
+}
+
+.socialLinksCompact .socialIcon:global(.mantine-ActionIcon-root:hover) {
+  transform: translateY(-1px) scale(1.05) !important;
+}
+
+.socialLinksCompact .socialIcon:global(.mantine-ActionIcon-root svg) {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+/* Platform-specific styles using design tokens */
+.socialIconLinkedin {
+  composes: social-link-linkedin from '../../../styles/design-tokens.css' !important;
+}
+
+.socialIconLinkedin:global(.mantine-ActionIcon-root:hover) {
+  color: var(--social-linkedin) !important;
   background: transparent !important;
 }
 
-.socialIcon:hover {
+.socialIconTwitter {
+  composes: social-link-twitter from '../../../styles/design-tokens.css';
+}
+
+.socialIconTwitter:global(.mantine-ActionIcon-root:hover) {
+  color: var(--social-twitter) !important;
+  background: transparent !important;
+}
+
+.socialIconFacebook {
+  composes: social-link-facebook from '../../../styles/design-tokens.css';
+}
+
+.socialIconFacebook:global(.mantine-ActionIcon-root:hover) {
+  color: var(--social-facebook) !important;
+  background: transparent !important;
+}
+
+.socialIconInstagram {
+  composes: social-link-instagram from '../../../styles/design-tokens.css';
+}
+
+.socialIconInstagram:global(.mantine-ActionIcon-root:hover) {
+  color: var(--social-instagram) !important;
+  background: transparent !important;
+}
+
+.socialIconYoutube {
+  composes: social-link-youtube from '../../../styles/design-tokens.css';
+}
+
+.socialIconYoutube:global(.mantine-ActionIcon-root:hover) {
+  color: var(--social-youtube) !important;
+  background: transparent !important;
+}
+
+.socialIconTiktok {
+  composes: social-link-tiktok from '../../../styles/design-tokens.css';
+}
+
+.socialIconTiktok:global(.mantine-ActionIcon-root:hover) {
+  color: var(--social-tiktok) !important;
+  background: transparent !important;
+}
+
+.socialIconOther {
+  composes: social-link-other from '../../../styles/design-tokens.css';
+}
+
+.socialIconOther:global(.mantine-ActionIcon-root:hover) {
   color: var(--color-primary) !important;
-  background: rgba(139, 92, 246, 0.08) !important;
-  transform: translateY(-2px);
+  background: transparent !important;
 }
 
 /* Responsive design */
