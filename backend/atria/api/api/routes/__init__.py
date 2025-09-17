@@ -17,6 +17,7 @@ from .sponsors import blp as sponsors_blp
 from .uploads import blp as uploads_blp
 from .invitations import blp as invitations_blp
 from .moderation import blp as moderation_blp
+from .health import blp as health_blp
 
 __all__ = [
     # User blueprints
@@ -47,11 +48,16 @@ __all__ = [
     "invitations_blp",
     # Moderation blueprint
     "moderation_blp",
+    # Health check blueprint
+    "health_blp",
 ]
 
 
 def register_blueprints(api):
     print("\n\nRegistering blueprints\n\n")
+    # Health (register first for monitoring)
+    api.register_blueprint(health_blp)
+
     # Auth
     api.register_blueprint(auth_blp)
 
