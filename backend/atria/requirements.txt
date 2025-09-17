@@ -39,5 +39,9 @@ Pillow
 # Testing
 tox
 
+# Redis support for Socket.IO clustering and caching
+redis>=4.5.0
+hiredis>=2.2.0  # C parser for better performance
+
 # Not currently using
 # celery[redis]>=5.0.0

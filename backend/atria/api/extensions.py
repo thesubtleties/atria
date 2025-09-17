@@ -16,6 +16,10 @@ from datetime import time
 from flask_socketio import SocketIO
 
 
+# Redis clients (initialized in app factory)
+redis_client = None  # For Socket.IO pub/sub
+cache_redis = None   # For application caching (separate DB)
+
 # serialize time objects
 # class CustomJSONProvider(JSONProvider):
 #     def default(self, obj):

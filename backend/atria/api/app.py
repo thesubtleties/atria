@@ -37,10 +37,34 @@ def create_app(testing=False):
 
 
 def configure_extensions(app):
-    """Configure flask extensions"""
+    """Configure flask extensions with Redis support"""
     db.init_app(app)
     jwt.init_app(app)
     migrate.init_app(app, db)
+
+    # Initialize Redis if configured
+    import redis as redis_lib
+    from api import extensions
+    redis_url = app.config.get("REDIS_URL")
+
+    if redis_url:
+        try:
+            # Socket.IO Redis client
+            extensions.redis_client = redis_lib.from_url(redis_url, decode_responses=True)
+            extensions.redis_client.ping()
+
+            # Separate cache client (different DB)
+            cache_url = redis_url.rsplit('/', 1)[0] + '/2'  # Use DB 2 for cache
+            extensions.cache_redis = redis_lib.from_url(cache_url, decode_responses=True)
+            extensions.cache_redis.ping()
+
+            app.logger.info("✅ Redis connected for Socket.IO and caching")
+        except redis_lib.ConnectionError as e:
+            app.logger.warning(f"⚠️ Redis not available ({e}) - falling back to in-memory")
+            extensions.redis_client = None
+            extensions.cache_redis = None
+    else:
+        app.logger.info("ℹ️ Redis not configured - using in-memory mode")
 
     # Configure CORS based on environment
     flask_env = os.getenv("FLASK_ENV", "production")
@@ -58,15 +82,27 @@ def configure_extensions(app):
             methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
             allow_headers=["Content-Type", "Authorization"],
         )
-        socketio.init_app(
-            app,
-            cors_allowed_origins=[
+        # Configure Socket.IO with conditional Redis adapter
+        socketio_kwargs = {
+            "async_mode": app.config.get("SOCKETIO_ASYNC_MODE", "eventlet"),
+            "cors_allowed_origins": [
                 "http://localhost:3000",
                 "http://localhost:5173",
                 "http://localhost:8080",
                 "http://100.67.207.5:5173",
             ],
-        )
+            "logger": app.config.get("SOCKETIO_LOGGER", False),
+            "engineio_logger": app.config.get("SOCKETIO_ENGINEIO_LOGGER", False),
+        }
+
+        if extensions.redis_client and app.config.get("SOCKETIO_REDIS_URL"):
+            socketio_kwargs["message_queue"] = app.config["SOCKETIO_REDIS_URL"]
+            socketio_kwargs["channel"] = "atria-socketio"
+            app.logger.info("🔄 Socket.IO using Redis adapter (clustering enabled)")
+        else:
+            app.logger.warning("⚠️ Socket.IO using in-memory adapter (no clustering)")
+
+        socketio.init_app(app, **socketio_kwargs)
     else:
         # Production: Only allow production domain with credentials
         CORS(
@@ -76,13 +112,25 @@ def configure_extensions(app):
             methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
             allow_headers=["Content-Type", "Authorization"],
         )
-        socketio.init_app(
-            app,
-            cors_allowed_origins=[
+        # Configure Socket.IO with conditional Redis adapter
+        socketio_kwargs = {
+            "async_mode": app.config.get("SOCKETIO_ASYNC_MODE", "eventlet"),
+            "cors_allowed_origins": [
                 "https://atria.gg",
                 "https://www.atria.gg",
             ],
-        )
+            "logger": app.config.get("SOCKETIO_LOGGER", False),
+            "engineio_logger": app.config.get("SOCKETIO_ENGINEIO_LOGGER", False),
+        }
+
+        if extensions.redis_client and app.config.get("SOCKETIO_REDIS_URL"):
+            socketio_kwargs["message_queue"] = app.config["SOCKETIO_REDIS_URL"]
+            socketio_kwargs["channel"] = "atria-socketio"
+            app.logger.info("🔄 Socket.IO using Redis adapter (clustering enabled)")
+        else:
+            app.logger.warning("⚠️ Socket.IO using in-memory adapter (no clustering)")
+
+        socketio.init_app(app, **socketio_kwargs)
 
     from api.api.sockets import register_socket_handlers
 
