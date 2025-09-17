@@ -139,11 +139,21 @@ except Exception as e:
 END
 
 
-echo "[$(date)] Starting Gunicorn server..."
+# Determine worker count based on Redis availability
+if [ -n "$REDIS_URL" ]; then
+    WORKERS=${GUNICORN_WORKERS:-4}
+    echo "[$(date)] 🔄 Redis detected - using $WORKERS workers for clustering"
+else
+    WORKERS=1
+    echo "[$(date)] ⚠️ No Redis - using single worker (no clustering)"
+fi
+
+echo "[$(date)] Starting Gunicorn server with $WORKERS workers..."
 exec python -u -m gunicorn "api.wsgi:app" \
     --worker-class eventlet \
     --bind 0.0.0.0:5000 \
-    --workers 1 \
+    --workers $WORKERS \
+    --worker-connections 1000 \
     --log-level ${LOG_LEVEL:-warning} \
     --access-logfile - \
     --error-logfile - \

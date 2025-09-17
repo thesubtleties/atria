@@ -87,6 +87,21 @@ MAIL_DEFAULT_SENDER = os.getenv(
 )
 FRONTEND_URL = os.getenv("FRONTEND_URL", "https://atria.gg")
 
+# Redis Configuration
+REDIS_URL = os.getenv("REDIS_URL", None)  # None = graceful degradation
+SOCKETIO_REDIS_URL = os.getenv("SOCKETIO_REDIS_URL", REDIS_URL)
+
+# Cache Configuration (for future use)
+CACHE_TYPE = "redis" if REDIS_URL else "simple"
+CACHE_REDIS_URL = REDIS_URL
+CACHE_DEFAULT_TIMEOUT = 300  # 5 minutes
+CACHE_KEY_PREFIX = "atria_cache_"
+
+# Socket.IO Configuration
+SOCKETIO_ASYNC_MODE = "eventlet"
+SOCKETIO_LOGGER = ENV == "development"
+SOCKETIO_ENGINEIO_LOGGER = False
+
 # Celery settings (for future use)
 USE_CELERY = os.getenv("USE_CELERY", "false").lower() == "true"
 CELERY_BROKER_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
