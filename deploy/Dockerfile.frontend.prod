@@ -13,18 +13,32 @@ COPY frontend/ .
 ENV NODE_ENV=production
 RUN npm run build
 
-# Serve stage
-FROM node:20-alpine
+# Serve stage - Using nginx for much better performance
+FROM nginx:alpine
 
-WORKDIR /app
+# Remove default nginx config
+RUN rm -rf /etc/nginx/conf.d/*
 
-# Install serve globally
-RUN npm install -g serve
+# Copy custom nginx config
+COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
 
 # Copy built files from builder
-COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Create a non-root user to run nginx
+RUN adduser -D -s /bin/sh nginx-user && \
+    chown -R nginx-user:nginx-user /usr/share/nginx/html && \
+    chown -R nginx-user:nginx-user /var/cache/nginx && \
+    chown -R nginx-user:nginx-user /var/log/nginx && \
+    touch /var/run/nginx.pid && \
+    chown nginx-user:nginx-user /var/run/nginx.pid
+
+# Update nginx config to not run as daemon and use proper user
+RUN echo 'user nginx-user;' > /tmp/nginx.conf && \
+    cat /etc/nginx/nginx.conf | grep -v '^user' >> /tmp/nginx.conf && \
+    mv /tmp/nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 80
 
-# Serve the built files on port 80
-CMD ["serve", "-s", "dist", "-l", "80"]
+# Run nginx in foreground
+CMD ["nginx", "-g", "daemon off;"]
