@@ -1,0 +1,157 @@
+version: '3.8'
+
+services:
+  # Traefik reverse proxy (matching k3s environment)
+  traefik:
+    container_name: atria-traefik-dev
+    image: traefik:v3.0
+    command:
+      - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --log.level=INFO
+      - --accesslog=true
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"  # Traefik dashboard
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - default
+
+  # Redis for Socket.IO clustering and future caching
+  redis:
+    container_name: atria-redis-dev
+    image: redis:7-alpine
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru --save 900 1 --save 300 10
+    volumes:
+      - redis_data_dev:/data
+    ports:
+      - "6379:6379"  # Expose for debugging/monitoring
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - default
+
+  # Backend instance 1
+  backend-1:
+    container_name: atria-backend-1
+    build:
+      context: ./backend/atria
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend/atria:/app
+    env_file:
+      - ./backend/atria/.flaskenv
+      - .env.development
+    environment:
+      - SEED_DB=${SEED_DB:-true}  # Seed on first instance (can override with SEED_DB=false)
+      - REDIS_URL=redis://redis:6379/0
+      - SOCKETIO_REDIS_URL=redis://redis:6379/1
+      - GUNICORN_WORKERS=2
+      - INSTANCE_ID=backend-1  # For debugging
+    labels:
+      - traefik.enable=true
+      # Router for API and Socket.IO
+      - traefik.http.routers.backend-1.rule=Host(`localhost`) && (PathPrefix(`/api`) || PathPrefix(`/socket.io`))
+      - traefik.http.routers.backend-1.entrypoints=web
+      - traefik.http.routers.backend-1.service=backend-lb
+      # Service configuration
+      - traefik.http.services.backend-lb.loadbalancer.server.port=5000
+      - traefik.http.services.backend-lb.loadbalancer.sticky.cookie=true
+      - traefik.http.services.backend-lb.loadbalancer.sticky.cookie.name=atria-affinity
+      - traefik.http.services.backend-lb.loadbalancer.sticky.cookie.httpOnly=true
+      - traefik.http.services.backend-lb.loadbalancer.sticky.cookie.sameSite=lax
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - default
+
+  # Backend instance 2 (for testing clustering)
+  backend-2:
+    container_name: atria-backend-2
+    build:
+      context: ./backend/atria
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend/atria:/app
+    env_file:
+      - ./backend/atria/.flaskenv
+      - .env.development
+    environment:
+      - SEED_DB=false  # Don't seed from second instance
+      - REDIS_URL=redis://redis:6379/0
+      - SOCKETIO_REDIS_URL=redis://redis:6379/1
+      - GUNICORN_WORKERS=2
+      - INSTANCE_ID=backend-2  # For debugging
+    labels:
+      - traefik.enable=true
+      # Router for API and Socket.IO
+      - traefik.http.routers.backend-2.rule=Host(`localhost`) && (PathPrefix(`/api`) || PathPrefix(`/socket.io`))
+      - traefik.http.routers.backend-2.entrypoints=web
+      - traefik.http.routers.backend-2.service=backend-lb
+      # Share the same service as backend-1 for load balancing
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - default
+
+  # Frontend (Vite) - unchanged but points to Traefik
+  frontend-vite:
+    container_name: atria-client-vite-dev
+    image: node:20-alpine
+    working_dir: /app
+    command: sh -c "npm install && npm run dev -- --host"
+    ports:
+      - '5173:5173'
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost/api  # Through Traefik on port 80
+    networks:
+      - default
+    depends_on:
+      - backend-1
+      - backend-2
+      - traefik
+
+  # Database (unchanged)
+  db:
+    container_name: atria-db-dev
+    image: postgres:15-alpine
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    ports:
+      - '5432:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - default
+
+volumes:
+  postgres_data_dev:
+  redis_data_dev:
+
+networks:
+  default:
+    name: atria-dev-network
