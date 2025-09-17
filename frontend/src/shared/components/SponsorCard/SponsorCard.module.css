@@ -103,6 +103,8 @@
 }
 
 .logo {
+  width: 100%;
+  height: clamp(70px, 12vw, 100px);
   max-height: clamp(70px, 12vw, 100px);
   max-width: 85%;
   object-fit: contain;
