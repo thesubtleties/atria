@@ -110,6 +110,8 @@
   object-fit: contain;
   position: relative;
   z-index: 1;
+  flex-grow: 1 !important;
+  flex-shrink: 1 !important;
 }
 
 .logoPlaceholder {
