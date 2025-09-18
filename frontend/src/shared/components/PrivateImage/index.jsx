@@ -55,10 +55,6 @@ const PrivateImage = ({
       width={width}
       height={height}
       fit={fit}
-      style={{
-        objectFit: fit,
-        ...props.style
-      }}
       {...props}
     />
   );
