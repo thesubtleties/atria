@@ -29,7 +29,7 @@ class OrganizationService:
         # If user_id provided, verify membership
         if user_id:
             user = User.query.get_or_404(user_id)
-            if not org.has_user(user):
+            if not org.user_can_access(user):
                 raise ValueError("Not a member of this organization")
 
         return org
@@ -191,7 +191,7 @@ class OrganizationService:
         user = User.query.get_or_404(user_id)
 
         # Verify user is member
-        if not org.has_user(user):
+        if not org.user_can_access(user):
             raise ValueError("Not a member of this organization")
 
         # Build query
@@ -217,7 +217,7 @@ class OrganizationService:
         user = User.query.get_or_404(user_id)
 
         # Verify user is member
-        if not org.has_user(user):
+        if not org.user_can_access(user):
             raise ValueError("Not a member of this organization")
 
         # Build query with proper filtering

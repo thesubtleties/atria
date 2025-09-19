@@ -71,7 +71,7 @@ class OrganizationDetailSchema(OrganizationSchema):
         try:
             current_user_id = int(get_jwt_identity())
             user = User.query.get(current_user_id)
-            if user and obj.has_user(user):
+            if user and obj.user_can_access(user):
                 return obj.get_user_role(user).value
         except Exception:
             pass

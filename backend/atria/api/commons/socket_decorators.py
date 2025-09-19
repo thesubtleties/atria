@@ -66,7 +66,7 @@ def socket_event_member_required(f):
             disconnect()
             return
 
-        if not event.has_user(current_user):
+        if not event.user_can_access(current_user):
             emit("error", {"message": "Not authorized to access this event"})
             disconnect()
             return
@@ -110,7 +110,7 @@ def socket_chat_room_access_required(f):
             return
 
         event = Event.query.get(chat_room.event_id)
-        if not event.has_user(current_user):
+        if not event.user_can_access(current_user):
             emit(
                 "error", {"message": "Not authorized to access this chat room"}
             )
