@@ -73,8 +73,21 @@ class Organization(db.Model):
         return org_user.role if org_user else None
 
     def has_user(self, user) -> bool:
-        """Check if user is in organization"""
+        """Check if user has an explicit OrganizationUser record
+
+        This method only checks for actual organization membership.
+        For organizations, has_user() and user_can_access() are the same
+        since there's no implicit access like with events.
+        """
         return user in self.users
+
+    def user_can_access(self, user) -> bool:
+        """Check if user can access this organization
+
+        For organizations, this is the same as has_user().
+        Provided for API consistency with Event model.
+        """
+        return self.has_user(user)
 
     def get_users_by_role(self, role: OrganizationUserRole):
         """Get all users with specific role"""

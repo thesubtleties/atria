@@ -82,7 +82,7 @@ def org_member_required():
                     "message": f"Organization with id {org_id} not found"
                 }, 404
 
-            if not org.has_user(current_user):
+            if not org.user_can_access(current_user):
                 return {"message": "Not a member of this organization"}, 403
 
             return f(*args, **kwargs)
@@ -94,8 +94,8 @@ def org_member_required():
 
 def event_member_required():
     """Check if user has any role in event and is not banned
-    
-    #! NOTE: Organization owners automatically pass this check via Event.has_user()
+
+    #! NOTE: Organization owners automatically pass this check via Event.user_can_access()
     #! which grants them access to all events in their organization.
     """
 
@@ -115,7 +115,7 @@ def event_member_required():
                 return {"message": "No event ID found"}, 400
 
             event = Event.query.get_or_404(event_id)
-            if not event.has_user(current_user):
+            if not event.user_can_access(current_user):
                 return {"message": "Not authorized to access this event"}, 403
 
             # Check if user is banned from the event
@@ -136,8 +136,8 @@ def event_member_required():
 
 def event_member_or_admin_required():
     """Check if user has any role in event - admins/organizers can access even if banned
-    
-    #! NOTE: Organization owners automatically pass this check via Event.has_user()
+
+    #! NOTE: Organization owners automatically pass this check via Event.user_can_access()
     #! and are treated as ADMINs via Event.get_user_role().
     """
 
@@ -157,7 +157,7 @@ def event_member_or_admin_required():
                 return {"message": "No event ID found"}, 400
 
             event = Event.query.get_or_404(event_id)
-            if not event.has_user(current_user):
+            if not event.user_can_access(current_user):
                 return {"message": "Not authorized to access this event"}, 403
 
             # Get user's event role
@@ -245,8 +245,8 @@ def event_admin_required():
 
 def session_access_required():
     """Check if user has access to session's event
-    
-    #! NOTE: Organization owners have access via Event.has_user() which includes
+
+    #! NOTE: Organization owners have access via Event.user_can_access() which includes
     #! org owner checks.
     """
 
@@ -258,7 +258,7 @@ def session_access_required():
             session_id = kwargs.get("session_id")
 
             session = Session.query.get_or_404(session_id)
-            if not session.event.has_user(current_user):
+            if not session.event.user_can_access(current_user):
                 return {
                     "message": "Not authorized to access this session"
                 }, 403
@@ -272,8 +272,8 @@ def session_access_required():
 
 def chat_room_access_required():
     """Check if user has access to chat room's event
-    
-    #! NOTE: Organization owners have access via Event.has_user() which includes
+
+    #! NOTE: Organization owners have access via Event.user_can_access() which includes
     #! org owner checks.
     """
 
@@ -287,7 +287,7 @@ def chat_room_access_required():
             chat_room = ChatRoom.query.get_or_404(room_id)
             event = Event.query.get_or_404(chat_room.event_id)
 
-            if not event.has_user(current_user):
+            if not event.user_can_access(current_user):
                 return {
                     "message": "Not authorized to access this chat room"
                 }, 403

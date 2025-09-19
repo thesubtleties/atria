@@ -194,21 +194,32 @@ class Event(db.Model):
         )
 
     def has_user(self, user) -> bool:
-        """Check if user is in event
-        
-        #! SPECIAL CASE: Organization owners are considered to have access to all events
-        #! in their organization, even if not explicitly added as event members.
-        #! This grants org owners de facto admin privileges on all their org's events.
+        """Check if user has an explicit EventUser record for this event
+
+        This method only checks for actual event membership, not implicit access.
+        Use user_can_access() to check if a user has permission to access the event.
         """
-        # Check event membership first (faster)
-        if user in self.users:
+        return user in self.users
+
+    def user_can_access(self, user) -> bool:
+        """Check if user can access this event
+
+        Returns True if:
+        - User has an explicit EventUser record (is a member)
+        - User is an organization owner (implicit admin access)
+
+        Use this for permission checks and access control.
+        Use has_user() for membership management and duplicate prevention.
+        """
+        # Check explicit membership first (faster)
+        if self.has_user(user):
             return True
-        
+
         # Check if user is organization owner
         from api.models.enums import OrganizationUserRole
         if self.organization.get_user_role(user) == OrganizationUserRole.OWNER:
             return True
-        
+
         return False
 
     def get_user_role(self, user) -> EventUserRole:

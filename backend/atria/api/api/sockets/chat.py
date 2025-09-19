@@ -242,7 +242,7 @@ def handle_get_chat_rooms(user_id, data):
         emit("error", {"message": "Event not found"})
         return
 
-    if not event.has_user(current_user):
+    if not event.user_can_access(current_user):
         emit("error", {"message": "Not authorized to access this event"})
         return
 
@@ -279,7 +279,7 @@ def handle_join_session_chat_rooms(user_id, data):
     
     # Check if user is part of the event
     current_user = User.query.get(user_id)
-    if not session.event.has_user(current_user):
+    if not session.event.user_can_access(current_user):
         emit("error", {"message": "Not authorized to access this session"})
         return
     
