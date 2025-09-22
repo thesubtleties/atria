@@ -1,42 +1,142 @@
 import json
 import pytest
-from dotenv import load_dotenv
 
 from api.models import User
-from api.app import create_app
 from api.extensions import db as _db
 from pytest_factoryboy import register
-from tests.factories import UserFactory
 
+# Import all factories
+from tests.factories.user_factory import UserFactory, AdminUserFactory, SpeakerUserFactory
+from tests.factories.organization_factory import OrganizationFactory, OrganizationUserFactory
+from tests.factories.event_factory import EventFactory, EventUserFactory, VirtualEventFactory
+from tests.factories.session_factory import SessionFactory
 
+# Register factories with pytest-factoryboy
+# This makes them available as fixtures automatically
 register(UserFactory)
+register(AdminUserFactory)
+register(SpeakerUserFactory)
+register(OrganizationFactory)
+register(OrganizationUserFactory)
+register(EventFactory)
+register(EventUserFactory)
+register(VirtualEventFactory)
+register(SessionFactory)
 
 
 @pytest.fixture(scope="session")
 def app():
-    load_dotenv(".testenv")
+    """Create application for testing."""
+    import os
+
+    # Override ALL database-related environment variables
+    test_db_url = 'postgresql://test_user:test_pass@localhost:5433/test_atria'
+    os.environ['TEST_DATABASE_URL'] = test_db_url
+    os.environ['SQLALCHEMY_DATABASE_URI'] = test_db_url
+    os.environ['DATABASE_URL'] = test_db_url
+    os.environ['DATABASE_URI'] = test_db_url
+
+    # Override PostgreSQL env vars to ensure they don't interfere
+    os.environ['POSTGRES_USER'] = 'test_user'
+    os.environ['POSTGRES_PASSWORD'] = 'test_pass'
+    os.environ['POSTGRES_DB'] = 'test_atria'
+    os.environ['POSTGRES_PORT'] = '5433'
+
+    # Set testing environment
+    os.environ['FLASK_ENV'] = 'testing'
+    os.environ['TESTING'] = 'true'
+    os.environ['JWT_SECRET_KEY'] = 'test-secret-key'
+    os.environ['SECRET_KEY'] = 'test-secret-key'
+    os.environ['REDIS_URL'] = ''  # Disable Redis for tests
+
+    # Import create_app after setting environment
+    from api.app import create_app
+
+    # Create app with test config override
     app = create_app(testing=True)
+
+    # Force test configuration
+    app.config.from_object("api.config_test")
+
     return app
 
 
 @pytest.fixture
-def db(app):
-    _db.app = app
+def client(app):
+    """Test client for making requests."""
+    client = app.test_client()
 
+    # Add helper methods to the client
+    def clear_cookies():
+        """Clear all cookies from the test client."""
+        # Access the cookie jar if available
+        if hasattr(client, 'cookie_jar'):
+            client.cookie_jar.clear()
+
+    def get_cookies():
+        """Get all cookies as a dict."""
+        # Parse cookies from the cookie jar
+        cookies = {}
+        if hasattr(client, 'cookie_jar'):
+            for cookie in client.cookie_jar:
+                cookies[cookie.name] = cookie.value
+        return cookies
+
+    # Attach helper methods
+    client.clear_cookies = clear_cookies
+    client.get_cookies = get_cookies
+
+    return client
+
+
+@pytest.fixture(autouse=True)
+def clean_db(app):
+    """Automatically clean database between tests."""
     with app.app_context():
-        _db.create_all()
+        # Clean all data from tables before each test
+        # This ensures test isolation
+        _db.session.rollback()
 
-    yield _db
+        # Delete in correct order to respect foreign keys
+        from api.models import (
+            EventUser, OrganizationUser, Event,
+            Organization, User
+        )
+        from api.models.blocklist import TokenBlocklist
 
-    _db.session.close()
-    _db.drop_all()
+        # Delete tokens first (references users)
+        TokenBlocklist.query.delete()
+
+        # Then delete user associations
+        EventUser.query.delete()
+        OrganizationUser.query.delete()
+
+        # Then delete events and orgs
+        Event.query.delete()
+        Organization.query.delete()
+
+        # Finally delete users
+        User.query.delete()
+
+        _db.session.commit()
+        yield
+        # Rollback any uncommitted changes after test
+        _db.session.rollback()
+
+
+@pytest.fixture
+def db(app, clean_db):
+    """Database fixture that ensures we're in app context."""
+    with app.app_context():
+        yield _db
 
 
 @pytest.fixture
 def admin_user(db):
     user = User(
-        username='admin',
         email='admin@admin.com',
+        first_name='Admin',
+        last_name='User',
         password='admin'
     )
 
@@ -49,11 +149,11 @@ def admin_user(db):
 @pytest.fixture
 def admin_headers(admin_user, client):
     data = {
-        'username': admin_user.username,
+        'email': admin_user.email,
         'password': 'admin'
     }
     rep = client.post(
-        '/auth/login',
+        '/api/auth/login',
         data=json.dumps(data),
         headers={'content-type': 'application/json'}
     )
@@ -68,11 +168,11 @@ def admin_headers(admin_user, client):
 @pytest.fixture
 def admin_refresh_headers(admin_user, client):
     data = {
-        'username': admin_user.username,
+        'email': admin_user.email,
         'password': 'admin'
     }
     rep = client.post(
-        '/auth/login',
+        '/api/auth/login',
         data=json.dumps(data),
         headers={'content-type': 'application/json'}
     )
