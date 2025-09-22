@@ -14,9 +14,9 @@ services:
       - --log.level=INFO
       - --accesslog=true
     ports:
-      - "80:80"
-      - "443:443"
-      - "8080:8080"  # Traefik dashboard
+      - '80:80'
+      - '443:443'
+      - '8080:8080' # Traefik dashboard
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
@@ -30,7 +30,7 @@ services:
     volumes:
       - redis_data_dev:/data
     ports:
-      - "6379:6379"  # Expose for debugging/monitoring
+      - '6379:6379' # Expose for debugging/monitoring
     healthcheck:
       test: ['CMD', 'redis-cli', 'ping']
       interval: 5s
@@ -51,11 +51,11 @@ services:
       - ./backend/atria/.flaskenv
       - .env.development
     environment:
-      - SEED_DB=${SEED_DB:-true}  # Seed on first instance (can override with SEED_DB=false)
+      - SEED_DB=${SEED_DB:-true} # Seed on first instance (can override with SEED_DB=false)
       - REDIS_URL=redis://redis:6379/0
       - SOCKETIO_REDIS_URL=redis://redis:6379/1
       - GUNICORN_WORKERS=2
-      - INSTANCE_ID=backend-1  # For debugging
+      - INSTANCE_ID=backend-1 # For debugging
     labels:
       - traefik.enable=true
       # Router for API and Socket.IO
@@ -88,11 +88,11 @@ services:
       - ./backend/atria/.flaskenv
       - .env.development
     environment:
-      - SEED_DB=false  # Don't seed from second instance
+      - SEED_DB=false # Don't seed from second instance
       - REDIS_URL=redis://redis:6379/0
       - SOCKETIO_REDIS_URL=redis://redis:6379/1
       - GUNICORN_WORKERS=2
-      - INSTANCE_ID=backend-2  # For debugging
+      - INSTANCE_ID=backend-2 # For debugging
     labels:
       - traefik.enable=true
       # Router for API and Socket.IO
@@ -119,8 +119,11 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
+    env_file:
+      - .env.development  # Load variables from .env.development file
     environment:
-      - VITE_API_URL=http://localhost/api  # Through Traefik on port 80
+      - VITE_API_URL=http://localhost/api # Through Traefik on port 80
+      - VITE_FORCE_HTTP_FALLBACK=${VITE_FORCE_HTTP_FALLBACK:-false} # Pass through from .env.development
     networks:
       - default
     depends_on:
