@@ -34,6 +34,7 @@ class DirectMessageThreadSchema(ma.SQLAlchemyAutoSchema):
     # These are transient attributes set by the service layer
     shared_event_ids = ma.List(ma.Integer(), dump_only=True, required=False)
     other_user_in_event = ma.Boolean(dump_only=True, required=False)
+    is_new = ma.Boolean(dump_only=True, required=False)  # Set when thread is newly created
 
     def get_last_message(self, obj):
         message = (
