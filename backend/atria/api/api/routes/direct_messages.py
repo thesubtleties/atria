@@ -1,6 +1,6 @@
 # api/api/routes/direct_messages.py
 from flask.views import MethodView
-from flask_smorest import Blueprint
+from flask_smorest import Blueprint, abort
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask import request
 
@@ -43,6 +43,13 @@ class DirectMessageThreadList(MethodView):
         user_id = int(get_jwt_identity())
         # Get optional event_id from query params for event-specific enrichment
         event_id = request.args.get('event_id', type=int)
+
+        # TODO: Implement pagination - route claims to support it but doesn't
+        # Need to add:
+        # page = request.args.get('page', 1, type=int)
+        # per_page = request.args.get('per_page', 50, type=int)
+        # And update get_user_threads() to handle pagination
+
         return DirectMessageService.get_user_threads(
             user_id, DirectMessageThreadSchema(many=True), event_id=event_id
         )
@@ -90,11 +97,30 @@ class DirectMessageThreadList(MethodView):
                 from api.api.sockets.dm_notifications import emit_direct_message_thread_created
                 emit_direct_message_thread_created(thread, user_id, other_user_id)
 
-            # Format response using existing service method
-            thread_data = DirectMessageService.format_thread_for_response(thread, user_id)
-            thread_data["is_new"] = is_new
+            # Return the thread object directly - the schema will serialize it
+            # The DirectMessageThreadSchema will compute last_message, unread_count, etc.
+            # We can add is_new as a transient attribute for the schema to include
+            thread.is_new = is_new
 
-            return thread_data, 201
+            # Add shared_event_ids for the schema (similar to get_user_threads)
+            if event_id:
+                from api.models.event_user import EventUser
+                event_user = EventUser.query.filter_by(
+                    event_id=event_id, user_id=other_user_id
+                ).first()
+                if event_user:
+                    thread.shared_event_ids = [event_id]
+                    thread.other_user_in_event = True
+                else:
+                    thread.shared_event_ids = []
+                    thread.other_user_in_event = False
+            else:
+                # For global threads, get all shared events
+                shared_event_ids = DirectMessageService.get_shared_event_ids(user_id, other_user_id)
+                thread.shared_event_ids = shared_event_ids
+                thread.other_user_in_event = False  # Not relevant for global context
+
+            return thread, 201
 
         except ValueError as e:
             return {"message": str(e)}, 403
@@ -116,9 +142,20 @@ class DirectMessageThreadDetail(MethodView):
         user_id = int(get_jwt_identity())
 
         try:
-            return DirectMessageService.get_thread(thread_id, user_id)
+            thread = DirectMessageService.get_thread(thread_id, user_id)
+
+            # Add transient attributes for schema serialization
+            # Get the other user to find shared events
+            other_user_id = thread.user2_id if thread.user1_id == user_id else thread.user1_id
+
+            # Add shared events info
+            shared_event_ids = DirectMessageService.get_shared_event_ids(user_id, other_user_id)
+            thread.shared_event_ids = shared_event_ids
+            thread.other_user_in_event = False  # Not relevant without specific event context
+
+            return thread
         except ValueError as e:
-            return {"message": str(e)}, 403
+            abort(403, message=str(e))
 
 
 @blp.route("/direct-messages/threads/<int:thread_id>/messages")
