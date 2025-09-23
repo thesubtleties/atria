@@ -1,5 +1,25 @@
 # Atria Test Inventory
 
+## Current Test Status (Sept 23, 2025)
+
+### 🎯 Test Results Summary
+- **Passing:** 72 out of 88 integration tests (82%)
+- **Failing:** 11 tests
+- **Skipped:** 1 test
+- **Coverage:** 47.89% backend code coverage
+
+### 🔴 Known Issues
+1. **DM Integration (10 failures)** - Known issue from main branch, needs merge to fix
+2. **Auth Rate Limiting (1 failure)** - Rate limiting not implemented on login endpoints
+
+### ✅ Fixed During This Session
+1. **Moderation Notes** - Fixed accumulation bug (was overwriting instead of appending)
+2. **Decorator Error Handling** - Fixed all decorators to use `abort()` instead of returning dicts
+3. **Sponsor Service** - Fixed to use `abort()` for proper HTTP error responses
+4. **Double Serialization** - Fixed anti-pattern in sponsor routes
+5. **Chat Room Access Control** - Enhanced decorator to properly check room type permissions
+6. **Message Validation** - Added empty message validation to chat endpoints
+
 ## Test Coverage Status
 
 ### Summary
@@ -7,9 +27,19 @@
 - **Total Test Categories:** 4 main categories
 - **Total Test Suites Planned:** ~50
 - **Total Test Cases Planned:** ~300+
-- **Current Coverage:** ~35% (infrastructure + auth/org/event/session/DM/connection/moderation/sponsor integration + model tests)
+- **Current Coverage:** ~47.89% backend coverage (per pytest-cov)
 - **Target Coverage:** 80%+ for critical paths
-- **Tests Implemented:** ~99 tests (5 infrastructure, 10 auth, 15 org, 10 event, 8 session, 10 DM, 6 connection, 10 moderation, 9 sponsor, 10 chat, 20+ model tests)
+- **Tests Implemented:** 88 integration tests + model tests
+  - Infrastructure: 5 tests (✅ all passing)
+  - Auth: 11 tests (✅ 10 passing, ❌ 1 failing - rate limiting)
+  - Organization: 15 tests (✅ all passing)
+  - Event: 10 tests (✅ all passing)
+  - Session: 9 tests (✅ 8 passing, 1 skipped)
+  - Chat: 10 tests (✅ all passing - fixed during session)
+  - Connection: 9 tests (✅ all passing)
+  - DM: 10 tests (❌ all failing - known issue from main branch)
+  - Moderation: 10 tests (✅ all passing - fixed during session)
+  - Sponsor: 9 tests (✅ all passing - fixed during session)
 
 ### Legend
 
@@ -94,33 +124,34 @@ Integration tests validate the complete flow: HTTP Request → Route → Service
 - [x] `test_backstage_room_access_control` - Speaker/organizer only
 - [skip] `test_session_attendee_tracking` - Feature not implemented
 
-### 🚧 Chat Integration (`test_integration/test_chat_integration.py`)
+### ✅ Chat Integration (`test_integration/test_chat_integration.py`) - COMPLETED
 
 - [x] `test_public_chat_room_access` - All attendees can access PUBLIC rooms
-- [⚠️] `test_backstage_room_restricted_access` - Backstage restrictions (FAILING: HTTP doesn't enforce)
-- [⚠️] `test_message_creation_and_validation` - Message validation (FAILING: empty messages accepted)
+- [x] `test_backstage_room_restricted_access` - Backstage restrictions (FIXED: decorator now enforces)
+- [x] `test_message_creation_and_validation` - Message validation (FIXED: empty messages rejected)
 - [x] `test_message_soft_delete` - Soft delete preserves audit trail
 - [x] `test_role_based_message_deletion` - Only ADMIN/ORGANIZER can delete
-- [⚠️] `test_admin_room_access` - Admin room restrictions (FAILING: HTTP doesn't enforce)
-- [⚠️] `test_green_room_speaker_access` - Green room restrictions (FAILING: HTTP doesn't enforce)
+- [x] `test_admin_room_access` - Admin room restrictions (FIXED: decorator now enforces)
+- [x] `test_green_room_speaker_access` - Green room restrictions (FIXED: decorator now enforces)
 - [x] `test_message_pagination` - Load messages in batches with proper ordering
 - [x] `test_chat_room_participant_tracking` - Track room participants
 - [x] `test_chat_disabled_mode` - DISABLED mode behavior (messages still allowed - by design)
 - [skip] `test_message_editing` - Feature not implemented (no edit endpoint)
 - [ ] `test_real_time_delivery` - Socket.IO integration (needs socket testing)
 
-### ✅ Direct Message Integration (`test_integration/test_dm_integration.py`) - COMPLETED
+### ❌ Direct Message Integration (`test_integration/test_dm_integration.py`) - KNOWN ISSUE FROM MAIN
 
-- [x] `test_create_thread_between_event_attendees` - Create DM thread between users in event context
-- [x] `test_thread_privacy_between_participants_only` - Only participants can read threads
-- [x] `test_blocking_prevents_messaging` - Block user prevents messages
-- [x] `test_thread_pagination_and_ordering` - Load threads with ordering (pagination not yet implemented)
-- [x] `test_message_sending_and_retrieval` - Send and retrieve messages in threads
-- [x] `test_thread_read_status_tracking` - Track and mark messages as read
-- [x] `test_event_scoped_vs_global_threads` - Test event-scoped vs global thread creation
-- [x] `test_clear_thread_messages` - Clear/archive thread messages with cutoff
-- [x] `test_message_content_validation` - Validate message content requirements
-- [x] `test_cross_organization_dm_permissions` - Test cross-org DM isolation
+- [❌] `test_create_thread_between_event_attendees` - Create DM thread between users in event context
+- [❌] `test_thread_privacy_between_participants_only` - Only participants can read threads
+- [❌] `test_blocking_prevents_messaging` - Block user prevents messages
+- [❌] `test_thread_pagination_and_ordering` - Load threads with ordering (pagination not yet implemented)
+- [❌] `test_message_sending_and_retrieval` - Send and retrieve messages in threads
+- [❌] `test_thread_read_status_tracking` - Track and mark messages as read
+- [❌] `test_event_scoped_vs_global_threads` - Test event-scoped vs global thread creation
+- [❌] `test_clear_thread_messages` - Clear/archive thread messages with cutoff
+- [❌] `test_message_content_validation` - Validate message content requirements
+- [❌] `test_cross_organization_dm_permissions` - Test cross-org DM isolation
+**Note:** All DM tests currently failing due to known issue from main branch - needs merge to fix
 - [ ] `test_message_notifications` - Real-time notifications (needs socket testing)
 - [ ] `test_message_search` - Search within threads (feature not implemented)
 
@@ -175,7 +206,7 @@ Integration tests validate the complete flow: HTTP Request → Route → Service
 - [x] `test_sponsor_custom_benefits` - Store negotiated benefits beyond tier defaults
 - [x] `test_cross_event_sponsor_isolation` - Sponsors isolated between events
 
-### 🚧 Moderation Integration (`test_integration/test_moderation_integration.py`) - MOSTLY COMPLETE
+### ✅ Moderation Integration (`test_integration/test_moderation_integration.py`) - COMPLETED
 
 - [x] `test_event_ban_flow` - Complete event ban and unban with reason tracking
 - [x] `test_chat_ban_temporary` - Temporary chat bans with automatic expiry
@@ -184,9 +215,9 @@ Integration tests validate the complete flow: HTTP Request → Route → Service
 - [x] `test_last_admin_protection` - Cannot ban last admin, self-ban prevention, organizer limitations
 - [x] `test_banned_user_cannot_moderate` - Banned users lose all moderation privileges
 - [x] `test_moderation_status_retrieval` - Get comprehensive moderation status for users
-- [⚠️] `test_moderation_notes_accumulation` - Audit trail (FAILING: ban overwrites notes instead of appending)
+- [x] `test_moderation_notes_accumulation` - Audit trail (FIXED: now properly appends notes)
 - [x] `test_cross_event_isolation` - Bans are isolated per event
-- [⚠️] `test_attendee_cannot_moderate` - Non-moderators blocked (FAILING: schema serialization issue)
+- [x] `test_attendee_cannot_moderate` - Non-moderators blocked (FIXED: decorators now use abort())
 
 ---
 

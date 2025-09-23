@@ -798,13 +798,12 @@ class TestModerationIntegration:
             event_id=event.id, user_id=user.id
         ).first()
 
-        # TODO: BUG - The ban service overwrites moderation_notes instead of appending
-        # This test will fail until the service is fixed to append notes like chat_ban and unban do
+        # Fixed! The ban service now properly appends moderation notes
 
         # All notes should be present (checking for the actual format used by service)
         assert "Chat banned: Warning 1: Spamming chat" in event_user.moderation_notes
-        assert "Unbanned: Unbanned after discussion" in event_user.moderation_notes
-        assert "Final action: Multiple violations" in event_user.moderation_notes
+        assert "Chat unbanned: Unbanned after discussion" in event_user.moderation_notes
+        assert "Event banned: Final action: Multiple violations" in event_user.moderation_notes
 
     def test_cross_event_isolation(self, client, db):
         """Test that moderation actions are isolated per event.

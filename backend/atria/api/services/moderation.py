@@ -77,8 +77,14 @@ class ModerationService:
         target_event_user.banned_at = datetime.now(timezone.utc)
         target_event_user.banned_by = banned_by_id
         target_event_user.ban_reason = ban_data['reason']
+
+        # TODO: Migrate moderation_notes to JSON array structure for proper audit trail
+        # Should store: timestamp, action, moderator_id, moderator_name, reason, note
+        # This would allow better querying and display of moderation history
         if ban_data.get('moderation_notes'):
-            target_event_user.moderation_notes = ban_data['moderation_notes']
+            current_notes = target_event_user.moderation_notes or ""
+            ban_note = f"Event banned: {ban_data['moderation_notes']}"
+            target_event_user.moderation_notes = f"{current_notes}\n{ban_note}".strip()
         
         db.session.commit()
         return target_event_user

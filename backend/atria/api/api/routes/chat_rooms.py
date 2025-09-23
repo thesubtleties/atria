@@ -257,20 +257,26 @@ class ChatMessageList(MethodView):
         },
     )
     @jwt_required()
-    @chat_room_access_required()
+    @chat_room_access_required()  # Decorator now handles room type access checking
     def post(self, message_data, room_id):
         """Send chat message"""
         user_id = int(get_jwt_identity())
-        
-        # Check if user can send chat messages
+
+        # Validate message content is not empty first
+        if not message_data.get("content") or not message_data["content"].strip():
+            abort(400, message="Message content cannot be empty")
+
+        # Check if user can send chat messages (banned/chat-banned check)
         chat_room = ChatRoom.query.get_or_404(room_id)
         event_user = EventUser.query.filter_by(
             event_id=chat_room.event_id,
             user_id=user_id
         ).first()
-        
+
         if not event_user or not event_user.can_use_chat():
             abort(403, message="You are not allowed to send messages in this chat")
+
+        # Room type access is already checked by @chat_room_access_required decorator
 
         message = ChatMessage(
             room_id=room_id, user_id=user_id, content=message_data["content"]

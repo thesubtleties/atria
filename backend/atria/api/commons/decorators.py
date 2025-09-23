@@ -1,5 +1,6 @@
 from functools import wraps
 from flask_jwt_extended import get_jwt_identity
+from flask_smorest import abort
 from api.models import User, Organization, Event, Session, ChatRoom, EventUser
 from api.models.enums import EventUserRole, OrganizationUserRole
 
@@ -22,9 +23,7 @@ def org_admin_required():
                 OrganizationUserRole.OWNER,
                 OrganizationUserRole.ADMIN,
             ]:
-                return {
-                    "message": "Must be owner or admin to perform this action"
-                }, 403
+                abort(403, message="Must be owner or admin to perform this action")
 
             return f(*args, **kwargs)
 
@@ -49,15 +48,13 @@ def org_owner_required():
                 org_id = event.organization_id
 
             if not org_id:
-                return {"message": "Organization context required"}, 400
+                abort(400, message="Organization context required")
 
             org = Organization.query.get_or_404(org_id)
             user_role = org.get_user_role(current_user)
 
             if user_role != OrganizationUserRole.OWNER:
-                return {
-                    "message": "Must be organization owner to perform this action"
-                }, 403
+                abort(403, message="Must be organization owner to perform this action")
 
             return f(*args, **kwargs)
 
@@ -78,12 +75,10 @@ def org_member_required():
 
             org = Organization.query.get(org_id)
             if not org:
-                return {
-                    "message": f"Organization with id {org_id} not found"
-                }, 404
+                abort(404, message=f"Organization with id {org_id} not found")
 
             if not org.user_can_access(current_user):
-                return {"message": "Not a member of this organization"}, 403
+                abort(403, message="Not a member of this organization")
 
             return f(*args, **kwargs)
 
@@ -112,20 +107,20 @@ def event_member_required():
                 event_id = session.event_id
 
             if not event_id:
-                return {"message": "No event ID found"}, 400
+                abort(400, message="No event ID found")
 
             event = Event.query.get_or_404(event_id)
             if not event.user_can_access(current_user):
-                return {"message": "Not authorized to access this event"}, 403
+                abort(403, message="Not authorized to access this event")
 
             # Check if user is banned from the event
             event_user = EventUser.query.filter_by(
-                event_id=event_id, 
+                event_id=event_id,
                 user_id=current_user_id
             ).first()
-            
+
             if event_user and event_user.is_banned:
-                return {"message": "You have been banned from this event"}, 403
+                abort(403, message="You have been banned from this event")
 
             return f(*args, **kwargs)
 
@@ -154,24 +149,24 @@ def event_member_or_admin_required():
                 event_id = session.event_id
 
             if not event_id:
-                return {"message": "No event ID found"}, 400
+                abort(400, message="No event ID found")
 
             event = Event.query.get_or_404(event_id)
             if not event.user_can_access(current_user):
-                return {"message": "Not authorized to access this event"}, 403
+                abort(403, message="Not authorized to access this event")
 
             # Get user's event role
             event_user = EventUser.query.filter_by(
-                event_id=event_id, 
+                event_id=event_id,
                 user_id=current_user_id
             ).first()
-            
-            # Allow access if user is admin/organizer even if banned, 
+
+            # Allow access if user is admin/organizer even if banned,
             # or if user is not banned
             if event_user:
                 is_admin_or_organizer = event_user.role in [EventUserRole.ADMIN, EventUserRole.ORGANIZER]
                 if not is_admin_or_organizer and event_user.is_banned:
-                    return {"message": "You have been banned from this event"}, 403
+                    abort(403, message="You have been banned from this event")
 
             return f(*args, **kwargs)
 
@@ -204,9 +199,7 @@ def event_organizer_required():
             user_role = event.get_user_role(current_user)
 
             if user_role not in [EventUserRole.ADMIN, EventUserRole.ORGANIZER]:
-                return {
-                    "message": "Must be admin or organizer to perform this action"
-                }, 403
+                abort(403, message="Must be admin or organizer to perform this action")
 
             return f(*args, **kwargs)
 
@@ -234,7 +227,7 @@ def event_admin_required():
             user_role = event.get_user_role(current_user)
 
             if user_role != EventUserRole.ADMIN:
-                return {"message": "Must be admin to perform this action"}, 403
+                abort(403, message="Must be admin to perform this action")
 
             return f(*args, **kwargs)
 
@@ -271,10 +264,10 @@ def session_access_required():
 
 
 def chat_room_access_required():
-    """Check if user has access to chat room's event
+    """Check if user has access to chat room based on event membership and room type
 
     #! NOTE: Organization owners have access via Event.user_can_access() which includes
-    #! org owner checks.
+    #! org owner checks. They are treated as ADMIN role for room type checks.
     """
 
     def decorator(f):
@@ -287,10 +280,40 @@ def chat_room_access_required():
             chat_room = ChatRoom.query.get_or_404(room_id)
             event = Event.query.get_or_404(chat_room.event_id)
 
+            # First check basic event access
             if not event.user_can_access(current_user):
-                return {
-                    "message": "Not authorized to access this chat room"
-                }, 403
+                abort(403, message="Not authorized to access this chat room")
+
+            # Get user's role in the event for room type checking
+            event_user = EventUser.query.filter_by(
+                event_id=chat_room.event_id,
+                user_id=current_user_id
+            ).first()
+
+            # If no EventUser record but has access, they're likely org owner (treated as ADMIN)
+            user_role = event.get_user_role(current_user) if not event_user else event_user.role
+
+            # Check room type access based on role
+            from api.models.enums import ChatRoomType
+
+            if chat_room.room_type == ChatRoomType.ADMIN:
+                # Admin room - only admins and organizers
+                if user_role not in [EventUserRole.ADMIN, EventUserRole.ORGANIZER]:
+                    abort(403, message="Only admins and organizers can access admin rooms")
+
+            elif chat_room.room_type == ChatRoomType.GREEN_ROOM:
+                # Green room - speakers, admins, and organizers
+                if user_role not in [EventUserRole.ADMIN, EventUserRole.ORGANIZER, EventUserRole.SPEAKER]:
+                    abort(403, message="Only speakers, admins, and organizers can access the green room")
+
+            elif chat_room.room_type == ChatRoomType.BACKSTAGE:
+                # Backstage (session-specific) - speakers of THIS session, admins, and organizers
+                if user_role not in [EventUserRole.ADMIN, EventUserRole.ORGANIZER]:
+                    # Not an admin/organizer, check if they're a speaker for this specific session
+                    if chat_room.session and not chat_room.session.has_speaker(current_user):
+                        abort(403, message="Only session speakers and organizers can access backstage rooms")
+
+            # GLOBAL and PUBLIC rooms are accessible to all event members (already passed event access check)
 
             return f(*args, **kwargs)
 
