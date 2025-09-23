@@ -32,18 +32,21 @@ Integration tests validate the complete flow: HTTP Request → Route → Service
 - [x] `test_health_endpoint_exists` - Health check endpoint
 - [x] `test_database_operations` - CRUD operations work
 
-### 🚧 Authentication Integration (`test_integration/test_auth_integration.py`)
+### ✅ Authentication Integration (`test_integration/test_auth_integration.py`) - MOSTLY COMPLETE
 
-- [x] `test_complete_authentication_flow` - Full login/logout cycle
-- [ ] `test_jwt_token_refresh` - Access token refresh with refresh token
-- [ ] `test_jwt_token_expiry` - Token expiration handling
-- [ ] `test_invalid_credentials` - Failed login attempts
-- [ ] `test_logout_invalidates_tokens` - Logout clears cookies
-- [ ] `test_concurrent_sessions` - Multiple device login
-- [ ] `test_socket_token_generation` - Socket.IO authentication
-- [ ] `test_password_reset_flow` - Complete reset with email
-- [ ] `test_email_verification_flow` - Signup with email verification
-- [ ] `test_account_lockout` - Failed attempts lockout
+- [x] `test_complete_authentication_flow` - Full signup → login → access → refresh → logout
+- [x] `test_invalid_credentials_rejection` - Failed login attempts with wrong password/email
+- [x] `test_email_verification_requirement` - Unverified emails cannot login
+- [x] `test_jwt_cookie_security_headers` - httpOnly, SameSite, Secure cookie settings
+- [x] `test_protected_endpoints_require_auth` - Endpoints reject unauthorized access
+- [x] `test_token_refresh_extends_session` - Refresh token properly extends session
+- [x] `test_concurrent_sessions_support` - Multiple device login supported
+- [x] `test_password_field_security` - Password field not exposed in responses
+- [x] `test_malformed_request_handling` - Handles missing/invalid request fields
+- [x] `test_logout_invalidates_tokens` - Logout properly clears cookies
+- [⚠️] `test_rate_limiting_on_login_attempts` - Rate limiting (FAILING: not implemented)
+- [ ] `test_password_reset_flow` - Complete reset with email (not yet written)
+- [ ] `test_socket_token_generation` - Socket.IO authentication (not yet written)
 
 ### 🚧 Organization Integration (`test_integration/test_organization_integration.py`)
 
@@ -101,29 +104,34 @@ Integration tests validate the complete flow: HTTP Request → Route → Service
 - [skip] `test_message_editing` - Feature not implemented (no edit endpoint)
 - [ ] `test_real_time_delivery` - Socket.IO integration (needs socket testing)
 
-### ❌ Direct Message Integration (`test_integration/test_dm_integration.py`)
+### ✅ Direct Message Integration (`test_integration/test_dm_integration.py`) - COMPLETED
 
-- [ ] `test_thread_creation` - Create DM thread between users
-- [ ] `test_message_privacy` - Only participants can read
-- [ ] `test_thread_blocking` - Block user prevents messages
-- [ ] `test_thread_pagination` - Load threads with pagination
-- [ ] `test_message_notifications` - Real-time notifications
-- [ ] `test_thread_archival` - Archive old threads
-- [ ] `test_cross_event_messaging` - DM across events
-- [ ] `test_message_search` - Search within threads
-- [ ] `test_unread_count_tracking` - Track unread messages
+- [x] `test_create_thread_between_event_attendees` - Create DM thread between users in event context
+- [x] `test_thread_privacy_between_participants_only` - Only participants can read threads
+- [x] `test_blocking_prevents_messaging` - Block user prevents messages
+- [x] `test_thread_pagination_and_ordering` - Load threads with ordering (pagination not yet implemented)
+- [x] `test_message_sending_and_retrieval` - Send and retrieve messages in threads
+- [x] `test_thread_read_status_tracking` - Track and mark messages as read
+- [x] `test_event_scoped_vs_global_threads` - Test event-scoped vs global thread creation
+- [x] `test_clear_thread_messages` - Clear/archive thread messages with cutoff
+- [x] `test_message_content_validation` - Validate message content requirements
+- [x] `test_cross_organization_dm_permissions` - Test cross-org DM isolation
+- [ ] `test_message_notifications` - Real-time notifications (needs socket testing)
+- [ ] `test_message_search` - Search within threads (feature not implemented)
 
-### ❌ Connection Integration (`test_integration/test_connection_integration.py`)
+### ✅ Connection Integration (`test_integration/test_connection_integration.py`)
 
-- [ ] `test_connection_request_flow` - Send, accept, reject
-- [ ] `test_icebreaker_message` - Include with request
-- [ ] `test_mutual_connections` - Both must accept
-- [ ] `test_connection_listing` - List with filters
-- [ ] `test_connection_privacy` - Respect privacy settings
-- [ ] `test_attendee_discovery` - Find other attendees
-- [ ] `test_connection_removal` - Remove connection
-- [ ] `test_connection_notifications` - Real-time updates
-- [ ] `test_bulk_connection_export` - Export contacts
+- [x] `test_connection_request_flow` - Send, accept, reject
+- [x] `test_icebreaker_message_to_dm_thread` - Icebreaker becomes first DM message
+- [x] `test_connection_listing_with_filters` - List with status filters and pagination
+- [x] `test_privacy_filtering_in_connections` - Respect privacy settings
+- [x] `test_event_scoped_connections` - Event connections endpoint
+- [x] `test_connection_removal_flow` - Remove connection and thread management
+- [x] `test_duplicate_connection_prevention` - Prevent duplicates, allow REMOVED reuse
+- [x] `test_pending_requests_endpoint` - View incoming requests
+- [x] `test_connection_authorization` - Access control and permissions
+- [ ] `test_connection_notifications` - Real-time updates (needs socket testing)
+- [ ] `test_bulk_connection_export` - Export contacts (feature not implemented)
 
 ### ❌ Invitation Integration (`test_integration/test_invitation_integration.py`)
 
