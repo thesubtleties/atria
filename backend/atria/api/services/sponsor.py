@@ -1,5 +1,6 @@
 from typing import Dict, List, Optional, Any
 
+from flask_smorest import abort
 from api.extensions import db
 from api.models import Sponsor, Event
 from api.commons.pagination import paginate
@@ -49,11 +50,11 @@ class SponsorService:
         # Validate tier_id if provided
         if sponsor_data.get("tier_id"):
             if not event.sponsor_tiers:
-                raise ValueError("Event has no sponsor tiers defined")
-            
+                abort(400, message="Event has no sponsor tiers defined")
+
             tier_ids = [tier.get("id") for tier in event.sponsor_tiers]
             if sponsor_data["tier_id"] not in tier_ids:
-                raise ValueError(f"Invalid tier_id: {sponsor_data['tier_id']}")
+                abort(400, message=f"Invalid tier_id: {sponsor_data['tier_id']}")
         
         # Create sponsor - filter out datetime fields that should be managed by DB
         allowed_data = {k: v for k, v in sponsor_data.items() if k not in ("created_at", "updated_at")}

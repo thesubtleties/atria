@@ -799,3 +799,550 @@ class TestOrganizationIntegration:
                 f"/api/events/{event1_id}", json={"name": "Hacked Event"}
             )
             assert event_modify.status_code in [403, 404]
+
+    def test_organization_listing_with_pagination(self, client, db):
+        """Test pagination for organization listing.
+
+        Why test this? Users may belong to many organizations,
+        pagination ensures scalable API responses.
+        """
+        # Create a user who will own multiple orgs
+        owner = User(
+            email="multi_org_owner@sbtl.ai",
+            first_name="Multi",
+            last_name="Owner",
+            password="Pass123!",
+            email_verified=True,
+        )
+        db.session.add(owner)
+        db.session.commit()
+
+        # Login as owner
+        client.post(
+            "/api/auth/login",
+            json={"email": "multi_org_owner@sbtl.ai", "password": "Pass123!"},
+        )
+
+        # Create 15 organizations
+        org_ids = []
+        for i in range(15):
+            org_response = client.post(
+                "/api/organizations",
+                json={"name": f"Test Organization {i+1}"}
+            )
+            org_ids.append(json.loads(org_response.data)["id"])
+
+        # Test default pagination
+        list_response = client.get("/api/organizations")
+        assert list_response.status_code == 200
+        data = json.loads(list_response.data)
+        assert data["total_items"] == 15
+
+        # Test page 1 with 5 items per page
+        page1_response = client.get("/api/organizations?page=1&per_page=5")
+        assert page1_response.status_code == 200
+        page1_data = json.loads(page1_response.data)
+        assert len(page1_data["organizations"]) == 5
+        assert page1_data["current_page"] == 1
+        assert page1_data["total_pages"] == 3
+        assert page1_data["per_page"] == 5
+
+        # Test page 2
+        page2_response = client.get("/api/organizations?page=2&per_page=5")
+        assert page2_response.status_code == 200
+        page2_data = json.loads(page2_response.data)
+        assert len(page2_data["organizations"]) == 5
+        assert page2_data["current_page"] == 2
+
+        # Test last page
+        page3_response = client.get("/api/organizations?page=3&per_page=5")
+        assert page3_response.status_code == 200
+        page3_data = json.loads(page3_response.data)
+        assert len(page3_data["organizations"]) == 5
+        assert page3_data["current_page"] == 3
+
+        # Organization list doesn't include current_user_role in list view
+        # That's only in the detail view (OrganizationDetailSchema)
+        # Just verify we got organizations back
+        for org in page1_data["organizations"]:
+            assert "id" in org
+            assert "name" in org
+
+    def test_last_owner_demotion_protection(self, client, db):
+        """Test that the last owner cannot be demoted to a lower role.
+
+        Why test this? Every organization must maintain at least one owner
+        to prevent orphaned organizations without administrative control.
+        """
+        owner = User(
+            email="sole_owner@sbtl.ai",
+            first_name="Sole",
+            last_name="Owner",
+            password="Pass123!",
+            email_verified=True,
+        )
+        admin = User(
+            email="admin@sbtl.ai",
+            first_name="Admin",
+            last_name="User",
+            password="Pass123!",
+            email_verified=True,
+        )
+        db.session.add_all([owner, admin])
+        db.session.commit()
+
+        # Create organization
+        client.post(
+            "/api/auth/login",
+            json={"email": "sole_owner@sbtl.ai", "password": "Pass123!"},
+        )
+        org_response = client.post(
+            "/api/organizations",
+            json={"name": "Single Owner Org"}
+        )
+        org_id = json.loads(org_response.data)["id"]
+
+        # Add admin user
+        client.post(
+            f"/api/organizations/{org_id}/users",
+            json={
+                "email": "admin@sbtl.ai",
+                "first_name": "Admin",
+                "last_name": "User",
+                "role": "ADMIN"
+            }
+        )
+
+        # Try to demote the only owner to ADMIN (should fail)
+        demote_response = client.put(
+            f"/api/organizations/{org_id}/users/{owner.id}",
+            json={"role": "ADMIN"}
+        )
+        assert demote_response.status_code == 400
+        error_msg = json.loads(demote_response.data).get("message", "").lower()
+        assert "last owner" in error_msg or "cannot" in error_msg
+
+        # Try to demote to MEMBER (should also fail)
+        demote_to_member = client.put(
+            f"/api/organizations/{org_id}/users/{owner.id}",
+            json={"role": "MEMBER"}
+        )
+        assert demote_to_member.status_code == 400
+
+        # Promote admin to owner (now we have 2 owners)
+        promote_response = client.put(
+            f"/api/organizations/{org_id}/users/{admin.id}",
+            json={"role": "OWNER"}
+        )
+        assert promote_response.status_code == 200
+
+        # Now demotion should work since there are 2 owners
+        demote_now_response = client.put(
+            f"/api/organizations/{org_id}/users/{owner.id}",
+            json={"role": "ADMIN"}
+        )
+        assert demote_now_response.status_code == 200
+
+        # Verify the role change
+        members_response = client.get(f"/api/organizations/{org_id}/users")
+        members_data = json.loads(members_response.data)
+
+        # Find the original owner in the members list
+        # OrganizationUserSchema has user_id field from include_fk=True
+        original_owner = next(
+            (m for m in members_data["organization_users"]
+             if m["user_id"] == owner.id), None
+        )
+        assert original_owner is not None
+        assert original_owner["role"] == "ADMIN"
+
+    def test_organization_members_with_role_filter(self, client, db):
+        """Test filtering organization members by role.
+
+        Why test this? Admins need to quickly find users by role
+        for management purposes.
+        """
+        owner = User(
+            email="owner@sbtl.ai",
+            first_name="Owner",
+            last_name="User",
+            password="Pass123!",
+            email_verified=True,
+        )
+        admin1 = User(
+            email="admin1@sbtl.ai",
+            first_name="Admin",
+            last_name="One",
+            password="Pass123!",
+            email_verified=True,
+        )
+        admin2 = User(
+            email="admin2@sbtl.ai",
+            first_name="Admin",
+            last_name="Two",
+            password="Pass123!",
+            email_verified=True,
+        )
+        member1 = User(
+            email="member1@sbtl.ai",
+            first_name="Member",
+            last_name="One",
+            password="Pass123!",
+            email_verified=True,
+        )
+        member2 = User(
+            email="member2@sbtl.ai",
+            first_name="Member",
+            last_name="Two",
+            password="Pass123!",
+            email_verified=True,
+        )
+        db.session.add_all([owner, admin1, admin2, member1, member2])
+        db.session.commit()
+
+        # Create organization and add members
+        client.post(
+            "/api/auth/login",
+            json={"email": "owner@sbtl.ai", "password": "Pass123!"},
+        )
+        org_response = client.post(
+            "/api/organizations",
+            json={"name": "Role Filter Test Org"}
+        )
+        org_id = json.loads(org_response.data)["id"]
+
+        # Add users with different roles
+        for user_email, role in [
+            ("admin1@sbtl.ai", "ADMIN"),
+            ("admin2@sbtl.ai", "ADMIN"),
+            ("member1@sbtl.ai", "MEMBER"),
+            ("member2@sbtl.ai", "MEMBER"),
+        ]:
+            client.post(
+                f"/api/organizations/{org_id}/users",
+                json={
+                    "email": user_email,
+                    "first_name": "Test",
+                    "last_name": "User",
+                    "role": role
+                }
+            )
+
+        # Test filtering by OWNER role
+        owners_response = client.get(
+            f"/api/organizations/{org_id}/users?role=OWNER"
+        )
+        assert owners_response.status_code == 200
+        owners_data = json.loads(owners_response.data)
+        assert owners_data["total_items"] == 1
+        assert owners_data["organization_users"][0]["role"] == "OWNER"
+
+        # Test filtering by ADMIN role
+        admins_response = client.get(
+            f"/api/organizations/{org_id}/users?role=ADMIN"
+        )
+        assert admins_response.status_code == 200
+        admins_data = json.loads(admins_response.data)
+        assert admins_data["total_items"] == 2
+        for user in admins_data["organization_users"]:
+            assert user["role"] == "ADMIN"
+
+        # Test filtering by MEMBER role
+        members_response = client.get(
+            f"/api/organizations/{org_id}/users?role=MEMBER"
+        )
+        assert members_response.status_code == 200
+        members_data = json.loads(members_response.data)
+        assert members_data["total_items"] == 2
+        for user in members_data["organization_users"]:
+            assert user["role"] == "MEMBER"
+
+        # Test listing all without filter
+        all_response = client.get(f"/api/organizations/{org_id}/users")
+        assert all_response.status_code == 200
+        all_data = json.loads(all_response.data)
+        assert all_data["total_items"] == 5  # 1 owner + 2 admins + 2 members
+
+    def test_add_existing_vs_new_user_to_organization(self, client, db):
+        """Test adding existing platform users vs creating new placeholder users.
+
+        Why test this? Organizations need to add both existing users
+        and invite new users who don't have accounts yet.
+        """
+        owner = User(
+            email="owner@sbtl.ai",
+            first_name="Owner",
+            last_name="User",
+            password="Pass123!",
+            email_verified=True,
+        )
+        existing_user = User(
+            email="existing@sbtl.ai",
+            first_name="Existing",
+            last_name="User",
+            password="Pass123!",
+            email_verified=True,
+        )
+        db.session.add_all([owner, existing_user])
+        db.session.commit()
+
+        # Create organization
+        client.post(
+            "/api/auth/login",
+            json={"email": "owner@sbtl.ai", "password": "Pass123!"},
+        )
+        org_response = client.post(
+            "/api/organizations",
+            json={"name": "User Addition Test Org"}
+        )
+        org_id = json.loads(org_response.data)["id"]
+
+        # Test 1: Add existing user
+        add_existing_response = client.post(
+            f"/api/organizations/{org_id}/users",
+            json={
+                "email": "existing@sbtl.ai",
+                "first_name": "Existing",
+                "last_name": "User",
+                "role": "ADMIN"
+            }
+        )
+        assert add_existing_response.status_code == 201
+        existing_data = json.loads(add_existing_response.data)
+        # OrganizationUserDetailSchema includes a nested user object
+        assert existing_data["user"]["email"] == "existing@sbtl.ai"
+        assert existing_data["role"] == "ADMIN"
+
+        # Verify existing user wasn't duplicated
+        existing_count = User.query.filter_by(email="existing@sbtl.ai").count()
+        assert existing_count == 1
+
+        # Test 2: Add new user (creates placeholder)
+        add_new_response = client.post(
+            f"/api/organizations/{org_id}/users",
+            json={
+                "email": "newuser@sbtl.ai",
+                "first_name": "New",
+                "last_name": "User",
+                "role": "MEMBER"
+            }
+        )
+        assert add_new_response.status_code == 201
+        new_data = json.loads(add_new_response.data)
+        # OrganizationUserDetailSchema includes a nested user object
+        assert new_data["user"]["email"] == "newuser@sbtl.ai"
+        assert new_data["role"] == "MEMBER"
+
+        # Verify new user was created in database
+        new_user = User.query.filter_by(email="newuser@sbtl.ai").first()
+        assert new_user is not None
+        assert new_user.first_name == "New"
+        assert new_user.last_name == "User"
+
+        # Test 3: Try to add duplicate (should fail)
+        duplicate_response = client.post(
+            f"/api/organizations/{org_id}/users",
+            json={
+                "email": "existing@sbtl.ai",
+                "first_name": "Existing",
+                "last_name": "User",
+                "role": "MEMBER"
+            }
+        )
+        assert duplicate_response.status_code == 409
+        error_data = json.loads(duplicate_response.data)
+        # Now using abort() which should properly return the error message
+        assert "already" in error_data.get("message", "").lower()
+
+        # Verify organization member count
+        members_response = client.get(f"/api/organizations/{org_id}/users")
+        members_data = json.loads(members_response.data)
+        assert members_data["total_items"] == 3  # owner + existing + new
+
+    def test_comprehensive_role_updates(self, client, db):
+        """Test all role transition scenarios.
+
+        Why test this? Role changes have complex permission rules
+        and we need to verify all transitions work correctly.
+        """
+        owner = User(
+            email="owner@sbtl.ai",
+            first_name="Owner",
+            last_name="User",
+            password="Pass123!",
+            email_verified=True,
+        )
+        user1 = User(
+            email="user1@sbtl.ai",
+            first_name="User",
+            last_name="One",
+            password="Pass123!",
+            email_verified=True,
+        )
+        user2 = User(
+            email="user2@sbtl.ai",
+            first_name="User",
+            last_name="Two",
+            password="Pass123!",
+            email_verified=True,
+        )
+        db.session.add_all([owner, user1, user2])
+        db.session.commit()
+
+        # Create organization
+        client.post(
+            "/api/auth/login",
+            json={"email": "owner@sbtl.ai", "password": "Pass123!"},
+        )
+        org_response = client.post(
+            "/api/organizations",
+            json={"name": "Role Update Test Org"}
+        )
+        org_id = json.loads(org_response.data)["id"]
+
+        # Add users as members
+        client.post(
+            f"/api/organizations/{org_id}/users",
+            json={
+                "email": "user1@sbtl.ai",
+                "first_name": "User",
+                "last_name": "One",
+                "role": "MEMBER"
+            }
+        )
+        client.post(
+            f"/api/organizations/{org_id}/users",
+            json={
+                "email": "user2@sbtl.ai",
+                "first_name": "User",
+                "last_name": "Two",
+                "role": "MEMBER"
+            }
+        )
+
+        # Test MEMBER -> ADMIN promotion
+        promote_to_admin = client.put(
+            f"/api/organizations/{org_id}/users/{user1.id}",
+            json={"role": "ADMIN"}
+        )
+        assert promote_to_admin.status_code == 200
+        admin_data = json.loads(promote_to_admin.data)
+        assert admin_data["role"] == "ADMIN"
+
+        # Test MEMBER -> OWNER promotion
+        promote_to_owner = client.put(
+            f"/api/organizations/{org_id}/users/{user2.id}",
+            json={"role": "OWNER"}
+        )
+        assert promote_to_owner.status_code == 200
+        owner_data = json.loads(promote_to_owner.data)
+        assert owner_data["role"] == "OWNER"
+
+        # Now we have 2 owners, test OWNER -> ADMIN demotion
+        demote_to_admin = client.put(
+            f"/api/organizations/{org_id}/users/{user2.id}",
+            json={"role": "ADMIN"}
+        )
+        assert demote_to_admin.status_code == 200
+
+        # Test ADMIN -> MEMBER demotion
+        demote_to_member = client.put(
+            f"/api/organizations/{org_id}/users/{user1.id}",
+            json={"role": "MEMBER"}
+        )
+        assert demote_to_member.status_code == 200
+
+        # Verify final roles
+        members_response = client.get(f"/api/organizations/{org_id}/users")
+        members_data = json.loads(members_response.data)
+
+        # OrganizationUserSchema has user_id field from include_fk=True
+        roles_map = {
+            m["user_id"]: m["role"]
+            for m in members_data["organization_users"]
+        }
+
+        assert roles_map[owner.id] == "OWNER"
+        assert roles_map[user1.id] == "MEMBER"
+        assert roles_map[user2.id] == "ADMIN"
+
+    def test_member_count_validation(self, client, db):
+        """Test that member_count and owner_count are accurate.
+
+        Why test this? These counts are used in UI and must be accurate
+        for proper organization management.
+        """
+        owner = User(
+            email="owner@sbtl.ai",
+            first_name="Owner",
+            last_name="User",
+            password="Pass123!",
+            email_verified=True,
+        )
+        db.session.add(owner)
+        db.session.commit()
+
+        # Create organization
+        client.post(
+            "/api/auth/login",
+            json={"email": "owner@sbtl.ai", "password": "Pass123!"},
+        )
+        org_response = client.post(
+            "/api/organizations",
+            json={"name": "Count Test Org"}
+        )
+        org_data = json.loads(org_response.data)
+        org_id = org_data["id"]
+
+        # Initial counts
+        assert org_data["member_count"] == 1
+        assert org_data["owner_count"] == 1
+
+        # Add more users
+        for i in range(3):
+            new_user = User(
+                email=f"user{i}@sbtl.ai",
+                first_name=f"User",
+                last_name=f"{i}",
+                password="Pass123!",
+                email_verified=True,
+            )
+            db.session.add(new_user)
+        db.session.commit()
+
+        # Add users with different roles
+        client.post(
+            f"/api/organizations/{org_id}/users",
+            json={
+                "email": "user0@sbtl.ai",
+                "first_name": "User",
+                "last_name": "0",
+                "role": "OWNER"
+            }
+        )
+        client.post(
+            f"/api/organizations/{org_id}/users",
+            json={
+                "email": "user1@sbtl.ai",
+                "first_name": "User",
+                "last_name": "1",
+                "role": "ADMIN"
+            }
+        )
+        client.post(
+            f"/api/organizations/{org_id}/users",
+            json={
+                "email": "user2@sbtl.ai",
+                "first_name": "User",
+                "last_name": "2",
+                "role": "MEMBER"
+            }
+        )
+
+        # Get updated organization data
+        org_get_response = client.get(f"/api/organizations/{org_id}")
+        updated_org_data = json.loads(org_get_response.data)
+
+        # Verify counts
+        assert updated_org_data["member_count"] == 4  # 2 owners + 1 admin + 1 member
+        assert updated_org_data["owner_count"] == 2  # 2 owners

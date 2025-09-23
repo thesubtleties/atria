@@ -7,9 +7,9 @@
 - **Total Test Categories:** 4 main categories
 - **Total Test Suites Planned:** ~50
 - **Total Test Cases Planned:** ~300+
-- **Current Coverage:** ~20% (infrastructure + org/event/session integration + model tests)
+- **Current Coverage:** ~35% (infrastructure + auth/org/event/session/DM/connection/moderation/sponsor integration + model tests)
 - **Target Coverage:** 80%+ for critical paths
-- **Tests Implemented:** ~55 tests (5 infrastructure, 2 org, 10 event, 8 session, 10 chat, 20+ model tests)
+- **Tests Implemented:** ~99 tests (5 infrastructure, 10 auth, 15 org, 10 event, 8 session, 10 DM, 6 connection, 10 moderation, 9 sponsor, 10 chat, 20+ model tests)
 
 ### Legend
 
@@ -48,18 +48,23 @@ Integration tests validate the complete flow: HTTP Request → Route → Service
 - [ ] `test_password_reset_flow` - Complete reset with email (not yet written)
 - [ ] `test_socket_token_generation` - Socket.IO authentication (not yet written)
 
-### 🚧 Organization Integration (`test_integration/test_organization_integration.py`)
+### ✅ Organization Integration (`test_integration/test_organization_integration.py`) - COMPLETED
 
 - [x] `test_create_organization_flow` - Organization creation
-- [ ] `test_organization_multi_tenancy` - Data isolation between orgs
-- [ ] `test_organization_role_hierarchy` - OWNER > ADMIN > MEMBER
-- [x] `test_organization_member_invitation` - Invite and accept flow (basic implementation)
-- [ ] `test_organization_member_removal` - Remove member with permissions
-- [ ] `test_organization_ownership_transfer` - Transfer to another user
-- [ ] `test_organization_deletion` - Soft delete with cascade
-- [ ] `test_organization_settings_update` - Update org details
-- [ ] `test_cross_org_access_denied` - Cannot access other org's data
-- [ ] `test_organization_member_list` - List with pagination
+- [x] `test_organization_user_becomes_owner` - Creator becomes owner automatically
+- [x] `test_organization_update_requires_admin` - Only admin/owner can update
+- [x] `test_organization_delete_requires_owner` - Only owner can delete
+- [x] `test_organization_member_management` - Add/remove members with proper roles
+- [x] `test_organization_role_updates` - Promote/demote users with hierarchy
+- [x] `test_organization_member_listing` - List members with pagination support
+- [x] `test_organization_details_access` - Members can view org details
+- [x] `test_cross_organization_isolation` - Cannot access other org's data
+- [x] `test_organization_listing_with_pagination` - List user's organizations
+- [x] `test_last_owner_demotion_protection` - Cannot remove/demote last owner
+- [x] `test_organization_members_with_role_filter` - Filter members by role
+- [x] `test_add_existing_vs_new_user_to_organization` - Handle both existing and new users
+- [x] `test_comprehensive_role_updates` - All role transitions tested
+- [x] `test_member_count_validation` - Validate member and owner counts
 
 ### ✅ Event Integration (`test_integration/test_event_integration.py`)
 
@@ -158,25 +163,30 @@ Integration tests validate the complete flow: HTTP Request → Route → Service
 - [ ] `test_file_deletion` - Remove from storage
 - [ ] `test_batch_upload` - Multiple files at once
 
-### ❌ Sponsor Integration (`test_integration/test_sponsor_integration.py`)
+### ✅ Sponsor Integration (`test_integration/test_sponsor_integration.py`) - COMPLETED
 
-- [ ] `test_sponsor_creation` - Add with tier assignment
-- [ ] `test_sponsor_tier_ordering` - Drag and drop reorder
-- [ ] `test_fractional_indexing` - Order value calculation
-- [ ] `test_sponsor_logo_upload` - Image processing
-- [ ] `test_sponsor_visibility` - Show on event page
-- [ ] `test_sponsor_update` - Edit details
-- [ ] `test_sponsor_deletion` - Remove sponsor
-- [ ] `test_tier_management` - PLATINUM/GOLD/SILVER/BRONZE
-- [ ] `test_sponsor_limits` - Max per tier
+- [x] `test_sponsor_crud_flow` - Complete CRUD operations for sponsors
+- [x] `test_sponsor_tier_validation` - Validates sponsors can only use defined tiers
+- [x] `test_sponsor_listing_and_filtering` - Active/inactive filtering and featured sponsors
+- [x] `test_sponsor_display_order_management` - Fractional indexing for drag-drop reordering
+- [x] `test_sponsor_permission_enforcement` - Only organizers/admins can manage sponsors
+- [x] `test_sponsor_social_links_management` - Social media platform links
+- [x] `test_sponsor_tier_sorting` - Frontend handles sorting by tier and display order
+- [x] `test_sponsor_custom_benefits` - Store negotiated benefits beyond tier defaults
+- [x] `test_cross_event_sponsor_isolation` - Sponsors isolated between events
 
-### ❌ Moderation Integration (`test_integration/test_moderation_integration.py`)
+### 🚧 Moderation Integration (`test_integration/test_moderation_integration.py`) - MOSTLY COMPLETE
 
-- [ ] `test_message_flagging` - Report inappropriate content
-- [ ] `test_moderator_actions` - Delete, edit messages
-- [ ] `test_user_suspension` - Temporary ban from chat
-- [ ] `test_moderation_log` - Audit trail
-- [ ] `test_automated_filtering` - Profanity filter
+- [x] `test_event_ban_flow` - Complete event ban and unban with reason tracking
+- [x] `test_chat_ban_temporary` - Temporary chat bans with automatic expiry
+- [x] `test_chat_ban_permanent` - Permanent chat bans requiring manual unban
+- [x] `test_role_hierarchy_enforcement` - Organizers cannot ban admins, admins can ban anyone
+- [x] `test_last_admin_protection` - Cannot ban last admin, self-ban prevention, organizer limitations
+- [x] `test_banned_user_cannot_moderate` - Banned users lose all moderation privileges
+- [x] `test_moderation_status_retrieval` - Get comprehensive moderation status for users
+- [⚠️] `test_moderation_notes_accumulation` - Audit trail (FAILING: ban overwrites notes instead of appending)
+- [x] `test_cross_event_isolation` - Bans are isolated per event
+- [⚠️] `test_attendee_cannot_moderate` - Non-moderators blocked (FAILING: schema serialization issue)
 
 ---
 

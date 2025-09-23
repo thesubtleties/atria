@@ -30,7 +30,7 @@ blp = Blueprint(
 class SponsorList(MethodView):
     @jwt_required()
     @event_member_required()
-    @blp.response(200)
+    @blp.response(200, SponsorListSchema(many=True))
     @blp.doc(
         summary="List event sponsors",
         description="Get all sponsors for an event (requires event membership)",
@@ -57,8 +57,9 @@ class SponsorList(MethodView):
             # Frontend sends 0 or 1 which works with type=int
             active_only = request.args.get("active_only", 1, type=int)
 
+            # Don't pass schema since decorator handles serialization
             return SponsorService.get_event_sponsors(
-                event_id, bool(active_only), SponsorListSchema()
+                event_id, bool(active_only)
             )
         except Exception as e:
             return {"message": f"Failed to get sponsors: {str(e)}"}, 500
@@ -78,7 +79,7 @@ class SponsorList(MethodView):
     def post(self, sponsor_data, event_id):
         """Create a new sponsor"""
         sponsor = SponsorService.create_sponsor(event_id, sponsor_data)
-        return SponsorDetailSchema().dump(sponsor)
+        return sponsor, 201  # Let @blp.response decorator handle serialization
 
 
 @blp.route("/sponsors/<int:sponsor_id>")
@@ -104,7 +105,7 @@ class SponsorDetail(MethodView):
         if not event.get_user_role(current_user):
             return {"message": "Not authorized to view this sponsor"}, 403
 
-        return SponsorDetailSchema().dump(sponsor)
+        return sponsor  # Let @blp.response decorator handle serialization
 
     @blp.arguments(SponsorUpdateSchema)
     @blp.response(200, SponsorDetailSchema)
@@ -142,7 +143,7 @@ class SponsorDetail(MethodView):
             updated_sponsor = SponsorService.update_sponsor(
                 sponsor_id, sponsor_data
             )
-            return SponsorDetailSchema().dump(updated_sponsor)
+            return updated_sponsor  # Let @blp.response decorator handle serialization
         except Exception as e:
             # Return error with proper status code
             return {"message": f"Failed to update sponsor: {str(e)}"}, 500
@@ -188,7 +189,7 @@ class SponsorDetail(MethodView):
 class FeaturedSponsorsList(MethodView):
     @jwt_required()
     @event_member_required()
-    @blp.response(200)
+    @blp.response(200, SponsorListSchema(many=True))
     @blp.doc(
         summary="List featured sponsors",
         description="Get featured sponsors for an event (requires event membership)",
@@ -196,7 +197,7 @@ class FeaturedSponsorsList(MethodView):
     def get(self, event_id):
         """Get featured sponsors - requires event membership"""
         sponsors = SponsorService.get_featured_sponsors(event_id)
-        return SponsorListSchema().dump(sponsors, many=True)
+        return sponsors  # Let @blp.response decorator handle serialization
 
 
 @blp.route("/sponsors/<int:sponsor_id>/toggle-active")
