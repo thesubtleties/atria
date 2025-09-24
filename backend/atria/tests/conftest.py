@@ -47,7 +47,7 @@ def app():
     os.environ['TESTING'] = 'true'
     os.environ['JWT_SECRET_KEY'] = 'test-secret-key'
     os.environ['SECRET_KEY'] = 'test-secret-key'
-    os.environ['REDIS_URL'] = ''  # Disable Redis for tests
+    os.environ['REDIS_URL'] = 'redis://localhost:6380/0'  # Use test Redis instance
 
     # Import create_app after setting environment
     from api.app import create_app

@@ -21,9 +21,9 @@ cleanup() {
 # Set trap to cleanup on exit
 trap cleanup EXIT
 
-# Start PostgreSQL for tests
+# Start PostgreSQL and Redis for tests
 echo -e "${YELLOW}🐘 Starting PostgreSQL test database...${NC}"
-docker compose -f ../../docker-compose.test.yml up -d postgres-test
+docker compose -f ../../docker-compose.test.yml up -d postgres-test redis-test
 
 # Wait for PostgreSQL to be ready
 echo -e "${YELLOW}⏳ Waiting for PostgreSQL to be ready...${NC}"
@@ -45,9 +45,27 @@ if [ $attempt -eq $max_attempts ]; then
     exit 1
 fi
 
-# Set up database environment
+# Wait for Redis to be ready
+echo -e "${YELLOW}⏳ Waiting for Redis to be ready...${NC}"
+attempt=0
+while [ $attempt -lt $max_attempts ]; do
+    if docker exec capstone-redis-test-1 redis-cli ping &>/dev/null; then
+        echo -e "${GREEN}✅ Redis is ready!${NC}"
+        break
+    fi
+    echo -n "."
+    sleep 1
+    attempt=$((attempt + 1))
+done
+
+if [ $attempt -eq $max_attempts ]; then
+    echo -e "${YELLOW}⚠️ Redis failed to start - tests will run without rate limiting${NC}"
+fi
+
+# Set up database and Redis environment
 echo -e "${YELLOW}🔧 Setting up database...${NC}"
 export DATABASE_URL="postgresql://test_user:test_pass@localhost:5433/test_atria"
+export REDIS_URL="redis://localhost:6380/0"
 export SQLALCHEMY_DATABASE_URI="postgresql://test_user:test_pass@localhost:5433/test_atria"
 export TEST_DATABASE_URL="postgresql://test_user:test_pass@localhost:5433/test_atria"
 export FLASK_APP="api.app:create_app"

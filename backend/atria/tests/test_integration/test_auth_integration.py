@@ -448,3 +448,49 @@ class TestAuthIntegration:
         assert (
             rate_limited
         ), "SECURITY ISSUE: No rate limiting on login attempts! Brute force attacks possible!"
+
+    def test_rate_limit_resets_on_successful_login(self, client, db, user_factory):
+        """Test that rate limit counter resets after successful login"""
+        # Create a user for testing
+        user = user_factory(
+            email="resettest@sbtl.ai",
+            password="TestPassword123!",
+            email_verified=True
+        )
+        db.session.commit()
+
+        # Make 4 failed login attempts (just under the limit)
+        for i in range(4):
+            response = client.post(
+                "/api/auth/login",
+                json={
+                    "email": "resettest@sbtl.ai",
+                    "password": "WrongPassword!",
+                },
+            )
+            assert response.status_code == 401
+
+        # Successful login should work and reset the counter
+        response = client.post(
+            "/api/auth/login",
+            json={
+                "email": "resettest@sbtl.ai",
+                "password": "TestPassword123!",
+            },
+        )
+        assert response.status_code == 200
+
+        # After successful login, we should be able to make 5 more failed attempts
+        # before being rate limited (counter was reset)
+        for i in range(6):  # Try 6 times to verify the 6th is blocked
+            response = client.post(
+                "/api/auth/login",
+                json={
+                    "email": "resettest@sbtl.ai",
+                    "password": "WrongPassword!",
+                },
+            )
+            if i < 5:  # First 5 attempts should fail with 401
+                assert response.status_code == 401, f"Attempt {i+1} should be 401, got {response.status_code}"
+            else:  # 6th attempt should be rate limited
+                assert response.status_code == 429, f"Attempt {i+1} should be 429, got {response.status_code}"

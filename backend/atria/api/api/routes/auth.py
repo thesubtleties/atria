@@ -3,7 +3,7 @@ from flask_smorest import Blueprint, abort
 from flask_jwt_extended import jwt_required
 
 from api.api.schemas import (
-    LoginSchema, 
+    LoginSchema,
     SignupSchema,
     SignupResponseSchema,
     UserDetailSchema,
@@ -16,6 +16,7 @@ from api.api.schemas import (
     ChangePasswordSchema,
 )
 from api.services.auth import AuthService
+from api.commons.rate_limit import rate_limit
 
 blp = Blueprint(
     "auth",
@@ -48,12 +49,22 @@ class AuthLoginResource(MethodView):
                 },
             },
             401: {"description": "Invalid credentials"},
+            429: {"description": "Too many login attempts"},
         },
     )
+    @rate_limit(max_attempts=5, window_seconds=300)  # 5 attempts per 5 minutes
     def post(self, login_data):
         """Authenticate user"""
         try:
-            return AuthService.login(login_data)
+            result = AuthService.login(login_data)
+            # Clear rate limit on successful login
+            from api.commons.rate_limit import reset_rate_limit
+            from flask import request
+            identifier = request.remote_addr or "unknown"
+            if login_data.get("email"):
+                identifier = f"{identifier}:{login_data['email']}"
+            reset_rate_limit("auth.AuthLoginResource", identifier)
+            return result
         except ValueError:
             return {"message": "Invalid credentials"}, 401
 
