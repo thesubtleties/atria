@@ -40,7 +40,9 @@ def app():
     os.environ['POSTGRES_USER'] = 'test_user'
     os.environ['POSTGRES_PASSWORD'] = 'test_pass'
     os.environ['POSTGRES_DB'] = 'test_atria'
-    os.environ['POSTGRES_PORT'] = '5433'
+    # Don't override POSTGRES_PORT if already set (CI uses 5432, local uses 5433)
+    if 'POSTGRES_PORT' not in os.environ:
+        os.environ['POSTGRES_PORT'] = '5433'
 
     # Set testing environment
     os.environ['FLASK_ENV'] = 'testing'

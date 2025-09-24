@@ -16,7 +16,8 @@ def test_database_is_postgresql(app):
     db_uri = app.config['SQLALCHEMY_DATABASE_URI']
     assert 'postgresql' in db_uri
     assert 'test_atria' in db_uri  # Using test database
-    assert '5433' in db_uri  # Using test port
+    # Port can be 5432 (CI) or 5433 (local)
+    assert ('5432' in db_uri or '5433' in db_uri)  # Has valid test port
     print(f"✓ Using test database: {db_uri}")
 
 
