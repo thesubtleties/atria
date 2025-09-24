@@ -1,4 +1,4 @@
-import { Avatar, Text } from '@mantine/core';
+import { Avatar } from '@mantine/core';
 import styles from './styles/index.module.css';
 
 export const ProfileHeader = ({ user }) => {
@@ -15,7 +15,7 @@ export const ProfileHeader = ({ user }) => {
 
   const memberSince = new Date(user.created_at).toLocaleDateString('en-US', {
     month: 'long',
-    year: 'numeric'
+    year: 'numeric',
   });
 
   return (
@@ -31,13 +31,13 @@ export const ProfileHeader = ({ user }) => {
             root: {
               width: 'clamp(50px, 12vw, 60px)',
               height: 'clamp(50px, 12vw, 60px)',
-              fontSize: 'clamp(1rem, 2.5vw, 1.25rem)'
-            }
+              fontSize: 'clamp(1rem, 2.5vw, 1.25rem)',
+            },
           }}
         >
           {getInitials(user.full_name || user.email)}
         </Avatar>
-        
+
         <div className={styles.profileDetails}>
           <h2>{user.full_name || user.email}</h2>
           {(user.title || user.company_name) && (
