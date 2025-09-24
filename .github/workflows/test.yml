@@ -110,7 +110,7 @@ jobs:
 
     - name: Upload HTML coverage report
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: backend-coverage-report
         path: backend/atria/htmlcov/
@@ -165,7 +165,7 @@ jobs:
         VITE_API_URL: http://localhost:5000/api
 
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: frontend-build
         path: frontend/dist/
@@ -250,7 +250,7 @@ jobs:
 
     - name: Upload Bandit report
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: bandit-security-report
         path: bandit-report.json
