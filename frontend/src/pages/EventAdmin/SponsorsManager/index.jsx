@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Text } from '@mantine/core';
 import { LoadingOverlay } from '../../../shared/components/loading';
 import { useParams } from 'react-router-dom';
@@ -15,9 +15,14 @@ const SponsorsManager = () => {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [tierModalOpen, setTierModalOpen] = useState(false);
 
-  const { data: sponsors = [], isLoading, error, refetch } = useGetSponsorsQuery({ 
-    eventId: parseInt(eventId), 
-    activeOnly: false 
+  const {
+    data: sponsors = [],
+    isLoading,
+    error,
+    refetch,
+  } = useGetSponsorsQuery({
+    eventId: parseInt(eventId),
+    activeOnly: false,
   });
 
   if (error) {
@@ -25,17 +30,14 @@ const SponsorsManager = () => {
       <div className={styles.container}>
         <div className={styles.bgShape1} />
         <div className={styles.bgShape2} />
-        
+
         <div className={styles.contentWrapper}>
           <section className={styles.mainContent}>
             <div style={{ textAlign: 'center', padding: '3rem' }}>
               <Text c="red" size="lg" mb="md">
                 Error loading sponsors: {error.data?.message || 'Unknown error'}
               </Text>
-              <Button 
-                variant="primary"
-                onClick={refetch}
-              >
+              <Button variant="primary" onClick={refetch}>
                 Retry
               </Button>
             </div>
@@ -61,11 +63,8 @@ const SponsorsManager = () => {
         {/* Main Content Section */}
         <section className={styles.mainContent}>
           <LoadingOverlay visible={isLoading} />
-          
-          <SponsorsList 
-            sponsors={sponsors} 
-            eventId={parseInt(eventId)}
-          />
+
+          <SponsorsList sponsors={sponsors} eventId={parseInt(eventId)} />
         </section>
 
         <SponsorModal
