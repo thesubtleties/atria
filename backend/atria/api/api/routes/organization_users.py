@@ -82,7 +82,7 @@ class OrganizationUserList(MethodView):
             )
             return org_user, 201
         except ValueError as e:
-            return {"message": str(e)}, 409
+            abort(409, message=str(e))
 
 
 @blp.route("/organizations/<int:org_id>/users/<int:user_id>")

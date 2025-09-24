@@ -184,6 +184,18 @@ class Event(db.Model):
         db.session.add(event_user)
         return event_user
 
+    def remove_user(self, user):
+        """Remove user from event"""
+        from api.models import EventUser
+
+        # Can't remove the last admin
+        if self.get_user_role(user) == EventUserRole.ADMIN and self.admin_count == 1:
+            raise ValueError("Cannot remove last admin")
+
+        EventUser.query.filter_by(
+            event_id=self.id, user_id=user.id
+        ).delete()
+
     def add_speaker(self, user, **kwargs):
         """Convenience method to add speaker with optional bio and title"""
         return self.add_user(
@@ -349,6 +361,15 @@ class Event(db.Model):
             db.session.add(green_room)
 
         db.session.commit()
+
+    @property
+    def admin_count(self):
+        """Get number of admins"""
+        from api.models import EventUser
+
+        return EventUser.query.filter_by(
+            event_id=self.id, role=EventUserRole.ADMIN
+        ).count()
 
     @property
     def speakers(self):

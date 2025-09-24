@@ -1,0 +1,108 @@
+version: '3.8'
+
+services:
+  postgres-test:
+    container_name: atria-postgres-test
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_pass
+      POSTGRES_DB: test_atria
+    ports:
+      - "5433:5432"  # Different port to avoid conflicts with dev
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test_user -d test_atria"]
+      interval: 2s
+      timeout: 3s
+      retries: 10
+    tmpfs:
+      - /var/lib/postgresql/data  # Use RAM for faster tests
+
+  redis-test:
+    image: redis:7
+    ports:
+      - "6380:6379"  # Different port to avoid conflicts
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend-test:
+    build:
+      context: .
+      dockerfile: ./deploy/Dockerfile.backend.prod
+    environment:
+      DATABASE_URL: postgresql://test_user:test_pass@postgres-test:5432/test_atria
+      REDIS_URL: redis://redis-test:6379/0
+      JWT_SECRET_KEY: test-secret-key-for-testing
+      FLASK_ENV: testing
+      TESTING: "true"
+      SECRET_KEY: test-secret-key
+      CELERY_BROKER_URL: redis://redis-test:6379/1
+      CELERY_RESULT_BACKEND: redis://redis-test:6379/1
+      MINIO_ENDPOINT: minio-test:9000
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+      SMTP_HOST: mailhog
+      SMTP_PORT: 1025
+      SMTP_USE_TLS: "false"
+    ports:
+      - "5001:5000"  # Different port to avoid conflicts
+    depends_on:
+      postgres-test:
+        condition: service_healthy
+      redis-test:
+        condition: service_healthy
+    command: >
+      sh -c "
+        flask db upgrade &&
+        python -m pytest tests/ -v --tb=short
+      "
+    volumes:
+      - ./backend/atria:/app
+      - ./backend/atria/tests:/app/tests
+
+  frontend-test:
+    build:
+      context: .
+      dockerfile: ./deploy/Dockerfile.frontend.prod
+      args:
+        VITE_API_URL: http://backend-test:5000/api
+    ports:
+      - "5174:80"  # Different port to avoid conflicts
+    depends_on:
+      - backend-test
+
+  minio-test:
+    image: minio/minio:latest
+    ports:
+      - "9001:9000"  # Different port to avoid conflicts
+      - "9091:9090"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9090"
+    volumes:
+      - test_minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    ports:
+      - "1025:1025"  # SMTP
+      - "8025:8025"  # Web UI
+    logging:
+      driver: 'none'  # Disable logs to avoid clutter
+
+volumes:
+  test_postgres_data:
+  test_minio_data:
+
+networks:
+  default:
+    name: atria-test-network

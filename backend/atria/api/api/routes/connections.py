@@ -12,7 +12,9 @@ from api.api.schemas import (
 from api.commons.pagination import (
     PAGINATION_PARAMETERS,
     get_pagination_schema,
+    paginate,
 )
+from api.models import User
 from api.models.enums import ConnectionStatus
 from api.services.connection import ConnectionService
 
@@ -107,7 +109,7 @@ class ConnectionDetail(MethodView):
         try:
             return ConnectionService.get_connection(connection_id, user_id)
         except ValueError as e:
-            return {"message": str(e)}, 403
+            abort(403, message=str(e))
 
     @blp.arguments(ConnectionUpdateSchema)
     @blp.response(200, ConnectionSchema)

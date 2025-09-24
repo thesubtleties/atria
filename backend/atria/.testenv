@@ -1,4 +1,10 @@
 SECRET_KEY=testing
+SQLALCHEMY_DATABASE_URI=sqlite:///:memory:
+DATABASE_URL=sqlite:///:memory:
 DATABASE_URI=sqlite:///:memory:
+FLASK_ENV=testing
+TESTING=true
+JWT_SECRET_KEY=test-secret-key
+REDIS_URL=
 CELERY_BROKER_URL=amqp://guest:guest@localhost/
 CELERY_RESULT_BACKEND_URL=rpc://
