@@ -29,8 +29,8 @@ def app():
     """Create application for testing."""
     import os
 
-    # Override ALL database-related environment variables
-    test_db_url = 'postgresql://test_user:test_pass@localhost:5433/test_atria'
+    # Use environment variables if they exist, otherwise use defaults for local testing
+    test_db_url = os.environ.get('SQLALCHEMY_DATABASE_URI') or os.environ.get('DATABASE_URL') or 'postgresql://test_user:test_pass@localhost:5433/test_atria'
     os.environ['TEST_DATABASE_URL'] = test_db_url
     os.environ['SQLALCHEMY_DATABASE_URI'] = test_db_url
     os.environ['DATABASE_URL'] = test_db_url
@@ -47,7 +47,9 @@ def app():
     os.environ['TESTING'] = 'true'
     os.environ['JWT_SECRET_KEY'] = 'test-secret-key'
     os.environ['SECRET_KEY'] = 'test-secret-key'
-    os.environ['REDIS_URL'] = 'redis://localhost:6380/0'  # Use test Redis instance
+    # Use Redis URL from environment or default to test instance
+    if 'REDIS_URL' not in os.environ:
+        os.environ['REDIS_URL'] = 'redis://localhost:6380/0'  # Use test Redis instance
 
     # Import create_app after setting environment
     from api.app import create_app
