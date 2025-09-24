@@ -108,7 +108,7 @@ const BasicInfoSection = ({ event, eventId }) => {
     <div className={`${parentStyles.section} ${styles.glassSection}`}>
       <h3 className={parentStyles.sectionTitle}>Basic Information</h3>
       <Text c="dimmed" size="sm" mb="xl">
-        Update your event's core details and configuration
+        {`Update your event's core details and configuration`}
       </Text>
       
       <form onSubmit={form.onSubmit(handleSubmit)}>

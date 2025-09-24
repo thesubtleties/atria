@@ -88,7 +88,7 @@ const DeleteEventModal = ({ opened, onClose, event, onSuccess }) => {
             </Text>
           </div>
           <Text size="sm" className={styles.alertText}>
-            {`You are about to permanently delete "`}<strong>{event?.title}</strong>{`".`} 
+            You are about to permanently delete <strong>&quot;{event?.title}&quot;</strong>.
             This will remove all event data, attendees, sessions, and chat history.
           </Text>
         </div>
