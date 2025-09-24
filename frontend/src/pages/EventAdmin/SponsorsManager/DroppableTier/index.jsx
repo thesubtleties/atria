@@ -1,4 +1,3 @@
-import React from 'react';
 import { Title, Badge, Text } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import { useDroppable } from '@dnd-kit/react';

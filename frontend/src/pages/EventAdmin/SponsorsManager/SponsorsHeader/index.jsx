@@ -1,4 +1,3 @@
-import React from 'react';
 import { Badge } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import { IconTags, IconPlus } from '@tabler/icons-react';

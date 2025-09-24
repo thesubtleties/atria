@@ -1,4 +1,3 @@
-import React from 'react';
 import { useGetUserInvitationsQuery } from '../../../app/features/users/api';
 import { Alert, Text } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';

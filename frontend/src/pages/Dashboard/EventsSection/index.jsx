@@ -1,4 +1,3 @@
-import React from 'react';
 import { Badge } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/shared/components/buttons';

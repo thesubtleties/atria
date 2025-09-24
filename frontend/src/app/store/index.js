@@ -18,9 +18,7 @@ const rootReducer = (state, action) => {
   if (action.type === 'auth/logout') {
     console.log('🔄 LOGOUT: Resetting entire Redux state');
     
-    // Reset the state to initial values, BUT preserve the RTK Query reducer
-    // so we can manually clear its cache
-    const apiState = state?.[baseApi.reducerPath];
+    // Reset the state to initial values
     state = undefined;
     
     // Create a new state with empty API cache

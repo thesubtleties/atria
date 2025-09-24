@@ -1,4 +1,3 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/shared/components/buttons';
 import styles from './styles/index.module.css';

@@ -1,4 +1,3 @@
-import React from 'react';
 import { useGetUserDashboardQuery } from '@/app/features/users/api';
 import { LoadingSpinner } from '../../../shared/components/loading';
 import styles from './styles/index.module.css';

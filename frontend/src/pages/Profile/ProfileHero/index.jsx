@@ -1,4 +1,3 @@
-import React from 'react';
 import { Avatar, Group, Stack, Text, Menu, ActionIcon } from '@mantine/core';
 import { IconEdit, IconRefresh, IconDots, IconUserMinus } from '@tabler/icons-react';
 import { Button } from '@/shared/components/buttons';

@@ -1,4 +1,3 @@
-import React from 'react';
 import { useSelector } from 'react-redux';
 import { Container, Text } from '@mantine/core';
 import { useGetUserDashboardQuery } from '@/app/features/users/api';
