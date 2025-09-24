@@ -75,6 +75,7 @@ jobs:
     - name: Run database migrations
       env:
         DATABASE_URL: postgresql://test_user:test_pass@localhost:5432/test_atria
+        SQLALCHEMY_DATABASE_URI: postgresql://test_user:test_pass@localhost:5432/test_atria
         FLASK_APP: api.app:create_app
         FLASK_ENV: testing
       run: |
@@ -84,6 +85,7 @@ jobs:
     - name: Run unit tests
       env:
         DATABASE_URL: postgresql://test_user:test_pass@localhost:5432/test_atria
+        SQLALCHEMY_DATABASE_URI: postgresql://test_user:test_pass@localhost:5432/test_atria
         REDIS_URL: redis://localhost:6379/0
         JWT_SECRET_KEY: test-secret-key-for-testing
         FLASK_ENV: testing
