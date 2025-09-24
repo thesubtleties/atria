@@ -1,65 +1,15 @@
 import { useMemo, useState, useEffect } from 'react';
-import { Table, Text, Box, ActionIcon } from '@mantine/core';
+import { Text } from '@mantine/core';
 import { LoadingOverlay } from '../../../../shared/components/loading';
-import { IconGripVertical } from '@tabler/icons-react';
 import { useMediaQuery } from '@mantine/hooks';
-import { DragDropProvider } from '@dnd-kit/react';
 import { move } from '@dnd-kit/helpers';
-import { useSortable } from '@dnd-kit/react/sortable';
 import { notifications } from '@mantine/notifications';
 import { useReorderChatRoomMutation } from '@/app/features/chat/api';
-import ChatRoomRow from '../ChatRoomRow';
+import RoomTypeSection from './RoomTypeSection';
+import EmptyState from './EmptyState';
 import styles from './styles.module.css';
 
-// Draggable table row wrapper
-const DraggableTableRow = ({ id, room, color, onEdit, children }) => {
-  const { ref, isDragging } = useSortable({ 
-    id,
-    type: `chatroom-${room.room_type}`,
-    accept: [`chatroom-${room.room_type}`],
-  });
-
-  return (
-    <Table.Tr 
-      ref={ref}
-      className={`${styles.draggableRow} ${isDragging ? styles.dragging : ''}`}
-    >
-      <Table.Td className={styles.dragHandleCell}>
-        <ActionIcon 
-          variant="subtle" 
-          size="sm" 
-          className={styles.dragHandle}
-        >
-          <IconGripVertical size={16} />
-        </ActionIcon>
-      </Table.Td>
-      {children}
-    </Table.Tr>
-  );
-};
-
-// Draggable card wrapper for mobile
-const DraggableCard = ({ id, room, color, onEdit }) => {
-  const { ref, isDragging } = useSortable({ 
-    id,
-    type: `chatroom-${room.room_type}`,
-    accept: [`chatroom-${room.room_type}`],
-  });
-
-  return (
-    <div 
-      ref={ref}
-      className={`${styles.mobileCard} ${isDragging ? styles.dragging : ''}`}
-    >
-      <ChatRoomRow
-        room={room}
-        color={color}
-        onEdit={onEdit}
-        isMobile={true}
-      />
-    </div>
-  );
-};
+// Components moved to separate files
 
 const ChatRoomsList = ({ chatRooms, isLoading, onEdit }) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
@@ -226,13 +176,7 @@ const ChatRoomsList = ({ chatRooms, isLoading, onEdit }) => {
   };
 
   if (chatRooms.length === 0 && !isLoading) {
-    return (
-      <Box className={styles.emptyState}>
-        <Text c="dimmed" ta="center">
-          No chat rooms configured. Click "Add Chat Room" to enable networking.
-        </Text>
-      </Box>
-    );
+    return <EmptyState />;
   }
 
   const roomTypeInfo = {
@@ -257,77 +201,20 @@ const ChatRoomsList = ({ chatRooms, isLoading, onEdit }) => {
         if (!rooms || rooms.length === 0) return null;
         
         return (
-          <Box key={type} className={styles.typeSection}>
-            <Box className={styles.typeHeader}>
-              <h4>{title}</h4>
-              <p>
-                {help} • {rooms.length} room{rooms.length !== 1 ? 's' : ''}
-              </p>
-            </Box>
-            
-            <DragDropProvider 
-              onDragOver={handleDragOver(type)}
-              onDragEnd={handleDragEnd(type)}
-            >
-              {isMobile ? (
-                // Mobile: Card view
-                <div className={styles.mobileCardList}>
-                  {(localRooms[type] || []).map((roomId) => {
-                    const room = roomLookup[roomId];
-                    if (!room) return null;
-                    
-                    return (
-                      <DraggableCard
-                        key={roomId}
-                        id={roomId}
-                        room={room}
-                        color={color}
-                        onEdit={onEdit}
-                      />
-                    );
-                  })}
-                </div>
-              ) : (
-                // Desktop: Table view
-                <Table>
-                  <Table.Thead>
-                    <Table.Tr>
-                      <Table.Th style={{ width: '40px' }}></Table.Th>
-                      <Table.Th>Room Name</Table.Th>
-                      <Table.Th>Description</Table.Th>
-                      <Table.Th style={{ width: '80px', textAlign: 'center' }}>Messages</Table.Th>
-                      <Table.Th style={{ width: '80px', textAlign: 'center' }}>Active</Table.Th>
-                      <Table.Th style={{ width: '100px', textAlign: 'center' }}>Status</Table.Th>
-                      <Table.Th style={{ width: '70px', textAlign: 'center' }}>Actions</Table.Th>
-                    </Table.Tr>
-                  </Table.Thead>
-                  <Table.Tbody>
-                    {(localRooms[type] || []).map((roomId) => {
-                      const room = roomLookup[roomId];
-                      if (!room) return null;
-                      
-                      return (
-                        <DraggableTableRow
-                          key={roomId}
-                          id={roomId}
-                          room={room}
-                          color={color}
-                          onEdit={onEdit}
-                        >
-                          <ChatRoomRow
-                            room={room}
-                            color={color}
-                            onEdit={onEdit}
-                            isTableRow={true}
-                          />
-                        </DraggableTableRow>
-                      );
-                    })}
-                  </Table.Tbody>
-                </Table>
-              )}
-            </DragDropProvider>
-          </Box>
+          <RoomTypeSection
+            key={type}
+            type={type}
+            title={title}
+            color={color}
+            help={help}
+            rooms={rooms}
+            localRooms={localRooms}
+            roomLookup={roomLookup}
+            isMobile={isMobile}
+            onEdit={onEdit}
+            handleDragOver={handleDragOver(type)}
+            handleDragEnd={handleDragEnd(type)}
+          />
         );
       })}
     </div>
