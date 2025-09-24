@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Avatar } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import { useMediaQuery } from '@mantine/hooks';
@@ -13,7 +13,8 @@ export const ConnectionsSection = ({ connections }) => {
   const navigate = useNavigate();
   const openThread = useOpenThread();
   const isMobile = useMediaQuery('(max-width: 768px)');
-  const [createThread, { isLoading: isCreatingThread }] = useCreateDirectMessageThreadMutation();
+  const [createThread, { isLoading: isCreatingThread }] =
+    useCreateDirectMessageThreadMutation();
   const [messagingUserId, setMessagingUserId] = useState(null);
 
   const getInitials = (name) => {
@@ -40,8 +41,12 @@ export const ConnectionsSection = ({ connections }) => {
     setMessagingUserId(userId);
     try {
       const result = await createThread(userId).unwrap();
-      const threadId = result.thread_id || result.id || result.data?.thread_id || result.data?.id;
-      
+      const threadId =
+        result.thread_id ||
+        result.id ||
+        result.data?.thread_id ||
+        result.data?.id;
+
       if (threadId) {
         openThread(threadId);
         // Only show notification on desktop - mobile makes it obvious with full screen
@@ -71,10 +76,7 @@ export const ConnectionsSection = ({ connections }) => {
     <section className={styles.dashboardSection}>
       <div className={styles.sectionHeader}>
         <h2 className={styles.sectionTitle}>Recent Connections</h2>
-        <Button 
-          variant="secondary"
-          onClick={() => navigate('/app/network')}
-        >
+        <Button variant="secondary" onClick={() => navigate('/app/network')}>
           View All
         </Button>
       </div>
@@ -94,14 +96,16 @@ export const ConnectionsSection = ({ connections }) => {
                     background: getAvatarGradient(index),
                     color: 'white',
                     fontWeight: 600,
-                    fontSize: '0.9rem'
-                  }
+                    fontSize: '0.9rem',
+                  },
                 }}
               >
-                {getInitials(connection.user.display_name || connection.user.username)}
+                {getInitials(
+                  connection.user.display_name || connection.user.username
+                )}
               </Avatar>
               <div className={styles.connectionInfo}>
-                <div 
+                <div
                   className={styles.connectionName}
                   onClick={() => navigate(`/app/users/${connection.user.id}`)}
                   style={{ cursor: 'pointer' }}
@@ -109,20 +113,23 @@ export const ConnectionsSection = ({ connections }) => {
                   {connection.user.display_name || connection.user.username}
                 </div>
                 <div className={styles.connectionRole}>
-                  {connection.title && connection.company 
+                  {connection.title && connection.company
                     ? `${connection.title} at ${connection.company}`
-                    : connection.title || connection.company || ''
-                  }
+                    : connection.title || connection.company || ''}
                 </div>
               </div>
               <Button
                 size="xs"
                 variant="ghost"
-                onClick={() => handleMessage(
-                  connection.user.id, 
-                  connection.user.display_name || connection.user.username
-                )}
-                loading={messagingUserId === connection.user.id || isCreatingThread}
+                onClick={() =>
+                  handleMessage(
+                    connection.user.id,
+                    connection.user.display_name || connection.user.username
+                  )
+                }
+                loading={
+                  messagingUserId === connection.user.id || isCreatingThread
+                }
                 className={styles.messageButton}
               >
                 <IconMessageCircle size={16} />
@@ -133,10 +140,7 @@ export const ConnectionsSection = ({ connections }) => {
       ) : (
         <div className={styles.emptyState}>
           <p>No connections yet. Start networking at events!</p>
-          <Button 
-            variant="primary"
-            onClick={() => navigate('/app/events')}
-          >
+          <Button variant="primary" onClick={() => navigate('/app/events')}>
             Find Events
           </Button>
         </div>
