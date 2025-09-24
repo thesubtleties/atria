@@ -144,7 +144,7 @@ const InviteModal = ({ opened, onClose, eventId, currentUserRole, onSuccess }) =
         onClose();
         onSuccess?.();
       }
-    } catch (error) {
+    } catch {
       notifications.show({
         title: 'Error',
         message: 'Failed to send invitations',

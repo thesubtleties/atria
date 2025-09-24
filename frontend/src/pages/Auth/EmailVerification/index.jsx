@@ -39,7 +39,7 @@ export const EmailVerification = () => {
             </Center>
             <Title order={2}>Email Verified!</Title>
             <Text c="dimmed" ta="center">
-              Your email has been successfully verified. You'll be redirected to the login page in a few seconds.
+              {`Your email has been successfully verified. You'll be redirected to the login page in a few seconds.`}
             </Text>
             <Button onClick={() => navigate('/', { state: { emailVerified: true, message: 'Email verified successfully! You can now log in.' } })} variant="filled">
               Go to Login
