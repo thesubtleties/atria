@@ -49,7 +49,7 @@ const PendingInvitations = ({ orgId, searchQuery }) => {
         color: 'green',
       });
       refetch();
-    } catch (error) {
+    } catch {
       notifications.show({
         title: 'Error',
         message: 'Failed to cancel invitation',

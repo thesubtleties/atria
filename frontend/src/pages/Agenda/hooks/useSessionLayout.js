@@ -17,15 +17,6 @@ function timeToMinutes(timeStr) {
   return totalHours * 60 + minutes;
 }
 
-function hasTimeOverlap(session1, session2) {
-  const start1 = timeToMinutes(session1.start_time);
-  const end1 = timeToMinutes(session1.end_time);
-  const start2 = timeToMinutes(session2.start_time);
-  const end2 = timeToMinutes(session2.end_time);
-
-  return start1 < end2 && start2 < end1;
-}
-
 function organizeTimeSlots(sessions) {
   // Sort ALL sessions strictly by start time
   const sorted = [...sessions].sort((a, b) => {

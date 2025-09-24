@@ -12,9 +12,9 @@ import {
   Stack,
 } from '@mantine/core';
 import { TimeSelect } from '@/shared/components/forms/TimeSelect';
-import { 
-  IconDots, 
-  IconTrash, 
+import {
+  IconDots,
+  IconTrash,
   IconAlertCircle,
   IconChevronDown,
   IconChevronUp,
@@ -22,7 +22,10 @@ import {
 } from '@tabler/icons-react';
 import { useDebouncedValue } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
-import { useUpdateSessionMutation, useDeleteSessionMutation } from '@/app/features/sessions/api';
+import {
+  useUpdateSessionMutation,
+  useDeleteSessionMutation,
+} from '@/app/features/sessions/api';
 import { SessionSpeakers } from '@/pages/Session/SessionSpeakers';
 import { openConfirmationModal } from '@/shared/components/modals/ConfirmationModal';
 import { validateField, validateTimeOrder } from '../schemas/sessionCardSchema';
@@ -44,7 +47,7 @@ const CHAT_MODES = [
   { value: 'DISABLED', label: 'Chat Disabled' },
 ];
 
-export const SessionCardMobile = ({ session, eventId, hasConflict }) => {
+export const SessionCardMobile = ({ session, hasConflict }) => {
   const [updateSession] = useUpdateSessionMutation();
   const [deleteSession] = useDeleteSessionMutation();
   const [detailsExpanded, setDetailsExpanded] = useState(false);
@@ -52,13 +55,15 @@ export const SessionCardMobile = ({ session, eventId, hasConflict }) => {
   // Local state for immediate UI updates
   const [title, setTitle] = useState(session.title);
   const [description, setDescription] = useState(session.description || '');
-  const [shortDescription, setShortDescription] = useState(session.short_description || '');
+  const [shortDescription, setShortDescription] = useState(
+    session.short_description || ''
+  );
   const [sessionType, setSessionType] = useState(session.session_type);
   const [startTime, setStartTime] = useState(session.start_time);
   const [endTime, setEndTime] = useState(session.end_time);
   const [streamUrl, setStreamUrl] = useState(session.stream_url || '');
   const [chatMode, setChatMode] = useState(session.chat_mode || 'ENABLED');
-  
+
   // Validation error states
   const [errors, setErrors] = useState({});
 
@@ -69,44 +74,53 @@ export const SessionCardMobile = ({ session, eventId, hasConflict }) => {
   const [debouncedStreamUrl] = useDebouncedValue(streamUrl, 500);
 
   // Auto-save when debounced values change
-  const handleUpdate = useCallback(async (updates) => {
-    try {
-      await updateSession({
-        id: session.id,
-        ...updates,
-      }).unwrap();
-    } catch (error) {
-      console.error('Failed to update session:', error);
-      notifications.show({
-        title: 'Error',
-        message: 'Failed to update session',
-        color: 'red',
-      });
-    }
-  }, [session.id, updateSession]);
+  const handleUpdate = useCallback(
+    async (updates) => {
+      try {
+        await updateSession({
+          id: session.id,
+          ...updates,
+        }).unwrap();
+      } catch (error) {
+        console.error('Failed to update session:', error);
+        notifications.show({
+          title: 'Error',
+          message: 'Failed to update session',
+          color: 'red',
+        });
+      }
+    },
+    [session.id, updateSession]
+  );
 
   // Validate field before updating
   const validateAndUpdate = useCallback((field, value) => {
     const validation = validateField(field, value);
-    
+
     if (!validation.success) {
-      setErrors(prev => ({ ...prev, [field]: validation.error.errors[0].message }));
+      setErrors((prev) => ({
+        ...prev,
+        [field]: validation.error.errors[0].message,
+      }));
       return false;
     }
-    
+
     // Clear error if validation passes
-    setErrors(prev => {
+    setErrors((prev) => {
       const newErrors = { ...prev };
       delete newErrors[field];
       return newErrors;
     });
-    
+
     return true;
   }, []);
 
   // Update on debounced changes
   useEffect(() => {
-    if (debouncedTitle !== session.title && validateAndUpdate('title', debouncedTitle)) {
+    if (
+      debouncedTitle !== session.title &&
+      validateAndUpdate('title', debouncedTitle)
+    ) {
       handleUpdate({ title: debouncedTitle });
     }
   }, [debouncedTitle, session.title, handleUpdate, validateAndUpdate]);
@@ -118,13 +132,25 @@ export const SessionCardMobile = ({ session, eventId, hasConflict }) => {
   }, [debouncedDescription, session.description, handleUpdate]);
 
   useEffect(() => {
-    if (debouncedShortDescription !== session.short_description && validateAndUpdate('short_description', debouncedShortDescription)) {
+    if (
+      debouncedShortDescription !== session.short_description &&
+      validateAndUpdate('short_description', debouncedShortDescription)
+    ) {
       handleUpdate({ short_description: debouncedShortDescription });
     }
-  }, [debouncedShortDescription, session.short_description, handleUpdate, validateAndUpdate]);
+  }, [
+    debouncedShortDescription,
+    session.short_description,
+    handleUpdate,
+    validateAndUpdate,
+  ]);
 
   useEffect(() => {
-    if (debouncedStreamUrl !== session.stream_url && (debouncedStreamUrl === '' || validateAndUpdate('stream_url', debouncedStreamUrl))) {
+    if (
+      debouncedStreamUrl !== session.stream_url &&
+      (debouncedStreamUrl === '' ||
+        validateAndUpdate('stream_url', debouncedStreamUrl))
+    ) {
       handleUpdate({ stream_url: debouncedStreamUrl });
     }
   }, [debouncedStreamUrl, session.stream_url, handleUpdate, validateAndUpdate]);
@@ -133,7 +159,7 @@ export const SessionCardMobile = ({ session, eventId, hasConflict }) => {
   const calculateDuration = (start, end) => {
     const [startHour, startMin] = start.split(':').map(Number);
     const [endHour, endMin] = end.split(':').map(Number);
-    const totalMinutes = (endHour * 60 + endMin) - (startHour * 60 + startMin);
+    const totalMinutes = endHour * 60 + endMin - (startHour * 60 + startMin);
     const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
     return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
@@ -141,43 +167,46 @@ export const SessionCardMobile = ({ session, eventId, hasConflict }) => {
 
   const handleTimeChange = (field, value) => {
     if (!value) return;
-    
+
     // Validate time format
     if (!validateAndUpdate(field, value)) {
       return;
     }
-    
+
     // Always update local state immediately for better UX
     if (field === 'start_time') {
       setStartTime(value);
     } else {
       setEndTime(value);
     }
-    
+
     // Check time order validation with the new values
     const newStartTime = field === 'start_time' ? value : startTime;
     const newEndTime = field === 'end_time' ? value : endTime;
     const timeOrderValidation = validateTimeOrder(newStartTime, newEndTime);
-    
+
     if (!timeOrderValidation.success) {
       // Show error but don't prevent local state update
-      setErrors(prev => ({ ...prev, time_order: timeOrderValidation.error.message }));
+      setErrors((prev) => ({
+        ...prev,
+        time_order: timeOrderValidation.error.message,
+      }));
       // Don't update backend if validation fails
       return;
     }
-    
+
     // Clear time order error if validation passes
-    setErrors(prev => {
+    setErrors((prev) => {
       const newErrors = { ...prev };
       delete newErrors.time_order;
       return newErrors;
     });
-    
+
     // Always send both times when clearing a time order error to ensure backend is in sync
-    const updates = errors.time_order 
+    const updates = errors.time_order
       ? { start_time: newStartTime, end_time: newEndTime }
       : { [field]: value };
-    
+
     handleUpdate(updates);
   };
 
@@ -209,45 +238,47 @@ export const SessionCardMobile = ({ session, eventId, hasConflict }) => {
   };
 
   const getSessionTypeLabel = (type) => {
-    return SESSION_TYPES.find(t => t.value === type)?.label || type;
+    return SESSION_TYPES.find((t) => t.value === type)?.label || type;
   };
 
   // Get the appropriate badge class based on session type
   const getSessionTypeBadgeClass = (type) => {
     const typeClassMap = {
-      'KEYNOTE': styles.badgeKeynote,
-      'WORKSHOP': styles.badgeWorkshop,
-      'PANEL': styles.badgePanel,
-      'PRESENTATION': styles.badgePresentation,
-      'NETWORKING': styles.badgeNetworking,
-      'QA': styles.badgeQa,
+      KEYNOTE: styles.badgeKeynote,
+      WORKSHOP: styles.badgeWorkshop,
+      PANEL: styles.badgePanel,
+      PRESENTATION: styles.badgePresentation,
+      NETWORKING: styles.badgeNetworking,
+      QA: styles.badgeQa,
     };
     return typeClassMap[type] || styles.sessionTypeBadge;
   };
 
   return (
-    <div className={`${styles.sessionCard} ${hasConflict ? styles.hasConflict : ''}`}>
+    <div
+      className={`${styles.sessionCard} ${hasConflict ? styles.hasConflict : ''}`}
+    >
       {/* Actions Menu - Top right corner */}
       <Menu position="bottom-end" withinPortal>
         <Menu.Target>
-          <ActionIcon 
-            variant="subtle" 
+          <ActionIcon
+            variant="subtle"
             color="gray"
             className={styles.mobileActionButton}
-            style={{ 
-              position: 'absolute', 
-              top: '0.75rem', 
+            style={{
+              position: 'absolute',
+              top: '0.75rem',
               right: '0.75rem',
               opacity: 1,
-              visibility: 'visible'
+              visibility: 'visible',
             }}
           >
             <IconDots size={16} />
           </ActionIcon>
         </Menu.Target>
         <Menu.Dropdown>
-          <Menu.Item 
-            color="red" 
+          <Menu.Item
+            color="red"
             leftSection={<IconTrash size={14} />}
             onClick={handleDelete}
           >
@@ -288,14 +319,18 @@ export const SessionCardMobile = ({ session, eventId, hasConflict }) => {
             {getSessionTypeLabel(sessionType)}
           </Badge>
           {hasConflict && (
-            <Badge className={styles.conflictPill} size="sm" leftSection={<IconAlertCircle size={12} />}>
+            <Badge
+              className={styles.conflictPill}
+              size="sm"
+              leftSection={<IconAlertCircle size={12} />}
+            >
               Overlaps
             </Badge>
           )}
         </Group>
 
         {/* Expandable Section Trigger */}
-        <div 
+        <div
           className={styles.expandableSection}
           onClick={() => setDetailsExpanded(!detailsExpanded)}
         >
@@ -303,8 +338,16 @@ export const SessionCardMobile = ({ session, eventId, hasConflict }) => {
             <Text size="sm" fw={500}>
               Session Details
             </Text>
-            <ActionIcon size="xs" variant="transparent" style={{ color: 'var(--color-text-muted)' }}>
-              {detailsExpanded ? <IconChevronUp size={14} /> : <IconChevronDown size={14} />}
+            <ActionIcon
+              size="xs"
+              variant="transparent"
+              style={{ color: 'var(--color-text-muted)' }}
+            >
+              {detailsExpanded ? (
+                <IconChevronUp size={14} />
+              ) : (
+                <IconChevronDown size={14} />
+              )}
             </ActionIcon>
           </Group>
         </div>
@@ -375,9 +418,11 @@ export const SessionCardMobile = ({ session, eventId, hasConflict }) => {
 
             {/* Speakers */}
             <div className={styles.speakersSection}>
-              <Text size="sm" fw={500} mb="xs">Speakers</Text>
-              <SessionSpeakers 
-                sessionId={session.id} 
+              <Text size="sm" fw={500} mb="xs">
+                Speakers
+              </Text>
+              <SessionSpeakers
+                sessionId={session.id}
                 eventId={session.event_id}
                 canEdit={true}
                 preloadedSpeakers={session.session_speakers}

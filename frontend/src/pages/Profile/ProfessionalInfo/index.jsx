@@ -1,4 +1,3 @@
-import React from 'react';
 import { Text } from '@mantine/core';
 import styles from './styles/index.module.css';
 

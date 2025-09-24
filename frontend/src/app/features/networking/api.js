@@ -11,7 +11,7 @@ import {
 
 // Helper function to handle socket promises with RTK Query
 const socketBaseQuery = () => async (args) => {
-  const { url, method, body } = args;
+  const { url, body } = args;
 
   try {
     let result;

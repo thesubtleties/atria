@@ -1,4 +1,3 @@
-import React from 'react';
 import { Loader, LoadingOverlay, Skeleton, Center, Text, Stack } from '@mantine/core';
 import styles from './styles/LoadingState.module.css';
 

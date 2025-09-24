@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
-import { 
-  ColorInput, 
-  Stack, 
+import {
+  // ColorInput, // Uncomment when branding section is re-enabled
+  Stack,
   Group,
   Text,
   FileInput,
   Box,
   Tabs,
   Textarea,
-  Divider
+  // Divider // Uncomment when branding section is re-enabled
 } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
@@ -22,10 +22,12 @@ import styles from './styles.module.css';
 import parentStyles from '../styles/index.module.css';
 
 const BrandingSection = ({ event, eventId }) => {
-  const [updateBranding, { isLoading: isUpdatingBranding }] = useUpdateEventBrandingMutation();
+  // const [updateBranding, { isLoading: isUpdatingBranding }] = useUpdateEventBrandingMutation(); // Uncomment when branding section is re-enabled
+  const [updateBranding] = useUpdateEventBrandingMutation();
   const [updateEvent, { isLoading: isUpdatingHero }] = useUpdateEventMutation();
   const [uploadImage, { isLoading: isUploading }] = useUploadImageMutation();
-  const [hasChanges, setHasChanges] = useState(false);
+  // const [hasChanges, setHasChanges] = useState(false); // Uncomment when branding section is re-enabled
+  const [, setHasChanges] = useState(false); // Keeping setter for commented code references
   const [hasHeroChanges, setHasHeroChanges] = useState(false);
   const [activeTab, setActiveTab] = useState('desktop');
 
@@ -118,6 +120,8 @@ const BrandingSection = ({ event, eventId }) => {
     }
   };
 
+  // Commented out - will be used when branding section is re-enabled
+  // eslint-disable-next-line no-unused-vars
   const handleSubmit = async (values) => {
     try {
       await updateBranding({
@@ -166,6 +170,8 @@ const BrandingSection = ({ event, eventId }) => {
     }
   };
 
+  // Commented out - will be used when branding section is re-enabled
+  // eslint-disable-next-line no-unused-vars
   const handleReset = () => {
     form.setValues({
       primary_color: event?.branding?.primary_color || '#8B5CF6',

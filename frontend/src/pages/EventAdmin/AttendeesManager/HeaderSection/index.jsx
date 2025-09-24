@@ -1,4 +1,3 @@
-import React from 'react';
 import { Badge } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
 import { Button } from '../../../../shared/components/buttons';

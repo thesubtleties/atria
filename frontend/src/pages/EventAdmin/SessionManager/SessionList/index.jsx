@@ -14,7 +14,7 @@ export const SessionList = ({ sessions, currentDay, eventId }) => {
           No sessions scheduled for Day {currentDay}
         </Text>
         <Text size="sm" c="dimmed" mt="xs">
-          Click "New Session" to add your first session
+          {`Click "New Session" to add your first session`}
         </Text>
       </div>
     );

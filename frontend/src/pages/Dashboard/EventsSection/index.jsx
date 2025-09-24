@@ -1,4 +1,3 @@
-import React from 'react';
 import { Badge } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/shared/components/buttons';
@@ -91,7 +90,7 @@ export const EventsSection = ({ events }) => {
         </div>
       ) : (
         <div className={styles.emptyState}>
-          <p>You're not registered for any events yet.</p>
+          <p>{`You're not registered for any events yet.`}</p>
           <Button 
             variant="primary"
             onClick={() => navigate('/app/events')}

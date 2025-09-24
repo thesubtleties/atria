@@ -7,7 +7,7 @@ export const sponsorsApi = baseApi.injectEndpoints({
         url: `/events/${eventId}/sponsors`,
         params: { active_only: activeOnly ? 1 : 0 },
       }),
-      providesTags: (result, error, { eventId }) =>
+      providesTags: (result) =>
         result
           ? [
               ...result.map(({ id }) => ({ type: 'Sponsor', id })),
@@ -20,7 +20,7 @@ export const sponsorsApi = baseApi.injectEndpoints({
       query: (sponsorId) => ({
         url: `/sponsors/${sponsorId}`,
       }),
-      providesTags: (result, error, sponsorId) => [{ type: 'Sponsor', id: sponsorId }],
+      providesTags: (result, _, sponsorId) => [{ type: 'Sponsor', id: sponsorId }],
     }),
 
     getFeaturedSponsors: builder.query({
@@ -45,7 +45,7 @@ export const sponsorsApi = baseApi.injectEndpoints({
         method: 'PATCH',
         body: data,
       }),
-      invalidatesTags: (result, error, { sponsorId }) => [
+      invalidatesTags: (result, _, { sponsorId }) => [
         { type: 'Sponsor', id: sponsorId },
         { type: 'Sponsor', id: 'LIST' },
       ],
@@ -75,7 +75,7 @@ export const sponsorsApi = baseApi.injectEndpoints({
         url: `/sponsors/${sponsorId}/toggle-featured`,
         method: 'POST',
       }),
-      invalidatesTags: (result, error, sponsorId) => [
+      invalidatesTags: (result, _, sponsorId) => [
         { type: 'Sponsor', id: sponsorId },
         { type: 'Sponsor', id: 'LIST' },
       ],

@@ -26,7 +26,7 @@ const ChatRoomRow = ({ room, color, onEdit, isTableRow, isMobile }) => {
         message: `Chat room ${checked ? 'enabled' : 'disabled'}`,
         color: 'green',
       });
-    } catch (error) {
+    } catch {
       notifications.show({
         title: 'Error',
         message: 'Failed to update chat room status',
@@ -52,7 +52,7 @@ const ChatRoomRow = ({ room, color, onEdit, isTableRow, isMobile }) => {
             message: 'Chat room deleted successfully',
             color: 'green',
           });
-        } catch (error) {
+        } catch {
           notifications.show({
             title: 'Error',
             message: 'Failed to delete chat room',

@@ -45,7 +45,7 @@ const NetworkingManager = () => {
             message: `Disabled ${result.disabled_count} public chat rooms`,
             color: 'green',
           });
-        } catch (error) {
+        } catch {
           notifications.show({
             title: 'Error',
             message: 'Failed to disable chat rooms',

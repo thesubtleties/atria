@@ -18,10 +18,8 @@ import {
   IconMail,
   IconChevronDown,
 } from '@tabler/icons-react';
+import { useGetEventInvitationsQuery } from '../../../app/features/eventInvitations/api';
 import {
-  useGetEventInvitationsQuery,
-} from '../../../app/features/eventInvitations/api';
-import { 
   useGetEventQuery,
   useGetEventUsersAdminQuery,
 } from '../../../app/features/events/api';
@@ -38,7 +36,7 @@ const AttendeesManager = () => {
   const { eventId } = useParams();
   const isMobile = useMediaQuery('(max-width: 768px)');
   const [viewMode, setViewMode] = useState('attendees');
-  
+
   const handleViewChange = (value) => {
     setViewMode(value);
     // Reset pagination when switching views
@@ -48,9 +46,12 @@ const AttendeesManager = () => {
       setPage(1);
     }
   };
-  
+
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
-  const [roleUpdateModal, setRoleUpdateModal] = useState({ open: false, user: null });
+  const [roleUpdateModal, setRoleUpdateModal] = useState({
+    open: false,
+    user: null,
+  });
   const [filters, setFilters] = useState({
     search: '',
     role: 'ALL',
@@ -61,7 +62,7 @@ const AttendeesManager = () => {
   // Get current user info
   const currentUser = useSelector((state) => state.auth.user);
   const currentUserId = currentUser?.id;
-  
+
   // Fetch event details to get current user's role
   const { data: eventData } = useGetEventQuery(eventId);
   const currentUserRole = eventData?.user_role || 'ATTENDEE';
@@ -86,8 +87,8 @@ const AttendeesManager = () => {
     data: invitationsData,
     isLoading: isLoadingInvitations,
     refetch: refetchInvitations,
-  } = useGetEventInvitationsQuery({ 
-    eventId, 
+  } = useGetEventInvitationsQuery({
+    eventId,
     page: invitationsPage,
     perPage: 50,
   });
@@ -107,19 +108,21 @@ const AttendeesManager = () => {
     setFilters((prev) => ({
       ...prev,
       sortBy: field,
-      sortOrder: prev.sortBy === field && prev.sortOrder === 'asc' ? 'desc' : 'asc',
+      sortOrder:
+        prev.sortBy === field && prev.sortOrder === 'asc' ? 'desc' : 'asc',
     }));
   };
 
-  const filteredAttendees = attendeesData?.event_users?.filter((user) => {
-    if (!filters.search) return true;
-    const searchLower = filters.search.toLowerCase();
-    return (
-      user.full_name?.toLowerCase().includes(searchLower) ||
-      user.email?.toLowerCase().includes(searchLower) ||
-      user.company_name?.toLowerCase().includes(searchLower)
-    );
-  }) || [];
+  const filteredAttendees =
+    attendeesData?.event_users?.filter((user) => {
+      if (!filters.search) return true;
+      const searchLower = filters.search.toLowerCase();
+      return (
+        user.full_name?.toLowerCase().includes(searchLower) ||
+        user.email?.toLowerCase().includes(searchLower) ||
+        user.company_name?.toLowerCase().includes(searchLower)
+      );
+    }) || [];
 
   const sortedAttendees = [...filteredAttendees].sort((a, b) => {
     let aVal, bVal;
@@ -166,7 +169,7 @@ const AttendeesManager = () => {
   });
 
   // Use role counts from backend if available, otherwise calculate from current page
-  const roleCounts = attendeesData?.role_counts || 
+  const roleCounts = attendeesData?.role_counts ||
     attendeesData?.event_users?.reduce((acc, user) => {
       acc[user.role] = (acc[user.role] || 0) + 1;
       acc.total = (acc.total || 0) + 1;
@@ -178,17 +181,14 @@ const AttendeesManager = () => {
       <div className={styles.container}>
         <div className={styles.bgShape1} />
         <div className={styles.bgShape2} />
-        
+
         <div className={styles.contentWrapper}>
           <section className={styles.mainContent}>
             <div style={{ textAlign: 'center', padding: '3rem' }}>
               <Text c="red" size="lg" mb="md">
                 Error loading attendees: {attendeesError.message}
               </Text>
-              <Button 
-                variant="primary"
-                onClick={refetchAttendees}
-              >
+              <Button variant="primary" onClick={refetchAttendees}>
                 Retry
               </Button>
             </div>
@@ -206,7 +206,7 @@ const AttendeesManager = () => {
 
       <div className={styles.contentWrapper}>
         {/* Header Section */}
-        <HeaderSection 
+        <HeaderSection
           roleCounts={roleCounts}
           onInviteClick={() => setInviteModalOpen(true)}
         />
@@ -219,10 +219,22 @@ const AttendeesManager = () => {
               value={viewMode}
               onChange={handleViewChange}
               data={[
-                { value: 'attendees', label: `Attendees (${roleCounts.total || 0})` },
-                { value: 'invitations', label: `Pending Invitations (${invitationsData?.total_items || 0})` }
+                {
+                  value: 'attendees',
+                  label: `Attendees (${roleCounts.total || 0})`,
+                },
+                {
+                  value: 'invitations',
+                  label: `Pending Invitations (${invitationsData?.total_items || 0})`,
+                },
               ]}
-              leftSection={viewMode === 'attendees' ? <IconUsers size={16} /> : <IconMail size={16} />}
+              leftSection={
+                viewMode === 'attendees' ? (
+                  <IconUsers size={16} />
+                ) : (
+                  <IconMail size={16} />
+                )
+              }
               rightSection={<IconChevronDown size={16} />}
               className={styles.mobileSelect}
               classNames={{
@@ -236,17 +248,21 @@ const AttendeesManager = () => {
 
           {/* Desktop Tabs - Hidden on mobile */}
           {!isMobile && (
-            <Tabs value={viewMode} onChange={handleViewChange} className={styles.tabsContainer}>
+            <Tabs
+              value={viewMode}
+              onChange={handleViewChange}
+              className={styles.tabsContainer}
+            >
               <Tabs.List className={styles.tabsList}>
-                <Tabs.Tab 
-                  value="attendees" 
+                <Tabs.Tab
+                  value="attendees"
                   className={styles.tab}
                   leftSection={<IconUsers size={16} />}
                 >
                   Attendees ({roleCounts.total || 0})
                 </Tabs.Tab>
-                <Tabs.Tab 
-                  value="invitations" 
+                <Tabs.Tab
+                  value="invitations"
                   className={styles.tab}
                   leftSection={<IconMail size={16} />}
                 >
@@ -291,7 +307,12 @@ const AttendeesManager = () => {
                 attendees={sortedAttendees}
                 currentUserRole={currentUserRole}
                 currentUserId={currentUserId}
-                adminCount={attendeesData?.role_counts?.admins || attendeesData?.event_users?.filter(u => u.role === 'ADMIN').length || 1}
+                adminCount={
+                  attendeesData?.role_counts?.admins ||
+                  attendeesData?.event_users?.filter((u) => u.role === 'ADMIN')
+                    .length ||
+                  1
+                }
                 eventIcebreakers={eventData?.icebreakers || []}
                 onUpdateRole={(user) => {
                   setRoleUpdateModal({ open: true, user });
@@ -339,7 +360,7 @@ const AttendeesManager = () => {
           currentUserRole={currentUserRole}
           onSuccess={() => {
             refetchInvitations();
-            setActiveTab('invitations');
+            setViewMode('invitations');
           }}
         />
 
@@ -350,7 +371,12 @@ const AttendeesManager = () => {
           eventId={eventId}
           currentUserRole={currentUserRole}
           currentUserId={currentUserId}
-          adminCount={attendeesData?.role_counts?.admins || attendeesData?.event_users?.filter(u => u.role === 'ADMIN').length || 1}
+          adminCount={
+            attendeesData?.role_counts?.admins ||
+            attendeesData?.event_users?.filter((u) => u.role === 'ADMIN')
+              .length ||
+            1
+          }
           onSuccess={refetchAttendees}
         />
       </div>

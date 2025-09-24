@@ -1,4 +1,3 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/shared/components/buttons';
 import styles from './styles/index.module.css';
@@ -73,7 +72,7 @@ export const OrganizationsSection = ({ organizations }) => {
         </div>
       ) : (
         <div className={styles.emptyState}>
-          <p>You're not part of any organizations yet.</p>
+          <p>{`You're not part of any organizations yet.`}</p>
           <Button 
             variant="primary"
             onClick={() => navigate('/app/organizations/new')}

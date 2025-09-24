@@ -1,5 +1,13 @@
 import { useState } from 'react';
-import { Group, Text, Avatar, Menu, ActionIcon, Badge, Stack, Collapse } from '@mantine/core';
+import {
+  Group,
+  Text,
+  Avatar,
+  Menu,
+  ActionIcon,
+  Badge,
+  Collapse,
+} from '@mantine/core';
 import {
   IconDots,
   IconUserCircle,
@@ -22,9 +30,12 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
 import { openConfirmationModal } from '@/shared/components/modals/ConfirmationModal';
-import { getRoleDisplayName, canChangeUserRole } from '../schemas/attendeeSchemas';
+import {
+  getRoleDisplayName,
+  canChangeUserRole,
+} from '../schemas/attendeeSchemas';
 import { useRemoveEventUserMutation } from '../../../../app/features/events/api';
-import { 
+import {
   useBanEventUserMutation,
   useUnbanEventUserMutation,
   useChatBanEventUserMutation,
@@ -32,15 +43,17 @@ import {
 } from '../../../../app/features/moderation/api';
 import {
   useGetConnectionsQuery,
-  useCreateConnectionMutation,
   useCreateDirectMessageThreadMutation,
 } from '../../../../app/features/networking/api';
 import { useCancelEventInvitationMutation } from '../../../../app/features/eventInvitations/api';
 import { IcebreakerModal } from '../../../../shared/components/IcebreakerModal';
 import { useDispatch } from 'react-redux';
 import { openThread } from '../../../../app/store/chatSlice';
-import { formatTime, capitalizeWords } from '@/shared/utils/formatting';
-import { getModerationPermissions, getModerationStyles, createModerationHandlers } from '@/shared/utils/moderation';
+import {
+  getModerationPermissions,
+  getModerationStyles,
+  createModerationHandlers,
+} from '@/shared/utils/moderation';
 import styles from './styles.module.css';
 
 const AttendeeCard = ({
@@ -57,26 +70,29 @@ const AttendeeCard = ({
   const dispatch = useDispatch();
   const [modalOpened, setModalOpened] = useState(false);
   const [detailsExpanded, setDetailsExpanded] = useState(false);
-  
+
   // Mutations
   const [removeUser] = useRemoveEventUserMutation();
   const [banUser] = useBanEventUserMutation();
   const [unbanUser] = useUnbanEventUserMutation();
   const [chatBanUser] = useChatBanEventUserMutation();
   const [chatUnbanUser] = useChatUnbanEventUserMutation();
-  const [createConnection] = useCreateConnectionMutation();
   const [createThread] = useCreateDirectMessageThreadMutation();
   const [cancelInvitation] = useCancelEventInvitationMutation();
-  
+
   // Check connection status (for attendees only)
   const { data: connectionsData } = useGetConnectionsQuery(
     { page: 1, per_page: 1000 },
     { skip: isInvitation }
   );
-  const isConnected = !isInvitation && connectionsData?.connections?.some(
-    conn => (conn.requester.id === data.user_id || conn.recipient.id === data.user_id) && 
-             conn.status === 'ACCEPTED'
-  );
+  const isConnected =
+    !isInvitation &&
+    connectionsData?.connections?.some(
+      (conn) =>
+        (conn.requester.id === data.user_id ||
+          conn.recipient.id === data.user_id) &&
+        conn.status === 'ACCEPTED'
+    );
 
   // Get moderation permissions
   const {
@@ -85,21 +101,17 @@ const AttendeeCard = ({
     canChatModerateUser,
     canChatUnmuteUser,
   } = getModerationPermissions(currentUserId, currentUserRole, data);
-  
+
   // Create moderation handlers
-  const {
-    handleBan,
-    handleUnban,
-    handleChatBan,
-    handleChatUnban,
-  } = createModerationHandlers({
-    user: data,
-    currentUserRole,
-    banUser,
-    unbanUser,
-    chatBanUser,
-    chatUnbanUser,
-  });
+  const { handleBan, handleUnban, handleChatBan, handleChatUnban } =
+    createModerationHandlers({
+      user: data,
+      currentUserRole,
+      banUser,
+      unbanUser,
+      chatBanUser,
+      chatUnbanUser,
+    });
 
   // Format date for display
   const formatDate = (dateString) => {
@@ -114,10 +126,10 @@ const AttendeeCard = ({
 
   // Handle actions for attendees
   const handleRemove = () => {
-    const confirmMessage = isInvitation 
+    const confirmMessage = isInvitation
       ? `Cancel invitation to ${data.email}?`
       : `Remove ${data.full_name} from the event?`;
-    
+
     openConfirmationModal({
       title: isInvitation ? 'Cancel Invitation' : 'Remove Attendee',
       message: confirmMessage,
@@ -164,11 +176,11 @@ const AttendeeCard = ({
     try {
       const result = await createThread({
         userId: data.user_id,
-        eventId: data.event_id  // Include event context for proper thread creation
+        eventId: data.event_id, // Include event context for proper thread creation
       }).unwrap();
-      
+
       dispatch(openThread(result));
-      
+
       notifications.show({
         title: 'Success',
         message: 'Message thread opened',
@@ -184,21 +196,29 @@ const AttendeeCard = ({
   };
 
   const canManage = ['ADMIN', 'ORGANIZER'].includes(currentUserRole);
-  
+
   // Get status badge for invitations
   const getInvitationStatus = () => {
     if (!isInvitation) return null;
-    
+
     if (data.is_expired) {
       return (
-        <Badge color="gray" variant="light" leftSection={<IconClock size={14} />}>
+        <Badge
+          color="gray"
+          variant="light"
+          leftSection={<IconClock size={14} />}
+        >
           Expired
         </Badge>
       );
     }
     if (data.status === 'ACCEPTED') {
       return (
-        <Badge color="green" variant="light" leftSection={<IconCheck size={14} />}>
+        <Badge
+          color="green"
+          variant="light"
+          leftSection={<IconCheck size={14} />}
+        >
           Accepted
         </Badge>
       );
@@ -233,8 +253,12 @@ const AttendeeCard = ({
                       View Profile
                     </Menu.Item>
                   )}
-                  
-                  {canChangeUserRole(currentUserRole, data.role, adminCount) && (
+
+                  {canChangeUserRole(
+                    currentUserRole,
+                    data.role,
+                    adminCount
+                  ) && (
                     <Menu.Item
                       leftSection={<IconEdit size={16} />}
                       onClick={() => onUpdateRole(data)}
@@ -242,21 +266,26 @@ const AttendeeCard = ({
                       Change Role
                     </Menu.Item>
                   )}
-                  
+
                   {data.role === 'SPEAKER' && (
                     <Menu.Item
                       leftSection={<IconMicrophone size={16} />}
-                      onClick={() => navigate(`/app/organizations/${data.organization_id}/events/${data.event_id}/admin/speakers`)}
+                      onClick={() =>
+                        navigate(
+                          `/app/organizations/${data.organization_id}/events/${data.event_id}/admin/speakers`
+                        )
+                      }
                     >
                       Manage as Speaker
                     </Menu.Item>
                   )}
-                  
+
                   {/* Moderation Actions */}
-                  {(canModerateUser || canUnbanUser || canChatModerateUser || canChatUnmuteUser) && (
-                    <Menu.Divider />
-                  )}
-                  
+                  {(canModerateUser ||
+                    canUnbanUser ||
+                    canChatModerateUser ||
+                    canChatUnmuteUser) && <Menu.Divider />}
+
                   {canUnbanUser && (
                     <Menu.Item
                       leftSection={<IconUserCheck size={16} />}
@@ -265,7 +294,7 @@ const AttendeeCard = ({
                       Unban from Event
                     </Menu.Item>
                   )}
-                  
+
                   {canModerateUser && (
                     <Menu.Item
                       leftSection={<IconBan size={16} />}
@@ -275,7 +304,7 @@ const AttendeeCard = ({
                       Ban from Event
                     </Menu.Item>
                   )}
-                  
+
                   {canChatModerateUser && !data.is_chat_banned && (
                     <Menu.Item
                       leftSection={<IconVolumeOff size={16} />}
@@ -285,7 +314,7 @@ const AttendeeCard = ({
                       Mute Chat
                     </Menu.Item>
                   )}
-                  
+
                   {canChatUnmuteUser && (
                     <Menu.Item
                       leftSection={<IconVolume3 size={16} />}
@@ -294,7 +323,7 @@ const AttendeeCard = ({
                       Unmute Chat
                     </Menu.Item>
                   )}
-                  
+
                   {/* Admin Actions */}
                   {currentUserRole === 'ADMIN' && (
                     <>
@@ -308,7 +337,7 @@ const AttendeeCard = ({
                       </Menu.Item>
                     </>
                   )}
-                  
+
                   {/* Connection Actions */}
                   {currentUserId !== data.user_id && (
                     <>
@@ -345,9 +374,9 @@ const AttendeeCard = ({
                   >
                     Resend Invitation
                   </Menu.Item>
-                  
+
                   <Menu.Divider />
-                  
+
                   <Menu.Item
                     leftSection={<IconX size={16} />}
                     color="red"
@@ -371,10 +400,9 @@ const AttendeeCard = ({
           size={50}
           className={styles.avatar}
         >
-          {!isInvitation 
+          {!isInvitation
             ? `${data.first_name?.[0] || ''}${data.last_name?.[0] || ''}`
-            : data.email?.[0]?.toUpperCase()
-          }
+            : data.email?.[0]?.toUpperCase()}
         </Avatar>
         <div className={styles.userDetails}>
           <Group gap="xs" wrap="nowrap" align="center">
@@ -382,20 +410,24 @@ const AttendeeCard = ({
               {!isInvitation ? data.full_name : data.email}
             </Text>
             {!isInvitation && isConnected && (
-              <IconUserCheck 
-                size={14} 
+              <IconUserCheck
+                size={14}
                 style={{ color: 'rgba(139, 92, 246, 0.7)', flexShrink: 0 }}
                 title="Connected"
               />
             )}
           </Group>
           <Text size="sm" className={styles.userEmail}>
-            {!isInvitation ? data.email : `Invited by: ${data.inviter_name || 'Unknown'}`}
+            {!isInvitation
+              ? data.email
+              : `Invited by: ${data.inviter_name || 'Unknown'}`}
           </Text>
           {/* Role badges inline */}
           <Group gap="xs" mt={4}>
-            <Badge 
-              className={styles[`${data.role?.toLowerCase()}Badge`] || styles.roleBadge}
+            <Badge
+              className={
+                styles[`${data.role?.toLowerCase()}Badge`] || styles.roleBadge
+              }
               radius="sm"
               size="sm"
             >
@@ -407,7 +439,7 @@ const AttendeeCard = ({
       </div>
 
       {/* Additional Info - Expandable on mobile */}
-      <div 
+      <div
         className={styles.expandableSection}
         onClick={() => setDetailsExpanded(!detailsExpanded)}
       >
@@ -416,7 +448,11 @@ const AttendeeCard = ({
             {isInvitation ? 'Invitation Details' : 'Additional Info'}
           </Text>
           <ActionIcon size="xs" variant="transparent">
-            {detailsExpanded ? <IconChevronUp size={14} /> : <IconChevronDown size={14} />}
+            {detailsExpanded ? (
+              <IconChevronUp size={14} />
+            ) : (
+              <IconChevronDown size={14} />
+            )}
           </ActionIcon>
         </Group>
       </div>
@@ -427,27 +463,43 @@ const AttendeeCard = ({
             <>
               {data.company_name && (
                 <div className={styles.detailItem}>
-                  <Text size="xs" c="dimmed">Company</Text>
+                  <Text size="xs" c="dimmed">
+                    Company
+                  </Text>
                   <Text size="sm">{data.company_name}</Text>
                 </div>
               )}
               {data.title && (
                 <div className={styles.detailItem}>
-                  <Text size="xs" c="dimmed">Title</Text>
+                  <Text size="xs" c="dimmed">
+                    Title
+                  </Text>
                   <Text size="sm">{data.title}</Text>
                 </div>
               )}
               <div className={styles.detailItem}>
-                <Text size="xs" c="dimmed">Joined Event</Text>
+                <Text size="xs" c="dimmed">
+                  Joined Event
+                </Text>
                 <Text size="sm">{formatDate(data.created_at)}</Text>
               </div>
               {data.is_banned && (
-                <Badge className={styles.bannedBadge} radius="sm" size="sm" leftSection={<IconBan size={12} />}>
+                <Badge
+                  className={styles.bannedBadge}
+                  radius="sm"
+                  size="sm"
+                  leftSection={<IconBan size={12} />}
+                >
                   Banned
                 </Badge>
               )}
               {data.is_chat_banned && (
-                <Badge className={styles.chatBannedBadge} radius="sm" size="sm" leftSection={<IconVolumeOff size={12} />}>
+                <Badge
+                  className={styles.chatBannedBadge}
+                  radius="sm"
+                  size="sm"
+                  leftSection={<IconVolumeOff size={12} />}
+                >
                   Chat Banned
                 </Badge>
               )}
@@ -455,17 +507,25 @@ const AttendeeCard = ({
           ) : (
             <>
               <div className={styles.detailItem}>
-                <Text size="xs" c="dimmed">Sent</Text>
+                <Text size="xs" c="dimmed">
+                  Sent
+                </Text>
                 <Text size="sm">{formatDate(data.created_at)}</Text>
               </div>
               <div className={styles.detailItem}>
-                <Text size="xs" c="dimmed">Expires</Text>
+                <Text size="xs" c="dimmed">
+                  Expires
+                </Text>
                 <Text size="sm">{formatDate(data.expires_at)}</Text>
               </div>
               {data.message && (
                 <div className={styles.detailItem}>
-                  <Text size="xs" c="dimmed">Message</Text>
-                  <Text size="sm" lineClamp={2}>{data.message}</Text>
+                  <Text size="xs" c="dimmed">
+                    Message
+                  </Text>
+                  <Text size="sm" lineClamp={2}>
+                    {data.message}
+                  </Text>
                 </div>
               )}
             </>

@@ -368,7 +368,9 @@ const ContentSections = ({ event, eventId }) => {
       welcomeForm.values.welcome_content !== event?.sections?.welcome?.content;
     
     // Compare without _id field
+    // eslint-disable-next-line no-unused-vars
     const highlightsWithoutId = highlights.map(({ _id, ...rest }) => rest);
+    // eslint-disable-next-line no-unused-vars
     const faqsWithoutId = faqs.map(({ _id, ...rest }) => rest);
     
     const highlightsChanged = JSON.stringify(highlightsWithoutId) !== JSON.stringify(event?.sections?.highlights || []);
@@ -387,6 +389,7 @@ const ContentSections = ({ event, eventId }) => {
   const handleEditHighlight = (highlightId) => {
     const highlight = highlightLookup[highlightId];
     if (highlight) {
+      // eslint-disable-next-line no-unused-vars
       const { _id, ...rest } = highlight;
       highlightForm.setValues(rest);
       setHighlightModal({ open: true, mode: 'edit', id: highlightId });
@@ -447,6 +450,7 @@ const ContentSections = ({ event, eventId }) => {
   const handleEditFAQ = (faqId) => {
     const faq = faqLookup[faqId];
     if (faq) {
+      // eslint-disable-next-line no-unused-vars
       const { _id, ...rest } = faq;
       faqForm.setValues(rest);
       setFaqModal({ open: true, mode: 'edit', id: faqId });
@@ -502,7 +506,9 @@ const ContentSections = ({ event, eventId }) => {
   const handleSubmit = async () => {
     try {
       // Strip _id fields before sending to API
+      // eslint-disable-next-line no-unused-vars
       const highlightsForApi = highlights.map(({ _id, ...rest }) => rest);
+      // eslint-disable-next-line no-unused-vars
       const faqsForApi = faqs.map(({ _id, ...rest }) => rest);
 
       await updateEvent({

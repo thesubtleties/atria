@@ -3,12 +3,25 @@ import { Modal, Select, Stack, Text, Alert, List } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { IconAlertCircle, IconCheck } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
-import { roleUpdateSchema, getRoleDisplayName, canChangeRole, canChangeUserRole } from '../schemas/attendeeSchemas';
+import {
+  roleUpdateSchema,
+  getRoleDisplayName,
+  canChangeUserRole,
+} from '../schemas/attendeeSchemas';
 import { useUpdateEventUserMutation } from '../../../../app/features/events/api';
 import { Button } from '../../../../shared/components/buttons';
 import styles from './styles.module.css';
 
-const RoleUpdateModal = ({ opened, onClose, user, eventId, currentUserRole, currentUserId, adminCount, onSuccess }) => {
+const RoleUpdateModal = ({
+  opened,
+  onClose,
+  user,
+  eventId,
+  currentUserRole,
+  currentUserId,
+  adminCount,
+  onSuccess,
+}) => {
   const [updateUser, { isLoading }] = useUpdateEventUserMutation();
 
   const form = useForm({
@@ -69,7 +82,7 @@ const RoleUpdateModal = ({ opened, onClose, user, eventId, currentUserRole, curr
         disabled: !validation.allowed,
       };
     })
-    .filter(option => !option.disabled);
+    .filter((option) => !option.disabled);
 
   if (!user) return null;
 
@@ -102,88 +115,114 @@ const RoleUpdateModal = ({ opened, onClose, user, eventId, currentUserRole, curr
 
           {/* Warning for speaker being downgraded to attendee */}
           {user?.role === 'SPEAKER' && form.values.role === 'ATTENDEE' && (
-            <Alert icon={<IconAlertCircle size={16} />} color="red" className={styles.dangerAlert}>
+            <Alert
+              icon={<IconAlertCircle size={16} />}
+              color="red"
+              className={styles.dangerAlert}
+            >
               <Text size="sm" fw={500}>
                 Warning: Downgrading to Attendee
               </Text>
               <Text size="sm" mt="xs">
-                This user will be automatically removed from all sessions they are assigned to speak at.
-                This action cannot be undone automatically.
+                This user will be automatically removed from all sessions they
+                are assigned to speak at. This action cannot be undone
+                automatically.
               </Text>
             </Alert>
           )}
 
           {/* Info for speaker being upgraded to organizer/admin */}
-          {user?.role === 'SPEAKER' && ['ORGANIZER', 'ADMIN'].includes(form.values.role) && (
-            <Alert icon={<IconAlertCircle size={16} />} className={styles.infoAlert}>
-              <Text size="sm" fw={500}>
-                Note: Upgrading from Speaker
-              </Text>
-              <Text size="sm" mt="xs">
-                This user will retain their speaker assignments to any sessions. 
-                If you want to remove them from sessions, you'll need to do so manually from the Sessions Manager.
-              </Text>
-            </Alert>
-          )}
+          {user?.role === 'SPEAKER' &&
+            ['ORGANIZER', 'ADMIN'].includes(form.values.role) && (
+              <Alert
+                icon={<IconAlertCircle size={16} />}
+                className={styles.infoAlert}
+              >
+                <Text size="sm" fw={500}>
+                  Note: Upgrading from Speaker
+                </Text>
+                <Text size="sm" mt="xs">
+                  {`This user will retain their speaker assignments to any
+                  sessions. If you want to remove them from sessions, you'll
+                  need to do so manually from the Sessions Manager.`}
+                </Text>
+              </Alert>
+            )}
 
           {/* Info for organizer/admin being changed to speaker */}
-          {['ORGANIZER', 'ADMIN'].includes(user?.role) && form.values.role === 'SPEAKER' && (
-            <Alert icon={<IconAlertCircle size={16} />} className={styles.infoAlert}>
-              <Text size="sm" fw={500}>
-                Note: Changing to Speaker Role
-              </Text>
-              <Text size="sm" mt="xs">
-                This user can be assigned to sessions after this change.
-                They will lose their administrative permissions but can be upgraded back later if needed.
-              </Text>
-            </Alert>
-          )}
+          {['ORGANIZER', 'ADMIN'].includes(user?.role) &&
+            form.values.role === 'SPEAKER' && (
+              <Alert
+                icon={<IconAlertCircle size={16} />}
+                className={styles.infoAlert}
+              >
+                <Text size="sm" fw={500}>
+                  Note: Changing to Speaker Role
+                </Text>
+                <Text size="sm" mt="xs">
+                  This user can be assigned to sessions after this change. They
+                  will lose their administrative permissions but can be upgraded
+                  back later if needed.
+                </Text>
+              </Alert>
+            )}
 
           {currentUserRole === 'ORGANIZER' && (
-            <Alert icon={<IconAlertCircle size={16} />} className={styles.warningAlert}>
+            <Alert
+              icon={<IconAlertCircle size={16} />}
+              className={styles.warningAlert}
+            >
               <Text size="sm">
-                As an organizer, you can only change between attendee and speaker roles.
-                You cannot create other organizers or admins.
+                As an organizer, you can only change between attendee and
+                speaker roles. You cannot create other organizers or admins.
               </Text>
             </Alert>
           )}
 
           {form.values.role === 'SPEAKER' && user.role !== 'SPEAKER' && (
-            <Alert icon={<IconAlertCircle size={16} />} className={styles.infoAlert}>
+            <Alert
+              icon={<IconAlertCircle size={16} />}
+              className={styles.infoAlert}
+            >
               <Stack gap="xs">
                 <Text size="sm" fw={500}>
                   Speaker Role Privileges:
                 </Text>
-                <List 
-                  size="sm" 
+                <List
+                  size="sm"
                   spacing="xs"
                   icon={<IconCheck size={16} stroke={3} />}
                   className={styles.privilegesList}
                   styles={{
-                    itemIcon: { marginTop: 2 }
+                    itemIcon: { marginTop: 2 },
                   }}
                 >
                   <List.Item>Be assigned to sessions</List.Item>
                   <List.Item>Access speaker-only chat rooms</List.Item>
-                  <List.Item>Have their profile featured on the speakers page</List.Item>
+                  <List.Item>
+                    Have their profile featured on the speakers page
+                  </List.Item>
                 </List>
               </Stack>
             </Alert>
           )}
 
           {form.values.role === 'ORGANIZER' && user.role !== 'ORGANIZER' && (
-            <Alert icon={<IconAlertCircle size={16} />} className={styles.warningAlert}>
+            <Alert
+              icon={<IconAlertCircle size={16} />}
+              className={styles.warningAlert}
+            >
               <Stack gap="xs">
                 <Text size="sm" fw={500}>
                   Organizer Role Permissions:
                 </Text>
-                <List 
-                  size="sm" 
+                <List
+                  size="sm"
                   spacing="xs"
                   icon={<IconCheck size={16} stroke={3} />}
                   className={styles.privilegesList}
                   styles={{
-                    itemIcon: { marginTop: 2 }
+                    itemIcon: { marginTop: 2 },
                   }}
                 >
                   <List.Item>Manage event settings and details</List.Item>
@@ -193,14 +232,18 @@ const RoleUpdateModal = ({ opened, onClose, user, eventId, currentUserRole, curr
                   <List.Item>Send event invitations</List.Item>
                 </List>
                 <Text size="xs" c="dimmed" mt="xs">
-                  Note: Organizers cannot assign Admin roles or delete the event.
+                  Note: Organizers cannot assign Admin roles or delete the
+                  event.
                 </Text>
               </Stack>
             </Alert>
           )}
 
           {form.values.role === 'ADMIN' && (
-            <Alert icon={<IconAlertCircle size={16} />} className={styles.dangerAlert}>
+            <Alert
+              icon={<IconAlertCircle size={16} />}
+              className={styles.dangerAlert}
+            >
               <Text size="sm" fw={500}>
                 Warning: Admin users have full control over the event, including
                 the ability to delete it. Only grant this role to trusted users.

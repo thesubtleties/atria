@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react';
-import { 
-  Select, 
-  TextInput, 
-  Textarea, 
-  Stack, 
+import {
+  Select,
+  TextInput,
+  Textarea,
+  Stack,
   Group,
-  Switch,
   Text,
-  Alert
+  Alert,
 } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
@@ -39,7 +38,7 @@ const VenueSection = ({ event, eventId }) => {
   // Track changes
   useEffect(() => {
     const checkChanges = () => {
-      const changed = Object.keys(form.values).some(key => {
+      const changed = Object.keys(form.values).some((key) => {
         return form.values[key] !== event?.[key];
       });
       setHasChanges(changed);
@@ -49,8 +48,9 @@ const VenueSection = ({ event, eventId }) => {
   }, [form.values, event]);
 
   // Show/hide venue fields based on format
-  const showVenueFields = form.values.event_format === 'IN_PERSON' || 
-                         form.values.event_format === 'HYBRID';
+  const showVenueFields =
+    form.values.event_format === 'IN_PERSON' ||
+    form.values.event_format === 'HYBRID';
 
   const handleSubmit = async (values) => {
     try {
@@ -103,7 +103,7 @@ const VenueSection = ({ event, eventId }) => {
       <Text c="dimmed" size="sm" mb="xl">
         Configure how attendees will participate in your event
       </Text>
-      
+
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Stack spacing="md">
           <Group grow align="flex-start">
@@ -117,7 +117,7 @@ const VenueSection = ({ event, eventId }) => {
               required
               classNames={{
                 input: styles.formInput,
-                label: styles.formLabel
+                label: styles.formLabel,
               }}
               {...form.getInputProps('event_format')}
             />
@@ -144,25 +144,26 @@ const VenueSection = ({ event, eventId }) => {
           </Group>
 
           {form.values.event_format === 'VIRTUAL' && (
-            <Alert 
-              icon={<IconInfoCircle size={16} />} 
+            <Alert
+              icon={<IconInfoCircle size={16} />}
               className={styles.infoAlert}
             >
-              Virtual events don't require venue information. Attendees will join online.
+              {`Virtual events don't require venue information. Attendees will
+              join online.`}
             </Alert>
           )}
 
           {showVenueFields && (
             <>
               <h4 className={styles.subsectionTitle}>Venue Information</h4>
-              
+
               <TextInput
                 label="Venue Name"
                 placeholder="Enter venue name"
                 required
                 classNames={{
                   input: styles.formInput,
-                  label: styles.formLabel
+                  label: styles.formLabel,
                 }}
                 {...form.getInputProps('venue_name')}
               />
@@ -173,7 +174,7 @@ const VenueSection = ({ event, eventId }) => {
                 minRows={2}
                 classNames={{
                   input: styles.formInput,
-                  label: styles.formLabel
+                  label: styles.formLabel,
                 }}
                 {...form.getInputProps('venue_address')}
               />
@@ -185,7 +186,7 @@ const VenueSection = ({ event, eventId }) => {
                   required
                   classNames={{
                     input: styles.formInput,
-                    label: styles.formLabel
+                    label: styles.formLabel,
                   }}
                   {...form.getInputProps('venue_city')}
                 />
@@ -198,7 +199,7 @@ const VenueSection = ({ event, eventId }) => {
                   data={US_STATES}
                   classNames={{
                     input: styles.formInput,
-                    label: styles.formLabel
+                    label: styles.formLabel,
                   }}
                   {...form.getInputProps('venue_state')}
                 />
@@ -209,7 +210,7 @@ const VenueSection = ({ event, eventId }) => {
                   required
                   classNames={{
                     input: styles.formInput,
-                    label: styles.formLabel
+                    label: styles.formLabel,
                   }}
                   {...form.getInputProps('venue_country')}
                 />
@@ -223,11 +224,7 @@ const VenueSection = ({ event, eventId }) => {
                 <IconX size={16} />
                 Cancel
               </Button>
-              <Button 
-                type="submit" 
-                variant="primary"
-                loading={isLoading}
-              >
+              <Button type="submit" variant="primary" loading={isLoading}>
                 <IconCheck size={16} />
                 Save Changes
               </Button>

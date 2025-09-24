@@ -1,4 +1,3 @@
-import React from 'react';
 import { ButtonLoader } from '../loading';
 import styles from './Button.module.css';
 

@@ -14,7 +14,7 @@ export const RootLayout = () => {
       // Always try to get current user - cookies will be sent automatically
       try {
         await dispatch(authApi.endpoints.getCurrentUser.initiate()).unwrap();
-      } catch (error) {
+      } catch {
         // If getCurrentUser fails with 401, user is not authenticated
         // Don't redirect - let the user stay on public pages
         console.log('User not authenticated or session expired');

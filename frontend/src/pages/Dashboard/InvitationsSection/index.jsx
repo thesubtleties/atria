@@ -1,6 +1,5 @@
-import React from 'react';
 import { useGetUserInvitationsQuery } from '../../../app/features/users/api';
-import { Alert, Text } from '@mantine/core';
+import { Alert } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { LoadingCard } from '../../../shared/components/loading';
 import InvitationCard from './InvitationCard';
@@ -12,7 +11,9 @@ function InvitationsSection({ userId }) {
 
   if (isLoading) {
     return (
-      <section className={`${dashboardStyles.dashboardSection} ${dashboardStyles.fullWidth}`}>
+      <section
+        className={`${dashboardStyles.dashboardSection} ${dashboardStyles.fullWidth}`}
+      >
         <div className={dashboardStyles.sectionHeader}>
           <h2 className={dashboardStyles.sectionTitle}>Pending Invitations</h2>
         </div>
@@ -26,10 +27,12 @@ function InvitationsSection({ userId }) {
 
   if (error) {
     return (
-      <section className={`${dashboardStyles.dashboardSection} ${dashboardStyles.fullWidth}`}>
-        <Alert 
-          icon={<IconInfoCircle size={16} />} 
-          title="Unable to load invitations" 
+      <section
+        className={`${dashboardStyles.dashboardSection} ${dashboardStyles.fullWidth}`}
+      >
+        <Alert
+          icon={<IconInfoCircle size={16} />}
+          title="Unable to load invitations"
           color="red"
         >
           There was an error loading your invitations. Please try again later.
@@ -46,14 +49,16 @@ function InvitationsSection({ userId }) {
   }
 
   return (
-    <section className={`${dashboardStyles.dashboardSection} ${dashboardStyles.fullWidth}`}>
+    <section
+      className={`${dashboardStyles.dashboardSection} ${dashboardStyles.fullWidth}`}
+    >
       <div className={dashboardStyles.sectionHeader}>
         <h2 className={dashboardStyles.sectionTitle}>
           Pending Invitations
           <span className={styles.invitationCount}>{data.total_count}</span>
         </h2>
       </div>
-      
+
       <div className={styles.invitationsContainer}>
         {/* Organization Invitations */}
         {data.organization_invitations.map((invitation) => (
@@ -64,7 +69,7 @@ function InvitationsSection({ userId }) {
             userId={userId}
           />
         ))}
-        
+
         {/* Event Invitations */}
         {data.event_invitations.map((invitation) => (
           <InvitationCard

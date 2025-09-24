@@ -39,7 +39,7 @@ export const authApi = baseApi.injectEndpoints({
           const { data } = await queryFulfilled;
           console.log('getCurrentUser success:', data);
           dispatch(setUser(data));
-        } catch (error) {
+        } catch {
           // User is not authenticated - set authChecked to true
           console.log('getCurrentUser failed - user not authenticated');
           dispatch(setUser(null));
@@ -85,7 +85,7 @@ export const authApi = baseApi.injectEndpoints({
           // Force page refresh to clear any persistent state
           console.log('🔄 LOGOUT: Forcing page refresh to clear all state');
           window.location.reload();
-        } catch (error) {
+        } catch {
           // Even if logout fails, we clear local state
           dispatch(logout());
           dispatch(baseApi.util.resetApiState());
