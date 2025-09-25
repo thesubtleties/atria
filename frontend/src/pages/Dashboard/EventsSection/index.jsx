@@ -49,8 +49,8 @@ export const EventsSection = ({ events }) => {
   return (
     <section className={styles.dashboardSection}>
       <div className={styles.sectionHeader}>
-        <h2 className={styles.sectionTitle}>Upcoming Events</h2>
-        <Button 
+        <h2 className={styles.sectionTitle}>Your Events</h2>
+        <Button
           variant="secondary"
           onClick={() => navigate('/app/events')}
         >
