@@ -1,0 +1,25 @@
+.pageHeader {
+  margin-bottom: var(--space-2xl);
+  text-align: center;
+}
+
+.title {
+  font-size: clamp(2rem, 5vw, 2.5rem);
+  font-weight: 300;
+  color: var(--color-primary);
+  margin-bottom: var(--space-sm);
+}
+
+.subtitle {
+  font-size: clamp(var(--text-base), 2.5vw, 1.1rem);
+  color: var(--color-text-secondary);
+  font-weight: 400;
+  margin-top: 0;
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .pageHeader {
+    margin-bottom: var(--space-xl);
+  }
+}
