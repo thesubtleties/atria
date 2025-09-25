@@ -50,28 +50,6 @@
   }
 }
 
-/* Page Header */
-.pageHeader {
-  margin-bottom: var(--space-2xl);
-  position: relative;
-  z-index: 10;
-  text-align: center;
-}
-
-.pageTitle {
-  font-size: clamp(2rem, 5vw, 2.5rem);
-  font-weight: 300;
-  color: var(--color-primary);
-  letter-spacing: -0.02em;
-  margin: 0 0 var(--space-sm) 0;
-}
-
-.pageSubtitle {
-  font-size: var(--text-base);
-  color: var(--color-text-secondary);
-  margin: 0;
-}
-
 /* Content Section */
 .contentSection {
   composes: section-container from '../../../styles/design-tokens.css';

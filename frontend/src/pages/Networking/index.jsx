@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Badge, Container } from '@mantine/core';
 import { IconMessages, IconUsers, IconUserPlus } from '@tabler/icons-react';
 import { useParams, useSearchParams } from 'react-router-dom';
+import { PageHeader } from '@/shared/components/PageHeader';
 import { ChatArea } from './ChatArea';
 import { AttendeesGrid } from './AttendeesGrid';
 import { RequestsList } from './RequestsList';
@@ -54,13 +55,11 @@ export function Networking() {
       <div className={styles.bgShape2} />
       
       <Container size="xl" className={styles.contentWrapper}>
-        {/* Header Section */}
-        <section className={styles.headerSection}>
-          <h1 className={styles.pageTitle}>Networking</h1>
-          <p className={styles.pageSubtitle}>
-            Connect with attendees, chat in rooms, and manage connection requests
-          </p>
-        </section>
+        <PageHeader
+          title="Networking"
+          subtitle="Connect with attendees, chat in rooms, and manage connection requests"
+          className={styles.headerSection}
+        />
 
         {/* Main Content Section */}
         <section className={styles.mainContent}>

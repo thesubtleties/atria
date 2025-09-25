@@ -73,28 +73,9 @@
   overflow: hidden;
 }
 
-/* Header Section */
+/* Header Section - only for special hiding behavior */
 .headerSection {
-  text-align: center;
-  margin-bottom: clamp(1.5rem, 3vh, 3rem);
-  position: relative;
-  z-index: 10;
-}
-
-/* Page Title Styling - Matches Speakers/Sponsors */
-.pageTitle {
-  font-size: 2.5rem;
-  font-weight: 300;
-  color: #8b5cf6;
-  letter-spacing: -0.02em;
-  margin: 0 0 0.5rem 0;
-}
-
-.pageSubtitle {
-  font-size: 1.1rem;
-  color: #64748b;
-  font-weight: 400;
-  margin: 0;
+  /* Uses shared PageHeader styles by default */
 }
 
 /* Main Content Section */
@@ -297,7 +278,7 @@
   .headerSection {
     display: none; /* Remove header entirely to save vertical space */
   }
-  
+
   .contentWrapper {
     padding-top: 1rem; /* Reduce top padding since header is gone */
   }
@@ -305,18 +286,6 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .headerSection {
-    margin-bottom: 2rem;
-  }
-
-  .pageTitle {
-    font-size: 2rem;
-  }
-
-  .pageSubtitle {
-    font-size: 1rem;
-  }
-
   .customTab {
     font-size: 0.85rem;
     padding: 0.5rem 0.75rem;

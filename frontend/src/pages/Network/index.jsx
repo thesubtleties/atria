@@ -3,6 +3,7 @@ import { TextInput } from '@mantine/core';
 import { IconSearch } from '@tabler/icons-react';
 import { useGetConnectionsQuery } from '@/app/features/networking/api';
 import { useSelector } from 'react-redux';
+import { PageHeader } from '@/shared/components/PageHeader';
 import { ConnectionsList } from './ConnectionsList';
 import styles from './styles/index.module.css';
 
@@ -42,13 +43,10 @@ export default function NetworkPage() {
       <div className={styles.bgShape1} />
       <div className={styles.bgShape2} />
 
-      {/* Page Header */}
-      <section className={styles.pageHeader}>
-        <h1 className={styles.pageTitle}>My Network</h1>
-        <p className={styles.pageSubtitle}>
-          Manage your professional connections across all events
-        </p>
-      </section>
+      <PageHeader
+        title="My Network"
+        subtitle="Manage your professional connections across all events"
+      />
 
       {/* Main Content */}
       <section className={styles.contentSection}>

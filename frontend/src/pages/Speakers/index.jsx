@@ -2,6 +2,7 @@
 import { useParams } from 'react-router-dom';
 import { Container } from '@mantine/core';
 import { useGetEventUsersQuery } from '../../app/features/events/api';
+import { PageHeader } from '../../shared/components/PageHeader';
 import SpeakersList from './SpeakersList';
 import styles from './Speakers.module.css';
 
@@ -31,14 +32,10 @@ export const SpeakersPage = () => {
       <div className={styles.bgShape3} />
       
       <Container size="xl" className={styles.contentWrapper}>
-        <div className={styles.header}>
-          <h1 className={styles.pageTitle}>Featured Speakers</h1>
-          {speakers.length > 0 && (
-            <p className={styles.pageSubtitle}>
-              Meet the experts sharing their knowledge at this event
-            </p>
-          )}
-        </div>
+        <PageHeader
+          title="Featured Speakers"
+          subtitle={speakers.length > 0 ? "Meet the experts sharing their knowledge at this event" : null}
+        />
         
         {speakers.length > 0 ? (
           <SpeakersList speakers={speakers} />

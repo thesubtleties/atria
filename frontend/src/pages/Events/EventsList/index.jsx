@@ -1,12 +1,12 @@
 // src/pages/Events/EventsList/index.jsx
 import { useMemo } from 'react';
 import { useGetUserEventsQuery, useGetUserInvitationsQuery } from '@/app/features/users/api';
-import { Text } from '@mantine/core';
 import { useSelector } from 'react-redux';
 import { IconCalendar, IconClock, IconHistory, IconMail } from '@tabler/icons-react';
 import { LoadingSection } from '../../../shared/components/loading';
-import { AttendeeEventCard } from './AttendeeEventCard';
-import { EventInvitationCard } from './EventInvitationCard';
+import { PageHeader } from '../../../shared/components/PageHeader';
+import { EventSection } from './EventSection';
+import { EmptyState } from './EmptyState';
 import { categorizeEvents } from './utils/eventCategorization';
 import styles from './styles/index.module.css';
 
@@ -38,7 +38,7 @@ export const EventsList = () => {
         <div className={styles.bgShape1} />
         <div className={styles.bgShape2} />
         <div className={styles.bgShape3} />
-        
+
         <div className={styles.contentWrapper}>
           <LoadingSection message="Loading your events..." height={400} />
         </div>
@@ -46,8 +46,8 @@ export const EventsList = () => {
     );
   }
 
-  const hasAnyEvents = categorizedEvents.live.length > 0 || 
-                      categorizedEvents.upcoming.length > 0 || 
+  const hasAnyEvents = categorizedEvents.live.length > 0 ||
+                      categorizedEvents.upcoming.length > 0 ||
                       categorizedEvents.past.length > 0;
   const hasInvitations = eventInvitations.length > 0;
   const hasAnyContent = hasAnyEvents || hasInvitations;
@@ -61,94 +61,47 @@ export const EventsList = () => {
 
       {/* Content Wrapper */}
       <div className={styles.contentWrapper}>
-        {/* Header Section */}
-        <section className={styles.headerSection}>
-          <h1 className={styles.pageTitle}>Events</h1>
-          <p className={styles.subtitle}>Discover and join events you're invited to</p>
-        </section>
+        <PageHeader
+          title="Events"
+          subtitle="Discover and join events you're invited to"
+        />
 
         {/* Main Content */}
         {hasAnyContent ? (
           <div className={styles.eventSections}>
-            {/* Event Invitations */}
-            {hasInvitations && (
-              <section className={styles.eventCategory}>
-                <div className={styles.categoryHeader}>
-                  <IconMail size={24} className={styles.categoryIcon} />
-                  <h2 className={styles.categoryTitle}>Pending Invitations</h2>
-                  <span className={styles.eventCount}>{eventInvitations.length}</span>
-                </div>
-                <div className={styles.eventsGrid}>
-                  {eventInvitations.map((invitation) => (
-                    <EventInvitationCard key={invitation.id} invitation={invitation} />
-                  ))}
-                </div>
-              </section>
-            )}
+            <EventSection
+              icon={IconMail}
+              title="Pending Invitations"
+              items={eventInvitations}
+              type="invitation"
+            />
 
-            {/* Live Events */}
-            {categorizedEvents.live.length > 0 && (
-              <section className={styles.eventCategory}>
-                <div className={styles.categoryHeader}>
-                  <IconClock size={24} className={styles.categoryIcon} />
-                  <h2 className={styles.categoryTitle}>Events Live Now</h2>
-                  <span className={styles.eventCount}>{categorizedEvents.live.length}</span>
-                </div>
-                <div className={styles.eventsGrid}>
-                  {categorizedEvents.live.map((event) => (
-                    <AttendeeEventCard key={event.id} event={event} status="live" />
-                  ))}
-                </div>
-              </section>
-            )}
+            <EventSection
+              icon={IconClock}
+              title="Events Live Now"
+              items={categorizedEvents.live}
+              type="event"
+              status="live"
+            />
 
-            {/* Upcoming Events */}
-            {categorizedEvents.upcoming.length > 0 && (
-              <section className={styles.eventCategory}>
-                <div className={styles.categoryHeader}>
-                  <IconCalendar size={24} className={styles.categoryIcon} />
-                  <h2 className={styles.categoryTitle}>Upcoming Events</h2>
-                  <span className={styles.eventCount}>{categorizedEvents.upcoming.length}</span>
-                </div>
-                <div className={styles.eventsGrid}>
-                  {categorizedEvents.upcoming.map((event) => (
-                    <AttendeeEventCard key={event.id} event={event} status="upcoming" />
-                  ))}
-                </div>
-              </section>
-            )}
+            <EventSection
+              icon={IconCalendar}
+              title="Upcoming Events"
+              items={categorizedEvents.upcoming}
+              type="event"
+              status="upcoming"
+            />
 
-            {/* Past Events */}
-            {categorizedEvents.past.length > 0 && (
-              <section className={styles.eventCategory}>
-                <div className={styles.categoryHeader}>
-                  <IconHistory size={24} className={styles.categoryIcon} />
-                  <h2 className={styles.categoryTitle}>Past Events</h2>
-                  <span className={styles.eventCount}>{categorizedEvents.past.length}</span>
-                </div>
-                <div className={styles.eventsGrid}>
-                  {categorizedEvents.past.map((event) => (
-                    <AttendeeEventCard key={event.id} event={event} status="past" />
-                  ))}
-                </div>
-              </section>
-            )}
+            <EventSection
+              icon={IconHistory}
+              title="Past Events"
+              items={categorizedEvents.past}
+              type="event"
+              status="past"
+            />
           </div>
         ) : (
-          <div className={styles.emptyStateContainer}>
-            <div className={styles.emptyState}>
-              <IconCalendar size={64} className={styles.emptyIcon} stroke={1.5} />
-              <Text size="xl" weight={600} className={styles.emptyTitle}>
-                No Events Yet
-              </Text>
-              <Text size="md" className={styles.emptyText}>
-                You haven't been invited to any events.
-              </Text>
-              <Text size="md" className={styles.emptyText}>
-                When organizations invite you to their events, they'll appear here.
-              </Text>
-            </div>
-          </div>
+          <EmptyState />
         )}
       </div>
     </div>
