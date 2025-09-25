@@ -1,24 +1,10 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import {
-  Group,
-  TextInput,
-  Badge,
-  ActionIcon,
-  Menu,
-  Text,
-  Pagination,
-} from '@mantine/core';
+import { Group, TextInput, Badge, Text, Pagination } from '@mantine/core';
 import { LoadingOverlay } from '../../../shared/components/loading';
-import {
-  IconPlus,
-  IconSearch,
-  IconDownload,
-  IconDots,
-  IconRefresh,
-} from '@tabler/icons-react';
+import { IconPlus, IconSearch } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
-import { 
+import {
   useGetEventQuery,
   useGetEventUsersAdminQuery,
 } from '@/app/features/events/api';
@@ -32,7 +18,10 @@ const SpeakersManager = () => {
   const { eventId } = useParams();
   const [searchQuery, setSearchQuery] = useState('');
   const [page, setPage] = useState(1);
-  const [editModalData, setEditModalData] = useState({ open: false, speaker: null });
+  const [editModalData, setEditModalData] = useState({
+    open: false,
+    speaker: null,
+  });
   const [addModalOpen, setAddModalOpen] = useState(false);
 
   // Fetch event details
@@ -52,14 +41,15 @@ const SpeakersManager = () => {
     role: 'SPEAKER',
   });
 
-  const handleExport = () => {
-    notifications.show({
-      title: 'Export Started',
-      message: 'Preparing speakers list for download...',
-      color: 'blue',
-    });
-    // TODO: Implement CSV export
-  };
+  // TODO: Implement export/import functionality
+  // const handleExport = () => {
+  //   notifications.show({
+  //     title: 'Export Started',
+  //     message: 'Preparing speakers list for download...',
+  //     color: 'blue',
+  //   });
+  //   // TODO: Implement CSV export
+  // };
 
   const handleEditSpeaker = (speaker) => {
     setEditModalData({ open: true, speaker });
@@ -70,22 +60,26 @@ const SpeakersManager = () => {
   };
 
   // Filter speakers based on search
-  const filteredSpeakers = speakersData?.event_users?.filter((speaker) => {
-    if (!searchQuery) return true;
-    const searchLower = searchQuery.toLowerCase();
-    return (
-      speaker.full_name?.toLowerCase().includes(searchLower) ||
-      speaker.email?.toLowerCase().includes(searchLower) ||
-      speaker.company_name?.toLowerCase().includes(searchLower) ||
-      speaker.speaker_title?.toLowerCase().includes(searchLower)
-    );
-  }) || [];
+  const filteredSpeakers =
+    speakersData?.event_users?.filter((speaker) => {
+      if (!searchQuery) return true;
+      const searchLower = searchQuery.toLowerCase();
+      return (
+        speaker.full_name?.toLowerCase().includes(searchLower) ||
+        speaker.email?.toLowerCase().includes(searchLower) ||
+        speaker.company_name?.toLowerCase().includes(searchLower) ||
+        speaker.speaker_title?.toLowerCase().includes(searchLower)
+      );
+    }) || [];
 
   // Count session assignments
   const speakerCounts = {
     total: speakersData?.total_items || 0,
-    withSessions: speakersData?.event_users?.filter(s => s.session_count > 0).length || 0,
-    withoutSessions: speakersData?.event_users?.filter(s => s.session_count === 0).length || 0,
+    withSessions:
+      speakersData?.event_users?.filter((s) => s.session_count > 0).length || 0,
+    withoutSessions:
+      speakersData?.event_users?.filter((s) => s.session_count === 0).length ||
+      0,
   };
 
   if (error) {
@@ -93,17 +87,14 @@ const SpeakersManager = () => {
       <div className={styles.container}>
         <div className={styles.bgShape1} />
         <div className={styles.bgShape2} />
-        
+
         <div className={styles.contentWrapper}>
           <section className={styles.mainContent}>
             <div style={{ textAlign: 'center', padding: '3rem' }}>
               <Text c="red" size="lg" mb="md">
                 Error loading speakers: {error.message}
               </Text>
-              <Button 
-                variant="primary"
-                onClick={refetch}
-              >
+              <Button variant="primary" onClick={refetch}>
                 Retry
               </Button>
             </div>
@@ -135,7 +126,11 @@ const SpeakersManager = () => {
                   <Badge className={styles.assignedBadge} size="md" radius="sm">
                     {speakerCounts.withSessions} Assigned
                   </Badge>
-                  <Badge className={styles.unassignedBadge} size="md" radius="sm">
+                  <Badge
+                    className={styles.unassignedBadge}
+                    size="md"
+                    radius="sm"
+                  >
                     {speakerCounts.withoutSessions} Unassigned
                   </Badge>
                 </div>
@@ -199,7 +194,7 @@ const SpeakersManager = () => {
             onEditSpeaker={handleEditSpeaker}
             organizationId={eventData?.organization_id}
           />
-          
+
           {speakersData?.total_pages > 1 && (
             <Group justify="center" mt="xl">
               <Pagination

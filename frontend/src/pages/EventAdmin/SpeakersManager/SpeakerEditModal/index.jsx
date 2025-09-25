@@ -102,8 +102,8 @@ const SpeakerEditModal = ({ opened, onClose, speaker, eventId, onSuccess }) => {
             }}
           >
             <Text size="xs">
-              Override speaker's profile info for this event only.
-              Leave blank to use defaults.
+              {`Override speaker's profile info for this event only.
+              Leave blank to use defaults.`}
             </Text>
           </Alert>
 
