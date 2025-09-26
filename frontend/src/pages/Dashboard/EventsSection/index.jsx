@@ -1,23 +1,33 @@
 import { Badge } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
+import { parseISO, differenceInDays, isSameDay } from 'date-fns';
 import { Button } from '@/shared/components/buttons';
+import { useFormatDate } from '@/shared/hooks/formatDate';
 import styles from './styles/index.module.css';
 
 export const EventsSection = ({ events }) => {
   const navigate = useNavigate();
+  const { formatDateWithToday } = useFormatDate();
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const today = new Date();
-    const isToday = date.toDateString() === today.toDateString();
-    
-    if (isToday) return 'Today';
-    
-    return date.toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric', 
-      year: 'numeric' 
-    });
+  const getEventDateDisplay = (event) => {
+    if (!event.start_date) return '';
+
+    try {
+      const startDate = parseISO(event.start_date);
+      const endDate = event.end_date ? parseISO(event.end_date) : startDate;
+
+      // Check if it's a single-day event
+      if (isSameDay(startDate, endDate)) {
+        return formatDateWithToday(event.start_date);
+      }
+
+      // Multi-day event - calculate duration
+      const daysDiff = differenceInDays(endDate, startDate) + 1; // +1 to include both start and end day
+      return `${formatDateWithToday(event.start_date)} • ${daysDiff}-day event`;
+    } catch (error) {
+      console.error('Error formatting event dates:', error);
+      return formatDateWithToday(event.start_date);
+    }
   };
 
   const getStatusColor = (status) => {
@@ -70,7 +80,7 @@ export const EventsSection = ({ events }) => {
                 <div className={styles.cardContent}>
                   <div className={styles.cardTitle}>{event.name}</div>
                   <div className={styles.cardSubtitle}>
-                    {formatDate(event.start_date)} • {event.location || 'Virtual'}
+                    {getEventDateDisplay(event)} • {event.location || 'Virtual'}
                   </div>
                 </div>
                 <Badge 
