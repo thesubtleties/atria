@@ -181,6 +181,7 @@ Atria is in **early access** with all core features implemented and tested. The 
 - **Advanced Reporting & Analytics** - Comprehensive event metrics and attendee engagement tracking
 - **Interactive Polling** - Native polling system or integration with existing platforms
 - **Advanced Ticketing** - Exploring integration with popular ticketing platforms or native solution (TBD)
+- **Donation Integration** - Integration with donation platforms for nonprofits and content creators
 - **Digital Wallet Passes** - Apple Wallet and Google Wallet integration for event tickets
 - **AI-Enhanced Session Importing** - Smart parsing and import of session data from various formats
 - **AI Event Chat Host** - Virtual assistant with access to event and session info for attendee recommendations
