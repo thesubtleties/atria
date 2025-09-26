@@ -178,11 +178,20 @@ Atria is in **early access** with all core features implemented and tested. The 
 
 ### **Planned Features**
 
-- Enhanced dashboard analytics
-- Advanced reporting and analytics
-- Mobile application
-- Enhanced integration APIs
-- Advanced security features (2FA, SSO)
+- **Advanced Reporting & Analytics** - Comprehensive event metrics and attendee engagement tracking
+- **Interactive Polling** - Native polling system or integration with existing platforms
+- **Advanced Ticketing** - Exploring integration with popular ticketing platforms or native solution (TBD)
+- **Digital Wallet Passes** - Apple Wallet and Google Wallet integration for event tickets
+- **AI-Enhanced Session Importing** - Smart parsing and import of session data from various formats
+- **AI Event Chat Host** - Virtual assistant with access to event and session info for attendee recommendations
+- **Greenlight System** - Custom pre-approval system for connections (full event or targeted matching)
+- **Additional Streaming Options** - Zoom API integration and Twitch embeds for creator-focused communities
+- **Per-Event Custom Theming** - Custom visual themes on an event-by-event basis
+- **Custom Agenda/Favoriting System** - Personalized schedule building for attendees
+- **Enhanced Profile Pages** - Expanded profile features (details TBD)
+- **Enhanced Integration APIs** - Expanded API capabilities for third-party integrations
+- **Advanced Security Features** - Two-factor authentication (2FA) and Single Sign-On (SSO)
+- **Community-Suggested Features** - Additional features as suggested by the user community
 
 ## Deployment Options
 
