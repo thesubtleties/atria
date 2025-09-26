@@ -18,29 +18,30 @@
 }
 
 
-/* Form Inputs */
+/* Form Label Styling - Matching BasicInfoSection */
+.formLabel {
+  color: var(--color-text-primary, #1e293b) !important;
+  font-weight: 500;
+  font-size: clamp(0.8125rem, 2vw, 0.9rem) !important;
+  margin-bottom: 0.25rem;
+}
+
+/* Form Inputs - Matching BasicInfoSection */
 .formInput input,
 .formSelect input,
 .formTextarea textarea {
-  background: rgba(255, 255, 255, 0.5);
-  border: 1px solid rgba(139, 92, 246, 0.1);
-  border-radius: 4px;
+  background: rgba(255, 255, 255, 1) !important;
+  border: 1px solid rgba(139, 92, 246, 0.1) !important;
   transition: all 0.2s ease;
-  font-size: 0.875rem;
-}
-
-.formInput input:hover:not(:disabled),
-.formSelect input:hover:not(:disabled),
-.formTextarea textarea:hover:not(:disabled) {
-  border-color: rgba(139, 92, 246, 0.2);
-  background: rgba(255, 255, 255, 0.8);
+  font-size: clamp(0.875rem, 2vw, 0.95rem) !important;
+  min-height: 44px !important; /* Touch-friendly size */
 }
 
 .formInput input:focus,
 .formSelect input:focus,
 .formTextarea textarea:focus {
-  border-color: rgba(139, 92, 246, 0.3);
-  background: rgba(255, 255, 255, 1);
+  border-color: rgba(139, 92, 246, 0.3) !important;
+  background: rgba(255, 255, 255, 1) !important;
   box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.05);
 }
 
@@ -54,8 +55,8 @@
 }
 
 /* Textarea specific */
-.formTextarea {
-  min-height: 8em !important;
+.formTextarea textarea {
+  min-height: 6em !important;
   resize: vertical;
 }
 
@@ -64,6 +65,14 @@
   color: #8b5cf6;
 }
 
+
+/* Alert Styling - Matching RoleUpdateModal */
+.warningAlert {
+  background: rgba(252, 211, 77, 0.06) !important;
+  border: 1px solid rgba(252, 211, 77, 0.2) !important;
+  border-radius: 6px;
+  margin-top: 0.75rem;
+}
 
 /* Error Message */
 .errorMessage {
@@ -106,6 +115,22 @@
 :global(.mantine-Modal-close:hover) {
   color: #8b5cf6;
   background: rgba(139, 92, 246, 0.08);
+}
+
+/* Override Mantine input focus colors to purple - subtle like other modals */
+:global(.mantine-TextInput-input:focus),
+:global(.mantine-Select-input:focus),
+:global(.mantine-Textarea-input:focus),
+:global(.mantine-DateInput-input:focus) {
+  border-color: rgba(139, 92, 246, 0.3) !important;
+}
+
+:global(.mantine-TextInput-input:focus-visible),
+:global(.mantine-Select-input:focus-visible),
+:global(.mantine-Textarea-input:focus-visible),
+:global(.mantine-DateInput-input:focus-visible) {
+  outline: none !important;
+  border-color: rgba(139, 92, 246, 0.3) !important;
 }
 
 /* Responsive Adjustments */

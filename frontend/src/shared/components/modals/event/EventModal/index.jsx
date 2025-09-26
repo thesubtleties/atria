@@ -5,8 +5,10 @@ import {
   Select,
   Textarea,
   Text,
+  Alert,
 } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
+import { IconAlertCircle } from '@tabler/icons-react';
 import {
   useCreateEventMutation,
   useUpdateEventMutation,
@@ -132,7 +134,10 @@ export const EventModal = ({
             required
             {...form.getInputProps('title')}
             disabled={isLoading}
-            classNames={{ input: styles.formInput }}
+            classNames={{
+              input: styles.formInput,
+              label: styles.formLabel
+            }}
           />
 
           <Textarea
@@ -141,7 +146,10 @@ export const EventModal = ({
             {...form.getInputProps('description')}
             disabled={isLoading}
             minRows={4}
-            classNames={{ input: styles.formTextarea }}
+            classNames={{
+              input: styles.formTextarea,
+              label: styles.formLabel
+            }}
           />
 
           {allowConferences && (
@@ -156,7 +164,10 @@ export const EventModal = ({
                   ? 'Event type cannot be modified once sessions are created'
                   : undefined
               }
-              classNames={{ input: styles.formSelect }}
+              classNames={{
+                input: styles.formSelect,
+                label: styles.formLabel
+              }}
             />
           )}
 
@@ -171,7 +182,10 @@ export const EventModal = ({
                 ? 'Start date cannot be modified once sessions are created'
                 : undefined
             }
-            classNames={{ input: styles.formInput }}
+            classNames={{
+              input: styles.formInput,
+              label: styles.formLabel
+            }}
           />
 
           <TextInput
@@ -192,7 +206,10 @@ export const EventModal = ({
                   ? 'End date cannot be modified once sessions are created'
                   : undefined
             }
-            classNames={{ input: styles.formInput }}
+            classNames={{
+              input: styles.formInput,
+              label: styles.formLabel
+            }}
           />
 
           <TextInput
@@ -201,13 +218,31 @@ export const EventModal = ({
             required
             {...form.getInputProps('company_name')}
             disabled={isLoading}
-            classNames={{ input: styles.formInput }}
+            classNames={{
+              input: styles.formInput,
+              label: styles.formLabel
+            }}
           />
 
           {form.errors._schema && (
             <Text c="red" size="sm" className={styles.errorMessage}>
               {form.errors._schema}
             </Text>
+          )}
+
+          {/* Draft Status Disclaimer - only show when creating */}
+          {!isEditing && (
+            <Alert
+              icon={<IconAlertCircle size={16} />}
+              className={styles.warningAlert}
+              color="yellow"
+            >
+              <Text size="sm" c="dimmed">
+                Your event will not appear on dashboards until published. After
+                creating, visit your event from the Organization page to customize
+                details and publish when ready.
+              </Text>
+            </Alert>
           )}
 
           <div className={styles.buttonGroup}>
