@@ -42,14 +42,14 @@ class DashboardService:
     @staticmethod
     def _get_user_stats(user_id: int):
         """Get aggregated statistics for the user"""
-        # Events hosted (where user is ADMIN or ORGANIZER and not banned)
+        # Events hosted (where user is ADMIN or ORGANIZER and not banned) - Published or Archived
         events_hosted = db.session.query(func.count(EventUser.event_id)).join(
             Event, EventUser.event_id == Event.id
         ).filter(
             EventUser.user_id == user_id,
             EventUser.role.in_([EventUserRole.ADMIN, EventUserRole.ORGANIZER]),
             EventUser.is_banned.is_(False),  # Exclude banned users
-            Event.status != EventStatus.DELETED  # Exclude soft-deleted events
+            Event.status.in_([EventStatus.PUBLISHED, EventStatus.ARCHIVED])  # Only count real events
         ).scalar() or 0
 
         # Total attendees reached (sum of attendees in events user organized)
@@ -65,11 +65,11 @@ class DashboardService:
                     EventUser.user_id == user_id,
                     EventUser.role.in_([EventUserRole.ADMIN, EventUserRole.ORGANIZER]),
                     EventUser.is_banned.is_(False),  # Exclude banned users
-                    Event.status != EventStatus.DELETED  # Exclude soft-deleted events
+                    Event.status.in_([EventStatus.PUBLISHED, EventStatus.ARCHIVED])  # Only real events
                 )
             ),
             EventUser.user_id != user_id,  # Don't count the organizer
-            Event.status != EventStatus.DELETED  # Exclude soft-deleted events
+            Event.status.in_([EventStatus.PUBLISHED, EventStatus.ARCHIVED])  # Only real events
         ).scalar() or 0
 
         # Connections made
@@ -86,7 +86,7 @@ class DashboardService:
         ).filter(
             EventUser.user_id == user_id,
             EventUser.is_banned.is_(False),  # Exclude banned users
-            Event.status != EventStatus.DELETED  # Exclude soft-deleted events
+            Event.status.in_([EventStatus.PUBLISHED, EventStatus.ARCHIVED])  # Only real events
         ).scalar() or 0
 
         # Organizations count
@@ -113,10 +113,10 @@ class DashboardService:
         for org_user in org_users:
             org = org_user.organization
             
-            # Get event count for this organization (excluding deleted)
+            # Get event count for this organization (published/archived only)
             event_count = Event.query.filter(
                 Event.organization_id == org.id,
-                Event.status != EventStatus.DELETED
+                Event.status.in_([EventStatus.PUBLISHED, EventStatus.ARCHIVED])
             ).count()
             
             # Get member count
@@ -138,17 +138,15 @@ class DashboardService:
         now = datetime.now(timezone.utc)
         today = now.date()
         
-        # Get events where user is a participant and not banned
+        # Get events where user is a participant and not banned - ONLY PUBLISHED EVENTS
         event_users = EventUser.query.filter(
             EventUser.user_id == user_id,
             EventUser.is_banned.is_(False)  # Exclude banned users
         ).options(
             joinedload(EventUser.event).joinedload(Event.organization)
         ).join(Event).filter(
-            Event.status != EventStatus.DELETED  # Exclude soft-deleted events
+            Event.status == EventStatus.PUBLISHED  # Only show published events on dashboard
         ).order_by(
-            # Order by: published events first, then by start date
-            Event.status == EventStatus.PUBLISHED,
             Event.start_date.asc(),
             Event.end_date.desc()
         ).limit(limit).all()

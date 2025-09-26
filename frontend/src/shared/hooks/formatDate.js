@@ -1,5 +1,5 @@
 // src/hooks/useFormatDate.js
-import { format, parseISO } from 'date-fns';
+import { format, parseISO, isToday } from 'date-fns';
 
 export const useFormatDate = (defaultFormat = 'M/d/yyyy') => {
   // Generic formatter with custom format
@@ -25,11 +25,30 @@ export const useFormatDate = (defaultFormat = 'M/d/yyyy') => {
   const formatDateForInput = (dateString) =>
     formatWithPattern(dateString, 'yyyy-MM-dd');
 
+  // Format date with "Today" check
+  const formatDateWithToday = (dateString, pattern = 'MMM d, yyyy') => {
+    if (!dateString) return '';
+
+    try {
+      const date = parseISO(dateString);
+
+      if (isToday(date)) {
+        return 'Today';
+      }
+
+      return format(date, pattern);
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return 'Invalid date';
+    }
+  };
+
   return {
     formatDate,
     formatDateTime,
     formatMonthYear,
     formatWithPattern,
     formatDateForInput,
+    formatDateWithToday,
   };
 };

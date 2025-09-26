@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { 
-  TextInput, 
-  Textarea, 
-  Select, 
-  Stack, 
+import {
+  TextInput,
+  Textarea,
+  Select,
+  Stack,
   Group,
   Text
 } from '@mantine/core';
@@ -13,6 +13,7 @@ import { notifications } from '@mantine/notifications';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { useUpdateEventMutation } from '@/app/features/events/api';
 import { useGetSessionsQuery } from '@/app/features/sessions/api';
+import { useEventStatusStyle } from '@/shared/hooks/useEventStatusStyle';
 import { eventUpdateSchema } from '../schemas/eventSettingsSchemas';
 import { Button } from '@/shared/components/buttons';
 import styles from './styles.module.css';
@@ -21,7 +22,8 @@ import parentStyles from '../styles/index.module.css';
 const BasicInfoSection = ({ event, eventId }) => {
   const [updateEvent, { isLoading }] = useUpdateEventMutation();
   const [hasChanges, setHasChanges] = useState(false);
-  
+  const { getStatusStyles } = useEventStatusStyle();
+
   // Fetch sessions when event_type is single_session
   const { data: sessionsData } = useGetSessionsQuery(
     { eventId: parseInt(eventId) },
@@ -158,6 +160,13 @@ const BasicInfoSection = ({ event, eventId }) => {
                 { value: 'ARCHIVED', label: 'Archived' },
               ]}
               required
+              allowDeselect={false}
+              styles={{
+                input: {
+                  ...getStatusStyles(form.values.status),
+                  fontWeight: 500,
+                }
+              }}
               classNames={{
                 input: styles.formInput,
                 label: styles.formLabel
