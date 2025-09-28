@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Modal, Stack, Grid, TextInput, ActionIcon, Text, ColorInput } from '@mantine/core';
 import { IconTrash, IconPlus } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
@@ -65,7 +65,7 @@ const TierManagementModal = ({ opened, onClose, eventId }) => {
       });
 
       onClose();
-    } catch (error) {
+    } catch {
       notifications.show({
         title: 'Error',
         message: 'Failed to update sponsor tiers',
@@ -137,7 +137,7 @@ const TierManagementModal = ({ opened, onClose, eventId }) => {
         </Text>
 
         <Text size="xs" c="dimmed" ta="center" mb="xs">
-          Tier IDs should be lowercase with no spaces (e.g., "platinum", "gold", "silver")
+          {'Tier IDs should be lowercase with no spaces (e.g., "platinum", "gold", "silver")'}
         </Text>
 
         {/* Header row */}

@@ -14,7 +14,7 @@ export const sponsorFieldSchemas = {
   contact_name: z.string().max(255, 'Contact name too long').optional(),
   contact_email: z.string().email('Invalid email format').optional().or(z.literal('')),
   contact_phone: z.string()
-    .regex(/^[\d\s\-\+\(\)]+$/, 'Invalid phone format')
+    .regex(/^[\d\s+()-]+$/, 'Invalid phone format')
     .max(50, 'Phone number too long')
     .optional()
     .or(z.literal('')),
@@ -69,7 +69,7 @@ export const validateSocialLink = (platform, url) => {
 export const tierSchema = z.object({
   id: z.string()
     .min(1, 'Tier ID is required')
-    .regex(/^[a-z0-9\-]+$/, 'Tier ID must be lowercase alphanumeric with dashes'),
+    .regex(/^[a-z0-9-]+$/, 'Tier ID must be lowercase alphanumeric with dashes'),
   name: z.string().min(1, 'Tier name is required').max(100, 'Tier name too long'),
   order: z.number().int().positive('Order must be a positive number'),
   color: z.string()

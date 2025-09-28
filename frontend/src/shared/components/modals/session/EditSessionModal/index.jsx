@@ -6,7 +6,6 @@ import {
   Select,
   Group,
   Text,
-  Box,
 } from '@mantine/core';
 import { TimeSelect } from '@/shared/components/forms/TimeSelect';
 import { useForm, zodResolver } from '@mantine/form';
@@ -160,7 +159,7 @@ export const EditSessionModal = ({
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Stack spacing="md" p="lg">
           <Text className={styles.sectionTitle}>Basic Information</Text>
-          
+
           <TextInput
             label="Session Title"
             placeholder="Enter a descriptive title for your session"
@@ -189,7 +188,7 @@ export const EditSessionModal = ({
           />
 
           <Text className={styles.sectionTitle}>Session Details</Text>
-          
+
           <Select
             label="Session Type"
             placeholder="Select the type of session"
@@ -227,7 +226,7 @@ export const EditSessionModal = ({
           </Group>
 
           <Text className={styles.sectionTitle}>Streaming & Chat</Text>
-          
+
           <TextInput
             label="Stream URL"
             placeholder="https://vimeo.com/..."

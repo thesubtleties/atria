@@ -1,5 +1,5 @@
 // pages/Session/SessionSpeakers/index.jsx
-import { Card, Group, Button, Text } from '@mantine/core';
+import { Button, Text } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
 import { useState, useEffect } from 'react';
 import { DragDropProvider } from '@dnd-kit/react';
@@ -17,13 +17,16 @@ import styles from './styles/index.module.css';
 
 // Draggable speaker wrapper component - now includes role for scoped dragging
 const DraggableSpeakerCard = ({ id, speaker, canEdit, onRemove, role, variant = 'flow', isLast }) => {
-  // Only enable drag-and-drop if canEdit is true
-  const { ref, isDragging } = canEdit 
-    ? useSortable({ 
-        id,
-        type: `speaker-${role}`, // Unique type per role
-        accept: [`speaker-${role}`], // Only accept same role
-      })
+  // Call useSortable unconditionally
+  const sortableResult = useSortable({
+    id,
+    type: `speaker-${role}`, // Unique type per role
+    accept: [`speaker-${role}`], // Only accept same role
+  });
+
+  // Only use the sortable result if canEdit is true
+  const { ref, isDragging } = canEdit
+    ? sortableResult
     : { ref: null, isDragging: false };
 
   const wrapperProps = canEdit ? { ref } : {};
@@ -81,7 +84,7 @@ export const SessionSpeakers = ({ sessionId, eventId, canEdit, variant = 'flow',
       speakersByRoleLocal[role] = roleSpeakers.map(speaker => `speaker-${speaker.user_id}`);
     });
     setLocalSpeakersByRole(speakersByRoleLocal);
-  }, [speakers]);
+  }, [speakers, speakersByRole]);
 
   const handleRemoveSpeaker = async (userId) => {
     try {
@@ -177,7 +180,7 @@ export const SessionSpeakers = ({ sessionId, eventId, canEdit, variant = 'flow',
         </Text>
       ) : (
         <div className={styles.speakers}>
-          {Object.entries(speakersByRole).map(([role, roleSpeakers]) => {
+          {Object.entries(speakersByRole).map(([role]) => {
             const roleSpeakerIds = localSpeakersByRole[role] || [];
             return (
               <div key={role} className={styles.roleGroup}>

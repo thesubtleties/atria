@@ -101,8 +101,9 @@ export function useChatScroll({
     }
 
     return () => {
-      // Capture the timeout ID at cleanup time
-      const timeoutId = scrollState.current.scrollTimeout;
+      // Capture timeout ID at cleanup time to avoid stale references
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      const timeoutId = scrollState.current?.scrollTimeout;
 
       if (container) {
         container.removeEventListener('scroll', handleScroll);
