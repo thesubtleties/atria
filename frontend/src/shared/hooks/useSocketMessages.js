@@ -117,11 +117,11 @@ export function useSocketMessages(threadId) {
     };
 
     registerDirectMessageCallback(threadId, handleSocketUpdate);
-    
+
     return () => {
       unregisterDirectMessageCallback(threadId);
     };
-  }, [threadId]);
+  }, [threadId, currentUser?.id]);
 
   // Mark messages as read when thread is opened
   useEffect(() => {

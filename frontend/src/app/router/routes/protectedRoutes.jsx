@@ -26,45 +26,6 @@ import AttendeesManager from '../../../pages/EventAdmin/AttendeesManager';
 import SpeakersManager from '../../../pages/EventAdmin/SpeakersManager';
 import EventSettings from '../../../pages/EventAdmin/EventSettings';
 
-// Placeholder component for development
-const PlaceholderComponent = ({ routeName = 'This page' }) => (
-  <div
-    style={{
-      padding: '20px',
-      textAlign: 'center',
-      margin: '20px',
-      border: '2px dashed #ccc',
-      borderRadius: '8px',
-    }}
-  >
-    <h2>{routeName} is under construction</h2>
-    <p>🚧 Coming Soon 🚧</p>
-    <pre style={{ textAlign: 'left', background: '#f5f5f5', padding: '10px' }}>
-      Current Route: {routeName}
-    </pre>
-  </div>
-);
-
-const COMPONENTS_READY = {
-  OrganizationsPage: false,
-  OrganizationDashboard: true,
-  EventsListView: false,
-  EventAgenda: false,
-  EventDashboard: false,
-  JoinEventPage: false,
-};
-
-const getComponent = (componentName, context = '') => {
-  if (COMPONENTS_READY[componentName]) {
-    return <PlaceholderComponent routeName={`${componentName} (Ready)`} />;
-  }
-  return (
-    <PlaceholderComponent
-      routeName={`${componentName}${context ? ` (${context})` : ''}`}
-    />
-  );
-};
-
 export const protectedRoutes = [
   {
     path: '/app',
@@ -125,40 +86,6 @@ export const protectedRoutes = [
                   {
                     path: '',
                     element: <AgendaPage />,
-                  },
-                  {
-                    path: 'admin',
-                    element: <Outlet />,
-                    children: [
-                      {
-                        path: '',
-                        element: getComponent('EventDashboard'),
-                      },
-                      {
-                        path: 'sessions',
-                        element: <SessionManager />,
-                      },
-                      {
-                        path: 'attendees',
-                        element: <AttendeesManager />,
-                      },
-                      {
-                        path: 'speakers',
-                        element: <PlaceholderComponent routeName="Speakers Management" />,
-                      },
-                      {
-                        path: 'sponsors',
-                        element: <SponsorsManager />,
-                      },
-                      {
-                        path: 'networking',
-                        element: <NetworkingManager />,
-                      },
-                      {
-                        path: 'settings',
-                        element: <EventSettings />,
-                      },
-                    ],
                   },
                   // New session-related routes
                   {
@@ -229,7 +156,7 @@ export const protectedRoutes = [
                 children: [
                   {
                     path: '',
-                    element: getComponent('EventDashboard'),
+                    element: <Navigate to="settings" replace />,
                   },
                   {
                     path: 'sessions',
@@ -262,10 +189,6 @@ export const protectedRoutes = [
                 element: <RoadmapPage />,
               },
             ],
-          },
-          {
-            path: 'join',
-            element: getComponent('JoinEventPage'),
           },
         ],
       },

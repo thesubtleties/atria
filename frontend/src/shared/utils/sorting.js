@@ -28,10 +28,9 @@ export const compareByLastName = (aLastName, aFirstName, bLastName, bFirstName) 
 /**
  * Gets the sort value for name sorting - tries individual fields first, falls back to full_name
  * @param {Object} person - Person object with name fields
- * @param {string} sortOrder - 'asc' or 'desc'
  * @returns {string} Sort key for comparison
  */
-export const getNameSortValue = (person, sortOrder = 'asc') => {
+export const getNameSortValue = (person) => {
   // If we have individual first/last name fields, use them for proper sorting
   if (person.last_name && person.first_name) {
     const lastName = (person.last_name || '').toLowerCase().trim();
@@ -63,8 +62,8 @@ export const getNameSortValue = (person, sortOrder = 'asc') => {
  */
 export const sortByLastName = (people, sortOrder = 'asc') => {
   return [...people].sort((a, b) => {
-    const aValue = getNameSortValue(a, sortOrder);
-    const bValue = getNameSortValue(b, sortOrder);
+    const aValue = getNameSortValue(a);
+    const bValue = getNameSortValue(b);
     
     const comparison = aValue.localeCompare(bValue);
     return sortOrder === 'asc' ? comparison : -comparison;

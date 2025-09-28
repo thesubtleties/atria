@@ -351,14 +351,17 @@ const ContentSections = ({ event, eventId }) => {
   }, [faqs]);
 
   // Initialize local items for drag and drop (only on mount or when items added/removed)
+  // We intentionally only depend on length to avoid resetting drag state during reorders
   useEffect(() => {
     const highlightIds = highlights.map(h => h._id);
     setLocalHighlights({ default: highlightIds });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [highlights.length]); // Only re-run when count changes
 
   useEffect(() => {
     const faqIds = faqs.map(f => f._id);
     setLocalFaqs({ default: faqIds });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [faqs.length]); // Only re-run when count changes
 
   // Track changes

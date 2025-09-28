@@ -34,9 +34,10 @@ const RoleUpdateModal = ({
   // Reset form when user changes
   useEffect(() => {
     if (user) {
+      form.reset();
       form.setFieldValue('role', user.role);
     }
-  }, [user]);
+  }, [user, form]);
 
   const handleSubmit = async (values) => {
     if (!user) return;
