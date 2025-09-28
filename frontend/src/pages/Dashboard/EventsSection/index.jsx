@@ -23,7 +23,7 @@ export const EventsSection = ({ events }) => {
 
       // Multi-day event - calculate duration
       const daysDiff = differenceInDays(endDate, startDate) + 1; // +1 to include both start and end day
-      return `${formatDateWithToday(event.start_date)} • ${daysDiff}-day event`;
+      return `${formatDateWithToday(event.start_date)} • ${daysDiff} day event`;
     } catch (error) {
       console.error('Error formatting event dates:', error);
       return formatDateWithToday(event.start_date);
@@ -60,10 +60,7 @@ export const EventsSection = ({ events }) => {
     <section className={styles.dashboardSection}>
       <div className={styles.sectionHeader}>
         <h2 className={styles.sectionTitle}>Your Events</h2>
-        <Button
-          variant="secondary"
-          onClick={() => navigate('/app/events')}
-        >
+        <Button variant="secondary" onClick={() => navigate('/app/events')}>
           View All
         </Button>
       </div>
@@ -71,8 +68,8 @@ export const EventsSection = ({ events }) => {
       {events && events.length > 0 ? (
         <div className={styles.cardList}>
           {events.map((event) => (
-            <div 
-              key={event.id} 
+            <div
+              key={event.id}
               className={styles.card}
               onClick={() => navigate(`/app/events/${event.id}`)}
             >
@@ -83,7 +80,7 @@ export const EventsSection = ({ events }) => {
                     {getEventDateDisplay(event)} • {event.location || 'Virtual'}
                   </div>
                 </div>
-                <Badge 
+                <Badge
                   color={getStatusColor(event.status)}
                   variant="light"
                   radius="sm"
@@ -93,7 +90,9 @@ export const EventsSection = ({ events }) => {
                 </Badge>
               </div>
               <div className={styles.cardMeta}>
-                {event.attendee_count} {event.attendee_count === 1 ? 'attendee' : 'attendees'} • {event.organization.name}
+                {event.attendee_count}{' '}
+                {event.attendee_count === 1 ? 'attendee' : 'attendees'} •{' '}
+                {event.organization.name}
               </div>
             </div>
           ))}
@@ -101,10 +100,7 @@ export const EventsSection = ({ events }) => {
       ) : (
         <div className={styles.emptyState}>
           <p>{`You're not registered for any events yet.`}</p>
-          <Button 
-            variant="primary"
-            onClick={() => navigate('/app/events')}
-          >
+          <Button variant="primary" onClick={() => navigate('/app/events')}>
             Browse Events
           </Button>
         </div>
