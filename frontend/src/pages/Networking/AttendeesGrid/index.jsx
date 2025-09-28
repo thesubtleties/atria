@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   TextInput,
   Select,
@@ -91,24 +91,26 @@ export function AttendeesGrid({ eventId }) {
       ? isFetchingAdmins || isFetchingOrganizers
       : isFetchingRegular;
 
-  const currentData =
-    filterRole === 'organizer'
-      ? {
-          event_users: [
-            ...(adminData?.event_users || []),
-            ...(organizerData?.event_users || []),
-          ],
-          total_items:
-            (adminData?.total_items || 0) + 
-            (organizerData?.total_items || 0),
-          total_pages: Math.max(
-            adminData?.total_pages || 0,
-            organizerData?.total_pages || 0
-          ),
-          current_page: currentPage,
-          has_next: (adminData?.has_next || false) || (organizerData?.has_next || false),
-        }
-      : regularData;
+  const currentData = useMemo(() => {
+    if (filterRole === 'organizer') {
+      return {
+        event_users: [
+          ...(adminData?.event_users || []),
+          ...(organizerData?.event_users || []),
+        ],
+        total_items:
+          (adminData?.total_items || 0) +
+          (organizerData?.total_items || 0),
+        total_pages: Math.max(
+          adminData?.total_pages || 0,
+          organizerData?.total_pages || 0
+        ),
+        current_page: currentPage,
+        has_next: (adminData?.has_next || false) || (organizerData?.has_next || false),
+      };
+    }
+    return regularData;
+  }, [filterRole, adminData, organizerData, regularData, currentPage]);
 
   // Update loaded attendees when new data arrives
   React.useEffect(() => {

@@ -3,10 +3,10 @@ import { useForm, zodResolver } from '@mantine/form';
 import { useDispatch } from 'react-redux';
 import { useLoginMutation, authApi } from '@/app/features/auth/api';
 import { loginSchema } from './schemas/loginSchema';
-import { setUser } from '@/app/store/authSlice';
 import { Button } from '../../../../components/buttons';
 import styles from './styles/index.module.css';
 
+// eslint-disable-next-line no-unused-vars
 export const LoginModal = ({ onClose, onSuccess, onForgotPassword }) => {
   const dispatch = useDispatch();
   const [login, { isLoading }] = useLoginMutation();

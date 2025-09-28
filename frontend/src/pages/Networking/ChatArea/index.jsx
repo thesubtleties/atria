@@ -75,7 +75,8 @@ export function ChatArea({ eventId }) {
         setActiveRoom(rooms[0].id);
       }
     }
-  }, [rooms, activeRoom]); // Only depend on rooms changing, not searchParams
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rooms, activeRoom]); // Intentionally omit searchParams to avoid infinite loops
   
   // Listen for URL changes (browser back/forward)
   useEffect(() => {
@@ -88,7 +89,8 @@ export function ChatArea({ eventId }) {
         setActiveRoom(roomId);
       }
     }
-  }, [searchParams]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]); // Intentionally omit activeRoom and rooms to avoid infinite loops
 
   // Update URL when room changes (but not from URL updates)
   const handleRoomChange = (roomId) => {

@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { ActionIcon, Text, Badge, Group, ScrollArea, Center } from '@mantine/core';
+import { useState, useEffect, useRef } from 'react';
+import { ActionIcon, Text, Badge, Group, Center } from '@mantine/core';
 import { IconX, IconLock, IconGlobe, IconMicrophone, IconMessage } from '@tabler/icons-react';
 import { LoadingSpinner } from '../../loading';
 import { useSelector } from 'react-redux';
@@ -98,7 +98,7 @@ function MobileChatRoomWindow({ room, eventData, onClose }) {
         setHasMore(false);
       }
     }
-  }, [data, currentPage, perPage, room.id, isLoading]);
+  }, [data, currentPage, perPage, room.id, isLoading, loadedMessages]);
 
   // Reset when room changes
   useEffect(() => {
@@ -175,7 +175,7 @@ function MobileChatRoomWindow({ room, eventData, onClose }) {
           viewport.scrollTop = viewport.scrollHeight;
         }
       }
-    } catch (error) {
+    } catch {
       notifications.show({
         title: 'Error',
         message: 'Failed to send message',
@@ -210,7 +210,7 @@ function MobileChatRoomWindow({ room, eventData, onClose }) {
         message: 'The message has been removed from the chat.',
         color: 'red',
       });
-    } catch (error) {
+    } catch {
       notifications.show({
         title: 'Error',
         message: 'Failed to delete the message',

@@ -1,5 +1,5 @@
 import { useRef, useEffect } from 'react';
-import { Text, Center } from '@mantine/core';
+import { Text } from '@mantine/core';
 import { LoadingSpinner } from '../../../../shared/components/loading';
 import { MessageBubble } from '../MessageBubble';
 import styles from './styles/index.module.css';
@@ -65,24 +65,17 @@ export function MessageList({
     const isScrollingUp = scrollTop < scrollState.current.lastScrollTop;
     scrollState.current.lastScrollTop = scrollTop;
     
-    // Calculate percentage from top of total scrollable area
-    const percentFromTop = (scrollTop / (scrollHeight - clientHeight)) * 100;
-    const triggerThreshold = (scrollHeight - clientHeight) * 0.25; // 25% from top of scrollable area
-    
-    
     // Consider "near bottom" if within 100px of the bottom
     scrollState.current.isNearBottom = distanceFromBottom < 100;
-    
+
     // Debounce the load more check
     scrollState.current.scrollTimeout = setTimeout(() => {
       // Calculate trigger threshold - load when 25% from top of total scrollable area
       const triggerThreshold = (scrollHeight - clientHeight) * 0.25;
-      
+
       // Check if scrolled near top for infinite loading
       // Only trigger if near top AND scrolling up (to avoid triggering on initial load)
       if (scrollTop < triggerThreshold && isScrollingUp && onScrollTop && !isLoadingMore) {
-        const actualPercent = (scrollTop / (scrollHeight - clientHeight)) * 100;
-        
         onScrollTop();
       }
     }, 300); // 300ms debounce
@@ -91,8 +84,11 @@ export function MessageList({
   // Cleanup on unmount
   useEffect(() => {
     return () => {
-      if (scrollState.current.scrollTimeout) {
-        clearTimeout(scrollState.current.scrollTimeout);
+      // Capture timeout at cleanup time to avoid stale reference
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      const timeoutId = scrollState.current.scrollTimeout;
+      if (timeoutId) {
+        clearTimeout(timeoutId);
       }
     };
   }, []);
@@ -185,7 +181,7 @@ export function MessageList({
     
     // Update the previous length
     scrollState.current.previousMessagesLength = messages.length;
-  }, [messages]);
+  }, [messages, isLoadingMore]);
 
   return (
     <div 

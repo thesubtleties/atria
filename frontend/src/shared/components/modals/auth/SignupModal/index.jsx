@@ -7,6 +7,8 @@ import { signupSchema } from './schemas/signupSchema';
 import { Button } from '../../../../components/buttons';
 import styles from './styles/index.module.css';
 
+// onSuccess is passed by some parents but not currently used (signup requires email verification)
+// eslint-disable-next-line no-unused-vars
 export const SignupModal = ({ onClose, onSuccess }) => {
   const [signup, { isLoading }] = useSignupMutation();
   const [showVerificationMessage, setShowVerificationMessage] = useState(false);
@@ -26,6 +28,7 @@ export const SignupModal = ({ onClose, onSuccess }) => {
   const handleSubmit = async (values) => {
     try {
       // Remove password_confirm before sending to API
+      // eslint-disable-next-line no-unused-vars
       const { password_confirm, ...submitData } = values;
       const response = await signup(submitData).unwrap();
       
@@ -50,14 +53,14 @@ export const SignupModal = ({ onClose, onSuccess }) => {
         <IconMail size={48} color="var(--mantine-color-blue-6)" style={{ alignSelf: 'center' }} />
         <Title order={3} ta="center">Check Your Email</Title>
         <Text ta="center" c="dimmed">
-          We've sent a verification email to <strong>{userEmail}</strong>
+          {"We've sent a verification email to "}<strong>{userEmail}</strong>
         </Text>
         <Alert color="blue" variant="light">
           Please check your inbox and click the verification link to activate your account.
           The link will expire in 24 hours.
         </Alert>
         <Text size="sm" c="dimmed" ta="center">
-          Didn't receive the email? Check your spam folder or contact support.
+          {"Didn't receive the email? Check your spam folder or contact support."}
         </Text>
         <Button variant="subtle" onClick={onClose} className={styles.closeButton}>
           Close

@@ -65,14 +65,14 @@ export const EventModal = ({
     ) {
       form.setFieldValue('end_date', form.values.start_date);
     }
-  }, [form.values.start_date, form.values.event_type]);
+  }, [form.values.start_date, form.values.event_type, form]);
 
   // Reset form when modal is closed
   useEffect(() => {
     if (!opened) {
       form.reset();
     }
-  }, [opened]);
+  }, [opened, form]);
 
   const availableEventTypes = allowConferences
     ? EVENT_TYPES

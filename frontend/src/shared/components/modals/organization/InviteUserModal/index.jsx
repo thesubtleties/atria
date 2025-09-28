@@ -27,7 +27,7 @@ export const InviteUserModal = ({ organizationId, opened, onClose }) => {
   // Only skip if email is empty or too short
   const email = form.values.email;
   const skipQuery = !email || email.length < 5; // Basic length check
-  const { data: userExists, isFetching } = useCheckUserExistsQuery(email, {
+  const { data: userExists } = useCheckUserExistsQuery(email, {
     skip: skipQuery,
   });
 
@@ -39,7 +39,7 @@ export const InviteUserModal = ({ organizationId, opened, onClose }) => {
         lastName: userExists.user.last_name,
       });
     }
-  }, [userExists]);
+  }, [userExists, form]);
 
   const handleSubmit = async (values) => {
     try {

@@ -28,7 +28,7 @@ export const AddEventUserModal = ({ eventId, opened, onClose }) => {
 
   const email = form.values.email;
   const skipQuery = !email || email.length < 5;
-  const { data: userExists, isFetching } = useCheckUserExistsQuery(email, {
+  const { data: userExists } = useCheckUserExistsQuery(email, {
     skip: skipQuery,
   });
 
@@ -39,13 +39,13 @@ export const AddEventUserModal = ({ eventId, opened, onClose }) => {
         lastName: userExists.user.last_name,
       });
     }
-  }, [userExists]);
+  }, [userExists, form]);
 
   useEffect(() => {
     if (!opened) {
       form.reset();
     }
-  }, [opened]);
+  }, [opened, form]);
 
   const handleSubmit = async (values) => {
     try {
