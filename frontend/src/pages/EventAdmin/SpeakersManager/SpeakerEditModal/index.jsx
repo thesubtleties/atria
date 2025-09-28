@@ -24,12 +24,13 @@ const SpeakerEditModal = ({ opened, onClose, speaker, eventId, onSuccess }) => {
   // Reset form when speaker changes
   useEffect(() => {
     if (speaker) {
+      form.reset();
       form.setValues({
         speaker_title: speaker.speaker_title || speaker.title || '',
         speaker_bio: speaker.speaker_bio || speaker.bio || '',
       });
     }
-  }, [speaker]);
+  }, [speaker, form]);
 
   const handleSubmit = async (values) => {
     if (!speaker) return;

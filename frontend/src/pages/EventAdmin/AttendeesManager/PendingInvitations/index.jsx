@@ -55,7 +55,7 @@ const PendingInvitations = ({ invitations, onRefresh }) => {
       },
     });
   };
-
+  // eslint-disable-next-line no-unused-vars
   const handleResend = async (invitation) => {
     // TODO: Implement resend functionality
     notifications.show({

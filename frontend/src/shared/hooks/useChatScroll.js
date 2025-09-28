@@ -101,11 +101,14 @@ export function useChatScroll({
     }
 
     return () => {
+      // Capture the timeout ID at cleanup time
+      const timeoutId = scrollState.current.scrollTimeout;
+
       if (container) {
         container.removeEventListener('scroll', handleScroll);
       }
-      if (scrollState.current.scrollTimeout) {
-        clearTimeout(scrollState.current.scrollTimeout);
+      if (timeoutId) {
+        clearTimeout(timeoutId);
       }
     };
   }, [hasMore, isFetching, loadMoreMessages]);

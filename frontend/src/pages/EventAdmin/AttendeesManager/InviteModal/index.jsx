@@ -259,9 +259,7 @@ const InviteModal = ({
                   className={styles.infoAlert}
                 >
                   <Text size="sm">
-                    The recipient will receive an email invitation to join your
-                    event. If they don't have an account, they'll be prompted to
-                    create one.
+                    {"The recipient will receive an email invitation to join your event. If they don't have an account, they'll be prompted to create one."}
                   </Text>
                 </Alert>
               </Stack>

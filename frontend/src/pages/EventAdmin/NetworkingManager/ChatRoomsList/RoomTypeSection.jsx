@@ -1,4 +1,4 @@
-import { Box, Table, Text } from '@mantine/core';
+import { Box, Table } from '@mantine/core';
 import { DragDropProvider } from '@dnd-kit/react';
 import DraggableTableRow from './DraggableTableRow';
 import DraggableCard from './DraggableCard';
@@ -16,7 +16,7 @@ const RoomTypeSection = ({
   isMobile,
   onEdit,
   handleDragOver,
-  handleDragEnd
+  handleDragEnd,
 }) => {
   if (!rooms || rooms.length === 0) return null;
 
@@ -29,10 +29,7 @@ const RoomTypeSection = ({
         </p>
       </Box>
 
-      <DragDropProvider
-        onDragOver={handleDragOver}
-        onDragEnd={handleDragEnd}
-      >
+      <DragDropProvider onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
         {isMobile ? (
           // Mobile: Card view
           <div className={styles.mobileCardList}>
@@ -59,10 +56,18 @@ const RoomTypeSection = ({
                 <Table.Th style={{ width: '40px' }}></Table.Th>
                 <Table.Th>Room Name</Table.Th>
                 <Table.Th>Description</Table.Th>
-                <Table.Th style={{ width: '80px', textAlign: 'center' }}>Messages</Table.Th>
-                <Table.Th style={{ width: '80px', textAlign: 'center' }}>Active</Table.Th>
-                <Table.Th style={{ width: '100px', textAlign: 'center' }}>Status</Table.Th>
-                <Table.Th style={{ width: '70px', textAlign: 'center' }}>Actions</Table.Th>
+                <Table.Th style={{ width: '80px', textAlign: 'center' }}>
+                  Messages
+                </Table.Th>
+                <Table.Th style={{ width: '80px', textAlign: 'center' }}>
+                  Active
+                </Table.Th>
+                <Table.Th style={{ width: '100px', textAlign: 'center' }}>
+                  Status
+                </Table.Th>
+                <Table.Th style={{ width: '70px', textAlign: 'center' }}>
+                  Actions
+                </Table.Th>
               </Table.Tr>
             </Table.Thead>
             <Table.Tbody>
@@ -71,11 +76,7 @@ const RoomTypeSection = ({
                 if (!room) return null;
 
                 return (
-                  <DraggableTableRow
-                    key={roomId}
-                    id={roomId}
-                    room={room}
-                  >
+                  <DraggableTableRow key={roomId} id={roomId} room={room}>
                     <ChatRoomRow
                       room={room}
                       color={color}
