@@ -125,7 +125,7 @@ Unlike complex enterprise tools that require months of training, Atria is laser-
 - **Mantine UI** components for professional, accessible interfaces
 - **Redux Toolkit** with **RTK Query** for efficient state management
 - **Socket.IO Client** for real-time features
-- **TypeScript** support for enhanced development experience
+- **Zod** for runtime type validation and form safety
 
 ## Quick Start
 
@@ -280,7 +280,7 @@ Atria follows modern software architecture principles with clear separation of c
 - **Feature Organization**: Logical grouping of related functionality
 - **API Integration**: RTK Query for efficient data fetching and caching
 - **Real-time Updates**: Socket.IO client integration
-- **Type Safety**: TypeScript integration for enhanced development
+- **Type Safety**: Zod schemas for runtime validation and form safety
 
 ### **Data Model**
 
