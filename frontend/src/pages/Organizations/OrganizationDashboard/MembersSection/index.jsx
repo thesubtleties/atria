@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Tabs, TextInput, Select, Group, Badge } from '@mantine/core';
+import { Tabs, TextInput, Select } from '@mantine/core';
 import {
   IconSearch,
   IconUsers,
@@ -15,7 +15,6 @@ import styles from './styles/index.module.css';
 
 const MembersSection = ({
   orgId,
-  organization,
   currentUserRole,
   activeTab,
   onTabChange,

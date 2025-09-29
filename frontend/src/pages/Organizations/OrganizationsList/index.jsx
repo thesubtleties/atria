@@ -8,6 +8,7 @@ import styles from './styles/index.module.css';
 
 export const OrganizationsList = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
+  //eslint-disable-next-line no-unused-vars
   const { data, isLoading } = useGetOrganizationsQuery();
   const organizations = data?.organizations || [];
 

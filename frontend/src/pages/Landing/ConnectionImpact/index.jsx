@@ -203,7 +203,7 @@ const ConnectionImpact = () => {
           transition={{ type: "spring", stiffness: 300 }}
         >
           <div className={styles.testimonialCard}>
-            <div className={styles.quoteIcon}>"</div>
+            <div className={styles.quoteIcon}>{'"'}</div>
             <p className={styles.testimonialText}>
               I met my co-founder at a conference using Atria. The Green Light system made it easy to know who was open to networking, and the icebreaker suggestions helped start a conversation that changed my life.
             </p>

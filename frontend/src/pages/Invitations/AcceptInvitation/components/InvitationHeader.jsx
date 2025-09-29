@@ -30,7 +30,7 @@ const InvitationHeader = ({ invitation }) => {
       </div>
       
       <Title order={2} className={styles.title}>
-        You've been invited!
+        {"You've been invited!"}
       </Title>
       
       <Text size="lg" className={styles.subtitle}>

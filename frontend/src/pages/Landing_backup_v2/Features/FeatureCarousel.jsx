@@ -1,6 +1,6 @@
 // Landing/Features/FeatureCarousel.jsx
 import { Carousel } from '@mantine/carousel';
-import { useMediaQuery } from '@mantine/hooks';
+
 import { FeatureCard } from './FeatureCard';
 import {
   IconDeviceDesktop,
@@ -74,11 +74,7 @@ const FEATURES_DATA = [
 ];
 
 export const FeatureCarousel = () => {
-  const isMobile = useMediaQuery('(max-width: 768px)');
-  const isTablet = useMediaQuery('(max-width: 992px) and (min-width: 769px)');
-
-  // Determine how many slides to show at once based on screen size
-  const slidesToShow = isMobile ? 1 : isTablet ? 2 : 3;
+  // Determine how many slides to show at once based on screen size - media removed for now as this is an unused section
 
   return (
     <Carousel

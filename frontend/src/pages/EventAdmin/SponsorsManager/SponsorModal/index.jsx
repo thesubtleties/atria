@@ -153,7 +153,6 @@ const SponsorModal = ({
         />
 
         <LogoUploadSection
-          logoFile={logoFile}
           logoPreview={logoPreview}
           existingLogoKey={existingLogoKey}
           isMobile={isMobile}

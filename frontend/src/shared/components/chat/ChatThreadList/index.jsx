@@ -1,5 +1,4 @@
 // src/shared/components/chat/ChatThreadList/index.jsx
-import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Avatar, Text, Group, Menu, ActionIcon } from '@mantine/core';
 import { IconDots, IconTrash } from '@tabler/icons-react';
@@ -16,12 +15,12 @@ function ChatThreadList({ threads, onThreadClick, onDeleteChatStart }) {
 
   const handleClearThread = (threadId, otherUserName, event) => {
     event.stopPropagation(); // Prevent thread click
-    
+
     // For mobile: minimize sidebar before showing modal
     if (onDeleteChatStart) {
       onDeleteChatStart();
     }
-    
+
     openConfirmationModal({
       title: 'Delete Chat',
       message: `Delete chat with ${otherUserName}? You can start fresh anytime.`,
@@ -31,16 +30,16 @@ function ChatThreadList({ threads, onThreadClick, onDeleteChatStart }) {
       onConfirm: async () => {
         try {
           await clearThread(threadId).unwrap();
-          
+
           // Close any open chat windows for this thread
           dispatch(closeThread(threadId));
-          
+
           notifications.show({
             title: 'Chat deleted',
             message: 'The conversation has been removed from your chat list',
             color: 'green',
           });
-        } catch (error) {
+        } catch {
           notifications.show({
             title: 'Error',
             message: 'Failed to delete chat',
@@ -93,24 +92,32 @@ function ChatThreadList({ threads, onThreadClick, onDeleteChatStart }) {
                     <Menu.Item
                       leftSection={<IconTrash size={14} />}
                       color="red"
-                      onClick={(e) => handleClearThread(thread.id, thread.other_user?.full_name, e)}
+                      onClick={(e) =>
+                        handleClearThread(
+                          thread.id,
+                          thread.other_user?.full_name,
+                          e
+                        )
+                      }
                     >
                       Delete Chat
                     </Menu.Item>
                   </Menu.Dropdown>
                 </Menu>
               </div>
-              
+
               {/* Message preview - full width */}
               <Text size="xs" c="dimmed" className={styles.messagePreview}>
                 {thread.last_message?.content || 'Start a conversation'}
               </Text>
-              
+
               {/* Timestamp on separate line, right-aligned */}
               {thread.last_message && (
                 <Text size="xs" c="dimmed" className={styles.timestamp}>
                   {(() => {
-                    const messageDate = new Date(thread.last_message.created_at);
+                    const messageDate = new Date(
+                      thread.last_message.created_at
+                    );
                     const now = new Date();
                     // Ensure we never show future times due to clock sync issues
                     const safeDate = messageDate > now ? now : messageDate;

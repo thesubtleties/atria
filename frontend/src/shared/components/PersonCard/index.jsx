@@ -4,13 +4,12 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import styles from './styles/index.module.css';
 
-export function PersonCard({ 
-  person, 
-  variant = 'attendee', // 'speaker' | 'attendee'
+export function PersonCard({
+  person,
   role, // User's actual role: ADMIN, ORGANIZER, SPEAKER, ATTENDEE
   onConnect,
   onMessage,
-  showActions = true 
+  showActions = true
 }) {
   const currentUser = useSelector((state) => state.auth.user);
   const navigate = useNavigate();

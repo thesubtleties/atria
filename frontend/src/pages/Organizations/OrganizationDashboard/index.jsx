@@ -50,9 +50,8 @@ const OrganizationDashboard = () => {
         />
 
         {/* Main Content */}
-        <MembersSection 
+        <MembersSection
           orgId={orgId}
-          organization={organization}
           currentUserRole={organization.current_user_role}
           activeTab={activeTab}
           onTabChange={setActiveTab}

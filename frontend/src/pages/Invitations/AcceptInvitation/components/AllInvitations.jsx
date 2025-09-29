@@ -1,5 +1,4 @@
 import { Title, Text, Stack } from '@mantine/core';
-import { IconInfoCircle } from '@tabler/icons-react';
 import InvitationItem from './InvitationItem';
 import RoleImplication from './RoleImplication';
 import styles from '../styles/AllInvitations.module.css';
@@ -46,7 +45,7 @@ const AllInvitations = ({
     <div className={styles.container}>
       <Title order={3} mb="md" className={styles.title}>All Your Invitations</Title>
       <Text size="sm" c="dimmed" mb="xl" className={styles.subtitle}>
-        Select which invitations you'd like to accept. We've pre-selected all of them for you.
+        {"Select which invitations you'd like to accept. We've pre-selected all of them for you."}
       </Text>
 
       {hasRoleImplications && <RoleImplication />}

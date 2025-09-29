@@ -5,7 +5,6 @@ import PrivateImage from '../../../../shared/components/PrivateImage';
 import styles from './styles/index.module.css';
 
 const LogoUploadSection = ({
-  logoFile,
   logoPreview,
   existingLogoKey,
   isMobile,

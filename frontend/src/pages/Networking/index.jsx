@@ -148,7 +148,7 @@ export function Networking() {
                 </div>
               )}
               {activeTab === 'attendees' && <AttendeesGrid eventId={eventId} />}
-              {activeTab === 'requests' && <RequestsList eventId={eventId} />}
+              {activeTab === 'requests' && <RequestsList />}
             </div>
           </div>
         </section>

@@ -42,13 +42,15 @@ const ReadingSpeedReveal = ({
   useEffect(() => {
     if (!textRef.current || !containerRef.current) return
 
+    // Capture the current ref value to use in cleanup
+    const containerElement = containerRef.current
     const wordElements = textRef.current.querySelectorAll(`.${styles.word}`)
     const highlightedElements = textRef.current.querySelectorAll(`.${styles.highlighted}`)
 
     // Create the animation timeline
     const tl = gsap.timeline({
       scrollTrigger: {
-        trigger: containerRef.current,
+        trigger: containerElement,
         start: "top top",
         end: "+=200%",
         pin: true,
@@ -60,7 +62,7 @@ const ReadingSpeedReveal = ({
     })
 
     // Set initial states
-    gsap.set(containerRef.current, { backgroundColor: backgroundColor.start })
+    gsap.set(containerElement, { backgroundColor: backgroundColor.start })
     gsap.set(wordElements, { 
       opacity: 0,
       y: 20,
@@ -84,7 +86,7 @@ const ReadingSpeedReveal = ({
     })
 
     // Animate background color
-    tl.to(containerRef.current, {
+    tl.to(containerElement, {
       backgroundColor: backgroundColor.end,
       duration: 1.2,
       ease: "power2.inOut"
@@ -107,7 +109,7 @@ const ReadingSpeedReveal = ({
     return () => {
       tl.kill()
       gsap.killTweensOf(wordElements)
-      gsap.killTweensOf(containerRef.current)
+      gsap.killTweensOf(containerElement)
     }
   }, [text, highlightWords, readingSpeed, backgroundColor, textColor, highlightGlow, scrollTriggerOptions])
 

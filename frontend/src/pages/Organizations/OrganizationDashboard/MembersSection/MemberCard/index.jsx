@@ -1,10 +1,9 @@
-import { useState } from 'react';
 import { Avatar, Text, Badge, Menu, ActionIcon } from '@mantine/core';
 import { IconDots, IconUserEdit, IconUserX, IconMail } from '@tabler/icons-react';
 import { formatDistanceToNow } from 'date-fns';
 import styles from './styles/index.module.css';
 
-const MemberCard = ({ member, orgId, currentUserRole, onRoleUpdate, onRemove }) => {
+const MemberCard = ({ member, currentUserRole, onRoleUpdate, onRemove }) => {
   const canManage = currentUserRole === 'OWNER' || 
     (currentUserRole === 'ADMIN' && member.role !== 'OWNER');
   const isCurrentUser = member.is_current_user;

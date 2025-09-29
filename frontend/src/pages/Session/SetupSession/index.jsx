@@ -1,5 +1,5 @@
 // pages/Session/SetupSession/index.jsx
-import { Container, Title, Text, Button, Card, Stack } from '@mantine/core';
+import { Title, Text, Button, Stack } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';

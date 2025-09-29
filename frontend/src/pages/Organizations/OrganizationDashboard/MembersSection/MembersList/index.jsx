@@ -196,7 +196,6 @@ const MembersList = ({ orgId, searchQuery, roleFilter, currentUserRole }) => {
             <MemberCard
               key={member.id}
               member={member}
-              orgId={orgId}
               currentUserRole={currentUserRole}
               onRoleUpdate={handleRoleUpdate}
               onRemove={handleRemove}

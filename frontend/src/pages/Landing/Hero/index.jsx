@@ -4,7 +4,6 @@ import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
-import { motion } from 'motion/react';
 import { useModals } from '@mantine/modals';
 import MagneticButton from '../shared/MagneticButton';
 import styles from './Hero.module.css';
@@ -14,7 +13,6 @@ import { SignupModal } from '@/shared/components/modals/auth/SignupModal';
 import { ForgotPasswordModal } from '@/shared/components/modals/auth/ForgotPasswordModal';
 import { useLoginMutation, authApi } from '@/app/features/auth/api';
 import { useDispatch } from 'react-redux';
-import { setUser } from '@/app/store/authSlice';
 
 gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin);
 

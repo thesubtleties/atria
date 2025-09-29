@@ -1,7 +1,7 @@
 // pages/Events/EventsList/EventCard/index.jsx
 import { Text, Group, Badge, Modal, Button } from '@mantine/core';
 import { IconEdit, IconX } from '@tabler/icons-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { EventModal } from '@/shared/components/modals/event/EventModal';
 import {

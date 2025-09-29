@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Image, Box } from '@mantine/core';
 import { LoadingSpinner } from '../loading';
 import { useGetPrivateContentQuery } from '../../../app/features/uploads/api';
 
-const PrivateImage = ({ 
-  objectKey, 
-  alt, 
-  width, 
-  height, 
+const PrivateImage = ({
+  objectKey,
+  alt,
+  width,
+  height,
   fit = 'contain',
   placeholder,
-  ...props 
+  ...props
 }) => {
   const [imageUrl, setImageUrl] = useState(null);
-  
+
   const { data, isLoading, error } = useGetPrivateContentQuery(objectKey, {
     skip: !objectKey,
   });
@@ -30,13 +30,13 @@ const PrivateImage = ({
 
   if (isLoading) {
     return (
-      <Box 
-        style={{ 
-          width, 
-          height, 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'center' 
+      <Box
+        style={{
+          width,
+          height,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
         }}
       >
         <LoadingSpinner size="sm" />

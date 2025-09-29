@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import {
   Stack,
@@ -12,7 +12,12 @@ import {
 import { LoadingContent } from '../../../../shared/components/loading';
 import { useForm, zodResolver } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
-import { IconCheck, IconX, IconWorld, IconCalendarEvent } from '@tabler/icons-react';
+import {
+  IconCheck,
+  IconX,
+  IconWorld,
+  IconCalendarEvent,
+} from '@tabler/icons-react';
 import {
   useGetUserPrivacySettingsQuery,
   useUpdateUserPrivacySettingsMutation,
@@ -30,16 +35,17 @@ const PrivacySettings = () => {
   const [hasChanges, setHasChanges] = useState(false);
   const [originalValues, setOriginalValues] = useState(null);
   const [activeTab, setActiveTab] = useState('global');
-  
+
   // Fetch privacy settings
   const { data: privacyData, isLoading } = useGetUserPrivacySettingsQuery(
     currentUser?.id,
     { skip: !currentUser?.id }
   );
-  
+
   // Update mutation
-  const [updatePrivacySettings, { isLoading: isUpdating }] = useUpdateUserPrivacySettingsMutation();
-  
+  const [updatePrivacySettings, { isLoading: isUpdating }] =
+    useUpdateUserPrivacySettingsMutation();
+
   // Form setup
   const form = useForm({
     initialValues: {
@@ -53,36 +59,36 @@ const PrivacySettings = () => {
     },
     validate: zodResolver(privacySettingsSchema),
   });
-  
+
   // Update form when data loads
   useEffect(() => {
     if (privacyData?.privacy_settings) {
       form.setValues(privacyData.privacy_settings);
       setOriginalValues(privacyData.privacy_settings);
     }
-  }, [privacyData]);
-  
+  }, [privacyData, form]);
+
   // Track changes
   useEffect(() => {
     if (originalValues) {
-      const changed = Object.keys(form.values).some(key => {
+      const changed = Object.keys(form.values).some((key) => {
         return form.values[key] !== originalValues[key];
       });
       setHasChanges(changed);
     }
   }, [form.values, originalValues]);
-  
+
   const handleSubmit = async (values) => {
     try {
       await updatePrivacySettings({
         id: currentUser.id,
         ...values,
       }).unwrap();
-      
+
       // Update original values after successful save
       setOriginalValues(values);
       setHasChanges(false);
-      
+
       notifications.show({
         title: 'Success',
         message: 'Privacy settings updated successfully',
@@ -97,14 +103,14 @@ const PrivacySettings = () => {
       });
     }
   };
-  
+
   const handleReset = () => {
     if (originalValues) {
       form.setValues(originalValues);
       setHasChanges(false);
     }
   };
-  
+
   if (isLoading) {
     return (
       <Center h={400}>
@@ -112,26 +118,29 @@ const PrivacySettings = () => {
       </Center>
     );
   }
-  
+
   return (
     <Stack gap="lg">
       <div className={styles.headerSection}>
-        <Title order={3} className={styles.sectionTitle}>Privacy Settings</Title>
+        <Title order={3} className={styles.sectionTitle}>
+          Privacy Settings
+        </Title>
         <Text size="sm" className={styles.description}>
           Control who can see your information and contact you
         </Text>
       </div>
-      
-      <Tabs value={activeTab} onChange={setActiveTab} className={styles.privacyTabs}>
+
+      <Tabs
+        value={activeTab}
+        onChange={setActiveTab}
+        className={styles.privacyTabs}
+      >
         <Tabs.List>
-          <Tabs.Tab 
-            value="global" 
-            leftSection={<IconWorld size={16} />}
-          >
+          <Tabs.Tab value="global" leftSection={<IconWorld size={16} />}>
             Global Privacy
           </Tabs.Tab>
-          <Tabs.Tab 
-            value="events" 
+          <Tabs.Tab
+            value="events"
             leftSection={<IconCalendarEvent size={16} />}
           >
             Event Privacy
@@ -142,17 +151,21 @@ const PrivacySettings = () => {
           <form onSubmit={form.onSubmit(handleSubmit)}>
             <Stack gap="lg">
               <EmailSection form={form} />
-              
+
               <Divider className={styles.divider} />
-              
+
               <ConnectionSection form={form} />
-              
+
               <Divider className={styles.divider} />
-              
+
               <ProfileSection form={form} />
-              
+
               {hasChanges && (
-                <Group justify="flex-end" mt="md" className={styles.buttonGroup}>
+                <Group
+                  justify="flex-end"
+                  mt="md"
+                  className={styles.buttonGroup}
+                >
                   <Button
                     variant="subtle"
                     onClick={handleReset}
@@ -161,11 +174,7 @@ const PrivacySettings = () => {
                     <IconX size={16} />
                     Cancel
                   </Button>
-                  <Button
-                    variant="primary"
-                    type="submit"
-                    loading={isUpdating}
-                  >
+                  <Button variant="primary" type="submit" loading={isUpdating}>
                     <IconCheck size={16} />
                     Save Changes
                   </Button>

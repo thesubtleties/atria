@@ -170,7 +170,7 @@ const RegistrationForm = ({ email, selectedInvitations, onSuccess }) => {
 
           <div className={styles.summary}>
             <Text size="sm" fw={500} mb="xs" className={styles.summaryTitle}>
-              You're accepting {totalSelected} invitation{totalSelected !== 1 ? 's' : ''}:
+              {"You're accepting "}{totalSelected}{" invitation"}{totalSelected !== 1 ? 's' : ''}:
             </Text>
             <List size="sm" spacing={4} icon={<IconCheck size={14} />} className={styles.summaryList}>
               {selectedInvitations.organization_ids.length > 0 && (

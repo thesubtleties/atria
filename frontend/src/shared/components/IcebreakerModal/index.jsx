@@ -78,7 +78,7 @@ export function IcebreakerModal({
             variant="light"
             className={styles.infoAlert}
           >
-            No icebreakers available for this event. Event organizers haven't set up icebreakers yet.
+            {"No icebreakers available for this event. Event organizers haven't set up icebreakers yet."}
           </Alert>
         )}
 
