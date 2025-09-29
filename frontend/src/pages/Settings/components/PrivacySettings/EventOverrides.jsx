@@ -95,7 +95,9 @@ const EventOverrides = () => {
       form.reset();
       setOriginalValues(null);
     }
-  }, [overridesData, selectedEventId, form]);
+    // IMPORTANT: DO NOT add 'form' to dependencies - it causes infinite re-renders
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [overridesData, selectedEventId]);
 
   // Track changes
   useEffect(() => {

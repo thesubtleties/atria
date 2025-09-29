@@ -66,7 +66,9 @@ const PrivacySettings = () => {
       form.setValues(privacyData.privacy_settings);
       setOriginalValues(privacyData.privacy_settings);
     }
-  }, [privacyData, form]);
+    // IMPORTANT: DO NOT add 'form' to dependencies - it causes infinite re-renders
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [privacyData]);
 
   // Track changes
   useEffect(() => {
