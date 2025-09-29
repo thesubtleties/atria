@@ -9,6 +9,8 @@ import styles from './styles/index.module.css';
 
 const EventsSection = ({ orgId, currentUserRole }) => {
   const [activeTab, setActiveTab] = useState('published');
+  // TODO: Implement pagination UI - currently only showing first 12 events per status
+  // eslint-disable-next-line no-unused-vars
   const [page, setPage] = useState(1);
   const [eventModalOpened, setEventModalOpened] = useState(false);
   const perPage = 12;
