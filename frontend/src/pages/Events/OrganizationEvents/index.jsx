@@ -14,7 +14,8 @@ export const OrganizationEvents = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
 
   const { data: orgData } = useGetOrganizationQuery(orgId);
-  const { data: eventsData, isLoading } = useGetEventsQuery({ orgId });
+  // TODO: Add loading state handling - currently shows empty state while loading
+  const { data: eventsData } = useGetEventsQuery({ orgId });
 
   const events = eventsData?.events || [];
   const canCreateEvents = orgData?.user_is_admin_or_owner || false;
