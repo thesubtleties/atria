@@ -102,7 +102,9 @@ export const ProfilePage = () => {
         },
       });
     }
-  }, [userProfile, form]);
+    // IMPORTANT: DO NOT add 'form' to dependencies - it causes infinite re-renders
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userProfile]);
 
   // Parallax effect for background shapes
   useEffect(() => {

@@ -39,7 +39,9 @@ export const InviteUserModal = ({ organizationId, opened, onClose }) => {
         lastName: userExists.user.last_name,
       });
     }
-  }, [userExists, form]);
+    // IMPORTANT: DO NOT add 'form' to dependencies - it causes infinite re-renders
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userExists]);
 
   const handleSubmit = async (values) => {
     try {

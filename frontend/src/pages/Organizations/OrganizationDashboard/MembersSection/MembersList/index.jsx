@@ -180,7 +180,7 @@ const MembersList = ({ orgId, searchQuery, roleFilter, currentUserRole }) => {
             <tbody>
               {filteredMembers.map((member) => (
                 <MemberRow
-                  key={member.id}
+                  key={member.user_id}
                   member={member}
                   orgId={orgId}
                   currentUserRole={currentUserRole}
@@ -194,7 +194,7 @@ const MembersList = ({ orgId, searchQuery, roleFilter, currentUserRole }) => {
         <div className={styles.memberCards}>
           {filteredMembers.map((member) => (
             <MemberCard
-              key={member.id}
+              key={member.user_id}
               member={member}
               currentUserRole={currentUserRole}
               onRoleUpdate={handleRoleUpdate}

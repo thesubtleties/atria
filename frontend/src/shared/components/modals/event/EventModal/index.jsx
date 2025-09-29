@@ -65,14 +65,19 @@ export const EventModal = ({
     ) {
       form.setFieldValue('end_date', form.values.start_date);
     }
-  }, [form.values.start_date, form.values.event_type, form]);
+    // IMPORTANT: DO NOT add 'form' to dependencies - it causes infinite re-renders
+    // The form object from useForm is stable, but including it triggers updates
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.values.start_date, form.values.event_type]);
 
   // Reset form when modal is closed
   useEffect(() => {
     if (!opened) {
       form.reset();
     }
-  }, [opened, form]);
+    // IMPORTANT: DO NOT add 'form' to dependencies - it causes infinite re-renders
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [opened]);
 
   const availableEventTypes = allowConferences
     ? EVENT_TYPES
