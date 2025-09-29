@@ -4,7 +4,7 @@ import {
   Text,
 } from '@mantine/core';
 import { IconMessage } from '@tabler/icons-react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useState } from 'react';
 import {
@@ -22,7 +22,6 @@ import styles from './styles/index.module.css';
 
 export const SessionPage = () => {
   const { sessionId } = useParams();
-  const navigate = useNavigate();
   const currentUser = useSelector((state) => state.auth.user);
   const [isChatOpen, setIsChatOpen] = useState(true); // Start open by default
 

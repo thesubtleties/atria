@@ -1,5 +1,5 @@
 // pages/Session/SessionPending/index.jsx
-import { Container, Title, Text, Card } from '@mantine/core';
+import { Title, Text } from '@mantine/core';
 import { IconClock } from '@tabler/icons-react';
 import styles from './styles/index.module.css';
 

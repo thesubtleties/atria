@@ -12,7 +12,6 @@ export default function Highlights({ highlights }) {
               key={index}
               title={highlight.title}
               description={highlight.description}
-              icon={highlight.icon}
             />
           ))}
         </div>

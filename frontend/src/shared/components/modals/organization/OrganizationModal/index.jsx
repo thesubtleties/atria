@@ -33,7 +33,7 @@ export const OrganizationModal = ({
     if (!opened) {
       form.reset();
     }
-  }, [opened]);
+  }, [opened, form]);
 
   const handleSubmit = async (values) => {
     try {

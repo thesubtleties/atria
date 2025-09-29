@@ -1,18 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
-import {
-  Container,
-  Stack,
-  Group,
-  TextInput,
-  Alert,
-} from '@mantine/core';
+import { Container, Stack, Group, TextInput, Alert } from '@mantine/core';
 import { IconCheck, IconX, IconUserPlus } from '@tabler/icons-react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useGetUserQuery, useUpdateUserMutation } from '@/app/features/users/api';
-import { 
-  useGetConnectionsQuery, 
-  useRemoveConnectionMutation 
+import {
+  useGetUserQuery,
+  useUpdateUserMutation,
+} from '@/app/features/users/api';
+import {
+  useGetConnectionsQuery,
+  useRemoveConnectionMutation,
 } from '@/app/features/networking/api';
 import { useForm, zodResolver } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
@@ -36,35 +33,41 @@ export const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [tempImageUrl, setTempImageUrl] = useState(null);
   const parallaxRef = useRef(null);
-  
+
   // Determine which user profile to load
   const profileUserId = userId ? parseInt(userId) : currentUser?.id;
   const isOwnProfile = profileUserId === currentUser?.id;
-  
+
   // Fetch user profile (backend will enforce connection requirement)
-  const { data: userProfile, isLoading, error } = useGetUserQuery(profileUserId, {
+  const {
+    data: userProfile,
+    isLoading,
+    error,
+  } = useGetUserQuery(profileUserId, {
     skip: !profileUserId,
   });
-  
+
   const [updateUser, { isLoading: isUpdating }] = useUpdateUserMutation();
-  const [removeConnection, { isLoading: isRemovingConnection }] = useRemoveConnectionMutation();
-  
-  // Check connection status if viewing another user's profile  
+  const [removeConnection, { isLoading: isRemovingConnection }] =
+    useRemoveConnectionMutation();
+
+  // Check connection status if viewing another user's profile
   const { data: connectionsData } = useGetConnectionsQuery(
     { page: 1, perPage: 1000 },
     { skip: isOwnProfile }
   );
-  
+
   // Find the connection object if it exists
-  const connection = !isOwnProfile && connectionsData?.connections?.find(
-    conn => {
+  const connection =
+    !isOwnProfile &&
+    connectionsData?.connections?.find((conn) => {
       const isRequester = conn.requester.id === profileUserId;
       const isRecipient = conn.recipient.id === profileUserId;
-      const isAccepted = conn.status === 'accepted' || conn.status === 'ACCEPTED';
+      const isAccepted =
+        conn.status === 'accepted' || conn.status === 'ACCEPTED';
       return (isRequester || isRecipient) && isAccepted;
-    }
-  );
-  
+    });
+
   const form = useForm({
     initialValues: {
       first_name: '',
@@ -81,7 +84,7 @@ export const ProfilePage = () => {
     },
     validate: zodResolver(profileSchema),
   });
-  
+
   // Update form when user data loads
   useEffect(() => {
     if (userProfile) {
@@ -99,39 +102,43 @@ export const ProfilePage = () => {
         },
       });
     }
-  }, [userProfile]);
+  }, [userProfile, form]);
 
   // Parallax effect for background shapes
   useEffect(() => {
     const handleScroll = () => {
       if (!parallaxRef.current) return;
-      
+
       const scrolled = window.pageYOffset;
       const parallax = scrolled * 0.3;
-      
-      const shapes = parallaxRef.current.querySelectorAll('.bg-shape-1, .bg-shape-2');
+
+      const shapes = parallaxRef.current.querySelectorAll(
+        '.bg-shape-1, .bg-shape-2'
+      );
       shapes.forEach((shape, index) => {
         shape.style.transform = `translateY(${parallax * (index + 1) * 0.1}px) rotate(${parallax * 0.05}deg)`;
       });
     };
-    
+
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-  
+
   const handleSave = async (values) => {
     try {
       await updateUser({
         id: currentUser.id,
         ...values,
       }).unwrap();
-      
+
       // Update the auth store with the new user data
-      dispatch(updateUserProfile({
-        ...values,
-        full_name: `${values.first_name} ${values.last_name}`.trim(),
-      }));
-      
+      dispatch(
+        updateUserProfile({
+          ...values,
+          full_name: `${values.first_name} ${values.last_name}`.trim(),
+        })
+      );
+
       notifications.show({
         title: 'Success',
         message: 'Profile updated successfully',
@@ -147,7 +154,7 @@ export const ProfilePage = () => {
       });
     }
   };
-  
+
   const handleCancel = () => {
     // Reset form to current user values
     if (userProfile) {
@@ -191,17 +198,18 @@ export const ProfilePage = () => {
   // Generate random seed for DiceBear avatar
   const generateRandomSeed = () => {
     const length = Math.floor(Math.random() * 6) + 8; // 8-13 characters
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const chars =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let seed = '';
     for (let i = 0; i < length; i++) {
       seed += chars.charAt(Math.floor(Math.random() * chars.length));
     }
     return seed;
   };
-  
+
   const handleRemoveConnection = () => {
     if (!connection) return;
-    
+
     openConfirmationModal({
       title: 'Remove Connection',
       message: `Are you sure you want to remove your connection with ${userProfile?.full_name || 'this user'}? You will no longer be able to send direct messages to each other.`,
@@ -216,7 +224,7 @@ export const ProfilePage = () => {
             message: 'You are no longer connected with this user',
             color: 'blue',
           });
-          
+
           // Navigate back to previous page or dashboard
           if (window.history.length > 1) {
             navigate(-1); // Go back to previous page
@@ -240,18 +248,18 @@ export const ProfilePage = () => {
     setTempImageUrl(newAvatarUrl);
     form.setFieldValue('image_url', newAvatarUrl);
   };
-  
+
   if (isLoading) {
     return <LoadingPage message="Loading profile..." />;
   }
-  
+
   if (error) {
     // Handle 403 error for non-connected users
     if (error?.status === 403) {
       return (
         <Container size="xl" className={styles.profileContainer}>
-          <Alert 
-            color="yellow" 
+          <Alert
+            color="yellow"
             title="Connection Required"
             icon={<IconUserPlus size={20} />}
           >
@@ -260,7 +268,7 @@ export const ProfilePage = () => {
         </Container>
       );
     }
-    
+
     return (
       <Container size="xl" className={styles.profileContainer}>
         <Alert color="red" title="Error">
@@ -269,25 +277,30 @@ export const ProfilePage = () => {
       </Container>
     );
   }
-  
+
   // Prepare user data with form values when editing
-  const displayUser = isEditing ? {
-    ...userProfile,
-    full_name: `${form.values.first_name} ${form.values.last_name}`.trim() || userProfile?.full_name,
-    title: form.values.title,
-    company_name: form.values.company_name,
-    image_url: tempImageUrl || form.values.image_url || userProfile?.image_url,
-  } : userProfile;
-  
+  const displayUser = isEditing
+    ? {
+        ...userProfile,
+        full_name:
+          `${form.values.first_name} ${form.values.last_name}`.trim() ||
+          userProfile?.full_name,
+        title: form.values.title,
+        company_name: form.values.company_name,
+        image_url:
+          tempImageUrl || form.values.image_url || userProfile?.image_url,
+      }
+    : userProfile;
+
   return (
     <main className={styles.profileContainer} ref={parallaxRef}>
       {/* Background Shapes */}
       <div className={`${styles.bgShape1} bg-shape-1`} />
       <div className={`${styles.bgShape2} bg-shape-2`} />
-      
+
       {/* Profile Hero */}
-      <ProfileHero 
-        user={displayUser} 
+      <ProfileHero
+        user={displayUser}
         onEditClick={handleEditClick}
         isOwnProfile={isOwnProfile}
         isEditing={isEditing}
@@ -296,7 +309,7 @@ export const ProfilePage = () => {
         onRemoveConnection={handleRemoveConnection}
         isRemovingConnection={isRemovingConnection}
       />
-      
+
       {/* Content Grid */}
       <div className={styles.profileGrid}>
         {/* Left Column */}
@@ -346,10 +359,12 @@ export const ProfilePage = () => {
           ) : (
             <ProfessionalInfo user={userProfile} />
           )}
-          
+
           {/* Social Links */}
           {isEditing ? (
-            <section className={`${styles.profileSection} ${styles.sectionMarginTop}`}>
+            <section
+              className={`${styles.profileSection} ${styles.sectionMarginTop}`}
+            >
               <h2 className={styles.sectionTitle}>Social Links</h2>
               <Stack spacing="sm">
                 <TextInput
@@ -376,14 +391,14 @@ export const ProfilePage = () => {
             <SocialLinks socialLinks={userProfile?.social_links} />
           )}
         </div>
-        
+
         {/* Right Column */}
         <div>
           {/* Activity Overview - Only show for own profile */}
           {isOwnProfile && <ActivityOverview userId={profileUserId} />}
-          
+
           {/* About */}
-          <AboutSection 
+          <AboutSection
             bio={userProfile?.bio}
             isEditing={isEditing}
             value={form.values.bio}
@@ -391,24 +406,20 @@ export const ProfilePage = () => {
           />
         </div>
       </div>
-      
+
       {/* Edit Mode Action Buttons */}
       {isEditing && (
         <div className={styles.editActions}>
-          <form onSubmit={form.onSubmit(handleSave)} className={styles.editForm}>
+          <form
+            onSubmit={form.onSubmit(handleSave)}
+            className={styles.editForm}
+          >
             <div className={styles.editButtonGroup}>
-              <Button
-                variant="subtle"
-                onClick={handleCancel}
-              >
+              <Button variant="subtle" onClick={handleCancel}>
                 <IconX size={16} />
                 Cancel
               </Button>
-              <Button
-                type="submit"
-                variant="primary"
-                disabled={isUpdating}
-              >
+              <Button type="submit" variant="primary" disabled={isUpdating}>
                 <IconCheck size={16} />
                 Save Changes
               </Button>

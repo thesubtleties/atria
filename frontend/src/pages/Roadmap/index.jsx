@@ -1,10 +1,8 @@
 // src/pages/Roadmap/index.jsx
-import { useParams } from 'react-router-dom';
+
 import styles from './styles/index.module.css';
 
 const RoadmapPage = () => {
-  const { eventId } = useParams();
-
   // Define the roadmap phases
   const roadmapPhases = [
     {
@@ -19,8 +17,14 @@ const RoadmapPage = () => {
           description: 'Public chat functionality for events',
           details: [
             { text: 'Backend implementation', status: 'complete' },
-            { text: 'Networking area chat rooms with tabbed interface', status: 'complete' },
-            { text: 'Individual session chat rooms (PUBLIC and BACKSTAGE)', status: 'complete' },
+            {
+              text: 'Networking area chat rooms with tabbed interface',
+              status: 'complete',
+            },
+            {
+              text: 'Individual session chat rooms (PUBLIC and BACKSTAGE)',
+              status: 'complete',
+            },
             { text: 'Real-time messaging with Socket.IO', status: 'complete' },
             { text: 'Frontend chat UI components', status: 'complete' },
             { text: 'Moderation/muting capabilities', status: 'planned' },
@@ -49,9 +53,18 @@ const RoadmapPage = () => {
           status: 'partial',
           description: 'Manage connections with other attendees',
           details: [
-            { text: 'Attendee directory with role-based filtering', status: 'complete' },
-            { text: 'Attendee cards/base profiles (PersonCard component)', status: 'complete' },
-            { text: 'Privacy controls for attendee visibility', status: 'complete' },
+            {
+              text: 'Attendee directory with role-based filtering',
+              status: 'complete',
+            },
+            {
+              text: 'Attendee cards/base profiles (PersonCard component)',
+              status: 'complete',
+            },
+            {
+              text: 'Privacy controls for attendee visibility',
+              status: 'complete',
+            },
             { text: 'Connection request functionality', status: 'planned' },
             { text: 'Accept/decline connection flows', status: 'planned' },
           ],
@@ -69,10 +82,19 @@ const RoadmapPage = () => {
           status: 'partial',
           description: 'User profile creation and management',
           details: [
-            { text: 'Create/update profile page with view/edit modes', status: 'complete' },
-            { text: 'Professional info (company, title, bio)', status: 'complete' },
+            {
+              text: 'Create/update profile page with view/edit modes',
+              status: 'complete',
+            },
+            {
+              text: 'Professional info (company, title, bio)',
+              status: 'complete',
+            },
             { text: 'Social links integration', status: 'complete' },
-            { text: 'Profile image upload with MinIO storage', status: 'complete' },
+            {
+              text: 'Profile image upload with MinIO storage',
+              status: 'complete',
+            },
             { text: 'Emoji generator alternative', status: 'planned' },
             { text: 'Cards for connections', status: 'planned' },
           ],
@@ -115,9 +137,15 @@ const RoadmapPage = () => {
           status: 'complete',
           description: 'Attendee management features',
           details: [
-            { text: 'Role management (Admin, Organizer, Speaker, Attendee)', status: 'complete' },
+            {
+              text: 'Role management (Admin, Organizer, Speaker, Attendee)',
+              status: 'complete',
+            },
             { text: 'Search and filter attendees', status: 'complete' },
-            { text: 'View attendee details and join dates', status: 'complete' },
+            {
+              text: 'View attendee details and join dates',
+              status: 'complete',
+            },
             { text: 'Pagination for large attendee lists', status: 'complete' },
             { text: 'Ability for attendees to leave event', status: 'planned' },
             { text: 'Event archiving', status: 'planned' },
@@ -136,7 +164,10 @@ const RoadmapPage = () => {
           status: 'partial',
           description: 'Session content and details',
           details: [
-            { text: 'Cleaner session page with streamlined UI', status: 'complete' },
+            {
+              text: 'Cleaner session page with streamlined UI',
+              status: 'complete',
+            },
             { text: 'Speakers area with social links', status: 'complete' },
             { text: 'Speaker ordering with drag-and-drop', status: 'complete' },
             { text: 'Session type badges (color-coded)', status: 'complete' },
@@ -149,7 +180,10 @@ const RoadmapPage = () => {
           status: 'planned',
           description: 'Session management tools',
           details: [
-            { text: 'Magic import from CSV/run of show docs', status: 'planned' },
+            {
+              text: 'Magic import from CSV/run of show docs',
+              status: 'planned',
+            },
             { text: 'LLM-powered document parsing', status: 'planned' },
             { text: 'Mass session import', status: 'planned' },
             { text: 'Session creation wizard', status: 'planned' },
@@ -160,9 +194,18 @@ const RoadmapPage = () => {
           status: 'partial',
           description: 'Interactive session capabilities',
           details: [
-            { text: 'Per-session chat rooms (PUBLIC and BACKSTAGE types)', status: 'complete' },
-            { text: 'Auto-created chat rooms for new sessions', status: 'complete' },
-            { text: 'SessionChatMode for granular control', status: 'complete' },
+            {
+              text: 'Per-session chat rooms (PUBLIC and BACKSTAGE types)',
+              status: 'complete',
+            },
+            {
+              text: 'Auto-created chat rooms for new sessions',
+              status: 'complete',
+            },
+            {
+              text: 'SessionChatMode for granular control',
+              status: 'complete',
+            },
             { text: 'Session tracking/attendance', status: 'planned' },
             { text: 'Event timer for video preparation', status: 'planned' },
           ],
@@ -189,7 +232,10 @@ const RoadmapPage = () => {
           status: 'partial',
           description: 'Advanced session administration tools',
           details: [
-            { text: 'SessionManager component for bulk operations', status: 'complete' },
+            {
+              text: 'SessionManager component for bulk operations',
+              status: 'complete',
+            },
             { text: 'Inline editing with auto-save', status: 'complete' },
             { text: 'Zod validation for form inputs', status: 'complete' },
             { text: 'Time conflict detection', status: 'complete' },
@@ -224,12 +270,24 @@ const RoadmapPage = () => {
           status: 'complete',
           description: 'Admin tools for managing participants',
           details: [
-            { text: 'Attendees Management page with role controls', status: 'complete' },
-            { text: 'Speakers Management page with bio/title overrides', status: 'complete' },
+            {
+              text: 'Attendees Management page with role controls',
+              status: 'complete',
+            },
+            {
+              text: 'Speakers Management page with bio/title overrides',
+              status: 'complete',
+            },
             { text: 'Session count tracking for speakers', status: 'complete' },
-            { text: 'Invitation system with email integration', status: 'complete' },
+            {
+              text: 'Invitation system with email integration',
+              status: 'complete',
+            },
             { text: 'CSV export functionality', status: 'planned' },
-            { text: 'Multiple role support (admin who is also speaker)', status: 'planned' },
+            {
+              text: 'Multiple role support (admin who is also speaker)',
+              status: 'planned',
+            },
           ],
         },
       ],
@@ -245,10 +303,22 @@ const RoadmapPage = () => {
           status: 'partial',
           description: 'Core sponsor functionality',
           details: [
-            { text: 'Sponsors page with full CRUD operations', status: 'complete' },
-            { text: 'Sponsor levels with custom names and tiers', status: 'complete' },
-            { text: 'Drag-and-drop reordering with fractional indexing', status: 'complete' },
-            { text: 'Logo upload with WebP optimization (80-90% size reduction)', status: 'complete' },
+            {
+              text: 'Sponsors page with full CRUD operations',
+              status: 'complete',
+            },
+            {
+              text: 'Sponsor levels with custom names and tiers',
+              status: 'complete',
+            },
+            {
+              text: 'Drag-and-drop reordering with fractional indexing',
+              status: 'complete',
+            },
+            {
+              text: 'Logo upload with WebP optimization (80-90% size reduction)',
+              status: 'complete',
+            },
             { text: 'Contact info and social links', status: 'complete' },
             { text: 'Active/featured toggles', status: 'complete' },
             { text: 'Per-session sponsorship area', status: 'planned' },
@@ -260,9 +330,18 @@ const RoadmapPage = () => {
           status: 'partial',
           description: 'Sponsor visibility features',
           details: [
-            { text: 'Sponsor imagery management with MinIO storage', status: 'complete' },
-            { text: 'PrivateImage component for secure display', status: 'complete' },
-            { text: 'Image optimization and EXIF orientation fixes', status: 'complete' },
+            {
+              text: 'Sponsor imagery management with MinIO storage',
+              status: 'complete',
+            },
+            {
+              text: 'PrivateImage component for secure display',
+              status: 'complete',
+            },
+            {
+              text: 'Image optimization and EXIF orientation fixes',
+              status: 'complete',
+            },
             {
               text: 'Sponsored chat rooms with timed opening',
               status: 'planned',

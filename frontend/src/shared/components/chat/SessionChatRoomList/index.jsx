@@ -61,14 +61,8 @@ function SessionChatRoomList({ sessionId, onRoomClick, activeChatRoomId }) {
   
   console.log('Sorted session rooms:', sortedRooms);
 
-  // Check user role to determine accessible rooms
-  const userRole = eventData?.user_role;
-  const canAccessBackstage = userRole === 'ADMIN' || 
-                            userRole === 'ORGANIZER' || 
-                            userRole === 'SPEAKER';
-
-  // For now, show all rooms returned by the API
-  // The backend should already filter based on permissions
+  // The backend filters rooms based on user permissions
+  // Frontend displays all rooms returned by the API
   const accessibleRooms = sortedRooms;
 
   if (isLoading) {

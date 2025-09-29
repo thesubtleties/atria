@@ -11,7 +11,7 @@ import { useGetPendingConnectionsQuery } from '@/app/features/networking/api';
 import { RequestCard } from './RequestCard';
 import styles from './styles/index.module.css';
 
-export function RequestsList({ eventId }) {
+export function RequestsList() {
   const [page, setPage] = useState(1);
   const perPage = 20;
 
@@ -64,7 +64,7 @@ export function RequestsList({ eventId }) {
         ) : (
           <div className={styles.requestGrid}>
             {requests.map((request) => (
-              <RequestCard key={request.id} request={request} eventId={eventId} />
+              <RequestCard key={request.id} request={request} />
             ))}
           </div>
         )}

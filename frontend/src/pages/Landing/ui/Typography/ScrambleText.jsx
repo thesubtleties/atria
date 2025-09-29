@@ -18,12 +18,14 @@ const ScrambleText = ({
   
   useEffect(() => {
     if (!words.length || !textRef.current) return
-    
+
+    // Capture the current ref value to use in cleanup
+    const textElement = textRef.current
     let wordIndex = 0
-    
+
     const scrambleAnimation = () => {
       wordIndex = (wordIndex + 1) % words.length
-      gsap.to(textRef.current, {
+      gsap.to(textElement, {
         duration,
         scrambleText: {
           text: words[wordIndex],
@@ -31,12 +33,12 @@ const ScrambleText = ({
         }
       })
     }
-    
+
     const intervalHandle = setInterval(scrambleAnimation, interval)
-    
+
     return () => {
       clearInterval(intervalHandle)
-      gsap.killTweensOf(textRef.current)
+      gsap.killTweensOf(textElement)
     }
   }, [words, interval, duration, scrambleOptions])
   

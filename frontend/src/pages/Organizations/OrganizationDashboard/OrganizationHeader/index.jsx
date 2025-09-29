@@ -1,19 +1,25 @@
 import { useState } from 'react';
 import { TextInput, Group, Badge, ActionIcon, Text } from '@mantine/core';
-import { IconEdit, IconCheck, IconX, IconSettings, IconBuilding, IconUsers } from '@tabler/icons-react';
+import {
+  IconEdit,
+  IconCheck,
+  IconX,
+  IconBuilding,
+  IconUsers,
+} from '@tabler/icons-react';
 import { useUpdateOrganizationMutation } from '../../../../app/features/organizations/api';
 import { notifications } from '@mantine/notifications';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom'; // TODO: Implement settings button
 import styles from './styles/index.module.css';
 
 const OrganizationHeader = ({ organization, currentUserRole }) => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate(); // TODO: Implement settings button
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState(organization.name);
   const [updateOrganization, { isLoading }] = useUpdateOrganizationMutation();
 
   const canEdit = currentUserRole === 'OWNER' || currentUserRole === 'ADMIN';
-  const canViewSettings = currentUserRole === 'OWNER';
+  // const canViewSettings = currentUserRole === 'OWNER'; // TODO: Implement settings button
 
   const handleSave = async () => {
     if (editedName.trim() === organization.name) {
@@ -33,7 +39,7 @@ const OrganizationHeader = ({ organization, currentUserRole }) => {
         color: 'green',
       });
       setIsEditing(false);
-    } catch (error) {
+    } catch {
       notifications.show({
         title: 'Error',
         message: 'Failed to update organization name',
@@ -55,7 +61,7 @@ const OrganizationHeader = ({ organization, currentUserRole }) => {
           <div className={styles.iconWrapper}>
             <IconBuilding size={48} stroke={1.5} />
           </div>
-          
+
           <div className={styles.titleArea}>
             {isEditing ? (
               <div className={styles.editingContainer}>
@@ -96,14 +102,19 @@ const OrganizationHeader = ({ organization, currentUserRole }) => {
               <Group spacing="sm" align="center">
                 <h1 className={styles.organizationName}>{organization.name}</h1>
                 {canEdit && (
-                  <div className={styles.editContainer} onClick={() => setIsEditing(true)}>
+                  <div
+                    className={styles.editContainer}
+                    onClick={() => setIsEditing(true)}
+                  >
                     <IconEdit size={16} />
-                    <Text size="sm" className={styles.editText}>Edit Organization Name</Text>
+                    <Text size="sm" className={styles.editText}>
+                      Edit Organization Name
+                    </Text>
                   </div>
                 )}
               </Group>
             )}
-            
+
             <div className={styles.metadata}>
               <Badge
                 leftSection={<IconUsers size={14} />}
@@ -112,12 +123,19 @@ const OrganizationHeader = ({ organization, currentUserRole }) => {
                 size="lg"
                 className={styles.memberBadge}
               >
-                {organization.member_count || 0} member{organization.member_count !== 1 ? 's' : ''}
+                {organization.member_count || 0} member
+                {organization.member_count !== 1 ? 's' : ''}
               </Badge>
-              
+
               <Badge
                 variant="outline"
-                color={currentUserRole === 'OWNER' ? 'violet' : currentUserRole === 'ADMIN' ? 'pink' : 'blue'}
+                color={
+                  currentUserRole === 'OWNER'
+                    ? 'violet'
+                    : currentUserRole === 'ADMIN'
+                      ? 'pink'
+                      : 'blue'
+                }
                 size="lg"
                 className={styles.roleBadge}
               >

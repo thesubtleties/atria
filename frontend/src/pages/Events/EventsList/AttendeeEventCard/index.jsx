@@ -1,5 +1,11 @@
-import { Text, Badge, Group } from '@mantine/core';
-import { IconCalendar, IconMapPin, IconUsers, IconBuilding, IconClock } from '@tabler/icons-react';
+import { Text, Badge } from '@mantine/core';
+import {
+  IconCalendar,
+  IconMapPin,
+  IconUsers,
+  IconBuilding,
+  IconClock,
+} from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { useFormatDate } from '@/shared/hooks/formatDate';
 import { getEventStatusLabel } from '../utils/eventCategorization';
@@ -16,7 +22,7 @@ export const AttendeeEventCard = ({ event, status }) => {
   const formatEventDates = () => {
     const startDate = formatDate(event.start_date);
     const endDate = formatDate(event.end_date);
-    
+
     if (startDate === endDate) {
       return startDate;
     }
@@ -66,13 +72,17 @@ export const AttendeeEventCard = ({ event, status }) => {
       {/* Main Content */}
       <div className={styles.cardContent}>
         <h3 className={styles.eventTitle}>{event.title}</h3>
-        
+
         {/* Organization Info */}
-        {(event.organization?.name || event.organization_name || event.company_name) && (
+        {(event.organization?.name ||
+          event.organization_name ||
+          event.company_name) && (
           <div className={styles.organizationInfo}>
             <IconBuilding size={16} className={styles.metaIcon} />
             <Text size="sm" className={styles.organizationName}>
-              {event.organization?.name || event.organization_name || event.company_name}
+              {event.organization?.name ||
+                event.organization_name ||
+                event.company_name}
             </Text>
           </div>
         )}
@@ -99,7 +109,8 @@ export const AttendeeEventCard = ({ event, status }) => {
             <div className={styles.metaItem}>
               <IconUsers size={16} className={styles.metaIcon} />
               <Text size="sm" className={styles.metaText}>
-                {event.attendee_count} {event.attendee_count === 1 ? 'attendee' : 'attendees'}
+                {event.attendee_count}{' '}
+                {event.attendee_count === 1 ? 'attendee' : 'attendees'}
               </Text>
             </div>
           )}

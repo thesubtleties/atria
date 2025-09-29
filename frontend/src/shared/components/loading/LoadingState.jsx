@@ -1,4 +1,11 @@
-import { Loader, LoadingOverlay, Skeleton, Center, Text, Stack } from '@mantine/core';
+import {
+  Loader,
+  LoadingOverlay,
+  Skeleton,
+  Center,
+  Text,
+  Stack,
+} from '@mantine/core';
 import styles from './styles/LoadingState.module.css';
 
 /**
@@ -7,23 +14,17 @@ import styles from './styles/LoadingState.module.css';
  */
 
 // Standard inline loader - use for buttons, small sections
-export const LoadingSpinner = ({ 
-  size = 'md', 
+export const LoadingSpinner = ({
+  size = 'md',
   color = 'var(--color-primary)',
-  ...props 
-}) => (
-  <Loader 
-    size={size} 
-    color={color}
-    {...props}
-  />
-);
+  ...props
+}) => <Loader size={size} color={color} {...props} />;
 
 // Centered loading state - use for card/section content
-export const LoadingContent = ({ 
-  message = 'Loading...', 
+export const LoadingContent = ({
+  message = 'Loading...',
   size = 'md',
-  showMessage = true 
+  showMessage = true,
 }) => (
   <Center className={styles.loadingContent}>
     <Stack align="center" gap="md">
@@ -38,48 +39,31 @@ export const LoadingContent = ({
 );
 
 // Full section loading - use for page sections
-export const LoadingSection = ({ 
-  height = 200,
-  message = 'Loading...' 
-}) => (
+export const LoadingSection = ({ height = 200, message = 'Loading...' }) => (
   <div className={styles.loadingSection} style={{ minHeight: height }}>
     <LoadingContent message={message} />
   </div>
 );
 
 // Loading overlay - use for forms, modals, or sections being updated
-export const LoadingOverlayCustom = ({ 
-  visible,
-  message,
-  blur = 2,
-  ...props 
-}) => (
+export const LoadingOverlayCustom = ({ visible, blur = 2, ...props }) => (
   <LoadingOverlay
     visible={visible}
     zIndex={1000}
     overlayProps={{ blur }}
-    loaderProps={{ 
+    loaderProps={{
       color: 'var(--color-primary)',
-      size: 'lg'
+      size: 'lg',
     }}
     {...props}
   />
 );
 
 // Skeleton loader - use for content placeholders
-export const LoadingSkeleton = ({ 
-  lines = 3,
-  height = 10,
-  ...props 
-}) => (
+export const LoadingSkeleton = ({ lines = 3, height = 10, ...props }) => (
   <Stack gap="xs">
     {Array.from({ length: lines }).map((_, index) => (
-      <Skeleton 
-        key={index} 
-        height={height} 
-        radius="md"
-        {...props}
-      />
+      <Skeleton key={index} height={height} radius="md" {...props} />
     ))}
   </Stack>
 );

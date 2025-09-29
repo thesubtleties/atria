@@ -231,8 +231,7 @@ const InviteModal = ({ opened, onClose, orgId, onSuccess }) => {
 
               <Alert icon={<IconAlertCircle size={16} />} className={styles.infoAlert}>
                 <Text size="sm">
-                  The recipient will receive an email invitation to join your organization.
-                  If they don't have an account, they'll be prompted to create one.
+                  {"The recipient will receive an email invitation to join your organization. If they don't have an account, they'll be prompted to create one."}
                 </Text>
               </Alert>
 

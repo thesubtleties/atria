@@ -14,7 +14,7 @@ import { useUpdateConnectionStatusMutation } from '@/app/features/networking/api
 import { useNavigate } from 'react-router-dom';
 import styles from './styles/index.module.css';
 
-export function RequestCard({ request, eventId }) {
+export function RequestCard({ request }) {
   const navigate = useNavigate();
   const [updateStatus, { isLoading }] = useUpdateConnectionStatusMutation();
   const [isAccepting, setIsAccepting] = useState(false);
@@ -67,7 +67,7 @@ export function RequestCard({ request, eventId }) {
         message: 'Connection request has been declined',
         color: 'gray',
       });
-    } catch (error) {
+    } catch {
       notifications.show({
         title: 'Error',
         message: 'Failed to decline connection request',
@@ -181,7 +181,7 @@ export function RequestCard({ request, eventId }) {
 
         <Card.Section className={styles.messageSection} px="lg">
           <Text className={styles.messageText}>
-            "{request.icebreaker_message}"
+            {`"${request.icebreaker_message}"`}
           </Text>
         </Card.Section>
 

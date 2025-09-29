@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Alert,
   Text,
@@ -36,21 +36,27 @@ const EventOverrides = () => {
   const [originalValues, setOriginalValues] = useState(null);
 
   // Fetch user's events
-  const { data: eventsData, isLoading: eventsLoading } = useGetUserEventsQuery({
-    userId: currentUser?.id,
-    page: 1,
-    per_page: 100, // Get all events for dropdown
-  }, { skip: !currentUser?.id });
-
-  // Fetch privacy overrides for selected event
-  const { data: overridesData, isLoading: overridesLoading } = useGetEventPrivacyOverridesQuery(
-    { userId: currentUser?.id, eventId: selectedEventId },
-    { skip: !currentUser?.id || !selectedEventId }
+  const { data: eventsData, isLoading: eventsLoading } = useGetUserEventsQuery(
+    {
+      userId: currentUser?.id,
+      page: 1,
+      per_page: 100, // Get all events for dropdown
+    },
+    { skip: !currentUser?.id }
   );
 
+  // Fetch privacy overrides for selected event
+  const { data: overridesData, isLoading: overridesLoading } =
+    useGetEventPrivacyOverridesQuery(
+      { userId: currentUser?.id, eventId: selectedEventId },
+      { skip: !currentUser?.id || !selectedEventId }
+    );
+
   // Mutations
-  const [updateOverrides, { isLoading: isUpdating }] = useUpdateEventPrivacyOverridesMutation();
-  const [deleteOverrides, { isLoading: isDeleting }] = useDeleteEventPrivacyOverridesMutation();
+  const [updateOverrides, { isLoading: isUpdating }] =
+    useUpdateEventPrivacyOverridesMutation();
+  const [deleteOverrides, { isLoading: isDeleting }] =
+    useDeleteEventPrivacyOverridesMutation();
 
   // Form for privacy settings
   const form = useForm({
@@ -69,9 +75,10 @@ const EventOverrides = () => {
   // Update form when overrides data loads
   useEffect(() => {
     if (!selectedEventId) return;
-    
+
     if (overridesData?.privacy_overrides) {
-      const hasOverrides = Object.keys(overridesData.privacy_overrides).length > 0;
+      const hasOverrides =
+        Object.keys(overridesData.privacy_overrides).length > 0;
       setOverrideEnabled(hasOverrides);
       if (hasOverrides) {
         form.setValues(overridesData.privacy_overrides);
@@ -88,14 +95,14 @@ const EventOverrides = () => {
       form.reset();
       setOriginalValues(null);
     }
-  }, [overridesData, selectedEventId]);
+  }, [overridesData, selectedEventId, form]);
 
   // Track changes
   useEffect(() => {
     if (overrideEnabled) {
       if (originalValues) {
         // Existing overrides - compare with original
-        const changed = Object.keys(form.values).some(key => {
+        const changed = Object.keys(form.values).some((key) => {
           return form.values[key] !== originalValues[key];
         });
         setHasChanges(changed);
@@ -125,18 +132,18 @@ const EventOverrides = () => {
           userId: currentUser.id,
           eventId: selectedEventId,
         }).unwrap();
-        
+
         notifications.show({
           title: 'Success',
           message: 'Event privacy overrides removed',
           color: 'green',
         });
-        
+
         setOverrideEnabled(false);
         form.reset();
         setOriginalValues(null);
         setHasChanges(false);
-      } catch (error) {
+      } catch {
         notifications.show({
           title: 'Error',
           message: 'Failed to remove privacy overrides',
@@ -159,10 +166,10 @@ const EventOverrides = () => {
         eventId: selectedEventId,
         ...values,
       }).unwrap();
-      
+
       setOriginalValues(values);
       setHasChanges(false);
-      
+
       notifications.show({
         title: 'Success',
         message: 'Event privacy overrides saved',
@@ -188,10 +195,11 @@ const EventOverrides = () => {
   };
 
   // Prepare events for dropdown
-  const eventOptions = eventsData?.events?.map(event => ({
-    value: event.id.toString(),
-    label: event.title,
-  })) || [];
+  const eventOptions =
+    eventsData?.events?.map((event) => ({
+      value: event.id.toString(),
+      label: event.title,
+    })) || [];
 
   if (eventsLoading) {
     return (
@@ -212,8 +220,7 @@ const EventOverrides = () => {
           No Events Available
         </Text>
         <Text size="sm" className={styles.alertText}>
-          You're not currently part of any events. Event-specific privacy overrides
-          will be available when you join or create events.
+          {"You're not currently part of any events. Event-specific privacy overrides will be available when you join or create events."}
         </Text>
       </Alert>
     );
@@ -222,7 +229,9 @@ const EventOverrides = () => {
   return (
     <Stack gap="lg">
       <Text size="sm" className={styles.description}>
-        Customize your privacy settings for specific events. These settings will override your global privacy settings when participating in the selected event.
+        Customize your privacy settings for specific events. These settings will
+        override your global privacy settings when participating in the selected
+        event.
       </Text>
 
       <Select
@@ -243,22 +252,25 @@ const EventOverrides = () => {
               <div>
                 <Text fw={500}>Override Privacy Settings for This Event</Text>
                 <Text size="sm" c="dimmed">
-                  When enabled, these settings will override your global privacy settings for this event only
+                  When enabled, these settings will override your global privacy
+                  settings for this event only
                 </Text>
               </div>
               <Switch
                 checked={overrideEnabled}
-                onChange={(event) => handleOverrideToggle(event.currentTarget.checked)}
+                onChange={(event) =>
+                  handleOverrideToggle(event.currentTarget.checked)
+                }
                 disabled={isDeleting}
                 size="lg"
                 color="var(--color-primary)"
                 styles={{
-                  track: { 
-                    '&[data-checked]': { 
+                  track: {
+                    '&[data-checked]': {
                       backgroundColor: 'var(--color-primary)',
-                      borderColor: 'var(--color-primary)'
-                    }
-                  }
+                      borderColor: 'var(--color-primary)',
+                    },
+                  },
                 }}
               />
             </Group>
@@ -267,41 +279,47 @@ const EventOverrides = () => {
               <Center h={100}>
                 <LoadingSpinner size="sm" />
               </Center>
-            ) : overrideEnabled && (
-              <form onSubmit={form.onSubmit(handleSubmit)}>
-                <Stack gap="md" mt="lg">
-                  <Divider className={styles.divider} />
-                  
-                  <EmailSection form={form} />
-                  
-                  <Divider className={styles.divider} />
-                  
-                  <ConnectionSection form={form} />
-                  
-                  <Divider className={styles.divider} />
-                  
-                  <ProfileSection form={form} />
-                  
-                  {hasChanges && (
-                    <Group justify="flex-end" mt="md" className={styles.buttonGroup}>
-                      <Button
-                        variant="subtle"
-                        onClick={handleReset}
-                        disabled={isUpdating}
+            ) : (
+              overrideEnabled && (
+                <form onSubmit={form.onSubmit(handleSubmit)}>
+                  <Stack gap="md" mt="lg">
+                    <Divider className={styles.divider} />
+
+                    <EmailSection form={form} />
+
+                    <Divider className={styles.divider} />
+
+                    <ConnectionSection form={form} />
+
+                    <Divider className={styles.divider} />
+
+                    <ProfileSection form={form} />
+
+                    {hasChanges && (
+                      <Group
+                        justify="flex-end"
+                        mt="md"
+                        className={styles.buttonGroup}
                       >
-                        Cancel
-                      </Button>
-                      <Button
-                        variant="primary"
-                        type="submit"
-                        loading={isUpdating ? true : undefined}
-                      >
-                        Save Event Overrides
-                      </Button>
-                    </Group>
-                  )}
-                </Stack>
-              </form>
+                        <Button
+                          variant="subtle"
+                          onClick={handleReset}
+                          disabled={isUpdating}
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          variant="primary"
+                          type="submit"
+                          loading={isUpdating ? true : undefined}
+                        >
+                          Save Event Overrides
+                        </Button>
+                      </Group>
+                    )}
+                  </Stack>
+                </form>
+              )
             )}
           </Card>
         </>

@@ -159,7 +159,6 @@ function MobileChatContainer() {
         onRoomClick={handleRoomClick}
         onToggle={handleToggleSidebar}
         eventId={eventId}
-        currentEventId={currentEventId}
         activeChatRoomId={activeChatRoomId}
         sessionId={currentSessionId}
         onContextChange={(context) => {

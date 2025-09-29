@@ -23,14 +23,14 @@ export const EventsList = () => {
     { skip: !currentUser?.id }
   );
 
-  const events = data?.events || [];
   const eventInvitations = invitationsData?.event_invitations || [];
 
   // Filter only published events and categorize them
   const categorizedEvents = useMemo(() => {
+    const events = data?.events || [];
     const publishedEvents = events.filter(event => event.status?.toLowerCase() === 'published');
     return categorizeEvents(publishedEvents);
-  }, [events]);
+  }, [data?.events]);
 
   if (isLoading || invitationsLoading) {
     return (

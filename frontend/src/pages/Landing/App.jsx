@@ -1,4 +1,4 @@
-import { useEffect, useRef, createContext, useContext } from 'react';
+import { useEffect, useRef, createContext } from 'react';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -22,14 +22,15 @@ gsap.registerPlugin(useGSAP, ScrollTrigger, ScrambleTextPlugin);
 
 // Configure ScrollTrigger for better performance
 ScrollTrigger.config({
-  limitCallbacks: true, // Improves performance by limiting callback frequency
-  syncInterval: 20, // Default value for smooth scrolling
+  limitCallbacks: false, // True = improves performance by limiting callback frequency
+  syncInterval: 10, // Default value for smooth scrolling
   autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load', // When to auto-refresh
 });
 
 // Create animation context for global timeline coordination
 const AnimationContext = createContext();
-export const useAnimation = () => useContext(AnimationContext);
+// Hook for accessing animation context (currently unused but available for future use)
+// const useAnimation = () => useContext(AnimationContext);
 
 function App() {
   const masterTimelineRef = useRef();

@@ -1,4 +1,4 @@
-import { Group, Button, Text } from '@mantine/core';
+import { Button, Text } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useGetOrganizationQuery } from '@/app/features/organizations/api';

@@ -1,4 +1,4 @@
-import { parseISO, isToday, isFuture, isPast, startOfDay, endOfDay } from 'date-fns';
+import { parseISO, startOfDay, endOfDay } from 'date-fns';
 
 /**
  * Categorizes events into live, upcoming, and past

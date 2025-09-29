@@ -331,7 +331,6 @@ export function AttendeesGrid({ eventId }) {
                 connectionStatus: attendee.connection_status || null,
                 privacySettings: {},
               }}
-              variant={attendee.is_speaker ? 'speaker' : 'attendee'}
               role={attendee.role}
               onConnect={() => handleConnect(attendee)}
               onMessage={() => handleMessage(attendee)}

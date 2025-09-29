@@ -1,7 +1,7 @@
 // pages/Session/SessionSpeakers/index.jsx
 import { Button, Text } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { DragDropProvider } from '@dnd-kit/react';
 import { useSortable } from '@dnd-kit/react/sortable';
 import { move } from '@dnd-kit/helpers';
@@ -63,16 +63,20 @@ export const SessionSpeakers = ({ sessionId, eventId, canEdit, variant = 'flow',
   );
 
   // Use preloaded speakers if available, otherwise use fetched data
-  const speakers = preloadedSpeakers || speakersData?.session_speakers || [];
+  const speakers = useMemo(() => {
+    return preloadedSpeakers || speakersData?.session_speakers || [];
+  }, [preloadedSpeakers, speakersData?.session_speakers]);
 
   // Group speakers by role
-  const speakersByRole = SPEAKER_ROLE_ORDER.reduce((acc, role) => {
-    const roleSpeakers = speakers.filter((s) => s.role === role);
-    if (roleSpeakers.length > 0) {
-      acc[role] = roleSpeakers;
-    }
-    return acc;
-  }, {});
+  const speakersByRole = useMemo(() => {
+    return SPEAKER_ROLE_ORDER.reduce((acc, role) => {
+      const roleSpeakers = speakers.filter((s) => s.role === role);
+      if (roleSpeakers.length > 0) {
+        acc[role] = roleSpeakers;
+      }
+      return acc;
+    }, {});
+  }, [speakers]);
 
   // Local state for drag and drop - organized by role
   const [localSpeakersByRole, setLocalSpeakersByRole] = useState({});
@@ -84,7 +88,7 @@ export const SessionSpeakers = ({ sessionId, eventId, canEdit, variant = 'flow',
       speakersByRoleLocal[role] = roleSpeakers.map(speaker => `speaker-${speaker.user_id}`);
     });
     setLocalSpeakersByRole(speakersByRoleLocal);
-  }, [speakers, speakersByRole]);
+  }, [speakersByRole]);
 
   const handleRemoveSpeaker = async (userId) => {
     try {

@@ -91,7 +91,7 @@ export const AgendaDemo = ({ isFirefox }) => {
     }
   }, [isFirefox])
 
-  const handleMouseEnter = (e, sessionIndex, session) => {
+  const handleMouseEnter = (e, sessionIndex) => {
     const card = e.currentTarget
     const rowElement = card.parentElement
     const rowCards = rowElement ? rowElement.querySelectorAll(`.${styles.sessionCard}`) : [card]
@@ -175,7 +175,7 @@ export const AgendaDemo = ({ isFirefox }) => {
           <div
             key={agendaSessions[0].id}
             className={`${styles.sessionCard} ${styles.keynote}`}
-            onMouseEnter={(e) => handleMouseEnter(e, 0, agendaSessions[0])}
+            onMouseEnter={(e) => handleMouseEnter(e, 0)}
             onMouseLeave={handleMouseLeave}
           >
             <div className={styles.typeTag}>
@@ -215,7 +215,7 @@ export const AgendaDemo = ({ isFirefox }) => {
             <div
               key={session.id}
               className={styles.sessionCard}
-              onMouseEnter={(e) => handleMouseEnter(e, index + 1, session)}
+              onMouseEnter={(e) => handleMouseEnter(e, index + 1)}
               onMouseLeave={handleMouseLeave}
             >
               <div className={styles.typeTag}>

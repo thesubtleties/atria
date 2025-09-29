@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, Text, Badge, Group, Stack } from '@mantine/core';
 import { LoadingSpinner } from '../../../../shared/components/loading';
-import { IconCalendar, IconMapPin, IconUsers, IconClock } from '@tabler/icons-react';
+import { IconCalendar, IconMapPin, IconUsers } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
 import {
   useAcceptInvitationMutation,
-  useDeclineInvitationMutation
+  useDeclineInvitationMutation,
 } from '@/app/features/eventInvitations/api';
 import { Button } from '@/shared/components/buttons';
 import { getRoleDisplayName } from '../../../EventAdmin/AttendeesManager/schemas/attendeeSchemas';
@@ -16,7 +16,7 @@ import styles from './styles.module.css';
 export const EventInvitationCard = ({ invitation }) => {
   const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState(false);
-  
+
   const [acceptInvitation] = useAcceptInvitationMutation();
   const [declineInvitation] = useDeclineInvitationMutation();
 
@@ -30,7 +30,9 @@ export const EventInvitationCard = ({ invitation }) => {
         color: 'green',
       });
       // Navigate to event page
-      navigate(`/app/organizations/${invitation.event.organization.id}/events/${invitation.event.id}`);
+      navigate(
+        `/app/organizations/${invitation.event.organization.id}/events/${invitation.event.id}`
+      );
     } catch (error) {
       notifications.show({
         title: 'Error',
@@ -61,32 +63,35 @@ export const EventInvitationCard = ({ invitation }) => {
   };
 
   const event = invitation.event;
-  const invitedAgo = formatDistanceToNow(new Date(invitation.created_at), { addSuffix: true });
-  
+  const invitedAgo = formatDistanceToNow(new Date(invitation.created_at), {
+    addSuffix: true,
+  });
+
   // Format event dates with safer parsing
   let dateInfo = 'Date TBD';
   try {
     if (event.start_date) {
       // Handle date-only strings by appending time if needed
-      const startDateStr = event.start_date.includes('T') 
-        ? event.start_date 
+      const startDateStr = event.start_date.includes('T')
+        ? event.start_date
         : `${event.start_date}T00:00:00`;
       const startDate = new Date(startDateStr).toLocaleDateString('en-US', {
         month: 'short',
         day: 'numeric',
-        year: 'numeric'
+        year: 'numeric',
       });
-      
+
       if (event.end_date) {
-        const endDateStr = event.end_date.includes('T') 
-          ? event.end_date 
+        const endDateStr = event.end_date.includes('T')
+          ? event.end_date
           : `${event.end_date}T00:00:00`;
         const endDate = new Date(endDateStr).toLocaleDateString('en-US', {
           month: 'short',
           day: 'numeric',
-          year: 'numeric'
+          year: 'numeric',
         });
-        dateInfo = startDate !== endDate ? `${startDate} - ${endDate}` : startDate;
+        dateInfo =
+          startDate !== endDate ? `${startDate} - ${endDate}` : startDate;
       } else {
         dateInfo = startDate;
       }
@@ -99,17 +104,17 @@ export const EventInvitationCard = ({ invitation }) => {
   return (
     <Card className={styles.invitationCard} withBorder>
       <div className={styles.invitationBadge}>
-        <Badge 
-          color="pink" 
-          variant="light" 
-          size="sm" 
+        <Badge
+          color="pink"
+          variant="light"
+          size="sm"
           radius="sm"
           styles={{
             root: {
               background: 'rgba(236, 72, 153, 0.08)',
               border: '1px solid rgba(236, 72, 153, 0.15)',
               color: '#ec4899',
-            }
+            },
           }}
         >
           Invitation
@@ -134,23 +139,25 @@ export const EventInvitationCard = ({ invitation }) => {
             <IconCalendar size={16} className={styles.icon} />
             <Text size="sm">{dateInfo}</Text>
           </Group>
-          
+
           {event.location && (
             <Group spacing="xs">
               <IconMapPin size={16} className={styles.icon} />
               <Text size="sm">{event.location}</Text>
             </Group>
           )}
-          
+
           <Group spacing="xs">
             <IconUsers size={16} className={styles.icon} />
-            <Text size="sm">Invited as: <strong>{getRoleDisplayName(invitation.role)}</strong></Text>
+            <Text size="sm">
+              Invited as: <strong>{getRoleDisplayName(invitation.role)}</strong>
+            </Text>
           </Group>
         </Stack>
 
         {invitation.message && (
           <Text size="sm" className={styles.invitationMessage}>
-            "{invitation.message}"
+            {`"${invitation.message}"`}
           </Text>
         )}
 

@@ -12,19 +12,6 @@ const EventCard = ({ event }) => {
     navigate(`/app/events/${event.id}`);
   };
 
-  const getStatusColor = (status) => {
-    switch (status?.toLowerCase()) {
-      case 'published':
-        return 'green';
-      case 'draft':
-        return 'yellow';
-      case 'archived':
-        return 'gray';
-      default:
-        return 'gray';
-    }
-  };
-
   const formatEventDates = () => {
     const startDate = formatDate(event.start_date);
     const endDate = formatDate(event.end_date);

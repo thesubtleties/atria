@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
 import {
   Stack,
   Title,
@@ -45,7 +44,6 @@ const getPasswordStrengthColor = (strength) => {
 };
 
 const SecuritySettings = () => {
-  const currentUser = useSelector((state) => state.auth.user);
   const [hasChanges, setHasChanges] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState({ strength: 0, checks: {} });
   
@@ -267,7 +265,7 @@ const SecuritySettings = () => {
         </Text>
         <List spacing="sm" size="sm" c="dimmed">
           <List.Item icon={<ThemeIcon size={16} color="blue" variant="light"><IconCheck size={12} /></ThemeIcon>}>
-            Use a unique password that you don't use on other websites
+            {"Use a unique password that you don't use on other websites"}
           </List.Item>
           <List.Item icon={<ThemeIcon size={16} color="blue" variant="light"><IconCheck size={12} /></ThemeIcon>}>
             Include a mix of uppercase, lowercase, numbers, and special characters

@@ -34,8 +34,7 @@ const ExistingUserNotice = ({ email }) => {
       </Text>
 
       <Text size="md" c="dimmed" className={styles.description}>
-        Please sign in to manage your invitations. After logging in, you'll be able to 
-        view and accept all pending invitations from your dashboard.
+        {"Please sign in to manage your invitations. After logging in, you'll be able to view and accept all pending invitations from your dashboard."}
       </Text>
 
       <Group justify="center" mt="xl">

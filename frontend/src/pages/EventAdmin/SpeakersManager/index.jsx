@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Group, TextInput, Badge, Text, Pagination } from '@mantine/core';
 import { LoadingOverlay } from '../../../shared/components/loading';
 import { IconPlus, IconSearch } from '@tabler/icons-react';
-import { notifications } from '@mantine/notifications';
+// import { notifications } from '@mantine/notifications'; // TODO: Add when/if we add import/export
 import {
   useGetEventQuery,
   useGetEventUsersAdminQuery,
