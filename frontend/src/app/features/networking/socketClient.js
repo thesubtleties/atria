@@ -10,6 +10,8 @@ let connectionPromise = null;
 let isConnecting = false;
 let messageCallbacks = new Map(); // Map of roomId -> callback function for chat rooms
 let directMessageCallbacks = new Map(); // Map of threadId -> callback function for DMs
+let roomPresenceCallbacks = new Map(); // Map of roomId -> callback for presence updates
+let dmTypingCallbacks = new Map(); // Map of threadId -> callback for typing indicators
 
 export const initializeSocket = (token = null) => {
   // Check environment variable to force HTTP fallback (for testing)
@@ -648,6 +650,43 @@ export const initializeSocket = (token = null) => {
     console.log('Left chat room:', data);
   });
 
+  // Presence tracking events
+  socket.on('room_user_count', (data) => {
+    console.log('🟢 Room user count updated:', data);
+
+    if (data && data.room_id) {
+      const roomId = parseInt(data.room_id);
+      const callback = roomPresenceCallbacks.get(roomId);
+
+      if (callback) {
+        callback({
+          type: 'user_count_update',
+          room_id: roomId,
+          user_count: data.user_count
+        });
+      }
+    }
+  });
+
+  // Typing indicator events
+  socket.on('typing_in_dm', (data) => {
+    console.log('⌨️ Typing in DM:', data);
+
+    if (data && data.thread_id) {
+      const threadId = parseInt(data.thread_id);
+      const callback = dmTypingCallbacks.get(threadId);
+
+      if (callback) {
+        callback({
+          type: 'typing_status',
+          thread_id: threadId,
+          user_id: data.user_id,
+          is_typing: data.is_typing
+        });
+      }
+    }
+  });
+
   return socket;
 };
 
@@ -686,6 +725,30 @@ export const registerDirectMessageCallback = (threadId, callback) => {
 export const unregisterDirectMessageCallback = (threadId) => {
   console.log('🔌 Unregistering DM callback for thread:', threadId);
   directMessageCallbacks.delete(threadId);
+};
+
+// Register a callback for room presence updates
+export const registerRoomPresenceCallback = (roomId, callback) => {
+  console.log('🔌 Registering room presence callback for room:', roomId);
+  roomPresenceCallbacks.set(roomId, callback);
+};
+
+// Unregister a callback for room presence
+export const unregisterRoomPresenceCallback = (roomId) => {
+  console.log('🔌 Unregistering room presence callback for room:', roomId);
+  roomPresenceCallbacks.delete(roomId);
+};
+
+// Register a callback for DM typing indicators
+export const registerDMTypingCallback = (threadId, callback) => {
+  console.log('🔌 Registering DM typing callback for thread:', threadId);
+  dmTypingCallbacks.set(threadId, callback);
+};
+
+// Unregister a callback for DM typing
+export const unregisterDMTypingCallback = (threadId) => {
+  console.log('🔌 Unregistering DM typing callback for thread:', threadId);
+  dmTypingCallbacks.delete(threadId);
 };
 
 export const waitForSocket = async () => {
@@ -1069,20 +1132,50 @@ export const joinChatRoom = async (roomId) => {
 export const leaveChatRoom = (roomId) => {
   if (!socket || !socket.connected) {
     console.warn('Cannot leave chat room: Socket not connected');
-    return;
+    return Promise.resolve(); // Return resolved promise for consistency
   }
 
   console.log(`🔴 LEAVING chat room ${roomId}`);
-  socket.emit('leave_chat_room', { room_id: parseInt(roomId) });
+
+  return new Promise((resolve) => {
+    // Set up one-time listener for leave confirmation
+    const onLeft = (data) => {
+      if (data.room_id === parseInt(roomId)) {
+        console.log(`🔴 CONFIRMED leave for room ${roomId}:`, data);
+        socket.off('chat_room_left', onLeft);
+        clearTimeout(timeoutId);
+        resolve(data);
+      }
+    };
+
+    socket.once('chat_room_left', onLeft);
+
+    // Emit the leave request
+    socket.emit('leave_chat_room', { room_id: parseInt(roomId) });
+    console.log(`🔴 EMITTED leave_chat_room for room ${roomId}`);
+
+    // Fallback timeout in case no confirmation (shorter than join since leave is simpler)
+    const timeoutId = setTimeout(() => {
+      console.log(`🔴 TIMEOUT: Assuming leave succeeded for room ${roomId}`);
+      socket.off('chat_room_left', onLeft);
+      resolve({ room_id: roomId });
+    }, 500); // 500ms timeout for leave operations
+  });
 };
 
 // Smart room subscription - only subscribe to active room
 export const setActiveChatRoom = async (roomId) => {
   console.log(`🎯 setActiveChatRoom called with roomId: ${roomId}`);
-  
-  // Leave previous room if different
+
+  // Leave previous room if different - AWAIT to ensure it completes first
   if (activeChatRoom && activeChatRoom !== roomId) {
-    leaveChatRoom(activeChatRoom);
+    try {
+      await leaveChatRoom(activeChatRoom);
+      console.log(`✅ Successfully left room ${activeChatRoom} before joining ${roomId}`);
+    } catch (error) {
+      console.error(`❌ Error leaving room ${activeChatRoom}:`, error);
+      // Continue anyway - don't block joining the new room
+    }
   }
 
   // Join new room
@@ -1093,8 +1186,18 @@ export const setActiveChatRoom = async (roomId) => {
       console.log(`✅ Active chat room set to ${roomId}`);
     } catch (error) {
       console.error('❌ Failed to join chat room:', error);
+      activeChatRoom = null; // Reset on failure
     }
   } else {
+    // Explicitly leaving all rooms (setting to null)
+    if (activeChatRoom) {
+      try {
+        await leaveChatRoom(activeChatRoom);
+        console.log(`✅ Left room ${activeChatRoom} (setting active to null)`);
+      } catch (error) {
+        console.error(`❌ Error leaving room ${activeChatRoom}:`, error);
+      }
+    }
     activeChatRoom = null;
   }
 };
@@ -1199,6 +1302,17 @@ export const leaveEventNotifications = (eventId) => {
 
   console.log(`Leaving event ${eventId} notifications`);
   socket.emit('leave_event', { event_id: eventId });
+};
+
+// Join event admin monitoring room
+export const joinEventAdmin = (eventId) => {
+  if (!socket || !socket.connected) {
+    console.warn('Cannot join event admin: Socket not connected');
+    return;
+  }
+
+  console.log(`🔧 Joining event ${eventId} admin monitoring`);
+  socket.emit('join_event_admin', { event_id: eventId });
 };
 
 // ============================================
