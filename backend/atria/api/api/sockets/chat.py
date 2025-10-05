@@ -30,19 +30,32 @@ def handle_join_chat_room(user_id, data):
         return
 
     chat_room = ChatRoomService.get_chat_room(room_id)
+
+    # Join Socket.IO room
     join_room(f"room_{room_id}")
+
+    # Track presence in Redis and get updated count
+    from api.services.presence_service import PresenceService
+    from api.api.sockets.presence_notifications import emit_room_user_count
+
+    user_count = PresenceService.join_room(room_id, user_id)
 
     # Get recent messages
     messages = ChatRoomService.get_recent_messages(room_id, user_id)
 
+    # Send confirmation to user with current count
     emit(
         "chat_room_joined",
         {
             "room_id": room_id,
             "room_name": chat_room.name,
             "messages": messages,
+            "user_count": user_count or 0,
         },
     )
+
+    # Broadcast updated count to all users in room and admins (for health meter)
+    emit_room_user_count(room_id, chat_room.event_id)
 
 
 @socketio.on("leave_chat_room")
@@ -56,8 +69,23 @@ def handle_leave_chat_room(user_id, data):
         emit("error", {"message": "Missing room ID"})
         return
 
+    # Remove from presence tracking
+    from api.services.presence_service import PresenceService
+    from api.api.sockets.presence_notifications import emit_room_user_count
+
+    PresenceService.leave_room(room_id, user_id)
+
+    # Leave Socket.IO room
     leave_room(f"room_{room_id}")
+
+    # Confirm to user
     emit("chat_room_left", {"room_id": room_id})
+
+    # Broadcast updated count to remaining users and admins
+    # Need to get event_id from room
+    from api.services.chat_room import ChatRoomService
+    chat_room = ChatRoomService.get_chat_room(room_id)
+    emit_room_user_count(room_id, chat_room.event_id)
 
 
 @socketio.on("chat_message")

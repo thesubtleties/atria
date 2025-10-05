@@ -164,6 +164,37 @@ def handle_toggle_encryption(user_id, data):
         emit("error", {"message": str(e)})
 
 
+@socketio.on("typing_in_dm")
+@socket_authenticated_only
+def handle_typing_in_dm(user_id, data):
+    """
+    Handle typing indicator for DM threads.
+
+    Frontend should debounce (max once per 500ms) and auto-clear after 3s.
+    Uses Redis cache to avoid repeated DB hits on typing events.
+    """
+    thread_id = data.get("thread_id")
+    is_typing = data.get("is_typing", False)
+
+    if not thread_id:
+        emit("error", {"message": "Missing thread ID"})
+        return
+
+    try:
+        # Get other user with caching (first hit DB, then cached for 15min)
+        other_user_id = DirectMessageService.get_thread_other_user_cached(
+            thread_id, user_id
+        )
+
+        # Emit typing status to the other user
+        from api.api.sockets.presence_notifications import emit_typing_in_dm
+
+        emit_typing_in_dm(thread_id, user_id, is_typing, other_user_id)
+
+    except ValueError as e:
+        emit("error", {"message": str(e)})
+
+
 @socketio.on("create_direct_message_thread")
 @socket_authenticated_only
 def handle_create_direct_message_thread(user_id, data):
