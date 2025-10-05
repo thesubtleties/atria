@@ -1,12 +1,15 @@
 // src/shared/components/chat/MobileChatWindow/index.jsx
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { ActionIcon, Text, Group, Avatar } from '@mantine/core';
 import { IconX, IconSend } from '@tabler/icons-react';
 import { LoadingSpinner, LoadingContent } from '../../loading';
 import { useSocketMessages } from '../../../hooks/useSocketMessages';
 import { useChatScroll } from '../../../hooks/useChatScroll';
+import { useDMTyping } from '../../../hooks/useDMTyping';
 import { useMobileInputHandler } from '@/shared/hooks/useMobileInputHandler';
 import ChatMessage from '../ChatMessage';
+import TypingIndicator from '../TypingIndicator';
 import { selectUser } from '@/app/store/authSlice';
 import styles from './styles/index.module.css';
 
@@ -30,6 +33,12 @@ function MobileChatWindow({ threadId, onClose }) {
     isFetching,
   } = useSocketMessages(threadId);
 
+  // Typing indicator hook
+  const { isOtherUserTyping, setTyping } = useDMTyping(
+    threadId,
+    currentUser?.id
+  );
+
   // Use shared scroll logic
   const { messagesEndRef, messagesContainerRef } = useChatScroll({
     messages,
@@ -40,10 +49,27 @@ function MobileChatWindow({ threadId, onClose }) {
     threadId,
   });
 
+  // Auto-scroll when typing indicator appears/disappears (only if near bottom)
+  useEffect(() => {
+    const container = messagesContainerRef.current;
+    if (!container || !messagesEndRef.current) return;
+
+    // Check if user is near bottom (within 100px)
+    const threshold = 100;
+    const isNearBottom =
+      container.scrollHeight - container.scrollTop - container.clientHeight < threshold;
+
+    // Only scroll if user is already at bottom
+    if (isNearBottom) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [isOtherUserTyping]);
+
 
   const handleSendMessage = () => {
     if (messageInput.trim()) {
       sendMessage(messageInput.trim());
+      setTyping(false);
     }
   };
 
@@ -120,6 +146,7 @@ function MobileChatWindow({ threadId, onClose }) {
             isCurrentUser={message.sender_id === currentUser?.id}
           />
         ))}
+        {isOtherUserTyping && <TypingIndicator />}
         <div ref={messagesEndRef} />
       </div>
 
@@ -127,7 +154,10 @@ function MobileChatWindow({ threadId, onClose }) {
       <div className={styles.inputContainer}>
         <textarea
           value={messageInput}
-          onChange={(e) => setMessageInput(e.target.value)}
+          onChange={(e) => {
+            setMessageInput(e.target.value);
+            setTyping(e.target.value.length > 0);
+          }}
           onKeyDown={handleKeyDown}
           onFocus={handleFocus}
           onBlur={handleBlur}
