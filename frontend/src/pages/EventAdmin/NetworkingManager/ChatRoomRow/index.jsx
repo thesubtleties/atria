@@ -4,10 +4,11 @@ import { IconDots, IconEdit, IconTrash, IconMessages } from '@tabler/icons-react
 import { useNavigate } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
 import { openConfirmationModal } from '@/shared/components/modals/ConfirmationModal';
-import { 
-  useToggleChatRoomMutation, 
-  useDeleteChatRoomMutation 
+import {
+  useToggleChatRoomMutation,
+  useDeleteChatRoomMutation
 } from '@/app/features/chat/api';
+import { useRoomPresence } from '@/shared/hooks/useRoomPresence';
 import MobileCard from './MobileCard';
 import styles from './styles.module.css';
 
@@ -16,6 +17,9 @@ const ChatRoomRow = ({ room, color, onEdit, isTableRow, isMobile }) => {
   const [toggleRoom] = useToggleChatRoomMutation();
   const [deleteRoom] = useDeleteChatRoomMutation();
   const [isToggling, setIsToggling] = useState(false);
+
+  // Get live user count from presence tracking
+  const { userCount } = useRoomPresence(room.id);
 
   const handleToggle = async (checked) => {
     setIsToggling(true);
@@ -101,12 +105,12 @@ const ChatRoomRow = ({ room, color, onEdit, isTableRow, isMobile }) => {
         <Text size="sm">{room.message_count || 0}</Text>
       </Table.Td>
       <Table.Td style={{ textAlign: 'center' }}>
-        {hasRecentActivity ? (
+        {userCount > 0 ? (
           <Indicator processing color="green" size={10}>
-            <Text size="sm">{room.participant_count || 0}</Text>
+            <Text size="sm">{userCount}</Text>
           </Indicator>
         ) : (
-          <Text size="sm">{room.participant_count || 0}</Text>
+          <Text size="sm">{userCount}</Text>
         )}
       </Table.Td>
       <Table.Td>
