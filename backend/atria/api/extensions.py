@@ -17,8 +17,10 @@ from flask_socketio import SocketIO
 
 
 # Redis clients (initialized in app factory)
-redis_client = None  # For Socket.IO pub/sub
-cache_redis = None   # For application caching (separate DB)
+# Note: Socket.IO pub/sub uses DB 1 via its own internal connection (message_queue parameter)
+redis_client = None   # General purpose (DB 0) - currently unused
+cache_redis = None    # Application caching (DB 2)
+presence_redis = None # Presence & typing indicators (DB 3)
 
 # serialize time objects
 # class CustomJSONProvider(JSONProvider):

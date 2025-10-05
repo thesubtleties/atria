@@ -309,6 +309,23 @@ class CacheKeys:
         """Cache key for chat room messages (paginated)"""
         return f"chat_room:{room_id}:messages:page:{page}"
 
+    # DM-related keys
+    @staticmethod
+    def dm_thread_participants(thread_id: int) -> str:
+        """
+        Cache key for DM thread participant lookup (avoid DB hits on typing).
+
+        TTL: 15 minutes (participants rarely change)
+
+        Future: May want explicit invalidation on:
+        - Thread deletion
+        - Connection removal/blocking
+        - Thread merging (event -> global)
+
+        Currently: 15-min TTL handles edge cases acceptably.
+        """
+        return f"dm_thread:{thread_id}:participants"
+
     # Dashboard/Analytics keys
     @staticmethod
     def event_stats(event_id: int) -> str:
