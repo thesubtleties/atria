@@ -82,7 +82,17 @@ def handle_connect(auth=None):
 @socketio.on("disconnect")
 def handle_disconnect():
     print(f"Client disconnected: {request.sid}")
+
+    # Get user ID before removing session
+    user_id = session_manager.get_user_id(request.sid)
+
+    # Clean up session
     session_manager.remove_session(request.sid)
+
+    # Clean up presence and typing indicators
+    if user_id:
+        from api.api.sockets.presence_notifications import cleanup_user_presence
+        cleanup_user_presence(user_id)
 
 
 @socketio.on("heartbeat")
@@ -90,6 +100,39 @@ def handle_heartbeat():
     if session_manager.is_authenticated(request.sid):
         session_manager.update_activity(request.sid)
         emit("heartbeat_response", {})
+
+
+@socketio.on("join_event_admin")
+@authenticated_only
+def handle_join_event_admin(user_id, data):
+    """
+    Join event admin monitoring room.
+
+    Allows admins to receive real-time updates about room presence,
+    help requests, moderation alerts, etc. for an entire event.
+
+    Args:
+        user_id: Authenticated user ID
+        data: {"event_id": int}
+    """
+    event_id = data.get("event_id")
+
+    if not event_id:
+        emit("error", {"message": "Missing event ID"})
+        return
+
+    # TODO: Verify user is admin of this event
+    # For now, allow any authenticated user (will add permission check later)
+
+    # Join the event admin monitoring room
+    join_room(f"event_{event_id}_admin")
+
+    # Emit all current room counts to hydrate the admin panel
+    from api.api.sockets.presence_notifications import emit_all_room_counts_for_event
+    emit_all_room_counts_for_event(event_id)
+
+    emit("event_admin_joined", {"event_id": event_id})
+    print(f"User {user_id} joined event_{event_id}_admin monitoring room")
 
 
 # Simple test event

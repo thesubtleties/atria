@@ -6,6 +6,10 @@ from api.extensions import db
 from api.models import DirectMessageThread, DirectMessage, User, Connection
 from api.models.enums import MessageStatus, ConnectionStatus
 from api.commons.pagination import paginate
+from api.services.cache_service import CacheService, CacheKeys
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class DirectMessageService:
@@ -164,6 +168,63 @@ class DirectMessageService:
             raise ValueError("Not authorized to view this thread")
 
         return thread
+
+    @staticmethod
+    def get_thread_other_user_cached(thread_id: int, user_id: int) -> int:
+        """
+        Get the other user in a DM thread with Redis caching.
+
+        Used for high-frequency operations like typing indicators to avoid
+        repeated DB hits. First typing event hits DB, subsequent events use
+        cached data for 15 minutes.
+
+        Args:
+            thread_id: DM thread ID
+            user_id: Current user ID
+
+        Returns:
+            Other user's ID
+
+        Raises:
+            ValueError: If user not authorized or thread not found
+        """
+        cache_key = CacheKeys.dm_thread_participants(thread_id)
+
+        # Try cache first
+        cached = CacheService.get(cache_key)
+        if cached:
+            # Cache format: {"user1_id": X, "user2_id": Y}
+            user1_id = cached.get("user1_id")
+            user2_id = cached.get("user2_id")
+
+            # Verify user is in thread
+            if user_id not in [user1_id, user2_id]:
+                raise ValueError("Not authorized to view this thread")
+
+            # Return the other user
+            return user2_id if user_id == user1_id else user1_id
+
+        # Cache miss - hit DB
+        thread = DirectMessageService.get_thread(thread_id, user_id)
+
+        # Cache for 15 minutes
+        CacheService.set(
+            cache_key,
+            {"user1_id": thread.user1_id, "user2_id": thread.user2_id},
+            ttl=900  # 15 minutes
+        )
+
+        # Return the other user
+        other_user_id = (
+            thread.user2_id if thread.user1_id == user_id else thread.user1_id
+        )
+
+        logger.debug(
+            f"Cached DM thread {thread_id} participants "
+            f"(user {user_id} -> other user {other_user_id})"
+        )
+
+        return other_user_id
 
     @staticmethod
     def get_thread_messages(

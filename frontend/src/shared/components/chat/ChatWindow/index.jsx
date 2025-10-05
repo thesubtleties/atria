@@ -1,5 +1,5 @@
 // src/shared/components/chat/ChatWindow/index.jsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ActionIcon, Avatar, Text, Group } from '@mantine/core';
 import {
@@ -16,7 +16,9 @@ import {
 import { LoadingSpinner } from '../../loading';
 import { useSocketMessages } from '../../../hooks/useSocketMessages';
 import { useChatScroll } from '../../../hooks/useChatScroll';
+import { useDMTyping } from '../../../hooks/useDMTyping';
 import ChatMessage from '../ChatMessage';
+import TypingIndicator from '../TypingIndicator';
 import { selectUser } from '@/app/store/authSlice';
 import styles from './styles/index.module.css';
 
@@ -36,6 +38,12 @@ function ChatWindow({ threadId }) {
     loadMoreMessages,
   } = useSocketMessages(threadId);
 
+  // Typing indicator hook
+  const { isOtherUserTyping, setTyping } = useDMTyping(
+    threadId,
+    currentUser?.id
+  );
+
   // Use shared scroll logic
   const { messagesEndRef, messagesContainerRef } = useChatScroll({
     messages,
@@ -45,6 +53,22 @@ function ChatWindow({ threadId }) {
     loadMoreMessages,
     threadId,
   });
+
+  // Auto-scroll when typing indicator appears/disappears (only if near bottom)
+  useEffect(() => {
+    const container = messagesContainerRef.current;
+    if (!container || !messagesEndRef.current) return;
+
+    // Check if user is near bottom (within 100px)
+    const threshold = 100;
+    const isNearBottom =
+      container.scrollHeight - container.scrollTop - container.clientHeight < threshold;
+
+    // Only scroll if user is already at bottom
+    if (isNearBottom) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [isOtherUserTyping]);
 
   // Handle window controls
   const handleClose = () => {
@@ -64,6 +88,7 @@ function ChatWindow({ threadId }) {
   const handleSendMessage = () => {
     if (!messageInput.trim()) return;
     sendMessage(messageInput);
+    setTyping(false);
   };
 
   // Handle enter key
@@ -152,6 +177,7 @@ function ChatWindow({ threadId }) {
             isCurrentUser={message.sender_id === currentUser?.id}
           />
         ))}
+        {isOtherUserTyping && <TypingIndicator />}
         <div ref={messagesEndRef} />
       </div>
 
@@ -159,7 +185,10 @@ function ChatWindow({ threadId }) {
       <div className={styles.inputArea}>
         <textarea
           value={messageInput}
-          onChange={(e) => setMessageInput(e.target.value)}
+          onChange={(e) => {
+            setMessageInput(e.target.value);
+            setTyping(e.target.value.length > 0);
+          }}
           onKeyDown={handleKeyPress}
           placeholder="Write a message..."
           className={styles.input}

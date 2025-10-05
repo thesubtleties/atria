@@ -261,6 +261,14 @@ class DashboardService:
                 'date': datetime(2025, 8, 26, tzinfo=timezone.utc),
                 'type': 'feature_release',
                 'is_new': True
+            },
+            {
+                'id': 3,
+                'title': 'Real-Time Presence & Typing Indicators',
+                'description': 'See who\'s active in chat rooms with live user counts and know when others are typing in direct messages.',
+                'date': datetime(2025, 10, 5, tzinfo=timezone.utc),
+                'type': 'feature_release',
+                'is_new': True
             }
         ]
 

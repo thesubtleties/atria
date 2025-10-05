@@ -49,20 +49,27 @@ def configure_extensions(app):
 
     if redis_url:
         try:
-            # Socket.IO Redis client
+            # General purpose Redis client (DB 0) - currently unused
             extensions.redis_client = redis_lib.from_url(redis_url, decode_responses=True)
             extensions.redis_client.ping()
 
-            # Separate cache client (different DB)
-            cache_url = redis_url.rsplit('/', 1)[0] + '/2'  # Use DB 2 for cache
+            # Application caching client (DB 2)
+            cache_url = redis_url.rsplit('/', 1)[0] + '/2'
             extensions.cache_redis = redis_lib.from_url(cache_url, decode_responses=True)
             extensions.cache_redis.ping()
 
-            app.logger.info("✅ Redis connected for Socket.IO and caching")
+            # Presence & typing indicators client (DB 3)
+            presence_url = redis_url.rsplit('/', 1)[0] + '/3'
+            extensions.presence_redis = redis_lib.from_url(presence_url, decode_responses=True)
+            extensions.presence_redis.ping()
+
+            app.logger.info("✅ Redis connected: General (DB0), Cache (DB2), Presence (DB3)")
+            # Note: Socket.IO pub/sub uses DB 1 via message_queue parameter (configured below)
         except redis_lib.ConnectionError as e:
             app.logger.warning(f"⚠️ Redis not available ({e}) - falling back to in-memory")
             extensions.redis_client = None
             extensions.cache_redis = None
+            extensions.presence_redis = None
     else:
         app.logger.info("ℹ️ Redis not configured - using in-memory mode")
 

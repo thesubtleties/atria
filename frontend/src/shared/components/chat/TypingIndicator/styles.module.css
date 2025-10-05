@@ -1,0 +1,68 @@
+/* src/shared/components/chat/TypingIndicator/styles.module.css */
+
+/* Container - aligns like a received message (other user's side) */
+.typingIndicator {
+  align-self: flex-end;
+  animation: fadeIn 0.3s ease;
+}
+
+/* Fade in animation when typing indicator appears */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Bubble - matches incoming message style (from right side) */
+.typingBubble {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 10px 14px;
+  border-radius: 16px;
+  border-bottom-right-radius: 4px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1px solid rgba(139, 92, 246, 0.08);
+  box-shadow: 0 2px 4px rgba(139, 92, 246, 0.02);
+  min-height: 20px;
+}
+
+/* Dot styling */
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #94a3b8;
+  animation: bounce 1.4s infinite ease-in-out;
+}
+
+/* Staggered animation delays for each dot (reversed: 3, 2, 1) */
+.dot:nth-child(1) {
+  animation-delay: 0.4s;
+}
+
+.dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.dot:nth-child(3) {
+  animation-delay: 0s;
+}
+
+/* Bounce animation - smooth up and down motion */
+@keyframes bounce {
+  0%, 60%, 100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-8px);
+  }
+}

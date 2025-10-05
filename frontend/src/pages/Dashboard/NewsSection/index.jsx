@@ -77,7 +77,7 @@ export const NewsSection = ({ news }) => {
 
       {news && news.length > 0 ? (
         <div className={styles.newsList}>
-          {news.map((item) => (
+          {news.slice().reverse().map((item) => (
             <div key={item.id} className={`${styles.newsItem} ${getItemClass(item.type)}`}>
               <div className={`${styles.newsDot} ${getDotClass(item.date, item.is_new)}`} />
               <div className={styles.newsContent}>
@@ -85,7 +85,7 @@ export const NewsSection = ({ news }) => {
                 <div className={styles.newsDescription}>{item.description}</div>
                 <div className={styles.newsMeta}>
                   <span>{getTimeDifference(item.date)}</span>
-                  <Badge 
+                  <Badge
                     className={getBadgeClass(item.type)}
                     styles={{ root: { textTransform: 'none' } }}
                   >
