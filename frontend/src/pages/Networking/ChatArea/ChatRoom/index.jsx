@@ -25,6 +25,7 @@ export function ChatRoom({
   isActive,
   canModerate,
   canSendMessages = true,
+  socketManagedByParent = false, // New prop to indicate parent manages socket
 }) {
   const currentUser = useSelector((state) => state.auth.user);
   const [messageToDelete, setMessageToDelete] = useState(null);
@@ -105,61 +106,111 @@ export function ChatRoom({
   useEffect(() => {
     let isMounted = true;
 
-    const setupRoom = async () => {
-      if (room?.id && isMounted) {
-        try {
-          // This will now wait for socket connection before joining
-          await setActiveChatRoom(room.id);
+    if (socketManagedByParent) {
+      // Parent manages room joins/leaves, we just handle message updates
+      console.log(`🚫 ChatRoom: Socket managed by parent for room ${room.id}`);
 
-          // Register callback for socket message updates
-          registerMessageCallback(room.id, (update) => {
-            if (update.type === 'new_message') {
-              // Add new message to the end of the list
-              setLoadedMessages((prev) => {
-                // Check if message already exists (prevent duplicates)
-                if (prev.some((msg) => msg.id === update.message.id)) {
-                  return prev;
-                }
-                return [...prev, update.message];
-              });
-            } else if (update.type === 'message_moderated') {
-              // For admins/organizers - mark message as deleted (show red)
-              setLoadedMessages((prev) =>
-                prev.map((msg) =>
-                  msg.id === update.messageId
-                    ? {
-                        ...msg,
-                        is_deleted: true,
-                        deleted_at: update.deleted_at,
-                        deleted_by: update.deleted_by,
-                      }
-                    : msg
-                )
-              );
-            } else if (update.type === 'message_removed') {
-              // For regular users - completely remove the message
-              setLoadedMessages((prev) =>
-                prev.filter((msg) => msg.id !== update.messageId)
-              );
+      // Register for message updates (parent already joined the room)
+      const handleUpdate = (update) => {
+        if (!isMounted) return;
+
+        if (update.type === 'new_message') {
+          setLoadedMessages((prev) => {
+            if (prev.some((msg) => msg.id === update.message.id)) {
+              return prev;
             }
+            return [...prev, update.message];
           });
-        } catch (error) {
-          console.error('Failed to set up chat room:', error);
+        } else if (update.type === 'message_moderated') {
+          setLoadedMessages((prev) =>
+            prev.map((msg) =>
+              msg.id === update.messageId
+                ? {
+                    ...msg,
+                    is_deleted: true,
+                    deleted_at: update.deleted_at,
+                    deleted_by: update.deleted_by,
+                  }
+                : msg
+            )
+          );
+        } else if (update.type === 'message_removed') {
+          setLoadedMessages((prev) =>
+            prev.filter((msg) => msg.id !== update.messageId)
+          );
         }
-      }
-    };
+      };
 
-    setupRoom();
+      registerMessageCallback(room.id, handleUpdate);
 
-    // Cleanup: leave room and unregister callback when component unmounts or room changes
-    return () => {
-      isMounted = false;
-      if (room?.id) {
-        setActiveChatRoom(null);
+      // Cleanup: only unregister callback (parent handles room leave)
+      return () => {
+        isMounted = false;
         unregisterMessageCallback(room.id);
-      }
-    };
-  }, [room?.id]);
+      };
+    } else {
+      // Original self-managed socket logic
+      const setupRoom = async () => {
+        if (room?.id && isMounted) {
+          try {
+            // This will now wait for socket connection before joining
+            await setActiveChatRoom(room.id);
+
+            // Register callback for socket message updates
+            registerMessageCallback(room.id, (update) => {
+              if (update.type === 'new_message') {
+                setLoadedMessages((prev) => {
+                  if (prev.some((msg) => msg.id === update.message.id)) {
+                    return prev;
+                  }
+                  return [...prev, update.message];
+                });
+              } else if (update.type === 'message_moderated') {
+                setLoadedMessages((prev) =>
+                  prev.map((msg) =>
+                    msg.id === update.messageId
+                      ? {
+                          ...msg,
+                          is_deleted: true,
+                          deleted_at: update.deleted_at,
+                          deleted_by: update.deleted_by,
+                        }
+                      : msg
+                  )
+                );
+              } else if (update.type === 'message_removed') {
+                setLoadedMessages((prev) =>
+                  prev.filter((msg) => msg.id !== update.messageId)
+                );
+              }
+            });
+          } catch (error) {
+            console.error('Failed to set up chat room:', error);
+          }
+        }
+      };
+
+      setupRoom();
+
+      // Cleanup: leave room and unregister callback
+      return () => {
+        isMounted = false;
+        if (room?.id) {
+          const cleanup = async () => {
+            try {
+              await setActiveChatRoom(null);
+              console.log(`✅ Cleanup: Left room ${room.id}`);
+            } catch (error) {
+              console.error(`❌ Cleanup: Error leaving room ${room.id}:`, error);
+            } finally {
+              unregisterMessageCallback(room.id);
+            }
+          };
+          cleanup();
+        }
+      };
+    }
+  }, [room?.id, socketManagedByParent]);
 
   const handleDeleteClick = (message) => {
     setMessageToDelete(message);

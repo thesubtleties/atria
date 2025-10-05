@@ -1,23 +1,32 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo, useRef, useCallback } from 'react';
 import { Text, Stack, Center } from '@mantine/core';
 import { LoadingSpinner } from '../../../shared/components/loading';
 import { IconHash, IconLock, IconGlobe, IconMicrophone } from '@tabler/icons-react';
 import { useSearchParams } from 'react-router-dom';
 import { useGetChatRoomsQuery, useSendMessageMutation } from '@/app/features/chat/api';
 import { useGetEventQuery } from '@/app/features/events/api';
-import { joinEventNotifications, leaveEventNotifications } from '@/app/features/networking/socketClient';
+import {
+  joinEventNotifications,
+  leaveEventNotifications,
+  setActiveChatRoom,
+  registerMessageCallback,
+  unregisterMessageCallback
+} from '@/app/features/networking/socketClient';
 import { ChatRoom } from './ChatRoom';
 import styles from './styles/index.module.css';
 
-export function ChatArea({ eventId }) {
-  console.log('ChatArea component mounting with eventId:', eventId);
-  
+function ChatAreaComponent({ eventId: eventIdProp }) {
+  // Normalize eventId to number for consistent comparisons (memo, deps, etc.)
+  const eventId = eventIdProp ? parseInt(eventIdProp, 10) : null;
+
+  // Debug: Track renders (remove in production)
+  console.log(`🎨 ChatArea render - eventId: ${eventId} (type: ${typeof eventIdProp})`);
+
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeRoom, setActiveRoom] = useState(null);
   const [inputValues, setInputValues] = useState({});
-  
-  console.log('About to call useGetChatRoomsQuery with eventId:', eventId, 'type:', typeof eventId);
-  
+  const activeRoomRef = useRef(null); // Track active room for cleanup
+
   const { data: chatRooms, isLoading, error } = useGetChatRoomsQuery(eventId, {
     skip: !eventId
   });
@@ -25,6 +34,37 @@ export function ChatArea({ eventId }) {
     skip: !eventId
   });
   const [sendMessage] = useSendMessageMutation();
+
+  // Track mount/unmount and cleanup on unmount
+  useEffect(() => {
+    console.log(`🚀 ChatArea MOUNTED - eventId: ${eventId}`);
+
+    // Cleanup function runs when component fully unmounts (tab switch, navigation, etc)
+    return () => {
+      console.log(`🔥 ChatArea UNMOUNTING - eventId: ${eventId}`);
+
+      // IMPORTANT: Only use ref here, not state (closure issue with empty deps)
+      const currentRoom = activeRoomRef.current;
+      console.log(`🔍 ChatArea unmount - activeRoomRef.current: ${currentRoom}`);
+
+      if (currentRoom) {
+        console.log(`🚪 ChatArea unmounting: Leaving room ${currentRoom}`);
+        // Clean up message callbacks first
+        unregisterMessageCallback(currentRoom);
+
+        // Clean up socket room membership
+        setActiveChatRoom(null).then(() => {
+          console.log(`✅ ChatArea unmount: Successfully left room ${currentRoom}`);
+          activeRoomRef.current = null;  // Clear ref after successful leave
+        }).catch(error => {
+          console.error(`❌ ChatArea unmount: Error leaving room ${currentRoom}:`, error);
+          activeRoomRef.current = null;  // Clear ref even on error
+        });
+      } else {
+        console.log(`⚠️ ChatArea unmounting: No active room to leave (ref was null)`);
+      }
+    };
+  }, []); // Empty deps = only on true mount/unmount, uses ref to avoid closure issues
 
   // Extract chat rooms from paginated response and sort them
   const rawRooms = chatRooms?.chat_rooms || [];
@@ -50,54 +90,117 @@ export function ChatArea({ eventId }) {
   // Check if current user can send chat messages (not banned or chat-banned)
   const canSendMessages = eventData && !eventData.is_banned && !eventData.is_chat_banned;
 
-  // Initialize active room from URL param or first room (only on mount and rooms change)
+  // ==========================================
+  // CENTRALIZED SOCKET ROOM MANAGEMENT
+  // Parent manages all socket room joins/leaves to ensure single room presence
+  // ==========================================
   useEffect(() => {
-    const roomParam = searchParams.get('room');
-    
-    if (rooms.length > 0) {
-      if (roomParam) {
-        // Check if the room from URL exists
-        const roomExists = rooms.some(r => r.id === parseInt(roomParam));
-        if (roomExists) {
-          const roomId = parseInt(roomParam);
-          if (activeRoom !== roomId) {
-            console.log('Setting active room from URL:', roomId);
-            setActiveRoom(roomId);
-          }
-        } else {
-          // Room doesn't exist, use first room
-          if (activeRoom !== rooms[0].id) {
-            setActiveRoom(rooms[0].id);
-          }
-        }
-      } else if (!activeRoom) {
-        // No room param and no active room, use first room
-        setActiveRoom(rooms[0].id);
-      }
+    if (!activeRoom) {
+      console.log('🚫 Parent: No active room, skipping socket setup');
+      return;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rooms, activeRoom]); // Intentionally omit searchParams to avoid infinite loops
-  
-  // Listen for URL changes (browser back/forward)
-  useEffect(() => {
-    const roomParam = searchParams.get('room');
-    if (roomParam && rooms.length > 0) {
-      const roomId = parseInt(roomParam);
-      const roomExists = rooms.some(r => r.id === roomId);
-      if (roomExists && activeRoom !== roomId) {
-        console.log('URL changed, updating active room to:', roomId);
-        setActiveRoom(roomId);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]); // Intentionally omit activeRoom and rooms to avoid infinite loops
 
-  // Update URL when room changes (but not from URL updates)
+    let isMounted = true;
+    const previousRoom = activeRoomRef.current;
+
+    console.log(`📝 Parent: Updating ref from ${previousRoom} to ${activeRoom}`);
+    activeRoomRef.current = activeRoom;
+
+    const setupRoom = async () => {
+      console.log(`🎯 Parent: Setting up room ${activeRoom} (previous: ${previousRoom})`);
+
+      try {
+        // Join the new room via socket (this will leave previous room automatically)
+        await setActiveChatRoom(activeRoom);
+
+        if (!isMounted) {
+          console.log(`⚠️ Parent: Component unmounted during setup of room ${activeRoom}`);
+          return;
+        }
+
+        // Register callback for socket message updates
+        registerMessageCallback(activeRoom, (update) => {
+          if (!isMounted) return;
+
+          // Message updates will be handled by ChatRoom component
+          // Log only important events to reduce noise
+          if (update.type === 'new_message') {
+            console.log(`💬 Parent: New message in room ${activeRoom}`);
+          }
+        });
+
+        console.log(`✅ Parent: Room ${activeRoom} setup complete`);
+      } catch (error) {
+        console.error(`❌ Parent: Failed to set up room ${activeRoom}:`, error);
+      }
+    };
+
+    setupRoom();
+
+    // Cleanup function - only clean up callbacks when room changes
+    // The actual socket leave is handled by the next room join (auto-leaves previous)
+    return () => {
+      isMounted = false;
+      const roomToClean = activeRoom;
+      console.log(`🧹 Parent: Room change cleanup for room ${roomToClean}`);
+
+      // Only unregister message callback - don't leave the room here
+      // Room leave happens either:
+      // 1. When joining next room (auto-leaves previous)
+      // 2. When component unmounts (handled by unmount effect)
+      unregisterMessageCallback(roomToClean);
+      console.log(`✅ Parent: Unregistered callbacks for room ${roomToClean}`);
+    };
+  }, [activeRoom]); // Only depends on activeRoom changing
+
+  // Track URL room param with stable value
+  const urlRoomParam = searchParams.get('room');
+  const urlRoomId = urlRoomParam ? parseInt(urlRoomParam) : null;
+
+  // Single source of truth: derive active room from URL param
+  // This prevents race conditions from multiple competing effects
+  useEffect(() => {
+    if (rooms.length === 0) return;
+
+    let targetRoomId;
+
+    if (urlRoomId) {
+      const roomExists = rooms.some(r => r.id === urlRoomId);
+      if (roomExists) {
+        targetRoomId = urlRoomId;
+      } else {
+        // Invalid room in URL, redirect to first room
+        targetRoomId = rooms[0].id;
+        const newParams = new URLSearchParams(searchParams);
+        newParams.set('room', targetRoomId.toString());
+        setSearchParams(newParams, { replace: true });
+        return; // Effect will re-run with correct URL
+      }
+    } else {
+      // No room param, set to first room
+      targetRoomId = rooms[0].id;
+      const newParams = new URLSearchParams(searchParams);
+      newParams.set('room', targetRoomId.toString());
+      setSearchParams(newParams, { replace: true });
+      return; // Effect will re-run with correct URL
+    }
+
+    // URL is valid, sync activeRoom state ONLY if different
+    if (activeRoom !== targetRoomId) {
+      console.log('📍 URL sync: Setting active room to:', targetRoomId);
+      setActiveRoom(targetRoomId);
+    }
+    // Dependencies: Only re-run when rooms array or URL room ID changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rooms, urlRoomId]);
+
+  // Update URL when user clicks room tab
+  // Don't set state here - let URL sync effect handle it
   const handleRoomChange = (roomId) => {
-    console.log('Switching to room:', roomId);
-    setActiveRoom(roomId);
-    
-    // Update URL
+    console.log('👆 User clicked room:', roomId);
+
+    // Only update URL, don't set state
+    // The URL sync effect above will handle setting activeRoom
     const newParams = new URLSearchParams(searchParams);
     newParams.set('room', roomId.toString());
     setSearchParams(newParams, { replace: true });
@@ -221,18 +324,20 @@ export function ChatArea({ eventId }) {
             return (
               <div key={room.id} className={styles.chatPanel}>
                 {canAccessRoom() ? (
-                  <ChatRoom 
-                    room={room} 
+                  <ChatRoom
+                    room={room}
                     eventId={eventId}
                     inputValue={inputValues[room.id] || ''}
-                    onInputChange={(value) => setInputValues(prev => ({ 
-                      ...prev, 
-                      [room.id]: value 
+                    onInputChange={(value) => setInputValues(prev => ({
+                      ...prev,
+                      [room.id]: value
                     }))}
                     onSendMessage={() => handleSendMessage(room.id)}
                     canModerate={canModerate}
                     canSendMessages={canSendMessages}
                     isActive={activeRoom === room.id}
+                    // New prop to indicate parent manages socket
+                    socketManagedByParent={true}
                   />
                 ) : (
                   <Center className={styles.restricted}>
@@ -250,3 +355,12 @@ export function ChatArea({ eventId }) {
     </div>
   );
 }
+
+// Memoize to prevent unnecessary re-mounts when parent re-renders
+// Custom comparison to handle eventId as string or number
+export const ChatArea = memo(ChatAreaComponent, (prevProps, nextProps) => {
+  // Only re-render if eventId actually changes (handle string vs number)
+  const prevId = prevProps.eventId ? parseInt(prevProps.eventId, 10) : null;
+  const nextId = nextProps.eventId ? parseInt(nextProps.eventId, 10) : null;
+  return prevId === nextId; // true = don't re-render, false = re-render
+});
