@@ -68,7 +68,8 @@ function ChatWindow({ threadId }) {
     if (isNearBottom) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [isOtherUserTyping]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOtherUserTyping]); // Refs are stable and don't need to be in deps
 
   // Handle window controls
   const handleClose = () => {
