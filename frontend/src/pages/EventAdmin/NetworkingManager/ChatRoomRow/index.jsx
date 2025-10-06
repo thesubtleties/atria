@@ -72,10 +72,6 @@ const ChatRoomRow = ({ room, color, onEdit, isTableRow, isMobile }) => {
     navigate(`/app/events/${room.event_id}/networking?tab=chat&room=${room.id}`);
   };
 
-  // Show indicator if room has recent activity
-  const hasRecentActivity = room.last_activity && 
-    new Date(room.last_activity) > new Date(Date.now() - 3600000); // Within last hour
-
   // Mobile card layout
   if (isMobile) {
     return (

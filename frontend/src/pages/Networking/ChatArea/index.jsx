@@ -1,4 +1,4 @@
-import { useState, useEffect, memo, useRef, useCallback } from 'react';
+import { useState, useEffect, memo, useRef } from 'react';
 import { Text, Stack, Center } from '@mantine/core';
 import { LoadingSpinner } from '../../../shared/components/loading';
 import { IconHash, IconLock, IconGlobe, IconMicrophone } from '@tabler/icons-react';
@@ -64,6 +64,7 @@ function ChatAreaComponent({ eventId: eventIdProp }) {
         console.log(`⚠️ ChatArea unmounting: No active room to leave (ref was null)`);
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Empty deps = only on true mount/unmount, uses ref to avoid closure issues
 
   // Extract chat rooms from paginated response and sort them

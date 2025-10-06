@@ -72,7 +72,9 @@ const chatSlice = createSlice({
       }
     },
     setCurrentEventId: (state, action) => {
+      console.log('🔴 Redux: setCurrentEventId called with:', action.payload, 'type:', typeof action.payload);
       state.currentEventId = action.payload;
+      console.log('🔴 Redux: currentEventId now set to:', state.currentEventId);
     },
     // Mobile chat tab actions
     setActiveTab: (state, action) => {

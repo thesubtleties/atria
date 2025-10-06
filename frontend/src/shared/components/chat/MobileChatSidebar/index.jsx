@@ -44,6 +44,7 @@ function MobileChatSidebar({
   const unreadCount = (threads || []).filter(
     (thread) => thread.unread_count > 0
   ).length;
+  console.log('📱 MobileChatSidebar - threads.length:', threads?.length, 'unreadCount:', unreadCount, 'threads with unread:', threads?.map(t => ({ id: t.id, unread: t.unread_count })));
 
   return (
     <div

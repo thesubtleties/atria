@@ -112,39 +112,32 @@ class DirectMessageService:
         
         # Sort by last message time
         visible_threads.sort(key=lambda t: t.last_message_at or t.created_at, reverse=True)
-        
-        # Add event-specific enrichment if event_id is provided
-        if event_id:
-            from api.models.event_user import EventUser
-            
-            # Get all other user IDs from visible threads
-            other_user_ids = []
-            for thread in visible_threads:
-                other_id = thread.user2_id if thread.user1_id == user_id else thread.user1_id
-                other_user_ids.append(other_id)
-            
-            # Single query to check which users are in the event
-            event_users = set(
-                row[0] for row in 
-                db.session.query(EventUser.user_id)
-                .filter(
-                    EventUser.event_id == event_id,
-                    EventUser.user_id.in_(other_user_ids)
-                )
-                .all()
-            ) if other_user_ids else set()
-            
-            # Add the event membership info to each thread
-            for thread in visible_threads:
-                other_id = thread.user2_id if thread.user1_id == user_id else thread.user1_id
-                # Add as a transient attribute (won't be persisted to DB)
-                thread.other_user_in_event = other_id in event_users
-                # For backwards compatibility, also add shared_event_ids 
-                # but only include the current event if user is in it
-                if other_id in event_users:
-                    thread.shared_event_ids = [event_id]
-                else:
-                    thread.shared_event_ids = []
+
+        # ALWAYS add metadata for ALL threads - single cache approach
+        # This enables proper frontend filtering without multiple cache entries
+
+        # Get all other user IDs from visible threads
+        other_user_ids = []
+        for thread in visible_threads:
+            other_id = thread.user2_id if thread.user1_id == user_id else thread.user1_id
+            other_user_ids.append(other_id)
+
+        # Efficiently get all shared events for all thread participants in one query
+        shared_events_map = DirectMessageService.get_batch_shared_events(user_id, other_user_ids)
+
+        # Add metadata to all threads
+        for thread in visible_threads:
+            other_id = thread.user2_id if thread.user1_id == user_id else thread.user1_id
+            # Always include list of ALL shared events
+            thread.shared_event_ids = shared_events_map.get(other_id, [])
+
+            # If a specific event_id was provided, also add a flag for that event
+            # This maintains backwards compatibility while enabling single cache
+            if event_id:
+                thread.other_user_in_event = event_id in thread.shared_event_ids
+            else:
+                # When no event specified, this field isn't relevant
+                thread.other_user_in_event = None
         
         if schema:
             # Return in expected format for pagination
@@ -430,6 +423,52 @@ class DirectMessageService:
         db.session.commit()
 
         return thread, True
+
+    @staticmethod
+    def get_batch_shared_events(current_user_id: int, other_user_ids: List[int]) -> Dict[int, List[int]]:
+        """
+        Efficiently get shared events for multiple user pairs in a single query.
+
+        This is much more efficient than calling get_shared_event_ids() multiple times,
+        as it uses a single query with proper indexing to get all shared events at once.
+
+        Args:
+            current_user_id: ID of the current user
+            other_user_ids: List of other user IDs to check shared events with
+
+        Returns:
+            Dict mapping other_user_id -> list of shared event_ids
+            Example: {user2: [event1, event3], user3: [event1], user4: []}
+        """
+        from api.models.event_user import EventUser
+        from sqlalchemy import and_
+
+        if not other_user_ids:
+            return {}
+
+        # Get all events the current user is in
+        current_user_events = db.session.query(EventUser.event_id).filter(
+            EventUser.user_id == current_user_id
+        ).subquery()
+
+        # For each other user, find which of those events they're also in
+        # This single query gets all shared events for all user pairs at once
+        shared_events_query = db.session.query(
+            EventUser.user_id,
+            EventUser.event_id
+        ).filter(
+            and_(
+                EventUser.user_id.in_(other_user_ids),
+                EventUser.event_id.in_(current_user_events)
+            )
+        ).all()
+
+        # Build the result dict
+        result = {user_id: [] for user_id in other_user_ids}
+        for user_id, event_id in shared_events_query:
+            result[user_id].append(event_id)
+
+        return result
 
     @staticmethod
     def get_shared_event_ids(user1_id: int, user2_id: int) -> List[int]:

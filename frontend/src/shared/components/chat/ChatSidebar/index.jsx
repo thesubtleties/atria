@@ -35,23 +35,16 @@ function ChatSidebar() {
     }
   }, [eventId, dispatch]);
 
-  // Fetch threads - pass eventId when in event context for efficient filtering
-  const { data, isLoading, error } = useGetDirectMessageThreadsQuery(
-    currentEventId ? { eventId: currentEventId } : undefined
-  );
+  // Fetch threads - ALWAYS query with undefined (single cache approach)
+  // Backend now ALWAYS returns all threads with complete shared_event_ids metadata
+  const { data, isLoading, error } = useGetDirectMessageThreadsQuery(undefined); // Explicit undefined for consistent cache key!
 
   // Extract threads array from the response
   // The backend sends { threads: [...] }
   const threadsArray = data?.threads || data || [];
 
   // Filter threads based on context using shared hook
-  // Note: Backend now includes shared_event_ids in each thread, so we don't need to fetch event users
-  const filteredThreads = useThreadFiltering(
-    threadsArray, 
-    currentEventId, 
-    new Set(), // Empty set since we use shared_event_ids from backend
-    true // Enable debug logs for desktop version
-  );
+  const filteredThreads = useThreadFiltering(threadsArray, currentEventId);
 
   // Handle thread click
   const handleThreadClick = (threadId) => {
