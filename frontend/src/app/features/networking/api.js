@@ -137,7 +137,7 @@ export const networkingApi = baseApi.injectEndpoints({
       queryFn: async (arg, api, extraOptions) => {
         // arg can be undefined or an object with eventId
         const eventId = arg?.eventId;
-        return queryWithFallback(
+        const result = await queryWithFallback(
           {
             url: 'direct-message-threads',
             method: 'GET',
@@ -146,15 +146,28 @@ export const networkingApi = baseApi.injectEndpoints({
           api,
           extraOptions
         );
-      },
-      transformResponse: (response) => {
-        // Handle both socket and HTTP responses
-        if (response.threads) {
-          return response.threads;
-        } else if (response.data && response.data.threads) {
-          return response.data.threads;
+
+        // Extract just the threads array here, since transformResponse
+        // doesn't reliably work with queryFn
+        if (result.data) {
+          const data = result.data;
+
+          // Standard format from backend: { threads: [...] }
+          if (data.threads) {
+            return { data: data.threads };  // Return just the array
+          }
+
+          // Fallback: already an array (legacy/socket format)
+          if (Array.isArray(data)) {
+            return { data: data };  // Already an array
+          }
+
+          // Unexpected format - log warning and return empty array
+          console.warn('Unexpected thread list format:', data);
+          return { data: [] };
         }
-        return response;
+
+        return result;
       },
       providesTags: ['Thread'],
     }),
@@ -263,9 +276,35 @@ export const networkingApi = baseApi.injectEndpoints({
           extraOptions
         );
       },
-      // Don't invalidate - read status updates are handled via socket events
-      // The 'messages_read' socket event updates message statuses locally
-      // No need to refetch all messages just for read status changes
+      // Optimistically clear unread count when marking as read
+      // Note: messages_read socket event only goes to OTHER user (sender sees "read")
+      // So we must update our own cache immediately
+      async onQueryStarted(threadId, { dispatch, queryFulfilled }) {
+        // Update single cache (no eventId parameter)
+        const patchResult = dispatch(
+          networkingApi.util.updateQueryData(
+            'getDirectMessageThreads',
+            undefined, // Always undefined - single cache!
+            (draft) => {
+              // Cache should always be an array now
+              if (!Array.isArray(draft)) return; // Early return - no modifications
+              const threadIndex = draft.findIndex((t) => t.id === threadId);
+              if (threadIndex >= 0) {
+                draft[threadIndex].unread_count = 0;
+                console.log('✅ Cleared unread count for thread:', threadId);
+              }
+              // Immer handles returning the modified draft
+            }
+          )
+        );
+
+        try {
+          await queryFulfilled;
+        } catch {
+          // Rollback on error
+          patchResult.undo();
+        }
+      },
     }),
     // Connection endpoints
     // Create connection request
@@ -358,7 +397,15 @@ export const networkingApi = baseApi.injectEndpoints({
         // Update the threads list to remove the cleared thread
         const patchResult = dispatch(
           networkingApi.util.updateQueryData('getDirectMessageThreads', undefined, (draft) => {
-            return draft.filter(thread => thread.id !== threadId);
+            // Cache should always be an array now
+            if (!Array.isArray(draft)) return;
+
+            // Find and remove the thread using in-place mutation
+            const threadIndex = draft.findIndex(thread => thread.id === threadId);
+            if (threadIndex >= 0) {
+              draft.splice(threadIndex, 1);
+            }
+            // Don't return anything - let Immer handle the modified draft
           })
         );
         
