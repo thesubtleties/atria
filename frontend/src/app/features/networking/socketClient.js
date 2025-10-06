@@ -160,17 +160,29 @@ export const initializeSocket = (token = null) => {
   // Direct message events
   socket.on('direct_message_threads', (data) => {
     console.log('Received direct message threads:', data);
-    // Update RTK Query cache
-    if (data && data.threads) {
-      store.dispatch(
-        networkingApi.util.updateQueryData(
-          'getDirectMessageThreads',
-          undefined,
-          () => {
-            return data.threads;
-          }
-        )
-      );
+    try {
+      // Update RTK Query cache
+      if (data && data.threads && Array.isArray(data.threads)) {
+        store.dispatch(
+          networkingApi.util.updateQueryData(
+            'getDirectMessageThreads',
+            undefined,
+            (draft) => {
+              // Cache should always be an array now
+              if (Array.isArray(draft)) {
+                // Replace all items
+                draft.length = 0;
+                draft.push(...data.threads);
+              }
+              // Don't return anything - Immer handles the modified draft
+            }
+          )
+        );
+      } else {
+        console.error('Invalid thread list data received:', data);
+      }
+    } catch (error) {
+      console.error('Error handling direct_message_threads:', error);
     }
   });
 
@@ -200,7 +212,11 @@ export const initializeSocket = (token = null) => {
     console.log('🔵 Received new direct message:', data);
     console.log('🔵 Thread ID:', data.thread_id, 'Type:', typeof data.thread_id);
 
-    if (data && data.thread_id) {
+    try {
+      if (!data || !data.thread_id) {
+        console.error('Invalid message data received:', data);
+        return;
+      }
       const threadId = parseInt(data.thread_id);
       
       // Notify registered callbacks for this thread (for useSocketMessages hook)
@@ -214,36 +230,74 @@ export const initializeSocket = (token = null) => {
       }
       
       // Update thread list to show latest message
+      // Single cache approach - always update undefined cache
       console.log('🔵 Updating thread list...');
-      store.dispatch(
+
+      // Update the single cache (no eventId parameter)
+      const updateResult = store.dispatch(
         networkingApi.util.updateQueryData(
           'getDirectMessageThreads',
-          undefined,
+          undefined, // Always use undefined - single cache!
           (draft) => {
-            if (!Array.isArray(draft)) return draft;
+            console.log('🔵 Inside updateQueryData callback, draft:', draft);
+
+            // Cache should always be an array now
+            if (!Array.isArray(draft)) {
+              console.log('🔵 WARNING: Draft is not an array, type:', typeof draft);
+              return; // Early return - no modifications
+            }
 
             const threadIndex = draft.findIndex((t) => t.id === data.thread_id);
             if (threadIndex >= 0) {
               draft[threadIndex].last_message = data;
               draft[threadIndex].last_message_at = data.created_at;
 
+              // NOTE: We do NOT increment unread_count here!
+              // The backend computes it via schema method (DirectMessageThreadSchema.get_unread_count)
+              // which queries for DELIVERED messages. The count will be accurate on next fetch.
+
               // Move this thread to the top
               const thread = draft[threadIndex];
               draft.splice(threadIndex, 1);
               draft.unshift(thread);
               console.log('🔵 Thread list updated successfully');
+
+              // With Immer, just modify the draft - don't return anything
+            } else {
+              console.log('🔵 Thread not found in cache (likely deleted), forcing refetch');
+              // Thread was deleted or not in cache - need to refetch
+              // This happens when user deletes thread (sets cutoff), then receives new message
+              // The thread should reappear with the new message
+
+              // First invalidate to mark as stale
+              store.dispatch(networkingApi.util.invalidateTags(['Thread']));
+
+              // Then force an immediate refetch to get the updated thread list
+              // This ensures deleted threads reappear immediately when new messages arrive
+              // NOTE: subscribe: false prevents memory leaks when calling initiate() programmatically
+              // (we're not in a component, so no cleanup lifecycle - fire-and-forget is correct)
+              store.dispatch(
+                networkingApi.endpoints.getDirectMessageThreads.initiate(
+                  undefined,  // Single cache - no params
+                  { forceRefetch: true, subscribe: false }
+                )
+              );
+              console.log('🔵 Forced refetch of thread list');
+              // Don't modify the draft when thread not found
             }
-            return draft;
+            // Immer will handle returning the modified draft
           }
         )
       );
+      console.log('🔵 Update result:', updateResult);
+      console.log('🔵 Patches:', updateResult?.patches?.length, 'InversePatches:', updateResult?.inversePatches?.length);
 
       // Add message to the thread messages
       // Try to update page 1 (most recent messages)
       console.log('🔵 Updating messages for threadId:', data.thread_id);
-      
+
       // First try to update page 1
-      const updateResult = store.dispatch(
+      store.dispatch(
         networkingApi.util.updateQueryData(
           'getDirectMessages',
           { threadId: data.thread_id, page: 1 },
@@ -251,7 +305,7 @@ export const initializeSocket = (token = null) => {
             console.log('🔵 Current draft for page 1:', draft);
             if (!draft || !draft.messages) {
               console.log('🔵 No draft or messages array found for page 1');
-              return draft;
+              return; // Early return - no modifications
             }
 
             // Check if message already exists
@@ -262,7 +316,7 @@ export const initializeSocket = (token = null) => {
             } else {
               console.log('🔵 Message already exists, skipping');
             }
-            return draft;
+            // Don't return - Immer handles it
           }
         )
       );
@@ -276,82 +330,101 @@ export const initializeSocket = (token = null) => {
             { threadId: data.thread_id },
             (draft) => {
               console.log('🔵 Current draft (no page):', draft);
-              if (!draft || !draft.messages) return draft;
-              
+              if (!draft || !draft.messages) return; // Early return - no modifications
+
               const messageExists = draft.messages.some((m) => m.id === data.id);
               if (!messageExists) {
                 draft.messages.push(data);
               }
-              return draft;
+              // Don't return - Immer handles it
             }
           )
         );
       }
+    } catch (error) {
+      console.error('Error handling new_direct_message:', error);
+      // Don't crash - just log the error
     }
   });
 
+  // messages_read event - sent to OTHER user (sender) when we read their messages
+  // This lets the sender see "read" status on their messages
+  // We update OUR OWN unread count via optimistic update in markMessagesRead mutation
   socket.on('messages_read', (data) => {
-    console.log('Messages read notification:', data);
+    console.log('📬 Messages read notification (for sender):', data);
 
-    if (data && data.thread_id) {
-      // Update message status for page 1 (most common case)
+    try {
+      if (!data || !data.thread_id) {
+        console.error('Invalid messages_read data received:', data);
+        return;
+      }
+      // Update message status to show "read" checkmarks
+      // Only update messages WE sent (sender_id !== reader_id)
       store.dispatch(
         networkingApi.util.updateQueryData(
           'getDirectMessages',
           { threadId: data.thread_id, page: 1 },
           (draft) => {
-            if (!draft || !draft.messages) return draft;
+            if (!draft || !draft.messages) return; // Early return - no modifications
 
             draft.messages.forEach((msg) => {
               if (msg.sender_id !== data.reader_id) {
                 msg.status = 'read';  // lowercase to match backend enum and UI
               }
             });
-            return draft;
+            // Don't return - Immer handles it
           }
         )
       );
-      
+
       // Also update cache without page (for backwards compatibility)
       store.dispatch(
         networkingApi.util.updateQueryData(
           'getDirectMessages',
           { threadId: data.thread_id },
           (draft) => {
-            if (!draft || !draft.messages) return draft;
+            if (!draft || !draft.messages) return; // Early return - no modifications
 
             draft.messages.forEach((msg) => {
               if (msg.sender_id !== data.reader_id) {
                 msg.status = 'read';  // lowercase to match backend enum and UI
               }
             });
-            return draft;
+            // Don't return - Immer handles it
           }
         )
       );
+    } catch (error) {
+      console.error('Error handling messages_read:', error);
     }
   });
 
   socket.on('direct_message_thread_created', (data) => {
     console.log('New thread created:', data);
 
-    if (data) {
-      // Add to thread list
-      store.dispatch(
-        networkingApi.util.updateQueryData(
-          'getDirectMessageThreads',
-          undefined,
-          (draft) => {
-            if (!Array.isArray(draft)) return draft;
+    try {
+      if (data && data.id) {
+        // Add to thread list
+        store.dispatch(
+          networkingApi.util.updateQueryData(
+            'getDirectMessageThreads',
+            undefined,
+            (draft) => {
+              if (!Array.isArray(draft)) return;
 
-            const exists = draft.some((t) => t.id === data.id);
-            if (!exists) {
-              draft.unshift(data);
+              const exists = draft.some((t) => t.id === data.id);
+              if (!exists) {
+                draft.unshift(data);
+              }
+              // Don't return anything - let Immer handle it
             }
-            return draft;
-          }
-        )
-      );
+          )
+        );
+      } else {
+        console.error('Invalid thread creation data received:', data);
+      }
+    } catch (error) {
+      console.error('Error handling direct_message_thread_created:', error);
     }
   });
 
@@ -466,17 +539,17 @@ export const initializeSocket = (token = null) => {
           (draft) => {
             console.log('🔵 Updating cache for key:', cacheKey);
             console.log('🔵 Current draft:', draft);
-            
+
             if (!draft) {
               console.log('🔵 No draft found - query might not be active');
-              return draft;
+              return; // Early return - no modifications
             }
-            
+
             if (!draft.messages) {
               console.log('🔵 No messages array in draft');
               draft.messages = [];
             }
-            
+
             // Check if message already exists
             const messageExists = draft.messages.some((m) => m.id === data.id);
             if (!messageExists) {
@@ -485,8 +558,8 @@ export const initializeSocket = (token = null) => {
             } else {
               console.log('🔵 Message already exists, skipping');
             }
-            
-            return draft;
+
+            // Don't return - Immer handles it
           }
         )
       );
@@ -516,15 +589,15 @@ export const initializeSocket = (token = null) => {
           'getChatRooms',
           data.event_id,
           (draft) => {
-            if (!draft || !draft.chat_rooms) return draft;
-            
+            if (!draft || !draft.chat_rooms) return; // Early return - no modifications
+
             const room = draft.chat_rooms.find(r => r.id === data.room_id);
             if (room) {
               room.unread_count = data.unread_count;
               room.latest_message = data.latest_message;
               room.updated_at = data.updated_at;
             }
-            return draft;
+            // Don't return - Immer handles it
           }
         )
       );
@@ -554,13 +627,13 @@ export const initializeSocket = (token = null) => {
           'getChatRooms',
           data.event_id,
           (draft) => {
-            if (!draft || !draft.chat_rooms) return draft;
-            
+            if (!draft || !draft.chat_rooms) return; // Early return - no modifications
+
             const room = draft.chat_rooms.find(r => r.id === data.room_id);
             if (room && data.updates) {
               Object.assign(room, data.updates);
             }
-            return draft;
+            // Don't return - Immer handles it
           }
         )
       );
@@ -578,10 +651,10 @@ export const initializeSocket = (token = null) => {
           'getChatRoomMessages',
           { chatRoomId: data.room_id },
           (draft) => {
-            if (!draft) return draft;
+            if (!draft) return; // Early return - no modifications
             // Store user count in the response
             draft.active_users = data.user_count;
-            return draft;
+            // Don't return - Immer handles it
           }
         )
       );
@@ -598,9 +671,9 @@ export const initializeSocket = (token = null) => {
           'getChatRoomMessages',
           { chatRoomId: data.room_id },
           (draft) => {
-            if (!draft) return draft;
+            if (!draft) return; // Early return - no modifications
             draft.active_users = (draft.active_users || 0) + 1;
-            return draft;
+            // Don't return - Immer handles it
           }
         )
       );
@@ -617,9 +690,9 @@ export const initializeSocket = (token = null) => {
           'getChatRoomMessages',
           { chatRoomId: data.room_id },
           (draft) => {
-            if (!draft) return draft;
+            if (!draft) return; // Early return - no modifications
             draft.active_users = Math.max(0, (draft.active_users || 1) - 1);
-            return draft;
+            // Don't return - Immer handles it
           }
         )
       );
@@ -637,9 +710,9 @@ export const initializeSocket = (token = null) => {
           'getChatRoomMessages',
           { chatRoomId: data.room_id },
           (draft) => {
-            if (!draft) return { messages: data.messages };
+            if (!draft) return { messages: data.messages }; // Replacement pattern - valid
             draft.messages = data.messages;
-            return draft;
+            // Don't return - Immer handles it
           }
         )
       );
