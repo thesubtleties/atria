@@ -84,17 +84,13 @@ function MobileChatContainer() {
     }
   }, [eventId, sessionIdFromUrl, dispatch]);
 
-  // Get threads for sidebar - pass eventId when in event context for efficient filtering
-  const { 
-    data, 
-    isLoading: threadsLoading 
-  } = useGetDirectMessageThreadsQuery(
-    currentEventId ? { eventId: currentEventId } : undefined
-  );
+  // Get threads for sidebar - ALWAYS query with undefined (single cache approach)
+  // Backend now ALWAYS returns all threads with complete shared_event_ids metadata
+  const {
+    data,
+    isLoading: threadsLoading
+  } = useGetDirectMessageThreadsQuery(undefined); // Explicit undefined for consistent cache key!
 
-  // No longer need to fetch event users separately since backend provides shared_event_ids
-  // when we pass the event_id parameter to getDirectMessageThreads
-  
   // Fetch event data for permissions
   const { data: eventData } = useGetEventQuery(currentEventId, {
     skip: !currentEventId
@@ -103,16 +99,8 @@ function MobileChatContainer() {
   // Extract threads array from the response
   const threadsArray = data?.threads || data || [];
 
-  // No longer need eventUserIds since backend provides shared_event_ids
-  const eventUserIds = new Set();
-
   // Filter threads based on context using shared hook
-  const filteredThreads = useThreadFiltering(
-    threadsArray, 
-    currentEventId, 
-    eventUserIds, 
-    false // Disable debug logs for mobile version
-  );
+  const filteredThreads = useThreadFiltering(threadsArray, currentEventId);
 
   const handleThreadClick = (threadId) => {
     setActiveThreadId(threadId);
