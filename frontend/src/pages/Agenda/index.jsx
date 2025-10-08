@@ -66,6 +66,8 @@ export const AgendaPage = () => {
         />
         <AgendaView
           sessions={sessionsData?.sessions || []}
+          eventStartDate={event.start_date}
+          eventTimezone={event.timezone || 'UTC'}
           isOrgView={isOrgView}
           orgId={orgId}
           eventId={eventId}

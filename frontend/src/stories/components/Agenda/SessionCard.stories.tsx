@@ -66,6 +66,10 @@ const meta = {
   },
   args: {
     speakers: mockSpeakers,
+    day_number: 1,
+    eventStartDate: '2024-12-15',
+    eventTimezone: 'America/New_York',
+    eventId: '1',
   },
 } satisfies Meta<typeof SessionCard>;
 
@@ -76,8 +80,8 @@ export const ShortDescription: Story = {
   args: {
     title: 'Quick Status Update',
     session_type: 'PRESENTATION',
-    start_time: '9:00 AM',
-    end_time: '9:30 AM',
+    start_time: '09:00:00',
+    end_time: '09:30:00',
     description: 'Brief project status and roadmap review.',
     speakers: [mockSpeakers[0]],
   },
@@ -86,8 +90,8 @@ export const MediumDescription: Story = {
   args: {
     title: 'The Future of AI in Development',
     session_type: 'PANEL',
-    start_time: '10:00 AM',
-    end_time: '11:00 AM',
+    start_time: '10:00:00',
+    end_time: '11:00:00',
     description:
       'Industry experts discuss the impact of AI on software development practices and explore upcoming trends in AI-assisted development.',
     speakers: mockSpeakers,
@@ -98,8 +102,8 @@ export const LongDescription: Story = {
   args: {
     title: 'Advanced React Patterns Workshop',
     session_type: 'WORKSHOP',
-    start_time: '11:00 AM',
-    end_time: '12:30 PM',
+    start_time: '11:00:00',
+    end_time: '12:30:00',
     description:
       "Deep dive into advanced React patterns and best practices. We'll cover complex hooks patterns, performance optimization techniques, state management strategies, and real-world application architecture. Bring your laptop for hands-on exercises working with these patterns in a practical context.",
     speakers: [mockSpeakers[1]],
@@ -110,8 +114,8 @@ export const Keynote: Story = {
   args: {
     title: 'Opening Keynote: Future of Full-Stack Development',
     session_type: 'KEYNOTE',
-    start_time: '9:00 AM',
-    end_time: '10:00 AM',
+    start_time: '09:00:00',
+    end_time: '10:00:00',
     description:
       'Opening keynote discussing the latest trends in full-stack development and what to expect in 2024',
     speakers: [mockSpeakers[0]],
@@ -122,8 +126,8 @@ export const Panel: Story = {
   args: {
     title: 'The Future of AI in Development',
     session_type: 'PANEL',
-    start_time: '10:00 AM',
-    end_time: '11:00 AM',
+    start_time: '10:00:00',
+    end_time: '11:00:00',
     description:
       'Industry experts discuss the impact of AI on software development practices',
     speakers: mockSpeakers,
@@ -134,8 +138,8 @@ export const NoSpeakers: Story = {
   args: {
     title: 'Networking Break',
     session_type: 'NETWORKING',
-    start_time: '12:00 PM',
-    end_time: '1:00 PM',
+    start_time: '12:00:00',
+    end_time: '13:00:00',
     description: 'Connect with fellow developers over lunch',
     speakers: [],
   },
@@ -145,8 +149,8 @@ export const Playground: Story = {
   args: {
     title: 'Customizable Session',
     session_type: 'WORKSHOP',
-    start_time: '2:00 PM',
-    end_time: '4:00 PM',
+    start_time: '14:00:00',
+    end_time: '16:00:00',
     description:
       'This is a playground story where you can test different configurations',
     speakers: mockSpeakers,

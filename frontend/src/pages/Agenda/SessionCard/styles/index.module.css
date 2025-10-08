@@ -203,6 +203,27 @@
   color: #475569;
 }
 
+.eventTimeHover {
+  font-size: clamp(11px, 1.8vw, 12px);
+  color: var(--color-text-tertiary, #94a3b8);
+  font-style: italic;
+  font-weight: 400;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition:
+    max-height 0.3s ease-out,
+    opacity 0.3s ease-out,
+    margin-top 0.3s ease-out;
+  margin-top: 0;
+}
+
+.sessionCard:hover .eventTimeHover {
+  max-height: 30px;
+  opacity: 1;
+  margin-top: 2px;
+}
+
 /* Expanded content styles */
 .expandedContent {
   padding: 0 20px;
