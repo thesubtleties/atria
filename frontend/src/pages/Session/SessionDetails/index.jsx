@@ -2,45 +2,49 @@
 import { Text, Group, Divider, ActionIcon } from '@mantine/core';
 import { IconEdit, IconClock, IconCalendar } from '@tabler/icons-react';
 import { useState } from 'react';
+import { format, parseISO, addDays } from 'date-fns';
 import { EditSessionModal } from '@/shared/components/modals/session/EditSessionModal';
+import { formatSessionTime } from '@/shared/utils/timezone';
 import styles from './styles/index.module.css';
 
-export const SessionDetails = ({ session, canEdit }) => {
+export const SessionDetails = ({ session, event, canEdit }) => {
   const [showEditModal, setShowEditModal] = useState(false);
 
-  const formatTime = (timeString) => {
-    if (!timeString) return '';
-    // Parse HH:MM:SS format
-    const [hours, minutes] = timeString.split(':');
-    const h = parseInt(hours, 10);
-    // Convert to 12-hour format
-    const ampm = h >= 12 ? 'PM' : 'AM';
-    const hour12 = h % 12 || 12;
-    return `${hour12}:${minutes} ${ampm}`;
-  };
-
   const getSessionDate = () => {
-    if (!session.event?.start_date) return '';
-    const eventStart = new Date(session.event.start_date);
-    const sessionDate = new Date(eventStart);
-    sessionDate.setDate(eventStart.getDate() + session.day_number - 1);
-
-    const months = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
-    ];
-    return `${months[sessionDate.getMonth()]} ${sessionDate.getDate()}, ${sessionDate.getFullYear()}`;
+    if (!event?.start_date || !session.day_number) return '';
+    // Calculate session date from event start + day offset
+    const sessionDate = addDays(parseISO(event.start_date), session.day_number - 1);
+    return format(sessionDate, 'MMMM d, yyyy');
   };
+
+  // Format session times with timezone conversion
+  const getFormattedTimes = () => {
+    if (!session.start_time || !session.end_time || !event?.start_date || !event?.timezone) {
+      return { start: '', end: '', timezone: '' };
+    }
+
+    const startTimes = formatSessionTime(
+      session.start_time,
+      event.start_date,
+      session.day_number,
+      event.timezone
+    );
+
+    const endTimes = formatSessionTime(
+      session.end_time,
+      event.start_date,
+      session.day_number,
+      event.timezone
+    );
+
+    return {
+      start: startTimes.userTime || startTimes.eventTime,
+      end: endTimes.userTime || endTimes.eventTime,
+      timezone: startTimes.timezone, // Use timezone from start time
+    };
+  };
+
+  const formattedTimes = getFormattedTimes();
 
   return (
     <div className={styles.detailsSection}>
@@ -64,7 +68,7 @@ export const SessionDetails = ({ session, canEdit }) => {
         <Group gap="xs" align="center">
           <IconClock size={16} stroke={1.5} color="#8B5CF6" />
           <Text size="sm" c="dimmed">
-            {formatTime(session.start_time)} - {formatTime(session.end_time)}
+            {formattedTimes.start} - {formattedTimes.end} {formattedTimes.timezone}
           </Text>
           <Text size="xs" c="dimmed">
             ({session.formatted_duration})

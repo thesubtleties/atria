@@ -151,6 +151,7 @@ export const SessionPage = () => {
               <div className={styles.videoFooter}>
                 <SessionDetails
                   session={session}
+                  event={event}
                   canEdit={canEdit}
                   onStatusChange={handleStatusChange}
                   onUpdate={handleUpdate}
