@@ -7,6 +7,7 @@ export const eventSchema = z
     event_type: z.enum(['CONFERENCE', 'SINGLE_SESSION']),
     start_date: z.string().min(1, 'Start date is required'),
     end_date: z.string().min(1, 'End date is required'),
+    timezone: z.string().min(1, 'Timezone is required'),
     company_name: z.string().min(1, 'Company name is required'),
   })
   .refine(
@@ -44,6 +45,7 @@ export const eventUpdateSchema = z
     event_type: z.enum(['CONFERENCE', 'SINGLE_SESSION']).optional(),
     start_date: z.string().optional(),
     end_date: z.string().optional(),
+    timezone: z.string().optional(),
     company_name: z.string().min(1, 'Company name is required').optional(),
   })
   .refine(

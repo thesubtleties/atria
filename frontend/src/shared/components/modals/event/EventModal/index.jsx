@@ -19,6 +19,7 @@ import { eventSchema, eventUpdateSchema } from './schemas/eventSchema';
 import { useEffect } from 'react';
 import styles from './styles/index.module.css';
 import { useFormatDate } from '@/shared/hooks/formatDate';
+import { COMMON_TIMEZONES } from '@/shared/constants/timezones';
 
 const EVENT_TYPES = [
   { value: 'CONFERENCE', label: 'Conference' },
@@ -52,6 +53,7 @@ export const EventModal = ({
       event_type: event?.event_type || SINGLE_SESSION_TYPE,
       start_date: event?.start_date ? formatDateForInput(event.start_date) : '',
       end_date: event?.end_date ? formatDateForInput(event.end_date) : '',
+      timezone: event?.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
       company_name: event?.company_name || '',
     },
     validate: zodResolver(isEditing ? eventUpdateSchema : eventSchema),
@@ -225,6 +227,20 @@ export const EventModal = ({
             disabled={isLoading}
             classNames={{
               input: styles.formInput,
+              label: styles.formLabel
+            }}
+          />
+
+          <Select
+            label="Event Timezone"
+            description="All event times will be in this timezone"
+            data={COMMON_TIMEZONES}
+            searchable
+            required
+            {...form.getInputProps('timezone')}
+            disabled={isLoading}
+            classNames={{
+              input: styles.formSelect,
               label: styles.formLabel
             }}
           />

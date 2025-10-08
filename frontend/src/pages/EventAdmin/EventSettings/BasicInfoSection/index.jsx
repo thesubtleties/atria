@@ -16,6 +16,7 @@ import { useGetSessionsQuery } from '@/app/features/sessions/api';
 import { useEventStatusStyle } from '@/shared/hooks/useEventStatusStyle';
 import { eventUpdateSchema } from '../schemas/eventSettingsSchemas';
 import { Button } from '@/shared/components/buttons';
+import { COMMON_TIMEZONES } from '@/shared/constants/timezones';
 import styles from './styles.module.css';
 import parentStyles from '../styles/index.module.css';
 
@@ -37,6 +38,7 @@ const BasicInfoSection = ({ event, eventId }) => {
       event_type: event?.event_type || 'CONFERENCE',
       start_date: event?.start_date ? new Date(event.start_date) : null,
       end_date: event?.end_date ? new Date(event.end_date) : null,
+      timezone: event?.timezone || 'UTC',
       company_name: event?.company_name || '',
       status: event?.status || 'DRAFT',
       main_session_id: event?.main_session_id || null,
@@ -99,6 +101,7 @@ const BasicInfoSection = ({ event, eventId }) => {
       event_type: event?.event_type || 'CONFERENCE',
       start_date: event?.start_date ? new Date(event.start_date) : null,
       end_date: event?.end_date ? new Date(event.end_date) : null,
+      timezone: event?.timezone || 'UTC',
       company_name: event?.company_name || '',
       status: event?.status || 'DRAFT',
       main_session_id: event?.main_session_id || null,
@@ -209,7 +212,20 @@ const BasicInfoSection = ({ event, eventId }) => {
             }}
             {...form.getInputProps('company_name')}
           />
-          
+
+          <Select
+            label="Event Timezone"
+            description="All session times are interpreted in this timezone"
+            data={COMMON_TIMEZONES}
+            searchable
+            required
+            classNames={{
+              input: styles.formInput,
+              label: styles.formLabel
+            }}
+            {...form.getInputProps('timezone')}
+          />
+
           {form.values.event_type === 'SINGLE_SESSION' && sessionOptions.length > 0 && (
             <Select
               label="Main Session"
