@@ -3,6 +3,7 @@ from api.models import Event
 from api.models.enums import EventType, EventStatus, EventUserRole, EventFormat, USState
 from marshmallow import validates, ValidationError, validates_schema
 from datetime import datetime, timezone
+import pytz
 
 
 class EventSchema(ma.SQLAlchemyAutoSchema):
@@ -98,6 +99,7 @@ class EventCreateSchema(ma.Schema):
     event_type = ma.Enum(EventType, required=True)
     start_date = ma.Date(required=True)
     end_date = ma.Date(required=True)
+    timezone = ma.String(required=True)
     company_name = ma.String(required=True)
 
     # Optional fields
@@ -117,6 +119,13 @@ class EventCreateSchema(ma.Schema):
     def validate_title(self, value, **kwargs):
         if len(value.strip()) < 3:
             raise ValidationError("Title must be at least 3 characters")
+
+    @validates("timezone")
+    def validate_timezone(self, value, **kwargs):
+        if value not in pytz.all_timezones:
+            raise ValidationError(
+                f"Invalid timezone. Must be a valid IANA timezone (e.g., 'America/New_York')"
+            )
 
     # Validate multiple fields together
     @validates_schema
@@ -141,6 +150,7 @@ class EventUpdateSchema(ma.Schema):
     event_type = ma.Enum(EventType)
     start_date = ma.Date()
     end_date = ma.Date()
+    timezone = ma.String()
     company_name = ma.String()
     status = ma.Enum(EventStatus)
     branding = ma.Dict()
@@ -167,13 +177,20 @@ class EventUpdateSchema(ma.Schema):
     # Single session navigation
     main_session_id = ma.Integer(allow_none=True)
 
+    @validates("timezone")
+    def validate_timezone(self, value, **kwargs):
+        if value not in pytz.all_timezones:
+            raise ValidationError(
+                f"Invalid timezone. Must be a valid IANA timezone (e.g., 'America/New_York')"
+            )
+
     @validates_schema
     def validate_dates(self, data, **kwargs):
         """Validate dates if provided"""
         if "start_date" in data and "end_date" in data:
             if data["end_date"] < data["start_date"]:
                 raise ValidationError("End date cannot be before start date")
-                
+
     @validates_schema
     def validate_venue(self, data, **kwargs):
         """Validate venue requirements based on event format"""

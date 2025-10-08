@@ -10,6 +10,7 @@ export const eventUpdateSchema = z.object({
   end_date: z.date({
     required_error: 'End date is required',
   }),
+  timezone: z.string().min(1, 'Timezone is required'),
   company_name: z.string().min(1, 'Company name is required'),
   status: z.enum(['DRAFT', 'PUBLISHED', 'ARCHIVED']),
   main_session_id: z.string().nullable().optional(),

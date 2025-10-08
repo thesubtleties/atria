@@ -68,12 +68,18 @@ class Session(db.Model):
         )
 
     def get_datetime_for_time(self, time_obj: time) -> datetime:
-        """Convert time to full datetime based on event date and day number"""
+        """Convert time to full datetime in event timezone"""
+        import pytz
+
         event_start_date = self.event.start_date
         session_date = event_start_date + timedelta(days=self.day_number - 1)
-        return datetime.combine(session_date, time_obj).replace(
-            tzinfo=timezone.utc
-        )
+
+        # Create naive datetime
+        naive_dt = datetime.combine(session_date, time_obj)
+
+        # Localize to event timezone (makes it timezone-aware)
+        event_tz = pytz.timezone(self.event.timezone)
+        return event_tz.localize(naive_dt)
 
     def validate_times(self):
         """Validate session times"""

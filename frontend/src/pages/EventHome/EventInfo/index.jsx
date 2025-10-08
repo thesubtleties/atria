@@ -4,6 +4,7 @@ import {
   IconMapPin,
   IconDeviceLaptop,
 } from '@tabler/icons-react';
+import { format as formatDate, parseISO } from 'date-fns';
 import styles from './styles/index.module.css';
 
 export default function EventInfo({ format, venue, dates }) {
@@ -18,19 +19,11 @@ export default function EventInfo({ format, venue, dates }) {
             <div className={styles.cardContent}>
               <h3 className={styles.cardTitle}>When</h3>
               <p className={styles.cardText}>
-                {new Date(dates.start).toLocaleDateString('en-US', {
-                  month: 'long',
-                  day: 'numeric',
-                  year: 'numeric'
-                })}
+                {formatDate(parseISO(dates.start), 'MMMM d, yyyy')}
               </p>
               {dates.end !== dates.start && (
                 <p className={styles.cardSubtext}>
-                  to {new Date(dates.end).toLocaleDateString('en-US', {
-                    month: 'long',
-                    day: 'numeric',
-                    year: 'numeric'
-                  })}
+                  to {formatDate(parseISO(dates.end), 'MMMM d, yyyy')}
                 </p>
               )}
             </div>

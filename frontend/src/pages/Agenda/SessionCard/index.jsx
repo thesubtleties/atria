@@ -1,17 +1,20 @@
 import { Link } from 'react-router-dom';
 import styles from './styles/index.module.css';
 import PropTypes from 'prop-types';
-import { format } from 'date-fns';
 import { SPEAKER_ROLE_ORDER } from '@/shared/constants/speakerRoles';
 import { SpeakerItem } from './SpeakerItem';
+import { formatSessionTime } from '@/shared/utils/timezone';
 
 export const SessionCard = ({
   title,
   session_type = 'PRESENTATION',
   start_time,
   end_time,
+  day_number,
   short_description,
   session_speakers = [],
+  eventStartDate,
+  eventTimezone,
   isOrgView = false,
   orgId,
   eventId,
@@ -39,13 +42,9 @@ export const SessionCard = ({
     return acc;
   }, {});
 
-  const formatTime = (timeStr) => {
-    // Create a dummy date to parse the time
-    const [hours, minutes] = timeStr.split(':');
-    const date = new Date();
-    date.setHours(parseInt(hours), parseInt(minutes));
-    return format(date, 'h:mm a'); // This will give format like "9:00 AM"
-  };
+  // Format times with timezone support
+  const startTimes = formatSessionTime(start_time, eventStartDate, day_number, eventTimezone);
+  const endTimes = formatSessionTime(end_time, eventStartDate, day_number, eventTimezone);
 
   const sessionUrl = isOrgView
     ? `/app/organizations/${orgId}/events/${eventId}/sessions/${id}`
@@ -62,7 +61,16 @@ export const SessionCard = ({
       <div className={styles.content}>
         <h3 className={styles.title}>{title}</h3>
         <div className={styles.time}>
-          {formatTime(start_time)} - {formatTime(end_time)}
+          {/* Show user's local time by default (or event time if same timezone) */}
+          <div>
+            {startTimes.userTime || startTimes.eventTime} - {endTimes.userTime || endTimes.eventTime} {startTimes.timezone}
+          </div>
+          {/* Show event time on hover if different from user's timezone */}
+          {startTimes.showUserTime && (
+            <div className={styles.eventTimeHover}>
+              {startTimes.eventTime} - {endTimes.eventTime} {startTimes.eventTimezone}
+            </div>
+          )}
         </div>
         {short_description && <p className={styles.description}>{short_description}</p>}
       </div>
@@ -104,6 +112,9 @@ SessionCard.propTypes = {
   ]),
   start_time: PropTypes.string.isRequired,
   end_time: PropTypes.string.isRequired,
+  day_number: PropTypes.number.isRequired,
+  eventStartDate: PropTypes.string.isRequired,
+  eventTimezone: PropTypes.string.isRequired,
   short_description: PropTypes.string,
   description: PropTypes.string,
   session_speakers: PropTypes.arrayOf(
