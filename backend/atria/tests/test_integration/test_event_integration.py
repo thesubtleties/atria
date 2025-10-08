@@ -37,7 +37,8 @@ class TestEventIntegration:
             'event_type': 'CONFERENCE',
             'start_date': future_start.isoformat(),
             'end_date': future_end.isoformat(),
-            'company_name': 'Test Company'
+            'company_name': 'Test Company',
+            'timezone': 'UTC'
         }
         data.update(overrides)
         return data

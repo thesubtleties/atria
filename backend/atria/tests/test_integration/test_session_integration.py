@@ -35,7 +35,8 @@ class TestSessionIntegration:
             'event_type': 'CONFERENCE',
             'start_date': future_start.isoformat(),
             'end_date': future_end.isoformat(),
-            'company_name': 'Test Company'
+            'company_name': 'Test Company',
+            'timezone': 'UTC'
         }
         data.update(overrides)
         return data
@@ -470,7 +471,8 @@ class TestSessionIntegration:
                 'event_type': 'CONFERENCE',
                 'start_date': start_date.isoformat(),
                 'end_date': end_date.isoformat(),
-                'company_name': 'Test Corp'
+                'company_name': 'Test Corp',
+                'timezone': 'UTC'
             }
         )
         event_id = json.loads(event_response.data)['id']

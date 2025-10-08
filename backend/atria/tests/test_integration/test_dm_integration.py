@@ -53,7 +53,8 @@ class TestDirectMessageIntegration:
                 'event_type': 'CONFERENCE',
                 'start_date': (utc_now + timedelta(days=30)).isoformat(),
                 'end_date': (utc_now + timedelta(days=31)).isoformat(),
-                'company_name': 'Network Co'
+                'company_name': 'Network Co',
+                'timezone': 'UTC'
             }
         )
         event_id = json.loads(event_response.data)['id']
@@ -313,7 +314,8 @@ class TestDirectMessageIntegration:
                 'event_type': 'CONFERENCE',
                 'start_date': (utc_now + timedelta(days=30)).isoformat(),
                 'end_date': (utc_now + timedelta(days=31)).isoformat(),
-                'company_name': 'Scope Co'
+                'company_name': 'Scope Co',
+                'timezone': 'UTC'
             }
         )
         event_id = json.loads(event_response.data)['id']
