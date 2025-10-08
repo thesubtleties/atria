@@ -20,6 +20,7 @@ class Event(db.Model):
     )  # enum: 'conference', 'single_session',
     start_date = db.Column(db.Date, nullable=False)
     end_date = db.Column(db.Date, nullable=False)
+    timezone = db.Column(db.String(50), nullable=False, default='UTC')
     company_name = db.Column(db.Text, nullable=False)
     slug = db.Column(db.Text, nullable=False, unique=True)
     status = db.Column(
