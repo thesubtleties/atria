@@ -45,7 +45,8 @@ class TestChatIntegration:
                 'event_type': 'CONFERENCE',
                 'start_date': (utc_now + timedelta(days=30)).isoformat(),
                 'end_date': (utc_now + timedelta(days=31)).isoformat(),
-                'company_name': 'Test Company'
+                'company_name': 'Test Company',
+                'timezone': 'UTC'
             }
         )
         event_id = json.loads(event_response.data)['id']
@@ -782,7 +783,8 @@ class TestChatIntegration:
                 'event_type': 'CONFERENCE',
                 'start_date': (utc_now + timedelta(days=30)).isoformat(),
                 'end_date': (utc_now + timedelta(days=31)).isoformat(),
-                'company_name': 'Silent Co'
+                'company_name': 'Silent Co',
+                'timezone': 'UTC'
             }
         )
         event_id = json.loads(event_response.data)['id']

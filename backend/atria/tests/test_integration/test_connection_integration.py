@@ -57,7 +57,8 @@ class TestConnectionIntegration:
                 'event_type': 'CONFERENCE',
                 'start_date': (utc_now + timedelta(days=30)).isoformat(),
                 'end_date': (utc_now + timedelta(days=31)).isoformat(),
-                'company_name': 'Network Co'
+                'company_name': 'Network Co',
+                'timezone': 'UTC'
             }
         )
         event_id = json.loads(event_response.data)['id']
@@ -180,7 +181,8 @@ class TestConnectionIntegration:
                 'event_type': 'CONFERENCE',
                 'start_date': (utc_now + timedelta(days=30)).isoformat(),
                 'end_date': (utc_now + timedelta(days=31)).isoformat(),
-                'company_name': 'DM Co'
+                'company_name': 'DM Co',
+                'timezone': 'UTC'
             }
         )
         event_id = json.loads(event_response.data)['id']
@@ -460,7 +462,8 @@ class TestConnectionIntegration:
                 'event_type': 'CONFERENCE',
                 'start_date': (utc_now + timedelta(days=30)).isoformat(),
                 'end_date': (utc_now + timedelta(days=31)).isoformat(),
-                'company_name': 'Summit Co'
+                'company_name': 'Summit Co',
+                'timezone': 'UTC'
             }
         )
         event_id = json.loads(event_response.data)['id']
@@ -578,7 +581,8 @@ class TestConnectionIntegration:
                 'event_type': 'CONFERENCE',
                 'start_date': (utc_now + timedelta(days=30)).isoformat(),
                 'end_date': (utc_now + timedelta(days=31)).isoformat(),
-                'company_name': 'Tech Co'
+                'company_name': 'Tech Co',
+                'timezone': 'UTC'
             }
         )
         event_id = json.loads(event_response.data)['id']
