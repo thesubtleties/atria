@@ -14,6 +14,7 @@ import { IconCheck, IconX } from '@tabler/icons-react';
 import { useUpdateEventMutation } from '@/app/features/events/api';
 import { useGetSessionsQuery } from '@/app/features/sessions/api';
 import { useEventStatusStyle } from '@/shared/hooks/useEventStatusStyle';
+import { parseDateOnly, formatDateOnly } from '@/shared/hooks/formatDate';
 import { eventUpdateSchema } from '../schemas/eventSettingsSchemas';
 import { Button } from '@/shared/components/buttons';
 import { COMMON_TIMEZONES } from '@/shared/constants/timezones';
@@ -36,8 +37,8 @@ const BasicInfoSection = ({ event, eventId }) => {
       title: event?.title || '',
       description: event?.description || '',
       event_type: event?.event_type || 'CONFERENCE',
-      start_date: event?.start_date ? new Date(event.start_date) : null,
-      end_date: event?.end_date ? new Date(event.end_date) : null,
+      start_date: parseDateOnly(event?.start_date),
+      end_date: parseDateOnly(event?.end_date),
       timezone: event?.timezone || 'UTC',
       company_name: event?.company_name || '',
       status: event?.status || 'DRAFT',
@@ -51,8 +52,9 @@ const BasicInfoSection = ({ event, eventId }) => {
     const checkChanges = () => {
       const changed = Object.keys(form.values).some(key => {
         if (key === 'start_date' || key === 'end_date') {
-          const eventDate = event?.[key] ? new Date(event[key]).toISOString().split('T')[0] : null;
-          const formDate = form.values[key] ? form.values[key].toISOString().split('T')[0] : null;
+          // Compare dates as YYYY-MM-DD strings to avoid timezone issues
+          const eventDate = event?.[key] || null;
+          const formDate = formatDateOnly(form.values[key]);
           return eventDate !== formDate;
         }
         return form.values[key] !== event?.[key];
@@ -74,8 +76,8 @@ const BasicInfoSection = ({ event, eventId }) => {
       await updateEvent({
         id: eventId,
         ...values,
-        start_date: values.start_date?.toISOString().split('T')[0],
-        end_date: values.end_date?.toISOString().split('T')[0],
+        start_date: formatDateOnly(values.start_date),
+        end_date: formatDateOnly(values.end_date),
         main_session_id: values.main_session_id ? parseInt(values.main_session_id) : null,
       }).unwrap();
 
@@ -99,8 +101,8 @@ const BasicInfoSection = ({ event, eventId }) => {
       title: event?.title || '',
       description: event?.description || '',
       event_type: event?.event_type || 'CONFERENCE',
-      start_date: event?.start_date ? new Date(event.start_date) : null,
-      end_date: event?.end_date ? new Date(event.end_date) : null,
+      start_date: parseDateOnly(event?.start_date),
+      end_date: parseDateOnly(event?.end_date),
       timezone: event?.timezone || 'UTC',
       company_name: event?.company_name || '',
       status: event?.status || 'DRAFT',
