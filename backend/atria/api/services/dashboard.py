@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 from sqlalchemy import func, and_, or_
 from sqlalchemy.orm import joinedload, selectinload
+import pytz
 
 from api.extensions import db
 from api.models import User, Organization, OrganizationUser, Event, EventUser, Connection
@@ -135,9 +136,6 @@ class DashboardService:
     @staticmethod
     def _get_user_events(user_id: int, limit: int = 5):
         """Get user's recent and upcoming events (excluding banned)"""
-        now = datetime.now(timezone.utc)
-        today = now.date()
-        
         # Get events where user is a participant and not banned - ONLY PUBLISHED EVENTS
         event_users = EventUser.query.filter(
             EventUser.user_id == user_id,
@@ -154,20 +152,31 @@ class DashboardService:
         events = []
         for event_user in event_users:
             event = event_user.event
-            
+
             # Get attendee count for this event (excluding banned users)
             attendee_count = EventUser.query.filter(
                 EventUser.event_id == event.id,
                 EventUser.is_banned.is_(False)
             ).count()
-            
-            # Determine event status for display based on dates
-            if event.end_date and event.end_date < today:
+
+            # Determine event status for display based on dates in the event's timezone
+            # Convert current UTC time to the event's timezone
+            try:
+                event_tz = pytz.timezone(event.timezone)
+                now_in_event_tz = datetime.now(timezone.utc).astimezone(event_tz)
+                today_in_event_tz = now_in_event_tz.date()
+            except Exception:
+                # Fallback to UTC if timezone is invalid
+                now_in_event_tz = datetime.now(timezone.utc)
+                today_in_event_tz = now_in_event_tz.date()
+
+            # Compare dates in the event's timezone
+            if event.end_date and event.end_date < today_in_event_tz:
                 display_status = 'past'
-            elif event.start_date > today:
+            elif event.start_date > today_in_event_tz:
                 display_status = 'upcoming'
             else:
-                # Event is currently happening
+                # Event is currently happening in its timezone
                 display_status = 'live'
 
             # Build location string

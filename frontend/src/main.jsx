@@ -7,6 +7,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 import { RouterProvider } from 'react-router-dom';
 import { store } from './app/store';
 import { router } from './app/router/routes';
+import ErrorBoundary from './shared/components/ErrorBoundary';
 
 import './styles/reset.css';
 import './styles/design-tokens.css';
@@ -16,13 +17,15 @@ import '@mantine/notifications/styles.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <ReduxProvider store={store}>
-      <MantineProvider>
-        <Notifications position="bottom-left" />
-        <ModalsProvider>
-          <RouterProvider router={router} />
-        </ModalsProvider>
-      </MantineProvider>
-    </ReduxProvider>
+    <ErrorBoundary>
+      <ReduxProvider store={store}>
+        <MantineProvider>
+          <Notifications position="bottom-left" />
+          <ModalsProvider>
+            <RouterProvider router={router} />
+          </ModalsProvider>
+        </MantineProvider>
+      </ReduxProvider>
+    </ErrorBoundary>
   </React.StrictMode>
 );

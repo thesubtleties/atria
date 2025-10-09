@@ -1,8 +1,8 @@
 import { Badge } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
-import { parseISO, differenceInDays, isSameDay } from 'date-fns';
+import { differenceInDays, isSameDay } from 'date-fns';
 import { Button } from '@/shared/components/buttons';
-import { useFormatDate } from '@/shared/hooks/formatDate';
+import { useFormatDate, parseDateOnly } from '@/shared/hooks/formatDate';
 import styles from './styles/index.module.css';
 
 export const EventsSection = ({ events }) => {
@@ -13,8 +13,8 @@ export const EventsSection = ({ events }) => {
     if (!event.start_date) return '';
 
     try {
-      const startDate = parseISO(event.start_date);
-      const endDate = event.end_date ? parseISO(event.end_date) : startDate;
+      const startDate = parseDateOnly(event.start_date);
+      const endDate = event.end_date ? parseDateOnly(event.end_date) : startDate;
 
       // Check if it's a single-day event
       if (isSameDay(startDate, endDate)) {
