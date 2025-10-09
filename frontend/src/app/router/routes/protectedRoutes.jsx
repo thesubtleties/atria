@@ -11,7 +11,6 @@ import { AgendaPage } from '../../../pages/Agenda';
 import { EventHome } from '../../../pages/EventHome';
 import { SpeakersPage } from '../../../pages/Speakers';
 import { SessionPending } from '../../../pages/Session/SessionPending';
-import RoadmapPage from '@/pages/Roadmap';
 import { Networking } from '../../../pages/Networking';
 import { SponsorsPage } from '../../../pages/Sponsors';
 import Profile from '../../../pages/Profile';
@@ -25,6 +24,7 @@ import NetworkingManager from '../../../pages/EventAdmin/NetworkingManager';
 import AttendeesManager from '../../../pages/EventAdmin/AttendeesManager';
 import SpeakersManager from '../../../pages/EventAdmin/SpeakersManager';
 import EventSettings from '../../../pages/EventAdmin/EventSettings';
+import { NotFound } from '../../../pages/Errors/NotFound';
 
 export const protectedRoutes = [
   {
@@ -186,7 +186,7 @@ export const protectedRoutes = [
               },
               {
                 path: '*',
-                element: <RoadmapPage />,
+                element: <NotFound />,
               },
             ],
           },
