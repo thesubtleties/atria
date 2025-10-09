@@ -1,0 +1,176 @@
+/* Error Boundary Styles - Atria Branded */
+
+.errorContainer {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-lg);
+  background: var(--color-background);
+  background-image: radial-gradient(
+      circle at 20% 50%,
+      var(--primary-alpha-6) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% 80%,
+      var(--primary-alpha-4) 0%,
+      transparent 50%
+    );
+}
+
+.errorCard {
+  composes: section-container from '../../../styles/design-tokens.css';
+  max-width: 600px;
+  width: 100%;
+  text-align: center;
+  padding: var(--space-2xl);
+}
+
+/* Icon */
+.iconContainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--space-xl);
+}
+
+.errorIcon {
+  width: 80px;
+  height: 80px;
+  color: var(--color-primary);
+  opacity: 0.8;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Typography */
+.errorTitle {
+  font-size: clamp(var(--text-xl), 4vw, var(--text-2xl));
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-md) 0;
+  line-height: 1.2;
+}
+
+.errorMessage {
+  font-size: var(--text-base);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin: 0 0 var(--space-xl) 0;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Error Details (Development) */
+.errorDetails {
+  background: rgba(220, 38, 38, 0.05);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+  border-radius: var(--radius-md);
+  margin: var(--space-xl) 0;
+  padding: var(--space-md);
+  text-align: left;
+}
+
+.errorDetailsSummary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--color-error);
+  font-size: var(--text-sm);
+  user-select: none;
+  padding: var(--space-sm);
+}
+
+.errorDetailsSummary:hover {
+  color: #b91c1c;
+}
+
+.errorDetailsContent {
+  margin-top: var(--space-md);
+  padding: var(--space-md);
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: var(--radius-sm);
+}
+
+.errorName {
+  font-weight: 600;
+  color: var(--color-error);
+  margin: 0 0 var(--space-md) 0;
+  font-family: 'Courier New', monospace;
+  font-size: var(--text-sm);
+}
+
+.errorStack {
+  font-family: 'Courier New', monospace;
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  margin: 0;
+  padding: var(--space-md);
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: var(--radius-sm);
+  line-height: 1.4;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+/* Action Buttons */
+.actionButtons {
+  display: flex;
+  gap: var(--space-md);
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: var(--space-lg);
+}
+
+/* Help Text */
+.helpText {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.helpLink {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.helpLink:hover {
+  color: var(--color-primary-hover);
+  text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  .errorCard {
+    padding: var(--space-xl) var(--space-lg);
+  }
+
+  .errorIcon {
+    width: 60px;
+    height: 60px;
+  }
+
+  .actionButtons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .actionButtons button {
+    width: 100%;
+  }
+}

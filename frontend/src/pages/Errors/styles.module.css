@@ -1,0 +1,305 @@
+/* Shared Error Page Styles - Atria Branded */
+
+.errorContainer {
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 6rem var(--space-lg);
+  background: var(--color-background);
+  background-image: radial-gradient(
+      circle at 20% 50%,
+      var(--primary-alpha-6) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% 80%,
+      var(--primary-alpha-4) 0%,
+      transparent 50%
+    );
+}
+
+.errorCard {
+  composes: section-container from '../../styles/design-tokens.css';
+  max-width: 700px;
+  width: 100%;
+  text-align: center;
+  padding: clamp(var(--space-xl), 4vw, var(--space-2xl));
+}
+
+/* ==================== 404-Specific Styles ==================== */
+
+/* 404 Illustration */
+.illustration {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-xl);
+  flex-wrap: wrap;
+}
+
+.fourOhFour {
+  font-size: clamp(4rem, 10vw, 6rem);
+  font-weight: 900;
+  background: linear-gradient(
+    135deg,
+    var(--color-primary) 0%,
+    var(--color-primary-hover) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  /* Ensure text baseline doesn't affect vertical alignment */
+  display: inline-flex;
+  align-items: center;
+}
+
+.illustrationIcon {
+  width: clamp(60px, 10vw, 80px);
+  height: clamp(60px, 10vw, 80px);
+  color: var(--color-accent-yellow);
+  /* Better vertical alignment with the 404 text */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.illustrationIcon svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Suggestions Section */
+.suggestions {
+  margin: var(--space-2xl) 0;
+}
+
+.suggestionsTitle {
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-lg) 0;
+}
+
+.suggestionCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+}
+
+.suggestionCard {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.suggestionCard:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(139, 92, 246, 0.3);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.suggestionIcon {
+  width: 40px;
+  height: 40px;
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.suggestionIcon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.suggestionContent {
+  text-align: center;
+  width: 100%;
+}
+
+.suggestionTitle {
+  font-weight: 600;
+  color: var(--color-text-primary);
+  font-size: var(--text-base);
+  margin-bottom: var(--space-xs);
+}
+
+.suggestionDescription {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+}
+
+/* ==================== Generic Error Styles ==================== */
+
+/* Icon */
+.iconContainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--space-xl);
+}
+
+.errorIcon {
+  width: 80px;
+  height: 80px;
+  color: var(--color-primary);
+  opacity: 0.8;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Typography */
+.errorTitle {
+  font-size: clamp(var(--text-xl), 4vw, var(--text-2xl));
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-md) 0;
+  line-height: 1.2;
+}
+
+.errorMessage {
+  font-size: var(--text-base);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin: 0 0 var(--space-xl) 0;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Error Details */
+.errorDetails {
+  background: rgba(139, 92, 246, 0.05);
+  border: 1px solid rgba(139, 92, 246, 0.15);
+  border-radius: var(--radius-md);
+  margin: var(--space-xl) 0;
+  padding: var(--space-md);
+  text-align: left;
+}
+
+.errorDetailsSummary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--color-primary);
+  font-size: var(--text-sm);
+  user-select: none;
+  padding: var(--space-sm);
+}
+
+.errorDetailsSummary:hover {
+  color: var(--color-primary-hover);
+}
+
+.errorDetailsContent {
+  margin-top: var(--space-md);
+  padding: var(--space-md);
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: var(--radius-sm);
+}
+
+.errorName {
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-sm) 0;
+  font-family: 'Courier New', monospace;
+  font-size: var(--text-sm);
+}
+
+.errorData {
+  font-family: 'Courier New', monospace;
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  margin: var(--space-sm) 0;
+  padding: var(--space-md);
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: var(--radius-sm);
+  line-height: 1.4;
+}
+
+/* Action Buttons */
+.actionButtons {
+  display: flex;
+  gap: var(--space-md);
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: var(--space-lg);
+}
+
+/* Help Text */
+.helpText {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.helpLink {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.helpLink:hover {
+  color: var(--color-primary-hover);
+  text-decoration: underline;
+}
+
+/* ==================== Responsive Design ==================== */
+
+@media (max-width: 640px) {
+  .errorCard {
+    padding: var(--space-xl) var(--space-lg);
+  }
+
+  .fourOhFour {
+    font-size: 3.5rem;
+  }
+
+  .illustrationIcon {
+    width: 50px;
+    height: 50px;
+  }
+
+  .errorIcon {
+    width: 60px;
+    height: 60px;
+  }
+
+  .suggestionCards {
+    grid-template-columns: 1fr;
+  }
+
+  .actionButtons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .actionButtons button {
+    width: 100%;
+  }
+}
