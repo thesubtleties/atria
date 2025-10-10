@@ -1,30 +1,107 @@
 // src/app/router/routes/protectedRoutes.js
+import { lazy } from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
 import { AuthGuard } from '../guards/AuthGuard';
+
+// Eagerly load only the core layout
 import { AppLayout } from '../layouts/AppLayout';
-import { NewUserCheck } from '../../../pages/NewUserLanding';
-import { CreateOrganization } from '../../../pages/Organizations/CreateOrganization';
-import { EventsList } from '../../../pages/Events/EventsList';
-import { SetupSession } from '../../../pages/Session/SetupSession';
-import { SessionPage } from '../../../pages/Session';
-import { AgendaPage } from '../../../pages/Agenda';
-import { EventHome } from '../../../pages/EventHome';
-import { SpeakersPage } from '../../../pages/Speakers';
-import { SessionPending } from '../../../pages/Session/SessionPending';
-import { Networking } from '../../../pages/Networking';
-import { SponsorsPage } from '../../../pages/Sponsors';
-import Profile from '../../../pages/Profile';
-import Network from '../../../pages/Network';
-import Settings from '../../../pages/Settings';
-import { Dashboard } from '../../../pages/Dashboard';
-import OrganizationDashboard from '../../../pages/Organizations/OrganizationDashboard';
-import { SessionManager } from '../../../pages/EventAdmin/SessionManager';
-import SponsorsManager from '../../../pages/EventAdmin/SponsorsManager';
-import NetworkingManager from '../../../pages/EventAdmin/NetworkingManager';
-import AttendeesManager from '../../../pages/EventAdmin/AttendeesManager';
-import SpeakersManager from '../../../pages/EventAdmin/SpeakersManager';
-import EventSettings from '../../../pages/EventAdmin/EventSettings';
-import { NotFound } from '../../../pages/Errors/NotFound';
+
+// Lazy load all protected pages for optimal bundle splitting
+const NewUserCheck = lazy(() =>
+  import('../../../pages/NewUserLanding').then((module) => ({
+    default: module.NewUserCheck,
+  }))
+);
+const CreateOrganization = lazy(() =>
+  import('../../../pages/Organizations/CreateOrganization').then((module) => ({
+    default: module.CreateOrganization,
+  }))
+);
+const EventsList = lazy(() =>
+  import('../../../pages/Events/EventsList').then((module) => ({
+    default: module.EventsList,
+  }))
+);
+const SetupSession = lazy(() =>
+  import('../../../pages/Session/SetupSession').then((module) => ({
+    default: module.SetupSession,
+  }))
+);
+const SessionPage = lazy(() =>
+  import('../../../pages/Session').then((module) => ({
+    default: module.SessionPage,
+  }))
+);
+const AgendaPage = lazy(() =>
+  import('../../../pages/Agenda').then((module) => ({
+    default: module.AgendaPage,
+  }))
+);
+const EventHome = lazy(() =>
+  import('../../../pages/EventHome').then((module) => ({
+    default: module.EventHome,
+  }))
+);
+const SpeakersPage = lazy(() =>
+  import('../../../pages/Speakers').then((module) => ({
+    default: module.SpeakersPage,
+  }))
+);
+const SessionPending = lazy(() =>
+  import('../../../pages/Session/SessionPending').then((module) => ({
+    default: module.SessionPending,
+  }))
+);
+const Networking = lazy(() =>
+  import('../../../pages/Networking').then((module) => ({
+    default: module.Networking,
+  }))
+);
+const SponsorsPage = lazy(() =>
+  import('../../../pages/Sponsors').then((module) => ({
+    default: module.SponsorsPage,
+  }))
+);
+const Profile = lazy(() => import('../../../pages/Profile'));
+const Network = lazy(() => import('../../../pages/Network'));
+const Settings = lazy(() => import('../../../pages/Settings'));
+const Dashboard = lazy(() =>
+  import('../../../pages/Dashboard').then((module) => ({
+    default: module.Dashboard,
+  }))
+);
+const OrganizationDashboard = lazy(() =>
+  import('../../../pages/Organizations/OrganizationDashboard')
+);
+
+// Admin pages
+const SessionManager = lazy(() =>
+  import('../../../pages/EventAdmin/SessionManager').then((module) => ({
+    default: module.SessionManager,
+  }))
+);
+const SponsorsManager = lazy(() =>
+  import('../../../pages/EventAdmin/SponsorsManager')
+);
+const NetworkingManager = lazy(() =>
+  import('../../../pages/EventAdmin/NetworkingManager')
+);
+const AttendeesManager = lazy(() =>
+  import('../../../pages/EventAdmin/AttendeesManager')
+);
+const SpeakersManager = lazy(() =>
+  import('../../../pages/EventAdmin/SpeakersManager')
+);
+const EventSettings = lazy(() =>
+  import('../../../pages/EventAdmin/EventSettings')
+);
+
+// Error page
+const NotFound = lazy(() =>
+  import('../../../pages/Errors/NotFound').then((module) => ({
+    default: module.NotFound,
+  }))
+);
 
 export const protectedRoutes = [
   {
