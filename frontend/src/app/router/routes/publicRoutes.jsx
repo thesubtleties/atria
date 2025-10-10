@@ -1,9 +1,26 @@
+import { lazy } from 'react';
 import { Landing } from '../../../pages/Landing';
-import { EmailVerification } from '../../../pages/Auth/EmailVerification';
-import { ResetPassword } from '../../../pages/Auth/ResetPassword';
-import AcceptInvitation from '../../../pages/Invitations/AcceptInvitation';
 import { PublicGuard } from '../guards/PublicGuard';
-import { NotFound } from '../../../pages/Errors/NotFound';
+
+// Lazy load non-critical public routes
+const EmailVerification = lazy(() =>
+  import('../../../pages/Auth/EmailVerification').then((module) => ({
+    default: module.EmailVerification,
+  }))
+);
+const ResetPassword = lazy(() =>
+  import('../../../pages/Auth/ResetPassword').then((module) => ({
+    default: module.ResetPassword,
+  }))
+);
+const AcceptInvitation = lazy(() =>
+  import('../../../pages/Invitations/AcceptInvitation')
+);
+const NotFound = lazy(() =>
+  import('../../../pages/Errors/NotFound').then((module) => ({
+    default: module.NotFound,
+  }))
+);
 
 export const publicRoutes = [
   {
