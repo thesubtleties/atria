@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { Button } from '@/shared/components/buttons';
 import styles from './styles.module.css';
 
@@ -18,7 +18,7 @@ class ErrorBoundary extends Component {
     };
   }
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError() {
     // Update state so the next render will show the fallback UI
     return { hasError: true };
   }
@@ -75,8 +75,7 @@ class ErrorBoundary extends Component {
             {/* Error Message */}
             <h1 className={styles.errorTitle}>Oops! Something went wrong</h1>
             <p className={styles.errorMessage}>
-              We encountered an unexpected error. Don't worry — your data is safe,
-              and we're working to fix this.
+              {"We encountered an unexpected error. Don't worry — your data is safe, and we're working to fix this."}
             </p>
 
             {/* Error Details (for development) */}
