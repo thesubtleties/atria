@@ -82,16 +82,22 @@ export default defineConfig(({ mode }) => ({
     port: 5173,
     proxy: {
       '/api': {
-        target: 'http://atria-api:5000',
+        target: 'http://traefik',
         changeOrigin: true,
         secure: false,
+        headers: {
+          Host: 'localhost',
+        },
       },
       '/socket.io': {
         // Socket.io proxy configuration
-        target: 'http://atria-api:5000',
+        target: 'http://traefik',
         changeOrigin: true,
         secure: false,
         ws: true, // Critical for WebSockets
+        headers: {
+          Host: 'localhost',
+        },
       },
     },
   },
