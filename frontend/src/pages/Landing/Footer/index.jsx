@@ -26,7 +26,7 @@ const Footer = () => {
             </motion.a>
 
             <motion.a
-              href="https://www.linkedin.com/in/stevenglab/"
+              href="https://www.linkedin.com/company/atria-dot-gg/"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
               className={styles.socialLink}

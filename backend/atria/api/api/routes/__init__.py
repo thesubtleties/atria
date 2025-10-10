@@ -18,6 +18,7 @@ from .uploads import blp as uploads_blp
 from .invitations import blp as invitations_blp
 from .moderation import blp as moderation_blp
 from .health import blp as health_blp
+from .analytics import blp as analytics_blp
 
 __all__ = [
     # User blueprints
@@ -50,6 +51,8 @@ __all__ = [
     "moderation_blp",
     # Health check blueprint
     "health_blp",
+    # Analytics blueprint
+    "analytics_blp",
 ]
 
 
@@ -91,3 +94,5 @@ def register_blueprints(api):
     api.register_blueprint(invitations_blp)
     # Moderation
     api.register_blueprint(moderation_blp)
+    # Analytics (register last - no auth required, public endpoint)
+    api.register_blueprint(analytics_blp)
