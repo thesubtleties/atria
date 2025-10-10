@@ -18,6 +18,9 @@ export default defineConfig(({ mode }) => ({
     rollupOptions: {
       output: {
         manualChunks: (id) => {
+          // Let Vite handle React automatically - it knows how to handle shared dependencies
+          // Only manually chunk heavy/specific libraries
+
           // Animation libraries (critical for landing page)
           if (id.includes('gsap') || id.includes('lenis')) {
             return 'animations';
@@ -42,11 +45,6 @@ export default defineConfig(({ mode }) => ({
             return 'socket-io';
           }
 
-          // React Router (shared but small)
-          if (id.includes('react-router-dom')) {
-            return 'router';
-          }
-
           // Form libraries (only on certain pages)
           if (
             id.includes('react-hook-form') ||
@@ -59,24 +57,13 @@ export default defineConfig(({ mode }) => ({
           // Date libraries (only on certain pages)
           if (
             id.includes('date-fns') ||
-            id.includes('dayjs') ||
-            id.includes('@mantine/dates')
+            id.includes('dayjs')
           ) {
             return 'dates';
           }
 
-          // Core React (shared everywhere)
-          if (
-            id.includes('node_modules/react/') ||
-            id.includes('node_modules/react-dom/')
-          ) {
-            return 'react-vendor';
-          }
-
-          // Other node_modules
-          if (id.includes('node_modules')) {
-            return 'vendor';
-          }
+          // Let Vite automatically handle React, React-DOM, React-Router and other core dependencies
+          // They will be placed in appropriate vendor chunks automatically
         },
         // Optimize chunk naming for better debugging
         chunkFileNames: (chunkInfo) => {
