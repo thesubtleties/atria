@@ -84,8 +84,7 @@ export const NotFound = () => {
         {/* Main Message */}
         <h1 className={styles.errorTitle}>Page Not Found</h1>
         <p className={styles.errorMessage}>
-          Looks like you've ventured into uncharted territory! The page you're
-          looking for doesn't exist or may have been moved.
+          {"Looks like you've ventured into uncharted territory! The page you're looking for doesn't exist or may have been moved."}
         </p>
 
         {/* Suggestions */}

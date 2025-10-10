@@ -67,9 +67,6 @@ export default defineConfig(({ mode }) => ({
         },
         // Optimize chunk naming for better debugging
         chunkFileNames: (chunkInfo) => {
-          const facadeModuleId = chunkInfo.facadeModuleId
-            ? chunkInfo.facadeModuleId.split('/').pop()
-            : 'chunk';
           return `assets/${chunkInfo.name}-[hash].js`;
         },
       },
