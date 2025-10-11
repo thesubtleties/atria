@@ -13,6 +13,7 @@ import {
 } from '../../../app/features/eventInvitations/api';
 import { Button } from '../../../shared/components/buttons/Button';
 import { formatDistanceToNow } from 'date-fns';
+import { parseDateOnly } from '@/shared/hooks/formatDate';
 import { getRoleDisplayName } from '../../EventAdmin/AttendeesManager/schemas/attendeeSchemas';
 import styles from './styles/InvitationCard.module.css';
 
@@ -142,7 +143,7 @@ function InvitationCard({ invitation, type }) {
             <Text size="sm" color="dimmed">
               {invitation.event.organization.name} •{' '}
               {invitation.event.start_date
-                ? new Date(invitation.event.start_date).toLocaleDateString(
+                ? parseDateOnly(invitation.event.start_date).toLocaleDateString(
                     'en-US',
                     {
                       month: 'short',

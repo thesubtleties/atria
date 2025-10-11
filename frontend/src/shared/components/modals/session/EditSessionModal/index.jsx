@@ -13,6 +13,7 @@ import {
   useCreateSessionMutation,
   useUpdateSessionMutation,
 } from '@/app/features/sessions/api';
+import { parseDateOnly } from '@/shared/hooks/formatDate';
 import { useGetEventQuery } from '@/app/features/events/api';
 import { Button } from '@/shared/components/buttons';
 import { editSessionSchema } from './schemas/editSessionSchema';
@@ -37,10 +38,10 @@ const CHAT_MODES = [
 const getEventDays = (event) => {
   if (!event?.start_date || !event?.end_date) return [];
 
-  const start = new Date(event.start_date);
-  const end = new Date(event.end_date);
+  const start = parseDateOnly(event.start_date);
+  const end = parseDateOnly(event.end_date);
   const days = [];
-  let currentDate = start;
+  let currentDate = new Date(start);
   let dayNumber = 1;
 
   while (currentDate <= end) {

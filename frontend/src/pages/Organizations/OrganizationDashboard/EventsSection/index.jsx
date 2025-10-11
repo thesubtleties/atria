@@ -4,6 +4,7 @@ import { IconFileText, IconGlobe, IconArchive, IconCalendar, IconPlus, IconChevr
 import { useGetEventsQuery } from '../../../../app/features/events/api';
 import { Button } from '../../../../shared/components/buttons';
 import { EventModal } from '../../../../shared/components/modals/event/EventModal';
+import { parseDateOnly } from '@/shared/hooks/formatDate';
 import EventCard from './EventCard';
 import styles from './styles/index.module.css';
 
@@ -43,11 +44,11 @@ const EventsSection = ({ orgId, currentUserRole }) => {
 
     // Sort events
     // Draft and Published: by start_date ascending (soonest first)
-    groups.draft.sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
-    groups.published.sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
-    
+    groups.draft.sort((a, b) => parseDateOnly(a.start_date) - parseDateOnly(b.start_date));
+    groups.published.sort((a, b) => parseDateOnly(a.start_date) - parseDateOnly(b.start_date));
+
     // Archived: by start_date descending (most recent first)
-    groups.archived.sort((a, b) => new Date(b.start_date) - new Date(a.start_date));
+    groups.archived.sort((a, b) => parseDateOnly(b.start_date) - parseDateOnly(a.start_date));
 
     return groups;
   }, [data?.events]);
