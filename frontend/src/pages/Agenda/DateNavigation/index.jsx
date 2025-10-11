@@ -3,6 +3,7 @@ import styles from './styles/index.module.css';
 import PropTypes from 'prop-types';
 import { format, addDays } from 'date-fns';
 import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
+import { parseDateOnly } from '@/shared/hooks/formatDate';
 
 export const DateNavigation = ({
   startDate,
@@ -11,7 +12,7 @@ export const DateNavigation = ({
   onDateChange,
 }) => {
   const dates = Array.from({ length: dayCount }, (_, i) =>
-    addDays(new Date(startDate), i)
+    addDays(parseDateOnly(startDate), i)
   );
 
   const currentDate = dates[currentDay - 1];
