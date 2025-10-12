@@ -21,6 +21,8 @@ RUN rm -rf /etc/nginx/conf.d/*
 
 # Copy custom nginx config
 COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
+COPY frontend/security-headers.conf /etc/nginx/conf.d/security-headers.conf
+COPY frontend/csp-header.conf /etc/nginx/conf.d/csp-header.conf
 
 # Copy built files from builder
 COPY --from=builder /app/dist /usr/share/nginx/html
