@@ -242,6 +242,50 @@
   gap: clamp(0.75rem, 2vw, 1rem);
 }
 
+/* Scrollable Card List - For sections with many cards (5+ items) */
+.card-list-scrollable {
+  composes: card-list;
+  max-height: 550px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding-right: 4px; /* Space for scrollbar */
+}
+
+/* Custom scrollbar styling for scrollable card lists */
+.card-list-scrollable::-webkit-scrollbar {
+  width: 8px;
+}
+
+.card-list-scrollable::-webkit-scrollbar-track {
+  background: rgba(139, 92, 246, 0.02);
+  border-radius: 4px;
+}
+
+.card-list-scrollable::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.15);
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.card-list-scrollable::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 92, 246, 0.25);
+}
+
+/* Firefox scrollbar styling */
+.card-list-scrollable {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(139, 92, 246, 0.15) rgba(139, 92, 246, 0.02);
+}
+
+/* Disable max-height on mobile/tablet - allow natural page scrolling */
+@media (max-width: 1023px) {
+  .card-list-scrollable {
+    max-height: none !important;
+    overflow-y: visible !important;
+    padding-right: 0;
+  }
+}
+
 /* Empty State */
 .empty-state {
   text-align: center;
