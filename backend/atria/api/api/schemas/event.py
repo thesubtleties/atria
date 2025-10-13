@@ -36,6 +36,9 @@ class EventDetailSchema(EventSchema):
     class Meta(EventSchema.Meta):
         name = "EventDetail"
 
+    # Computed properties specific to detail view
+    sponsors_count = ma.Integer(dump_only=True)  # Number of active sponsors (detail only to avoid N+1)
+
     # Nested relationships - only include necessary fields
     organization = ma.Nested(
         "OrganizationSchema", only=("id", "name"), dump_only=True

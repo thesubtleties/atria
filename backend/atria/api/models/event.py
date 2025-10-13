@@ -373,6 +373,15 @@ class Event(db.Model):
         ).count()
 
     @property
+    def sponsors_count(self):
+        """Get number of active sponsors"""
+        from api.models import Sponsor
+
+        return Sponsor.query.filter_by(
+            event_id=self.id, is_active=True
+        ).count()
+
+    @property
     def speakers(self):
         """Get all speakers"""
         return self.get_users_by_role(EventUserRole.SPEAKER)
