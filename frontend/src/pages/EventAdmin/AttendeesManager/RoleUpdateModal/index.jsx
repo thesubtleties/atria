@@ -37,7 +37,8 @@ const RoleUpdateModal = ({
       form.reset();
       form.setFieldValue('role', user.role);
     }
-  }, [user, form]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]); // Only depend on user, not form (form object changes on every render)
 
   const handleSubmit = async (values) => {
     if (!user) return;
