@@ -3,6 +3,9 @@ import { axiosBaseQuery } from './baseQuery';
 
 export const baseApi = createApi({
   baseQuery: axiosBaseQuery,
+  // Default cache strategy
+  refetchOnReconnect: true, // Refetch when network reconnects
+  keepUnusedDataFor: 300, // Keep cache for 5 minutes after component unmounts
   tagTypes: [
     'Auth',
     'Users',
