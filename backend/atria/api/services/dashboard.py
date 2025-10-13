@@ -105,10 +105,12 @@ class DashboardService:
 
     @staticmethod
     def _get_user_organizations(user_id: int):
-        """Get user's organizations with role and basic stats"""
-        org_users = OrganizationUser.query.filter_by(user_id=user_id).options(
+        """Get user's organizations with role and basic stats (alphabetically ordered, case-insensitive)"""
+        org_users = OrganizationUser.query.filter_by(user_id=user_id).join(
+            Organization
+        ).options(
             joinedload(OrganizationUser.organization)
-        ).all()
+        ).order_by(func.lower(Organization.name).asc()).all()
 
         organizations = []
         for org_user in org_users:
