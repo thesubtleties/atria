@@ -30,7 +30,8 @@ const SpeakerEditModal = ({ opened, onClose, speaker, eventId, onSuccess }) => {
         speaker_bio: speaker.speaker_bio || speaker.bio || '',
       });
     }
-  }, [speaker, form]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [speaker]); // Only depend on speaker, not form (form object changes on every render)
 
   const handleSubmit = async (values) => {
     if (!speaker) return;

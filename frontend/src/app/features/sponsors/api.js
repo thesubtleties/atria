@@ -36,7 +36,10 @@ export const sponsorsApi = baseApi.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: [{ type: 'Sponsor', id: 'LIST' }],
+      invalidatesTags: [
+        { type: 'Sponsor', id: 'LIST' },
+        'Events', // Invalidate event cache so sponsors_count updates
+      ],
     }),
 
     updateSponsor: builder.mutation({
@@ -48,6 +51,7 @@ export const sponsorsApi = baseApi.injectEndpoints({
       invalidatesTags: (result, _, { sponsorId }) => [
         { type: 'Sponsor', id: sponsorId },
         { type: 'Sponsor', id: 'LIST' },
+        'Events', // Invalidate event cache so sponsors_count updates
       ],
     }),
 
@@ -56,7 +60,10 @@ export const sponsorsApi = baseApi.injectEndpoints({
         url: `/sponsors/${sponsorId}`,
         method: 'DELETE',
       }),
-      invalidatesTags: [{ type: 'Sponsor', id: 'LIST' }],
+      invalidatesTags: [
+        { type: 'Sponsor', id: 'LIST' },
+        'Events', // Invalidate event cache so sponsors_count updates
+      ],
     }),
 
     toggleSponsorActive: builder.mutation({
@@ -67,6 +74,7 @@ export const sponsorsApi = baseApi.injectEndpoints({
       invalidatesTags: (result, error, sponsorId) => [
         { type: 'Sponsor', id: sponsorId },
         { type: 'Sponsor', id: 'LIST' },
+        'Events', // Invalidate event cache so sponsors_count updates
       ],
     }),
 
@@ -78,6 +86,7 @@ export const sponsorsApi = baseApi.injectEndpoints({
       invalidatesTags: (result, _, sponsorId) => [
         { type: 'Sponsor', id: sponsorId },
         { type: 'Sponsor', id: 'LIST' },
+        'Events', // Invalidate event cache for consistency with other sponsor mutations
       ],
     }),
 

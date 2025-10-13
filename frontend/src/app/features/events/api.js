@@ -14,6 +14,8 @@ export const eventsApi = baseApi.injectEndpoints({
         url: `/events/${id}`,
       }),
       providesTags: (result, error, id) => [{ type: 'Events', id }],
+      // Refetch if cache is older than 5 minutes when navigating back
+      refetchOnMountOrArgChange: 300,
     }),
     createEvent: builder.mutation({
       query: ({ orgId, ...eventData }) => ({
@@ -56,6 +58,8 @@ export const eventsApi = baseApi.injectEndpoints({
         params: { role, page, per_page },
       }),
       providesTags: ['EventUsers'],
+      // Refetch if cache is older than 3 minutes (attendees can change during events)
+      refetchOnMountOrArgChange: 180,
     }),
     // Admin view with sensitive information
     getEventUsersAdmin: builder.query({
@@ -64,6 +68,8 @@ export const eventsApi = baseApi.injectEndpoints({
         params: { role, page, per_page },
       }),
       providesTags: ['EventUsers'],
+      // Refetch if cache is older than 3 minutes (attendees can change during events)
+      refetchOnMountOrArgChange: 180,
     }),
     addEventUser: builder.mutation({
       query: ({ eventId, ...userData }) => ({

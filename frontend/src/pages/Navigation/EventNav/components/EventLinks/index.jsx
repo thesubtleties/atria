@@ -27,7 +27,7 @@ export const EventLinks = ({ eventId, event, onMobileNavClick }) => {
     if (event?.event_type !== 'SINGLE_SESSION') {
       return null;
     }
-    
+
     // Use main_session_id if available
     if (event.main_session_id) {
       return {
@@ -35,7 +35,7 @@ export const EventLinks = ({ eventId, event, onMobileNavClick }) => {
         label: 'Main Stage'
       };
     }
-    
+
     // Fallback: find first session chronologically
     if (event.sessions && event.sessions.length > 0) {
       const sortedSessions = [...event.sessions].sort((a, b) => {
@@ -45,15 +45,18 @@ export const EventLinks = ({ eventId, event, onMobileNavClick }) => {
         }
         return a.start_time.localeCompare(b.start_time);
       });
-      
+
       return {
         id: sortedSessions[0].id,
         label: 'Main Stage'
       };
     }
-    
+
     return null;
   }, [event]);
+
+  // Check if there are active sponsors to show (using computed field from backend)
+  const hasActiveSponsors = (event?.sponsors_count ?? 0) > 0;
 
   return (
     <div className={styles.container}>
@@ -95,13 +98,15 @@ export const EventLinks = ({ eventId, event, onMobileNavClick }) => {
         active={isActive(`/app/events/${eventId}/networking`)}
         onClick={handleNavClick}
       />
-      <NavLink
-        component={RouterNavLink}
-        to={`/app/events/${eventId}/sponsors`}
-        label="Sponsors"
-        active={isActive(`/app/events/${eventId}/sponsors`)}
-        onClick={handleNavClick}
-      />
+      {hasActiveSponsors && (
+        <NavLink
+          component={RouterNavLink}
+          to={`/app/events/${eventId}/sponsors`}
+          label="Sponsors"
+          active={isActive(`/app/events/${eventId}/sponsors`)}
+          onClick={handleNavClick}
+        />
+      )}
     </div>
   );
 };

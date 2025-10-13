@@ -13,6 +13,8 @@ export const organizationsApi = baseApi.injectEndpoints({
         url: `/organizations/${id}`,
       }),
       providesTags: (result, error, id) => [{ type: 'Organizations', id }],
+      // Organizations rarely change, keep cache longer
+      keepUnusedDataFor: 600,
     }),
     createOrganization: builder.mutation({
       query: (orgData) => ({
