@@ -9,6 +9,8 @@ export const eventInvitationsApi = baseApi.injectEndpoints({
         params: { page, per_page: perPage },
       }),
       providesTags: ['EventInvitations'],
+      // Invitations change frequently during setup, refetch if older than 1 min
+      refetchOnMountOrArgChange: 60,
     }),
 
     // Send single invitation

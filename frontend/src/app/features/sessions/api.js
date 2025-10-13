@@ -8,6 +8,8 @@ export const sessionsApi = baseApi.injectEndpoints({
         params: { day_number: dayNumber, page, per_page },
       }),
       providesTags: ['Sessions'],
+      // Refetch if cache is older than 5 minutes (sessions can change during events)
+      refetchOnMountOrArgChange: 300,
     }),
     getSession: builder.query({
       query: (id) => {
@@ -17,6 +19,8 @@ export const sessionsApi = baseApi.injectEndpoints({
         };
       },
       providesTags: (result, error, id) => [{ type: 'Sessions', id }],
+      // Refetch if cache is older than 5 minutes (session details can change)
+      refetchOnMountOrArgChange: 300,
     }),
     createSession: builder.mutation({
       query: ({ eventId, ...sessionData }) => ({
@@ -64,6 +68,8 @@ export const sessionsApi = baseApi.injectEndpoints({
         params: { role, page, per_page },
       }),
       providesTags: ['SessionSpeakers'],
+      // Refetch if cache is older than 5 minutes (speakers can be added/removed)
+      refetchOnMountOrArgChange: 300,
     }),
     addSessionSpeaker: builder.mutation({
       query: ({ sessionId, ...speakerData }) => ({

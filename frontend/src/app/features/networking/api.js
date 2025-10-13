@@ -334,6 +334,8 @@ export const networkingApi = baseApi.injectEndpoints({
         },
       }),
       providesTags: ['Connection'],
+      // Connections change moderately, refetch if older than 5 min
+      refetchOnMountOrArgChange: 300,
     }),
 
     // Update connection status (accept/reject)
@@ -370,6 +372,8 @@ export const networkingApi = baseApi.injectEndpoints({
         },
       }),
       providesTags: ['Connection'],
+      // Connections change moderately, refetch if older than 5 min
+      refetchOnMountOrArgChange: 300,
     }),
 
     // Get pending connection requests
@@ -383,6 +387,8 @@ export const networkingApi = baseApi.injectEndpoints({
         },
       }),
       providesTags: ['Connection'],
+      // Pending requests change more frequently, refetch if older than 3 min
+      refetchOnMountOrArgChange: 180,
     }),
 
     // Clear/hide a direct message thread

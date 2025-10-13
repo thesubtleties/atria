@@ -7,6 +7,8 @@ export const usersApi = baseApi.injectEndpoints({
         url: `/users/${id}`,
       }),
       providesTags: (result, error, id) => [{ type: 'Users', id }],
+      // User profiles rarely change, keep cache longer
+      keepUnusedDataFor: 600,
     }),
     checkUserExists: builder.query({
       query: (email) => ({
