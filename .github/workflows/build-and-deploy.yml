@@ -63,7 +63,7 @@ jobs:
           ${{ env.FRONTEND_IMAGE }}:${{ steps.generate-tag.outputs.tag }}
           ${{ env.FRONTEND_IMAGE }}:latest
         build-args: |
-          VITE_API_URL=https://atria.gg/api
+          VITE_AVATAR_API_URL=https://avatars.atria.gg
         cache-from: type=gha
         cache-to: type=gha,mode=max
 

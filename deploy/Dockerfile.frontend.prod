@@ -9,8 +9,15 @@ RUN npm ci
 
 # Copy source and build
 COPY frontend/ .
+
+# Declare build arg for avatar API URL (different subdomain, needs full URL)
+ARG VITE_AVATAR_API_URL
+
 # Set NODE_ENV for production build
 ENV NODE_ENV=production
+# Expose avatar URL as ENV so Vite can embed it during build
+ENV VITE_AVATAR_API_URL=${VITE_AVATAR_API_URL}
+
 RUN npm run build
 
 # Serve stage - Using nginx for much better performance
