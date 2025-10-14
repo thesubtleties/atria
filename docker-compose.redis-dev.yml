@@ -151,6 +151,19 @@ services:
     networks:
       - default
 
+  # DiceBear Avatar API for local avatar generation
+  dicebear-api:
+    container_name: atria-avatars-dev
+    image: dicebear/api:3
+    ports:
+      - '5001:3000'
+    tmpfs:
+      - /run
+      - /tmp
+    networks:
+      - default
+    restart: unless-stopped
+
 volumes:
   postgres_data_dev:
   redis_data_dev:

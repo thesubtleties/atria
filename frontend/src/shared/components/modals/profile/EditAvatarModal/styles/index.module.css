@@ -1,0 +1,135 @@
+/* Modal Content - Glassmorphism */
+.modalContent {
+  background: rgba(255, 255, 255, 1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.08);
+}
+
+/* Modal Header */
+.modalHeader {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.04);
+}
+
+/* Section Titles */
+.sectionTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #8b5cf6;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.08);
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.sectionTitle:first-of-type {
+  margin-top: 0;
+}
+
+/* Form Select inputs within modals - Subtle and clean */
+.formSelect {
+  background: rgba(255, 255, 255, 1) !important;
+  border: 1px solid rgba(139, 92, 246, 0.1) !important;
+  transition: all 0.2s ease;
+}
+
+.formSelect:focus {
+  border-color: rgba(139, 92, 246, 0.3) !important;
+  background: rgba(255, 255, 255, 1) !important;
+}
+
+/* Button Group at Modal Bottom */
+.buttonGroup {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+}
+
+/* Main layout wrapper */
+.modalLayout {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Top section: preview + basic options side by side */
+.topSection {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+/* Preview on the left */
+.previewSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.previewLabel {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #8b5cf6;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+/* Basic options next to preview */
+.basicOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Full width options below preview */
+.fullWidthOptions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  row-gap: 0.75rem;
+}
+
+/* Section titles span full width */
+.sectionTitle {
+  grid-column: 1 / -1;
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .modalContent {
+    padding: 0;
+  }
+
+  .modalHeader {
+    padding: 1rem;
+    font-size: 1.125rem;
+  }
+
+  .buttonGroup {
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+  }
+
+  .topSection {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .fullWidthOptions {
+    grid-template-columns: 1fr;
+  }
+}
