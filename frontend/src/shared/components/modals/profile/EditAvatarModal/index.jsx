@@ -192,27 +192,14 @@ export const EditAvatarModal = ({ opened, onClose, onSave, currentUrl }) => {
               allowDeselect={false}
             />
 
-            {HAT_TYPES.includes(options.top) && (
-              <Select
-                label="Headwear Color"
-                placeholder="Select headwear color"
-                data={HAT_COLOR_OPTIONS}
-                value={options.hatColor}
-                onChange={(value) => handleOptionChange('hatColor', value)}
-                classNames={{ input: styles.formSelect }}
-                allowDeselect={false}
-              />
-            )}
-
-            <Text className={styles.sectionTitle}>Skin Tone</Text>
-
             <Select
-              label="Skin Tone"
-              placeholder="Select skin tone"
-              data={SKIN_OPTIONS}
-              value={options.skin}
-              onChange={(value) => handleOptionChange('skin', value)}
+              label="Headwear Color"
+              placeholder="Select headwear color"
+              data={HAT_COLOR_OPTIONS}
+              value={options.hatColor}
+              onChange={(value) => handleOptionChange('hatColor', value)}
               classNames={{ input: styles.formSelect }}
+              disabled={!HAT_TYPES.includes(options.top)}
               allowDeselect={false}
             />
           </div>
@@ -220,6 +207,18 @@ export const EditAvatarModal = ({ opened, onClose, onSave, currentUrl }) => {
 
         {/* Full Width Options Below */}
         <div className={styles.fullWidthOptions}>
+          <Text className={styles.sectionTitle}>Skin Tone</Text>
+
+          <Select
+            label="Skin Tone"
+            placeholder="Select skin tone"
+            data={SKIN_OPTIONS}
+            value={options.skin}
+            onChange={(value) => handleOptionChange('skin', value)}
+            classNames={{ input: styles.formSelect }}
+            allowDeselect={false}
+          />
+
           <Text className={styles.sectionTitle}>Facial Features</Text>
 
         <Select
@@ -271,6 +270,7 @@ export const EditAvatarModal = ({ opened, onClose, onSave, currentUrl }) => {
           onChange={(value) => handleOptionChange('facialHairColor', value)}
           classNames={{ input: styles.formSelect }}
           disabled={options.facialHair === 'blank'}
+          allowDeselect={false}
         />
 
         <Text className={styles.sectionTitle}>Clothing & Accessories</Text>
@@ -312,6 +312,7 @@ export const EditAvatarModal = ({ opened, onClose, onSave, currentUrl }) => {
           onChange={(value) => handleOptionChange('accessoriesColor', value)}
           classNames={{ input: styles.formSelect }}
           disabled={options.accessories === 'blank'}
+          allowDeselect={false}
         />
 
         <div className={styles.buttonGroup} style={{ gridColumn: '1 / -1' }}>
