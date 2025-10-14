@@ -1,7 +1,6 @@
 import { Avatar, Menu, ActionIcon } from '@mantine/core';
 import {
   IconEdit,
-  IconRefresh,
   IconDots,
   IconUserMinus,
 } from '@tabler/icons-react';
@@ -13,7 +12,7 @@ export const ProfileHero = ({
   onEditClick,
   isOwnProfile = true,
   isEditing = false,
-  onAvatarReroll,
+  onAvatarEdit,
   connection = null,
   onRemoveConnection,
   isRemovingConnection = false,
@@ -92,15 +91,15 @@ export const ProfileHero = ({
           >
             {getInitials(user.full_name || user.email)}
           </Avatar>
-          {isEditing && onAvatarReroll && (
+          {isEditing && onAvatarEdit && (
             <Button
               variant="subtle"
               size="sm"
-              onClick={onAvatarReroll}
+              onClick={onAvatarEdit}
               className={styles.rerollButton}
             >
-              <IconRefresh size={16} />
-              Reroll Avatar
+              <IconEdit size={16} />
+              Edit Avatar
             </Button>
           )}
         </div>

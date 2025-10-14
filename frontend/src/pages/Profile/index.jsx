@@ -23,6 +23,7 @@ import { ActivityOverview } from './ActivityOverview';
 import { AboutSection } from './AboutSection';
 import { Button } from '@/shared/components/buttons';
 import { openConfirmationModal } from '@/shared/components/modals/ConfirmationModal';
+import { EditAvatarModal } from '@/shared/components/modals/profile/EditAvatarModal';
 import styles from './styles/index.module.css';
 
 export const ProfilePage = () => {
@@ -32,6 +33,7 @@ export const ProfilePage = () => {
   const { userId } = useParams(); // Get userId from URL params
   const [isEditing, setIsEditing] = useState(false);
   const [tempImageUrl, setTempImageUrl] = useState(null);
+  const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
   const parallaxRef = useRef(null);
 
   // Determine which user profile to load
@@ -197,16 +199,13 @@ export const ProfilePage = () => {
     setIsEditing(true);
   };
 
-  // Generate random seed for DiceBear avatar
-  const generateRandomSeed = () => {
-    const length = Math.floor(Math.random() * 6) + 8; // 8-13 characters
-    const chars =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let seed = '';
-    for (let i = 0; i < length; i++) {
-      seed += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return seed;
+  const handleAvatarEdit = () => {
+    setIsAvatarModalOpen(true);
+  };
+
+  const handleAvatarSave = (newAvatarUrl) => {
+    setTempImageUrl(newAvatarUrl);
+    form.setFieldValue('image_url', newAvatarUrl);
   };
 
   const handleRemoveConnection = () => {
@@ -242,13 +241,6 @@ export const ProfilePage = () => {
         }
       },
     });
-  };
-
-  const handleAvatarReroll = () => {
-    const newSeed = generateRandomSeed();
-    const newAvatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${newSeed}`;
-    setTempImageUrl(newAvatarUrl);
-    form.setFieldValue('image_url', newAvatarUrl);
   };
 
   if (isLoading) {
@@ -306,7 +298,7 @@ export const ProfilePage = () => {
         onEditClick={handleEditClick}
         isOwnProfile={isOwnProfile}
         isEditing={isEditing}
-        onAvatarReroll={handleAvatarReroll}
+        onAvatarEdit={handleAvatarEdit}
         connection={connection}
         onRemoveConnection={handleRemoveConnection}
         isRemovingConnection={isRemovingConnection}
@@ -429,6 +421,14 @@ export const ProfilePage = () => {
           </form>
         </div>
       )}
+
+      {/* Avatar Editor Modal */}
+      <EditAvatarModal
+        opened={isAvatarModalOpen}
+        onClose={() => setIsAvatarModalOpen(false)}
+        onSave={handleAvatarSave}
+        currentUrl={form.values.image_url || userProfile?.image_url}
+      />
     </main>
   );
 };
