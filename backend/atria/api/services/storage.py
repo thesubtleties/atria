@@ -14,9 +14,10 @@ from werkzeug.datastructures import FileStorage
 
 class StorageBucket(Enum):
     """Storage bucket types based on access patterns."""
-    PUBLIC = "atria-public"
-    AUTHENTICATED = "atria-authenticated"
-    PRIVATE = "atria-private"
+    # Bucket names are configurable via environment variables for multi-environment support
+    PUBLIC = os.getenv('MINIO_BUCKET_PUBLIC', 'atria-public')
+    AUTHENTICATED = os.getenv('MINIO_BUCKET_AUTHENTICATED', 'atria-authenticated')
+    PRIVATE = os.getenv('MINIO_BUCKET_PRIVATE', 'atria-private')
 
 
 class StorageService:
@@ -34,19 +35,20 @@ class StorageService:
     }
     
     # Storage paths by context
+    # Note: Bucket names are read from StorageBucket enum which uses environment variables
     STORAGE_PATHS = {
         # Public bucket paths
-        'marketing': ('atria-public', 'marketing'),
-        'email_assets': ('atria-public', 'email-assets'),
-        
+        'marketing': (StorageBucket.PUBLIC.value, 'marketing'),
+        'email_assets': (StorageBucket.PUBLIC.value, 'email-assets'),
+
         # Authenticated bucket paths
-        'avatar': ('atria-authenticated', 'users/{user_id}/avatars'),
-        
+        'avatar': (StorageBucket.AUTHENTICATED.value, 'users/{user_id}/avatars'),
+
         # Private bucket paths
-        'event_logo': ('atria-private', 'events/{event_id}/logos'),
-        'event_banner': ('atria-private', 'events/{event_id}/banners'),
-        'sponsor_logo': ('atria-private', 'events/{event_id}/sponsors/logos'),
-        'event_document': ('atria-private', 'events/{event_id}/documents'),
+        'event_logo': (StorageBucket.PRIVATE.value, 'events/{event_id}/logos'),
+        'event_banner': (StorageBucket.PRIVATE.value, 'events/{event_id}/banners'),
+        'sponsor_logo': (StorageBucket.PRIVATE.value, 'events/{event_id}/sponsors/logos'),
+        'event_document': (StorageBucket.PRIVATE.value, 'events/{event_id}/documents'),
     }
     
     def __init__(self):

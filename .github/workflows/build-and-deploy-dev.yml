@@ -1,39 +1,38 @@
-name: Build and Deploy Atria (Production)
+name: Build and Deploy Atria (Dev/Staging)
 
 on:
   workflow_run:
     workflows: ["Test Suite"]
     types: [completed]
-    branches: [main]
-  workflow_dispatch:  # Keep manual trigger option (use with caution)
+    branches: [dev]
+  workflow_dispatch:  # Allow manual trigger
 
 env:
   BACKEND_IMAGE: sbtl/atria-backend
   FRONTEND_IMAGE: sbtl/atria-frontend
 
 jobs:
-  build-and-push-prod:
+  build-and-push-dev:
     runs-on: ubuntu-latest
     # Only run if tests passed (or manual trigger)
-    # PRODUCTION DEPLOYMENT - only runs on main branch
     if: |
       github.event_name == 'workflow_dispatch' ||
       (github.event.workflow_run.conclusion == 'success' &&
-       github.event.workflow_run.head_branch == 'main')
+       github.event.workflow_run.head_branch == 'dev')
     outputs:
       image-tag: ${{ steps.generate-tag.outputs.tag }}
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
       with:
-        ref: main  # Ensure we checkout the main branch
+        ref: dev  # Ensure we checkout the dev branch
 
     - name: Generate unique image tag
       id: generate-tag
       run: |
-        TAG="prod-${GITHUB_SHA::8}-$(date +%s)"
+        TAG="dev-${GITHUB_SHA::8}-$(date +%s)"
         echo "tag=${TAG}" >> $GITHUB_OUTPUT
-        echo "Generated production tag: ${TAG}"
+        echo "Generated dev tag: ${TAG}"
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
@@ -44,7 +43,7 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: Build and push backend image (production)
+    - name: Build and push backend image (dev)
       uses: docker/build-push-action@v5
       with:
         context: .
@@ -52,12 +51,11 @@ jobs:
         push: true
         tags: |
           ${{ env.BACKEND_IMAGE }}:${{ steps.generate-tag.outputs.tag }}
-          ${{ env.BACKEND_IMAGE }}:prod-latest
-          ${{ env.BACKEND_IMAGE }}:latest
+          ${{ env.BACKEND_IMAGE }}:dev-latest
         cache-from: type=gha
         cache-to: type=gha,mode=max
 
-    - name: Build and push frontend image (production)
+    - name: Build and push frontend image (dev)
       uses: docker/build-push-action@v5
       with:
         context: .
@@ -65,20 +63,17 @@ jobs:
         push: true
         tags: |
           ${{ env.FRONTEND_IMAGE }}:${{ steps.generate-tag.outputs.tag }}
-          ${{ env.FRONTEND_IMAGE }}:prod-latest
-          ${{ env.FRONTEND_IMAGE }}:latest
+          ${{ env.FRONTEND_IMAGE }}:dev-latest
         build-args: |
           VITE_AVATAR_API_URL=https://avatars.atria.gg
         cache-from: type=gha
         cache-to: type=gha,mode=max
 
-  deploy-prod:
-    needs: build-and-push-prod
+  deploy-dev:
+    needs: build-and-push-dev
     runs-on: ubuntu-latest
-    # PRODUCTION DEPLOYMENT - only runs on main branch
-    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
     steps:
-    - name: Deploy to k3s production environment
+    - name: Deploy to k3s dev environment
       uses: appleboy/ssh-action@v1.0.0
       with:
         host: ${{ secrets.K3S_HOST }}
@@ -86,26 +81,36 @@ jobs:
         key: ${{ secrets.K3S_SSH_KEY }}
         port: ${{ secrets.K3S_PORT }}
         script: |
-          IMAGE_TAG="${{ needs.build-and-push-prod.outputs.image-tag }}"
+          IMAGE_TAG="${{ needs.build-and-push-dev.outputs.image-tag }}"
 
           # Set KUBECONFIG to use user's config
           export KUBECONFIG=$HOME/.kube/config
 
           # Pull the new images with specific tag
-          echo "🚀 PRODUCTION DEPLOYMENT - Pulling Docker images with tag: ${IMAGE_TAG}"
+          echo "Pulling new Docker images with tag: ${IMAGE_TAG}"
           sudo k3s crictl pull ${{ env.BACKEND_IMAGE }}:${IMAGE_TAG}
           sudo k3s crictl pull ${{ env.FRONTEND_IMAGE }}:${IMAGE_TAG}
 
-          # Update deployments in PRODUCTION namespace (atria)
-          echo "Updating Kubernetes deployments in PRODUCTION namespace (atria)..."
-          kubectl set image deployment/backend-deployment backend=${{ env.BACKEND_IMAGE }}:${IMAGE_TAG} -n atria
-          kubectl set image deployment/frontend-deployment frontend=${{ env.FRONTEND_IMAGE }}:${IMAGE_TAG} -n atria
+          # Update deployments in DEV namespace
+          echo "Updating Kubernetes deployments in atria-dev namespace..."
+          kubectl set image deployment/backend-deployment backend=${{ env.BACKEND_IMAGE }}:${IMAGE_TAG} -n atria-dev
+          kubectl set image deployment/frontend-deployment frontend=${{ env.FRONTEND_IMAGE }}:${IMAGE_TAG} -n atria-dev
 
           # Wait for rollout to complete
           echo "Waiting for backend rollout..."
-          kubectl rollout status deployment/backend-deployment -n atria --timeout=300s
+          kubectl rollout status deployment/backend-deployment -n atria-dev --timeout=300s
 
           echo "Waiting for frontend rollout..."
-          kubectl rollout status deployment/frontend-deployment -n atria --timeout=300s
+          kubectl rollout status deployment/frontend-deployment -n atria-dev --timeout=300s
 
-          echo "✅ Production deployment completed successfully!"
+          echo "Dev deployment completed successfully!"
+
+    - name: Post deployment notification
+      if: always()
+      run: |
+        if [ "${{ job.status }}" == "success" ]; then
+          echo "✅ Dev environment deployed successfully!"
+          echo "Image tag: ${{ needs.build-and-push-dev.outputs.image-tag }}"
+        else
+          echo "❌ Dev deployment failed!"
+        fi

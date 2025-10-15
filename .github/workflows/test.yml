@@ -2,7 +2,7 @@ name: Test Suite
 
 on:
   pull_request:
-    branches: [main, develop]
+    branches: [main, dev]
     paths-ignore:
       - '**.md'
       - 'LICENSE*'
@@ -11,7 +11,7 @@ on:
       - '.github/ISSUE_TEMPLATE/**'
       - '.github/PULL_REQUEST_TEMPLATE/**'
   push:
-    branches: [main]
+    branches: [main, dev]
     paths-ignore:
       - '**.md'
       - 'LICENSE*'
