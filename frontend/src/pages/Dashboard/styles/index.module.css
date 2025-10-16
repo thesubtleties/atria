@@ -113,6 +113,7 @@
   /* iPhone SE and smaller */
   .dashboard {
     padding: 1rem; /* Ensure consistent padding */
+    padding-bottom: 50px; /* Extra space for messaging tab */
   }
 
   .dashboardGrid {
@@ -146,6 +147,10 @@
 
 @media (min-width: 430px) and (max-width: 767px) {
   /* iPhone 15 Pro range */
+
+  .dashboard {
+    padding-bottom: 50px; /* Extra space for messaging tab */
+  }
 
   .dashboardGrid {
     grid-template-columns: 1fr;

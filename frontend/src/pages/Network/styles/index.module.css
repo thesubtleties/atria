@@ -104,6 +104,7 @@
 @media (max-width: 768px) {
   .pageContainer {
     padding: var(--space-md);
+    padding-bottom: 50px; /* Extra space for messaging tab */
   }
 
   .sectionHeader {
