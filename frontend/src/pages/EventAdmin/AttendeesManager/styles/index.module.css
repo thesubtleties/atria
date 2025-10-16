@@ -226,6 +226,7 @@
 @media (max-width: 768px) {
   .contentWrapper {
     padding: 1rem;
+    padding-bottom: 50px; /* Extra space for messaging tab */
   }
 
   /* Header responsive styles moved to HeaderSection/styles.module.css */

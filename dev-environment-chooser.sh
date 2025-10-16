@@ -34,18 +34,25 @@ echo "   • Production-like environment"
 echo "   • Best for: Testing clustering, Socket.IO, caching"
 echo ""
 
-echo -e "${YELLOW}3) Check Status${NC}"
+echo -e "${YELLOW}3) Tailscale Mobile Testing${NC}"
+echo "   • Redis + Traefik (production-like)"
+echo "   • Configured for Tailscale remote access"
+echo "   • Two backend instances (clustered)"
+echo "   • Best for: Mobile/phone testing, remote access"
+echo ""
+
+echo -e "${YELLOW}4) Check Status${NC}"
 echo "   • See what's currently running"
 echo ""
 
-echo -e "${YELLOW}4) Stop All${NC}"
+echo -e "${YELLOW}5) Stop All${NC}"
 echo "   • Stop any running environments"
 echo ""
 
-echo -e "${YELLOW}5) Exit${NC}"
+echo -e "${YELLOW}6) Exit${NC}"
 echo ""
 
-read -p "Enter choice [1-5]: " choice
+read -p "Enter choice [1-6]: " choice
 
 case $choice in
     1)
@@ -67,6 +74,18 @@ case $choice in
         ;;
     3)
         echo ""
+        echo -e "${GREEN}Starting Tailscale Mobile Testing Environment...${NC}"
+        # Check if we should seed the database
+        read -p "Seed the database? (y/N): " seed_choice
+        if [[ $seed_choice =~ ^[Yy]$ ]]; then
+            export SEED_DB=true
+        else
+            export SEED_DB=false
+        fi
+        ./start-tailscale-dev-tmux.sh
+        ;;
+    4)
+        echo ""
         echo -e "${CYAN}Checking running environments...${NC}"
         echo ""
 
@@ -81,7 +100,10 @@ case $choice in
         echo ""
 
         # Check which compose file is active
-        if docker ps | grep -q "atria-redis-dev"; then
+        if docker ps | grep -q "atria-redis-tailscale"; then
+            echo -e "${GREEN}✓ Tailscale environment is running${NC}"
+            echo "  Stop with: ./stop-tailscale-dev-tmux.sh"
+        elif docker ps | grep -q "atria-redis-dev"; then
             echo -e "${GREEN}✓ Redis environment is running${NC}"
             echo "  Stop with: ./stop-redis-dev-tmux.sh"
         elif docker ps | grep -q "atria-api-dev"; then
@@ -91,14 +113,15 @@ case $choice in
             echo -e "${YELLOW}No Atria environment detected${NC}"
         fi
         ;;
-    4)
+    5)
         echo ""
         echo -e "${YELLOW}Stopping all environments...${NC}"
         ./stop-local-dev-tmux.sh 2>/dev/null
         ./stop-redis-dev-tmux.sh 2>/dev/null
+        ./stop-tailscale-dev-tmux.sh 2>/dev/null
         echo -e "${GREEN}✅ All environments stopped${NC}"
         ;;
-    5)
+    6)
         echo -e "${CYAN}Goodbye!${NC}"
         exit 0
         ;;
