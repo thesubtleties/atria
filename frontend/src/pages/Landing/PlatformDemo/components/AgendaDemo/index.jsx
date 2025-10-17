@@ -195,10 +195,11 @@ export const AgendaDemo = ({ isFirefox }) => {
                 SPEAKER
               </div>
               <div className={styles.speakerInfo}>
-                <img 
-                  className={styles.speakerAvatar} 
+                <img
+                  className={styles.speakerAvatar}
                   src={`https://api.dicebear.com/9.x/avataaars/svg?seed=${agendaSessions[0].speakerSeed}`}
                   alt={agendaSessions[0].speaker}
+                  loading="lazy"
                 />
                 <div className={styles.speakerDetails}>
                   <div className={styles.speakerName}>{agendaSessions[0].speaker}</div>
@@ -235,10 +236,11 @@ export const AgendaDemo = ({ isFirefox }) => {
                   MODERATOR
                 </div>
                 <div className={styles.speakerInfo}>
-                  <img 
-                    className={styles.speakerAvatar} 
+                  <img
+                    className={styles.speakerAvatar}
                     src={`https://api.dicebear.com/9.x/avataaars/svg?seed=${session.speakerSeed}`}
                     alt={session.speaker}
+                    loading="lazy"
                   />
                   <div className={styles.speakerDetails}>
                     <div className={styles.speakerName}>{session.speaker}</div>
