@@ -14,6 +14,9 @@ export default defineConfig(({ mode }) => ({
     drop: mode === 'production' ? ['console', 'debugger'] : [],
   },
   build: {
+    // Disable modulepreload for lazy chunks - we want true lazy loading
+    modulePreload: false,
+
     // Optimize chunk sizes for better caching
     rollupOptions: {
       output: {

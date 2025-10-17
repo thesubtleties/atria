@@ -4,13 +4,10 @@ import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
-import { useModals } from '@mantine/modals';
+import { useModalManager } from '../shared/useModalManager.jsx';
 import MagneticButton from '../shared/MagneticButton';
 import styles from './Hero.module.css';
 import AtriaLogo from '../../../assets/atria-logo.svg';
-import { LoginModal } from '@/shared/components/modals/auth/LoginModal';
-import { SignupModal } from '@/shared/components/modals/auth/SignupModal';
-import { ForgotPasswordModal } from '@/shared/components/modals/auth/ForgotPasswordModal';
 import { useLoginMutation, authApi } from '@/app/features/auth/api';
 import { useDispatch } from 'react-redux';
 
@@ -31,7 +28,7 @@ const PLACE_WORDS = [
 const Hero = () => {
   const [fontLoaded, setFontLoaded] = useState(false);
   const navigate = useNavigate();
-  const modals = useModals();
+  const { openModal, ModalRenderer } = useModalManager();
   const dispatch = useDispatch();
   const [login] = useLoginMutation();
   
@@ -71,65 +68,17 @@ const Hero = () => {
     }
   }, []);
 
-  // Modal handlers
+  // Modal handlers - now lazy-loaded, no Mantine dependency
   const handleForgotPassword = () => {
-    modals.openModal({
-      title: 'Reset Password',
-      children: (
-        <ForgotPasswordModal
-          onClose={() => modals.closeAll()}
-        />
-      ),
-      size: 'md',
-      centered: true,
-      closeOnClickOutside: true,
-      closeOnEscape: true,
-      lockScroll: false,
-    });
+    openModal('forgotPassword');
   };
 
   const handleLogin = () => {
-    modals.openModal({
-      title: 'Log In',
-      children: (
-        <LoginModal
-          onClose={() => modals.closeAll()}
-          onSuccess={() => {
-            modals.closeAll();
-            navigate('/app');
-          }}
-          onForgotPassword={() => {
-            modals.closeAll();
-            handleForgotPassword();
-          }}
-        />
-      ),
-      size: 'md',
-      centered: true,
-      closeOnClickOutside: true,
-      closeOnEscape: true,
-      lockScroll: false,
-    });
+    openModal('login');
   };
 
   const handleSignup = () => {
-    modals.openModal({
-      title: 'Create Account',
-      children: (
-        <SignupModal
-          onClose={() => modals.closeAll()}
-          onSuccess={() => {
-            modals.closeAll();
-            navigate('/app');
-          }}
-        />
-      ),
-      size: 'md',
-      centered: true,
-      closeOnClickOutside: true,
-      closeOnEscape: true,
-      lockScroll: false,
-    });
+    openModal('signup');
   };
 
   const handleDemoLogin = async () => {
@@ -152,6 +101,14 @@ const Hero = () => {
 
   useGSAP(
     () => {
+      console.log('🎬 [Hero] useGSAP starting', {
+        timestamp: performance.now(),
+        bodyClasses: document.body.className,
+        hasCriticalCSS: !!document.getElementById('critical-animations')
+      });
+
+      // Note: We let GSAP run during pre-rendering to capture initial animation states
+
       const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
       let scrambleIntervalHandle = null;
       let ctx = gsap.context(() => {
@@ -342,12 +299,22 @@ const Hero = () => {
         }
       }, containerRef); // Context scoped to container
 
+      // Mark body as hydrated AFTER GSAP animations are initialized
+      // This prevents flash during hydration by keeping critical CSS active
+      // until ScrollTrigger is ready to take over
+      console.log('✅ [Hero] GSAP initialized, adding .hydrated class', {
+        timestamp: performance.now(),
+        scrollTriggers: ScrollTrigger.getAll().length
+      });
+      document.body.classList.add('hydrated');
+
       // Cleanup function
       return () => {
         if (scrambleIntervalHandle) {
           clearInterval(scrambleIntervalHandle);
         }
         ctx.revert(); // This will kill all GSAP animations and ScrollTriggers in context
+        document.body.classList.remove('hydrated'); // Remove hydrated class on cleanup
       };
     },
     { scope: containerRef }
@@ -356,13 +323,13 @@ const Hero = () => {
   return (
     <section ref={containerRef} className={`${styles.hero} hero`}>
       {/* Yellow background that moves up with the drape */}
-      <div ref={movingBackgroundRef} className={styles.movingBackground}>
+      <div ref={movingBackgroundRef} className={`${styles.movingBackground} moving-background`}>
         {/* Purple drape as bottom layer that covers 90% of screen */}
-        <div ref={drapeRef} className={styles.drape}>
+        <div ref={drapeRef} className={`${styles.drape} drape`}>
           <svg
             viewBox="0 0 100 100"
             preserveAspectRatio="none"
-            className={styles.drapeSvg}
+            className={`${styles.drapeSvg} drape-svg`}
           >
             <path
               d="M0,0 L100,0 L100,94 C93.75,92.2 87.5,96.7 75,94 C62.5,92.2 50,97.8 37.5,95.6 C25,93.3 12.5,97.8 0,94 Z"
@@ -394,7 +361,7 @@ const Hero = () => {
         <div className={styles.container}>
           <div className={styles.heroContent}>
             <div ref={logoRef} className={styles.logoContainer}>
-              <img src={AtriaLogo} alt="Atria" className={styles.logo} />
+              <img src={AtriaLogo} alt="Atria" className={styles.logo} fetchpriority="high" width="512" height="512" />
               <h1 
                 className={styles.logoText} 
                 style={{ opacity: fontLoaded ? 1 : 0, transition: 'opacity 0.3s ease' }}
@@ -404,7 +371,7 @@ const Hero = () => {
             </div>
             <div ref={taglineRef} className={styles.tagline}>
               <p className={styles.taglineTop}>— a place for —</p>
-              <p ref={scrambleRef} className={styles.scrambleText}>
+              <p ref={scrambleRef} id="hero-scramble-text" className={styles.scrambleText}>
                 connections
               </p>
             </div>
@@ -445,6 +412,9 @@ const Hero = () => {
           />
         </svg>
       </div>
+
+      {/* Lazy-loaded modals */}
+      <ModalRenderer />
     </section>
   );
 };

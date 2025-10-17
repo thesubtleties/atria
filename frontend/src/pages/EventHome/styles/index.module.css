@@ -56,3 +56,15 @@
   position: relative;
   z-index: 1;
 }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding-bottom: 50px; /* Extra space for messaging tab */
+  }
+
+  .bgShape1,
+  .bgShape2 {
+    display: none;
+  }
+}

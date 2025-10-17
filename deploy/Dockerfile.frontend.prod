@@ -3,9 +3,27 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
+# Install dependencies for build scripts and Playwright
+RUN apk add --no-cache \
+    bash \
+    curl \
+    chromium \
+    nss \
+    freetype \
+    harfbuzz \
+    ca-certificates \
+    ttf-freefont
+
+# Tell Playwright to use system chromium
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
+ENV PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium-browser
+
 # Install dependencies
 COPY frontend/package*.json ./
 RUN npm ci
+
+# Install Playwright (will use system chromium due to env vars above)
+RUN npx playwright install chromium
 
 # Copy source and build
 COPY frontend/ .
