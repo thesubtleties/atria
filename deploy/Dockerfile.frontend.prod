@@ -22,6 +22,9 @@ ENV PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium-browser
 COPY frontend/package*.json ./
 RUN npm ci
 
+# Install Playwright (will use system chromium due to env vars above)
+RUN npx playwright install chromium
+
 # Copy source and build
 COPY frontend/ .
 

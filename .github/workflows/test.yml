@@ -151,6 +151,11 @@ jobs:
         cd frontend
         npm ci
 
+    - name: Install Playwright browsers
+      run: |
+        cd frontend
+        npx playwright install chromium --with-deps
+
     - name: Run linting
       continue-on-error: true
       run: |
