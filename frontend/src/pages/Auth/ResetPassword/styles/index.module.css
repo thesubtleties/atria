@@ -1,5 +1,5 @@
 /* Import Nunito font for branding */
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600&display=swap');
+/* Nunito is now self-hosted in /public/fonts/fonts.css */
 
 /* Page Container - Full viewport */
 .container {

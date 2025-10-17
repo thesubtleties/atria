@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "bash scripts/build-with-prerender.sh",
+    "build:no-prerender": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "generate-api": "orval",
@@ -70,6 +71,7 @@
     "eslint-plugin-storybook": "^0.11.2",
     "globals": "^15.14.0",
     "orval": "^7.4.1",
+    "playwright": "^1.56.0",
     "postcss": "^8.5.1",
     "postcss-preset-mantine": "^1.17.0",
     "postcss-simple-vars": "^7.0.1",

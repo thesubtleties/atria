@@ -10,13 +10,12 @@ export const PublicGuard = ({ children }) => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const authChecked = useSelector(selectAuthChecked);
 
-  // Show loading state while checking auth
-  if (!authChecked) {
-    return null;
-  }
+  // Always render children immediately for public pages (prevents hydration flash)
+  // Auth check happens in background, redirect occurs once check completes
+  // This is safe because public pages are meant to be accessible without auth
 
-  // Redirect if authenticated
-  if (isAuthenticated) {
+  // Redirect if authenticated (only after auth check completes)
+  if (authChecked && isAuthenticated) {
     return <Navigate to="/app" replace />;
   }
 

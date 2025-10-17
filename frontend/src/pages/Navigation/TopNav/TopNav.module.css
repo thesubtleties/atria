@@ -1,5 +1,5 @@
 /* Import Nunito font with block to prevent FOUC */
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600;700&display=block');
+/* Nunito is now self-hosted in /public/fonts/fonts.css */
 
 .navbar {
   width: 100%;
