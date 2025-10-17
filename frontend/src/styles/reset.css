@@ -26,6 +26,8 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Set brand background color to prevent jarring flashes during route transitions */
+  background-color: #FBFAFF; /* Very light purple, almost white - from design system */
 }
 
 /* Remove list styles on ul, ol elements with a list role */

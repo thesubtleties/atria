@@ -1,0 +1,92 @@
+version: '3.8'
+
+# Production Preview - built frontend + Traefik (like production)
+# Same setup as Redis + Traefik dev, but serves built frontend with nginx
+
+services:
+  # Traefik reverse proxy (matches production setup)
+  traefik:
+    container_name: atria-traefik-preview
+    image: traefik:v3.0
+    command:
+      - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --log.level=INFO
+    ports:
+      - '80:80'
+      - '8080:8080' # Traefik dashboard
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - atria-preview-network
+
+  # Backend
+  backend:
+    container_name: atria-backend-preview
+    build:
+      context: ./backend/atria
+      dockerfile: Dockerfile
+    env_file:
+      - ./backend/atria/.flaskenv
+      - .env
+    environment:
+      - FLASK_ENV=production
+      - SEED_DB=${SEED_DB:-false}
+    labels:
+      - traefik.enable=true
+      # Route /api and /socket.io to backend
+      - traefik.http.routers.backend.rule=Host(`localhost`) && (PathPrefix(`/api`) || PathPrefix(`/socket.io`))
+      - traefik.http.routers.backend.entrypoints=web
+      - traefik.http.services.backend.loadbalancer.server.port=5000
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - atria-preview-network
+
+  # Frontend - built with nginx (production-like)
+  frontend:
+    container_name: atria-frontend-preview
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile.frontend.prod
+    labels:
+      - traefik.enable=true
+      # Route everything else to frontend
+      - traefik.http.routers.frontend.rule=Host(`localhost`)
+      - traefik.http.routers.frontend.entrypoints=web
+      - traefik.http.routers.frontend.priority=1
+      - traefik.http.services.frontend.loadbalancer.server.port=80
+    networks:
+      - atria-preview-network
+    depends_on:
+      - backend
+
+  # Database
+  db:
+    container_name: atria-db-preview
+    image: postgres:15-alpine
+    volumes:
+      - postgres_data_preview:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-atria_user}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-atria_dev_password}
+      - POSTGRES_DB=${POSTGRES_DB:-atria_dev}
+    ports:
+      - '5433:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-atria_user} -d ${POSTGRES_DB:-atria_dev}']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - atria-preview-network
+
+volumes:
+  postgres_data_preview:
+
+networks:
+  atria-preview-network:
+    driver: bridge

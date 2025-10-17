@@ -2,32 +2,22 @@ import { useRef } from 'react';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { useModals } from '@mantine/modals';
+import { useModalManager } from '../shared/useModalManager.jsx';
 import MagneticButton from '../shared/MagneticButton';
 import Footer from '../Footer';
 import styles from './CallToAction.module.css';
-import { SignupModal } from '@/shared/components/modals/auth/SignupModal';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const CallToAction = () => {
-  const modals = useModals();
+  const { openModal, ModalRenderer } = useModalManager();
   const containerRef = useRef(null);
   const primaryRef = useRef(null);
   const drapeRef = useRef(null);
   const contentRef = useRef(null);
 
   const handleSignup = () => {
-    modals.openModal({
-      title: 'Create Account',
-      children: <SignupModal onClose={() => modals.closeAll()} />,
-      centered: true,
-      overlayProps: {
-        opacity: 0.55,
-        blur: 3,
-      },
-      lockScroll: false,
-    });
+    openModal('signup');
   };
 
   useGSAP(() => {
@@ -146,6 +136,9 @@ const CallToAction = () => {
       <div className={styles.footerWrapper}>
         <Footer />
       </div>
+
+      {/* Lazy-loaded modals */}
+      <ModalRenderer />
     </section>
   );
 };

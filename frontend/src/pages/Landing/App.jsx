@@ -1,4 +1,4 @@
-import { useEffect, useRef, createContext } from 'react';
+import { useEffect, useRef, createContext, lazy, Suspense } from 'react';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -8,14 +8,16 @@ import Lenis from 'lenis';
 // Styles
 import styles from './Landing.module.css';
 
-// Components
+// Load immediately (above the fold)
 import Hero from './Hero';
 import ProblemStatement from './ProblemStatement';
-import PlatformDemo from './PlatformDemo';
-import AudienceCards from './AudienceCards';
-import OpenSourceSplit from './OpenSourceSplit';
-import BrandExperience from './BrandExperience';
-import CallToAction from './CallToAction';
+
+// Lazy load everything else (below the fold)
+const PlatformDemo = lazy(() => import('./PlatformDemo'));
+const AudienceCards = lazy(() => import('./AudienceCards'));
+const OpenSourceSplit = lazy(() => import('./OpenSourceSplit'));
+const BrandExperience = lazy(() => import('./BrandExperience'));
+const CallToAction = lazy(() => import('./CallToAction'));
 
 // Register GSAP plugins
 gsap.registerPlugin(useGSAP, ScrollTrigger, ScrambleTextPlugin);
@@ -44,6 +46,9 @@ function App() {
   });
 
   useEffect(() => {
+    // Note: We let GSAP run during pre-rendering to capture initial animation states
+    // The prerender script will capture these states and inject them as critical CSS
+
     // Enable debug mode with ?debug=true in URL
     const urlParams = new URLSearchParams(window.location.search);
     const debugMode = urlParams.get('debug') === 'true';
@@ -258,13 +263,18 @@ function App() {
   return (
     <AnimationContext.Provider value={animationContextValue}>
       <div className={styles.app}>
+        {/* Load immediately - the "hook" content */}
         <Hero />
         <ProblemStatement />
-        <PlatformDemo />
-        <AudienceCards />
-        <OpenSourceSplit />
-        <BrandExperience />
-        <CallToAction />
+
+        {/* Lazy load below-the-fold content */}
+        <Suspense fallback={null}>
+          <PlatformDemo />
+          <AudienceCards />
+          <OpenSourceSplit />
+          <BrandExperience />
+          <CallToAction />
+        </Suspense>
       </div>
     </AnimationContext.Provider>
   );

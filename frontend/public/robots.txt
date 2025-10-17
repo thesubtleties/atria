@@ -1,0 +1,9 @@
+# Allow all search engines to crawl all content
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://atria.gg/sitemap.xml
+
+# Crawl delay (optional, helps with server load)
+Crawl-delay: 1

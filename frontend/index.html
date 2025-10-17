@@ -29,17 +29,16 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Preload critical fonts to prevent FOUT -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=M+PLUS+2:wght@700&family=ABeeZee&display=block" as="style">
-    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+2:wght@700&family=ABeeZee&display=block" rel="stylesheet">
+    <!-- Self-hosted fonts for better performance -->
+    <link rel="preload" href="/fonts/abeezee-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/mplus2-700-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="/fonts/fonts.css">
 
     <!-- Primary Meta Tags -->
-    <meta name="title" content="Atria - Transform Your Events with Engaging Experiences" />
+    <meta name="title" content="Atria | Free Open Source Event Management & Networking" />
     <meta
       name="description"
-      content="Transform your events with comprehensive management tools, real-time networking, and engaging attendee experiences for virtual and hybrid events."
+      content="Free, open source event management platform with real-time networking, attendee engagement, and comprehensive tools for virtual and hybrid events."
     />
 
     <!-- Open Graph / Facebook -->
@@ -48,11 +47,11 @@
     <meta property="og:site_name" content="Atria" />
     <meta
       property="og:title"
-      content="Atria - Transform Your Events with Engaging Experiences"
+      content="Atria | Free Open Source Event Management & Networking"
     />
     <meta
       property="og:description"
-      content="Transform your events with comprehensive management tools, real-time networking, and engaging attendee experiences for virtual and hybrid events."
+      content="Free, open source event management platform with real-time networking, attendee engagement, and comprehensive tools for virtual and hybrid events."
     />
     <meta
       property="og:image"
@@ -64,27 +63,66 @@
     <meta name="twitter:url" content="https://atria.gg/" />
     <meta
       name="twitter:title"
-      content="Atria - Transform Your Events with Engaging Experiences"
+      content="Atria | Free Open Source Event Management & Networking"
     />
     <meta
       name="twitter:description"
-      content="Transform your events with comprehensive management tools, real-time networking, and engaging attendee experiences for virtual and hybrid events."
+      content="Free, open source event management platform with real-time networking, attendee engagement, and comprehensive tools for virtual and hybrid events."
     />
     <meta
       name="twitter:image"
       content="https://atria.gg/images/og-image.png"
     />
 
-    <title>atria</title>
+    <title>Atria | Free Open Source Event Management & Networking</title>
 
-    <!-- Plausible Analytics (proxied through backend to bypass ad blockers) -->
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://atria.gg/" />
+
+    <!-- JSON-LD Structured Data for rich search results -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Atria",
+      "applicationCategory": "BusinessApplication",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "description": "Free, open source event management platform with real-time networking, attendee engagement, and comprehensive tools for virtual and hybrid events.",
+      "operatingSystem": "Web",
+      "url": "https://atria.gg",
+      "author": {
+        "@type": "Organization",
+        "name": "Atria"
+      },
+      "featureList": [
+        "Event management",
+        "Real-time networking",
+        "Attendee engagement",
+        "Virtual and hybrid event support",
+        "Chat and messaging",
+        "Session scheduling",
+        "Sponsor management"
+      ]
+    }
+    </script>
+
+    <!-- Plausible Analytics will be loaded after page hydration -->
     <!-- Privacy-focused, GDPR compliant, no cookies, no personal data collection -->
-    <script
-      defer
-      data-domain="atria.gg"
-      data-api="/api/anonstats/event"
-      src="/api/anonstats/js/script.file-downloads.outbound-links.js"
-    ></script>
+    <script>
+      // Load analytics after hydration (skip during pre-rendering)
+      if (typeof window !== 'undefined' && !navigator.userAgent.includes('PrerendererBot')) {
+        var script = document.createElement('script');
+        script.defer = true;
+        script.setAttribute('data-domain', 'atria.gg');
+        script.setAttribute('data-api', '/api/anonstats/event');
+        script.src = '/api/anonstats/js/script.file-downloads.outbound-links.js';
+        document.head.appendChild(script);
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
