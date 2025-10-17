@@ -126,6 +126,7 @@ export const SessionDemo = ({ isFirefox }) => {
                 className={styles.videoPoster}
                 src="https://storage.sbtl.dev/atria-public/samplevideoimage.avif"
                 alt="Community Outreach Program"
+                loading="lazy"
               />
               <div className={styles.liveIndicator}>
                 <span className={styles.liveDot}></span>
@@ -141,6 +142,7 @@ export const SessionDemo = ({ isFirefox }) => {
                 className={styles.speakerAvatar}
                 src="https://api.dicebear.com/9.x/avataaars/svg?seed=emilyrodriguez"
                 alt="Dr. Emily Rodriguez"
+                loading="lazy"
               />
               <div className={styles.speakerDetails}>
                 <h4 className={styles.speakerName}>Dr. Emily Rodriguez</h4>
@@ -189,6 +191,7 @@ export const SessionDemo = ({ isFirefox }) => {
                 className={styles.messageAvatar}
                 src={`https://api.dicebear.com/9.x/avataaars/svg?seed=${msg.avatar}`}
                 alt={msg.user}
+                loading="lazy"
               />
               <div className={styles.messageContent}>
                 <div className={styles.messageHeader}>

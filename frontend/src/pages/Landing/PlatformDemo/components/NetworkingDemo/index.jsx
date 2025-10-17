@@ -86,10 +86,11 @@ export const NetworkingDemo = ({ isFirefox }) => {
             data-animate
           >
             <div className={styles.connectionMain}>
-              <img 
+              <img
                 className={styles.avatar}
                 src={`https://api.dicebear.com/9.x/avataaars/svg?seed=${connection.avatar}`}
                 alt={connection.name}
+                loading="lazy"
               />
               <div className={styles.personInfo}>
                 <h4 className={styles.personName}>{connection.name}</h4>

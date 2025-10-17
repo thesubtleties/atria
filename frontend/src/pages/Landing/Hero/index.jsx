@@ -361,7 +361,7 @@ const Hero = () => {
         <div className={styles.container}>
           <div className={styles.heroContent}>
             <div ref={logoRef} className={styles.logoContainer}>
-              <img src={AtriaLogo} alt="Atria" className={styles.logo} fetchpriority="high" />
+              <img src={AtriaLogo} alt="Atria" className={styles.logo} fetchpriority="high" width="512" height="512" />
               <h1 
                 className={styles.logoText} 
                 style={{ opacity: fontLoaded ? 1 : 0, transition: 'opacity 0.3s ease' }}
