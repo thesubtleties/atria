@@ -45,6 +45,12 @@ export const AppLayout = () => {
 
   const showEventNav = Boolean(eventId);
 
+  // Mark body as hydrated for app pages to prevent layout flash on hard refresh
+  useEffect(() => {
+    document.body.classList.add('hydrated');
+    return () => document.body.classList.remove('hydrated');
+  }, []);
+
   // Initialize socket when authenticated
   useEffect(() => {
     console.log('🔐 AppLayout useEffect - Auth check:', { isAuthenticated, hasUser: !!user });
