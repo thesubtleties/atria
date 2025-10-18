@@ -91,7 +91,7 @@ def handle_disconnect():
 
     # Clean up presence and typing indicators
     if user_id:
-        from api.api.sockets.presence_notifications import cleanup_user_presence
+        from api.sockets.presence_notifications import cleanup_user_presence
         cleanup_user_presence(user_id)
 
 
@@ -128,7 +128,7 @@ def handle_join_event_admin(user_id, data):
     join_room(f"event_{event_id}_admin")
 
     # Emit all current room counts to hydrate the admin panel
-    from api.api.sockets.presence_notifications import emit_all_room_counts_for_event
+    from api.sockets.presence_notifications import emit_all_room_counts_for_event
     emit_all_room_counts_for_event(event_id)
 
     emit("event_admin_joined", {"event_id": event_id})

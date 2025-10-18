@@ -5,7 +5,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask import request
 
 from api.models.enums import OrganizationUserRole
-from api.api.schemas import (
+from api.schemas import (
     OrganizationUserSchema,
     OrganizationUserDetailSchema,
     OrganizationUserUpdateSchema,

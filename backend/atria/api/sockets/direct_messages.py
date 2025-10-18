@@ -74,7 +74,7 @@ def handle_send_direct_message(user_id, data):
         )
 
         # Use centralized notification function
-        from api.api.sockets.dm_notifications import emit_new_direct_message
+        from api.sockets.dm_notifications import emit_new_direct_message
         
         # Send to recipient
         emit_new_direct_message(message, thread_id, other_user_id)
@@ -110,7 +110,7 @@ def handle_mark_messages_read(user_id, data):
         # Only notify if there were unread messages
         if had_unread:
             # Use centralized notification function
-            from api.api.sockets.dm_notifications import emit_messages_read
+            from api.sockets.dm_notifications import emit_messages_read
             emit_messages_read(thread_id, user_id, other_user_id)
 
         emit("messages_marked_read", {"thread_id": thread_id})
@@ -187,7 +187,7 @@ def handle_typing_in_dm(user_id, data):
         )
 
         # Emit typing status to the other user
-        from api.api.sockets.presence_notifications import emit_typing_in_dm
+        from api.sockets.presence_notifications import emit_typing_in_dm
 
         emit_typing_in_dm(thread_id, user_id, is_typing, other_user_id)
 
@@ -248,7 +248,7 @@ def handle_create_direct_message_thread(user_id, data):
 
         # If it's a new thread, notify both users
         if is_new:
-            from api.api.sockets.dm_notifications import emit_direct_message_thread_created
+            from api.sockets.dm_notifications import emit_direct_message_thread_created
             emit_direct_message_thread_created(thread, user_id, other_user_id)
         else:
             # For existing threads, just confirm to the requester
