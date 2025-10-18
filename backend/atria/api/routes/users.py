@@ -4,21 +4,21 @@ from flask_smorest import Blueprint, abort
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask import request, current_app
 
-from api.api.schemas import (
+from api.schemas import (
     UserDetailSchema,
     UserUpdateSchema,
     EventSchema,
     SessionSchema,
     UserCheckResponseSchema,
 )
-from api.api.schemas.user_privacy import PrivacyAwareUserSchema
-from api.api.schemas.privacy import (
+from api.schemas.user_privacy import PrivacyAwareUserSchema
+from api.schemas.privacy import (
     PrivacySettingsSchema,
     PrivacySettingsUpdateSchema,
     UserPrivacyResponseSchema,
     PrivacySettingsResponseSchema
 )
-from api.api.schemas.dashboard import DashboardResponseSchema, UserInvitationsResponseSchema
+from api.schemas.dashboard import DashboardResponseSchema, UserInvitationsResponseSchema
 from api.commons.pagination import (
     PAGINATION_PARAMETERS,
     get_pagination_schema,

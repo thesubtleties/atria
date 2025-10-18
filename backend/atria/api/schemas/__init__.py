@@ -1,4 +1,4 @@
-from api.api.schemas.user import (
+from api.schemas.user import (
     UserSchema,
     UserDetailSchema,
     UserCreateSchema,
@@ -7,7 +7,7 @@ from api.api.schemas.user import (
     UserCheckResponseSchema,
     UserBasicSchema,  # Actually used in UserCheckResponseSchema
 )
-from api.api.schemas.event import (
+from api.schemas.event import (
     EventSchema,
     EventDetailSchema,
     EventCreateSchema,
@@ -16,7 +16,7 @@ from api.api.schemas.event import (
     EventNestedSchema,
     AddUserToEventSchema,
 )
-from api.api.schemas.session import (
+from api.schemas.session import (
     SessionSchema,
     SessionDetailSchema,
     SessionAdminListSchema,
@@ -25,13 +25,13 @@ from api.api.schemas.session import (
     SessionTimesUpdateSchema,
     SessionStatusUpdateSchema,
 )
-from api.api.schemas.organization import (
+from api.schemas.organization import (
     OrganizationSchema,
     OrganizationDetailSchema,
     OrganizationCreateSchema,
     OrganizationUpdateSchema,
 )
-from api.api.schemas.event_user import (
+from api.schemas.event_user import (
     EventUserSchema,
     EventUserDetailSchema,
     EventUserCreateSchema,
@@ -40,21 +40,21 @@ from api.api.schemas.event_user import (
     EventUserAdminSchema,
     EventUserNetworkingSchema,
 )
-from api.api.schemas.event_invitation import (
+from api.schemas.event_invitation import (
     EventInvitationSchema,
     EventInvitationDetailSchema,
     EventInvitationCreateSchema,
     BulkEventInvitationCreateSchema,
     EventInvitationAcceptSchema,
 )
-from api.api.schemas.organization_invitation import (
+from api.schemas.organization_invitation import (
     OrganizationInvitationSchema,
     OrganizationInvitationDetailSchema,
     OrganizationInvitationCreateSchema,
     BulkOrganizationInvitationCreateSchema,
     OrganizationInvitationAcceptSchema,
 )
-from api.api.schemas.organization_user import (
+from api.schemas.organization_user import (
     OrganizationUserSchema,
     OrganizationUserDetailSchema,
     OrganizationUserCreateSchema,
@@ -62,7 +62,7 @@ from api.api.schemas.organization_user import (
     OrganizationUserNestedSchema,
     AddUserToOrgSchema,
 )
-from api.api.schemas.session_speaker import (
+from api.schemas.session_speaker import (
     SessionSpeakerSchema,
     SessionSpeakerDetailSchema,
     SessionSpeakerCreateSchema,
@@ -70,7 +70,7 @@ from api.api.schemas.session_speaker import (
     SpeakerReorderSchema,
 )
 
-from api.api.schemas.auth import (
+from api.schemas.auth import (
     LoginSchema,
     SignupSchema,
     SignupResponseSchema,
@@ -83,7 +83,7 @@ from api.api.schemas.auth import (
     ChangePasswordSchema,
 )
 
-from api.api.schemas.chat import (
+from api.schemas.chat import (
     ChatRoomSchema,
     ChatRoomDetailSchema,
     ChatRoomCreateSchema,
@@ -93,12 +93,12 @@ from api.api.schemas.chat import (
     ChatMessageCreateSchema,
     SessionChatRoomSchema,
 )
-from api.api.schemas.connection import (
+from api.schemas.connection import (
     ConnectionSchema,
     ConnectionCreateSchema,
     ConnectionUpdateSchema,
 )
-from api.api.schemas.direct_message import (
+from api.schemas.direct_message import (
     DirectMessageThreadSchema,
     DirectMessageSchema,
     DirectMessageCreateSchema,
@@ -106,7 +106,7 @@ from api.api.schemas.direct_message import (
     DirectMessagesWithContextSchema,
     MarkMessagesReadResponseSchema,
 )
-from api.api.schemas.sponsor import (
+from api.schemas.sponsor import (
     SponsorSchema,
     SponsorDetailSchema,
     SponsorCreateSchema,
@@ -114,17 +114,17 @@ from api.api.schemas.sponsor import (
     SponsorListSchema,
     SponsorTierSchema,
 )
-from api.api.schemas.upload import (
+from api.schemas.upload import (
     ImageUploadSchema,
     ImageUploadResponseSchema,
     PresignedUrlResponseSchema,
 )
-from api.api.schemas.invitation import (
+from api.schemas.invitation import (
     InvitationDetailsResponseSchema,
     RegisterAndAcceptInvitationsSchema,
     RegisterAndAcceptResponseSchema,
 )
-from api.api.schemas.moderation import (
+from api.schemas.moderation import (
     ModerationStatusSchema,
     BanUserSchema,
     UnbanUserSchema,

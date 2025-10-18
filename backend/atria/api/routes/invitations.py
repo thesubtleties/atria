@@ -1,7 +1,7 @@
 # api/api/routes/invitations.py
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
-from api.api.schemas import (
+from api.schemas import (
     InvitationDetailsResponseSchema,
     RegisterAndAcceptInvitationsSchema,
     RegisterAndAcceptResponseSchema

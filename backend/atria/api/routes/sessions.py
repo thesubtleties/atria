@@ -4,7 +4,7 @@ from flask_smorest import Blueprint, abort
 from flask_jwt_extended import jwt_required
 from flask import request
 
-from api.api.schemas import (
+from api.schemas import (
     SessionSchema,
     SessionDetailSchema,
     SessionAdminListSchema,

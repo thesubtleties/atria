@@ -3,7 +3,7 @@ from flask_smorest import Blueprint, abort
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask import request
 
-from api.api.schemas import (
+from api.schemas import (
     UserSchema,
     ConnectionSchema,
     ConnectionCreateSchema,

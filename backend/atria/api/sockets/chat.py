@@ -36,7 +36,7 @@ def handle_join_chat_room(user_id, data):
 
     # Track presence in Redis and get updated count
     from api.services.presence_service import PresenceService
-    from api.api.sockets.presence_notifications import emit_room_user_count
+    from api.sockets.presence_notifications import emit_room_user_count
 
     user_count = PresenceService.join_room(room_id, user_id)
 
@@ -71,7 +71,7 @@ def handle_leave_chat_room(user_id, data):
 
     # Remove from presence tracking
     from api.services.presence_service import PresenceService
-    from api.api.sockets.presence_notifications import emit_room_user_count
+    from api.sockets.presence_notifications import emit_room_user_count
 
     PresenceService.leave_room(room_id, user_id)
 
@@ -103,7 +103,7 @@ def handle_chat_message(user_id, data):
     message = ChatRoomService.send_message(room_id, user_id, content)
     
     # Use centralized notification function
-    from api.api.sockets.chat_notifications import emit_new_chat_message
+    from api.sockets.chat_notifications import emit_new_chat_message
     emit_new_chat_message(message, room_id)
     
     # Send confirmation to sender

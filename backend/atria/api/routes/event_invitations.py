@@ -2,7 +2,7 @@ from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from flask_jwt_extended import jwt_required
 from api.models.enums import EventUserRole
-from api.api.schemas import (
+from api.schemas import (
     EventInvitationSchema,
     EventInvitationDetailSchema,
     EventInvitationCreateSchema,

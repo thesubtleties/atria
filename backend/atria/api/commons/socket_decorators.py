@@ -6,7 +6,7 @@ from api.models import User, Event, ChatRoom
 from api.models.enums import EventUserRole
 
 # Import the session manager
-from api.api.sockets.session_manager import session_manager
+from api.sockets.session_manager import session_manager
 
 
 def socket_authenticated_only(f):

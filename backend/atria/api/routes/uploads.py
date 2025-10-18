@@ -6,7 +6,7 @@ from flask import request, jsonify, send_file
 from io import BytesIO
 
 from api.services.storage import storage_service, StorageBucket
-from api.api.schemas.upload import (
+from api.schemas.upload import (
     ImageUploadSchema,
     ImageUploadResponseSchema,
     PresignedUrlResponseSchema

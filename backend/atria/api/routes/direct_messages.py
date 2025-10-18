@@ -4,7 +4,7 @@ from flask_smorest import Blueprint, abort
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask import request
 
-from api.api.schemas import (
+from api.schemas import (
     DirectMessageThreadSchema,
     DirectMessageSchema,
     DirectMessageCreateSchema,
@@ -94,7 +94,7 @@ class DirectMessageThreadList(MethodView):
 
             # If it's a new thread, emit socket notifications
             if is_new:
-                from api.api.sockets.dm_notifications import emit_direct_message_thread_created
+                from api.sockets.dm_notifications import emit_direct_message_thread_created
                 emit_direct_message_thread_created(thread, user_id, other_user_id)
 
             # Return the thread object directly - the schema will serialize it
@@ -223,7 +223,7 @@ class DirectMessageList(MethodView):
             )
 
             # Emit socket event for real-time notification
-            from api.api.sockets.dm_notifications import emit_new_direct_message
+            from api.sockets.dm_notifications import emit_new_direct_message
             emit_new_direct_message(message, thread_id, other_user_id)
 
             return message, 201
@@ -257,7 +257,7 @@ class DirectMessageMarkRead(MethodView):
             
             # If there were unread messages, notify the other user via WebSocket (if connected)
             if had_unread:
-                from api.api.sockets.dm_notifications import emit_messages_read
+                from api.sockets.dm_notifications import emit_messages_read
                 emit_messages_read(thread_id, user_id, other_user_id)
             
             # Return success response matching socket response format
@@ -291,7 +291,7 @@ class DirectMessageThreadClear(MethodView):
             thread = DirectMessageService.clear_thread_for_user(thread_id, user_id)
             
             # Note: Socket event emission would go here if dm_notifications module exists
-            # from api.api.sockets.dm_notifications import emit_thread_cleared
+            # from api.sockets.dm_notifications import emit_thread_cleared
             # emit_thread_cleared(thread_id, user_id)
             
             return thread
