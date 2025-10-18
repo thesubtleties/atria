@@ -3,7 +3,7 @@ from flask_smorest import Blueprint
 from flask_jwt_extended import jwt_required
 from flask import request
 
-from api.api.schemas.sponsor import (
+from api.schemas.sponsor import (
     SponsorSchema,
     SponsorDetailSchema,
     SponsorCreateSchema,

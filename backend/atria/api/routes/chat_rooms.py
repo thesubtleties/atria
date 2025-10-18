@@ -7,7 +7,7 @@ from flask import request
 from api.extensions import db, ma
 from api.models import ChatRoom, ChatMessage, Event, User, EventUser
 from api.models.enums import EventUserRole, ChatRoomType
-from api.api.schemas import (
+from api.schemas import (
     ChatRoomSchema,
     ChatRoomDetailSchema,
     ChatRoomCreateSchema,
@@ -133,7 +133,7 @@ class ChatRoomList(MethodView):
             chat_room = ChatRoomService.create_event_chat_room(event_id, room_data, user_id)
             
             # Emit socket event for real-time updates
-            from api.api.sockets.chat_notifications import emit_chat_room_created
+            from api.sockets.chat_notifications import emit_chat_room_created
             emit_chat_room_created(chat_room, event_id)
             
             return chat_room, 201
@@ -177,7 +177,7 @@ class ChatRoomResource(MethodView):
             chat_room = ChatRoomService.update_chat_room(room_id, room_data, user_id)
             
             # Emit socket event
-            from api.api.sockets.chat_notifications import emit_chat_room_updated
+            from api.sockets.chat_notifications import emit_chat_room_updated
             emit_chat_room_updated(chat_room)
             
             return chat_room
@@ -201,7 +201,7 @@ class ChatRoomResource(MethodView):
             event_id = ChatRoomService.delete_chat_room(room_id, user_id)
             
             # Emit socket event
-            from api.api.sockets.chat_notifications import emit_chat_room_deleted
+            from api.sockets.chat_notifications import emit_chat_room_deleted
             emit_chat_room_deleted(room_id, event_id)
             
             return "", 204
@@ -286,7 +286,7 @@ class ChatMessageList(MethodView):
         db.session.commit()
 
         # Emit to all users in the chat room via Socket.IO
-        from api.api.sockets.chat_notifications import emit_new_chat_message
+        from api.sockets.chat_notifications import emit_new_chat_message
         emit_new_chat_message(message, room_id)
 
         return message, 201
@@ -312,7 +312,7 @@ class ChatMessageResource(MethodView):
             result = ChatRoomService.delete_message(message_id, user_id)
             
             # Emit different events based on user role
-            from api.api.sockets.chat_notifications import emit_chat_message_moderated
+            from api.sockets.chat_notifications import emit_chat_message_moderated
             emit_chat_message_moderated(message_id, room_id, result["deleted_by"])
             
             return "", 204
@@ -348,7 +348,7 @@ class ChatRoomToggle(MethodView):
         chat_room = ChatRoomService.toggle_chat_room(room_id, user_id)
         
         # Emit socket event
-        from api.api.sockets.chat_notifications import emit_chat_room_updated
+        from api.sockets.chat_notifications import emit_chat_room_updated
         emit_chat_room_updated(chat_room)
         
         return chat_room
@@ -395,7 +395,7 @@ class DisableAllPublicRooms(MethodView):
         
         # Emit socket event for rooms that were disabled
         if result["disabled_count"] > 0:
-            from api.api.sockets.chat_notifications import emit_bulk_chat_rooms_updated
+            from api.sockets.chat_notifications import emit_bulk_chat_rooms_updated
             emit_bulk_chat_rooms_updated(event_id, {"is_enabled": False})
         
         return result
@@ -427,7 +427,7 @@ class ChatRoomReorder(MethodView):
             )
             
             # Emit socket event
-            from api.api.sockets.chat_notifications import emit_chat_room_updated
+            from api.sockets.chat_notifications import emit_chat_room_updated
             emit_chat_room_updated(chat_room)
             
             return chat_room

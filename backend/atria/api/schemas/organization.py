@@ -33,7 +33,7 @@ class OrganizationSchema(ma.SQLAlchemyAutoSchema):
         name = "OrganizationBase"
 
     users = ma.Nested(
-        "api.api.schemas.organization_user.OrganizationUserNestedSchema",  # Full path
+        "api.schemas.organization_user.OrganizationUserNestedSchema",  # Full path
         many=True,
         attribute="organization_users",
         dump_only=True,
@@ -52,14 +52,14 @@ class OrganizationDetailSchema(OrganizationSchema):
     current_user_role = ma.Method("get_current_user_role", dump_only=True)
 
     users = ma.Nested(
-        "api.api.schemas.organization_user.OrganizationUserNestedSchema",
+        "api.schemas.organization_user.OrganizationUserNestedSchema",
         many=True,
         attribute="organization_users",
         dump_only=True,
     )
 
     upcoming_events = ma.Nested(
-        "api.api.schemas.event.EventNestedSchema",  # Use full path like we did with users
+        "api.schemas.event.EventNestedSchema",  # Use full path like we did with users
         many=True,
         dump_only=True,
     )

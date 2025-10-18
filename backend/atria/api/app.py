@@ -139,10 +139,10 @@ def configure_extensions(app):
 
         socketio.init_app(app, **socketio_kwargs)
 
-    from api.api.sockets import register_socket_handlers
+    from api.sockets import register_socket_handlers
 
     register_socket_handlers()
-    from api.api.sockets import setup_socket_maintenance
+    from api.sockets import setup_socket_maintenance
 
     setup_socket_maintenance()
     configure_jwt_handlers(app)
@@ -152,7 +152,7 @@ def configure_smorest(app):
     """Configure Flask-SMOREST for OpenAPI documentation"""
     # app.json_provider_class = CustomJSONProvider # Commented out because I think we fixed serialization problems
     smorest_api.init_app(app)
-    from api.api.routes import register_blueprints
+    from api.routes import register_blueprints
 
     register_blueprints(smorest_api)
 
