@@ -1,7 +1,6 @@
 from flask import Flask
 from flask_cors import CORS
 import os
-from api import api
 
 # from api import manage # this has been unused for a while
 from api.extensions import smorest_api
@@ -182,10 +181,7 @@ def configure_apispec(app):
     )
 
 
-def register_blueprints(app):
-    """Register all blueprints for application"""
-    # Now only registering the api blueprint which contains all resources
-    app.register_blueprint(api.views.blueprint)
+# NOTE: register_blueprints removed - using Flask-Smorest routes registered in configure_smorest()
 
 
 def configure_jwt_handlers(app):
