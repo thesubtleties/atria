@@ -19,7 +19,7 @@ from api.commons.decorators import (
 )
 from api.commons.pagination import (
     PAGINATION_PARAMETERS,
-    get_pagination_schema,
+    get_pagination_doc_reference,
 )
 from api.services.event import EventService
 
@@ -50,7 +50,7 @@ class EventList(MethodView):
             *PAGINATION_PARAMETERS,
         ],
         responses={
-            200: get_pagination_schema("events", "EventBase"),
+            200: get_pagination_doc_reference("EventBase"),
             404: {"description": "Organization not found"},
         },
     )

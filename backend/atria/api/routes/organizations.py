@@ -13,7 +13,7 @@ from api.schemas import (
 from api.commons.decorators import org_admin_required, org_member_required
 from api.commons.pagination import (
     PAGINATION_PARAMETERS,
-    get_pagination_schema,
+    get_pagination_doc_reference,
 )
 from api.services.organization import OrganizationService
 
@@ -94,7 +94,7 @@ class OrganizationList(MethodView):
             *PAGINATION_PARAMETERS,
         ],
         responses={
-            200: get_pagination_schema("organizations", "OrganizationBase"),
+            200: get_pagination_doc_reference("OrganizationBase"),
             401: {"description": "Not authenticated"},
             403: {"description": "Not authorized"},
         },

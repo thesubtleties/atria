@@ -14,7 +14,7 @@ from api.schemas import (
 )
 from api.commons.pagination import (
     PAGINATION_PARAMETERS,
-    get_pagination_schema,
+    get_pagination_doc_reference,
 )
 from api.services.direct_message import DirectMessageService
 
@@ -34,7 +34,7 @@ class DirectMessageThreadList(MethodView):
         description="Get all direct message threads for the current user",
         parameters=PAGINATION_PARAMETERS,
         responses={
-            200: get_pagination_schema("threads", "DirectMessageThreadBase"),
+            200: get_pagination_doc_reference("DirectMessageThreadBase"),
         },
     )
     @jwt_required()

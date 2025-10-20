@@ -11,7 +11,7 @@ from api.schemas import (
 )
 from api.commons.pagination import (
     PAGINATION_PARAMETERS,
-    get_pagination_schema,
+    get_pagination_doc_reference,
     paginate,
 )
 from api.models import User
@@ -44,7 +44,7 @@ class ConnectionList(MethodView):
             *PAGINATION_PARAMETERS,
         ],
         responses={
-            200: get_pagination_schema("connections", "ConnectionBase"),
+            200: get_pagination_doc_reference("ConnectionBase"),
         },
     )
     @jwt_required()
@@ -166,7 +166,7 @@ class PendingConnectionList(MethodView):
         description="Get all pending connection requests received by the current user",
         parameters=PAGINATION_PARAMETERS,
         responses={
-            200: get_pagination_schema("connections", "ConnectionBase"),
+            200: get_pagination_doc_reference("ConnectionBase"),
         },
     )
     @jwt_required()
@@ -187,7 +187,7 @@ class EventConnectionList(MethodView):
         description="Get all users connected with the current user who are also in this event",
         parameters=PAGINATION_PARAMETERS,
         responses={
-            200: get_pagination_schema("users", "UserBase"),
+            200: get_pagination_doc_reference("UserBase"),
             403: {"description": "Not authorized to access this event"},
             404: {"description": "Event not found"},
         },

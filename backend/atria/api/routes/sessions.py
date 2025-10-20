@@ -16,7 +16,7 @@ from api.schemas import (
 )
 from api.commons.pagination import (
     PAGINATION_PARAMETERS,
-    get_pagination_schema,
+    get_pagination_doc_reference,
 )
 from api.commons.decorators import (
     event_member_required,
@@ -58,10 +58,7 @@ class SessionList(MethodView):
             *PAGINATION_PARAMETERS,
         ],
         responses={
-            200: get_pagination_schema(
-                "sessions",
-                "SessionDetail",
-            ),
+            200: get_pagination_doc_reference("SessionDetail"),
             404: {"description": "Event not found"},
         },
     )

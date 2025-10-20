@@ -21,7 +21,7 @@ from api.schemas.privacy import (
 from api.schemas.dashboard import DashboardResponseSchema, UserInvitationsResponseSchema
 from api.commons.pagination import (
     PAGINATION_PARAMETERS,
-    get_pagination_schema,
+    get_pagination_doc_reference,
 )
 from api.services.user import UserService
 from api.services.dashboard import DashboardService
@@ -100,7 +100,7 @@ class UserEventsResource(MethodView):
             *PAGINATION_PARAMETERS,
         ],
         responses={
-            200: get_pagination_schema("events", "EventBase"),
+            200: get_pagination_doc_reference("EventBase"),
             403: {"description": "Not authorized"},
             404: {"description": "User not found"},
         },

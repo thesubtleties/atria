@@ -25,7 +25,7 @@ from api.commons.decorators import (
 from api.commons.pagination import (
     paginate,
     PAGINATION_PARAMETERS,
-    get_pagination_schema,
+    get_pagination_doc_reference,
 )
 from api.services.chat_room import ChatRoomService
 
@@ -60,7 +60,7 @@ class ChatRoomList(MethodView):
             *PAGINATION_PARAMETERS,
         ],
         responses={
-            200: get_pagination_schema("chat_rooms", "ChatRoomBase"),
+            200: get_pagination_doc_reference("ChatRoomBase"),
             403: {"description": "Not authorized to access this event"},
             404: {"description": "Event not found"},
         },
@@ -227,7 +227,7 @@ class ChatMessageList(MethodView):
             *PAGINATION_PARAMETERS,
         ],
         responses={
-            200: get_pagination_schema("messages", "ChatMessageBase"),
+            200: get_pagination_doc_reference("ChatMessageBase"),
             403: {"description": "Not authorized to access this chat room"},
             404: {"description": "Chat room not found"},
         },

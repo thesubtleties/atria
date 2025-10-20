@@ -2,6 +2,7 @@
 
 from typing import Dict, Any, Tuple, Optional, Union
 from flask import url_for, request
+from marshmallow import Schema, fields
 
 DEFAULT_PAGE_SIZE = 50
 DEFAULT_PAGE_NUMBER = 1
@@ -52,6 +53,111 @@ def get_pagination_schema(collection_name: str, ref_schema: str):
                 }
             }
         },
+    }
+
+
+def create_pagination_schema(item_schema_class, collection_name: str = "items"):
+    """
+    Create a pagination wrapper schema class for Flask-SMOREST.
+
+    This generates a Marshmallow schema that describes the response structure
+    returned by the paginate() function. The schema must be manually registered
+    with Flask-SMOREST (see register_pagination_schemas in app.py) to avoid
+    double serialization issues.
+
+    Args:
+        item_schema_class: The Marshmallow schema class for individual items
+        collection_name: The key name for the items array in the response (e.g., "events", "users")
+
+    Returns:
+        A Marshmallow Schema class for OpenAPI documentation
+
+    Example:
+        # Create the schema
+        PaginatedEvents = create_pagination_schema(EventSchema, "events")
+
+        # Register it manually at startup (in app.py)
+        api.spec.components.schema('PaginatedEvent', schema=PaginatedEvents)
+
+        # Use in routes (docs only, not for serialization)
+        @blp.response(200)
+        @blp.doc(responses={200: get_pagination_doc_reference("Event")})
+        def get(self, org_id):
+            return paginate(query, EventSchema(many=True), "events")
+    """
+    # Get the schema name for OpenAPI documentation
+    # If the schema has a Meta.name, use it; otherwise use the class name
+    if hasattr(item_schema_class, 'Meta') and hasattr(item_schema_class.Meta, 'name'):
+        item_schema_name = item_schema_class.Meta.name
+    else:
+        # Remove 'Schema' suffix if present
+        item_schema_name = item_schema_class.__name__.replace('Schema', '')
+
+    # Create unique schema class dynamically
+    schema_attrs = {
+        'total_items': fields.Integer(metadata={'description': 'Total number of items across all pages'}),
+        'total_pages': fields.Integer(metadata={'description': 'Total number of pages'}),
+        'current_page': fields.Integer(metadata={'description': 'Current page number'}),
+        'per_page': fields.Integer(metadata={'description': 'Items per page'}),
+        'self': fields.String(metadata={'description': 'Link to current page'}, data_key='self'),
+        'first': fields.String(metadata={'description': 'Link to first page'}),
+        'last': fields.String(metadata={'description': 'Link to last page'}),
+        'next': fields.String(allow_none=True, metadata={'description': 'Link to next page (null if on last page)'}),
+        'prev': fields.String(allow_none=True, metadata={'description': 'Link to previous page (null if on first page)'}),
+        collection_name: fields.List(
+            fields.Nested(item_schema_class),
+            metadata={'description': f'Array of {collection_name}'}
+        ),
+        'Meta': type('Meta', (), {
+            'name': f'Paginated{item_schema_name}'
+        })
+    }
+
+    # Create and return the schema class
+    PaginatedSchema = type(
+        f'Paginated{item_schema_name}Schema',
+        (Schema,),
+        schema_attrs
+    )
+
+    return PaginatedSchema
+
+
+def get_pagination_doc_reference(schema_class_name: str):
+    """
+    Get OpenAPI documentation reference for a paginated response.
+
+    This returns a properly formatted OpenAPI response dict that references
+    a PaginatedXYZ schema registered with Flask-SMOREST. Use this in @blp.doc()
+    to document paginated endpoints without triggering serialization.
+
+    Args:
+        schema_class_name: The base schema name (e.g., "Event", "User", "Organization")
+                          This will be prefixed with "Paginated" to match the registered schema
+
+    Returns:
+        OpenAPI response dict for use in @blp.doc(responses={...})
+
+    Example:
+        @blp.response(200)  # No schema = no serialization
+        @blp.doc(
+            responses={
+                200: get_pagination_doc_reference("Event"),
+                404: {"description": "Not found"}
+            }
+        )
+        def get(self, org_id):
+            return paginate(query, EventSchema(many=True), "events")
+    """
+    return {
+        "description": f"Paginated response",
+        "content": {
+            "application/json": {
+                "schema": {
+                    "$ref": f"#/components/schemas/Paginated{schema_class_name}"
+                }
+            }
+        }
     }
 
 
