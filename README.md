@@ -1,302 +1,310 @@
-# Atria - Professional Event Management & Networking Platform
+# Atria - Event Management & Professional Networking Platform
 
-**Transform your events into powerful networking experiences with real-time engagement and meaningful connections.**
+**Build meaningful connections that last beyond your events.**
 
-**[Live Demo](https://atria.gg)** - Experience Atria in action
-
-Atria is a comprehensive event management platform designed for organizations that understand the true value of events lies in the connections made. Whether you're running corporate conferences, nonprofit galas, educational workshops, or community meetups, Atria provides the sophisticated tools needed to create memorable experiences that extend far beyond the event itself.
-
-## Screenshots
+[![Live Demo](https://img.shields.io/badge/demo-atria.gg-6366f1)](https://atria.gg) [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL%203.0-blue.svg)](LICENSE) [![Documentation](https://img.shields.io/badge/docs-docs.atria.gg-34d399)](https://docs.atria.gg)
 
 <p align="center">
   <img src="https://storage.sbtl.dev/spookyspot/atriaslideshowsmall.webp" alt="Atria Platform Overview" width="100%" />
 </p>
 
-## Why Choose Atria?
+---
 
-### **Event-Focused, Not Platform-Focused**
+## What is Atria?
 
-Unlike complex enterprise tools that require months of training, Atria is laser-focused on one thing: **your event**. Once you enter an event, you get a completely event-centric view - no other events distracting you, no cluttered sidebars of unrelated features. No marketing email tools, no CRM bloat, no learning curve. Just powerful event and networking features that work immediately.
+Atria is an **open-source event management platform** that combines comprehensive event administration with intelligent networking features. Unlike bloated enterprise tools or feature-creep SaaS platforms, Atria focuses exclusively on what matters: **your event and the connections made there**.
 
-### **Open Source & True Data Ownership**
+### Why Atria?
 
-- **No Black Box** - Complete transparency into what happens with your data and how the platform works
-- **Real Data Ownership** - Your data stays yours, export or migrate anytime without vendor lock-in
-- **Pay What Makes Sense** - Use free self-hosted version or pay for hosted convenience - your choice
-- **No Surprise Pricing** - Open source means you're never held hostage by sudden price increases
-- **Build What You Need** - Add custom features or modify existing ones to fit your exact requirements
-- **Internal Communities** - Create private, internal event networks for your organization's ongoing engagement
-- **Built by Event People** - Created by developers with real event management experience, not generic software builders
-- **Direct Developer Access** - Talk directly to the people who built it - no call centers, no outsourced support
+**Event-Focused, Not Platform-Focused**
+When you're managing an event, you see only that event. No distracting sidebars, no unrelated organizations, no feature overload. Just powerful tools to run your event and facilitate meaningful networking.
 
-### For Organizations
+**True Open Source & Data Ownership**
+- AGPL-3.0 licensed - complete transparency and freedom
+- Your data stays yours - export or migrate anytime, no vendor lock-in
+- Self-host or cloud - run it yourself for free, or use managed hosting
+- No surprise pricing - never held hostage by sudden price increases
+- Community-driven - talk directly to the developers who built it
 
-- **Minutes to Master** - Intuitive interface that event teams can use immediately without extensive training
-- **Your Brand, Your Event** - Attendees experience your event, not another platform's branding
-- **Value-Added Virtual** - Enhance in-person events with virtual components rather than replacing them entirely
-- **Connection Continuity** - Attendee connections span across multiple events, building lasting professional networks
-- **Flexible Hybrid Support** - Virtual when you want it, in-person when you want it, seamlessly integrated
+**Built for Real Events**
+- Corporations: Conferences, product launches, training events
+- Nonprofits: Fundraising galas, awareness campaigns, volunteer coordination
+- Education: Academic conferences, workshops, alumni gatherings
+- Communities: Professional associations, industry meetups, local events
 
-### For Event Organizers
-
-- **Pre-Event Engagement** - Start virtual networking sessions before your live event to build excitement and connections
-- **Bridge the Gap** - Live session chat connects virtual and in-person attendees in real-time
-- **No Feature Creep** - Focus on events and networking without distracting productivity tools
-- **Lasting Impact** - Connections made at one event carry forward, helping attendees find familiar faces at future events
-- **Simple Setup** - Event creation and management designed for event professionals, not software engineers
-
-### For Attendees
-
-- **Familiar Faces** - Find connections from previous events and build on existing professional relationships
-- **Seamless Participation** - Join virtually for sessions you can't attend in person, or vice versa
-- **Purpose-Built Networking** - Connect with context - you met at a specific event for specific professional reasons
-- **Pre-Event Connection** - Start building relationships before the event through virtual lead-up sessions
-- **Focused Experience** - No social media distractions - just your event and the people who matter for your professional goals
-
-## Perfect For
-
-- **Corporations** - Annual conferences, product launches, training events, and executive retreats
-- **Nonprofits** - Fundraising galas, awareness campaigns, volunteer coordination, and donor events
-- **Educational Institutions** - Academic conferences, workshops, graduation events, and alumni gatherings
-- **Professional Associations** - Industry conferences, certification programs, and member events
-- **Community Organizations** - Local meetups, social events, and community building initiatives
-
-## Key Features
-
-### **Advanced Event Management**
-
-- Multi-day event support with complex scheduling
-- Session-specific chat rooms (public and backstage)
-- Drag-and-drop speaker management with role assignments
-- Real-time session status updates and conflict detection
-- Hybrid event support for virtual and in-person attendance
-
-### **Intelligent Networking**
-
-- **Event-Context Connections** - Network based on shared interests within specific events
-- **Icebreaker System** - Start conversations with personalized connection requests
-- **Privacy Controls** - Granular settings for profile visibility and contact preferences
-- **Attendee Discovery** - Find and connect with relevant professionals based on roles and interests
-- **Connection Management** - Track and manage your professional network growth
-
-### **Real-Time Communication**
-
-- **Multi-Level Chat System** - General, Q&A, networking, and session-specific rooms
-- **Direct Messaging** - Private conversations between attendees
-- **Administrative Channels** - Backstage and admin-only communication
-- **Live Session Chat** - Real-time discussion during presentations
-- **Socket.IO Integration** - Instant messaging with reliable delivery
-
-### **Multi-Tenant Architecture**
-
-- **Organization Management** - Support multiple entities with isolated data
-- **Role-Based Permissions** - Granular access control at organization and event levels
-- **Cross-Organization Events** - Host events with attendees from multiple organizations
-- **Flexible User Roles** - From owners and admins to speakers and general attendees
-
-### **Professional Sponsor Management**
-
-- **Multi-Tier System** - Platinum, Gold, Silver, Bronze, and custom sponsor levels
-- **Rich Sponsor Profiles** - Logos, descriptions, contact information, and social links
-- **Visual Organization** - Drag-and-drop reordering with professional presentation
-- **Image Optimization** - Automatic WebP conversion with 80-90% file size reduction
-
-### **Security**
-
-- **HTTPOnly Cookie Authentication** - Enhanced security against XSS attacks
-- **JWT with Automatic Refresh** - Seamless session management
-- **Role-Based Access Control** - Fine-grained permissions throughout the platform
-- **Secure File Storage** - MinIO integration with three-tier security model
-- **Data Isolation** - Complete multi-tenant data separation
-
-## Technology Stack
-
-### **Backend**
-
-- **Python 3.13** with **Flask** framework for robust, scalable APIs
-- **PostgreSQL** database with SQLAlchemy ORM for reliable data management
-- **Flask-SocketIO** for real-time communication features
-- Connects with **[MinIO](https://github.com/minio/minio)** object storage for secure, scalable file management
-- **SMTP2GO** integration for reliable transactional emails
-
-### **Frontend**
-
-- **React 18** with **Vite** for lightning-fast development and builds
-- **Mantine UI** components for professional, accessible interfaces
-- **Redux Toolkit** with **RTK Query** for efficient state management
-- **Socket.IO Client** for real-time features
-- **Zod** for runtime type validation and form safety
+---
 
 ## Quick Start
 
-### Using Docker (Recommended)
+### Prerequisites
 
-```bash
-# Clone the repository
-git clone https://github.com/thesubtleties/atria.git
-cd atria
+Before you begin, ensure you have:
 
-# Copy environment configuration
-cp .env.example .env.development
-# Edit .env.development with your configuration settings
+- **Docker & Docker Compose** (recommended for quickest setup)
+- **Node.js 20+** and **Python 3.13+** (if running outside Docker)
+- **PostgreSQL 15+** (included in Docker setup)
+- **MinIO or S3-compatible storage** (required for file uploads)
+  - See [MinIO on GitHub](https://github.com/minio/minio) for self-hosted option
+  - Or use AWS S3, DigitalOcean Spaces, or other S3-compatible service
+- **Redis** (optional but recommended for caching and real-time features)
+  - App works without Redis (graceful degradation) but with reduced features
 
-# Start the complete development stack
-docker-compose -f docker-compose.dev-vite.yml up
+### Installation
 
-# Access your platform
-# Frontend: http://localhost:5173
-# Backend API: http://localhost:5000
-# API Docs: http://localhost:5000/new-swagger
-```
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/thesubtleties/atria.git
+   cd atria
+   ```
 
-**Note**: This setup connects to **[MinIO](https://github.com/minio/minio)** for file storage. You can configure your own S3-compatible storage provider in the environment settings.
+2. **Configure environment**
+   ```bash
+   cp .env.example .env.development
+   ```
+
+   Edit `.env.development` and configure at minimum:
+   - Database credentials (already set for Docker)
+   - MinIO/S3 credentials (see `.env.example` for details)
+   - JWT secret keys (change defaults!)
+   - Email settings (optional, for invitations)
+
+3. **Start the platform**
+   ```bash
+   docker-compose -f docker-compose.dev-vite.yml up
+   ```
+
+4. **Access your platform**
+   - **Frontend**: http://localhost:5173
+   - **Backend API**: http://localhost:5000
+   - **API Documentation**: http://localhost:5000/new-swagger
 
 The development environment includes:
+- Hot reload for frontend and backend
+- PostgreSQL database with sample data
+- Automatic dependency installation
 
-- **Hot reload** for both frontend and backend development
-- **PostgreSQL database** with health checks
-- **Volume mounting** for live code updates
-- **Automatic dependency installation**
+**Need more detailed setup instructions?** → [Full installation guide](https://docs.atria.gg/installation)
 
-## Current Status
+---
 
-Atria is in **early access** with all core features implemented and tested. The platform is currently in final CSS refinement phase, with plans for continuous feature enhancements based on user feedback.
+## Core Features
 
-**Planning a large-scale event or have special requirements?** Please [contact us](mailto:steven@sbtl.dev) to discuss your needs and ensure optimal performance for your specific use case.
+**Event Management**
+- Multi-day events with complex session scheduling
+- Drag-and-drop speaker management with role assignments
+- Real-time session status updates
+- Hybrid event support (virtual + in-person attendance)
+- Session-specific chat rooms (public and backstage)
 
-### **Fully Implemented**
+**Professional Networking**
+- Icebreaker system for personalized connection requests
+- Attendee discovery by role and interests
+- Privacy controls for profile visibility
+- Connection management and tracking
 
-- Complete authentication and authorization system
-- Multi-tenant organization and event management
-- Real-time chat and messaging infrastructure
-- Advanced session management with speaker coordination
-- Comprehensive attendee management and invitation system
-- Professional sponsor management with image optimization
-- Role-based access control throughout the platform
-- File upload and storage with security controls
-- Email notifications and transactional messaging
+**Real-Time Communication**
+- Multi-level chat system (general, Q&A, networking, session-specific)
+- Direct messaging between attendees
+- Administrative and backstage channels
+- Live session chat during presentations
+- Socket.IO powered instant messaging
 
-### **Planned Features**
+**Multi-Tenant Architecture**
+- Organization-level management with data isolation
+- Role-based access control (Organization: Owner > Admin > Member)
+- Event-level permissions (Admin > Organizer > Moderator > Speaker > Attendee)
+- Cross-organization event support
+- Complete data security and separation
 
-- **Advanced Reporting & Analytics** - Comprehensive event metrics and attendee engagement tracking
-- **Interactive Polling** - Native polling system or integration with existing platforms
-- **Advanced Ticketing** - Exploring integration with popular ticketing platforms or native solution (TBD)
-- **Donation Integration** - Integration with donation platforms for nonprofits and content creators
-- **Digital Wallet Passes** - Apple Wallet and Google Wallet integration for event tickets
-- **AI-Enhanced Session Importing** - Smart parsing and import of session data from various formats
-- **AI Event Chat Host** - Virtual assistant with access to event and session info for attendee recommendations
-- **Greenlight System** - Custom pre-approval system for connections (full event or targeted matching)
-- **Additional Streaming Options** - Zoom API integration and Twitch embeds for creator-focused communities
-- **Per-Event Custom Theming** - Custom visual themes on an event-by-event basis
-- **Custom Agenda/Favoriting System** - Personalized schedule building for attendees
-- **Enhanced Profile Pages** - Expanded profile features (details TBD)
-- **Enhanced Integration APIs** - Expanded API capabilities for third-party integrations
-- **Advanced Security Features** - Two-factor authentication (2FA) and Single Sign-On (SSO)
-- **Community-Suggested Features** - Additional features as suggested by the user community
+**Sponsor Management**
+- Multi-tier system (Platinum, Gold, Silver, Bronze, custom levels)
+- Rich sponsor profiles with logos, descriptions, links
+- Drag-and-drop reordering for visual organization
+- Automatic image optimization (WebP conversion, 80-90% size reduction)
 
-## Deployment Options
+**Enterprise Security**
+- HTTPOnly cookie authentication (XSS protection)
+- JWT with automatic refresh tokens
+- Granular role-based permissions
+- Secure file storage with three-tier access control
+- Multi-tenant data isolation
 
-### **Self-Hosted**
+**Developer Experience**
+- Comprehensive OpenAPI documentation
+- RESTful API design
+- Real-time Socket.IO event system
+- Hot reload development environment
+- Docker-first deployment
 
-- Complete control over your data and customizations
-- Free to use - you provide infrastructure and comply with AGPL-3.0 license
-- Perfect for organizations with specific compliance requirements or nonprofits with limited budgets
-- Full access to source code for custom modifications
+**For the complete feature list and roadmap** → [View full features & roadmap](https://docs.atria.gg/features)
 
-### **Commercial Support**
+---
 
-For organizations requiring professional support, custom features, or consultation:
+## Technology Stack
 
-- **Custom Development** - Feature additions and modifications
-- **Professional Support** - SLA-backed technical support
-- **Training & Onboarding** - Team training and implementation guidance
-- **Managed Hosting** - Fully managed deployment and maintenance
+### Backend
+- **Python 3.13** with **Flask** framework
+- **PostgreSQL 15** with SQLAlchemy ORM
+- **Redis 7** for caching, presence tracking, and Socket.IO clustering
+- **Flask-SocketIO** for real-time features
+- **S3-compatible storage** (MinIO, AWS S3, or similar) for file uploads
+- **SMTP2GO** for transactional emails
 
-Contact: [steven@sbtl.dev](mailto:steven@sbtl.dev)
+### Frontend
+- **React 18** with **Vite 6** build system
+- **Mantine UI 7** component library
+- **Redux Toolkit + RTK Query** for state management
+- **Socket.IO Client** for real-time updates
+- **Zod** for runtime validation
+
+**Want to understand the architecture?** → [Architecture deep dive](https://docs.atria.gg/architecture)
+
+---
+
+## Project Status
+
+**Current State**: Live at atria.gg with active development
+
+- Live deployment at [atria.gg](https://atria.gg)
+- 196 passing tests (~47% backend coverage, target: 80%+)
+- Automated CI/CD with GitHub Actions
+- Multi-instance scaling ready (Socket.IO clustering with Redis)
+- Actively maintained with regular updates
+
+**Roadmap highlights**:
+- Advanced reporting & analytics
+- Interactive polling system
+- Ticketing integrations
+- AI-enhanced features (session imports, chat host)
+- Custom event theming
+- Enhanced mobile experience
+
+**Full roadmap & changelog** → [docs.atria.gg/roadmap](https://docs.atria.gg/roadmap)
+
+---
+
+## Documentation & Resources
+
+- **Complete Documentation**: [docs.atria.gg](https://docs.atria.gg)
+- **API Reference**: [docs.atria.gg/api/atria-api](https://docs.atria.gg/api/atria-api)
+- **Community Support**: [GitHub Discussions](https://github.com/thesubtleties/atria/discussions)
+- **Bug Reports**: [GitHub Issues](https://github.com/thesubtleties/atria/issues)
+- **Commercial Support**: [steven@sbtl.dev](mailto:steven@sbtl.dev)
+
+---
 
 ## Contributing
 
-We welcome contributions from the community! Whether you're fixing bugs, adding features, or improving documentation, your help makes Atria better for everyone.
+We welcome contributions from the community! Whether fixing bugs, adding features, or improving documentation, your help makes Atria better for everyone.
 
-### **Before Contributing**
+**Before contributing, please:**
+1. Read our [Contributing Guidelines](CONTRIBUTING.md)
+2. Sign the [Contributor License Agreement](CLA.md)
+3. Check existing [issues](https://github.com/thesubtleties/atria/issues) and [discussions](https://github.com/thesubtleties/atria/discussions)
 
-All contributors must sign our [Contributor License Agreement](CLA.md) to maintain our dual licensing model while accepting community contributions.
+**Quick contribution guide**:
+- Fork the repository and create a feature branch
+- Follow existing code style and patterns
+- Add tests for new functionality
+- Update documentation as needed
+- Submit a PR with clear description
 
-### **Getting Started**
+All contributions must pass our CI test suite before merging.
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes following our coding standards
-4. Add tests and update documentation
-5. Submit a pull request
-
-See our [Contributing Guidelines](CONTRIBUTING.md) for detailed information on development setup, coding standards, and the contribution process.
+---
 
 ## Licensing
 
-### **Open Source (AGPL-3.0)**
+### Open Source (AGPL-3.0)
 
-Atria is licensed under the [GNU Affero General Public License v3.0](LICENSE). You can:
+Atria is licensed under the [GNU Affero General Public License v3.0](LICENSE).
 
-- Use, modify, and distribute the software freely
-- Run it for any purpose, including commercial use
-- **Requirement**: Any modifications or derivative works must also be licensed under AGPL-3.0
-- **Requirement**: If you run a modified version on a server, you must provide source code to users
+**You can:**
+- Use, modify, and distribute freely
+- Run for any purpose including commercial use
 
-### **Commercial License**
+**Requirements:**
+- Modifications must be licensed under AGPL-3.0
+- If you run modified code on a server, you must provide source code to users
+- Attribution required: Keep "atria is made with ❤️ by sbtl" in the UI
+  - "atria" links to https://atria.gg
+  - "sbtl" links to https://sbtl.dev
 
-For organizations that cannot comply with AGPL-3.0 requirements, commercial licenses are available:
+**Full attribution requirements** → [LICENSE-ATTRIBUTION.md](LICENSE-ATTRIBUTION.md)
 
+### Commercial License
+
+For organizations that cannot comply with AGPL-3.0:
 - Private modifications without source disclosure
 - Integration into proprietary systems
 - Custom support and SLA options
 - No attribution requirements
 
-### **Attribution Requirement**
-
-Open source users must retain the attribution in the event navigation sidebar:
-**"atria is made with ❤️ by sbtl"**
-
-- "atria" links to https://atria.gg
-- "sbtl" links to https://sbtl.dev
-
-See [LICENSE-ATTRIBUTION.md](LICENSE-ATTRIBUTION.md) for complete details.
-
-## Architecture
-
-Atria follows modern software architecture principles with clear separation of concerns:
-
-### **Backend Architecture**
-
-- **API Layer**: Flask-Smorest with OpenAPI documentation
-- **Service Layer**: Business logic separated from routing
-- **Data Layer**: SQLAlchemy models with proper relationships
-- **Real-time Layer**: Socket.IO for live features
-- **Storage Layer**: MinIO for secure file management
-
-### **Frontend Architecture**
-
-- **Component-Based**: Reusable React components with proper state management
-- **Feature Organization**: Logical grouping of related functionality
-- **API Integration**: RTK Query for efficient data fetching and caching
-- **Real-time Updates**: Socket.IO client integration
-- **Type Safety**: Zod schemas for runtime validation and form safety
-
-### **Data Model**
-
-- **Multi-Tenant**: Organization-scoped data isolation
-- **Role-Based**: Hierarchical permission system
-- **Relationship-Rich**: Proper associations between users, events, and organizations
-- **Privacy-Aware**: Granular privacy controls built into the data model
-
-## Support
-
-- **Documentation**: Comprehensive API docs at `/new-swagger`
-- **Community Support**: GitHub Issues and Discussions
-- **Commercial Support**: Contact [steven@sbtl.dev](mailto:steven@sbtl.dev)
+**Contact for commercial licensing**: [steven@sbtl.dev](mailto:steven@sbtl.dev)
 
 ---
 
-**Ready to transform your next event?** [Get started with Atria today](#-quick-start) and create networking experiences that last long after your event ends.
+## Deployment Options
 
-_Copyright © 2025 SBTL LLC - Made with ❤️ for meaningful connections_
+### Self-Hosted (Free)
+Run your own instance with complete control. Perfect for organizations with specific compliance requirements or those who prefer full data ownership.
+
+- Free under AGPL-3.0 license
+- Complete control over data and infrastructure
+- Full source code access for customization
+- Community support via GitHub
+- **Note**: Self-hosted instances are isolated - users only connect within your events, not across other organizations using Atria
+- **Need to self-host but can't comply with AGPL?** Contact us about commercial licensing options: [steven@sbtl.dev](mailto:steven@sbtl.dev)
+
+### Managed Hosting (atria.gg)
+Use the hosted SaaS platform with extended networking capabilities and zero infrastructure management.
+
+**Currently in Early Access** - Experience Atria with no event size restrictions while we finalize features and stabilize the platform.
+
+- **Free during Early Access** - no event size limits
+- Cross-event networking - users can connect beyond individual events
+- Connections are tagged by the event where they originated, keeping your event visible
+- Actively maintained with bug fixes and updates
+- Multi-tiered data protection (Longhorn + Backblaze B2 backups)
+- Broader community reach - attendees can discover familiar faces from other events
+- **Note**: Early Access means best-effort uptime while we work toward production-grade infrastructure
+
+**After v1.0 Release**: Free tier for events up to 50 attendees, with paid tiers for larger events and premium features
+
+### Custom Private Instance
+Get the benefits of managed hosting with the isolation of self-hosting, plus custom features.
+
+- Managed setup and maintenance without your IT team's involvement
+- Private, isolated instance (not part of the shared community)
+- Custom branding and feature development
+- Flexible commercial licensing (can work around AGPL requirements)
+- Custom data retention and reporting capabilities
+- Pricing and terms negotiable based on your needs
+
+**Questions about deployment?** → Contact [steven@sbtl.dev](mailto:steven@sbtl.dev)
+
+---
+
+## Support
+
+**Community Support**:
+- Documentation: [docs.atria.gg](https://docs.atria.gg)
+- GitHub Discussions: [Community forum](https://github.com/thesubtleties/atria/discussions)
+- GitHub Issues: [Bug reports & feature requests](https://github.com/thesubtleties/atria/issues)
+
+**Commercial Support**:
+- Email: [steven@sbtl.dev](mailto:steven@sbtl.dev)
+- Response time: 24-48 hours for general inquiries
+- Priority support available for managed hosting customers
+
+---
+
+<div align="center">
+
+**Ready to transform your events?** [Get started now](#quick-start) or [try the live demo](https://atria.gg)
+
+_Atria - Where events become communities and attendees become connections_
+
+Made by [SBTL](https://sbtl.dev) | Copyright © 2025 SBTL LLC
+
+</div>
