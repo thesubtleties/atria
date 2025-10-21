@@ -122,7 +122,7 @@ The development environment includes:
 - Drag-and-drop reordering for visual organization
 - Automatic image optimization (WebP conversion, 80-90% size reduction)
 
-**Enterprise Security**
+**Security**
 - HTTPOnly cookie authentication (XSS protection)
 - JWT with automatic refresh tokens
 - Granular role-based permissions
@@ -303,7 +303,7 @@ Get the benefits of managed hosting with the isolation of self-hosting, plus cus
 
 **Ready to transform your events?** [Get started now](#quick-start) or [try the live demo](https://atria.gg)
 
-_Atria - Where events become communities and attendees become connections_
+_Building meaningful connections, one event at a time._
 
 Made by [SBTL](https://sbtl.dev) | Copyright © 2025 SBTL LLC
 
