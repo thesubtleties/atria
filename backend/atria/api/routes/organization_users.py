@@ -13,7 +13,7 @@ from api.schemas import (
 )
 from api.commons.pagination import (
     PAGINATION_PARAMETERS,
-    get_pagination_schema,
+    get_pagination_doc_reference,
 )
 from api.commons.decorators import org_admin_required, org_member_required
 from api.services.organization_user import OrganizationUserService
@@ -50,9 +50,7 @@ class OrganizationUserList(MethodView):
             *PAGINATION_PARAMETERS,
         ],
         responses={
-            200: get_pagination_schema(
-                "organization_users", "OrganizationUserBase"
-            ),
+            200: get_pagination_doc_reference("OrganizationUser"),
             403: {"description": "Not authorized to view organization users"},
             404: {"description": "Organization not found"},
         },

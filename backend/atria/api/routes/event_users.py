@@ -15,7 +15,7 @@ from api.schemas import (
 )
 from api.commons.pagination import (
     PAGINATION_PARAMETERS,
-    get_pagination_schema,
+    get_pagination_doc_reference,
 )
 from api.commons.decorators import (
     event_member_required,
@@ -90,7 +90,7 @@ class EventUserList(MethodView):
             *PAGINATION_PARAMETERS,
         ],
         responses={
-            200: get_pagination_schema("event_users", "EventUserBase"),
+            200: get_pagination_doc_reference("EventUserBase"),
             403: {"description": "Not authorized to view event users"},
             404: {"description": "Event not found"},
         },
@@ -207,7 +207,7 @@ class EventUserAdminList(MethodView):
             *PAGINATION_PARAMETERS,
         ],
         responses={
-            200: get_pagination_schema("event_users", "EventUserAdmin"),
+            200: get_pagination_doc_reference("EventUserAdmin"),
             403: {"description": "Not authorized to view admin details"},
             404: {"description": "Event not found"},
         },

@@ -11,7 +11,7 @@ from api.schemas import (
 )
 from api.commons.pagination import (
     PAGINATION_PARAMETERS,
-    get_pagination_schema,
+    get_pagination_doc_reference,
     paginate,
 )
 from api.commons.decorators import (
@@ -47,7 +47,7 @@ class OrganizationInvitationList(MethodView):
             *PAGINATION_PARAMETERS,
         ],
         responses={
-            200: get_pagination_schema("invitations", "OrganizationInvitationBase"),
+            200: get_pagination_doc_reference("OrganizationInvitationDetail"),
             403: {"description": "Not authorized to view invitations"},
             404: {"description": "Organization not found"},
         },

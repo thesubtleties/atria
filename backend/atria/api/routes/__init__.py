@@ -56,7 +56,73 @@ __all__ = [
 ]
 
 
+def register_pagination_schemas(api):
+    """
+    Manually register pagination wrapper schemas with Flask-SMOREST.
+
+    This ensures all PaginatedXYZ schemas are available in the OpenAPI spec
+    without Flask-SMOREST trying to use them for serialization (which would
+    cause errors since paginate() returns already-serialized dicts).
+    """
+    from api.commons.pagination import create_pagination_schema
+    from api.schemas import (
+        EventSchema,
+        OrganizationSchema,
+        OrganizationUserSchema,
+        DirectMessageThreadSchema,
+        EventInvitationDetailSchema,
+        OrganizationInvitationDetailSchema,
+        EventUserSchema,
+        EventUserAdminSchema,
+        ConnectionSchema,
+        UserSchema,
+        SessionDetailSchema,
+        SessionSpeakerSchema,
+        ChatRoomSchema,
+        ChatMessageSchema,
+    )
+
+    # List of (schema_class, collection_name) tuples for all paginated endpoints
+    pagination_schemas = [
+        # Events
+        (EventSchema, "events"),
+        # Organizations
+        (OrganizationSchema, "organizations"),
+        # Organization Users
+        (OrganizationUserSchema, "organization_users"),
+        # Direct Messages
+        (DirectMessageThreadSchema, "threads"),
+        # Invitations
+        (EventInvitationDetailSchema, "invitations"),
+        (OrganizationInvitationDetailSchema, "invitations"),
+        # Event Users
+        (EventUserSchema, "event_users"),
+        (EventUserAdminSchema, "event_users"),
+        # Connections
+        (ConnectionSchema, "connections"),
+        (UserSchema, "users"),
+        # Sessions
+        (SessionDetailSchema, "sessions"),
+        (SessionSpeakerSchema, "session_speakers"),
+        # Chat
+        (ChatRoomSchema, "chat_rooms"),
+        (ChatMessageSchema, "messages"),
+    ]
+
+    print("\n🔧 Registering pagination schemas...")
+    for schema_class, collection_name in pagination_schemas:
+        paginated_schema = create_pagination_schema(schema_class, collection_name)
+        schema_name = paginated_schema.Meta.name
+        api.spec.components.schema(schema_name, schema=paginated_schema)
+        print(f"  ✅ Registered: {schema_name}")
+    print(f"✅ Registered {len(pagination_schemas)} pagination schemas\n")
+
+
 def register_blueprints(api):
+    # Register pagination schemas BEFORE blueprints
+    # This ensures all PaginatedXYZ schemas are available in OpenAPI
+    register_pagination_schemas(api)
+
     print("\n\nRegistering blueprints\n\n")
     # Health (register first for monitoring)
     api.register_blueprint(health_blp)

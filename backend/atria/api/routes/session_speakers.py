@@ -14,7 +14,7 @@ from api.schemas import (
 )
 from api.commons.pagination import (
     PAGINATION_PARAMETERS,
-    get_pagination_schema,
+    get_pagination_doc_reference,
 )
 from api.commons.decorators import (
     event_member_required,
@@ -54,9 +54,7 @@ class SessionSpeakerList(MethodView):
             *PAGINATION_PARAMETERS,
         ],
         responses={
-            200: get_pagination_schema(
-                "session_speakers", "SessionSpeakerBase"
-            ),
+            200: get_pagination_doc_reference("SessionSpeaker"),
             403: {"description": "Not authorized to view session speakers"},
             404: {"description": "Session not found"},
         },
