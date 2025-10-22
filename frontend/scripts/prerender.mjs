@@ -209,6 +209,16 @@ ${criticalCSS}    </style>
       '$1community$2'
     );
 
+    console.log('🧹 Removing Plausible script to prevent double loading...');
+
+    // Remove the Plausible analytics script from pre-rendered HTML
+    // This prevents double-counting: script will load when React hydrates
+    // Pattern matches the entire script block that loads Plausible
+    html = html.replace(
+      /<script>\s*\/\/ Load analytics after hydration[\s\S]*?<\/script>/,
+      ''
+    );
+
     // Save it
     writeFileSync(INDEX_PATH, html, 'utf-8');
 
