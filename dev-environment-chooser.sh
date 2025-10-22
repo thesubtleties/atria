@@ -66,7 +66,7 @@ case $choice in
     1)
         echo ""
         echo -e "${GREEN}Starting Standard Local Development...${NC}"
-        ./start-local-dev-tmux.sh
+        ./scripts/dev/start-local-dev-tmux.sh
         ;;
     2)
         echo ""
@@ -78,7 +78,7 @@ case $choice in
         else
             export SEED_DB=false
         fi
-        ./start-redis-dev-tmux.sh
+        ./scripts/dev/start-redis-dev-tmux.sh
         ;;
     3)
         echo ""
@@ -90,7 +90,7 @@ case $choice in
         else
             export SEED_DB=false
         fi
-        ./start-preview-tmux.sh
+        ./scripts/dev/start-preview-tmux.sh
         ;;
     4)
         echo ""
@@ -102,7 +102,7 @@ case $choice in
         else
             export SEED_DB=false
         fi
-        ./start-tailscale-dev-tmux.sh
+        ./scripts/dev/start-tailscale-dev-tmux.sh
         ;;
     5)
         echo ""
@@ -122,17 +122,17 @@ case $choice in
         # Check which compose file is active
         if docker ps | grep -q "atria-redis-tailscale"; then
             echo -e "${GREEN}✓ Tailscale environment is running${NC}"
-            echo "  Stop with: ./stop-tailscale-dev-tmux.sh"
+            echo "  Stop with: ./scripts/dev/stop-tailscale-dev-tmux.sh"
         elif docker ps | grep -q "atria-redis-dev"; then
             echo -e "${GREEN}✓ Redis environment is running${NC}"
-            echo "  Stop with: ./stop-redis-dev-tmux.sh"
+            echo "  Stop with: ./scripts/dev/stop-redis-dev-tmux.sh"
         elif docker ps | grep -q "atria-api-preview"; then
             echo -e "${GREEN}✓ Production Preview environment is running${NC}"
-            echo "  Stop with: ./stop-preview-tmux.sh"
+            echo "  Stop with: ./scripts/dev/stop-preview-tmux.sh"
             echo "  Frontend: http://localhost:8080"
         elif docker ps | grep -q "atria-api-dev"; then
             echo -e "${GREEN}✓ Standard environment is running${NC}"
-            echo "  Stop with: ./stop-local-dev-tmux.sh"
+            echo "  Stop with: ./scripts/dev/stop-local-dev-tmux.sh"
         else
             echo -e "${YELLOW}No Atria environment detected${NC}"
         fi
@@ -140,10 +140,10 @@ case $choice in
     6)
         echo ""
         echo -e "${YELLOW}Stopping all environments...${NC}"
-        ./stop-local-dev-tmux.sh 2>/dev/null
-        ./stop-redis-dev-tmux.sh 2>/dev/null
-        ./stop-tailscale-dev-tmux.sh 2>/dev/null
-        ./stop-preview-tmux.sh 2>/dev/null
+        ./scripts/dev/stop-local-dev-tmux.sh 2>/dev/null
+        ./scripts/dev/stop-redis-dev-tmux.sh 2>/dev/null
+        ./scripts/dev/stop-tailscale-dev-tmux.sh 2>/dev/null
+        ./scripts/dev/stop-preview-tmux.sh 2>/dev/null
         echo -e "${GREEN}✅ All environments stopped${NC}"
         ;;
     7)
