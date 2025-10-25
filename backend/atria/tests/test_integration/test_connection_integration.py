@@ -669,15 +669,41 @@ class TestConnectionIntegration:
         db.session.add_all([alice, bob])
         db.session.commit()
 
-        # Alice sends connection request to Bob
+        # Create organization and event
         client.post('/api/auth/login',
                    json={'email': 'alice@sbtl.ai', 'password': 'Pass123!'})
 
+        org_response = client.post('/api/organizations',
+                                  json={'name': 'Test Org'})
+        org_id = json.loads(org_response.data)['id']
+
+        utc_now = datetime.now(timezone.utc).date()
+        event_response = client.post(
+            f'/api/organizations/{org_id}/events',
+            json={
+                'title': 'Test Event',
+                'event_type': 'CONFERENCE',
+                'start_date': (utc_now + timedelta(days=30)).isoformat(),
+                'end_date': (utc_now + timedelta(days=31)).isoformat(),
+                'company_name': 'Test Co',
+                'timezone': 'UTC'
+            }
+        )
+        event_id = json.loads(event_response.data)['id']
+
+        # Add Bob to event
+        event_user_bob = EventUser(event_id=event_id, user_id=bob.id,
+                                   role=EventUserRole.ATTENDEE)
+        db.session.add(event_user_bob)
+        db.session.commit()
+
+        # Alice sends connection request to Bob
         first_response = client.post(
             '/api/connections',
             json={
                 'recipient_id': bob.id,
-                'icebreaker_message': 'First connection attempt'
+                'icebreaker_message': 'First connection attempt',
+                'originating_event_id': event_id
             }
         )
         assert first_response.status_code == 201
@@ -688,7 +714,8 @@ class TestConnectionIntegration:
             '/api/connections',
             json={
                 'recipient_id': bob.id,
-                'icebreaker_message': 'Duplicate attempt'
+                'icebreaker_message': 'Duplicate attempt',
+                'originating_event_id': event_id
             }
         )
         assert duplicate_response.status_code == 400
@@ -706,7 +733,8 @@ class TestConnectionIntegration:
             '/api/connections',
             json={
                 'recipient_id': alice.id,
-                'icebreaker_message': 'Reverse connection'
+                'icebreaker_message': 'Reverse connection',
+                'originating_event_id': event_id
             }
         )
         assert reverse_response.status_code == 400
@@ -726,7 +754,8 @@ class TestConnectionIntegration:
             '/api/connections',
             json={
                 'recipient_id': alice.id,
-                'icebreaker_message': 'Let\'s reconnect!'
+                'icebreaker_message': 'Let\'s reconnect!',
+                'originating_event_id': event_id
             }
         )
         assert new_connection_response.status_code == 201
@@ -822,15 +851,41 @@ class TestConnectionIntegration:
         db.session.add_all([alice, bob, charlie])
         db.session.commit()
 
-        # Alice sends connection to Bob
+        # Create organization and event
         client.post('/api/auth/login',
                    json={'email': 'alice@sbtl.ai', 'password': 'Pass123!'})
 
+        org_response = client.post('/api/organizations',
+                                  json={'name': 'Test Org'})
+        org_id = json.loads(org_response.data)['id']
+
+        utc_now = datetime.now(timezone.utc).date()
+        event_response = client.post(
+            f'/api/organizations/{org_id}/events',
+            json={
+                'title': 'Test Event',
+                'event_type': 'CONFERENCE',
+                'start_date': (utc_now + timedelta(days=30)).isoformat(),
+                'end_date': (utc_now + timedelta(days=31)).isoformat(),
+                'company_name': 'Test Co',
+                'timezone': 'UTC'
+            }
+        )
+        event_id = json.loads(event_response.data)['id']
+
+        # Add Bob to event
+        event_user_bob = EventUser(event_id=event_id, user_id=bob.id,
+                                   role=EventUserRole.ATTENDEE)
+        db.session.add(event_user_bob)
+        db.session.commit()
+
+        # Alice sends connection to Bob
         connection_response = client.post(
             '/api/connections',
             json={
                 'recipient_id': bob.id,
-                'icebreaker_message': 'Private connection'
+                'icebreaker_message': 'Private connection',
+                'originating_event_id': event_id
             }
         )
         assert connection_response.status_code == 201

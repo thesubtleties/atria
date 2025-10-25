@@ -131,13 +131,18 @@ class EventUserNetworkingSchema(EventUserSchema):
     # Note: email may be None based on privacy settings
     # Even admins see privacy-filtered data here to understand what's public
     email = ma.Method("get_filtered_email", dump_only=True, allow_none=True)
+    can_send_connection_request = ma.Method("get_can_send_connection_request", dump_only=True, allow_none=True)
     full_name = ma.String(dump_only=True)
     bio = ma.String(dump_only=True, allow_none=True)
-    
+
     def get_filtered_email(self, obj):
         """Get the privacy-filtered email from the custom attribute"""
         return getattr(obj, '_filtered_email', None)
-    
+
+    def get_can_send_connection_request(self, obj):
+        """Get whether viewer can send connection request based on privacy settings"""
+        return getattr(obj, '_can_send_connection_request', None)
+
     # These fields already come from base EventUserSchema:
     # first_name, last_name, image_url, social_links, company_name, title
     # connection_status, connection_id, connection_direction
