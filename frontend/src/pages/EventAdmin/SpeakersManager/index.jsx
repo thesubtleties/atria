@@ -192,7 +192,6 @@ const SpeakersManager = () => {
             speakers={filteredSpeakers}
             currentUserRole={currentUserRole}
             onEditSpeaker={handleEditSpeaker}
-            organizationId={eventData?.organization_id}
           />
 
           {speakersData?.total_pages > 1 && (
