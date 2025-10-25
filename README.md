@@ -4,6 +4,8 @@
 
 [![Live Demo](https://img.shields.io/badge/demo-atria.gg-6366f1)](https://atria.gg) [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL%203.0-blue.svg)](LICENSE) [![Documentation](https://img.shields.io/badge/docs-docs.atria.gg-34d399)](https://docs.atria.gg)
 
+> ⭐ **If you find Atria interesting, please consider starring this repository** — it helps us grow and reach more people who could benefit from the platform.
+
 <p align="center">
   <img src="https://storage.sbtl.dev/spookyspot/atriaslideshowsmall.webp" alt="Atria Platform Overview" width="100%" />
 </p>
@@ -30,7 +32,12 @@ When you're managing an event, you see only that event. No distracting sidebars,
 - Corporations: Conferences, product launches, training events
 - Nonprofits: Fundraising galas, awareness campaigns, volunteer coordination
 - Education: Academic conferences, workshops, alumni gatherings
+- Faith Organizations: Church conferences, community gatherings, ministry events
 - Communities: Professional associations, industry meetups, local events
+
+---
+
+📰 **Stay Updated**: Follow our [blog](https://docs.atria.gg/blog) for release notes, feature announcements, and platform updates.
 
 ---
 
@@ -69,8 +76,16 @@ Before you begin, ensure you have:
    - Email settings (optional, for invitations)
 
 3. **Start the platform**
+
+   **Option A: Using the interactive chooser (recommended)**
    ```bash
-   docker-compose -f docker-compose.dev-vite.yml up
+   ./dev-environment-chooser.sh
+   ```
+   Select option **1) Standard Local Development** for the simplest setup.
+
+   **Option B: Direct Docker Compose (no tmux required)**
+   ```bash
+   docker-compose -f docker-compose.local-dev.yml up
    ```
 
 4. **Access your platform**
@@ -83,7 +98,7 @@ The development environment includes:
 - PostgreSQL database with sample data
 - Automatic dependency installation
 
-**Need more detailed setup instructions?** → [Full installation guide](https://docs.atria.gg/installation)
+**Need more detailed setup instructions?** → [Full installation guide](https://docs.atria.gg/getting-started/installation)
 
 ---
 
@@ -136,8 +151,6 @@ The development environment includes:
 - Hot reload development environment
 - Docker-first deployment
 
-**For the complete feature list and roadmap** → [View full features & roadmap](https://docs.atria.gg/features)
-
 ---
 
 ## Technology Stack
@@ -156,8 +169,6 @@ The development environment includes:
 - **Redux Toolkit + RTK Query** for state management
 - **Socket.IO Client** for real-time updates
 - **Zod** for runtime validation
-
-**Want to understand the architecture?** → [Architecture deep dive](https://docs.atria.gg/architecture)
 
 ---
 
