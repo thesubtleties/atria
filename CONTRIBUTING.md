@@ -73,16 +73,27 @@ If you find a bug or have a feature request:
    ```bash
    cp .env.example .env.development
    ```
+   Edit `.env.development` and configure at minimum: database credentials, MinIO/S3 storage, JWT secret keys.
 
 3. Start development environment:
+
+   **Option A: Using the interactive chooser (recommended)**
    ```bash
-   docker-compose -f docker-compose.dev-vite.yml up
+   ./dev-environment-chooser.sh
+   ```
+   Select option **1) Standard Local Development** for the simplest setup.
+
+   **Option B: Direct Docker Compose (no tmux required)**
+   ```bash
+   docker-compose -f docker-compose.local-dev.yml up
    ```
 
 4. Access the application:
    - Frontend: http://localhost:5173
    - Backend API: http://localhost:5000
    - API Documentation: http://localhost:5000/new-swagger
+
+**For detailed setup instructions including MinIO/S3 configuration, Redis, email, and troubleshooting**, see the [full installation guide](https://docs.atria.gg/getting-started/installation).
 
 ### Coding Standards
 
@@ -111,6 +122,9 @@ If you find a bug or have a feature request:
 - Document new features or APIs
 - Keep code comments up to date
 - Add JSDoc/docstrings for public APIs
+- **Update the docs site if necessary**: https://github.com/thesubtleties/atria-docs
+  - Installation guides, API documentation, and user guides live in the docs repo
+  - Keep documentation in sync with code changes
 
 ## Pull Request Process
 
