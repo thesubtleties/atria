@@ -132,14 +132,15 @@ class EventUserService:
             # Pass the event_user object to avoid another query for privacy overrides
             user_data = PrivacyService.filter_user_data(
                 event_user.user,  # Already eager-loaded
-                context, 
-                event_id, 
+                context,
+                event_id,
                 event_user  # Pass the pre-loaded EventUser
             )
-            
-            # Store the filtered email as a custom attribute
+
+            # Store privacy-filtered fields as custom attributes
             event_user._filtered_email = user_data.get('email')
-            
+            event_user._can_send_connection_request = user_data.get('can_send_connection_request')
+
             # Add connection status (already computed)
             if event_user.user_id != current_user_id:
                 event_user.connection_status = context.get('connection_status')
