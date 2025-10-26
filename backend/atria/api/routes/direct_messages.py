@@ -1,0 +1,299 @@
+# api/api/routes/direct_messages.py
+from flask.views import MethodView
+from flask_smorest import Blueprint, abort
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask import request
+
+from api.schemas import (
+    DirectMessageThreadSchema,
+    DirectMessageSchema,
+    DirectMessageCreateSchema,
+    DirectMessageThreadCreateSchema,
+    DirectMessagesWithContextSchema,
+    MarkMessagesReadResponseSchema,
+)
+from api.commons.pagination import (
+    PAGINATION_PARAMETERS,
+    get_pagination_doc_reference,
+)
+from api.services.direct_message import DirectMessageService
+
+blp = Blueprint(
+    "direct_messages",
+    "direct_messages",
+    url_prefix="/api",
+    description="Operations on direct messages",
+)
+
+
+@blp.route("/direct-messages/threads")
+class DirectMessageThreadList(MethodView):
+    @blp.response(200)
+    @blp.doc(
+        summary="List message threads",
+        description="Get all direct message threads for the current user",
+        parameters=PAGINATION_PARAMETERS,
+        responses={
+            200: get_pagination_doc_reference("DirectMessageThreadBase"),
+        },
+    )
+    @jwt_required()
+    def get(self):
+        """Get user's message threads"""
+        user_id = int(get_jwt_identity())
+        # Get optional event_id from query params for event-specific enrichment
+        event_id = request.args.get('event_id', type=int)
+
+        # TODO: Implement pagination - route claims to support it but doesn't
+        # Need to add:
+        # page = request.args.get('page', 1, type=int)
+        # per_page = request.args.get('per_page', 50, type=int)
+        # And update get_user_threads() to handle pagination
+
+        return DirectMessageService.get_user_threads(
+            user_id, DirectMessageThreadSchema(many=True), event_id=event_id
+        )
+
+    @blp.arguments(DirectMessageThreadCreateSchema)
+    @blp.response(201, DirectMessageThreadSchema)
+    @blp.doc(
+        summary="Create or get direct message thread",
+        description="Create a new thread or get existing thread between current user and another user",
+        responses={
+            201: {"description": "Thread created or retrieved successfully"},
+            400: {"description": "Validation error"},
+            403: {"description": "Not authorized to create thread with this user"},
+        },
+    )
+    @jwt_required()
+    def post(self, thread_data):
+        """Create or get a direct message thread"""
+        user_id = int(get_jwt_identity())
+        other_user_id = thread_data["user_id"]
+        event_id = thread_data.get("event_id")
+
+        try:
+            # Check permissions for thread creation
+            if event_id:
+                # Event-scoped thread requires admin privilege or existing connection
+                if not DirectMessageService.can_user_message_in_event_context(
+                    user_id, other_user_id, event_id
+                ):
+                    return {"message": "You must be connected with this user to start a conversation"}, 403
+            else:
+                # Global thread requires connection
+                from api.models.user import User
+                current_user = User.query.get(user_id)
+                if not current_user.is_connected_with(other_user_id):
+                    return {"message": "You must be connected with this user to start a conversation"}, 403
+
+            # Create or get thread
+            thread, is_new = DirectMessageService.get_or_create_thread(
+                user_id, other_user_id, event_scope_id=event_id
+            )
+
+            # If it's a new thread, emit socket notifications
+            if is_new:
+                from api.sockets.dm_notifications import emit_direct_message_thread_created
+                emit_direct_message_thread_created(thread, user_id, other_user_id)
+
+            # Return the thread object directly - the schema will serialize it
+            # The DirectMessageThreadSchema will compute last_message, unread_count, etc.
+            # We can add is_new as a transient attribute for the schema to include
+            thread.is_new = is_new
+
+            # Add shared_event_ids for the schema (similar to get_user_threads)
+            if event_id:
+                from api.models.event_user import EventUser
+                event_user = EventUser.query.filter_by(
+                    event_id=event_id, user_id=other_user_id
+                ).first()
+                if event_user:
+                    thread.shared_event_ids = [event_id]
+                    thread.other_user_in_event = True
+                else:
+                    thread.shared_event_ids = []
+                    thread.other_user_in_event = False
+            else:
+                # For global threads, get all shared events
+                shared_event_ids = DirectMessageService.get_shared_event_ids(user_id, other_user_id)
+                thread.shared_event_ids = shared_event_ids
+                thread.other_user_in_event = False  # Not relevant for global context
+
+            return thread, 201
+
+        except ValueError as e:
+            return {"message": str(e)}, 403
+
+
+@blp.route("/direct-messages/threads/<int:thread_id>")
+class DirectMessageThreadDetail(MethodView):
+    @blp.response(200, DirectMessageThreadSchema)
+    @blp.doc(
+        summary="Get thread details",
+        responses={
+            403: {"description": "Not authorized to view this thread"},
+            404: {"description": "Thread not found"},
+        },
+    )
+    @jwt_required()
+    def get(self, thread_id):
+        """Get thread details"""
+        user_id = int(get_jwt_identity())
+
+        try:
+            thread = DirectMessageService.get_thread(thread_id, user_id)
+
+            # Add transient attributes for schema serialization
+            # Get the other user to find shared events
+            other_user_id = thread.user2_id if thread.user1_id == user_id else thread.user1_id
+
+            # Add shared events info
+            shared_event_ids = DirectMessageService.get_shared_event_ids(user_id, other_user_id)
+            thread.shared_event_ids = shared_event_ids
+            thread.other_user_in_event = False  # Not relevant without specific event context
+
+            return thread
+        except ValueError as e:
+            abort(403, message=str(e))
+
+
+@blp.route("/direct-messages/threads/<int:thread_id>/messages")
+class DirectMessageList(MethodView):
+    @blp.response(200, DirectMessagesWithContextSchema)
+    @blp.doc(
+        summary="List thread messages with context",
+        description="Get messages for a thread with pagination and thread context (other user, encryption status)",
+        parameters=[
+            {
+                "in": "path",
+                "name": "thread_id",
+                "schema": {"type": "integer"},
+                "required": True,
+                "description": "Thread ID",
+                "example": 123,
+            },
+            *PAGINATION_PARAMETERS,
+        ],
+        responses={
+            200: {"description": "Messages with thread context"},
+            403: {"description": "Not authorized to view these messages"},
+            404: {"description": "Thread not found"},
+        },
+    )
+    @jwt_required()
+    def get(self, thread_id):
+        """Get thread messages"""
+        user_id = int(get_jwt_identity())
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 50, type=int)
+
+        try:
+            # Use the new unified service method that includes thread context
+            return DirectMessageService.get_thread_messages_with_context(
+                thread_id, user_id, page=page, per_page=per_page
+            )
+        except ValueError as e:
+            return {"message": str(e)}, 403
+
+    @blp.arguments(DirectMessageCreateSchema)
+    @blp.response(201, DirectMessageSchema)
+    @blp.doc(
+        summary="Send direct message",
+        description="Send a new message in a thread",
+        responses={
+            400: {"description": "Validation error"},
+            403: {
+                "description": "Not authorized to send messages in this thread"
+            },
+            404: {"description": "Thread not found"},
+        },
+    )
+    @jwt_required()
+    def post(self, message_data, thread_id):
+        """Send direct message"""
+        user_id = int(get_jwt_identity())
+
+        try:
+            message, other_user_id = DirectMessageService.create_message(
+                thread_id,
+                user_id,
+                message_data["content"],
+                message_data.get("encrypted_content"),
+            )
+
+            # Emit socket event for real-time notification
+            from api.sockets.dm_notifications import emit_new_direct_message
+            emit_new_direct_message(message, thread_id, other_user_id)
+
+            return message, 201
+
+        except ValueError as e:
+            return {"message": str(e)}, 403
+
+
+@blp.route("/direct-messages/threads/<int:thread_id>/read")
+class DirectMessageMarkRead(MethodView):
+    @blp.response(200, MarkMessagesReadResponseSchema)
+    @blp.doc(
+        summary="Mark messages as read",
+        description="Mark all unread messages in a thread as read",
+        responses={
+            200: {"description": "Messages marked as read"},
+            403: {"description": "Not authorized to access this thread"},
+            404: {"description": "Thread not found"},
+        },
+    )
+    @jwt_required()
+    def post(self, thread_id):
+        """Mark all messages in thread as read"""
+        user_id = int(get_jwt_identity())
+        
+        try:
+            # Mark messages and get info about what was marked
+            thread_id, other_user_id, had_unread = DirectMessageService.mark_messages_read(
+                thread_id, user_id
+            )
+            
+            # If there were unread messages, notify the other user via WebSocket (if connected)
+            if had_unread:
+                from api.sockets.dm_notifications import emit_messages_read
+                emit_messages_read(thread_id, user_id, other_user_id)
+            
+            # Return success response matching socket response format
+            return {
+                "thread_id": thread_id,
+                "marked_read": had_unread,
+                "message": "Messages marked as read" if had_unread else "No unread messages"
+            }, 200
+            
+        except ValueError as e:
+            return {"message": str(e)}, 403
+
+
+@blp.route("/direct-messages/threads/<int:thread_id>/clear")
+class DirectMessageThreadClear(MethodView):
+    @blp.response(200, DirectMessageThreadSchema)
+    @blp.doc(
+        summary="Clear/hide thread for current user",
+        description="Hide thread from user's view (iMessage-style deletion)",
+        responses={
+            403: {"description": "Not authorized to clear this thread"},
+            404: {"description": "Thread not found"},
+        },
+    )
+    @jwt_required()
+    def delete(self, thread_id):
+        """Clear thread for current user"""
+        user_id = int(get_jwt_identity())
+        
+        try:
+            thread = DirectMessageService.clear_thread_for_user(thread_id, user_id)
+            
+            # Note: Socket event emission would go here if dm_notifications module exists
+            # from api.sockets.dm_notifications import emit_thread_cleared
+            # emit_thread_cleared(thread_id, user_id)
+            
+            return thread
+        except ValueError as e:
+            return {"message": str(e)}, 403

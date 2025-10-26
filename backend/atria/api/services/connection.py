@@ -142,9 +142,12 @@ class ConnectionService:
         icebreaker_message,
         originating_event_id=None,
     ):
-        """Create a new connection request"""
-        # Check if recipient exists
+        """Create a new connection request with privacy enforcement"""
+        from api.services.privacy import PrivacyService
+
+        # Load both users
         recipient = User.query.get_or_404(recipient_id)
+        requester = User.query.get_or_404(requester_id)
 
         # Check if connection already exists
         existing = Connection.query.filter(
@@ -173,6 +176,10 @@ class ConnectionService:
             else:
                 raise ValueError("Connection already exists")
 
+        # Initialize EventUser objects as None
+        requester_in_event = None
+        recipient_in_event = None
+
         # If event_id is provided, verify both users are part of the event
         if originating_event_id:
             event = Event.query.get_or_404(originating_event_id)
@@ -186,6 +193,19 @@ class ConnectionService:
 
             if not requester_in_event or not recipient_in_event:
                 raise ValueError("Both users must be part of the event")
+
+        # Check privacy settings - pass pre-loaded objects to avoid duplicate queries
+        can_send, reason = PrivacyService.can_send_connection_request(
+            requester=requester,
+            recipient=recipient,
+            event_id=originating_event_id,
+            requester_event_user=requester_in_event,
+            recipient_event_user=recipient_in_event,
+            existing_connection=existing
+        )
+
+        if not can_send:
+            raise ValueError(reason or "Cannot send connection request")
 
         # Create new connection
         connection = Connection(

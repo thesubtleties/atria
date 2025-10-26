@@ -253,14 +253,15 @@ class PrivacyService:
             
             # Check if viewer can actually send a connection request
             can_connect = False
-            
+
             if allow_connection_requests == 'event_attendees':
-                can_connect = True
-            elif allow_connection_requests == 'event_attendees':
-                can_connect = context['is_event_attendee']
+                # Allow if viewer is an event attendee (in shared event context)
+                can_connect = context.get('is_event_attendee', False)
             elif allow_connection_requests == 'speakers_organizers':
+                # Allow only if viewer is a speaker or organizer
                 can_connect = context['is_organizer'] or context['is_co_speaker']
             elif allow_connection_requests == 'none':
+                # Block all connection requests
                 can_connect = False
                 
             filtered['can_send_connection_request'] = can_connect
@@ -287,27 +288,35 @@ class PrivacyService:
     
     @staticmethod
     def can_send_connection_request(
-        requester: User, 
-        recipient: User, 
-        event_id: Optional[int] = None
+        requester: User,
+        recipient: User,
+        event_id: Optional[int] = None,
+        requester_event_user = None,
+        recipient_event_user = None,
+        existing_connection = None
     ) -> tuple[bool, Optional[str]]:
         """
         Check if a user can send a connection request to another user.
-        
+
         Args:
             requester: User trying to send the request
             recipient: User receiving the request
             event_id: Optional event context
-            
+            requester_event_user: Optional pre-loaded EventUser for requester (performance optimization)
+            recipient_event_user: Optional pre-loaded EventUser for recipient (performance optimization)
+            existing_connection: Optional pre-loaded Connection object (performance optimization)
+
         Returns:
             Tuple of (can_send: bool, reason: Optional[str])
         """
         # Can't connect with yourself
         if requester.id == recipient.id:
             return False, "Cannot connect with yourself"
-        
-        # Check if already connected
-        existing_connection = requester.get_connection_with(recipient.id)
+
+        # Check if already connected (use pre-loaded or query)
+        if existing_connection is None:
+            existing_connection = requester.get_connection_with(recipient.id)
+
         if existing_connection:
             if existing_connection.status == ConnectionStatus.ACCEPTED:
                 return False, "Already connected"
@@ -315,49 +324,50 @@ class PrivacyService:
                 return False, "Connection request already pending"
             elif existing_connection.status == ConnectionStatus.BLOCKED:
                 return False, "Connection blocked"
-        
+
         # Get recipient's privacy settings
         privacy = recipient.privacy_settings or {}
         allow_requests = privacy.get('allow_connection_requests', 'event_attendees')
-        
-        # Check event-specific overrides
+
+        # Check event-specific overrides (use pre-loaded or query)
         if event_id:
-            recipient_event = EventUser.query.filter_by(
-                event_id=event_id,
-                user_id=recipient.id
-            ).first()
-            
-            if recipient_event and recipient_event.privacy_overrides:
-                event_privacy = recipient_event.privacy_overrides
+            if recipient_event_user is None:
+                recipient_event_user = EventUser.query.filter_by(
+                    event_id=event_id,
+                    user_id=recipient.id
+                ).first()
+
+            if recipient_event_user and recipient_event_user.privacy_overrides:
+                event_privacy = recipient_event_user.privacy_overrides
                 allow_requests = event_privacy.get('allow_connection_requests', allow_requests)
-        
+
         # Apply connection request rules
         if allow_requests == 'none':
             return False, "User has disabled connection requests"
-        
-        if allow_requests == 'event_attendees':
-            return True, None
-        
-        # Need event context for other rules
+
+        # Need event context for all other permission levels
         if not event_id:
             return False, "Connection requests require shared event context"
-        
-        # Check requester's event status
-        requester_event = EventUser.query.filter_by(
-            event_id=event_id,
-            user_id=requester.id
-        ).first()
-        
-        if not requester_event or requester_event.is_banned:
+
+        # Check requester's event status - must be active participant (use pre-loaded or query)
+        if requester_event_user is None:
+            requester_event_user = EventUser.query.filter_by(
+                event_id=event_id,
+                user_id=requester.id
+            ).first()
+
+        if not requester_event_user or requester_event_user.is_banned:
             return False, "Must be active event participant"
-        
+
+        # Now check permission level (requester is confirmed to be in the event)
         if allow_requests == 'event_attendees':
+            # Allow any active event participant
             return True, None
-        
+
         if allow_requests == 'speakers_organizers':
-            if requester_event.role in [
-                EventUserRole.SPEAKER, 
-                EventUserRole.ORGANIZER, 
+            if requester_event_user.role in [
+                EventUserRole.SPEAKER,
+                EventUserRole.ORGANIZER,
                 EventUserRole.ADMIN
             ]:
                 return True, None

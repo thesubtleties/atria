@@ -13,18 +13,19 @@ export function PersonCard({
 }) {
   const currentUser = useSelector((state) => state.auth.user);
   const navigate = useNavigate();
-  const { 
-    firstName, 
-    lastName, 
-    title, 
-    company, 
-    bio, 
+  const {
+    firstName,
+    lastName,
+    title,
+    company,
+    bio,
     avatarUrl,
     linkedin,
     twitter,
     website,
     email,
     connectionStatus,
+    canSendConnectionRequest,
     privacySettings = {}
   } = person;
 
@@ -186,7 +187,7 @@ export function PersonCard({
                 >
                   Pending
                 </Button>
-              ) : (
+              ) : canSendConnectionRequest !== false ? (
                 <Button
                   size="xs"
                   variant="light"
@@ -200,7 +201,7 @@ export function PersonCard({
                 >
                   Connect
                 </Button>
-              )}
+              ) : null}
             </div>
           )}
         </Group>

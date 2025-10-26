@@ -110,19 +110,7 @@
     }
     </script>
 
-    <!-- Plausible Analytics will be loaded after page hydration -->
-    <!-- Privacy-focused, GDPR compliant, no cookies, no personal data collection -->
-    <script>
-      // Load analytics after hydration (skip during pre-rendering)
-      if (typeof window !== 'undefined' && !navigator.userAgent.includes('PrerendererBot')) {
-        var script = document.createElement('script');
-        script.defer = true;
-        script.setAttribute('data-domain', 'atria.gg');
-        script.setAttribute('data-api', '/api/anonstats/event');
-        script.src = '/api/anonstats/js/script.file-downloads.outbound-links.js';
-        document.head.appendChild(script);
-      }
-    </script>
+    <!-- Plausible Analytics loaded by React after hydration to prevent double-counting -->
   </head>
   <body>
     <div id="root"></div>

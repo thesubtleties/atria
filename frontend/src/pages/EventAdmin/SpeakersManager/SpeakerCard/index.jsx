@@ -22,7 +22,6 @@ const SpeakerCard = ({
   speaker,
   onEditSpeaker,
   currentUserRole,
-  organizationId,
 }) => {
   const navigate = useNavigate();
   const [updateUser] = useUpdateEventUserMutation();
@@ -112,7 +111,7 @@ const SpeakerCard = ({
               
               <Menu.Item
                 leftSection={<IconMicrophone size={16} />}
-                onClick={() => navigate(`/app/organizations/${organizationId}/events/${speaker.event_id}/admin/sessions`)}
+                onClick={() => navigate(`/app/events/${speaker.event_id}/admin/sessions`)}
               >
                 Manage Sessions
               </Menu.Item>

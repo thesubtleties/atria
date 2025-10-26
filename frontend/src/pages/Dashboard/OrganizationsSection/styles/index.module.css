@@ -15,7 +15,7 @@
 
 /* Card System Classes */
 .cardList {
-  composes: card-list-scrollable from '../../../../styles/design-tokens.css';
+  composes: card-list-scrollable from '../../../../styles/design-tokens.css' !important;
 }
 
 .card {

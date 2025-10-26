@@ -69,6 +69,32 @@ export const NewsSection = ({ news }) => {
     }
   };
 
+  const renderDescription = (description, link) => {
+    if (!link) return description;
+
+    // Match URLs like "docs.atria.gg" or "docs.atria.gg/blog"
+    const urlPattern = /(docs\.atria\.gg[^\s]*)/g;
+    const parts = description.split(urlPattern);
+
+    return parts.map((part, index) => {
+      if (part.match(urlPattern)) {
+        return (
+          <a
+            key={index}
+            href={link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.inlineLink}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {part}
+          </a>
+        );
+      }
+      return part;
+    });
+  };
+
   return (
     <section className={styles.dashboardSection}>
       <div className={styles.sectionHeader}>
@@ -82,7 +108,9 @@ export const NewsSection = ({ news }) => {
               <div className={`${styles.newsDot} ${getDotClass(item.date, item.is_new)}`} />
               <div className={styles.newsContent}>
                 <div className={styles.newsTitle}>{item.title}</div>
-                <div className={styles.newsDescription}>{item.description}</div>
+                <div className={styles.newsDescription}>
+                  {renderDescription(item.description, item.link)}
+                </div>
                 <div className={styles.newsMeta}>
                   <span>{getTimeDifference(item.date)}</span>
                   <Badge

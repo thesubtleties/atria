@@ -1,57 +1,23 @@
-## Description
+## Problem
+What issue does this PR solve? What was broken/missing?
 
-Please provide a brief description of the changes in this PR.
+## Solution
+How does this PR fix it? What approach did you take?
 
-## Type of Change
-
-- [ ] Bug fix (non-breaking change which fixes an issue)
-- [ ] New feature (non-breaking change which adds functionality)
-- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
-- [ ] Documentation update
-- [ ] Performance improvement
-- [ ] Code refactoring
-
-## Related Issues
-
-Fixes #(issue number)
-
-## Changes Made
-
-Please describe the changes made in this PR:
-
-- 
-- 
-- 
+## Changes
+- `file/path`: what changed
+- `file/path`: what changed
 
 ## Testing
+How did you verify this works?
 
-Please describe the tests you ran to verify your changes:
+## Breaking Changes
+Does this break existing functionality? How should users migrate?
 
-- [ ] I have tested these changes locally
-- [ ] All existing tests pass
-- [ ] I have added new tests for my changes (if applicable)
-
-## Screenshots (if applicable)
-
-Please add screenshots to help explain your changes if they affect the UI.
-
-## Checklist
-
-- [ ] My code follows the project's style guidelines
-- [ ] I have performed a self-review of my code
-- [ ] I have commented my code, particularly in hard-to-understand areas
-- [ ] I have made corresponding changes to the documentation
-- [ ] My changes generate no new warnings
-- [ ] Any dependent changes have been merged and published
-
-## Contributor License Agreement
-
-- [ ] I have read and agree to the [Contributor License Agreement](../CLA.md)
-- [ ] I understand that my contributions will be licensed under both AGPL-3.0 and a commercial license
-
-## Additional Notes
-
-Please add any additional notes or context about the pull request here.
+(If none, write "None")
 
 ---
-*By submitting this pull request, I confirm that my contribution is made under the terms of the AGPL-3.0 license and I agree to the Contributor License Agreement with SBTL LLC.*
+
+**Type:** [ ] Bug Fix [ ] Feature [ ] Breaking [ ] Refactor [ ] Docs [ ] Performance
+
+**CLA:** [ ] I have read and agree to the [Contributor License Agreement](../CLA.md) and understand my contributions are licensed under AGPL-3.0 and commercial licenses.

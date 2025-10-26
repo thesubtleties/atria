@@ -8,6 +8,7 @@ import { RouterProvider } from 'react-router-dom';
 import { store } from './app/store';
 import { router } from './app/router/routes';
 import ErrorBoundary from './shared/components/ErrorBoundary';
+import { Analytics } from './shared/components/Analytics';
 
 import './styles/reset.css';
 import './styles/design-tokens.css';
@@ -20,6 +21,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <ErrorBoundary>
       <ReduxProvider store={store}>
         <MantineProvider>
+          <Analytics />
           <Notifications position="bottom-left" />
           <ModalsProvider>
             <RouterProvider router={router} />

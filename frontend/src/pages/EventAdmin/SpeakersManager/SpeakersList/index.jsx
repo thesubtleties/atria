@@ -11,7 +11,6 @@ const SpeakersList = ({
   speakers,
   currentUserRole,
   onEditSpeaker,
-  organizationId,
 }) => {
   const [sortBy, setSortBy] = useState('name');
   const [sortOrder, setSortOrder] = useState('asc');
@@ -134,7 +133,6 @@ const SpeakersList = ({
               speaker={speaker}
               onEditSpeaker={onEditSpeaker}
               currentUserRole={currentUserRole}
-              organizationId={organizationId}
             />
           ))}
         </div>
@@ -171,7 +169,6 @@ const SpeakersList = ({
               speaker={speaker}
               onEditSpeaker={onEditSpeaker}
               currentUserRole={currentUserRole}
-              organizationId={organizationId}
             />
           ))}
         </Table.Tbody>

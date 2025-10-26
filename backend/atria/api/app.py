@@ -1,7 +1,6 @@
 from flask import Flask
 from flask_cors import CORS
 import os
-from api import api
 
 # from api import manage # this has been unused for a while
 from api.extensions import smorest_api
@@ -139,10 +138,10 @@ def configure_extensions(app):
 
         socketio.init_app(app, **socketio_kwargs)
 
-    from api.api.sockets import register_socket_handlers
+    from api.sockets import register_socket_handlers
 
     register_socket_handlers()
-    from api.api.sockets import setup_socket_maintenance
+    from api.sockets import setup_socket_maintenance
 
     setup_socket_maintenance()
     configure_jwt_handlers(app)
@@ -152,7 +151,7 @@ def configure_smorest(app):
     """Configure Flask-SMOREST for OpenAPI documentation"""
     # app.json_provider_class = CustomJSONProvider # Commented out because I think we fixed serialization problems
     smorest_api.init_app(app)
-    from api.api.routes import register_blueprints
+    from api.routes import register_blueprints
 
     register_blueprints(smorest_api)
 
@@ -182,10 +181,7 @@ def configure_apispec(app):
     )
 
 
-def register_blueprints(app):
-    """Register all blueprints for application"""
-    # Now only registering the api blueprint which contains all resources
-    app.register_blueprint(api.views.blueprint)
+# NOTE: register_blueprints removed - using Flask-Smorest routes registered in configure_smorest()
 
 
 def configure_jwt_handlers(app):
