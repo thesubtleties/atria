@@ -2,7 +2,7 @@
 
 **Build meaningful connections that last beyond your events.**
 
-[![Live Demo](https://img.shields.io/badge/demo-atria.gg-6366f1)](https://atria.gg) [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL%203.0-blue.svg)](LICENSE) [![Documentation](https://img.shields.io/badge/docs-docs.atria.gg-34d399)](https://docs.atria.gg)
+![Version](https://img.shields.io/github/v/release/thesubtleties/atria) [![Live Demo](https://img.shields.io/badge/demo-atria.gg-6366f1)](https://atria.gg) [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL%203.0-blue.svg)](LICENSE) [![Documentation](https://img.shields.io/badge/docs-docs.atria.gg-34d399)](https://docs.atria.gg)
 
 > ⭐ **If you find Atria interesting, please consider starring this repository** — it helps us grow and reach more people who could benefit from the platform.
 
