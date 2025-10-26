@@ -4,6 +4,7 @@ import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
+import { IconBrandGithubFilled } from '@tabler/icons-react';
 import { useModalManager } from '../shared/useModalManager.jsx';
 import MagneticButton from '../shared/MagneticButton';
 import styles from './Hero.module.css';
@@ -69,10 +70,6 @@ const Hero = () => {
   }, []);
 
   // Modal handlers - now lazy-loaded, no Mantine dependency
-  const handleForgotPassword = () => {
-    openModal('forgotPassword');
-  };
-
   const handleLogin = () => {
     openModal('login');
   };
@@ -342,6 +339,7 @@ const Hero = () => {
       {/* Navigation */}
       <nav ref={navRef} className={styles.nav}>
         <div className={styles.navContent}>
+          {/* Main nav links */}
           <div className={styles.navLinks}>
             <button onClick={handleLogin} className={styles.navLink}>
               Login
@@ -353,6 +351,35 @@ const Hero = () => {
               Demo
             </button>
           </div>
+
+          {/* Icon links - far right, desktop only */}
+          <div className={styles.navIconLinks}>
+            <a
+              href="https://docs.atria.gg"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.navIconLink}
+              aria-label="Documentation"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                <path d="M7 3m0 2.667a2.667 2.667 0 0 1 2.667 -2.667h8.666a2.667 2.667 0 0 1 2.667 2.667v8.666a2.667 2.667 0 0 1 -2.667 2.667h-8.666a2.667 2.667 0 0 1 -2.667 -2.667z" />
+                <path d="M4.012 7.26a2.005 2.005 0 0 0 -1.012 1.737v10c0 1.1 .9 2 2 2h10c.75 0 1.158 -.385 1.5 -1" />
+                <path d="M11 7h5" />
+                <path d="M11 10h6" />
+                <path d="M11 13h3" />
+              </svg>
+            </a>
+            <a
+              href="https://github.com/thesubtleties/atria"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.navIconLink}
+              aria-label="GitHub Repository"
+            >
+              <IconBrandGithubFilled size={20} />
+            </a>
+          </div>
         </div>
       </nav>
 
@@ -361,7 +388,7 @@ const Hero = () => {
         <div className={styles.container}>
           <div className={styles.heroContent}>
             <div ref={logoRef} className={styles.logoContainer}>
-              <img src={AtriaLogo} alt="Atria" className={styles.logo} fetchpriority="high" width="512" height="512" />
+              <img src={AtriaLogo} alt="Atria" className={styles.logo} fetchPriority="high" width="512" height="512" />
               <h1 
                 className={styles.logoText} 
                 style={{ opacity: fontLoaded ? 1 : 0, transition: 'opacity 0.3s ease' }}

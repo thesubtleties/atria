@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Modal, Stack, Select, Text, Avatar, Group } from '@mantine/core';
+import { Modal, Select, Text, Avatar } from '@mantine/core';
 import { Button } from '@/shared/components/buttons';
 import {
   TOP_OPTIONS,
