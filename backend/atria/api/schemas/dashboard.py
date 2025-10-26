@@ -57,6 +57,7 @@ class DashboardNewsSchema(Schema):
     date = fields.DateTime(format="iso", dump_only=True)
     type = fields.Str(dump_only=True)  # 'platform_update', 'product_launch', 'feature_release', 'security'
     is_new = fields.Bool(dump_only=True)
+    link = fields.Str(dump_only=True, allow_none=True)
 
 
 class DashboardUserSchema(Schema):
