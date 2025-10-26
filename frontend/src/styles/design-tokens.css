@@ -245,7 +245,7 @@
 /* Scrollable Card List - For sections with many cards (5+ items) */
 .card-list-scrollable {
   composes: card-list;
-  max-height: 550px !important;
+  max-height: 800px !important;
   overflow-y: auto !important;
   overflow-x: hidden !important;
   padding-right: 4px; /* Space for scrollbar */

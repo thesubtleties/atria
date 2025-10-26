@@ -280,6 +280,24 @@ class DashboardService:
                 'date': datetime(2025, 10, 5, tzinfo=timezone.utc),
                 'type': 'feature_release',
                 'is_new': True
+            },
+            {
+                'id': 4,
+                'title': 'v0.1.0 Release',
+                'description': 'New features, bug fixes, and improvements are now live! Check out the full changelog at docs.atria.gg/blog',
+                'date': datetime(2025, 10, 25, tzinfo=timezone.utc),
+                'type': 'platform_update',
+                'is_new': True,
+                'link': 'https://docs.atria.gg/blog'
+            },
+            {
+                'id': 5,
+                'title': 'Documentation Hub Now Available',
+                'description': 'Need help getting started? Our comprehensive documentation is now live with guides, tutorials, and API references. Visit docs.atria.gg',
+                'date': datetime(2025, 10, 25, tzinfo=timezone.utc),
+                'type': 'platform_update',
+                'is_new': True,
+                'link': 'https://docs.atria.gg'
             }
         ]
 
