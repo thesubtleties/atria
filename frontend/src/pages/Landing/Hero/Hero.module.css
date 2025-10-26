@@ -101,11 +101,25 @@
   padding: 0 var(--space-comfort);
   display: flex;
   justify-content: flex-end;
+  align-items: center;
+  gap: var(--space-comfort);
 }
 
 .navLinks {
   display: flex;
   gap: var(--space-comfort);
+}
+
+/* Icon links container - top left, desktop only */
+.navIconLinks {
+  display: none; /* Hidden on mobile */
+  gap: var(--space-comfort);
+}
+
+@media (min-width: 768px) {
+  .navIconLinks {
+    display: flex;
+  }
 }
 
 .navLink {
@@ -123,6 +137,23 @@
 }
 
 .navLink:hover {
+  color: var(--color-almost-white);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Individual icon link styling - minimal white aesthetic */
+.navIconLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  color: rgba(255, 255, 255, 0.8);
+  transition: var(--transition-smooth);
+  border-radius: 50%; /* Circular background */
+  text-decoration: none;
+}
+
+.navIconLink:hover {
   color: var(--color-almost-white);
   background: rgba(255, 255, 255, 0.1);
 }
