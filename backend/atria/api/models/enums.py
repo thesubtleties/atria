@@ -119,6 +119,12 @@ class InvitationStatus(str, Enum):
     CANCELLED = "cancelled"
 
 
+class StreamingPlatform(str, Enum):
+    VIMEO = "VIMEO"
+    MUX = "MUX"
+    ZOOM = "ZOOM"
+
+
 class USState(str, Enum):
     AL = "AL"  # Alabama
     AK = "AK"  # Alaska
