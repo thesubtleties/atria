@@ -16,6 +16,15 @@ class Organization(db.Model):
         db.DateTime(timezone=True), onupdate=db.func.current_timestamp()
     )
 
+    # Mux BYOA (Bring Your Own Account) credentials
+    # For basic Mux API access (asset upload, playback info)
+    mux_token_id = db.Column(db.String(255), nullable=True)  # Public ID
+    mux_token_secret = db.Column(db.Text, nullable=True)  # ENCRYPTED secret
+
+    # For signed playback URLs (optional, for SIGNED playback policy)
+    mux_signing_key_id = db.Column(db.String(255), nullable=True)  # Public ID
+    mux_signing_private_key = db.Column(db.Text, nullable=True)  # ENCRYPTED RSA private key
+
     # Relationships
     users = db.relationship(
         "User",
@@ -184,3 +193,44 @@ class Organization(db.Model):
             raise ValueError("Cannot remove last owner")
 
         org_user.role = new_role
+
+    # Mux credential management with automatic encryption/decryption
+    def set_mux_credentials(
+        self, token_id: str, token_secret: str, signing_key_id: str = None, signing_private_key: str = None
+    ):
+        """Set Mux API credentials (encrypts secrets automatically)"""
+        from api.commons.encryption import encrypt_secret
+
+        self.mux_token_id = token_id
+        self.mux_token_secret = encrypt_secret(token_secret)
+        self.mux_signing_key_id = signing_key_id
+        self.mux_signing_private_key = encrypt_secret(signing_private_key) if signing_private_key else None
+
+    def get_mux_token_secret(self) -> str:
+        """Get decrypted Mux token secret"""
+        from api.commons.encryption import decrypt_secret
+
+        return decrypt_secret(self.mux_token_secret)
+
+    def get_mux_signing_private_key(self) -> str:
+        """Get decrypted Mux signing private key"""
+        from api.commons.encryption import decrypt_secret
+
+        return decrypt_secret(self.mux_signing_private_key)
+
+    def clear_mux_credentials(self):
+        """Remove all Mux credentials from organization"""
+        self.mux_token_id = None
+        self.mux_token_secret = None
+        self.mux_signing_key_id = None
+        self.mux_signing_private_key = None
+
+    @property
+    def has_mux_credentials(self) -> bool:
+        """Check if organization has Mux API credentials configured"""
+        return bool(self.mux_token_id and self.mux_token_secret)
+
+    @property
+    def has_mux_signing_credentials(self) -> bool:
+        """Check if organization has Mux signing credentials for signed URLs"""
+        return bool(self.mux_signing_key_id and self.mux_signing_private_key)
