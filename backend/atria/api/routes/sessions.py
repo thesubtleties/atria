@@ -13,6 +13,7 @@ from api.schemas import (
     SessionTimesUpdateSchema,
     SessionStatusUpdateSchema,
     SessionChatRoomSchema,
+    SessionPlaybackDataSchema,
 )
 from api.commons.pagination import (
     PAGINATION_PARAMETERS,
@@ -284,5 +285,42 @@ class SessionChatRoomList(MethodView):
         # Add message count to each room
         for room in chat_rooms:
             room.message_count = ChatMessage.query.filter_by(room_id=room.id).count()
-        
+
         return chat_rooms
+
+
+@blp.route("/sessions/<int:session_id>/playback-data")
+class SessionPlaybackData(MethodView):
+    @blp.response(200, SessionPlaybackDataSchema)
+    @blp.doc(
+        summary="Get session playback data",
+        description="Get platform-specific playback data with JWT tokens if needed (Vimeo/Mux/Zoom)",
+        responses={
+            200: {"description": "Playback data with platform-specific fields"},
+            403: {"description": "Not authorized to access this session"},
+            404: {"description": "Session not found or no streaming platform configured"},
+        },
+    )
+    @jwt_required()
+    @session_access_required()
+    def get(self, session_id):
+        """Get platform-agnostic playback data for session
+
+        Returns different structure based on streaming platform:
+        - VIMEO: Simple playback_url
+        - MUX: playback_url + optional JWT tokens (PUBLIC/SIGNED policy)
+        - ZOOM: join_url with embedded passcode
+
+        Tokens are generated on-demand with smart expiration (session duration + 1hr buffer)
+        """
+        from api.models import Session
+
+        session = Session.query.get_or_404(session_id)
+
+        # Generate platform-specific playback data
+        playback_data = session.get_playback_data()
+
+        if not playback_data:
+            abort(404, message="No streaming platform configured for this session")
+
+        return playback_data
