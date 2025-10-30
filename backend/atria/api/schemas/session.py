@@ -157,12 +157,33 @@ class SessionAdminListSchema(SessionSchema):
 
 class SessionMinimalSchema(ma.Schema):
     """Minimal session schema for dropdowns and lists"""
-    
+
     class Meta:
         name = "SessionMinimal"
-    
+
     id = ma.Integer(dump_only=True)
     title = ma.String(dump_only=True)
     day_number = ma.Integer(dump_only=True)
     start_time = ma.Time(dump_only=True)
     end_time = ma.Time(dump_only=True)
+
+
+class SessionPlaybackDataSchema(ma.Schema):
+    """Schema for platform-agnostic playback data endpoint"""
+
+    class Meta:
+        name = "SessionPlaybackData"
+
+    # Common field for all platforms
+    platform = ma.String(dump_only=True, required=True)
+
+    # Vimeo/Mux fields (both use HLS/video URLs)
+    playback_url = ma.String(dump_only=True, allow_none=True)
+
+    # Mux-specific
+    playback_policy = ma.String(dump_only=True, allow_none=True)  # 'PUBLIC' or 'SIGNED'
+    tokens = ma.Dict(dump_only=True, allow_none=True)  # JWT tokens for SIGNED playback
+
+    # Zoom-specific
+    join_url = ma.String(dump_only=True, allow_none=True)
+    passcode = ma.String(dump_only=True, allow_none=True)

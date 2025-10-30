@@ -17,13 +17,16 @@ class Organization(db.Model):
     )
 
     # Mux BYOA (Bring Your Own Account) credentials
-    # For basic Mux API access (asset upload, playback info)
-    mux_token_id = db.Column(db.String(255), nullable=True)  # Public ID
-    mux_token_secret = db.Column(db.Text, nullable=True)  # ENCRYPTED secret
 
-    # For signed playback URLs (optional, for SIGNED playback policy)
-    mux_signing_key_id = db.Column(db.String(255), nullable=True)  # Public ID
-    mux_signing_private_key = db.Column(db.Text, nullable=True)  # ENCRYPTED RSA private key
+    # Mux API credentials (OPTIONAL - for future analytics/management features)
+    # Currently unused - users manage Mux assets via Mux dashboard
+    mux_token_id = db.Column(db.String(255), nullable=True)  # API Token ID (public)
+    mux_token_secret = db.Column(db.Text, nullable=True)  # API Token Secret (ENCRYPTED)
+
+    # Mux signing credentials (OPTIONAL - only needed for SIGNED playback policy)
+    # Used to generate JWT tokens for secure video playback at organization level
+    mux_signing_key_id = db.Column(db.String(255), nullable=True)  # Signing Key ID (public)
+    mux_signing_private_key = db.Column(db.Text, nullable=True)  # RSA Private Key (ENCRYPTED)
 
     # Relationships
     users = db.relationship(

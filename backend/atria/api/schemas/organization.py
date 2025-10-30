@@ -51,6 +51,13 @@ class OrganizationDetailSchema(OrganizationSchema):
     user_is_admin_or_owner = ma.Boolean(dump_only=True)
     current_user_role = ma.Method("get_current_user_role", dump_only=True)
 
+    # Mux credential status (OPTIONAL - visible to all org members)
+    # Just boolean flags indicating if credentials are configured
+    # has_mux_credentials: API credentials (future analytics/management)
+    # has_mux_signing_credentials: Signing credentials (for SIGNED playback)
+    has_mux_credentials = ma.Boolean(dump_only=True)
+    has_mux_signing_credentials = ma.Boolean(dump_only=True)
+
     users = ma.Nested(
         "api.schemas.organization_user.OrganizationUserNestedSchema",
         many=True,
@@ -127,3 +134,23 @@ class OrganizationAddUserSchema(ma.Schema):
 
     user_id = ma.Integer(required=True)
     role = ma.Enum(OrganizationUserRole, required=True)
+
+
+# Mux Credentials Management Schemas (Owner/Admin only)
+
+class OrganizationMuxCredentialsSetSchema(ma.Schema):
+    """Schema for setting/updating Mux credentials (owner/admin only)
+
+    Response uses OrganizationDetailSchema (includes credential status)
+    """
+
+    class Meta:
+        name = "OrganizationMuxCredentialsSet"
+
+    # Mux API credentials (OPTIONAL - for future analytics/management)
+    mux_token_id = ma.String(allow_none=True)
+    mux_token_secret = ma.String(allow_none=True)  # Never returned in response
+
+    # Mux signing credentials (OPTIONAL - for SIGNED playback)
+    mux_signing_key_id = ma.String(allow_none=True)
+    mux_signing_private_key = ma.String(allow_none=True)  # Never returned in response
