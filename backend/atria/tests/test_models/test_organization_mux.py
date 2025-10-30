@@ -41,8 +41,9 @@ class TestOrganizationMuxCredentials:
         db.session.add(org)
         db.session.commit()
 
+        # FAKE TEST KEY - Not a real RSA key, just for testing encryption format
         test_private_key = """-----BEGIN RSA PRIVATE KEY-----
-MIIEowIBAAKCAQEAtest123456789
+FAKE-TEST-KEY-NOT-REAL-MIIEowIBAAKCAQEAtest123456789
 -----END RSA PRIVATE KEY-----"""
 
         # Set full credentials including signing
@@ -86,8 +87,9 @@ MIIEowIBAAKCAQEAtest123456789
         db.session.add(org)
         db.session.commit()
 
+        # FAKE TEST KEY - Not a real RSA key, just for testing encryption format
         original_key = """-----BEGIN RSA PRIVATE KEY-----
-MIIEowIBAAKCAQEAtest123456789
+FAKE-TEST-KEY-NOT-REAL-MIIEowIBAAKCAQEAtest123456789
 -----END RSA PRIVATE KEY-----"""
 
         org.set_mux_credentials(
@@ -201,7 +203,8 @@ MIIEowIBAAKCAQEAtest123456789
         org_id = org.id
 
         original_secret = "super-secret-token-abc123"
-        original_key = "-----BEGIN RSA PRIVATE KEY-----\ntest\n-----END RSA PRIVATE KEY-----"
+        # FAKE TEST KEY - Not a real RSA key
+        original_key = "-----BEGIN RSA PRIVATE KEY-----\nFAKE-TEST-KEY-NOT-REAL\n-----END RSA PRIVATE KEY-----"
 
         org.set_mux_credentials(
             token_id="prod-token-id",
@@ -309,13 +312,14 @@ MIIEowIBAAKCAQEAtest123456789
         db.session.add(org)
         db.session.commit()
 
-        # Realistic RSA private key (2048-bit)
+        # FAKE TEST KEY - Not a real RSA key, just proper length for testing encryption
+        # Real RSA keys would have valid base64-encoded ASN.1 structure
         long_key = """-----BEGIN RSA PRIVATE KEY-----
-MIIEpAIBAAKCAQEA2L3J3vN7c8K5K3h5F1P9Q4x8Y3C7J5K5N5X5V5M5T5R5S5W5
-U5Z5Y5X5W5V5U5T5S5R5Q5P5O5N5M5L5K5J5I5H5G5F5E5D5C5B5A595989979695
-9594939291908988878685848382818079787776757473727170696867666564636
-26160595857565554535251504948474645444342414039383736353433323130292
-82726252423222120191817161514131211109876543210
+FAKE-TEST-KEY-NOT-REAL-2048bit-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+TESTKEYTESTKEYTESTKEYTESTKEYTESTKEYTESTKEYTESTKEYTESTKEYTESTKEYTESTK
+NOTAREALRSAKEYJUSTFORTESTINGENCRYPTIONANDDECRYPTIONOFVERYLONGCREDENTIAL
+THISISSIMULATINGTHE2048BITKEYLENGTHBUTCONTENTISCLEARLYFAKEFORTESTSUITE
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 -----END RSA PRIVATE KEY-----"""
 
         org.set_mux_credentials(

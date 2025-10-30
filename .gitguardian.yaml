@@ -1,0 +1,22 @@
+# GitGuardian configuration
+# Ignore test files and fixtures that contain fake/mock credentials
+
+version: 2
+
+paths-ignore:
+  # Test directories
+  - "backend/atria/tests/**"
+  - "frontend/src/**/*.test.js"
+  - "frontend/src/**/*.test.jsx"
+
+  # Test fixtures and mocks
+  - "**/fixtures/**"
+  - "**/mocks/**"
+  - "**/__tests__/**"
+
+  # Documentation examples
+  - "docs/**/*.md"
+
+  # Development environment files
+  - ".env.example"
+  - "*.example"
