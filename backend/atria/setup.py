@@ -1,7 +1,7 @@
 from setuptools import find_packages
 from setuptools import setup
 
-__version__ = "0.1"
+__version__ = "0.1.1"
 
 # requirements.txt to stay up to date
 with open("requirements.txt") as f:

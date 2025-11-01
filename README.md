@@ -98,7 +98,7 @@ The development environment includes:
 - PostgreSQL database with sample data
 - Automatic dependency installation
 
-**Need more detailed setup instructions?** → [Full installation guide](https://docs.atria.gg/getting-started/installation)
+**Need more detailed setup instructions?** → [Full installation guide](https://docs.atria.gg/docs/getting-started/installation)
 
 ---
 
@@ -197,7 +197,7 @@ The development environment includes:
 ## Documentation & Resources
 
 - **Complete Documentation**: [docs.atria.gg](https://docs.atria.gg)
-- **API Reference**: [docs.atria.gg/api/atria-api](https://docs.atria.gg/api/atria-api)
+- **API Reference**: [docs.atria.gg/docs/api/atria-api](https://docs.atria.gg/docs/api/atria-api)
 - **Community Support**: [GitHub Discussions](https://github.com/thesubtleties/atria/discussions)
 - **Bug Reports**: [GitHub Issues](https://github.com/thesubtleties/atria/issues)
 - **Commercial Support**: [steven@sbtl.dev](mailto:steven@sbtl.dev)
