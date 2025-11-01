@@ -17,7 +17,7 @@ from api.models import User, Organization, Event, Session, ChatRoom, SessionSpea
 from api.models.enums import (
     EventType, EventStatus, EventUserRole,
     SessionStatus, SessionType, SessionChatMode,
-    ChatRoomType, SessionSpeakerRole
+    ChatRoomType, SessionSpeakerRole, StreamingPlatform
 )
 
 
@@ -663,3 +663,550 @@ class TestSessionIntegration:
             room_ids = [r['id'] for r in rooms.get('rooms', [])]
             # Backstage should not be visible to attendees
             assert backstage_room.id not in room_ids
+
+    def test_session_streaming_vimeo_url_normalization(self, client, db):
+        """Test creating session with Vimeo URL - should extract video ID.
+
+        Why test this? We normalize URLs to IDs in schemas for data consistency.
+        """
+        # Setup
+        organizer = User(email='organizer@sbtl.ai', first_name='Vimeo', last_name='Tester',
+                        password='Pass123!', email_verified=True)
+        db.session.add(organizer)
+        db.session.commit()
+
+        client.post('/api/auth/login', json={'email': 'organizer@sbtl.ai', 'password': 'Pass123!'})
+        org_response = client.post('/api/organizations', json={'name': 'Vimeo Test Org'})
+        org_id = json.loads(org_response.data)['id']
+
+        event_response = client.post(
+            f'/api/organizations/{org_id}/events',
+            json=self._get_event_data('Vimeo Streaming Event')
+        )
+        event_id = json.loads(event_response.data)['id']
+
+        # Create session with Vimeo full URL
+        session_data = self._get_session_data(
+            'Vimeo Session',
+            streaming_platform='VIMEO',
+            stream_url='https://vimeo.com/123456789'
+        )
+        response = client.post(
+            f'/api/events/{event_id}/sessions',
+            json=session_data
+        )
+
+        assert response.status_code == 201
+        data = json.loads(response.data)
+
+        # Verify URL was normalized to just ID
+        session = Session.query.get(data['id'])
+        assert session.streaming_platform == 'VIMEO'
+        assert session.stream_url == '123456789'  # Just the ID, not full URL
+
+    def test_session_streaming_mux_url_normalization(self, client, db):
+        """Test creating session with Mux URL - should extract playback ID.
+
+        Why test this? Mux playback IDs can be provided as URLs or raw IDs.
+        """
+        # Setup
+        organizer = User(email='organizer@sbtl.ai', first_name='Mux', last_name='Tester',
+                        password='Pass123!', email_verified=True)
+        db.session.add(organizer)
+        db.session.commit()
+
+        client.post('/api/auth/login', json={'email': 'organizer@sbtl.ai', 'password': 'Pass123!'})
+        org_response = client.post('/api/organizations', json={'name': 'Mux Test Org'})
+        org_id = json.loads(org_response.data)['id']
+
+        event_response = client.post(
+            f'/api/organizations/{org_id}/events',
+            json=self._get_event_data('Mux Streaming Event')
+        )
+        event_id = json.loads(event_response.data)['id']
+
+        # Create session with Mux stream URL
+        session_data = self._get_session_data(
+            'Mux Session',
+            streaming_platform='MUX',
+            stream_url='https://stream.mux.com/DS00Spx1CV902MCtPj5WknGlR102V5HFkDe.m3u8',
+            mux_playback_policy='PUBLIC'
+        )
+        response = client.post(
+            f'/api/events/{event_id}/sessions',
+            json=session_data
+        )
+
+        assert response.status_code == 201
+        data = json.loads(response.data)
+
+        # Verify URL was normalized to just playback ID
+        session = Session.query.get(data['id'])
+        assert session.streaming_platform == 'MUX'
+        assert session.stream_url == 'DS00Spx1CV902MCtPj5WknGlR102V5HFkDe'
+        assert session.mux_playback_policy == 'PUBLIC'
+
+    def test_session_streaming_zoom_id_normalization(self, client, db):
+        """Test creating session with Zoom meeting ID - should normalize to URL.
+
+        Why test this? Zoom meeting IDs can be formatted various ways (spaces, dashes).
+        """
+        # Setup
+        organizer = User(email='organizer@sbtl.ai', first_name='Zoom', last_name='Tester',
+                        password='Pass123!', email_verified=True)
+        db.session.add(organizer)
+        db.session.commit()
+
+        client.post('/api/auth/login', json={'email': 'organizer@sbtl.ai', 'password': 'Pass123!'})
+        org_response = client.post('/api/organizations', json={'name': 'Zoom Test Org'})
+        org_id = json.loads(org_response.data)['id']
+
+        event_response = client.post(
+            f'/api/organizations/{org_id}/events',
+            json=self._get_event_data('Zoom Streaming Event')
+        )
+        event_id = json.loads(event_response.data)['id']
+
+        # Create session with Zoom meeting ID (with spaces)
+        session_data = self._get_session_data(
+            'Zoom Session',
+            streaming_platform='ZOOM',
+            zoom_meeting_id='123 456 7890',
+            zoom_passcode='abc123'
+        )
+        response = client.post(
+            f'/api/events/{event_id}/sessions',
+            json=session_data
+        )
+
+        assert response.status_code == 201
+        data = json.loads(response.data)
+
+        # Verify meeting ID was normalized to full URL
+        session = Session.query.get(data['id'])
+        assert session.streaming_platform == 'ZOOM'
+        assert session.zoom_meeting_id == 'https://zoom.us/j/1234567890'
+        assert session.zoom_passcode == 'abc123'
+
+    def test_session_streaming_vimeo_raw_id_accepted(self, client, db):
+        """Test creating session with raw Vimeo ID (not URL).
+
+        Why test this? Users might already have just the ID.
+        """
+        # Setup
+        organizer = User(email='organizer@sbtl.ai', first_name='Vimeo', last_name='ID',
+                        password='Pass123!', email_verified=True)
+        db.session.add(organizer)
+        db.session.commit()
+
+        client.post('/api/auth/login', json={'email': 'organizer@sbtl.ai', 'password': 'Pass123!'})
+        org_response = client.post('/api/organizations', json={'name': 'Vimeo ID Org'})
+        org_id = json.loads(org_response.data)['id']
+
+        event_response = client.post(
+            f'/api/organizations/{org_id}/events',
+            json=self._get_event_data('Vimeo ID Event')
+        )
+        event_id = json.loads(event_response.data)['id']
+
+        # Create session with raw Vimeo ID (no URL)
+        session_data = self._get_session_data(
+            'Vimeo ID Session',
+            streaming_platform='VIMEO',
+            stream_url='987654321'  # Just the ID
+        )
+        response = client.post(
+            f'/api/events/{event_id}/sessions',
+            json=session_data
+        )
+
+        assert response.status_code == 201
+        data = json.loads(response.data)
+
+        session = Session.query.get(data['id'])
+        assert session.stream_url == '987654321'
+
+    def test_session_streaming_invalid_platform_rejected(self, client, db):
+        """Test that invalid streaming platform is rejected.
+
+        Why test this? Enum validation should prevent typos.
+        """
+        # Setup
+        organizer = User(email='organizer@sbtl.ai', first_name='Invalid', last_name='Platform',
+                        password='Pass123!', email_verified=True)
+        db.session.add(organizer)
+        db.session.commit()
+
+        client.post('/api/auth/login', json={'email': 'organizer@sbtl.ai', 'password': 'Pass123!'})
+        org_response = client.post('/api/organizations', json={'name': 'Invalid Platform Org'})
+        org_id = json.loads(org_response.data)['id']
+
+        event_response = client.post(
+            f'/api/organizations/{org_id}/events',
+            json=self._get_event_data('Invalid Platform Event')
+        )
+        event_id = json.loads(event_response.data)['id']
+
+        # Try to create session with invalid platform
+        session_data = self._get_session_data(
+            'Invalid Session',
+            streaming_platform='YOUTUBE',  # Not a valid platform
+            stream_url='abc123'
+        )
+        response = client.post(
+            f'/api/events/{event_id}/sessions',
+            json=session_data
+        )
+
+        # Should be rejected with 422 (validation error)
+        assert response.status_code == 422
+
+    def test_session_streaming_missing_required_field_rejected(self, client, db):
+        """Test that platform without required field is rejected.
+
+        Why test this? Each platform has required fields.
+        """
+        # Setup
+        organizer = User(email='organizer@sbtl.ai', first_name='Missing', last_name='Field',
+                        password='Pass123!', email_verified=True)
+        db.session.add(organizer)
+        db.session.commit()
+
+        client.post('/api/auth/login', json={'email': 'organizer@sbtl.ai', 'password': 'Pass123!'})
+        org_response = client.post('/api/organizations', json={'name': 'Missing Field Org'})
+        org_id = json.loads(org_response.data)['id']
+
+        event_response = client.post(
+            f'/api/organizations/{org_id}/events',
+            json=self._get_event_data('Missing Field Event')
+        )
+        event_id = json.loads(event_response.data)['id']
+
+        # Try to create Zoom session without zoom_meeting_id
+        session_data = self._get_session_data(
+            'Missing Field Session',
+            streaming_platform='ZOOM'
+            # Missing zoom_meeting_id!
+        )
+        response = client.post(
+            f'/api/events/{event_id}/sessions',
+            json=session_data
+        )
+
+        # Should be rejected with 422 (validation error)
+        assert response.status_code == 422
+        error_data = json.loads(response.data)
+        assert 'zoom_meeting_id' in str(error_data).lower()
+
+    def test_session_streaming_update_platform(self, client, db):
+        """Test updating session streaming platform.
+
+        Why test this? Users should be able to change platforms.
+        """
+        # Setup
+        organizer = User(email='organizer@sbtl.ai', first_name='Update', last_name='Platform',
+                        password='Pass123!', email_verified=True)
+        db.session.add(organizer)
+        db.session.commit()
+
+        client.post('/api/auth/login', json={'email': 'organizer@sbtl.ai', 'password': 'Pass123!'})
+        org_response = client.post('/api/organizations', json={'name': 'Update Platform Org'})
+        org_id = json.loads(org_response.data)['id']
+
+        event_response = client.post(
+            f'/api/organizations/{org_id}/events',
+            json=self._get_event_data('Update Platform Event')
+        )
+        event_id = json.loads(event_response.data)['id']
+
+        # Create session with Vimeo
+        session_data = self._get_session_data(
+            'Changeable Session',
+            streaming_platform='VIMEO',
+            stream_url='123456789'
+        )
+        response = client.post(
+            f'/api/events/{event_id}/sessions',
+            json=session_data
+        )
+        session_id = json.loads(response.data)['id']
+
+        # Update to Mux
+        update_response = client.put(
+            f'/api/sessions/{session_id}',
+            json={
+                'streaming_platform': 'MUX',
+                'stream_url': 'DS00Spx1CV902',
+                'mux_playback_policy': 'SIGNED'
+            }
+        )
+
+        assert update_response.status_code == 200
+
+        # Verify update
+        session = Session.query.get(session_id)
+        assert session.streaming_platform == 'MUX'
+        assert session.stream_url == 'DS00Spx1CV902'
+        assert session.mux_playback_policy == 'SIGNED'
+
+    def test_session_streaming_invalid_vimeo_url_rejected(self, client, db):
+        """Test that malformed Vimeo URL is rejected by schema validation.
+
+        Why test this? Schema should reject URLs that can't be normalized.
+        """
+        # Setup
+        organizer = User(email='organizer@sbtl.ai', first_name='Invalid', last_name='Vimeo',
+                        password='Pass123!', email_verified=True)
+        db.session.add(organizer)
+        db.session.commit()
+
+        client.post('/api/auth/login', json={'email': 'organizer@sbtl.ai', 'password': 'Pass123!'})
+        org_response = client.post('/api/organizations', json={'name': 'Invalid Vimeo Org'})
+        org_id = json.loads(org_response.data)['id']
+
+        event_response = client.post(
+            f'/api/organizations/{org_id}/events',
+            json=self._get_event_data('Invalid Vimeo Event')
+        )
+        event_id = json.loads(event_response.data)['id']
+
+        # Try to create session with malformed Vimeo URL
+        session_data = self._get_session_data(
+            'Invalid Vimeo URL Session',
+            streaming_platform='VIMEO',
+            stream_url='https://not-vimeo.com/invalid'  # Can't extract ID
+        )
+        response = client.post(
+            f'/api/events/{event_id}/sessions',
+            json=session_data
+        )
+
+        # Should be rejected with 422 (validation error)
+        assert response.status_code == 422
+        error_data = json.loads(response.data)
+        assert 'stream_url' in str(error_data).lower()
+
+    def test_session_streaming_invalid_mux_url_rejected(self, client, db):
+        """Test that malformed Mux URL is rejected by schema validation.
+
+        Why test this? Schema should reject URLs that can't extract playback ID.
+        """
+        # Setup
+        organizer = User(email='organizer@sbtl.ai', first_name='Invalid', last_name='Mux',
+                        password='Pass123!', email_verified=True)
+        db.session.add(organizer)
+        db.session.commit()
+
+        client.post('/api/auth/login', json={'email': 'organizer@sbtl.ai', 'password': 'Pass123!'})
+        org_response = client.post('/api/organizations', json={'name': 'Invalid Mux Org'})
+        org_id = json.loads(org_response.data)['id']
+
+        event_response = client.post(
+            f'/api/organizations/{org_id}/events',
+            json=self._get_event_data('Invalid Mux Event')
+        )
+        event_id = json.loads(event_response.data)['id']
+
+        # Try to create session with malformed Mux URL
+        session_data = self._get_session_data(
+            'Invalid Mux URL Session',
+            streaming_platform='MUX',
+            stream_url='https://not-mux.com/invalid!@#'  # Can't extract playback ID
+        )
+        response = client.post(
+            f'/api/events/{event_id}/sessions',
+            json=session_data
+        )
+
+        # Should be rejected with 422 (validation error)
+        assert response.status_code == 422
+        error_data = json.loads(response.data)
+        assert 'stream_url' in str(error_data).lower()
+
+    def test_session_streaming_partial_update_requires_url(self, client, db):
+        """Test that changing platform without providing URL field is rejected.
+
+        Why test this? Cross-field validation should ensure platform has corresponding URL.
+        """
+        # Setup
+        organizer = User(email='organizer@sbtl.ai', first_name='Partial', last_name='Update',
+                        password='Pass123!', email_verified=True)
+        db.session.add(organizer)
+        db.session.commit()
+
+        client.post('/api/auth/login', json={'email': 'organizer@sbtl.ai', 'password': 'Pass123!'})
+        org_response = client.post('/api/organizations', json={'name': 'Partial Update Org'})
+        org_id = json.loads(org_response.data)['id']
+
+        event_response = client.post(
+            f'/api/organizations/{org_id}/events',
+            json=self._get_event_data('Partial Update Event')
+        )
+        event_id = json.loads(event_response.data)['id']
+
+        # Create session with Vimeo
+        session_data = self._get_session_data(
+            'Partial Update Session',
+            streaming_platform='VIMEO',
+            stream_url='123456789'
+        )
+        response = client.post(
+            f'/api/events/{event_id}/sessions',
+            json=session_data
+        )
+        session_id = json.loads(response.data)['id']
+
+        # Try to update to Mux without providing stream_url
+        update_response = client.put(
+            f'/api/sessions/{session_id}',
+            json={
+                'streaming_platform': 'MUX',
+                # Missing stream_url!
+            }
+        )
+
+        # Should be rejected with 422 (validation error)
+        assert update_response.status_code == 422
+        error_data = json.loads(update_response.data)
+        assert 'stream_url' in str(error_data).lower()
+
+    def test_session_without_streaming_platform(self, client, db):
+        """Test creating session without any streaming platform.
+
+        Why test this? Streaming is optional - sessions can exist without it.
+        """
+        # Setup
+        organizer = User(email='organizer@sbtl.ai', first_name='No', last_name='Stream',
+                        password='Pass123!', email_verified=True)
+        db.session.add(organizer)
+        db.session.commit()
+
+        client.post('/api/auth/login', json={'email': 'organizer@sbtl.ai', 'password': 'Pass123!'})
+        org_response = client.post('/api/organizations', json={'name': 'No Stream Org'})
+        org_id = json.loads(org_response.data)['id']
+
+        event_response = client.post(
+            f'/api/organizations/{org_id}/events',
+            json=self._get_event_data('No Stream Event')
+        )
+        event_id = json.loads(event_response.data)['id']
+
+        # Create session WITHOUT streaming platform (omit fields)
+        session_data = self._get_session_data('No Stream Session')
+        # Don't include streaming_platform, stream_url, etc.
+
+        response = client.post(
+            f'/api/events/{event_id}/sessions',
+            json=session_data
+        )
+
+        assert response.status_code == 201
+        data = json.loads(response.data)
+
+        # Verify session was created without streaming
+        session = Session.query.get(data['id'])
+        assert session.streaming_platform is None
+        assert session.stream_url is None
+        assert session.zoom_meeting_id is None
+
+    def test_session_streaming_clear_by_setting_platform_null(self, client, db):
+        """Test clearing streaming by setting platform to null.
+
+        Why test this? Users should be able to remove streaming by clearing the platform.
+        Setting platform=null means no URL validation required.
+        """
+        # Setup
+        organizer = User(email='organizer@sbtl.ai', first_name='Clear', last_name='Stream',
+                        password='Pass123!', email_verified=True)
+        db.session.add(organizer)
+        db.session.commit()
+
+        client.post('/api/auth/login', json={'email': 'organizer@sbtl.ai', 'password': 'Pass123!'})
+        org_response = client.post('/api/organizations', json={'name': 'Clear Stream Org'})
+        org_id = json.loads(org_response.data)['id']
+
+        event_response = client.post(
+            f'/api/organizations/{org_id}/events',
+            json=self._get_event_data('Clear Stream Event')
+        )
+        event_id = json.loads(event_response.data)['id']
+
+        # Create session with Vimeo streaming
+        session_data = self._get_session_data(
+            'Will Clear Streaming',
+            streaming_platform='VIMEO',
+            stream_url='123456789'
+        )
+        response = client.post(
+            f'/api/events/{event_id}/sessions',
+            json=session_data
+        )
+        session_id = json.loads(response.data)['id']
+
+        # Verify streaming is set
+        session = Session.query.get(session_id)
+        assert session.streaming_platform == 'VIMEO'
+        assert session.stream_url == '123456789'
+
+        # Clear streaming by setting both platform and URL to null
+        update_response = client.put(
+            f'/api/sessions/{session_id}',
+            json={
+                'streaming_platform': None,
+                'stream_url': None
+            }
+        )
+
+        assert update_response.status_code == 200
+
+        # Verify streaming was completely cleared
+        session = Session.query.get(session_id)
+        assert session.streaming_platform is None
+        assert session.stream_url is None
+
+    def test_session_streaming_change_only_title_keeps_platform(self, client, db):
+        """Test that updating other fields doesn't affect streaming config.
+
+        Why test this? Partial updates shouldn't clear unrelated fields.
+        """
+        # Setup
+        organizer = User(email='organizer@sbtl.ai', first_name='Partial', last_name='Keep',
+                        password='Pass123!', email_verified=True)
+        db.session.add(organizer)
+        db.session.commit()
+
+        client.post('/api/auth/login', json={'email': 'organizer@sbtl.ai', 'password': 'Pass123!'})
+        org_response = client.post('/api/organizations', json={'name': 'Partial Keep Org'})
+        org_id = json.loads(org_response.data)['id']
+
+        event_response = client.post(
+            f'/api/organizations/{org_id}/events',
+            json=self._get_event_data('Partial Keep Event')
+        )
+        event_id = json.loads(event_response.data)['id']
+
+        # Create session with Vimeo
+        session_data = self._get_session_data(
+            'Original Title',
+            streaming_platform='VIMEO',
+            stream_url='123456789'
+        )
+        response = client.post(
+            f'/api/events/{event_id}/sessions',
+            json=session_data
+        )
+        session_id = json.loads(response.data)['id']
+
+        # Update only the title (don't touch streaming fields)
+        update_response = client.put(
+            f'/api/sessions/{session_id}',
+            json={'title': 'Updated Title'}
+        )
+
+        assert update_response.status_code == 200
+
+        # Verify streaming config is preserved
+        session = Session.query.get(session_id)
+        assert session.title == 'Updated Title'
+        assert session.streaming_platform == 'VIMEO'
+        assert session.stream_url == '123456789'
