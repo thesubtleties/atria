@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import {
   TextInput,
   Stack,
@@ -32,6 +33,18 @@ const CHAT_MODES = [
   { value: 'ENABLED', label: 'All Chat Enabled (Public & Backstage)' },
   { value: 'BACKSTAGE_ONLY', label: 'Backstage Chat Only' },
   { value: 'DISABLED', label: 'Chat Disabled' },
+];
+
+const STREAMING_PLATFORMS = [
+  { value: '', label: 'No Streaming' },  // Empty string instead of null
+  { value: 'VIMEO', label: 'Vimeo' },
+  { value: 'MUX', label: 'Mux Video' },
+  { value: 'ZOOM', label: 'Zoom Meeting' },
+];
+
+const MUX_PLAYBACK_POLICIES = [
+  { value: 'PUBLIC', label: 'Public (Anyone with link)' },
+  { value: 'SIGNED', label: 'Signed (Requires authentication)' },
 ];
 
 // Helper to get available days based on event dates
@@ -81,8 +94,13 @@ export const EditSessionModal = ({
           start_time: session.start_time.substring(0, 5), // Updated to be in HH:mm format
           end_time: session.end_time.substring(0, 5), // Updated to be in HH:mm format
           day_number: session.day_number.toString(),
-          stream_url: session.stream_url || '',
           chat_mode: session.chat_mode || 'ENABLED',
+          // Streaming platform fields
+          streaming_platform: session.streaming_platform || '',
+          stream_url: session.stream_url || '',
+          zoom_meeting_id: session.zoom_meeting_id || '',
+          zoom_passcode: session.zoom_passcode || '',
+          mux_playback_policy: session.mux_playback_policy || 'PUBLIC',
         }
       : {
           title: '',
@@ -92,8 +110,13 @@ export const EditSessionModal = ({
           start_time: '09:00',
           end_time: '10:00',
           day_number: '1',
-          stream_url: '',
           chat_mode: 'ENABLED',
+          // Streaming platform fields (defaults for new sessions)
+          streaming_platform: '',
+          stream_url: '',
+          zoom_meeting_id: '',
+          zoom_passcode: '',
+          mux_playback_policy: 'PUBLIC',
         },
     validate: (values) => {
       console.log('Validation values:', values);
@@ -109,6 +132,18 @@ export const EditSessionModal = ({
     },
   });
 
+  // Clear streaming fields when platform changes to "No Streaming"
+  useEffect(() => {
+    if (!form.values.streaming_platform || form.values.streaming_platform === '') {
+      // Clear all streaming fields when platform is cleared
+      form.setFieldValue('stream_url', '');
+      form.setFieldValue('zoom_meeting_id', '');
+      form.setFieldValue('zoom_passcode', '');
+      form.setFieldValue('mux_playback_policy', 'PUBLIC');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.values.streaming_platform]);
+
   const handleSubmit = async (values) => {
     try {
       const sessionData = {
@@ -119,8 +154,13 @@ export const EditSessionModal = ({
         start_time: values.start_time, // Just send HH:mm
         end_time: values.end_time, // Just send HH:mm
         day_number: parseInt(values.day_number, 10),
-        stream_url: values.stream_url || '',
         chat_mode: values.chat_mode,
+        // Streaming platform fields (convert empty string to null for API)
+        streaming_platform: values.streaming_platform || null,
+        stream_url: values.stream_url || null,
+        zoom_meeting_id: values.zoom_meeting_id || null,
+        zoom_passcode: values.zoom_passcode || null,
+        mux_playback_policy: values.mux_playback_policy || null,
       };
 
       let result;
@@ -195,6 +235,7 @@ export const EditSessionModal = ({
             placeholder="Select the type of session"
             data={SESSION_TYPES}
             required
+            allowDeselect={false}
             classNames={{ input: styles.formSelect }}
             {...form.getInputProps('session_type')}
           />
@@ -204,6 +245,7 @@ export const EditSessionModal = ({
             placeholder="Select which day this session occurs"
             data={availableDays}
             required
+            allowDeselect={false}
             classNames={{ input: styles.formSelect }}
             {...form.getInputProps('day_number')}
           />
@@ -228,19 +270,76 @@ export const EditSessionModal = ({
 
           <Text className={styles.sectionTitle}>Streaming & Chat</Text>
 
-          <TextInput
-            label="Stream URL"
-            placeholder="https://vimeo.com/..."
-            description="Optional: Add a Vimeo URL for virtual streaming"
-            classNames={{ input: styles.formInput }}
-            {...form.getInputProps('stream_url')}
+          <Select
+            label="Streaming Platform"
+            placeholder="Select streaming platform"
+            description="Choose how attendees will watch this session"
+            data={STREAMING_PLATFORMS}
+            allowDeselect={false}
+            classNames={{ input: styles.formSelect }}
+            {...form.getInputProps('streaming_platform')}
           />
+
+          {/* Conditional streaming fields based on selected platform */}
+          {form.values.streaming_platform === 'VIMEO' && (
+            <TextInput
+              label="Vimeo Video"
+              placeholder="https://vimeo.com/123456789 or video ID"
+              description="Paste Vimeo URL or video ID - we'll handle the rest"
+              required
+              classNames={{ input: styles.formInput }}
+              {...form.getInputProps('stream_url')}
+            />
+          )}
+
+          {form.values.streaming_platform === 'MUX' && (
+            <>
+              <TextInput
+                label="Mux Playback ID or Stream URL"
+                placeholder="DS00Spx1CV902... or https://stream.mux.com/..."
+                description="Paste Mux playback ID or stream URL"
+                required
+                classNames={{ input: styles.formInput }}
+                {...form.getInputProps('stream_url')}
+              />
+              <Select
+                label="Mux Playback Policy"
+                placeholder="Select playback policy"
+                description="PUBLIC: Anyone can watch. SIGNED: Requires organization credentials"
+                data={MUX_PLAYBACK_POLICIES}
+                allowDeselect={false}
+                classNames={{ input: styles.formSelect }}
+                {...form.getInputProps('mux_playback_policy')}
+              />
+            </>
+          )}
+
+          {form.values.streaming_platform === 'ZOOM' && (
+            <>
+              <TextInput
+                label="Zoom Meeting URL or ID"
+                placeholder="https://zoom.us/j/123... or 123 456 7890"
+                description="Paste Zoom meeting URL or meeting ID (spaces and dashes OK)"
+                required
+                classNames={{ input: styles.formInput }}
+                {...form.getInputProps('zoom_meeting_id')}
+              />
+              <TextInput
+                label="Zoom Passcode (Optional)"
+                placeholder="Meeting passcode"
+                description="Add if your Zoom meeting requires a passcode"
+                classNames={{ input: styles.formInput }}
+                {...form.getInputProps('zoom_passcode')}
+              />
+            </>
+          )}
 
           <Select
             label="Chat Settings"
             placeholder="Choose chat availability"
             data={CHAT_MODES}
             required
+            allowDeselect={false}
             classNames={{ input: styles.formSelect }}
             {...form.getInputProps('chat_mode')}
           />
