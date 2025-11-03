@@ -1,15 +1,17 @@
 /* pages/Session/SessionDisplay/styles/index.module.css */
 .displayContainer {
   width: 100%;
-  background: #000; /* Black background for video */
+  background: #0a0a0a; /* Almost black for video (better than pure black) */
   overflow: hidden;
   /* Maintain 16:9 aspect ratio */
   aspect-ratio: 16 / 9;
-  /* No border radius or border - video should fill completely */
+  /* No border radius - keep it square */
 }
 
 .videoContainer {
   position: relative;
+  width: 100%;
+  height: 100%;
 }
 
 .videoContainer iframe {
@@ -19,4 +21,25 @@
   width: 100%;
   height: 100%;
   border: 0;
+}
+
+/* For non-video content (alerts, Zoom card, etc.) */
+.messageContainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1.5rem, 4vw, 3rem);
+  /* Opaque background to completely cover black container */
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 1) 0%,
+    rgba(251, 250, 255, 1) 100%
+  );
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5), 0 4px 20px rgba(139, 92, 246, 0.08);
+  box-sizing: border-box;
 }
