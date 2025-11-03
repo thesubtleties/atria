@@ -21,6 +21,7 @@ export const MuxPlayer = ({ playbackId, playbackPolicy, tokens }) => {
         <MuxPlayerReact
           playbackId={playbackId}
           tokens={tokens}
+          accentColor="#8B5CF6"
           controls
           style={{ width: '100%', aspectRatio: '16/9' }}
         />
@@ -33,6 +34,7 @@ export const MuxPlayer = ({ playbackId, playbackPolicy, tokens }) => {
     <div className={styles.videoContainer}>
       <MuxPlayerReact
         playbackId={playbackId}
+        accentColor="#8B5CF6"
         controls
         style={{ width: '100%', aspectRatio: '16/9' }}
       />
