@@ -161,8 +161,12 @@ class MuxPlaybackService:
             }
         """
         # Get decrypted private key and key ID
-        private_key_pem = organization.get_mux_signing_private_key()
+        private_key_base64 = organization.get_mux_signing_private_key()
         signing_key_id = organization.mux_signing_key_id
+
+        # Decode base64-encoded private key
+        import base64
+        private_key_pem = base64.b64decode(private_key_base64).decode('utf-8')
 
         # Load RSA private key
         private_key = serialization.load_pem_private_key(

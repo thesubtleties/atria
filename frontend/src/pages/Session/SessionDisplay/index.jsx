@@ -4,7 +4,7 @@ import { VimeoPlayer, MuxPlayer, ZoomJoinCard } from './players';
 import { Alert, Loader } from '@mantine/core';
 import styles from './styles/index.module.css';
 
-export const SessionDisplay = ({ session }) => {
+export const SessionDisplay = ({ session, event, currentUser }) => {
   const [playbackData, setPlaybackData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -197,6 +197,9 @@ export const SessionDisplay = ({ session }) => {
           <MuxPlayer
             playbackId={session.stream_url}
             playbackPolicy="PUBLIC"
+            session={session}
+            event={event}
+            currentUser={currentUser}
           />
         );
       }
@@ -279,6 +282,9 @@ export const SessionDisplay = ({ session }) => {
           playbackId={session.stream_url}
           playbackPolicy="SIGNED"
           tokens={playbackData.tokens}
+          session={session}
+          event={event}
+          currentUser={currentUser}
         />
       );
     }

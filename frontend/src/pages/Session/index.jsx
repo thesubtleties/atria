@@ -144,7 +144,11 @@ export const SessionPage = () => {
 
               {/* Video Display */}
               <div className={styles.videoWrapper}>
-                <SessionDisplay session={session} />
+                <SessionDisplay
+                  session={session}
+                  event={event}
+                  currentUser={currentUser}
+                />
               </div>
 
               {/* Session Details - Under video within same container */}

@@ -109,6 +109,18 @@ const OrganizationNameSection = ({ organization, currentUserRole }) => {
               Edit Name
             </Button>
           )}
+
+          {canEdit && isEditing && (
+            <ActionIcon
+              variant="subtle"
+              onClick={handleCancel}
+              disabled={isLoading}
+              size="lg"
+              className={styles.cancelButton}
+            >
+              <IconX size={18} />
+            </ActionIcon>
+          )}
         </Group>
 
         {/* Info text for non-editors */}
@@ -121,20 +133,21 @@ const OrganizationNameSection = ({ organization, currentUserRole }) => {
         {/* Editing form (ADMIN/OWNER only) */}
         <Collapse in={isEditing && canEdit}>
           <Stack spacing="sm">
-            <TextInput
-              label="Organization Name"
-              placeholder="Enter organization name"
-              value={editedName}
-              onChange={(e) => setEditedName(e.target.value)}
-              required
-              autoFocus
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') handleSave();
-                if (e.key === 'Escape') handleCancel();
-              }}
-            />
+              <TextInput
+                label="Organization Name"
+                placeholder="Enter organization name"
+                value={editedName}
+                onChange={(e) => setEditedName(e.target.value)}
+                required
+                autoFocus
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleSave();
+                  if (e.key === 'Escape') handleCancel();
+                }}
+              />
 
-            <Group spacing="xs">
+            {/* Save button at bottom left */}
+            <div>
               <Button
                 variant="primary"
                 onClick={handleSave}
@@ -144,15 +157,7 @@ const OrganizationNameSection = ({ organization, currentUserRole }) => {
                 <IconCheck size={16} />
                 Save Name
               </Button>
-              <ActionIcon
-                variant="subtle"
-                onClick={handleCancel}
-                disabled={isLoading}
-                size="lg"
-              >
-                <IconX size={18} />
-              </ActionIcon>
-            </Group>
+            </div>
           </Stack>
         </Collapse>
       </Stack>

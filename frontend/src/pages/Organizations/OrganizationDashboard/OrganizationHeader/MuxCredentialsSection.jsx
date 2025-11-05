@@ -189,6 +189,18 @@ const MuxCredentialsSection = ({ organization, currentUserRole }) => {
               {hasCredentials ? 'Update Credentials' : 'Add Credentials'}
             </Button>
           )}
+
+          {canEdit && isEditing && (
+            <ActionIcon
+              variant="subtle"
+              onClick={handleCancel}
+              disabled={isUpdating || isDeleting}
+              size="lg"
+              className={styles.cancelButton}
+            >
+              <IconX size={18} />
+            </ActionIcon>
+          )}
         </Group>
 
         {/* Info text for non-editors */}
@@ -201,65 +213,59 @@ const MuxCredentialsSection = ({ organization, currentUserRole }) => {
         {/* Editing form (ADMIN/OWNER only) */}
         <Collapse in={isEditing && canEdit}>
           <Stack spacing="sm">
-            <Alert
-              icon={<IconAlertCircle size={16} />}
-              color="blue"
-              variant="light"
-            >
-              <Text size="xs" style={{ color: '#64748B' }}>
-                Credentials are encrypted and never exposed. Enter new values to update.
-              </Text>
-            </Alert>
+              <Alert
+                icon={<IconAlertCircle size={16} />}
+                color="blue"
+                variant="light"
+              >
+                <Text size="xs" style={{ color: '#64748B' }}>
+                  Credentials are encrypted and never exposed. Enter new values to update.
+                </Text>
+              </Alert>
 
-            <TextInput
-              label="Mux Signing Key ID"
-              placeholder={hasCredentials ? 'sk_******' : 'Enter signing key ID'}
-              value={keyId}
-              onChange={handleKeyIdChange}
-              required
-              description={
-                hasCredentials && !dirtyFields.keyId
-                  ? 'Leave empty to keep existing value'
-                  : 'Format: sk_xxxxx...'
-              }
-            />
+              <TextInput
+                label="Mux Signing Key ID"
+                placeholder={hasCredentials ? 'sk_******' : 'Enter signing key ID'}
+                value={keyId}
+                onChange={handleKeyIdChange}
+                required
+                description={
+                  hasCredentials && !dirtyFields.keyId
+                    ? 'Leave empty to keep existing value'
+                    : 'Format: sk_xxxxx...'
+                }
+              />
 
-            <TextInput
-              label="Mux Private Key (Base64)"
-              placeholder={hasCredentials ? '********' : 'Enter private key'}
-              value={privateKey}
-              onChange={handlePrivateKeyChange}
-              required
-              type="password"
-              description={
-                hasCredentials && !dirtyFields.privateKey
-                  ? 'Leave empty to keep existing value'
-                  : 'Paste the complete base64-encoded private key'
-              }
-            />
+              <TextInput
+                label="Mux Private Key (Base64)"
+                placeholder={hasCredentials ? '********' : 'Enter private key'}
+                value={privateKey}
+                onChange={handlePrivateKeyChange}
+                required
+                type="password"
+                description={
+                  hasCredentials && !dirtyFields.privateKey
+                    ? 'Leave empty to keep existing value'
+                    : 'Paste the complete base64-encoded private key'
+                }
+              />
 
-            <Group position="apart" mt="sm">
-              <Group spacing="xs">
-                <Button
-                  variant="primary"
-                  onClick={handleSave}
-                  disabled={isUpdating || isDeleting}
-                  loading={isUpdating}
-                >
-                  <IconCheck size={16} />
-                  Save Credentials
-                </Button>
-                <ActionIcon
-                  variant="subtle"
-                  onClick={handleCancel}
-                  disabled={isUpdating || isDeleting}
-                  size="lg"
-                >
-                  <IconX size={18} />
-                </ActionIcon>
-              </Group>
+            {/* Action buttons at bottom left */}
+            <div>
+              <Button
+                variant="primary"
+                onClick={handleSave}
+                disabled={isUpdating || isDeleting}
+                loading={isUpdating}
+              >
+                <IconCheck size={16} />
+                Save Credentials
+              </Button>
+            </div>
 
-              {hasCredentials && (
+            {/* Remove button below save if credentials exist */}
+            {hasCredentials && (
+              <div>
                 <Button
                   variant="danger"
                   onClick={handleDelete}
@@ -268,8 +274,8 @@ const MuxCredentialsSection = ({ organization, currentUserRole }) => {
                 >
                   Remove Credentials
                 </Button>
-              )}
-            </Group>
+              </div>
+            )}
           </Stack>
         </Collapse>
       </Stack>

@@ -332,3 +332,15 @@
   color: var(--color-text-muted);
   line-height: 1.4;
 }
+
+/* Cancel Button - In header row at far right */
+.cancelButton {
+  color: var(--color-text-muted) !important;
+  transition: all 0.2s ease;
+  margin-left: auto !important; /* Push to far right */
+}
+
+.cancelButton:hover {
+  color: var(--color-text-secondary) !important;
+  background: var(--primary-alpha-4) !important;
+}
