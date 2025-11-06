@@ -9,6 +9,17 @@ const SessionType = z.enum([
   'QA',
 ]);
 
+const StreamingPlatform = z.enum([
+  'VIMEO',
+  'MUX',
+  'ZOOM',
+]);
+
+const MuxPlaybackPolicy = z.enum([
+  'PUBLIC',
+  'SIGNED',
+]);
+
 // Schema for individual field validation
 export const sessionFieldSchemas = {
   title: z.string().min(1, 'Title is required').max(255, 'Title too long'),
@@ -21,7 +32,23 @@ export const sessionFieldSchemas = {
   end_time: z
     .string()
     .regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Invalid time format (HH:MM)'),
-  stream_url: z.string().url('Invalid URL').optional().or(z.literal('')),
+  // Streaming platform fields (flexible validation for inline editing)
+  streaming_platform: StreamingPlatform.nullable().optional(),
+  stream_url: z.string()
+    .min(8, 'Vimeo ID must be 8+ digits, or Mux ID 10+ characters')
+    .max(500, 'URL too long')
+    .optional()
+    .or(z.literal('')),
+  zoom_meeting_id: z.string()
+    .min(9, 'Zoom ID must be at least 9 digits')
+    .max(200, 'URL too long')
+    .optional()
+    .or(z.literal('')),
+  zoom_passcode: z.string()
+    .max(50, 'Passcode too long')
+    .optional()
+    .or(z.literal('')),
+  mux_playback_policy: MuxPlaybackPolicy.optional(),
 };
 
 // Helper to validate individual fields

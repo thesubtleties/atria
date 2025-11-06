@@ -9,6 +9,7 @@ from api.schemas import (
     OrganizationDetailSchema,
     OrganizationCreateSchema,
     OrganizationUpdateSchema,
+    OrganizationMuxCredentialsSetSchema,
 )
 from api.commons.decorators import org_admin_required, org_member_required
 from api.commons.pagination import (
@@ -125,3 +126,67 @@ class OrganizationList(MethodView):
             org_data["name"], user_id
         )
         return org, 201
+
+
+@blp.route("/organizations/<int:org_id>/mux-credentials")
+class OrganizationMuxCredentials(MethodView):
+    @blp.arguments(OrganizationMuxCredentialsSetSchema)
+    @blp.response(200, OrganizationDetailSchema)
+    @blp.doc(
+        summary="Set/update Mux credentials",
+        description="Set or update organization's Mux BYOA credentials (owner/admin only). All fields optional.",
+        responses={
+            403: {"description": "Must be owner or admin"},
+            404: {"description": "Organization not found"},
+        },
+    )
+    @jwt_required()
+    @org_admin_required()
+    def put(self, credentials_data, org_id):
+        """Set/update Mux credentials (owner/admin only)
+
+        All credential fields are optional:
+        - mux_token_id, mux_token_secret: API credentials (future analytics)
+        - mux_signing_key_id, mux_signing_private_key: Signing credentials (SIGNED playback)
+
+        Secrets are automatically encrypted before storage.
+        Response includes credential status (boolean flags), never actual secrets.
+        """
+        from api.models import Organization
+        from api.extensions import db
+
+        org = Organization.query.get_or_404(org_id)
+
+        # Set Mux credentials (automatically encrypts secrets)
+        org.set_mux_credentials(
+            token_id=credentials_data.get('mux_token_id'),
+            token_secret=credentials_data.get('mux_token_secret'),
+            signing_key_id=credentials_data.get('mux_signing_key_id'),
+            signing_private_key=credentials_data.get('mux_signing_private_key')
+        )
+        db.session.commit()
+
+        # Return full org detail (includes credential status)
+        return org
+
+    @blp.response(204)
+    @blp.doc(
+        summary="Delete Mux credentials",
+        description="Remove all Mux credentials from organization (owner/admin only)",
+        responses={
+            403: {"description": "Must be owner or admin"},
+            404: {"description": "Organization not found"},
+        },
+    )
+    @jwt_required()
+    @org_admin_required()
+    def delete(self, org_id):
+        """Delete all Mux credentials (owner/admin only)"""
+        from api.models import Organization
+        from api.extensions import db
+
+        org = Organization.query.get_or_404(org_id)
+        org.clear_mux_credentials()
+        db.session.commit()
+
+        return "", 204

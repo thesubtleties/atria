@@ -6,6 +6,9 @@
   padding: 0;
   border: 1px solid rgba(255, 255, 255, 0.8);
   box-shadow: 0 8px 32px rgba(139, 92, 246, 0.08);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Modal Header */
@@ -15,6 +18,15 @@
   color: #1e293b;
   padding: 1.5rem;
   border-bottom: 1px solid rgba(139, 92, 246, 0.04);
+  flex-shrink: 0;
+}
+
+/* Modal Body - Make it scrollable */
+.modalBody {
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: calc(90vh - 80px); /* Subtract header height */
+  flex: 1;
 }
 
 /* Section Titles */
@@ -102,11 +114,16 @@
 @media (max-width: 768px) {
   .modalContent {
     padding: 0;
+    max-height: 95vh; /* More height on mobile */
   }
 
   .modalHeader {
     padding: 1rem;
     font-size: 1.125rem;
+  }
+
+  .modalBody {
+    max-height: calc(95vh - 60px); /* Adjust for smaller header */
   }
 
   .buttonGroup {

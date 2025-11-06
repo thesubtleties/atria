@@ -48,6 +48,7 @@ def app():
     os.environ['FLASK_ENV'] = 'testing'
     os.environ['TESTING'] = 'true'
     os.environ['JWT_SECRET_KEY'] = 'test-secret-key'
+    os.environ['ENCRYPTION_KEY'] = 'KDn7Nz2Vm7iDR207Wm8TuTGNOoQiZkZR9PL_8RzJUQ4=' # test key only used for testing
     os.environ['SECRET_KEY'] = 'test-secret-key'
     # Use Redis URL from environment or default to test instance
     if 'REDIS_URL' not in os.environ:

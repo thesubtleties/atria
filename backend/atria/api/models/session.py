@@ -1,5 +1,5 @@
 from api.extensions import db
-from api.models.enums import SessionType, SessionStatus, SessionSpeakerRole, SessionChatMode
+from api.models.enums import SessionType, SessionStatus, SessionSpeakerRole, SessionChatMode, StreamingPlatform
 from datetime import datetime, timezone, time, date, timedelta
 
 
@@ -25,6 +25,14 @@ class Session(db.Model):
     start_time = db.Column(db.Time, nullable=False)
     end_time = db.Column(db.Time, nullable=False)
     stream_url = db.Column(db.Text)
+
+    # Streaming platform fields (multi-platform support: Vimeo/Mux/Zoom)
+    # Uses VARCHAR with CHECK constraint (not native ENUM) for flexibility
+    streaming_platform = db.Column(db.String(20), nullable=True)
+    zoom_meeting_id = db.Column(db.String(255), nullable=True)  # Normalized Zoom URL
+    zoom_passcode = db.Column(db.String(100), nullable=True)
+    mux_playback_policy = db.Column(db.String(20), nullable=True)  # 'PUBLIC' or 'SIGNED'
+
     day_number = db.Column(db.BigInteger, nullable=False)
     created_at = db.Column(
         db.DateTime(timezone=True), server_default=db.func.current_timestamp()
@@ -340,3 +348,57 @@ class Session(db.Model):
             .order_by(cls.start_time)
             .all()
         )
+
+    def get_playback_data(self):
+        """
+        Generate platform-specific playback data.
+
+        Returns different structure based on streaming platform:
+        - VIMEO: Simple URL
+        - MUX: URL + optional signed tokens
+        - ZOOM: Join URL with embedded passcode
+
+        Returns:
+            dict: Platform-specific playback data
+        """
+        if not self.streaming_platform:
+            # No platform configured, return None
+            return None
+
+        if self.streaming_platform == 'VIMEO':
+            return {
+                "platform": "VIMEO",
+                "playback_url": self.stream_url,
+                "tokens": None
+            }
+
+        elif self.streaming_platform == 'MUX':
+            from api.services.mux_playback_service import MuxPlaybackService
+
+            # Calculate smart expiration based on session duration
+            token_exp = MuxPlaybackService.calculate_session_token_expiration(self)
+
+            # Generate playback URL with tokens if SIGNED
+            result = MuxPlaybackService.get_playback_url(
+                organization=self.event.organization,
+                playback_id=self.stream_url,
+                playback_policy=self.mux_playback_policy or 'PUBLIC',
+                token_expiration=token_exp
+            )
+
+            return {
+                "platform": "MUX",
+                "playback_url": result["playback_url"],
+                "playback_policy": result["playback_policy"],
+                "tokens": result["tokens"]
+            }
+
+        elif self.streaming_platform == 'ZOOM':
+            # Zoom URL already includes passcode in ?pwd= parameter
+            return {
+                "platform": "ZOOM",
+                "join_url": self.zoom_meeting_id,  # Full URL with ?pwd=
+                "passcode": self.zoom_passcode  # Separate for optional display
+            }
+
+        return None

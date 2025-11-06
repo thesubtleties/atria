@@ -129,6 +129,28 @@ export const organizationsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['OrganizationInvitations'],
     }),
+    // Mux Credentials endpoints
+    updateMuxCredentials: builder.mutation({
+      query: ({ orgId, ...credentials }) => ({
+        url: `/organizations/${orgId}/mux-credentials`,
+        method: 'PUT',
+        body: credentials,
+      }),
+      invalidatesTags: (result, error, { orgId }) => [
+        { type: 'Organizations', id: orgId },
+        'Organizations',
+      ],
+    }),
+    deleteMuxCredentials: builder.mutation({
+      query: (orgId) => ({
+        url: `/organizations/${orgId}/mux-credentials`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (result, error, orgId) => [
+        { type: 'Organizations', id: orgId },
+        'Organizations',
+      ],
+    }),
   }),
 });
 
@@ -149,4 +171,6 @@ export const {
   useAcceptOrganizationInvitationMutation,
   useDeclineOrganizationInvitationMutation,
   useCancelOrganizationInvitationMutation,
+  useUpdateMuxCredentialsMutation,
+  useDeleteMuxCredentialsMutation,
 } = organizationsApi;
