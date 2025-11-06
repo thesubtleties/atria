@@ -65,6 +65,7 @@ class TestMuxPlaybackServiceSignedPlayback:
         from cryptography.hazmat.primitives.asymmetric import rsa
         from cryptography.hazmat.primitives import serialization
         from cryptography.hazmat.backends import default_backend
+        import base64
 
         private_key = rsa.generate_private_key(
             public_exponent=65537,
@@ -77,11 +78,14 @@ class TestMuxPlaybackServiceSignedPlayback:
             encryption_algorithm=serialization.NoEncryption()
         ).decode('utf-8')
 
+        # Base64-encode the PEM key (matches what users provide from Mux dashboard)
+        private_key_base64 = base64.b64encode(private_pem.encode('utf-8')).decode('utf-8')
+
         org.set_mux_credentials(
             token_id="test-token-id",
             token_secret="test-token-secret",
             signing_key_id="test-signing-key-id",
-            signing_private_key=private_pem
+            signing_private_key=private_key_base64
         )
         db.session.commit()
 
@@ -120,9 +124,13 @@ class TestMuxPlaybackServiceSignedPlayback:
         tokens = result["tokens"]
 
         # Get public key from org's private key for verification
-        private_key_pem = org_with_signing_credentials.get_mux_signing_private_key()
+        private_key_base64 = org_with_signing_credentials.get_mux_signing_private_key()
         from cryptography.hazmat.primitives import serialization
         from cryptography.hazmat.backends import default_backend
+        import base64
+
+        # Decode base64-encoded private key
+        private_key_pem = base64.b64decode(private_key_base64).decode('utf-8')
 
         private_key = serialization.load_pem_private_key(
             private_key_pem.encode(),
@@ -209,9 +217,13 @@ class TestMuxPlaybackServiceSignedPlayback:
         )
 
         # Get public key for verification
-        private_key_pem = org_with_signing_credentials.get_mux_signing_private_key()
+        private_key_base64 = org_with_signing_credentials.get_mux_signing_private_key()
         from cryptography.hazmat.primitives import serialization
         from cryptography.hazmat.backends import default_backend
+        import base64
+
+        # Decode base64-encoded private key
+        private_key_pem = base64.b64decode(private_key_base64).decode('utf-8')
 
         private_key = serialization.load_pem_private_key(
             private_key_pem.encode(),
@@ -250,9 +262,13 @@ class TestMuxPlaybackServiceSignedPlayback:
         )
 
         # Get public key for verification
-        private_key_pem = org_with_signing_credentials.get_mux_signing_private_key()
+        private_key_base64 = org_with_signing_credentials.get_mux_signing_private_key()
         from cryptography.hazmat.primitives import serialization
         from cryptography.hazmat.backends import default_backend
+        import base64
+
+        # Decode base64-encoded private key
+        private_key_pem = base64.b64decode(private_key_base64).decode('utf-8')
 
         private_key = serialization.load_pem_private_key(
             private_key_pem.encode(),
@@ -358,11 +374,15 @@ class TestMuxPlaybackServiceSessionDuration:
             encryption_algorithm=serialization.NoEncryption()
         ).decode('utf-8')
 
+        # Base64-encode the PEM key (matches what users provide from Mux dashboard)
+        import base64
+        private_key_base64 = base64.b64encode(private_pem.encode('utf-8')).decode('utf-8')
+
         org.set_mux_credentials(
             token_id="test-token-id",
             token_secret="test-token-secret",
             signing_key_id="test-signing-key-id",
-            signing_private_key=private_pem
+            signing_private_key=private_key_base64
         )
         db.session.flush()
 
@@ -530,11 +550,15 @@ class TestMuxPlaybackServiceReturnFormat:
             encryption_algorithm=serialization.NoEncryption()
         ).decode('utf-8')
 
+        # Base64-encode the PEM key (matches what users provide from Mux dashboard)
+        import base64
+        private_key_base64 = base64.b64encode(private_pem.encode('utf-8')).decode('utf-8')
+
         org.set_mux_credentials(
             token_id="test-token-id",
             token_secret="test-token-secret",
             signing_key_id="test-signing-key-id",
-            signing_private_key=private_pem
+            signing_private_key=private_key_base64
         )
         db.session.commit()
 
