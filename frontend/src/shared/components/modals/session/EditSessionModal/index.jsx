@@ -195,6 +195,7 @@ export const EditSessionModal = ({
       classNames={{
         content: styles.modalContent,
         header: styles.modalHeader,
+        body: styles.modalBody,
       }}
     >
       <form onSubmit={form.onSubmit(handleSubmit)}>
