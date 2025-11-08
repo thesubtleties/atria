@@ -9,8 +9,8 @@ SECRET_KEY=dkjfkldjlkjk
 JWT_SECRET_KEY=another-super-secret-key-change-in-prod # Add this for JWT
 
 # Database
-
-SQLALCHEMY_DATABASE_URI=postgresql://user:password@db:5432/atria
+# Note: SQLALCHEMY_DATABASE_URI is provided by .env.development
+# Do not hardcode credentials here
 
 # Optional: Add these if you want different token expiry times
 

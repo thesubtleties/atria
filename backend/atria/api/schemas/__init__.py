@@ -24,12 +24,14 @@ from api.schemas.session import (
     SessionUpdateSchema,
     SessionTimesUpdateSchema,
     SessionStatusUpdateSchema,
+    SessionPlaybackDataSchema,
 )
 from api.schemas.organization import (
     OrganizationSchema,
     OrganizationDetailSchema,
     OrganizationCreateSchema,
     OrganizationUpdateSchema,
+    OrganizationMuxCredentialsSetSchema,
 )
 from api.schemas.event_user import (
     EventUserSchema,
@@ -158,11 +160,13 @@ __all__ = [
     "SessionUpdateSchema",
     "SessionTimesUpdateSchema",
     "SessionStatusUpdateSchema",
+    "SessionPlaybackDataSchema",
     # Organization schemas
     "OrganizationSchema",
     "OrganizationDetailSchema",
     "OrganizationCreateSchema",
     "OrganizationUpdateSchema",
+    "OrganizationMuxCredentialsSetSchema",
     # Junction table schemas
     "EventUserSchema",
     "EventUserDetailSchema",

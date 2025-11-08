@@ -66,14 +66,20 @@ Before you begin, ensure you have:
 
 2. **Configure environment**
    ```bash
-   cp .env.example .env.development
+   # Copy environment files (you need BOTH)
+   cp .env.example .env                                # For Docker Compose
+   cp .env.development.example .env.development        # For backend app
    ```
 
-   Edit `.env.development` and configure at minimum:
-   - Database credentials (already set for Docker)
-   - MinIO/S3 credentials (see `.env.example` for details)
-   - JWT secret keys (change defaults!)
-   - Email settings (optional, for invitations)
+   **Why two files?**
+   - `.env` → Used by Docker Compose to set up PostgreSQL (minimal config)
+   - `.env.development` → Used by the Flask backend application (full config)
+
+   For local development, the defaults work out of the box! For production, edit:
+   - JWT secret keys (generate new ones!)
+   - MinIO/S3 credentials (for file uploads)
+   - Email settings (for invitations)
+   - Redis URL (for caching and real-time features)
 
 3. **Start the platform**
 
@@ -82,20 +88,32 @@ Before you begin, ensure you have:
    ./dev-environment-chooser.sh
    ```
    Select option **1) Standard Local Development** for the simplest setup.
+   - The chooser will ask if you want to seed the database with sample data
+   - **Recommended: Say yes (y)** for first-time setup to get sample organizations, events, and users
 
    **Option B: Direct Docker Compose (no tmux required)**
    ```bash
-   docker-compose -f docker-compose.local-dev.yml up
+   docker compose -f docker-compose.dev-vite.yml up
    ```
+
+   By default, this will **automatically seed** the database with sample data.
+
+   To **disable** automatic seeding:
+   ```bash
+   SEED_DB=false docker compose -f docker-compose.dev-vite.yml up
+   ```
+
+   **Note**: Sample data includes test organizations, events, users, and sessions to help you explore features immediately.
 
 4. **Access your platform**
    - **Frontend**: http://localhost:5173
    - **Backend API**: http://localhost:5000
    - **API Documentation**: http://localhost:5000/new-swagger
+   - **Health Check**: http://localhost:5000/api/health
 
 The development environment includes:
 - Hot reload for frontend and backend
-- PostgreSQL database with sample data
+- PostgreSQL database (seeded with sample data by default)
 - Automatic dependency installation
 
 **Need more detailed setup instructions?** → [Full installation guide](https://docs.atria.gg/docs/getting-started/installation)
@@ -109,6 +127,7 @@ The development environment includes:
 - Drag-and-drop speaker management with role assignments
 - Real-time session status updates
 - Hybrid event support (virtual + in-person attendance)
+- Multi-platform video streaming (Vimeo, Mux with signed playback for token-based video security, Zoom)
 - Session-specific chat rooms (public and backstage)
 
 **Professional Networking**

@@ -87,6 +87,9 @@ MAIL_DEFAULT_SENDER = os.getenv(
 )
 FRONTEND_URL = os.getenv("FRONTEND_URL", "https://atria.gg")
 
+# Encryption for organization credentials (Mux keys, etc.)
+ENCRYPTION_KEY = os.getenv("ENCRYPTION_KEY")
+
 # Redis Configuration
 REDIS_URL = os.getenv("REDIS_URL", None)  # None = graceful degradation
 SOCKETIO_REDIS_URL = os.getenv("SOCKETIO_REDIS_URL", REDIS_URL)

@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import {
   TextInput,
   Textarea,
@@ -47,6 +47,18 @@ const CHAT_MODES = [
   { value: 'DISABLED', label: 'Chat Disabled' },
 ];
 
+const STREAMING_PLATFORMS = [
+  { value: '', label: 'No Streaming' },
+  { value: 'VIMEO', label: 'Vimeo' },
+  { value: 'MUX', label: 'Mux' },
+  { value: 'ZOOM', label: 'Zoom' },
+];
+
+const MUX_PLAYBACK_POLICIES = [
+  { value: 'PUBLIC', label: 'Public' },
+  { value: 'SIGNED', label: 'Signed' },
+];
+
 export const SessionCardMobile = ({ session, hasConflict }) => {
   const [updateSession] = useUpdateSessionMutation();
   const [deleteSession] = useDeleteSessionMutation();
@@ -61,17 +73,28 @@ export const SessionCardMobile = ({ session, hasConflict }) => {
   const [sessionType, setSessionType] = useState(session.session_type);
   const [startTime, setStartTime] = useState(session.start_time);
   const [endTime, setEndTime] = useState(session.end_time);
-  const [streamUrl, setStreamUrl] = useState(session.stream_url || '');
   const [chatMode, setChatMode] = useState(session.chat_mode || 'ENABLED');
+
+  // Streaming platform state
+  const [streamingPlatform, setStreamingPlatform] = useState(session.streaming_platform || '');
+  const [streamUrl, setStreamUrl] = useState(session.stream_url || '');
+  const [zoomMeetingId, setZoomMeetingId] = useState(session.zoom_meeting_id || '');
+  const [zoomPasscode, setZoomPasscode] = useState(session.zoom_passcode || '');
+  const [muxPlaybackPolicy, setMuxPlaybackPolicy] = useState(session.mux_playback_policy || 'PUBLIC');
 
   // Validation error states
   const [errors, setErrors] = useState({});
+
+  // Track if we have a pending platform change that needs to be saved with URL
+  const pendingPlatformChangeRef = useRef(false);
 
   // Debounce values for auto-save
   const [debouncedTitle] = useDebouncedValue(title, 500);
   const [debouncedDescription] = useDebouncedValue(description, 500);
   const [debouncedShortDescription] = useDebouncedValue(shortDescription, 500);
   const [debouncedStreamUrl] = useDebouncedValue(streamUrl, 500);
+  const [debouncedZoomMeetingId] = useDebouncedValue(zoomMeetingId, 500);
+  const [debouncedZoomPasscode] = useDebouncedValue(zoomPasscode, 500);
 
   // Auto-save when debounced values change
   const handleUpdate = useCallback(
@@ -151,9 +174,43 @@ export const SessionCardMobile = ({ session, hasConflict }) => {
       (debouncedStreamUrl === '' ||
         validateAndUpdate('stream_url', debouncedStreamUrl))
     ) {
-      handleUpdate({ stream_url: debouncedStreamUrl });
+      // If we have a pending platform change, save platform + URL together
+      if (pendingPlatformChangeRef.current) {
+        handleUpdate({
+          streaming_platform: streamingPlatform || null,
+          stream_url: debouncedStreamUrl
+        });
+        pendingPlatformChangeRef.current = false;
+      } else {
+        handleUpdate({ stream_url: debouncedStreamUrl });
+      }
     }
-  }, [debouncedStreamUrl, session.stream_url, handleUpdate, validateAndUpdate]);
+  }, [debouncedStreamUrl, session.stream_url, streamingPlatform, handleUpdate, validateAndUpdate]);
+
+  useEffect(() => {
+    if (
+      debouncedZoomMeetingId !== session.zoom_meeting_id &&
+      (debouncedZoomMeetingId === '' ||
+        validateAndUpdate('zoom_meeting_id', debouncedZoomMeetingId))
+    ) {
+      // If we have a pending platform change, save platform + meeting ID together
+      if (pendingPlatformChangeRef.current) {
+        handleUpdate({
+          streaming_platform: streamingPlatform || null,
+          zoom_meeting_id: debouncedZoomMeetingId
+        });
+        pendingPlatformChangeRef.current = false;
+      } else {
+        handleUpdate({ zoom_meeting_id: debouncedZoomMeetingId });
+      }
+    }
+  }, [debouncedZoomMeetingId, session.zoom_meeting_id, streamingPlatform, handleUpdate, validateAndUpdate]);
+
+  useEffect(() => {
+    if (debouncedZoomPasscode !== session.zoom_passcode) {
+      handleUpdate({ zoom_passcode: debouncedZoomPasscode });
+    }
+  }, [debouncedZoomPasscode, session.zoom_passcode, handleUpdate]);
 
   // Calculate duration
   const calculateDuration = (start, end) => {
@@ -389,6 +446,7 @@ export const SessionCardMobile = ({ session, hasConflict }) => {
               }}
               data={SESSION_TYPES}
               size="sm"
+              allowDeselect={false}
               classNames={{ input: styles.formSelect }}
             />
 
@@ -402,19 +460,103 @@ export const SessionCardMobile = ({ session, hasConflict }) => {
               }}
               data={CHAT_MODES}
               size="sm"
+              allowDeselect={false}
               classNames={{ input: styles.formSelect }}
             />
 
-            {/* Stream URL */}
-            <TextInput
-              label="Stream URL"
-              placeholder="e.g., Vimeo URL"
+            {/* Streaming Platform */}
+            <Select
+              label="Streaming Platform"
+              placeholder="Select platform"
+              value={streamingPlatform}
+              onChange={(value) => {
+                setStreamingPlatform(value);
+
+                // If clearing platform (No Streaming), save immediately and clear all fields
+                if (!value || value === '') {
+                  setStreamUrl('');
+                  setZoomMeetingId('');
+                  setZoomPasscode('');
+                  setMuxPlaybackPolicy('PUBLIC');
+                  handleUpdate({
+                    streaming_platform: null,
+                    stream_url: null,
+                    zoom_meeting_id: null,
+                    zoom_passcode: null,
+                    mux_playback_policy: null,
+                  });
+                  pendingPlatformChangeRef.current = false;
+                } else {
+                  // Switching TO a platform - don't save yet, wait for URL
+                  pendingPlatformChangeRef.current = true;
+                }
+              }}
+              data={STREAMING_PLATFORMS}
               size="sm"
-              value={streamUrl}
-              onChange={(e) => setStreamUrl(e.target.value)}
-              error={errors.stream_url}
-              classNames={{ input: styles.formInput }}
+              allowDeselect={false}
+              classNames={{ input: styles.formSelect }}
             />
+
+            {/* Conditional streaming fields */}
+            {streamingPlatform === 'VIMEO' && (
+              <TextInput
+                label="Vimeo URL or Video ID"
+                placeholder="https://vimeo.com/123... or ID"
+                size="sm"
+                value={streamUrl}
+                onChange={(e) => setStreamUrl(e.target.value)}
+                error={errors.stream_url}
+                classNames={{ input: styles.formInput }}
+              />
+            )}
+
+            {streamingPlatform === 'MUX' && (
+              <>
+                <TextInput
+                  label="Mux Playback ID or URL"
+                  placeholder="DS00Spx1CV902..."
+                  size="sm"
+                  value={streamUrl}
+                  onChange={(e) => setStreamUrl(e.target.value)}
+                  error={errors.stream_url}
+                  classNames={{ input: styles.formInput }}
+                />
+                <Select
+                  label="Mux Playback Policy"
+                  value={muxPlaybackPolicy}
+                  onChange={(value) => {
+                    setMuxPlaybackPolicy(value);
+                    handleUpdate({ mux_playback_policy: value });
+                  }}
+                  data={MUX_PLAYBACK_POLICIES}
+                  size="sm"
+                  allowDeselect={false}
+                  classNames={{ input: styles.formSelect }}
+                />
+              </>
+            )}
+
+            {streamingPlatform === 'ZOOM' && (
+              <>
+                <TextInput
+                  label="Zoom Meeting URL or ID"
+                  placeholder="https://zoom.us/j/123... or ID"
+                  size="sm"
+                  value={zoomMeetingId}
+                  onChange={(e) => setZoomMeetingId(e.target.value)}
+                  error={errors.zoom_meeting_id}
+                  classNames={{ input: styles.formInput }}
+                />
+                <TextInput
+                  label="Passcode (Optional)"
+                  placeholder="Meeting passcode"
+                  size="sm"
+                  value={zoomPasscode}
+                  onChange={(e) => setZoomPasscode(e.target.value)}
+                  classNames={{ input: styles.formInput }}
+                />
+              </>
+            )}
 
             {/* Speakers */}
             <div className={styles.speakersSection}>

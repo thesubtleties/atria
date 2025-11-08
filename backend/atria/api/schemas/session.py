@@ -1,6 +1,7 @@
 from api.extensions import ma, db
 from api.models import Session
-from api.models.enums import SessionType, SessionStatus, SessionSpeakerRole, SessionChatMode
+from api.models.enums import SessionType, SessionStatus, SessionSpeakerRole, SessionChatMode, StreamingPlatform
+from api.commons.streaming import extract_vimeo_id, extract_mux_playback_id, normalize_zoom_url
 from marshmallow import validates, validates_schema, ValidationError, validate
 from datetime import time
 
@@ -65,9 +66,15 @@ class SessionCreateSchema(ma.Schema):
     description = ma.String()
     start_time = ma.Time(required=True)
     end_time = ma.Time(required=True)
-    stream_url = ma.String()
+    stream_url = ma.String(allow_none=True)
     day_number = ma.Integer(required=True)
     chat_mode = ma.Enum(SessionChatMode, load_default=SessionChatMode.ENABLED)
+
+    # Streaming platform fields (multi-platform support: Vimeo/Mux/Zoom)
+    streaming_platform = ma.Enum(StreamingPlatform, allow_none=True)
+    zoom_meeting_id = ma.String(allow_none=True)
+    zoom_passcode = ma.String(allow_none=True)
+    mux_playback_policy = ma.String(allow_none=True)  # 'PUBLIC' or 'SIGNED'
 
     @validates("title")
     def validate_title(self, value, **kwargs):
@@ -86,6 +93,73 @@ class SessionCreateSchema(ma.Schema):
             if data["end_time"] <= data["start_time"]:
                 raise ValidationError("End time must be after start time")
 
+    @validates_schema
+    def validate_streaming_config(self, data, **kwargs):
+        """Validate streaming configuration and normalize URLs to IDs"""
+        platform = data.get('streaming_platform')
+
+        if not platform:
+            # No platform selected - that's fine, streaming is optional
+            return
+
+        if platform == StreamingPlatform.VIMEO:
+            raw_value = data.get('stream_url')
+            if not raw_value:
+                raise ValidationError(
+                    {"stream_url": "Vimeo URL or video ID required when platform is VIMEO"}
+                )
+
+            # Extract and normalize to video ID only
+            video_id = extract_vimeo_id(raw_value)
+            if not video_id:
+                raise ValidationError(
+                    {"stream_url": "Invalid Vimeo input. Provide URL (https://vimeo.com/123456789) or video ID"}
+                )
+
+            # Normalize: Store ID only in database
+            data['stream_url'] = video_id
+
+        elif platform == StreamingPlatform.MUX:
+            raw_value = data.get('stream_url')
+            if not raw_value:
+                raise ValidationError(
+                    {"stream_url": "Mux Playback ID or URL required when platform is MUX"}
+                )
+
+            # Extract and normalize to Playback ID only
+            playback_id = extract_mux_playback_id(raw_value)
+            if not playback_id:
+                raise ValidationError(
+                    {"stream_url": "Invalid Mux input. Provide Playback ID or stream URL"}
+                )
+
+            # Normalize: Store Playback ID only in database
+            data['stream_url'] = playback_id
+
+            # Validate mux_playback_policy if provided
+            policy = data.get('mux_playback_policy')
+            if policy and policy not in ['PUBLIC', 'SIGNED']:
+                raise ValidationError(
+                    {"mux_playback_policy": "Invalid Mux playback policy. Must be 'PUBLIC' or 'SIGNED'"}
+                )
+
+        elif platform == StreamingPlatform.ZOOM:
+            raw_value = data.get('zoom_meeting_id')
+            if not raw_value:
+                raise ValidationError(
+                    {"zoom_meeting_id": "Zoom meeting URL or ID required when platform is ZOOM"}
+                )
+
+            # Normalize to full join URL
+            normalized_url = normalize_zoom_url(raw_value)
+            if not normalized_url:
+                raise ValidationError(
+                    {"zoom_meeting_id": "Invalid Zoom input. Provide meeting URL or ID (9-11 digits)"}
+                )
+
+            # Normalize: Store full join URL in database
+            data['zoom_meeting_id'] = normalized_url
+
 
 class SessionUpdateSchema(ma.Schema):
     """Schema for updating sessions"""
@@ -100,9 +174,82 @@ class SessionUpdateSchema(ma.Schema):
     description = ma.String()
     start_time = ma.Time()
     end_time = ma.Time()
-    stream_url = ma.String()
+    stream_url = ma.String(allow_none=True)
     day_number = ma.Integer()
     chat_mode = ma.Enum(SessionChatMode)
+
+    # Streaming platform fields (multi-platform support: Vimeo/Mux/Zoom)
+    streaming_platform = ma.Enum(StreamingPlatform, allow_none=True)
+    zoom_meeting_id = ma.String(allow_none=True)
+    zoom_passcode = ma.String(allow_none=True)
+    mux_playback_policy = ma.String(allow_none=True)  # 'PUBLIC' or 'SIGNED'
+
+    @validates_schema
+    def validate_streaming_config(self, data, **kwargs):
+        """Validate streaming configuration and normalize URLs to IDs"""
+        platform = data.get('streaming_platform')
+
+        if not platform:
+            # No platform in update - that's fine
+            return
+
+        if platform == StreamingPlatform.VIMEO:
+            raw_value = data.get('stream_url')
+            if not raw_value:
+                raise ValidationError(
+                    {"stream_url": "Vimeo URL or video ID required when platform is VIMEO"}
+                )
+
+            # Extract and normalize to video ID only
+            video_id = extract_vimeo_id(raw_value)
+            if not video_id:
+                raise ValidationError(
+                    {"stream_url": "Invalid Vimeo input. Provide URL (https://vimeo.com/123456789) or video ID"}
+                )
+
+            # Normalize: Store ID only in database
+            data['stream_url'] = video_id
+
+        elif platform == StreamingPlatform.MUX:
+            raw_value = data.get('stream_url')
+            if not raw_value:
+                raise ValidationError(
+                    {"stream_url": "Mux Playback ID or URL required when platform is MUX"}
+                )
+
+            # Extract and normalize to Playback ID only
+            playback_id = extract_mux_playback_id(raw_value)
+            if not playback_id:
+                raise ValidationError(
+                    {"stream_url": "Invalid Mux input. Provide Playback ID or stream URL"}
+                )
+
+            # Normalize: Store Playback ID only in database
+            data['stream_url'] = playback_id
+
+            # Validate mux_playback_policy if provided
+            policy = data.get('mux_playback_policy')
+            if policy and policy not in ['PUBLIC', 'SIGNED']:
+                raise ValidationError(
+                    {"mux_playback_policy": "Invalid Mux playback policy. Must be 'PUBLIC' or 'SIGNED'"}
+                )
+
+        elif platform == StreamingPlatform.ZOOM:
+            raw_value = data.get('zoom_meeting_id')
+            if not raw_value:
+                raise ValidationError(
+                    {"zoom_meeting_id": "Zoom meeting URL or ID required when platform is ZOOM"}
+                )
+
+            # Normalize to full join URL
+            normalized_url = normalize_zoom_url(raw_value)
+            if not normalized_url:
+                raise ValidationError(
+                    {"zoom_meeting_id": "Invalid Zoom input. Provide meeting URL or ID (9-11 digits)"}
+                )
+
+            # Normalize: Store full join URL in database
+            data['zoom_meeting_id'] = normalized_url
 
 
 class SessionTimesUpdateSchema(ma.Schema):
@@ -157,12 +304,33 @@ class SessionAdminListSchema(SessionSchema):
 
 class SessionMinimalSchema(ma.Schema):
     """Minimal session schema for dropdowns and lists"""
-    
+
     class Meta:
         name = "SessionMinimal"
-    
+
     id = ma.Integer(dump_only=True)
     title = ma.String(dump_only=True)
     day_number = ma.Integer(dump_only=True)
     start_time = ma.Time(dump_only=True)
     end_time = ma.Time(dump_only=True)
+
+
+class SessionPlaybackDataSchema(ma.Schema):
+    """Schema for platform-agnostic playback data endpoint"""
+
+    class Meta:
+        name = "SessionPlaybackData"
+
+    # Common field for all platforms
+    platform = ma.String(dump_only=True, required=True)
+
+    # Vimeo/Mux fields (both use HLS/video URLs)
+    playback_url = ma.String(dump_only=True, allow_none=True)
+
+    # Mux-specific
+    playback_policy = ma.String(dump_only=True, allow_none=True)  # 'PUBLIC' or 'SIGNED'
+    tokens = ma.Dict(dump_only=True, allow_none=True)  # JWT tokens for SIGNED playback
+
+    # Zoom-specific
+    join_url = ma.String(dump_only=True, allow_none=True)
+    passcode = ma.String(dump_only=True, allow_none=True)
