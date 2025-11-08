@@ -5,6 +5,33 @@ All notable changes to Atria will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2025-11-08
+
+### Added
+- **Multi-platform video streaming** support for Vimeo, Mux, and Zoom
+- **Mux BYOA (Bring Your Own Account)** with signed playback URLs and viewer analytics
+- Organization settings UI for managing Mux credentials with expandable sections
+- Fernet encryption for secure credential storage
+- Content Security Policy support for Mux streaming domains
+- Multi-platform video player components (MuxPlayer, VimeoPlayer, ZoomPlayer)
+- Streaming platform validation in frontend forms
+
+### Fixed
+- Dev environment installation issues (#325 - database authentication, missing env vars)
+- EditSessionModal scrolling when Mux platform fields displayed
+- Backend dependencies (added cryptography package)
+
+### Changed
+- Session model extended with streaming platform fields
+- Organization model extended with encrypted Mux credentials
+- Session cards and modals updated with multi-platform streaming UI
+
+### Security
+- Mux private keys stored encrypted with Fernet
+- CSP configured for trusted streaming providers only
+
+[0.2.0]: https://github.com/thesubtleties/atria/releases/tag/v0.2.0
+
 ## [0.1.1] - 2025-10-31
 
 ### Fixed

@@ -6,6 +6,7 @@ venv/
 .env
 .env.*
 !.env.example
+!.env.development.example
 
 # Node
 node_modules/
