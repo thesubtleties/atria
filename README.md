@@ -127,6 +127,7 @@ The development environment includes:
 - Drag-and-drop speaker management with role assignments
 - Real-time session status updates
 - Hybrid event support (virtual + in-person attendance)
+- Multi-platform video streaming (Vimeo, Mux with signed playback for token-based video security, Zoom)
 - Session-specific chat rooms (public and backstage)
 
 **Professional Networking**
