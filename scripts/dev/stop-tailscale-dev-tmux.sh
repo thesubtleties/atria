@@ -2,6 +2,10 @@
 
 # Stop Tailscale development environment and cleanup
 
+# Get the project root directory (two levels up from this script)
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PROJECT_ROOT="$( cd "$SCRIPT_DIR/../.." && pwd )"
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -12,7 +16,7 @@ echo -e "${YELLOW}Stopping Tailscale development environment...${NC}"
 
 # Stop docker compose
 echo "Stopping Docker containers..."
-docker compose -f docker-compose.tailscale-dev.yml down
+cd "$PROJECT_ROOT" && docker compose -f docker-compose.tailscale-dev.yml down
 
 # Kill tmux session if it exists
 if tmux has-session -t atria-tailscale 2>/dev/null; then

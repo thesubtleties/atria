@@ -3,33 +3,39 @@
 # Start PRODUCTION PREVIEW environment in tmux
 # This builds the frontend with pre-rendering and serves with nginx
 
+# Get the project root directory (two levels up from this script)
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PROJECT_ROOT="$( cd "$SCRIPT_DIR/../.." && pwd )"
+
 echo "🏗️  Building frontend with pre-rendering..."
-cd frontend && npm run build
+cd "$PROJECT_ROOT/frontend" && npm run build
 if [ $? -ne 0 ]; then
     echo "❌ Frontend build failed"
     exit 1
 fi
-cd ..
 
 echo "✅ Frontend built successfully"
 echo ""
 
-# Create a new tmux session named 'atria-preview' or attach if exists
-tmux new-session -d -s atria-preview || tmux attach -t atria-preview
+# Kill existing session if it exists
+tmux kill-session -t atria-preview 2>/dev/null || true
+
+# Create a new tmux session named 'atria-preview'
+tmux new-session -d -s atria-preview
 
 # Rename the first window to 'docker'
 tmux rename-window -t atria-preview:0 'docker'
 
 # Start docker compose with PREVIEW config in the first pane
-tmux send-keys -t atria-preview:0 'docker compose -f docker-compose.preview.yml up --build' C-m
+tmux send-keys -t atria-preview:0 "cd '$PROJECT_ROOT' && docker compose -f docker-compose.preview.yml up --build" C-m
 
 # Create a new window for logs
 tmux new-window -t atria-preview:1 -n 'logs'
-tmux send-keys -t atria-preview:1 'sleep 5 && docker compose -f docker-compose.preview.yml logs -f backend' C-m
+tmux send-keys -t atria-preview:1 "cd '$PROJECT_ROOT' && sleep 5 && docker compose -f docker-compose.preview.yml logs -f backend" C-m
 
 # Split the logs window horizontally
 tmux split-window -h -t atria-preview:1
-tmux send-keys -t atria-preview:1.1 'sleep 5 && docker compose -f docker-compose.preview.yml logs -f frontend' C-m
+tmux send-keys -t atria-preview:1.1 "cd '$PROJECT_ROOT' && sleep 5 && docker compose -f docker-compose.preview.yml logs -f frontend" C-m
 
 # Create a new window for shell access
 tmux new-window -t atria-preview:2 -n 'shell'
