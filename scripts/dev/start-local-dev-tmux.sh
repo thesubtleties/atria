@@ -2,6 +2,10 @@
 
 # Start LOCAL development environment in tmux (for localhost access)
 
+# Get the project root directory (two levels up from this script)
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PROJECT_ROOT="$( cd "$SCRIPT_DIR/../.." && pwd )"
+
 # Create a new tmux session named 'atria-local' or attach if exists
 tmux new-session -d -s atria-local || tmux attach -t atria-local
 
@@ -9,15 +13,15 @@ tmux new-session -d -s atria-local || tmux attach -t atria-local
 tmux rename-window -t atria-local:0 'docker'
 
 # Start docker compose with LOCAL config in the first pane
-tmux send-keys -t atria-local:0 'docker compose -f docker-compose.local-dev.yml up' C-m
+tmux send-keys -t atria-local:0 "cd '$PROJECT_ROOT' && docker compose -f docker-compose.local-dev.yml up" C-m
 
 # Create a new window for logs
 tmux new-window -t atria-local:1 -n 'logs'
-tmux send-keys -t atria-local:1 'sleep 5 && docker compose -f docker-compose.local-dev.yml logs -f backend' C-m
+tmux send-keys -t atria-local:1 "cd '$PROJECT_ROOT' && sleep 5 && docker compose -f docker-compose.local-dev.yml logs -f backend" C-m
 
 # Split the logs window horizontally
 tmux split-window -h -t atria-local:1
-tmux send-keys -t atria-local:1.1 'sleep 5 && docker compose -f docker-compose.local-dev.yml logs -f frontend-vite' C-m
+tmux send-keys -t atria-local:1.1 "cd '$PROJECT_ROOT' && sleep 5 && docker compose -f docker-compose.local-dev.yml logs -f frontend-vite" C-m
 
 # Create a new window for shell access
 tmux new-window -t atria-local:2 -n 'shell'

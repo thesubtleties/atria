@@ -2,6 +2,10 @@
 
 # Start Tailscale-enabled development environment with Redis + Traefik in tmux
 
+# Get the project root directory (two levels up from this script)
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PROJECT_ROOT="$( cd "$SCRIPT_DIR/../.." && pwd )"
+
 # Colors for output
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -28,23 +32,23 @@ fi
 tmux rename-window -t atria-tailscale:0 'docker'
 
 # Start docker compose with Tailscale config in the first pane
-tmux send-keys -t atria-tailscale:0 'docker compose -f docker-compose.tailscale-dev.yml up' C-m
+tmux send-keys -t atria-tailscale:0 "cd '$PROJECT_ROOT' && docker compose -f docker-compose.tailscale-dev.yml up" C-m
 
 # Create a new window for backend logs (split for both instances)
 tmux new-window -t atria-tailscale:1 -n 'backends'
-tmux send-keys -t atria-tailscale:1 'sleep 10 && docker compose -f docker-compose.tailscale-dev.yml logs -f backend-1' C-m
+tmux send-keys -t atria-tailscale:1 "cd '$PROJECT_ROOT' && sleep 10 && docker compose -f docker-compose.tailscale-dev.yml logs -f backend-1" C-m
 
 # Split for backend-2 logs
 tmux split-window -h -t atria-tailscale:1
-tmux send-keys -t atria-tailscale:1.1 'sleep 10 && docker compose -f docker-compose.tailscale-dev.yml logs -f backend-2' C-m
+tmux send-keys -t atria-tailscale:1.1 "cd '$PROJECT_ROOT' && sleep 10 && docker compose -f docker-compose.tailscale-dev.yml logs -f backend-2" C-m
 
 # Create a new window for frontend and traefik logs
 tmux new-window -t atria-tailscale:2 -n 'frontend+traefik'
-tmux send-keys -t atria-tailscale:2 'sleep 10 && docker compose -f docker-compose.tailscale-dev.yml logs -f frontend-vite' C-m
+tmux send-keys -t atria-tailscale:2 "cd '$PROJECT_ROOT' && sleep 10 && docker compose -f docker-compose.tailscale-dev.yml logs -f frontend-vite" C-m
 
 # Split for Traefik logs
 tmux split-window -h -t atria-tailscale:2
-tmux send-keys -t atria-tailscale:2.1 'sleep 10 && docker compose -f docker-compose.tailscale-dev.yml logs -f traefik' C-m
+tmux send-keys -t atria-tailscale:2.1 "cd '$PROJECT_ROOT' && sleep 10 && docker compose -f docker-compose.tailscale-dev.yml logs -f traefik" C-m
 
 # Create a new window for Redis monitoring
 tmux new-window -t atria-tailscale:3 -n 'redis'

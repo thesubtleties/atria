@@ -298,6 +298,15 @@ class DashboardService:
                 'type': 'platform_update',
                 'is_new': True,
                 'link': 'https://docs.atria.gg'
+            },
+            {
+                'id': 6,
+                'title': 'v0.2.0 - Multi-Platform Streaming Release',
+                'description': 'Multi-platform video streaming support with Vimeo, Mux, and Zoom integration. Read the full announcement at docs.atria.gg/blog/v0.2.0-release',
+                'date': datetime(2025, 11, 8, tzinfo=timezone.utc),
+                'type': 'feature_release',
+                'is_new': True,
+                'link': 'https://docs.atria.gg/blog/v0.2.0-release'
             }
         ]
 
