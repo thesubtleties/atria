@@ -5,6 +5,19 @@ All notable changes to Atria will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1] - 2025-11-15
+
+### Fixed
+- Dev environment setup reliability - tmux helper scripts now detect project root dynamically
+- Scripts can be executed from any directory location (previously required project root)
+- Environment file configuration verified for consistency across example files
+
+### Changed
+- All dev helper scripts updated with dynamic project root detection
+- Scripts now change to project root before running docker compose commands
+
+[0.2.1]: https://github.com/thesubtleties/atria/releases/tag/v0.2.1
+
 ## [0.2.0] - 2025-11-08
 
 ### Added
