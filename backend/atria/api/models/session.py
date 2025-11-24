@@ -26,12 +26,14 @@ class Session(db.Model):
     end_time = db.Column(db.Time, nullable=False)
     stream_url = db.Column(db.Text)
 
-    # Streaming platform fields (multi-platform support: Vimeo/Mux/Zoom)
+    # Streaming platform fields (multi-platform support: Vimeo/Mux/Zoom/Jitsi/Other)
     # Uses VARCHAR with CHECK constraint (not native ENUM) for flexibility
     streaming_platform = db.Column(db.String(20), nullable=True)
     zoom_meeting_id = db.Column(db.String(255), nullable=True)  # Normalized Zoom URL
     zoom_passcode = db.Column(db.String(100), nullable=True)
     mux_playback_policy = db.Column(db.String(20), nullable=True)  # 'PUBLIC' or 'SIGNED'
+    jitsi_room_name = db.Column(db.String(255), nullable=True)  # JaaS room identifier
+    # Note: OTHER platform uses stream_url (same as VIMEO/MUX) - no separate column needed
 
     day_number = db.Column(db.BigInteger, nullable=False)
     created_at = db.Column(
@@ -399,6 +401,53 @@ class Session(db.Model):
                 "platform": "ZOOM",
                 "join_url": self.zoom_meeting_id,  # Full URL with ?pwd=
                 "passcode": self.zoom_passcode  # Separate for optional display
+            }
+
+        elif self.streaming_platform == 'JITSI':
+            # Generate per-user JaaS JWT token
+            # NOTE: If we implement session response caching, move this to a separate
+            # GET /sessions/{id}/jaas-token endpoint to keep session data cacheable.
+            # This would still provide per-user tokens, just in a second API call.
+            from flask_jwt_extended import get_jwt_identity
+            from api.models import User
+            from api.services.jaas_service import JaaSService
+
+            # Get current user from JWT
+            current_user_id = int(get_jwt_identity())
+            user = User.query.get(current_user_id)
+
+            if not user:
+                return None
+
+            # Determine moderator status (event admins/organizers)
+            is_mod = JaaSService.is_user_moderator(user, self)
+
+            # Calculate smart expiration based on session duration
+            token_exp = JaaSService.calculate_session_token_expiration(self)
+
+            # Generate JaaS JWT for this specific user
+            token_data = JaaSService.generate_token(
+                organization=self.event.organization,
+                room_name=self.jitsi_room_name,
+                user=user,
+                is_moderator=is_mod,
+                token_expiration=token_exp
+            )
+
+            return {
+                "platform": "JITSI",
+                "app_id": self.event.organization.jaas_app_id,  # Needed by JaaSMeeting component
+                "room_name": self.jitsi_room_name,
+                "token": token_data["token"],
+                "expires_at": token_data["expires_at"]
+            }
+
+        elif self.streaming_platform == 'OTHER':
+            # External streaming platform URL (MS Teams, self-hosted Jitsi, etc.)
+            # Uses stream_url column (same as VIMEO/MUX)
+            return {
+                "platform": "OTHER",
+                "stream_url": self.stream_url
             }
 
         return None

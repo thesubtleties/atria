@@ -19,6 +19,8 @@ const StreamingPlatform = z.enum([
   'VIMEO',
   'MUX',
   'ZOOM',
+  'JITSI',
+  'OTHER',
 ]);
 
 const MuxPlaybackPolicy = z.enum([
@@ -47,11 +49,10 @@ export const editSessionSchema = z
       (val) => val === '' ? null : val,
       StreamingPlatform.nullable().optional()
     ),
-    // For VIMEO/MUX: Flexible to accept URLs or raw IDs
-    // Vimeo IDs are typically 8-9 digits, Mux IDs are 10+ alphanumeric
+    // For VIMEO/MUX/OTHER: Flexible to accept URLs or raw IDs
+    // Platform-specific validation happens in refinements below
     stream_url: z.string()
-      .min(8, 'Vimeo video ID must be at least 8 digits, or Mux playback ID at least 10 characters')
-      .max(500, 'Stream URL is too long')
+      .max(2000, 'Stream URL is too long')
       .optional()
       .or(z.literal('')),
     // For ZOOM: Meeting IDs are 9-11 digits (with optional spaces/dashes)
@@ -65,6 +66,13 @@ export const editSessionSchema = z
       .optional()
       .or(z.literal('')),
     mux_playback_policy: MuxPlaybackPolicy.optional(), // Optional for MUX
+    // For JITSI: Room names should be 3-200 characters
+    jitsi_room_name: z.string()
+      .min(3, 'Room name must be at least 3 characters')
+      .max(200, 'Room name is too long')
+      .optional()
+      .or(z.literal('')),
+    // Note: OTHER platform uses stream_url with additional HTTPS validation (see refinements below)
   })
   .refine(
     (data) => {
@@ -118,5 +126,49 @@ export const editSessionSchema = z
     {
       message: 'Zoom meeting URL or ID is required when platform is Zoom',
       path: ['zoom_meeting_id'],
+    }
+  )
+  .refine(
+    (data) => {
+      // If JITSI platform selected, jitsi_room_name is required
+      if (data.streaming_platform === 'JITSI') {
+        return data.jitsi_room_name && data.jitsi_room_name.trim().length > 0;
+      }
+      return true;
+    },
+    {
+      message: 'Jitsi room name is required when platform is Jitsi',
+      path: ['jitsi_room_name'],
+    }
+  )
+  .refine(
+    (data) => {
+      // If OTHER platform selected, stream_url is required
+      if (data.streaming_platform === 'OTHER') {
+        return data.stream_url && data.stream_url.trim().length > 0;
+      }
+      return true;
+    },
+    {
+      message: 'Stream URL is required when platform is Other',
+      path: ['stream_url'],
+    }
+  )
+  .refine(
+    (data) => {
+      // If OTHER platform, stream_url must be a valid HTTPS URL
+      if (data.streaming_platform === 'OTHER' && data.stream_url && data.stream_url.trim().length > 0) {
+        try {
+          const url = new URL(data.stream_url);
+          return url.protocol === 'https:';
+        } catch {
+          return false;
+        }
+      }
+      return true;
+    },
+    {
+      message: 'Stream URL must be a valid HTTPS URL for external platforms',
+      path: ['stream_url'],
     }
   );

@@ -1,6 +1,6 @@
 // pages/Session/SessionDisplay/index.jsx
 import { useState, useEffect } from 'react';
-import { VimeoPlayer, MuxPlayer, ZoomJoinCard } from './players';
+import { VimeoPlayer, MuxPlayer, ZoomJoinCard, JitsiPlayer, OtherLinkCard } from './players';
 import { Alert, Loader } from '@mantine/core';
 import styles from './styles/index.module.css';
 
@@ -9,14 +9,17 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Fetch playback data for Mux SIGNED streams
+  // Fetch playback data for Mux SIGNED streams and Jitsi (both need JWT tokens)
   useEffect(() => {
     const fetchPlaybackData = async () => {
-      // Only fetch if Mux with SIGNED policy
-      if (
-        session?.streaming_platform !== 'MUX' ||
-        session?.mux_playback_policy !== 'SIGNED'
-      ) {
+      // Fetch if:
+      // 1. Mux with SIGNED policy (needs JWT tokens)
+      // 2. Jitsi (always needs JWT tokens)
+      const needsPlaybackData =
+        (session?.streaming_platform === 'MUX' && session?.mux_playback_policy === 'SIGNED') ||
+        session?.streaming_platform === 'JITSI';
+
+      if (!needsPlaybackData) {
         return;
       }
 
@@ -297,6 +300,164 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
           passcode={session.zoom_passcode}
         />
       );
+    }
+
+    // JITSI
+    if (platform === 'JITSI' && !session?.jitsi_room_name) {
+      return (
+        <div className={styles.messageContainer}>
+          <Alert
+            color="blue"
+            title="No meeting configured"
+            styles={{
+              root: {
+                maxWidth: '500px',
+                background: 'rgba(139, 92, 246, 0.06)',
+                border: '1px solid rgba(139, 92, 246, 0.15)',
+                padding: '1.5rem',
+              },
+              title: {
+                color: '#1E293B',
+                fontSize: '1.125rem',
+                fontWeight: 600,
+                marginBottom: '0.5rem',
+              },
+              message: {
+                color: '#64748B',
+                fontSize: '0.9375rem',
+                lineHeight: '1.5',
+              },
+            }}
+          >
+            This Jitsi session does not have a room configured yet.
+          </Alert>
+        </div>
+      );
+    }
+
+    if (platform === 'JITSI') {
+      // Show loading state while fetching JWT tokens
+      if (loading) {
+        return (
+          <div className={styles.messageContainer}>
+            <Loader size="lg" />
+          </div>
+        );
+      }
+
+      // Show error state if fetch failed
+      if (error) {
+        return (
+          <div className={styles.messageContainer}>
+            <Alert
+              color="red"
+              title="Error loading meeting"
+              styles={{
+                root: {
+                  maxWidth: '500px',
+                  background: 'rgba(220, 38, 38, 0.06)',
+                  border: '1px solid rgba(220, 38, 38, 0.15)',
+                  padding: '1.5rem',
+                },
+                title: {
+                  color: '#1E293B',
+                  fontSize: '1.125rem',
+                  fontWeight: 600,
+                  marginBottom: '0.5rem',
+                },
+                message: {
+                  color: '#64748B',
+                  fontSize: '0.9375rem',
+                  lineHeight: '1.5',
+                },
+              }}
+            >
+              {error}
+            </Alert>
+          </div>
+        );
+      }
+
+      // Verify we have the required playback data
+      if (!playbackData?.app_id || !playbackData?.room_name || !playbackData?.token) {
+        return (
+          <div className={styles.messageContainer}>
+            <Alert
+              color="yellow"
+              title="Meeting not available"
+              styles={{
+                root: {
+                  maxWidth: '500px',
+                  background: 'rgba(245, 158, 11, 0.06)',
+                  border: '1px solid rgba(245, 158, 11, 0.15)',
+                  padding: '1.5rem',
+                },
+                title: {
+                  color: '#1E293B',
+                  fontSize: '1.125rem',
+                  fontWeight: 600,
+                  marginBottom: '0.5rem',
+                },
+                message: {
+                  color: '#64748B',
+                  fontSize: '0.9375rem',
+                  lineHeight: '1.5',
+                },
+              }}
+            >
+              Unable to load Jitsi meeting. Please ensure the organization has JaaS credentials configured.
+            </Alert>
+          </div>
+        );
+      }
+
+      // Render Jitsi player with playback data
+      return (
+        <JitsiPlayer
+          appId={playbackData.app_id}
+          roomName={playbackData.room_name}
+          jwt={playbackData.token}
+          session={session}
+          currentUser={currentUser}
+        />
+      );
+    }
+
+    // OTHER (External link) - uses stream_url column
+    if (platform === 'OTHER' && !session?.stream_url) {
+      return (
+        <div className={styles.messageContainer}>
+          <Alert
+            color="blue"
+            title="No stream URL available"
+            styles={{
+              root: {
+                maxWidth: '500px',
+                background: 'rgba(139, 92, 246, 0.06)',
+                border: '1px solid rgba(139, 92, 246, 0.15)',
+                padding: '1.5rem',
+              },
+              title: {
+                color: '#1E293B',
+                fontSize: '1.125rem',
+                fontWeight: 600,
+                marginBottom: '0.5rem',
+              },
+              message: {
+                color: '#64748B',
+                fontSize: '0.9375rem',
+                lineHeight: '1.5',
+              },
+            }}
+          >
+            This session does not have an external stream URL configured yet.
+          </Alert>
+        </div>
+      );
+    }
+
+    if (platform === 'OTHER') {
+      return <OtherLinkCard streamUrl={session.stream_url} />;
     }
 
     // Unknown platform

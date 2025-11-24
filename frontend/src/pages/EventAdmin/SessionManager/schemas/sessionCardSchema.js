@@ -13,6 +13,8 @@ const StreamingPlatform = z.enum([
   'VIMEO',
   'MUX',
   'ZOOM',
+  'JITSI',
+  'OTHER',
 ]);
 
 const MuxPlaybackPolicy = z.enum([
@@ -35,8 +37,8 @@ export const sessionFieldSchemas = {
   // Streaming platform fields (flexible validation for inline editing)
   streaming_platform: StreamingPlatform.nullable().optional(),
   stream_url: z.string()
-    .min(8, 'Vimeo ID must be 8+ digits, or Mux ID 10+ characters')
-    .max(500, 'URL too long')
+    .min(3, 'Stream URL or ID required')
+    .max(2000, 'URL too long')
     .optional()
     .or(z.literal('')),
   zoom_meeting_id: z.string()
@@ -49,6 +51,12 @@ export const sessionFieldSchemas = {
     .optional()
     .or(z.literal('')),
   mux_playback_policy: MuxPlaybackPolicy.optional(),
+  jitsi_room_name: z.string()
+    .min(3, 'Room name must be at least 3 characters')
+    .max(200, 'Room name too long')
+    .optional()
+    .or(z.literal('')),
+  // Note: OTHER platform uses stream_url (validated by backend for HTTPS)
 };
 
 // Helper to validate individual fields

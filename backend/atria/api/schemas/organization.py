@@ -58,6 +58,10 @@ class OrganizationDetailSchema(OrganizationSchema):
     has_mux_credentials = ma.Boolean(dump_only=True)
     has_mux_signing_credentials = ma.Boolean(dump_only=True)
 
+    # JaaS credential status (OPTIONAL - visible to all org members)
+    # Boolean flag indicating if JaaS credentials are configured
+    has_jaas_credentials = ma.Boolean(dump_only=True)
+
     users = ma.Nested(
         "api.schemas.organization_user.OrganizationUserNestedSchema",
         many=True,
@@ -153,4 +157,21 @@ class OrganizationMuxCredentialsSetSchema(ma.Schema):
 
     # Mux signing credentials (OPTIONAL - for SIGNED playback)
     mux_signing_key_id = ma.String(allow_none=True)
-    mux_signing_private_key = ma.String(allow_none=True)  # Never returned in response
+    mux_signing_private_key = ma.String(allow_none=True, load_only=True)  # Never returned in response
+
+
+# JaaS Credentials Management Schema (Owner/Admin only)
+
+class OrganizationJaasCredentialsSetSchema(ma.Schema):
+    """Schema for setting/updating JaaS credentials (owner/admin only)
+
+    Response uses OrganizationDetailSchema (includes credential status)
+    """
+
+    class Meta:
+        name = "OrganizationJaasCredentialsSet"
+
+    # JaaS credentials (all required for JaaS to work)
+    jaas_app_id = ma.String(required=True)  # vpaas-magic-cookie-xxx (public identifier)
+    jaas_api_key = ma.String(required=True, load_only=True)  # API Key ID - Never returned in response
+    jaas_private_key = ma.String(required=True, load_only=True)  # RSA Private Key (PEM format) - Never returned in response

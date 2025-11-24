@@ -32,6 +32,7 @@ from api.schemas.organization import (
     OrganizationCreateSchema,
     OrganizationUpdateSchema,
     OrganizationMuxCredentialsSetSchema,
+    OrganizationJaasCredentialsSetSchema,
 )
 from api.schemas.event_user import (
     EventUserSchema,
@@ -167,6 +168,7 @@ __all__ = [
     "OrganizationCreateSchema",
     "OrganizationUpdateSchema",
     "OrganizationMuxCredentialsSetSchema",
+    "OrganizationJaasCredentialsSetSchema",
     # Junction table schemas
     "EventUserSchema",
     "EventUserDetailSchema",

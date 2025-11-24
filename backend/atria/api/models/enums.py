@@ -123,6 +123,8 @@ class StreamingPlatform(str, Enum):
     VIMEO = "VIMEO"
     MUX = "MUX"
     ZOOM = "ZOOM"
+    JITSI = "JITSI"
+    OTHER = "OTHER"
 
 
 class USState(str, Enum):
