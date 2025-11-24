@@ -40,6 +40,8 @@ const STREAMING_PLATFORMS = [
   { value: 'VIMEO', label: 'Vimeo' },
   { value: 'MUX', label: 'Mux Video' },
   { value: 'ZOOM', label: 'Zoom Meeting' },
+  { value: 'JITSI', label: 'Jitsi Meet (JaaS)' },
+  { value: 'OTHER', label: 'Other (External Link)' },
 ];
 
 const MUX_PLAYBACK_POLICIES = [
@@ -101,6 +103,8 @@ export const EditSessionModal = ({
           zoom_meeting_id: session.zoom_meeting_id || '',
           zoom_passcode: session.zoom_passcode || '',
           mux_playback_policy: session.mux_playback_policy || 'PUBLIC',
+          jitsi_room_name: session.jitsi_room_name || '',
+          other_stream_url: session.other_stream_url || '',
         }
       : {
           title: '',
@@ -117,6 +121,8 @@ export const EditSessionModal = ({
           zoom_meeting_id: '',
           zoom_passcode: '',
           mux_playback_policy: 'PUBLIC',
+          jitsi_room_name: '',
+          other_stream_url: '',
         },
     validate: (values) => {
       console.log('Validation values:', values);
@@ -140,6 +146,8 @@ export const EditSessionModal = ({
       form.setFieldValue('zoom_meeting_id', '');
       form.setFieldValue('zoom_passcode', '');
       form.setFieldValue('mux_playback_policy', 'PUBLIC');
+      form.setFieldValue('jitsi_room_name', '');
+      form.setFieldValue('other_stream_url', '');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.values.streaming_platform]);
@@ -161,6 +169,8 @@ export const EditSessionModal = ({
         zoom_meeting_id: values.zoom_meeting_id || null,
         zoom_passcode: values.zoom_passcode || null,
         mux_playback_policy: values.mux_playback_policy || null,
+        jitsi_room_name: values.jitsi_room_name || null,
+        other_stream_url: values.other_stream_url || null,
       };
 
       let result;
@@ -333,6 +343,28 @@ export const EditSessionModal = ({
                 {...form.getInputProps('zoom_passcode')}
               />
             </>
+          )}
+
+          {form.values.streaming_platform === 'JITSI' && (
+            <TextInput
+              label="Jitsi Room Name"
+              placeholder="my-event-session or https://8x8.vc/..."
+              description="Enter a room name or full URL - we'll normalize it for you. Requires organization JaaS credentials."
+              required
+              classNames={{ input: styles.formInput }}
+              {...form.getInputProps('jitsi_room_name')}
+            />
+          )}
+
+          {form.values.streaming_platform === 'OTHER' && (
+            <TextInput
+              label="External Stream URL"
+              placeholder="https://..."
+              description="External streaming platform URL (MS Teams, custom player, etc.). Must be HTTPS."
+              required
+              classNames={{ input: styles.formInput }}
+              {...form.getInputProps('other_stream_url')}
+            />
           )}
 
           <Select

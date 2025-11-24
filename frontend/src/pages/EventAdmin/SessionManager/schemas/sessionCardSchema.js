@@ -13,6 +13,8 @@ const StreamingPlatform = z.enum([
   'VIMEO',
   'MUX',
   'ZOOM',
+  'JITSI',
+  'OTHER',
 ]);
 
 const MuxPlaybackPolicy = z.enum([
@@ -49,6 +51,17 @@ export const sessionFieldSchemas = {
     .optional()
     .or(z.literal('')),
   mux_playback_policy: MuxPlaybackPolicy.optional(),
+  jitsi_room_name: z.string()
+    .min(3, 'Room name must be at least 3 characters')
+    .max(200, 'Room name too long')
+    .optional()
+    .or(z.literal('')),
+  other_stream_url: z.string()
+    .url('Must be a valid URL')
+    .startsWith('https://', 'URL must use HTTPS')
+    .max(500, 'URL too long')
+    .optional()
+    .or(z.literal('')),
 };
 
 // Helper to validate individual fields

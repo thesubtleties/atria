@@ -19,6 +19,8 @@ const StreamingPlatform = z.enum([
   'VIMEO',
   'MUX',
   'ZOOM',
+  'JITSI',
+  'OTHER',
 ]);
 
 const MuxPlaybackPolicy = z.enum([
@@ -65,6 +67,19 @@ export const editSessionSchema = z
       .optional()
       .or(z.literal('')),
     mux_playback_policy: MuxPlaybackPolicy.optional(), // Optional for MUX
+    // For JITSI: Room names should be 3-200 characters
+    jitsi_room_name: z.string()
+      .min(3, 'Room name must be at least 3 characters')
+      .max(200, 'Room name is too long')
+      .optional()
+      .or(z.literal('')),
+    // For OTHER: External URLs must be HTTPS
+    other_stream_url: z.string()
+      .url('Must be a valid URL')
+      .startsWith('https://', 'URL must use HTTPS')
+      .max(2000, 'URL is too long')
+      .optional()
+      .or(z.literal('')),
   })
   .refine(
     (data) => {
@@ -118,5 +133,31 @@ export const editSessionSchema = z
     {
       message: 'Zoom meeting URL or ID is required when platform is Zoom',
       path: ['zoom_meeting_id'],
+    }
+  )
+  .refine(
+    (data) => {
+      // If JITSI platform selected, jitsi_room_name is required
+      if (data.streaming_platform === 'JITSI') {
+        return data.jitsi_room_name && data.jitsi_room_name.trim().length > 0;
+      }
+      return true;
+    },
+    {
+      message: 'Jitsi room name is required when platform is Jitsi',
+      path: ['jitsi_room_name'],
+    }
+  )
+  .refine(
+    (data) => {
+      // If OTHER platform selected, other_stream_url is required
+      if (data.streaming_platform === 'OTHER') {
+        return data.other_stream_url && data.other_stream_url.trim().length > 0;
+      }
+      return true;
+    },
+    {
+      message: 'Stream URL is required when platform is Other',
+      path: ['other_stream_url'],
     }
   );
