@@ -19,6 +19,7 @@
     "@emotion/react": "^11.14.0",
     "@gsap/react": "^2.1.2",
     "@hookform/resolvers": "^3.10.0",
+    "@jitsi/react-sdk": "^1.4.4",
     "@mantine/carousel": "^7.16.0",
     "@mantine/core": "^7.16.0",
     "@mantine/dates": "^7.16.0",
