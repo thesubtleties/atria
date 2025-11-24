@@ -49,11 +49,10 @@ export const editSessionSchema = z
       (val) => val === '' ? null : val,
       StreamingPlatform.nullable().optional()
     ),
-    // For VIMEO/MUX: Flexible to accept URLs or raw IDs
-    // Vimeo IDs are typically 8-9 digits, Mux IDs are 10+ alphanumeric
+    // For VIMEO/MUX/OTHER: Flexible to accept URLs or raw IDs
+    // Platform-specific validation happens in refinements below
     stream_url: z.string()
-      .min(8, 'Vimeo video ID must be at least 8 digits, or Mux playback ID at least 10 characters')
-      .max(500, 'Stream URL is too long')
+      .max(2000, 'Stream URL is too long')
       .optional()
       .or(z.literal('')),
     // For ZOOM: Meeting IDs are 9-11 digits (with optional spaces/dashes)
