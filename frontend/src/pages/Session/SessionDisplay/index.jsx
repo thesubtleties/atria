@@ -423,8 +423,8 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
       );
     }
 
-    // OTHER (External link)
-    if (platform === 'OTHER' && !session?.other_stream_url) {
+    // OTHER (External link) - uses stream_url column
+    if (platform === 'OTHER' && !session?.stream_url) {
       return (
         <div className={styles.messageContainer}>
           <Alert
@@ -457,7 +457,7 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
     }
 
     if (platform === 'OTHER') {
-      return <OtherLinkCard streamUrl={session.other_stream_url} />;
+      return <OtherLinkCard streamUrl={session.stream_url} />;
     }
 
     // Unknown platform

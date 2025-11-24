@@ -102,9 +102,9 @@ class JaaSService:
                 "JaaS requires App ID, API Key, and Private Key."
             )
 
-        # Get credentials
+        # Get credentials (decrypt API key and private key)
         app_id = organization.jaas_app_id
-        api_key = organization.jaas_api_key
+        api_key = organization.get_jaas_api_key()
         private_key_pem = organization.get_jaas_private_key()
 
         # Load RSA private key

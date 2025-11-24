@@ -73,7 +73,7 @@ export const SessionCard = ({ session, hasConflict }) => {
   const [zoomPasscode, setZoomPasscode] = useState(session.zoom_passcode || '');
   const [muxPlaybackPolicy, setMuxPlaybackPolicy] = useState(session.mux_playback_policy || 'PUBLIC');
   const [jitsiRoomName, setJitsiRoomName] = useState(session.jitsi_room_name || '');
-  const [otherStreamUrl, setOtherStreamUrl] = useState(session.other_stream_url || '');
+  // Note: OTHER platform uses streamUrl state (same as VIMEO/MUX)
 
   // Validation error states
   const [errors, setErrors] = useState({});
@@ -89,7 +89,7 @@ export const SessionCard = ({ session, hasConflict }) => {
   const [debouncedZoomMeetingId] = useDebouncedValue(zoomMeetingId, 500);
   const [debouncedZoomPasscode] = useDebouncedValue(zoomPasscode, 500);
   const [debouncedJitsiRoomName] = useDebouncedValue(jitsiRoomName, 500);
-  const [debouncedOtherStreamUrl] = useDebouncedValue(otherStreamUrl, 500);
+  // Note: OTHER platform uses debouncedStreamUrl (same as VIMEO/MUX)
 
   // Auto-save when debounced values change
   const handleUpdate = useCallback(
@@ -226,24 +226,7 @@ export const SessionCard = ({ session, hasConflict }) => {
     }
   }, [debouncedJitsiRoomName, session.jitsi_room_name, streamingPlatform, handleUpdate, validateAndUpdate]);
 
-  useEffect(() => {
-    if (
-      debouncedOtherStreamUrl !== session.other_stream_url &&
-      (debouncedOtherStreamUrl === '' ||
-        validateAndUpdate('other_stream_url', debouncedOtherStreamUrl))
-    ) {
-      // If we have a pending platform change, save platform + URL together
-      if (pendingPlatformChangeRef.current) {
-        handleUpdate({
-          streaming_platform: streamingPlatform || null,
-          other_stream_url: debouncedOtherStreamUrl
-        });
-        pendingPlatformChangeRef.current = false;
-      } else {
-        handleUpdate({ other_stream_url: debouncedOtherStreamUrl });
-      }
-    }
-  }, [debouncedOtherStreamUrl, session.other_stream_url, streamingPlatform, handleUpdate, validateAndUpdate]);
+  // Note: OTHER platform autosave handled by debouncedStreamUrl useEffect above (same as VIMEO/MUX)
 
   // Calculate duration
   const calculateDuration = (start, end) => {
@@ -468,7 +451,7 @@ export const SessionCard = ({ session, hasConflict }) => {
                 setZoomPasscode('');
                 setMuxPlaybackPolicy('PUBLIC');
                 setJitsiRoomName('');
-                setOtherStreamUrl('');
+                // Note: OTHER platform uses streamUrl (cleared above)
                 handleUpdate({
                   streaming_platform: null,
                   stream_url: null,
@@ -476,7 +459,6 @@ export const SessionCard = ({ session, hasConflict }) => {
                   zoom_passcode: null,
                   mux_playback_policy: null,
                   jitsi_room_name: null,
-                  other_stream_url: null,
                 });
                 pendingPlatformChangeRef.current = false;
               } else {
@@ -577,9 +559,9 @@ export const SessionCard = ({ session, hasConflict }) => {
               placeholder="External stream URL (https://...)"
               size="sm"
               style={{ flex: 1 }}
-              value={otherStreamUrl}
-              onChange={(e) => setOtherStreamUrl(e.target.value)}
-              error={errors.other_stream_url}
+              value={streamUrl}
+              onChange={(e) => setStreamUrl(e.target.value)}
+              error={errors.stream_url}
               classNames={{ input: styles.formInput }}
             />
           </Group>

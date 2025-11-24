@@ -82,7 +82,7 @@ class SessionCreateSchema(ma.Schema):
     zoom_passcode = ma.String(allow_none=True)
     mux_playback_policy = ma.String(allow_none=True)  # 'PUBLIC' or 'SIGNED'
     jitsi_room_name = ma.String(allow_none=True)  # JaaS room identifier
-    other_stream_url = ma.String(allow_none=True)  # External streaming URL for OTHER platform
+    # Note: OTHER platform uses stream_url (same as VIMEO/MUX)
 
     @validates("title")
     def validate_title(self, value, **kwargs):
@@ -186,21 +186,22 @@ class SessionCreateSchema(ma.Schema):
             data['jitsi_room_name'] = normalized_room
 
         elif platform == StreamingPlatform.OTHER:
-            raw_value = data.get('other_stream_url')
+            # OTHER platform uses stream_url column (same as VIMEO/MUX)
+            raw_value = data.get('stream_url')
             if not raw_value:
                 raise ValidationError(
-                    {"other_stream_url": "Stream URL required when platform is OTHER"}
+                    {"stream_url": "Stream URL required when platform is OTHER"}
                 )
 
             # Validate URL format (must be HTTPS)
             validated_url = validate_other_stream_url(raw_value)
             if not validated_url:
                 raise ValidationError(
-                    {"other_stream_url": "Invalid URL. Must be a valid HTTPS URL"}
+                    {"stream_url": "Invalid URL. Must be a valid HTTPS URL"}
                 )
 
-            # Store validated URL in database
-            data['other_stream_url'] = validated_url
+            # Store validated URL in stream_url column
+            data['stream_url'] = validated_url
 
 
 class SessionUpdateSchema(ma.Schema):
@@ -226,7 +227,7 @@ class SessionUpdateSchema(ma.Schema):
     zoom_passcode = ma.String(allow_none=True)
     mux_playback_policy = ma.String(allow_none=True)  # 'PUBLIC' or 'SIGNED'
     jitsi_room_name = ma.String(allow_none=True)  # JaaS room identifier
-    other_stream_url = ma.String(allow_none=True)  # External streaming URL for OTHER platform
+    # Note: OTHER platform uses stream_url (same as VIMEO/MUX)
 
     @validates_schema
     def validate_streaming_config(self, data, **kwargs):
@@ -313,21 +314,22 @@ class SessionUpdateSchema(ma.Schema):
             data['jitsi_room_name'] = normalized_room
 
         elif platform == StreamingPlatform.OTHER:
-            raw_value = data.get('other_stream_url')
+            # OTHER platform uses stream_url column (same as VIMEO/MUX)
+            raw_value = data.get('stream_url')
             if not raw_value:
                 raise ValidationError(
-                    {"other_stream_url": "Stream URL required when platform is OTHER"}
+                    {"stream_url": "Stream URL required when platform is OTHER"}
                 )
 
             # Validate URL format (must be HTTPS)
             validated_url = validate_other_stream_url(raw_value)
             if not validated_url:
                 raise ValidationError(
-                    {"other_stream_url": "Invalid URL. Must be a valid HTTPS URL"}
+                    {"stream_url": "Invalid URL. Must be a valid HTTPS URL"}
                 )
 
-            # Store validated URL in database
-            data['other_stream_url'] = validated_url
+            # Store validated URL in stream_url column
+            data['stream_url'] = validated_url
 
 
 class SessionTimesUpdateSchema(ma.Schema):

@@ -33,7 +33,7 @@ class Session(db.Model):
     zoom_passcode = db.Column(db.String(100), nullable=True)
     mux_playback_policy = db.Column(db.String(20), nullable=True)  # 'PUBLIC' or 'SIGNED'
     jitsi_room_name = db.Column(db.String(255), nullable=True)  # JaaS room identifier
-    other_stream_url = db.Column(db.Text, nullable=True)  # External streaming URL for OTHER platform
+    # Note: OTHER platform uses stream_url (same as VIMEO/MUX) - no separate column needed
 
     day_number = db.Column(db.BigInteger, nullable=False)
     created_at = db.Column(
@@ -444,9 +444,10 @@ class Session(db.Model):
 
         elif self.streaming_platform == 'OTHER':
             # External streaming platform URL (MS Teams, self-hosted Jitsi, etc.)
+            # Uses stream_url column (same as VIMEO/MUX)
             return {
                 "platform": "OTHER",
-                "stream_url": self.other_stream_url
+                "stream_url": self.stream_url
             }
 
         return None

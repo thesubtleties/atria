@@ -73,13 +73,7 @@ export const editSessionSchema = z
       .max(200, 'Room name is too long')
       .optional()
       .or(z.literal('')),
-    // For OTHER: External URLs must be HTTPS
-    other_stream_url: z.string()
-      .url('Must be a valid URL')
-      .startsWith('https://', 'URL must use HTTPS')
-      .max(2000, 'URL is too long')
-      .optional()
-      .or(z.literal('')),
+    // Note: OTHER platform uses stream_url with additional HTTPS validation (see refinements below)
   })
   .refine(
     (data) => {
@@ -150,14 +144,32 @@ export const editSessionSchema = z
   )
   .refine(
     (data) => {
-      // If OTHER platform selected, other_stream_url is required
+      // If OTHER platform selected, stream_url is required
       if (data.streaming_platform === 'OTHER') {
-        return data.other_stream_url && data.other_stream_url.trim().length > 0;
+        return data.stream_url && data.stream_url.trim().length > 0;
       }
       return true;
     },
     {
       message: 'Stream URL is required when platform is Other',
-      path: ['other_stream_url'],
+      path: ['stream_url'],
+    }
+  )
+  .refine(
+    (data) => {
+      // If OTHER platform, stream_url must be a valid HTTPS URL
+      if (data.streaming_platform === 'OTHER' && data.stream_url && data.stream_url.trim().length > 0) {
+        try {
+          const url = new URL(data.stream_url);
+          return url.protocol === 'https:';
+        } catch {
+          return false;
+        }
+      }
+      return true;
+    },
+    {
+      message: 'Stream URL must be a valid HTTPS URL for external platforms',
+      path: ['stream_url'],
     }
   );

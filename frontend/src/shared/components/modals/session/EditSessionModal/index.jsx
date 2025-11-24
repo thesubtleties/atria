@@ -104,7 +104,7 @@ export const EditSessionModal = ({
           zoom_passcode: session.zoom_passcode || '',
           mux_playback_policy: session.mux_playback_policy || 'PUBLIC',
           jitsi_room_name: session.jitsi_room_name || '',
-          other_stream_url: session.other_stream_url || '',
+          // Note: OTHER platform uses stream_url (same as VIMEO/MUX)
         }
       : {
           title: '',
@@ -122,7 +122,7 @@ export const EditSessionModal = ({
           zoom_passcode: '',
           mux_playback_policy: 'PUBLIC',
           jitsi_room_name: '',
-          other_stream_url: '',
+          // Note: OTHER platform uses stream_url (same as VIMEO/MUX)
         },
     validate: (values) => {
       console.log('Validation values:', values);
@@ -147,7 +147,7 @@ export const EditSessionModal = ({
       form.setFieldValue('zoom_passcode', '');
       form.setFieldValue('mux_playback_policy', 'PUBLIC');
       form.setFieldValue('jitsi_room_name', '');
-      form.setFieldValue('other_stream_url', '');
+      // Note: OTHER platform uses stream_url (cleared above)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.values.streaming_platform]);
@@ -170,7 +170,7 @@ export const EditSessionModal = ({
         zoom_passcode: values.zoom_passcode || null,
         mux_playback_policy: values.mux_playback_policy || null,
         jitsi_room_name: values.jitsi_room_name || null,
-        other_stream_url: values.other_stream_url || null,
+        // Note: OTHER platform uses stream_url (sent above)
       };
 
       let result;
@@ -363,7 +363,7 @@ export const EditSessionModal = ({
               description="External streaming platform URL (MS Teams, custom player, etc.). Must be HTTPS."
               required
               classNames={{ input: styles.formInput }}
-              {...form.getInputProps('other_stream_url')}
+              {...form.getInputProps('stream_url')}
             />
           )}
 
