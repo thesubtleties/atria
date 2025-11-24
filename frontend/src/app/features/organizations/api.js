@@ -151,6 +151,28 @@ export const organizationsApi = baseApi.injectEndpoints({
         'Organizations',
       ],
     }),
+    // JaaS Credentials endpoints
+    updateJaasCredentials: builder.mutation({
+      query: ({ orgId, ...credentials }) => ({
+        url: `/organizations/${orgId}/jaas-credentials`,
+        method: 'PUT',
+        body: credentials,
+      }),
+      invalidatesTags: (result, error, { orgId }) => [
+        { type: 'Organizations', id: orgId },
+        'Organizations',
+      ],
+    }),
+    deleteJaasCredentials: builder.mutation({
+      query: (orgId) => ({
+        url: `/organizations/${orgId}/jaas-credentials`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (result, error, orgId) => [
+        { type: 'Organizations', id: orgId },
+        'Organizations',
+      ],
+    }),
   }),
 });
 
@@ -173,4 +195,6 @@ export const {
   useCancelOrganizationInvitationMutation,
   useUpdateMuxCredentialsMutation,
   useDeleteMuxCredentialsMutation,
+  useUpdateJaasCredentialsMutation,
+  useDeleteJaasCredentialsMutation,
 } = organizationsApi;
