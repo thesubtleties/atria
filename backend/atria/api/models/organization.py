@@ -28,6 +28,12 @@ class Organization(db.Model):
     mux_signing_key_id = db.Column(db.String(255), nullable=True)  # Signing Key ID (public)
     mux_signing_private_key = db.Column(db.Text, nullable=True)  # RSA Private Key (ENCRYPTED)
 
+    # JaaS (Jitsi as a Service) BYOA credentials
+    # Used to generate JWT tokens for Jitsi video conferencing
+    jaas_app_id = db.Column(db.String(255), nullable=True)  # JaaS App ID (vpaas-magic-cookie-xxx)
+    jaas_api_key = db.Column(db.String(255), nullable=True)  # API Key ID for JWT header kid
+    jaas_private_key_encrypted = db.Column(db.Text, nullable=True)  # RSA Private Key (ENCRYPTED)
+
     # Relationships
     users = db.relationship(
         "User",
@@ -237,3 +243,31 @@ class Organization(db.Model):
     def has_mux_signing_credentials(self) -> bool:
         """Check if organization has Mux signing credentials for signed URLs"""
         return bool(self.mux_signing_key_id and self.mux_signing_private_key)
+
+    # JaaS credential management with automatic encryption/decryption
+    def set_jaas_credentials(
+        self, app_id: str, api_key: str, private_key: str
+    ):
+        """Set JaaS credentials (encrypts private key automatically)"""
+        from api.commons.encryption import encrypt_secret
+
+        self.jaas_app_id = app_id
+        self.jaas_api_key = api_key
+        self.jaas_private_key_encrypted = encrypt_secret(private_key)
+
+    def get_jaas_private_key(self) -> str:
+        """Get decrypted JaaS private key"""
+        from api.commons.encryption import decrypt_secret
+
+        return decrypt_secret(self.jaas_private_key_encrypted)
+
+    def clear_jaas_credentials(self):
+        """Remove all JaaS credentials from organization"""
+        self.jaas_app_id = None
+        self.jaas_api_key = None
+        self.jaas_private_key_encrypted = None
+
+    @property
+    def has_jaas_credentials(self) -> bool:
+        """Check if organization has JaaS credentials configured"""
+        return bool(self.jaas_app_id and self.jaas_api_key and self.jaas_private_key_encrypted)
