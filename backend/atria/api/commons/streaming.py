@@ -6,6 +6,7 @@ allowing users to paste full URLs or raw IDs/meeting codes.
 """
 import re
 from typing import Optional
+from urllib.parse import urlparse
 
 
 def extract_vimeo_id(url_or_id: str) -> Optional[str]:
@@ -184,14 +185,17 @@ def normalize_jitsi_room_name(input_str: str) -> Optional[str]:
 
     # If it's a URL, extract the room name from the path
     if value.startswith('http'):
-        # Extract last path component as room name
+        # Use urlparse to properly handle query strings and fragments
         # Handles: https://8x8.vc/vpaas-magic-cookie-xxx/MyRoom
-        #          https://meet.jit.si/MyRoom
-        match = re.search(r'/([^/]+)/?$', value)
-        if match:
-            value = match.group(1)
-        else:
-            return None
+        #          https://meet.jit.si/MyRoom?config=...
+        parsed = urlparse(value)
+        path = parsed.path  # Gets path without query string
+
+        # Extract last non-empty path segment
+        segments = [s for s in path.split('/') if s]
+        if not segments:
+            return None  # No path segments (e.g., https://8x8.vc/)
+        value = segments[-1]
 
     # Convert to lowercase
     value = value.lower()
@@ -245,8 +249,11 @@ def validate_other_stream_url(url: str) -> Optional[str]:
         return None
 
     # Basic URL validation (has a domain with at least one dot)
-    # Pattern: https:// + domain + optional path
-    url_pattern = r'^https://[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*(/.*)?$'
+    # Pattern: https:// + domain (with required TLD) + optional port + optional path
+    # Changes from original:
+    #   - Changed * to + to require at least one dot (TLD required)
+    #   - Added (?::[0-9]{1,5})? to allow optional port numbers
+    url_pattern = r'^https://[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+(?::[0-9]{1,5})?(/.*)?$'
 
     if not re.match(url_pattern, value):
         return None

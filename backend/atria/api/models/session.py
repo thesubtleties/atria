@@ -444,10 +444,10 @@ class Session(db.Model):
 
         elif self.streaming_platform == 'OTHER':
             # External streaming platform URL (MS Teams, self-hosted Jitsi, etc.)
-            # Uses stream_url column (same as VIMEO/MUX)
+            # Uses stream_url column and playback_url response field (same as VIMEO)
             return {
                 "platform": "OTHER",
-                "stream_url": self.stream_url
+                "playback_url": self.stream_url
             }
 
         return None
