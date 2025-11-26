@@ -137,49 +137,60 @@ class DashboardService:
 
     @staticmethod
     def _get_user_events(user_id: int, limit: int = 5):
-        """Get user's recent and upcoming events (excluding banned)"""
-        # Get events where user is a participant and not banned - ONLY PUBLISHED EVENTS
+        """Get user's events prioritized by status: live > upcoming > recent past
+
+        Priority order:
+        1. LIVE events (currently happening)
+        2. UPCOMING events (sorted by start_date, soonest first)
+        3. PAST events (up to ~2 weeks old, most recent first)
+
+        Returns at most `limit` events.
+        """
+        from datetime import timedelta
+
+        # Fetch more events than needed so we can filter/prioritize in Python
+        # (status calculation requires timezone logic that's cleaner in Python)
         event_users = EventUser.query.filter(
             EventUser.user_id == user_id,
-            EventUser.is_banned.is_(False)  # Exclude banned users
+            EventUser.is_banned.is_(False)
         ).options(
             joinedload(EventUser.event).joinedload(Event.organization)
         ).join(Event).filter(
-            Event.status == EventStatus.PUBLISHED  # Only show published events on dashboard
-        ).order_by(
-            Event.start_date.asc(),
-            Event.end_date.desc()
-        ).limit(limit).all()
+            Event.status == EventStatus.PUBLISHED
+        ).all()
 
-        events = []
+        live_events = []
+        upcoming_events = []
+        past_events = []
+
+        # Calculate cutoff for past events (~2 weeks ago)
+        two_weeks_ago = datetime.now(timezone.utc).date() - timedelta(days=14)
+
         for event_user in event_users:
             event = event_user.event
 
-            # Get attendee count for this event (excluding banned users)
-            attendee_count = EventUser.query.filter(
-                EventUser.event_id == event.id,
-                EventUser.is_banned.is_(False)
-            ).count()
-
-            # Determine event status for display based on dates in the event's timezone
-            # Convert current UTC time to the event's timezone
+            # Determine event status based on dates in the event's timezone
             try:
                 event_tz = pytz.timezone(event.timezone)
                 now_in_event_tz = datetime.now(timezone.utc).astimezone(event_tz)
                 today_in_event_tz = now_in_event_tz.date()
             except Exception:
-                # Fallback to UTC if timezone is invalid
                 now_in_event_tz = datetime.now(timezone.utc)
                 today_in_event_tz = now_in_event_tz.date()
 
-            # Compare dates in the event's timezone
+            # Determine status
             if event.end_date and event.end_date < today_in_event_tz:
                 display_status = 'past'
             elif event.start_date > today_in_event_tz:
                 display_status = 'upcoming'
             else:
-                # Event is currently happening in its timezone
                 display_status = 'live'
+
+            # Get attendee count
+            attendee_count = EventUser.query.filter(
+                EventUser.event_id == event.id,
+                EventUser.is_banned.is_(False)
+            ).count()
 
             # Build location string
             location = None
@@ -192,10 +203,10 @@ class DashboardService:
                 location = ', '.join(location_parts)
             elif event.event_format == 'VIRTUAL':
                 location = 'Virtual'
-            
-            events.append({
+
+            event_data = {
                 'id': event.id,
-                'name': event.title,  # Event model uses 'title' not 'name'
+                'name': event.title,
                 'start_date': event.start_date,
                 'end_date': event.end_date,
                 'location': location,
@@ -206,9 +217,28 @@ class DashboardService:
                     'name': event.organization.name
                 },
                 'user_role': event_user.role.value
-            })
+            }
 
-        return events
+            # Categorize by status
+            if display_status == 'live':
+                live_events.append(event_data)
+            elif display_status == 'upcoming':
+                upcoming_events.append(event_data)
+            elif display_status == 'past' and event.end_date >= two_weeks_ago:
+                # Only include past events from the last 2 weeks
+                past_events.append(event_data)
+
+        # Sort each category
+        # Live: by start_date (earliest live event first)
+        live_events.sort(key=lambda e: e['start_date'])
+        # Upcoming: by start_date (soonest first)
+        upcoming_events.sort(key=lambda e: e['start_date'])
+        # Past: by end_date descending (most recently ended first)
+        past_events.sort(key=lambda e: e['end_date'], reverse=True)
+
+        # Combine in priority order and return up to limit
+        prioritized = live_events + upcoming_events + past_events
+        return prioritized[:limit]
 
     @staticmethod
     def _get_recent_connections(user_id: int, limit: int = 5):
@@ -307,6 +337,14 @@ class DashboardService:
                 'type': 'feature_release',
                 'is_new': True,
                 'link': 'https://docs.atria.gg/blog/v0.2.0-release'
+            },
+            {
+                'id': 7,
+                'title': 'v0.3.0 - Jitsi & External Platform Support',
+                'description': 'Added Jitsi (JaaS) video conferencing with JWT authentication, plus external link support to use your preferred streaming platform.',
+                'date': datetime(2025, 11, 26, tzinfo=timezone.utc),
+                'type': 'feature_release',
+                'is_new': True
             }
         ]
 
