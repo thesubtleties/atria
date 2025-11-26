@@ -5,6 +5,18 @@ All notable changes to Atria will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2025-11-26
+
+### Added
+- **Jitsi (JaaS) video conferencing** with per-user JWT authentication and moderator permissions
+- **External platform support** for linking to any HTTPS streaming platform (MS Teams, self-hosted solutions, etc.)
+- Documentation link in top navigation menu for easy access to docs.atria.gg
+
+### Changed
+- Dashboard events now prioritize live events first, then upcoming (soonest first), then recent past (up to 2 weeks old)
+
+[0.3.0]: https://github.com/thesubtleties/atria/releases/tag/v0.3.0
+
 ## [0.2.1] - 2025-11-15
 
 ### Fixed
