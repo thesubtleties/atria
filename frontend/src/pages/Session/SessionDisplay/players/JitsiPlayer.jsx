@@ -10,10 +10,9 @@ import styles from '../styles/index.module.css';
  * @param {string} appId - JaaS App ID (vpaas-magic-cookie-xxx)
  * @param {string} roomName - Normalized room name
  * @param {string} jwt - Per-user JWT token (generated server-side)
- * @param {object} session - Session data for display
  * @param {object} currentUser - Current user data
  */
-export const JitsiPlayer = ({ appId, roomName, jwt, session, currentUser }) => {
+export const JitsiPlayer = ({ appId, roomName, jwt, currentUser }) => {
   // User information for Jitsi display
   const userInfo = {
     displayName: currentUser?.name || 'Anonymous',
