@@ -7,6 +7,7 @@ import {
   IconUsers,
   IconSettings,
   IconLayoutDashboard,
+  IconBook,
 } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { useLogoutMutation } from '@/app/features/auth/api'; // Adjust import path as needed
@@ -113,6 +114,21 @@ export const MenuButton = () => {
           onClick={() => navigate('/app/settings')}
         >
           Settings
+        </Menu.Item>
+
+        <Menu.Divider />
+
+        <Menu.Label>Help</Menu.Label>
+
+        <Menu.Item
+          leftSection={
+            <IconBook
+              style={{ width: rem(14), height: rem(14), color: 'var(--color-primary)' }}
+            />
+          }
+          onClick={() => window.open('https://docs.atria.gg/docs/intro', '_blank')}
+        >
+          Documentation
         </Menu.Item>
 
         <Menu.Divider />

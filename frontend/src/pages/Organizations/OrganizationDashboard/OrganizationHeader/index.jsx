@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Group, Badge, ActionIcon, Text, Collapse } from '@mantine/core';
+import { Badge, ActionIcon, Text, Collapse } from '@mantine/core';
 import {
   IconBuilding,
   IconUsers,
