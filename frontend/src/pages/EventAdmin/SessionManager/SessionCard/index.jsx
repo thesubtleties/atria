@@ -42,6 +42,8 @@ const STREAMING_PLATFORMS = [
   { value: 'VIMEO', label: 'Vimeo' },
   { value: 'MUX', label: 'Mux' },
   { value: 'ZOOM', label: 'Zoom' },
+  { value: 'JITSI', label: 'Jitsi (JaaS)' },
+  { value: 'OTHER', label: 'Other' },
 ];
 
 const MUX_PLAYBACK_POLICIES = [
@@ -70,6 +72,8 @@ export const SessionCard = ({ session, hasConflict }) => {
   const [zoomMeetingId, setZoomMeetingId] = useState(session.zoom_meeting_id || '');
   const [zoomPasscode, setZoomPasscode] = useState(session.zoom_passcode || '');
   const [muxPlaybackPolicy, setMuxPlaybackPolicy] = useState(session.mux_playback_policy || 'PUBLIC');
+  const [jitsiRoomName, setJitsiRoomName] = useState(session.jitsi_room_name || '');
+  // Note: OTHER platform uses streamUrl state (same as VIMEO/MUX)
 
   // Validation error states
   const [errors, setErrors] = useState({});
@@ -84,6 +88,8 @@ export const SessionCard = ({ session, hasConflict }) => {
   const [debouncedStreamUrl] = useDebouncedValue(streamUrl, 500);
   const [debouncedZoomMeetingId] = useDebouncedValue(zoomMeetingId, 500);
   const [debouncedZoomPasscode] = useDebouncedValue(zoomPasscode, 500);
+  const [debouncedJitsiRoomName] = useDebouncedValue(jitsiRoomName, 500);
+  // Note: OTHER platform uses debouncedStreamUrl (same as VIMEO/MUX)
 
   // Auto-save when debounced values change
   const handleUpdate = useCallback(
@@ -200,6 +206,27 @@ export const SessionCard = ({ session, hasConflict }) => {
       handleUpdate({ zoom_passcode: debouncedZoomPasscode });
     }
   }, [debouncedZoomPasscode, session.zoom_passcode, handleUpdate]);
+
+  useEffect(() => {
+    if (
+      debouncedJitsiRoomName !== session.jitsi_room_name &&
+      (debouncedJitsiRoomName === '' ||
+        validateAndUpdate('jitsi_room_name', debouncedJitsiRoomName))
+    ) {
+      // If we have a pending platform change, save platform + room name together
+      if (pendingPlatformChangeRef.current) {
+        handleUpdate({
+          streaming_platform: streamingPlatform || null,
+          jitsi_room_name: debouncedJitsiRoomName
+        });
+        pendingPlatformChangeRef.current = false;
+      } else {
+        handleUpdate({ jitsi_room_name: debouncedJitsiRoomName });
+      }
+    }
+  }, [debouncedJitsiRoomName, session.jitsi_room_name, streamingPlatform, handleUpdate, validateAndUpdate]);
+
+  // Note: OTHER platform autosave handled by debouncedStreamUrl useEffect above (same as VIMEO/MUX)
 
   // Calculate duration
   const calculateDuration = (start, end) => {
@@ -423,12 +450,15 @@ export const SessionCard = ({ session, hasConflict }) => {
                 setZoomMeetingId('');
                 setZoomPasscode('');
                 setMuxPlaybackPolicy('PUBLIC');
+                setJitsiRoomName('');
+                // Note: OTHER platform uses streamUrl (cleared above)
                 handleUpdate({
                   streaming_platform: null,
                   stream_url: null,
                   zoom_meeting_id: null,
                   zoom_passcode: null,
                   mux_playback_policy: null,
+                  jitsi_room_name: null,
                 });
                 pendingPlatformChangeRef.current = false;
               } else {
@@ -504,6 +534,34 @@ export const SessionCard = ({ session, hasConflict }) => {
               style={{ width: 150 }}
               value={zoomPasscode}
               onChange={(e) => setZoomPasscode(e.target.value)}
+              classNames={{ input: styles.formInput }}
+            />
+          </Group>
+        )}
+
+        {streamingPlatform === 'JITSI' && (
+          <Group gap="xs" style={{ marginTop: 8 }}>
+            <TextInput
+              placeholder="Jitsi room name or URL"
+              size="sm"
+              style={{ flex: 1 }}
+              value={jitsiRoomName}
+              onChange={(e) => setJitsiRoomName(e.target.value)}
+              error={errors.jitsi_room_name}
+              classNames={{ input: styles.formInput }}
+            />
+          </Group>
+        )}
+
+        {streamingPlatform === 'OTHER' && (
+          <Group gap="xs" style={{ marginTop: 8 }}>
+            <TextInput
+              placeholder="External stream URL (https://...)"
+              size="sm"
+              style={{ flex: 1 }}
+              value={streamUrl}
+              onChange={(e) => setStreamUrl(e.target.value)}
+              error={errors.stream_url}
               classNames={{ input: styles.formInput }}
             />
           </Group>

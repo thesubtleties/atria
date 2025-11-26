@@ -8,6 +8,7 @@ import {
 } from '@tabler/icons-react';
 import OrganizationNameSection from './OrganizationNameSection';
 import MuxCredentialsSection from './MuxCredentialsSection';
+import JaasCredentialsSection from './JaasCredentialsSection';
 import styles from './styles/index.module.css';
 
 const OrganizationHeader = ({ organization, currentUserRole }) => {
@@ -86,6 +87,10 @@ const OrganizationHeader = ({ organization, currentUserRole }) => {
             currentUserRole={currentUserRole}
           />
           <MuxCredentialsSection
+            organization={organization}
+            currentUserRole={currentUserRole}
+          />
+          <JaasCredentialsSection
             organization={organization}
             currentUserRole={currentUserRole}
           />

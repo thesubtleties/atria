@@ -1,7 +1,13 @@
 from api.extensions import ma, db
 from api.models import Session
 from api.models.enums import SessionType, SessionStatus, SessionSpeakerRole, SessionChatMode, StreamingPlatform
-from api.commons.streaming import extract_vimeo_id, extract_mux_playback_id, normalize_zoom_url
+from api.commons.streaming import (
+    extract_vimeo_id,
+    extract_mux_playback_id,
+    normalize_zoom_url,
+    normalize_jitsi_room_name,
+    validate_other_stream_url
+)
 from marshmallow import validates, validates_schema, ValidationError, validate
 from datetime import time
 
@@ -70,11 +76,13 @@ class SessionCreateSchema(ma.Schema):
     day_number = ma.Integer(required=True)
     chat_mode = ma.Enum(SessionChatMode, load_default=SessionChatMode.ENABLED)
 
-    # Streaming platform fields (multi-platform support: Vimeo/Mux/Zoom)
+    # Streaming platform fields (multi-platform support: Vimeo/Mux/Zoom/Jitsi/Other)
     streaming_platform = ma.Enum(StreamingPlatform, allow_none=True)
     zoom_meeting_id = ma.String(allow_none=True)
     zoom_passcode = ma.String(allow_none=True)
     mux_playback_policy = ma.String(allow_none=True)  # 'PUBLIC' or 'SIGNED'
+    jitsi_room_name = ma.String(allow_none=True)  # JaaS room identifier
+    # Note: OTHER platform uses stream_url (same as VIMEO/MUX)
 
     @validates("title")
     def validate_title(self, value, **kwargs):
@@ -160,6 +168,41 @@ class SessionCreateSchema(ma.Schema):
             # Normalize: Store full join URL in database
             data['zoom_meeting_id'] = normalized_url
 
+        elif platform == StreamingPlatform.JITSI:
+            raw_value = data.get('jitsi_room_name')
+            if not raw_value:
+                raise ValidationError(
+                    {"jitsi_room_name": "Jitsi room name or URL required when platform is JITSI"}
+                )
+
+            # Normalize to URL-safe room name
+            normalized_room = normalize_jitsi_room_name(raw_value)
+            if not normalized_room:
+                raise ValidationError(
+                    {"jitsi_room_name": "Invalid Jitsi room name. Use 3-200 characters (letters, numbers, dashes)"}
+                )
+
+            # Normalize: Store normalized room name in database
+            data['jitsi_room_name'] = normalized_room
+
+        elif platform == StreamingPlatform.OTHER:
+            # OTHER platform uses stream_url column (same as VIMEO/MUX)
+            raw_value = data.get('stream_url')
+            if not raw_value:
+                raise ValidationError(
+                    {"stream_url": "Stream URL required when platform is OTHER"}
+                )
+
+            # Validate URL format (must be HTTPS)
+            validated_url = validate_other_stream_url(raw_value)
+            if not validated_url:
+                raise ValidationError(
+                    {"stream_url": "Invalid URL. Must be a valid HTTPS URL"}
+                )
+
+            # Store validated URL in stream_url column
+            data['stream_url'] = validated_url
+
 
 class SessionUpdateSchema(ma.Schema):
     """Schema for updating sessions"""
@@ -178,11 +221,13 @@ class SessionUpdateSchema(ma.Schema):
     day_number = ma.Integer()
     chat_mode = ma.Enum(SessionChatMode)
 
-    # Streaming platform fields (multi-platform support: Vimeo/Mux/Zoom)
+    # Streaming platform fields (multi-platform support: Vimeo/Mux/Zoom/Jitsi/Other)
     streaming_platform = ma.Enum(StreamingPlatform, allow_none=True)
     zoom_meeting_id = ma.String(allow_none=True)
     zoom_passcode = ma.String(allow_none=True)
     mux_playback_policy = ma.String(allow_none=True)  # 'PUBLIC' or 'SIGNED'
+    jitsi_room_name = ma.String(allow_none=True)  # JaaS room identifier
+    # Note: OTHER platform uses stream_url (same as VIMEO/MUX)
 
     @validates_schema
     def validate_streaming_config(self, data, **kwargs):
@@ -250,6 +295,41 @@ class SessionUpdateSchema(ma.Schema):
 
             # Normalize: Store full join URL in database
             data['zoom_meeting_id'] = normalized_url
+
+        elif platform == StreamingPlatform.JITSI:
+            raw_value = data.get('jitsi_room_name')
+            if not raw_value:
+                raise ValidationError(
+                    {"jitsi_room_name": "Jitsi room name or URL required when platform is JITSI"}
+                )
+
+            # Normalize to URL-safe room name
+            normalized_room = normalize_jitsi_room_name(raw_value)
+            if not normalized_room:
+                raise ValidationError(
+                    {"jitsi_room_name": "Invalid Jitsi room name. Use 3-200 characters (letters, numbers, dashes)"}
+                )
+
+            # Normalize: Store normalized room name in database
+            data['jitsi_room_name'] = normalized_room
+
+        elif platform == StreamingPlatform.OTHER:
+            # OTHER platform uses stream_url column (same as VIMEO/MUX)
+            raw_value = data.get('stream_url')
+            if not raw_value:
+                raise ValidationError(
+                    {"stream_url": "Stream URL required when platform is OTHER"}
+                )
+
+            # Validate URL format (must be HTTPS)
+            validated_url = validate_other_stream_url(raw_value)
+            if not validated_url:
+                raise ValidationError(
+                    {"stream_url": "Invalid URL. Must be a valid HTTPS URL"}
+                )
+
+            # Store validated URL in stream_url column
+            data['stream_url'] = validated_url
 
 
 class SessionTimesUpdateSchema(ma.Schema):
@@ -334,3 +414,9 @@ class SessionPlaybackDataSchema(ma.Schema):
     # Zoom-specific
     join_url = ma.String(dump_only=True, allow_none=True)
     passcode = ma.String(dump_only=True, allow_none=True)
+
+    # Jitsi (JaaS)-specific
+    app_id = ma.String(dump_only=True, allow_none=True)  # JaaS App ID
+    room_name = ma.String(dump_only=True, allow_none=True)  # Jitsi room name
+    token = ma.String(dump_only=True, allow_none=True)  # JWT token for JaaS authentication
+    expires_at = ma.String(dump_only=True, allow_none=True)  # Token expiration timestamp

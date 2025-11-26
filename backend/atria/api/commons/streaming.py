@@ -6,6 +6,7 @@ allowing users to paste full URLs or raw IDs/meeting codes.
 """
 import re
 from typing import Optional
+from urllib.parse import urlparse
 
 
 def extract_vimeo_id(url_or_id: str) -> Optional[str]:
@@ -152,3 +153,113 @@ def normalize_zoom_url(url_or_id: str) -> Optional[str]:
 
     # Build standard Zoom join URL
     return f"https://zoom.us/j/{meeting_id}"
+
+
+def normalize_jitsi_room_name(input_str: str) -> Optional[str]:
+    """
+    Normalize Jitsi room name to URL-safe format.
+
+    Accepts:
+    - Full JaaS URL: https://8x8.vc/vpaas-magic-cookie-xxx/MyRoom
+    - Room name with spaces: "My Event Room"
+    - Already normalized: "my-event-room"
+
+    Args:
+        input_str: Jitsi room URL or name
+
+    Returns:
+        Normalized room name (lowercase, alphanumeric + dashes), or None if invalid
+
+    Examples:
+        >>> normalize_jitsi_room_name("My Event Room!")
+        "my-event-room"
+        >>> normalize_jitsi_room_name("https://8x8.vc/app/MyRoom123")
+        "myroom123"
+        >>> normalize_jitsi_room_name("already-good-123")
+        "already-good-123"
+    """
+    if not input_str:
+        return None
+
+    value = input_str.strip()
+
+    # If it's a URL, extract the room name from the path
+    if value.startswith('http'):
+        # Use urlparse to properly handle query strings and fragments
+        # Handles: https://8x8.vc/vpaas-magic-cookie-xxx/MyRoom
+        #          https://meet.jit.si/MyRoom?config=...
+        parsed = urlparse(value)
+        path = parsed.path  # Gets path without query string
+
+        # Extract last non-empty path segment
+        segments = [s for s in path.split('/') if s]
+        if not segments:
+            return None  # No path segments (e.g., https://8x8.vc/)
+        value = segments[-1]
+
+    # Convert to lowercase
+    value = value.lower()
+
+    # Replace spaces and underscores with dashes
+    value = re.sub(r'[\s_]+', '-', value)
+
+    # Remove any characters that aren't alphanumeric or dashes
+    value = re.sub(r'[^a-z0-9-]', '', value)
+
+    # Remove consecutive dashes
+    value = re.sub(r'-+', '-', value)
+
+    # Remove leading/trailing dashes
+    value = value.strip('-')
+
+    # Validate length (room names should be reasonable)
+    if not value or len(value) < 3 or len(value) > 200:
+        return None
+
+    return value
+
+
+def validate_other_stream_url(url: str) -> Optional[str]:
+    """
+    Validate URL format for OTHER streaming platform.
+
+    Requires HTTPS URL format for security.
+
+    Args:
+        url: External streaming platform URL
+
+    Returns:
+        Validated URL, or None if invalid
+
+    Examples:
+        >>> validate_other_stream_url("https://teams.microsoft.com/l/meetup-join/...")
+        "https://teams.microsoft.com/l/meetup-join/..."
+        >>> validate_other_stream_url("http://example.com")
+        None  # HTTP not allowed
+        >>> validate_other_stream_url("not-a-url")
+        None
+    """
+    if not url:
+        return None
+
+    value = url.strip()
+
+    # Must start with https://
+    if not value.startswith('https://'):
+        return None
+
+    # Basic URL validation (has a domain with at least one dot)
+    # Pattern: https:// + domain (with required TLD) + optional port + optional path
+    # Changes from original:
+    #   - Changed * to + to require at least one dot (TLD required)
+    #   - Added (?::[0-9]{1,5})? to allow optional port numbers
+    url_pattern = r'^https://[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+(?::[0-9]{1,5})?(/.*)?$'
+
+    if not re.match(url_pattern, value):
+        return None
+
+    # Validate length
+    if len(value) > 2000:
+        return None
+
+    return value

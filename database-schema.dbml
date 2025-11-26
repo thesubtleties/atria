@@ -1,0 +1,386 @@
+// Atria Database Schema
+// Database: atria_dev
+// Generated from PostgreSQL schema export
+
+Table direct_message_threads {
+  id bigint [primary key, not null, increment]
+  user1_id bigint [not null]
+  user2_id bigint [not null]
+  is_encrypted boolean
+  created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+  last_message_at timestamptz [default: `CURRENT_TIMESTAMP`]
+  event_scope_id bigint
+  user1_cutoff timestamptz
+  user2_cutoff timestamptz
+
+  indexes {
+    (user1_id, user2_id, event_scope_id)
+  }
+}
+
+Table organization_users {
+  organization_id bigint [primary key, not null]
+  user_id bigint [primary key, not null]
+  role varchar [not null]
+  created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+}
+
+Table organizations {
+  id bigint [primary key, not null, increment]
+  name text [not null]
+  created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz
+  mux_token_id varchar(255)
+  mux_token_secret text
+  mux_signing_key_id varchar(255)
+  mux_signing_private_key text
+}
+
+Table user_encryption_keys {
+  id bigint [primary key, not null, increment]
+  user_id bigint [not null]
+  public_key text [not null]
+  created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+
+  indexes {
+    user_id
+  }
+}
+
+Table direct_messages {
+  id bigint [primary key, not null, increment]
+  thread_id bigint [not null]
+  sender_id bigint [not null]
+  content text [not null]
+  encrypted_content text
+  status varchar
+  created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+}
+
+Table connections {
+  id bigint [primary key, not null, increment]
+  requester_id bigint [not null]
+  recipient_id bigint [not null]
+  status varchar
+  icebreaker_message text [not null]
+  originating_event_id bigint
+  created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz
+
+  indexes {
+    (recipient_id, status, created_at)
+    (recipient_id, requester_id)
+    (requester_id, recipient_id)
+  }
+}
+
+Table chat_messages {
+  id bigint [primary key, not null, increment]
+  room_id bigint [not null]
+  user_id bigint [not null]
+  content text [not null]
+  created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+  deleted_at timestamptz
+  deleted_by_id bigint
+}
+
+Table session_speakers {
+  session_id bigint [primary key, not null]
+  user_id bigint [primary key, not null]
+  role varchar [not null]
+  order bigint
+  created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+
+  indexes {
+    (session_id, order)
+  }
+}
+
+Table sponsors {
+  id bigint [primary key, not null, increment]
+  event_id bigint [not null]
+  name varchar(255) [not null]
+  description text
+  website_url varchar(500)
+  logo_url varchar(500)
+  contact_name varchar(255)
+  contact_email varchar(255)
+  contact_phone varchar(50)
+  tier_id varchar(50)
+  custom_benefits varchar
+  display_order double
+  is_active boolean
+  featured boolean
+  social_links varchar
+  created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz
+}
+
+Table event_invitations {
+  id bigint [primary key, not null, increment]
+  event_id bigint [not null]
+  email varchar(255) [not null]
+  role varchar [not null]
+  token varchar(64) [not null]
+  status varchar [not null]
+  message text
+  invited_by_id bigint
+  user_id bigint
+  created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+  accepted_at timestamptz
+  declined_at timestamptz
+  expires_at timestamptz [not null]
+
+  indexes {
+    expires_at
+    email
+    (event_id, status)
+    (event_id, email)
+    token
+  }
+}
+
+Table chat_rooms {
+  id bigint [primary key, not null, increment]
+  event_id bigint [not null]
+  name varchar(100) [not null]
+  description varchar(500)
+  created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz
+  session_id bigint
+  room_type varchar [not null]
+  is_enabled boolean [not null, default: true]
+  display_order double [not null]
+
+  indexes {
+    (session_id, room_type)
+  }
+}
+
+Table organization_invitations {
+  id bigint [primary key, not null, increment]
+  organization_id bigint [not null]
+  email varchar(255) [not null]
+  role varchar [not null]
+  token varchar(64) [not null]
+  status varchar [not null]
+  message text
+  invited_by_id bigint
+  user_id bigint
+  created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+  accepted_at timestamptz
+  declined_at timestamptz
+  expires_at timestamptz [not null]
+
+  indexes {
+    token
+    (organization_id, status)
+    (organization_id, email)
+    email
+    expires_at
+  }
+}
+
+Table sessions {
+  id bigint [primary key, not null, increment]
+  event_id bigint [not null]
+  status varchar [not null]
+  session_type varchar [not null]
+  title text [not null]
+  description text
+  start_time time [not null]
+  end_time time [not null]
+  stream_url text
+  day_number bigint [not null]
+  created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz
+  short_description varchar(200)
+  chat_mode varchar [not null, default: 'ENABLED']
+  streaming_platform varchar(20)
+  zoom_meeting_id varchar(255)
+  zoom_passcode varchar(100)
+  mux_playback_policy varchar(20)
+
+  indexes {
+    (event_id, day_number, start_time)
+  }
+}
+
+Table events {
+  id bigint [primary key, not null, increment]
+  organization_id bigint [not null]
+  title text [not null]
+  description text
+  event_type varchar [not null]
+  start_date varchar [not null]
+  end_date varchar [not null]
+  company_name text [not null]
+  slug text [not null]
+  status varchar [not null]
+  branding varchar [not null]
+  hero_description text
+  hero_images varchar
+  event_format varchar [not null]
+  is_private boolean
+  venue_name varchar(255)
+  venue_address text
+  venue_city varchar(100)
+  venue_country varchar(100)
+  sections varchar
+  created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz
+  icebreakers varchar
+  sponsor_tiers varchar
+  venue_state varchar
+  deleted_at timestamptz
+  deleted_by_id bigint
+  main_session_id bigint
+  timezone varchar(50) [not null, default: 'UTC']
+
+  indexes {
+    slug
+  }
+}
+
+Table event_users {
+  event_id bigint [primary key, not null]
+  user_id bigint [primary key, not null]
+  role varchar [not null]
+  speaker_bio text
+  speaker_title text
+  created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+  privacy_overrides varchar
+  is_banned boolean [not null, default: false]
+  banned_at timestamptz
+  banned_by bigint
+  ban_reason text
+  is_chat_banned boolean [not null, default: false]
+  chat_ban_until timestamptz
+  chat_ban_reason text
+  moderation_notes text
+
+  indexes {
+    (event_id, is_banned, role)
+    (user_id, event_id)
+  }
+}
+
+Table users {
+  id bigint [primary key, not null, increment]
+  email text [not null]
+  password_hash text [not null]
+  first_name text [not null]
+  last_name text [not null]
+  company_name text
+  title text
+  bio text
+  image_url text
+  social_links varchar [not null]
+  is_active boolean [not null]
+  created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz
+  email_verified boolean [not null]
+  privacy_settings varchar [not null, default: '{}']
+
+  indexes {
+    email
+  }
+}
+
+Table token_blocklist {
+  id integer [primary key, not null, increment]
+  jti varchar(36) [not null]
+  token_type varchar(10) [not null]
+  user_id bigint [not null]
+  revoked boolean [not null]
+  expires timestamp [not null]
+
+  indexes {
+    jti
+  }
+}
+
+Table user_key_backups {
+  id bigint [primary key, not null, increment]
+  user_id bigint [not null]
+  encrypted_private_key text [not null]
+  salt text [not null]
+  created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+
+  indexes {
+    user_id
+  }
+}
+
+Table email_verifications {
+  id bigint [primary key, not null, increment]
+  user_id bigint [not null]
+  email varchar(255) [not null]
+  token varchar(64) [not null]
+  created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+  expires_at timestamptz [not null]
+  verified_at timestamptz
+
+  indexes {
+    token
+    email
+    (token, expires_at)
+    (user_id, email)
+  }
+}
+
+Table password_resets {
+  id bigint [primary key, not null, increment]
+  user_id bigint [not null]
+  email varchar(255) [not null]
+  token varchar(64) [not null]
+  created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+  expires_at timestamptz [not null]
+  used_at timestamptz
+
+  indexes {
+    (token, expires_at, used_at)
+    token
+    (user_id, token)
+    email
+  }
+}
+
+
+// Foreign Key Relationships
+Ref: direct_message_threads.event_scope_id > events.id
+Ref: direct_message_threads.user2_id > users.id
+Ref: direct_message_threads.user1_id > users.id
+Ref: organization_users.user_id > users.id
+Ref: organization_users.organization_id > organizations.id
+Ref: user_encryption_keys.user_id > users.id
+Ref: direct_messages.thread_id > direct_message_threads.id
+Ref: direct_messages.sender_id > users.id
+Ref: connections.requester_id > users.id
+Ref: connections.recipient_id > users.id
+Ref: connections.originating_event_id > events.id
+Ref: chat_messages.deleted_by_id > users.id
+Ref: chat_messages.user_id > users.id
+Ref: chat_messages.room_id > chat_rooms.id
+Ref: session_speakers.user_id > users.id
+Ref: session_speakers.session_id > sessions.id
+Ref: sponsors.event_id > events.id
+Ref: event_invitations.user_id > users.id
+Ref: event_invitations.invited_by_id > users.id
+Ref: event_invitations.event_id > events.id
+Ref: chat_rooms.session_id > sessions.id
+Ref: chat_rooms.event_id > events.id
+Ref: organization_invitations.user_id > users.id
+Ref: organization_invitations.organization_id > organizations.id
+Ref: organization_invitations.invited_by_id > users.id
+Ref: sessions.event_id > events.id
+Ref: events.main_session_id > sessions.id
+Ref: events.deleted_by_id > users.id
+Ref: events.organization_id > organizations.id
+Ref: event_users.banned_by > users.id
+Ref: event_users.user_id > users.id
+Ref: event_users.event_id > events.id
+Ref: token_blocklist.user_id > users.id
+Ref: user_key_backups.user_id > users.id
+Ref: email_verifications.user_id > users.id
+Ref: password_resets.user_id > users.id
