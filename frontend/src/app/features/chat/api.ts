@@ -1,10 +1,55 @@
 import { baseApi } from '../api';
+import type {
+  ChatRoom,
+  ChatRoomDetail,
+  ChatRoomAdmin,
+  SessionChatRoom,
+  ChatMessage,
+  ChatRoomCreateData,
+  ChatRoomUpdateData,
+  PaginatedResponse,
+} from '@/types';
+
+/** Get chat rooms query parameters */
+interface GetChatRoomMessagesParams {
+  chatRoomId: number;
+  page?: number;
+  per_page?: number;
+}
+
+/** Send message payload */
+interface SendMessageParams {
+  chatRoomId: number;
+  content: string;
+}
+
+/** Delete message payload */
+interface DeleteMessageParams {
+  chatRoomId: number;
+  messageId: number;
+}
+
+/** Create chat room payload */
+interface CreateChatRoomParams extends ChatRoomCreateData {
+  eventId: number;
+}
+
+/** Update chat room payload */
+interface UpdateChatRoomParams extends ChatRoomUpdateData {
+  roomId: number;
+}
+
+/** Reorder chat room payload */
+interface ReorderChatRoomParams {
+  roomId: number;
+  display_order: number;
+}
 
 // socket connectivity handled in networking/socketClient.js
 export const chatApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // Get all chat rooms for an event
-    getChatRooms: builder.query({
+    getChatRooms: builder.query<ChatRoom[], number>({
       query: (eventId) => ({
         url: `/events/${eventId}/chat-rooms`,
         method: 'GET',
@@ -13,92 +58,93 @@ export const chatApi = baseApi.injectEndpoints({
     }),
 
     // Get admin chat rooms (non-session)
-    getEventAdminChatRooms: builder.query({
+    getEventAdminChatRooms: builder.query<ChatRoomAdmin[], number>({
       query: (eventId) => ({
         url: `/events/${eventId}/chat-rooms/admin`,
         method: 'GET',
       }),
-      providesTags: ['ChatRoom', 'AdminChatRoom'],
+      providesTags: ['ChatRoom'],
     }),
 
     // Create chat room
-    createChatRoom: builder.mutation({
+    createChatRoom: builder.mutation<ChatRoomDetail, CreateChatRoomParams>({
       query: ({ eventId, ...data }) => ({
         url: `/events/${eventId}/chat-rooms`,
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: ['ChatRoom', 'AdminChatRoom'],
+      invalidatesTags: ['ChatRoom'],
     }),
 
     // Update chat room
-    updateChatRoom: builder.mutation({
+    updateChatRoom: builder.mutation<ChatRoomDetail, UpdateChatRoomParams>({
       query: ({ roomId, ...data }) => ({
         url: `/chat-rooms/${roomId}`,
         method: 'PUT',
         body: data,
       }),
-      invalidatesTags: (result, error, { roomId }) => [
+      invalidatesTags: (_result, _error, { roomId }) => [
         { type: 'ChatRoom', id: roomId },
-        'AdminChatRoom',
       ],
     }),
 
     // Delete chat room
-    deleteChatRoom: builder.mutation({
+    deleteChatRoom: builder.mutation<void, number>({
       query: (roomId) => ({
         url: `/chat-rooms/${roomId}`,
         method: 'DELETE',
       }),
-      invalidatesTags: ['ChatRoom', 'AdminChatRoom'],
+      invalidatesTags: ['ChatRoom'],
     }),
 
     // Toggle enable/disable
-    toggleChatRoom: builder.mutation({
+    toggleChatRoom: builder.mutation<ChatRoom, number>({
       query: (roomId) => ({
         url: `/chat-rooms/${roomId}/toggle`,
         method: 'PATCH',
       }),
-      invalidatesTags: (result, error, roomId) => [
+      invalidatesTags: (_result, _error, roomId) => [
         { type: 'ChatRoom', id: roomId },
-        'AdminChatRoom',
       ],
     }),
 
     // Reorder chat room
-    reorderChatRoom: builder.mutation({
+    reorderChatRoom: builder.mutation<ChatRoom, ReorderChatRoomParams>({
       query: ({ roomId, display_order }) => ({
         url: `/chat-rooms/${roomId}/reorder`,
         method: 'PUT',
         body: { display_order },
       }),
-      invalidatesTags: ['ChatRoom', 'AdminChatRoom'],
+      invalidatesTags: ['ChatRoom'],
     }),
 
     // Disable all public rooms
-    disableAllPublicRooms: builder.mutation({
+    disableAllPublicRooms: builder.mutation<void, number>({
       query: (eventId) => ({
         url: `/events/${eventId}/chat-rooms/disable-all-public`,
         method: 'POST',
       }),
-      invalidatesTags: ['ChatRoom', 'AdminChatRoom'],
+      invalidatesTags: ['ChatRoom'],
     }),
 
     // Get messages for a specific chat room
-    getChatRoomMessages: builder.query({
+    getChatRoomMessages: builder.query<
+      PaginatedResponse<ChatMessage>,
+      GetChatRoomMessagesParams
+    >({
       query: ({ chatRoomId, page = 1, per_page = 50 }) => ({
         url: `/chat-rooms/${chatRoomId}/messages`,
         params: { page, per_page },
       }),
-      providesTags: (result, error, { chatRoomId, page }) => [
-        { type: 'ChatMessage', id: `ROOM_${chatRoomId}_PAGE_${page}` }
+      providesTags: (_result, _error, { chatRoomId, page }) => [
+        { type: 'ChatMessage', id: `ROOM_${chatRoomId}_PAGE_${page}` },
       ],
       // Keep args separate to avoid caching issues
       keepUnusedDataFor: 0, // Don't keep cached data when switching rooms
     }),
 
     // Send a message to a chat room
-    sendMessage: builder.mutation({
+    sendMessage: builder.mutation<ChatMessage, SendMessageParams>({
       query: ({ chatRoomId, content }) => ({
         url: `/chat-rooms/${chatRoomId}/messages`,
         method: 'POST',
@@ -108,7 +154,7 @@ export const chatApi = baseApi.injectEndpoints({
     }),
 
     // Delete (moderate) a message
-    deleteMessage: builder.mutation({
+    deleteMessage: builder.mutation<void, DeleteMessageParams>({
       query: ({ chatRoomId, messageId }) => ({
         url: `/chat-rooms/${chatRoomId}/messages/${messageId}`,
         method: 'DELETE',
@@ -117,7 +163,7 @@ export const chatApi = baseApi.injectEndpoints({
     }),
 
     // Join a chat room
-    joinChatRoom: builder.mutation({
+    joinChatRoom: builder.mutation<void, number>({
       query: (chatRoomId) => ({
         url: `/chat-rooms/${chatRoomId}/join`,
         method: 'POST',
@@ -126,7 +172,7 @@ export const chatApi = baseApi.injectEndpoints({
     }),
 
     // Leave a chat room
-    leaveChatRoom: builder.mutation({
+    leaveChatRoom: builder.mutation<void, number>({
       query: (chatRoomId) => ({
         url: `/chat-rooms/${chatRoomId}/leave`,
         method: 'POST',
@@ -135,7 +181,7 @@ export const chatApi = baseApi.injectEndpoints({
     }),
 
     // Get chat rooms for a session
-    getSessionChatRooms: builder.query({
+    getSessionChatRooms: builder.query<SessionChatRoom[], number>({
       query: (sessionId) => ({
         url: `/sessions/${sessionId}/chat-rooms`,
         method: 'GET',
@@ -161,3 +207,4 @@ export const {
   useLeaveChatRoomMutation,
   useGetSessionChatRoomsQuery,
 } = chatApi;
+

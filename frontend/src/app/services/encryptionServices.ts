@@ -1,19 +1,21 @@
-// src/app/services/encryptionServices.js
-// Encryption service placeholder
-class EncryptionService {
-  constructor() {
-    this.isInitialized = false;
-    this.privateKey = null;
-    this.threadKeys = new Map();
-  }
+/**
+ * Encryption service placeholder
+ * Will be implemented with WebCrypto API for end-to-end message encryption
+ */
 
-  // Check if encryption is set up
-  isSetup() {
+class EncryptionService {
+  private isInitialized = false;
+  // @ts-expect-error - Will be used when encryption is implemented
+  private privateKey: CryptoKey | null = null;
+  private threadKeys: Map<string, CryptoKey> = new Map();
+
+  /** Check if encryption is set up */
+  isSetup(): boolean {
     return this.isInitialized;
   }
 
-  // Initialize encryption (to be implemented later)
-  async initialize() {
+  /** Initialize encryption (to be implemented later) */
+  async initialize(_password?: string): Promise<boolean> {
     // This will be implemented with WebCrypto API
     // TODO: Use password parameter when encryption is implemented
     console.log('Encryption service initialized (placeholder)');
@@ -21,24 +23,31 @@ class EncryptionService {
     return true;
   }
 
-  // Encrypt a message (placeholder)
-  async encryptMessage(message) {
+  /** Encrypt a message (placeholder) */
+  async encryptMessage(
+    message: string,
+    _threadId?: string,
+    _recipientId?: number
+  ): Promise<string> {
     // For now, just return the message as is
     // Later, this will use the thread key to encrypt
     // TODO: Implement with threadId and recipientId when encryption is added
     return message;
   }
 
-  // Decrypt a message (placeholder)
-  async decryptMessage(encryptedMessage) {
+  /** Decrypt a message (placeholder) */
+  async decryptMessage(
+    encryptedMessage: string,
+    _threadId?: string
+  ): Promise<string> {
     // For now, just return the message as is
     // Later, this will use the thread key to decrypt
     // TODO: Implement with threadId when encryption is added
     return encryptedMessage;
   }
 
-  // Clear sensitive data
-  clear() {
+  /** Clear sensitive data */
+  clear(): void {
     this.privateKey = null;
     this.threadKeys.clear();
     this.isInitialized = false;
@@ -47,3 +56,4 @@ class EncryptionService {
 
 // Create singleton instance
 export const encryptionService = new EncryptionService();
+

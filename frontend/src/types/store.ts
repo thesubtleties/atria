@@ -1,5 +1,8 @@
 /**
  * Redux store types
+ *
+ * Note: RootState and AppDispatch are exported from @/app/store
+ * This file contains the slice state interfaces for reference.
  */
 
 import type { User } from './auth';
@@ -11,23 +14,5 @@ export interface AuthState {
   authChecked: boolean;
 }
 
-/** UI slice state */
-export interface UIState {
-  sidebarOpen: boolean;
-  theme: 'light' | 'dark' | 'system';
-}
-
-/** Chat slice state */
-export interface ChatState {
-  activeRoomId: number | null;
-  typingUsers: Record<string, number[]>; // roomId -> userIds
-  unreadCounts: Record<string, number>; // roomId -> count
-}
-
-/** Root state type - augmented when store is fully typed */
-export interface RootState {
-  auth: AuthState;
-  ui: UIState;
-  chat: ChatState;
-  // baseApi reducer is added dynamically by RTK Query
-}
+// Re-export RootState and AppDispatch from the actual store
+export type { RootState, AppDispatch } from '@/app/store';

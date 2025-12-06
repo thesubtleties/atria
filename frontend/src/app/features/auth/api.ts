@@ -1,40 +1,79 @@
-// features/auth/api.js
 import { baseApi } from '../api';
 import { setUser, logout } from '../../store/authSlice';
+import type {
+  User,
+  LoginCredentials,
+  SignupData,
+  PasswordResetData,
+  PasswordChangeData,
+} from '@/types';
+
+/** Login response from the API */
+interface LoginResponse {
+  user: User;
+  message?: string;
+}
+
+/** Signup response from the API */
+interface SignupResponse {
+  user: User;
+  message?: string;
+}
+
+/** Password verification response */
+interface VerifyPasswordResponse {
+  valid: boolean;
+}
+
+/** Email verification response */
+interface VerifyEmailResponse {
+  message: string;
+}
+
+/** Token validation response */
+interface ValidateTokenResponse {
+  valid: boolean;
+  email?: string;
+}
+
+/** Generic message response */
+interface MessageResponse {
+  message: string;
+}
 
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    login: builder.mutation({
+    login: builder.mutation<LoginResponse, LoginCredentials>({
       query: (credentials) => ({
         url: '/auth/login',
         method: 'POST',
         body: credentials,
       }),
       // No need to handle tokens - they're in cookies now
-      transformResponse(response) {
+      transformResponse(response: LoginResponse) {
         return response;
       },
     }),
 
-    signup: builder.mutation({
+    signup: builder.mutation<SignupResponse, SignupData>({
       query: (userData) => ({
         url: '/auth/signup',
         method: 'POST',
         body: userData,
       }),
       // No token handling needed
-      transformResponse: (response) => {
+      transformResponse: (response: SignupResponse) => {
         return response;
       },
     }),
 
     // Get current user data - no transformResponse needed because no token handling
-    getCurrentUser: builder.query({
+    getCurrentUser: builder.query<User, void>({
       query: () => ({
         url: '/auth/me',
         method: 'GET',
       }),
-      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+      async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
           console.log('getCurrentUser success:', data);
@@ -45,15 +84,16 @@ export const authApi = baseApi.injectEndpoints({
           dispatch(setUser(null));
         }
       },
-      providesTags: ['User'],
+      providesTags: ['Users'],
     }),
-    refresh: builder.mutation({
+
+    refresh: builder.mutation<void, void>({
       query: () => ({
         url: '/auth/refresh',
         method: 'POST',
         // No need for headers - refresh token is in cookies
       }),
-      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+      async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
         try {
           await queryFulfilled;
           // After successful refresh, get current user data
@@ -69,19 +109,19 @@ export const authApi = baseApi.injectEndpoints({
       },
     }),
 
-    logout: builder.mutation({
+    logout: builder.mutation<void, void>({
       query: () => ({
         url: '/auth/logout',
         method: 'POST',
       }),
-      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+      async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
         try {
           await queryFulfilled;
           // Dispatch logout action to reset auth state
           dispatch(logout());
           // Reset API state
           dispatch(baseApi.util.resetApiState());
-          
+
           // Force page refresh to clear any persistent state
           console.log('🔄 LOGOUT: Forcing page refresh to clear all state');
           window.location.reload();
@@ -89,29 +129,47 @@ export const authApi = baseApi.injectEndpoints({
           // Even if logout fails, we clear local state
           dispatch(logout());
           dispatch(baseApi.util.resetApiState());
-          
+
           // Force page refresh even on error
-          console.log('🔄 LOGOUT: Error occurred, but still forcing page refresh');
+          console.log(
+            '🔄 LOGOUT: Error occurred, but still forcing page refresh'
+          );
           window.location.reload();
         }
       },
       // Invalidate ALL cache tags on logout
       invalidatesTags: [
-        'Auth', 'Users', 'Organizations', 'OrganizationUsers', 'Events', 'EventUsers',
-        'Sessions', 'SessionSpeakers', 'ChatRoom', 'ChatMessage', 'SessionChatRoom',
-        'Attendee', 'Connection', 'Connections', 'Thread', 'DirectMessage',
-        'Sponsor', 'SponsorTiers', 'Dashboard', 'ModerationStatus'
+        'Auth',
+        'Users',
+        'Organizations',
+        'OrganizationUsers',
+        'Events',
+        'EventUsers',
+        'Sessions',
+        'SessionSpeakers',
+        'ChatRoom',
+        'ChatMessage',
+        'SessionChatRoom',
+        'Attendee',
+        'Connection',
+        'Connections',
+        'Thread',
+        'DirectMessage',
+        'Sponsor',
+        'SponsorTiers',
+        'Dashboard',
+        'ModerationStatus',
       ],
     }),
 
-    verifyEmail: builder.query({
+    verifyEmail: builder.query<VerifyEmailResponse, string>({
       query: (token) => ({
         url: `/auth/verify-email/${token}`,
         method: 'GET',
       }),
     }),
 
-    resendVerification: builder.mutation({
+    resendVerification: builder.mutation<MessageResponse, string>({
       query: (email) => ({
         url: '/auth/resend-verification',
         method: 'POST',
@@ -119,7 +177,7 @@ export const authApi = baseApi.injectEndpoints({
       }),
     }),
 
-    forgotPassword: builder.mutation({
+    forgotPassword: builder.mutation<MessageResponse, string>({
       query: (email) => ({
         url: '/auth/forgot-password',
         method: 'POST',
@@ -127,14 +185,14 @@ export const authApi = baseApi.injectEndpoints({
       }),
     }),
 
-    validateResetToken: builder.query({
+    validateResetToken: builder.query<ValidateTokenResponse, string>({
       query: (token) => ({
         url: `/auth/reset-password/${token}`,
         method: 'GET',
       }),
     }),
 
-    resetPassword: builder.mutation({
+    resetPassword: builder.mutation<MessageResponse, PasswordResetData>({
       query: ({ token, password }) => ({
         url: '/auth/reset-password',
         method: 'POST',
@@ -142,7 +200,7 @@ export const authApi = baseApi.injectEndpoints({
       }),
     }),
 
-    verifyPassword: builder.mutation({
+    verifyPassword: builder.mutation<VerifyPasswordResponse, { password: string }>({
       query: ({ password }) => ({
         url: '/auth/verify-password',
         method: 'POST',
@@ -150,13 +208,13 @@ export const authApi = baseApi.injectEndpoints({
       }),
     }),
 
-    changePassword: builder.mutation({
+    changePassword: builder.mutation<MessageResponse, PasswordChangeData>({
       query: ({ current_password, new_password }) => ({
         url: '/auth/change-password',
         method: 'PUT',
         body: { current_password, new_password },
       }),
-      invalidatesTags: ['User'],
+      invalidatesTags: ['Users'],
     }),
   }),
 });
@@ -175,3 +233,4 @@ export const {
   useVerifyPasswordMutation,
   useChangePasswordMutation,
 } = authApi;
+

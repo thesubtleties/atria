@@ -14,11 +14,7 @@ import {
   useSelector,
   type TypedUseSelectorHook,
 } from 'react-redux';
-import type { RootState } from './store';
-
-// Placeholder type for dispatch until store is fully typed
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type AppDispatch = any;
+import type { RootState, AppDispatch } from '@/app/store';
 
 /**
  * Typed dispatch hook - use this instead of useDispatch

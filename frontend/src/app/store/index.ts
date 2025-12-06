@@ -1,9 +1,24 @@
-// src/app/store/index.js
-import { configureStore, combineReducers } from '@reduxjs/toolkit';
+import {
+  configureStore,
+  combineReducers,
+  type Reducer,
+  type UnknownAction,
+} from '@reduxjs/toolkit';
 import { baseApi } from '../features/api';
 import authReducer from './authSlice';
 import uiReducer from './uiSlice';
 import chatReducer from './chatSlice';
+import type { AuthState } from '@/types';
+import type { UISliceState } from './uiSlice';
+import type { ChatSliceState } from './chatSlice';
+
+/** Combined app state shape */
+interface AppState {
+  [baseApi.reducerPath]: ReturnType<typeof baseApi.reducer>;
+  auth: AuthState;
+  ui: UISliceState;
+  chat: ChatSliceState;
+}
 
 // Combine all reducers
 const appReducer = combineReducers({
@@ -14,19 +29,20 @@ const appReducer = combineReducers({
 });
 
 // Root reducer that can reset state on logout
-const rootReducer = (state, action) => {
+const rootReducer: Reducer<AppState, UnknownAction> = (state, action) => {
   if (action.type === 'auth/logout') {
     console.log('🔄 LOGOUT: Resetting entire Redux state');
-    
+
     // Reset the state to initial values
-    state = undefined;
-    
+    const clearedState = undefined;
+
     // Create a new state with empty API cache
-    const newState = appReducer(state, action);
+    const newState = appReducer(clearedState, action);
     if (newState && baseApi.reducerPath) {
-      newState[baseApi.reducerPath] = baseApi.reducer(undefined, { type: '@@INIT' });
+      (newState as Record<string, unknown>)[baseApi.reducerPath] =
+        baseApi.reducer(undefined, { type: '@@INIT' });
     }
-    
+
     console.log('🔄 LOGOUT: RTK Query cache manually cleared');
     return newState;
   }
@@ -38,3 +54,8 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(baseApi.middleware),
 });
+
+// Infer the RootState and AppDispatch types from the store itself
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
+

@@ -1,16 +1,31 @@
-// src/app/store/chatSlice.js
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
-const initialState = {
+/** Chat tab types for mobile navigation */
+export type ChatTab = 'general' | 'event' | 'chat' | 'session';
+
+/** Chat slice state */
+export interface ChatSliceState {
+  sidebarExpanded: boolean;
+  activeThreads: number[]; // IDs of open chat windows
+  minimizedThreads: number[]; // IDs of minimized chat windows
+  currentEventId: number | null;
+  // Mobile chat state
+  activeTab: ChatTab;
+  activeChatRoomId: number | null; // Currently open chat room ID
+  lastSessionId: number | null; // Remember last viewed session
+  mobileActiveThreadId: number | null; // Active thread ID for mobile view
+}
+
+const initialState: ChatSliceState = {
   sidebarExpanded: false,
-  activeThreads: [], // IDs of open chat windows
-  minimizedThreads: [], // IDs of minimized chat windows
+  activeThreads: [],
+  minimizedThreads: [],
   currentEventId: null,
   // Mobile chat state
-  activeTab: 'general', // 'general', 'event', 'chat', 'session'
-  activeChatRoomId: null, // Currently open chat room ID
-  lastSessionId: null, // Remember last viewed session
-  mobileActiveThreadId: null, // Active thread ID for mobile view
+  activeTab: 'general',
+  activeChatRoomId: null,
+  lastSessionId: null,
+  mobileActiveThreadId: null,
 };
 
 const chatSlice = createSlice({
@@ -20,7 +35,7 @@ const chatSlice = createSlice({
     toggleSidebar: (state) => {
       state.sidebarExpanded = !state.sidebarExpanded;
     },
-    openThread: (state, action) => {
+    openThread: (state, action: PayloadAction<number>) => {
       const threadId = action.payload;
       // Remove from minimized if it was there
       state.minimizedThreads = state.minimizedThreads.filter(
@@ -33,19 +48,21 @@ const chatSlice = createSlice({
         if (state.activeThreads.length >= 3) {
           // Move oldest to minimized
           const oldestThread = state.activeThreads.shift();
-          state.minimizedThreads.push(oldestThread);
+          if (oldestThread !== undefined) {
+            state.minimizedThreads.push(oldestThread);
+          }
         }
         state.activeThreads.push(threadId);
       }
     },
-    closeThread: (state, action) => {
+    closeThread: (state, action: PayloadAction<number>) => {
       const threadId = action.payload;
       state.activeThreads = state.activeThreads.filter((id) => id !== threadId);
       state.minimizedThreads = state.minimizedThreads.filter(
         (id) => id !== threadId
       );
     },
-    minimizeThread: (state, action) => {
+    minimizeThread: (state, action: PayloadAction<number>) => {
       const threadId = action.payload;
       // Remove from active
       state.activeThreads = state.activeThreads.filter((id) => id !== threadId);
@@ -54,7 +71,7 @@ const chatSlice = createSlice({
         state.minimizedThreads.push(threadId);
       }
     },
-    maximizeThread: (state, action) => {
+    maximizeThread: (state, action: PayloadAction<number>) => {
       const threadId = action.payload;
       // Remove from minimized
       state.minimizedThreads = state.minimizedThreads.filter(
@@ -66,28 +83,35 @@ const chatSlice = createSlice({
         if (state.activeThreads.length >= 3) {
           // Move oldest to minimized
           const oldestThread = state.activeThreads.shift();
-          state.minimizedThreads.push(oldestThread);
+          if (oldestThread !== undefined) {
+            state.minimizedThreads.push(oldestThread);
+          }
         }
         state.activeThreads.push(threadId);
       }
     },
-    setCurrentEventId: (state, action) => {
-      console.log('🔴 Redux: setCurrentEventId called with:', action.payload, 'type:', typeof action.payload);
+    setCurrentEventId: (state, action: PayloadAction<number | null>) => {
+      console.log(
+        '🔴 Redux: setCurrentEventId called with:',
+        action.payload,
+        'type:',
+        typeof action.payload
+      );
       state.currentEventId = action.payload;
       console.log('🔴 Redux: currentEventId now set to:', state.currentEventId);
     },
     // Mobile chat tab actions
-    setActiveTab: (state, action) => {
+    setActiveTab: (state, action: PayloadAction<ChatTab>) => {
       state.activeTab = action.payload;
     },
-    setActiveChatRoomId: (state, action) => {
+    setActiveChatRoomId: (state, action: PayloadAction<number | null>) => {
       state.activeChatRoomId = action.payload;
     },
-    setLastSessionId: (state, action) => {
+    setLastSessionId: (state, action: PayloadAction<number | null>) => {
       state.lastSessionId = action.payload;
     },
     // Mobile-specific action for opening threads
-    openThreadMobile: (state, action) => {
+    openThreadMobile: (state, action: PayloadAction<number>) => {
       const threadId = action.payload;
       state.mobileActiveThreadId = threadId;
       // Automatically expand sidebar when opening a thread on mobile
@@ -114,13 +138,26 @@ export const {
 } = chatSlice.actions;
 
 // Selectors
-export const selectSidebarExpanded = (state) => state.chat.sidebarExpanded;
-export const selectActiveThreads = (state) => state.chat.activeThreads;
-export const selectMinimizedThreads = (state) => state.chat.minimizedThreads;
-export const selectCurrentEventId = (state) => state.chat.currentEventId;
-export const selectActiveTab = (state) => state.chat.activeTab;
-export const selectActiveChatRoomId = (state) => state.chat.activeChatRoomId;
-export const selectLastSessionId = (state) => state.chat.lastSessionId;
-export const selectMobileActiveThreadId = (state) => state.chat.mobileActiveThreadId;
+interface RootStateWithChat {
+  chat: ChatSliceState;
+}
+
+export const selectSidebarExpanded = (state: RootStateWithChat) =>
+  state.chat.sidebarExpanded;
+export const selectActiveThreads = (state: RootStateWithChat) =>
+  state.chat.activeThreads;
+export const selectMinimizedThreads = (state: RootStateWithChat) =>
+  state.chat.minimizedThreads;
+export const selectCurrentEventId = (state: RootStateWithChat) =>
+  state.chat.currentEventId;
+export const selectActiveTab = (state: RootStateWithChat) =>
+  state.chat.activeTab;
+export const selectActiveChatRoomId = (state: RootStateWithChat) =>
+  state.chat.activeChatRoomId;
+export const selectLastSessionId = (state: RootStateWithChat) =>
+  state.chat.lastSessionId;
+export const selectMobileActiveThreadId = (state: RootStateWithChat) =>
+  state.chat.mobileActiveThreadId;
 
 export default chatSlice.reducer;
+
