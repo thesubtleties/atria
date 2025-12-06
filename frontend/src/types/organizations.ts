@@ -1,0 +1,79 @@
+/**
+ * Organization-related types
+ */
+
+import type { OrganizationUserRole } from './enums';
+import type { EventNested } from './events';
+
+/** Core organization model */
+export interface Organization {
+  id: number;
+  name: string;
+  created_at: string;
+  updated_at: string | null;
+  users: OrganizationUserNested[];
+}
+
+/** Organization user nested in organization response */
+export interface OrganizationUserNested {
+  id: number;
+  user_id: number;
+  organization_id: number;
+  role: OrganizationUserRole;
+  user: {
+    id: number;
+    full_name: string;
+    email: string;
+  };
+  created_at: string;
+}
+
+/** Detailed organization with computed properties */
+export interface OrganizationDetail extends Organization {
+  member_count: number;
+  owner_count: number;
+  user_is_admin_or_owner: boolean;
+  current_user_role: OrganizationUserRole | null;
+  upcoming_events: EventNested[];
+  
+  // Credential status flags (visible to all org members)
+  has_mux_credentials: boolean;
+  has_mux_signing_credentials: boolean;
+  has_jaas_credentials: boolean;
+}
+
+/** Organization creation payload */
+export interface OrganizationCreateData {
+  name: string;
+}
+
+/** Organization update payload */
+export interface OrganizationUpdateData {
+  name?: string;
+}
+
+/** Organization user role update payload */
+export interface OrganizationUserRoleUpdateData {
+  role: OrganizationUserRole;
+}
+
+/** Add user to organization payload */
+export interface OrganizationAddUserData {
+  user_id: number;
+  role: OrganizationUserRole;
+}
+
+/** Mux credentials set payload (owner/admin only) */
+export interface OrganizationMuxCredentialsData {
+  mux_token_id?: string | null;
+  mux_token_secret?: string | null;
+  mux_signing_key_id?: string | null;
+  mux_signing_private_key?: string | null;
+}
+
+/** JaaS credentials set payload (owner/admin only) */
+export interface OrganizationJaasCredentialsData {
+  jaas_app_id: string;
+  jaas_api_key: string;
+  jaas_private_key: string;
+}

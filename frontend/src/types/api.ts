@@ -1,0 +1,48 @@
+/** Standard API error response shape */
+export interface ApiError {
+  status?: number;
+  data?: {
+    message?: string;
+    errors?: Record<string, string[]>;
+    [key: string]: unknown;
+  };
+  message?: string;
+}
+
+/** Paginated API response wrapper */
+export interface PaginatedResponse<T> {
+  items: T[];
+  total: number;
+  page: number;
+  per_page: number;
+  pages: number;
+}
+
+/** Common query parameters for paginated endpoints */
+export interface PaginationParams {
+  page?: number;
+  per_page?: number;
+}
+
+/** Base query request shape for axios base query */
+export interface BaseQueryRequest {
+  url: string;
+  method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+  body?: unknown;
+  data?: unknown;
+  params?: Record<string, unknown>;
+}
+
+/** RTK Query result shapes */
+export type QueryResult<T> =
+  | { data: T; error?: undefined }
+  | { data?: undefined; error: ApiError };
+
+/** Upload response from the API */
+export interface UploadResponse {
+  url: string;
+  filename: string;
+  content_type?: string;
+  size?: number;
+}
+
