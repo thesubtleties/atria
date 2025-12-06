@@ -1,4 +1,3 @@
-// vite.config.js
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { fileURLToPath, URL } from 'node:url';
@@ -11,7 +10,7 @@ export default defineConfig(({ mode }) => ({
     },
   },
   esbuild: {
-    drop: mode === 'production' ? ['console', 'debugger'] : [],
+    drop: mode === 'production' ? (['console', 'debugger'] as const) : [],
   },
   build: {
     // Disable modulepreload for lazy chunks - we want true lazy loading
@@ -20,7 +19,7 @@ export default defineConfig(({ mode }) => ({
     // Optimize chunk sizes for better caching
     rollupOptions: {
       output: {
-        manualChunks: (id) => {
+        manualChunks: (id: string) => {
           // Let Vite handle React automatically - it knows how to handle shared dependencies
           // Only manually chunk heavy/specific libraries
 
@@ -58,19 +57,17 @@ export default defineConfig(({ mode }) => ({
           }
 
           // Date libraries (only on certain pages)
-          if (
-            id.includes('date-fns') ||
-            id.includes('dayjs')
-          ) {
+          if (id.includes('date-fns') || id.includes('dayjs')) {
             return 'dates';
           }
 
           // Let Vite automatically handle React, React-DOM, React-Router and other core dependencies
           // They will be placed in appropriate vendor chunks automatically
+          return undefined;
         },
         // Optimize chunk naming for better debugging
-        chunkFileNames: (chunkInfo) => {
-          return `assets/${chunkInfo.name}-[hash].js`;
+        chunkFileNames: () => {
+          return 'assets/[name]-[hash].js';
         },
       },
     },
@@ -102,3 +99,4 @@ export default defineConfig(({ mode }) => ({
     },
   },
 }));
+
