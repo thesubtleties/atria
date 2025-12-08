@@ -63,7 +63,7 @@ export const chatApi = baseApi.injectEndpoints({
         url: `/events/${eventId}/chat-rooms/admin`,
         method: 'GET',
       }),
-      providesTags: ['ChatRoom'],
+      providesTags: ['ChatRoom', 'AdminChatRoom'],
     }),
 
     // Create chat room
@@ -73,7 +73,7 @@ export const chatApi = baseApi.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: ['ChatRoom'],
+      invalidatesTags: ['ChatRoom', 'AdminChatRoom'],
     }),
 
     // Update chat room
@@ -85,6 +85,7 @@ export const chatApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: (_result, _error, { roomId }) => [
         { type: 'ChatRoom', id: roomId },
+        'AdminChatRoom',
       ],
     }),
 
@@ -94,7 +95,7 @@ export const chatApi = baseApi.injectEndpoints({
         url: `/chat-rooms/${roomId}`,
         method: 'DELETE',
       }),
-      invalidatesTags: ['ChatRoom'],
+      invalidatesTags: ['ChatRoom', 'AdminChatRoom'],
     }),
 
     // Toggle enable/disable
@@ -105,6 +106,7 @@ export const chatApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: (_result, _error, roomId) => [
         { type: 'ChatRoom', id: roomId },
+        'AdminChatRoom',
       ],
     }),
 
@@ -115,7 +117,7 @@ export const chatApi = baseApi.injectEndpoints({
         method: 'PUT',
         body: { display_order },
       }),
-      invalidatesTags: ['ChatRoom'],
+      invalidatesTags: ['ChatRoom', 'AdminChatRoom'],
     }),
 
     // Disable all public rooms
@@ -124,7 +126,7 @@ export const chatApi = baseApi.injectEndpoints({
         url: `/events/${eventId}/chat-rooms/disable-all-public`,
         method: 'POST',
       }),
-      invalidatesTags: ['ChatRoom'],
+      invalidatesTags: ['ChatRoom', 'AdminChatRoom'],
     }),
 
     // Get messages for a specific chat room

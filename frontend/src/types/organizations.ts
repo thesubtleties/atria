@@ -17,15 +17,15 @@ export interface Organization {
 /** Organization user nested in organization response */
 export interface OrganizationUserNested {
   id: number;
-  user_id: number;
-  organization_id: number;
+  full_name: string;
+  email: string;
   role: OrganizationUserRole;
-  user: {
-    id: number;
-    full_name: string;
-    email: string;
-  };
-  created_at: string;
+  user_name?: string;
+  first_name?: string;
+  last_name?: string;
+  image_url?: string | null;
+  created_at?: string;
+  is_current_user?: boolean;
 }
 
 /** Detailed organization with computed properties */

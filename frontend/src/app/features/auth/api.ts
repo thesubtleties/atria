@@ -214,7 +214,6 @@ export const authApi = baseApi.injectEndpoints({
         method: 'PUT',
         body: { current_password, new_password },
       }),
-      invalidatesTags: ['Users'],
     }),
   }),
 });

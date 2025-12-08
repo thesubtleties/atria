@@ -101,7 +101,6 @@ export interface SignupData {
   last_name: string;
   company_name?: string;
   title?: string;
-  bio?: string;
 }
 
 /** Password change payload */

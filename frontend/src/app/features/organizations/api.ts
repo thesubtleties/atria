@@ -276,6 +276,7 @@ export const organizationsApi = baseApi.injectEndpoints({
         'Organizations',
         'OrganizationUsers',
         'Dashboard',
+        'Invitations',
       ],
     }),
 
