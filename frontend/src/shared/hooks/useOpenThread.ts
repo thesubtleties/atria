@@ -10,7 +10,7 @@ export function useOpenThread() {
   const dispatch = useDispatch();
   const isMobile = useMediaQuery('(max-width: 768px)');
 
-  const handleOpenThread = (threadId) => {
+  const handleOpenThread = (threadId: number) => {
     if (!threadId) {
       console.error('No thread ID provided to openThread');
       return;

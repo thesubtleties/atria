@@ -5,7 +5,7 @@ import { format, parseISO, isToday } from 'date-fns';
  * Parse a date-only string (YYYY-MM-DD) without timezone issues
  * Creates a Date object at midnight in the LOCAL timezone
  */
-export const parseDateOnly = (dateString) => {
+export const parseDateOnly = (dateString: string): Date | null => {
   if (!dateString) return null;
 
   // For date-only strings (no time component), parse manually to avoid timezone issues
@@ -23,7 +23,7 @@ export const parseDateOnly = (dateString) => {
  * Convert a Date object to YYYY-MM-DD string in local timezone
  * Avoids timezone shifts when converting to string for API submission
  */
-export const formatDateOnly = (date) => {
+export const formatDateOnly = (date: Date): string | null => {
   if (!date) return null;
 
   const year = date.getFullYear();
@@ -34,8 +34,7 @@ export const formatDateOnly = (date) => {
 };
 
 export const useFormatDate = (defaultFormat = 'M/d/yyyy') => {
-  // Generic formatter with custom format
-  const formatWithPattern = (dateString, pattern = defaultFormat) => {
+  const formatWithPattern = (dateString: string, pattern: string = defaultFormat): string => {
     if (!dateString) return '';
 
     try {
@@ -47,18 +46,15 @@ export const useFormatDate = (defaultFormat = 'M/d/yyyy') => {
     }
   };
 
-  // Pre-configured formatters
-  const formatDate = (dateString) => formatWithPattern(dateString, 'M/d/yyyy');
-  const formatDateTime = (dateString) =>
+  const formatDate = (dateString: string): string => formatWithPattern(dateString, 'M/d/yyyy');
+  const formatDateTime = (dateString: string): string =>
     formatWithPattern(dateString, 'M/d/yyyy h:mm a');
-  const formatMonthYear = (dateString) =>
+  const formatMonthYear = (dateString: string): string =>
     formatWithPattern(dateString, 'MMMM yyyy');
-  // Specific format for input elements (YYYY-MM-DD)
-  const formatDateForInput = (dateString) =>
+  const formatDateForInput = (dateString: string): string =>
     formatWithPattern(dateString, 'yyyy-MM-dd');
 
-  // Format date with "Today" check
-  const formatDateWithToday = (dateString, pattern = 'MMM d, yyyy') => {
+  const formatDateWithToday = (dateString: string, pattern = 'MMM d, yyyy'): string => {
     if (!dateString) return '';
 
     try {

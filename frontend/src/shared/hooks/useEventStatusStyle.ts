@@ -8,7 +8,7 @@ export const useEventStatusStyle = () => {
    * @param {string} status - The event status (DRAFT, PUBLISHED, ARCHIVED, etc.)
    * @returns {string} The Mantine color name
    */
-  const getStatusColor = (status) => {
+  const getStatusColor = (status: string): string => {
     switch (status?.toUpperCase()) {
       case 'DRAFT':
         return 'yellow';
@@ -28,7 +28,7 @@ export const useEventStatusStyle = () => {
    * @param {string} status - The event status
    * @returns {string} Human-readable label
    */
-  const getStatusLabel = (status) => {
+  const getStatusLabel = (status: string): string => {
     switch (status?.toUpperCase()) {
       case 'DRAFT':
         return 'Draft';
@@ -48,7 +48,7 @@ export const useEventStatusStyle = () => {
    * @param {string} status - The event status
    * @returns {object} Style object with background and color
    */
-  const getStatusStyles = (status) => {
+  const getStatusStyles = (status: string): React.CSSProperties => {
     switch (status?.toUpperCase()) {
       case 'DRAFT':
         return {

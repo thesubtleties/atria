@@ -21,7 +21,19 @@ import {
  *   setTyping: (isTyping: boolean) => void
  * }}
  */
-export function useDMTyping(threadId, currentUserId) {
+interface TypingUpdate {
+  type: string;
+  user_id: number;
+  is_typing: boolean;
+}
+
+export function useDMTyping(
+  threadId: number,
+  currentUserId: number
+): {
+  isOtherUserTyping: boolean;
+  setTyping: (isTyping: boolean) => void;
+} {
   const [isOtherUserTyping, setIsOtherUserTyping] = useState(false);
   const typingTimeoutRef = useRef(null);
   const heartbeatIntervalRef = useRef(null);
@@ -32,7 +44,7 @@ export function useDMTyping(threadId, currentUserId) {
   useEffect(() => {
     if (!threadId || !currentUserId) return;
 
-    const handleTypingUpdate = (update) => {
+    const handleTypingUpdate = (update: TypingUpdate) => {
       if (update.type === 'typing_status') {
         // Ignore our own typing events
         if (update.user_id === currentUserId) return;

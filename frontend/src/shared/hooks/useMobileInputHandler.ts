@@ -11,7 +11,18 @@ import { useCallback } from 'react';
  * @param {boolean} canSend - Whether sending is allowed
  * @returns {Object} Event handlers for input
  */
-export function useMobileInputHandler(onSend, value, canSend = true) {
+interface MobileInputHandlers {
+  handleKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
+  handleSendClick: () => void;
+  handleFocus: (e: React.FocusEvent<HTMLTextAreaElement>) => void;
+  handleBlur: (e: React.FocusEvent<HTMLTextAreaElement>) => void;
+}
+
+export function useMobileInputHandler(
+  onSend: () => void,
+  value: string,
+  canSend = true
+): MobileInputHandlers {
   // Force viewport reset on iOS
   const forceViewportReset = useCallback(() => {
     if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
@@ -37,7 +48,7 @@ export function useMobileInputHandler(onSend, value, canSend = true) {
   }, []);
 
   // Handle Enter key press
-  const handleKeyDown = useCallback((e) => {
+  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     // Send on Enter, new line on Shift+Enter
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -65,7 +76,7 @@ export function useMobileInputHandler(onSend, value, canSend = true) {
   }, [onSend, value, canSend, forceViewportReset]);
 
   // Handle input focus to prevent zoom on mobile
-  const handleFocus = useCallback((e) => {
+  const handleFocus = useCallback((e: React.FocusEvent<HTMLTextAreaElement>) => {
     // Prevent default zoom behavior on iOS
     if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
       // Set font size to prevent zoom
@@ -77,7 +88,7 @@ export function useMobileInputHandler(onSend, value, canSend = true) {
   }, []);
 
   // Handle input blur to ensure proper cleanup
-  const handleBlur = useCallback((e) => {
+  const handleBlur = useCallback((e: React.FocusEvent<HTMLTextAreaElement>) => {
     // Force viewport reset when input loses focus
     forceViewportReset();
     

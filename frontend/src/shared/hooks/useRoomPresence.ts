@@ -14,13 +14,18 @@ import {
  * @param {number} roomId - Chat room ID to track
  * @returns {{ userCount: number }} - Current number of users in room
  */
-export function useRoomPresence(roomId) {
+interface PresenceUpdate {
+  type: string;
+  user_count: number;
+}
+
+export function useRoomPresence(roomId: number): { userCount: number } {
   const [userCount, setUserCount] = useState(0);
 
   useEffect(() => {
     if (!roomId) return;
 
-    const handlePresenceUpdate = (update) => {
+    const handlePresenceUpdate = (update: PresenceUpdate) => {
       if (update.type === 'user_count_update') {
         setUserCount(update.user_count);
       }

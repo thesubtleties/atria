@@ -11,7 +11,27 @@ import {
   unregisterDirectMessageCallback 
 } from '../../app/features/networking/socketClient';
 
-export function useSocketMessages(threadId) {
+interface Message {
+  id: string | number;
+  thread_id: number;
+  sender_id: number;
+  content: string;
+  created_at: string;
+  is_sender: boolean;
+  status: string;
+  pending?: boolean;
+}
+
+interface DirectMessagesResponse {
+  messages: Message[];
+  pagination?: {
+    total_pages: number;
+  };
+  other_user?: any;
+  is_encrypted?: boolean;
+}
+
+export function useSocketMessages(threadId: number) {
   const [messageInput, setMessageInput] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
@@ -84,7 +104,7 @@ export function useSocketMessages(threadId) {
   useEffect(() => {
     if (!threadId) return;
 
-    const handleSocketUpdate = (update) => {
+    const handleSocketUpdate = (update: { type: string; message: Message }) => {
       if (update.type === 'new_message') {
         setLoadedMessages(prev => {
           // Check if message already exists with real ID (prevent duplicates)
@@ -139,7 +159,7 @@ export function useSocketMessages(threadId) {
 
   // Send message function
   const sendMessage = useCallback(
-    async (content) => {
+    async (content: string) => {
       if (!threadId || !content.trim()) return;
 
       try {
