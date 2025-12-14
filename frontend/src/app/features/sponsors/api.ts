@@ -96,7 +96,7 @@ export const sponsorsApi = baseApi.injectEndpoints({
       query: ({ sponsorId }) => ({
         url: `/sponsors/${sponsorId}`,
       }),
-      providesTags: (result, _, { sponsorId }) => [{ type: 'Sponsor' as const, id: sponsorId }],
+      providesTags: (_result, _, { sponsorId }) => [{ type: 'Sponsor' as const, id: sponsorId }],
     }),
 
     getFeaturedSponsors: builder.query<Sponsor[], GetFeaturedSponsorsParams>({
@@ -124,19 +124,8 @@ export const sponsorsApi = baseApi.injectEndpoints({
         method: 'PATCH',
         body: data,
       }),
-      invalidatesTags: (result, _, { sponsorId }) => [
+      invalidatesTags: (_result, _, { sponsorId }) => [
         { type: 'Sponsor' as const, id: sponsorId },
-        { type: 'Sponsor' as const, id: 'LIST' },
-        'Events',
-      ],
-    }),
-
-    deleteSponsor: builder.mutation<void, ToggleSponsorParams>({
-      query: ({ sponsorId }) => ({
-        url: `/sponsors/${sponsorId}`,
-        method: 'DELETE',
-      }),
-      invalidatesTags: [
         { type: 'Sponsor' as const, id: 'LIST' },
         'Events',
       ],
@@ -147,7 +136,7 @@ export const sponsorsApi = baseApi.injectEndpoints({
         url: `/sponsors/${sponsorId}/toggle-active`,
         method: 'POST',
       }),
-      invalidatesTags: (result, error, { sponsorId }) => [
+      invalidatesTags: (_result, _error, { sponsorId }) => [
         { type: 'Sponsor' as const, id: sponsorId },
         { type: 'Sponsor' as const, id: 'LIST' },
         'Events',
@@ -159,7 +148,7 @@ export const sponsorsApi = baseApi.injectEndpoints({
         url: `/sponsors/${sponsorId}/toggle-featured`,
         method: 'POST',
       }),
-      invalidatesTags: (result, _, { sponsorId }) => [
+      invalidatesTags: (_result, _, { sponsorId }) => [
         { type: 'Sponsor' as const, id: sponsorId },
         { type: 'Sponsor' as const, id: 'LIST' },
         'Events',
@@ -190,7 +179,6 @@ export const {
   useGetFeaturedSponsorsQuery,
   useCreateSponsorMutation,
   useUpdateSponsorMutation,
-  useDeleteSponsorMutation,
   useToggleSponsorActiveMutation,
   useToggleSponsorFeaturedMutation,
   useGetSponsorTiersQuery,

@@ -1,15 +1,14 @@
-// src/shared/hooks/useSocketMessages.js
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import { useState, useEffect, useCallback, useRef } from "react";
+import { useSelector } from "react-redux";
 import {
   useGetDirectMessagesQuery,
   useSendDirectMessageMutation,
   useMarkMessagesReadMutation,
-} from '../../app/features/networking/api';
-import { 
-  registerDirectMessageCallback, 
-  unregisterDirectMessageCallback 
-} from '../../app/features/networking/socketClient';
+} from "../../app/features/networking/api";
+import {
+  registerDirectMessageCallback,
+  unregisterDirectMessageCallback,
+} from "../../app/features/networking/socketClient";
 
 interface Message {
   id: string | number;
@@ -22,17 +21,8 @@ interface Message {
   pending?: boolean;
 }
 
-interface DirectMessagesResponse {
-  messages: Message[];
-  pagination?: {
-    total_pages: number;
-  };
-  other_user?: any;
-  is_encrypted?: boolean;
-}
-
 export function useSocketMessages(threadId: number) {
-  const [messageInput, setMessageInput] = useState('');
+  const [messageInput, setMessageInput] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loadedMessages, setLoadedMessages] = useState<Message[]>([]);
@@ -49,7 +39,7 @@ export function useSocketMessages(threadId: number) {
     { threadId, page: currentPage },
     {
       skip: !threadId,
-    }
+    },
   );
 
   // Mutations
@@ -69,21 +59,21 @@ export function useSocketMessages(threadId: number) {
   // Accumulate messages when data changes
   useEffect(() => {
     if (data?.messages && data.messages.length > 0) {
-      setLoadedMessages(prev => {
+      setLoadedMessages((prev) => {
         // For page 1, replace all messages
         // Messages come newest-first from backend, keep that order
         if (currentPage === 1) {
           return data.messages;
         }
-        
+
         // For other pages, these are older messages
         // They come newest-first, but they're OLDER than what we have
         // So they should go at the BEGINNING (top)
-        const existingIds = new Set(prev.map(msg => msg.id));
+        const existingIds = new Set(prev.map((msg: Message) => msg.id));
         const uniqueNewMessages = data.messages.filter(
-          msg => !existingIds.has(msg.id)
+          (msg: Message) => !existingIds.has(msg.id),
         );
-        
+
         // Prepend older messages at the beginning (they're older)
         return [...uniqueNewMessages, ...prev];
       });
@@ -103,31 +93,32 @@ export function useSocketMessages(threadId: number) {
     if (!threadId) return;
 
     const handleSocketUpdate = (update: { type: string; message: Message }) => {
-      if (update.type === 'new_message') {
-        setLoadedMessages(prev => {
+      if (update.type === "new_message") {
+        setLoadedMessages((prev) => {
           // Check if message already exists with real ID (prevent duplicates)
-          if (prev.some(msg => msg.id === update.message.id)) {
-            console.log('Message already exists, skipping:', update.message.id);
+          if (prev.some((msg) => msg.id === update.message.id)) {
+            console.log("Message already exists, skipping:", update.message.id);
             return prev;
           }
-          
+
           // Check if this is our own message replacing a temp message
           if (update.message.sender_id === currentUser?.id) {
             // Find temp message with same content sent in last 5 seconds
-            const tempIndex = prev.findIndex(msg => 
-              String(msg.id).startsWith('temp-') &&
-              msg.content === update.message.content &&
-              msg.sender_id === currentUser?.id
+            const tempIndex = prev.findIndex(
+              (msg) =>
+                String(msg.id).startsWith("temp-") &&
+                msg.content === update.message.content &&
+                msg.sender_id === currentUser?.id,
             );
-            
+
             if (tempIndex !== -1) {
-              console.log('Replacing temp message with real one');
+              console.log("Replacing temp message with real one");
               const newMessages = [...prev];
               newMessages[tempIndex] = update.message;
               return newMessages;
             }
           }
-          
+
           // Otherwise add the new message
           return [...prev, update.message];
         });
@@ -151,7 +142,7 @@ export function useSocketMessages(threadId: number) {
   // Load more messages
   const loadMoreMessages = useCallback(() => {
     if (hasMore && !isFetching) {
-      setCurrentPage(prevPage => prevPage + 1);
+      setCurrentPage((prevPage) => prevPage + 1);
     }
   }, [hasMore, isFetching]);
 
@@ -169,13 +160,13 @@ export function useSocketMessages(threadId: number) {
           content,
           created_at: new Date().toISOString(),
           is_sender: true,
-          status: 'SENT',
+          status: "SENT",
           pending: true,
         };
 
         // Add optimistically
-        setLoadedMessages(prev => [...prev, optimisticMessage]);
-        setMessageInput('');
+        setLoadedMessages((prev) => [...prev, optimisticMessage]);
+        setMessageInput("");
 
         // Send to server
         const result = await sendMessageMutation({
@@ -184,20 +175,18 @@ export function useSocketMessages(threadId: number) {
         }).unwrap();
 
         // Replace optimistic message with real one
-        setLoadedMessages(prev => 
-          prev.map(msg => 
-            msg.id === optimisticMessage.id ? result : msg
-          )
+        setLoadedMessages((prev) =>
+          prev.map((msg) => (msg.id === optimisticMessage.id ? result : msg)),
         );
       } catch (error) {
-        console.error('Failed to send message:', error);
+        console.error("Failed to send message:", error);
         // Remove optimistic message on error
-        setLoadedMessages(prev => 
-          prev.filter(msg => !String(msg.id).startsWith('temp-'))
+        setLoadedMessages((prev) =>
+          prev.filter((msg) => !String(msg.id).startsWith("temp-")),
         );
       }
     },
-    [threadId, currentUser, sendMessageMutation]
+    [threadId, currentUser, sendMessageMutation],
   );
 
   return {
@@ -214,3 +203,4 @@ export function useSocketMessages(threadId: number) {
     loadMoreMessages,
   };
 }
+

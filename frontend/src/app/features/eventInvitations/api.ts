@@ -61,7 +61,6 @@ export const eventInvitationsApi = baseApi.injectEndpoints({
         params: { page, per_page: perPage },
       }),
       providesTags: ['EventInvitations'],
-      refetchOnMountOrArgChange: 60,
     }),
 
     sendEventInvitation: builder.mutation<void, SendEventInvitationParams>({

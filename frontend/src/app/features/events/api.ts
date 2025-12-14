@@ -149,8 +149,7 @@ export const eventsApi = baseApi.injectEndpoints({
       query: ({ id }) => ({
         url: `/events/${id}`,
       }),
-      providesTags: (result, error, { id }) => [{ type: 'Events' as const, id }],
-      refetchOnMountOrArgChange: 300,
+      providesTags: (_result, _error, { id }) => [{ type: 'Events' as const, id }],
     }),
     createEvent: builder.mutation<Event, CreateEventParams>({
       query: ({ orgId, ...eventData }) => ({
@@ -173,7 +172,7 @@ export const eventsApi = baseApi.injectEndpoints({
         method: 'PUT',
         body: updates,
       }),
-      invalidatesTags: (result, error, { id }) => [
+      invalidatesTags: (_result, _error, { id }) => [
         { type: 'Events' as const, id },
         'Events',
       ],
@@ -184,7 +183,7 @@ export const eventsApi = baseApi.injectEndpoints({
         method: 'PUT',
         body: branding,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'Events' as const, id }],
+      invalidatesTags: (_result, _error, { id }) => [{ type: 'Events' as const, id }],
     }),
     getEventUsers: builder.query<GetEventUsersResponse, GetEventUsersParams>({
       query: ({ eventId, role, page = 1, per_page = 50 }) => ({
@@ -192,7 +191,6 @@ export const eventsApi = baseApi.injectEndpoints({
         params: { role, page, per_page },
       }),
       providesTags: ['EventUsers'],
-      refetchOnMountOrArgChange: 180,
     }),
     getEventUsersAdmin: builder.query<GetEventUsersResponse, GetEventUsersParams>({
       query: ({ eventId, role, page = 1, per_page = 50 }) => ({
@@ -200,7 +198,6 @@ export const eventsApi = baseApi.injectEndpoints({
         params: { role, page, per_page },
       }),
       providesTags: ['EventUsers'],
-      refetchOnMountOrArgChange: 180,
     }),
     addEventUser: builder.mutation<void, AddEventUserParams>({
       query: ({ eventId, ...userData }) => ({

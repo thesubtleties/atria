@@ -77,8 +77,12 @@ export const editSessionSchema = z
   .refine(
     (data) => {
       // Compare times
-      const [startHour, startMin] = data.start_time.split(':').map(Number);
-      const [endHour, endMin] = data.end_time.split(':').map(Number);
+      const startParts = data.start_time.split(':').map(Number);
+      const endParts = data.end_time.split(':').map(Number);
+      const startHour = startParts[0] ?? 0;
+      const startMin = startParts[1] ?? 0;
+      const endHour = endParts[0] ?? 0;
+      const endMin = endParts[1] ?? 0;
 
       return (
         endHour > startHour || (endHour === startHour && endMin > startMin)

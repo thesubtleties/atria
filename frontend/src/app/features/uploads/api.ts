@@ -32,7 +32,7 @@ export const uploadsApi = baseApi.injectEndpoints({
           data: formData,
         };
       },
-      invalidatesTags: (result, error, { context }) => {
+      invalidatesTags: (_result, _error, { context }) => {
         switch (context) {
           case 'avatar':
             return ['Users'];
@@ -50,14 +50,14 @@ export const uploadsApi = baseApi.injectEndpoints({
     getAuthenticatedContent: builder.query<Blob, string>({
       query: (objectKey) => ({
         url: `/content/${objectKey}`,
-        responseHandler: (response) => response.blob(),
+        responseHandler: (response: Response) => response.blob(),
       }),
     }),
     
     getPrivateContent: builder.query<Blob, string>({
       query: (objectKey) => ({
         url: `/private/${objectKey}`,
-        responseHandler: (response) => response.blob(),
+        responseHandler: (response: Response) => response.blob(),
       }),
     }),
     

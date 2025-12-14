@@ -1,15 +1,20 @@
-import { Component } from 'react';
-import { Button } from '@/shared/components/buttons';
-import styles from './styles.module.css';
+import type { ErrorInfo, ReactNode } from "react";
+import { Component } from "react";
+import { Button } from "@/shared/components/buttons";
+import styles from "./styles.module.css";
 
-/**
- * ErrorBoundary - Catches JavaScript errors anywhere in the component tree
- *
- * This provides a branded, user-friendly error page instead of a blank screen
- * when something goes wrong in the React component tree.
- */
-class ErrorBoundary extends Component {
-  constructor(props) {
+interface ErrorBoundaryProps {
+  children: ReactNode;
+}
+
+interface ErrorBoundaryState {
+  hasError: boolean;
+  error: Error | null;
+  errorInfo: ErrorInfo | null;
+}
+
+class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = {
       hasError: false,
@@ -18,26 +23,20 @@ class ErrorBoundary extends Component {
     };
   }
 
-  static getDerivedStateFromError() {
-    // Update state so the next render will show the fallback UI
+  static getDerivedStateFromError(): { hasError: boolean } {
     return { hasError: true };
   }
 
-  componentDidCatch(error, errorInfo) {
-    // Log error details for debugging
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error("ErrorBoundary caught an error:", error, errorInfo);
 
     this.setState({
       error: error,
       errorInfo: errorInfo,
     });
-
-    // You could also log the error to an error reporting service here
-    // e.g., Sentry, LogRocket, etc.
   }
 
   handleReset = () => {
-    // Reset the error boundary and try rendering again
     this.setState({
       hasError: false,
       error: null,
@@ -46,7 +45,7 @@ class ErrorBoundary extends Component {
   };
 
   handleGoHome = () => {
-    window.location.href = '/app/dashboard';
+    window.location.href = "/app/dashboard";
   };
 
   render() {
@@ -54,7 +53,6 @@ class ErrorBoundary extends Component {
       return (
         <div className={styles.errorContainer}>
           <div className={styles.errorCard}>
-            {/* Icon/Illustration */}
             <div className={styles.iconContainer}>
               <svg
                 className={styles.errorIcon}
@@ -72,20 +70,22 @@ class ErrorBoundary extends Component {
               </svg>
             </div>
 
-            {/* Error Message */}
             <h1 className={styles.errorTitle}>Oops! Something went wrong</h1>
             <p className={styles.errorMessage}>
-              {"We encountered an unexpected error. Don't worry — your data is safe, and we're working to fix this."}
+              {
+                "We encountered an unexpected error. Don't worry — your data is safe, and we're working to fix this."
+              }
             </p>
 
-            {/* Error Details (for development) */}
-            {process.env.NODE_ENV === 'development' && this.state.error && (
+            {process.env.NODE_ENV === "development" && this.state.error && (
               <details className={styles.errorDetails}>
                 <summary className={styles.errorDetailsSummary}>
                   Error Details (Development Only)
                 </summary>
                 <div className={styles.errorDetailsContent}>
-                  <p className={styles.errorName}>{this.state.error.toString()}</p>
+                  <p className={styles.errorName}>
+                    {this.state.error.toString()}
+                  </p>
                   {this.state.errorInfo && (
                     <pre className={styles.errorStack}>
                       {this.state.errorInfo.componentStack}
@@ -95,7 +95,6 @@ class ErrorBoundary extends Component {
               </details>
             )}
 
-            {/* Action Buttons */}
             <div className={styles.actionButtons}>
               <Button onClick={this.handleReset} variant="secondary">
                 Try Again
@@ -105,9 +104,8 @@ class ErrorBoundary extends Component {
               </Button>
             </div>
 
-            {/* Help Text */}
             <p className={styles.helpText}>
-              If this problem persists, please{' '}
+              If this problem persists, please{" "}
               <a
                 href="https://github.com/anthropics/claude-code/issues"
                 target="_blank"
@@ -123,7 +121,6 @@ class ErrorBoundary extends Component {
       );
     }
 
-    // When there's no error, render children normally
     return this.props.children;
   }
 }

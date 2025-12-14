@@ -9,7 +9,7 @@ import { useEffect } from 'react';
  *
  * Privacy-focused, GDPR compliant, no cookies, no personal data collection.
  */
-export const Analytics = () => {
+export const Analytics = (): null => {
   useEffect(() => {
     // Only load in browser (not during SSR/pre-rendering)
     if (typeof window === 'undefined') return;

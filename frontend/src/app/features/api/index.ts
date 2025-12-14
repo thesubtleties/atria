@@ -23,6 +23,10 @@ export const TAG_TYPES = [
   'SponsorTiers',
   'Dashboard',
   'ModerationStatus',
+  'EventInvitations',
+  'Invitations',
+  'AdminChatRoom',
+  'User',
 ] as const;
 
 export type TagType = (typeof TAG_TYPES)[number];

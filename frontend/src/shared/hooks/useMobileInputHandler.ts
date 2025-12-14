@@ -35,7 +35,7 @@ export function useMobileInputHandler(
         
         // Reset after a brief delay
         setTimeout(() => {
-          viewport.setAttribute('content', originalContent);
+          viewport.setAttribute('content', originalContent ?? '');
         }, 100);
       }
       
@@ -69,7 +69,7 @@ export function useMobileInputHandler(
       onSend();
       // Blur any focused element and reset zoom
       setTimeout(() => {
-        document.activeElement?.blur();
+        (document.activeElement as HTMLElement)?.blur();
         forceViewportReset();
       }, 50);
     }
