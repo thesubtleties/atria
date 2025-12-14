@@ -49,12 +49,12 @@
     gap: var(--space-xs);
     margin-top: var(--space-sm);
   }
-  
+
   .container :global(.mantine-Text-root) {
     padding: 0 var(--space-sm);
     font-size: var(--text-xs);
   }
-  
+
   .container :global(.mantine-NavLink-root) {
     padding: var(--space-sm) var(--space-sm);
     font-size: var(--text-sm);
@@ -67,12 +67,16 @@
     gap: var(--space-xs) !important; /* Tighter gaps on laptops */
     margin-top: var(--space-xs) !important; /* Reduce top margin */
   }
-  
+
   .container :global(.mantine-Text-root) {
     padding: 0 var(--space-md) !important; /* Match event menu header padding */
-    font-size: clamp(var(--text-xs), 2.5vw, var(--text-sm)) !important; /* Match event menu title size */
+    font-size: clamp(
+      var(--text-xs),
+      2.5vw,
+      var(--text-sm)
+    ) !important; /* Match event menu title size */
   }
-  
+
   .container :global(.mantine-NavLink-root) {
     padding: 6px var(--space-md) !important; /* A bit more breathing room on laptops */
     font-size: var(--text-sm) !important; /* Slightly smaller text */
@@ -85,7 +89,7 @@
   .container :global(.mantine-Text-root) {
     padding: 0 var(--space-xl);
   }
-  
+
   .container :global(.mantine-NavLink-root) {
     padding: 0.75rem var(--space-xl);
   }

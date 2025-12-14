@@ -106,11 +106,14 @@ interface AddEventUserParams {
   role: string;
 }
 
+/** Add or create event user */
 interface AddOrCreateEventUserParams {
   eventId: number;
   email: string;
+  first_name: string;
+  last_name: string;
+  password?: string | undefined; // Optional - used only for new user creation
   role: string;
-  full_name?: string;
 }
 
 interface UpdateEventUserParams {
@@ -172,10 +175,7 @@ export const eventsApi = baseApi.injectEndpoints({
         method: 'PUT',
         body: updates,
       }),
-      invalidatesTags: (_result, _error, { id }) => [
-        { type: 'Events' as const, id },
-        'Events',
-      ],
+      invalidatesTags: (_result, _error, { id }) => [{ type: 'Events' as const, id }, 'Events'],
     }),
     updateEventBranding: builder.mutation<void, UpdateEventBrandingParams>({
       query: ({ id, ...branding }) => ({

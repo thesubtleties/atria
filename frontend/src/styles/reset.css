@@ -27,7 +27,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   /* Set brand background color to prevent jarring flashes during route transitions */
-  background-color: #FBFAFF; /* Very light purple, almost white - from design system */
+  background-color: #fbfaff; /* Very light purple, almost white - from design system */
 }
 
 /* Remove list styles on ul, ol elements with a list role */
@@ -37,13 +37,25 @@ ol[role='list'] {
 }
 
 /* Set shorter line heights on headings and interactive elements */
-h1, h2, h3, h4, h5, h6,
-button, input, label {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+button,
+input,
+label {
   line-height: 1.1;
 }
 
 /* Balance text wrapping on headings */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   text-wrap: balance;
 }
 
@@ -71,7 +83,7 @@ svg {
 
 /* Preserve explicit image sizing for logos and Mantine Image components */
 img[width][height],
-[class*="mantine-Image"] img,
+[class*='mantine-Image'] img,
 .logo {
   max-width: none !important;
 }
@@ -79,10 +91,10 @@ img[width][height],
 /* Preserve inline display for icons */
 button svg,
 a svg,
-[role="button"] svg,
-[role="tab"] svg,
-[class*="mantine-"] svg,
-[class*="tabler-icon"] {
+[role='button'] svg,
+[role='tab'] svg,
+[class*='mantine-'] svg,
+[class*='tabler-icon'] {
   display: inline-block !important;
   vertical-align: middle !important;
   width: auto !important;
@@ -104,8 +116,10 @@ a svg,
 }
 
 /* Inherit fonts for inputs and buttons */
-input, button,
-textarea, select {
+input,
+button,
+textarea,
+select {
   font: inherit;
   color: inherit;
 }

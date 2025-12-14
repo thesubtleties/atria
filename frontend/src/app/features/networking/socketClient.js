@@ -17,30 +17,30 @@ export const initializeSocket = (token = null) => {
   // Check environment variable to force HTTP fallback (for testing)
   // Defaults to false in production where env var won't exist
   const FORCE_HTTP_FALLBACK = import.meta.env.VITE_FORCE_HTTP_FALLBACK === 'true';
-  
+
   if (FORCE_HTTP_FALLBACK) {
     console.log('⚠️ WebSocket disabled via VITE_FORCE_HTTP_FALLBACK - using HTTP fallback');
     return null;
   }
-  
+
   // If socket exists and is connected, return it
   if (socket && socket.connected) {
     console.log('🔌 Socket already exists and connected, returning existing socket');
     return socket;
   }
-  
+
   // If socket exists but is disconnected, reconnect it (don't create new one!)
   if (socket && !socket.connected) {
     console.log('🔌 Socket exists but disconnected, reconnecting...');
     socket.connect();
     return socket;
   }
-  
+
   if (isConnecting && connectionPromise) {
     console.log('🔌 Socket connection in progress, returning promise');
     return connectionPromise;
   }
-  
+
   // Make socket globally available for debugging
   window.socket = null;
 
@@ -49,7 +49,7 @@ export const initializeSocket = (token = null) => {
   // Connect using the proxy
   const socketUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || '';
   console.log('🔌 Socket URL:', socketUrl || '(empty - using same origin)');
-  
+
   // For WebSocket connections, we need to pass token in auth object
   // since cookies don't work with WebSocket upgrade
   const socketOptions = {
@@ -70,11 +70,11 @@ export const initializeSocket = (token = null) => {
   } else {
     console.log('🔌 No token provided, relying on cookies');
   }
-  
+
   console.log('🔌 Creating socket with options:', socketOptions);
   socket = io(socketUrl, socketOptions);
   window.socket = socket; // Make available immediately for debugging
-  
+
   // Create connection promise
   isConnecting = true;
   connectionPromise = new Promise((resolve) => {
@@ -85,7 +85,7 @@ export const initializeSocket = (token = null) => {
       socket.off('connect_error', onError);
       resolve(socket);
     };
-    
+
     const onError = (error) => {
       console.error('🔴 Socket connection failed:', error);
       isConnecting = false;
@@ -93,7 +93,7 @@ export const initializeSocket = (token = null) => {
       socket.off('connect', onConnect);
       socket.off('connect_error', onError);
     };
-    
+
     socket.once('connect', onConnect);
     socket.once('connect_error', onError);
   });
@@ -129,12 +129,12 @@ export const initializeSocket = (token = null) => {
   socket.on('error', (error) => {
     console.error('⚠️ Socket error event:', error);
   });
-  
+
   // Listen for backend error events
   socket.on('error_response', (data) => {
     console.error('⚠️ Backend error:', data);
   });
-  
+
   // Listen for successful room joins
   socket.on('chat_room_joined', (data) => {
     console.log('✅ Successfully joined chat room:', data);
@@ -164,19 +164,15 @@ export const initializeSocket = (token = null) => {
       // Update RTK Query cache
       if (data && data.threads && Array.isArray(data.threads)) {
         store.dispatch(
-          networkingApi.util.updateQueryData(
-            'getDirectMessageThreads',
-            undefined,
-            (draft) => {
-              // Cache should always be an array now
-              if (Array.isArray(draft)) {
-                // Replace all items
-                draft.length = 0;
-                draft.push(...data.threads);
-              }
-              // Don't return anything - Immer handles the modified draft
+          networkingApi.util.updateQueryData('getDirectMessageThreads', undefined, (draft) => {
+            // Cache should always be an array now
+            if (Array.isArray(draft)) {
+              // Replace all items
+              draft.length = 0;
+              draft.push(...data.threads);
             }
-          )
+            // Don't return anything - Immer handles the modified draft
+          }),
         );
       } else {
         console.error('Invalid thread list data received:', data);
@@ -202,8 +198,8 @@ export const initializeSocket = (token = null) => {
               pagination: data.pagination,
               is_encrypted: data.is_encrypted,
             };
-          }
-        )
+          },
+        ),
       );
     }
   });
@@ -218,17 +214,17 @@ export const initializeSocket = (token = null) => {
         return;
       }
       const threadId = parseInt(data.thread_id);
-      
+
       // Notify registered callbacks for this thread (for useSocketMessages hook)
       const callback = directMessageCallbacks.get(threadId);
       if (callback) {
         console.log('🔵 Notifying DM callback for thread:', threadId);
         callback({
           type: 'new_message',
-          message: data
+          message: data,
         });
       }
-      
+
       // Update thread list to show latest message
       // Single cache approach - always update undefined cache
       console.log('🔵 Updating thread list...');
@@ -278,19 +274,24 @@ export const initializeSocket = (token = null) => {
               // (we're not in a component, so no cleanup lifecycle - fire-and-forget is correct)
               store.dispatch(
                 networkingApi.endpoints.getDirectMessageThreads.initiate(
-                  undefined,  // Single cache - no params
-                  { forceRefetch: true, subscribe: false }
-                )
+                  undefined, // Single cache - no params
+                  { forceRefetch: true, subscribe: false },
+                ),
               );
               console.log('🔵 Forced refetch of thread list');
               // Don't modify the draft when thread not found
             }
             // Immer will handle returning the modified draft
-          }
-        )
+          },
+        ),
       );
       console.log('🔵 Update result:', updateResult);
-      console.log('🔵 Patches:', updateResult?.patches?.length, 'InversePatches:', updateResult?.inversePatches?.length);
+      console.log(
+        '🔵 Patches:',
+        updateResult?.patches?.length,
+        'InversePatches:',
+        updateResult?.inversePatches?.length,
+      );
 
       // Add message to the thread messages
       // Try to update page 1 (most recent messages)
@@ -317,10 +318,10 @@ export const initializeSocket = (token = null) => {
               console.log('🔵 Message already exists, skipping');
             }
             // Don't return - Immer handles it
-          }
-        )
+          },
+        ),
       );
-      
+
       // If page 1 wasn't in cache, try without page (for backwards compatibility)
       if (!updateResult.data) {
         console.log('🔵 Page 1 not in cache, trying without page number');
@@ -337,8 +338,8 @@ export const initializeSocket = (token = null) => {
                 draft.messages.push(data);
               }
               // Don't return - Immer handles it
-            }
-          )
+            },
+          ),
         );
       }
     } catch (error) {
@@ -369,12 +370,12 @@ export const initializeSocket = (token = null) => {
 
             draft.messages.forEach((msg) => {
               if (msg.sender_id !== data.reader_id) {
-                msg.status = 'read';  // lowercase to match backend enum and UI
+                msg.status = 'read'; // lowercase to match backend enum and UI
               }
             });
             // Don't return - Immer handles it
-          }
-        )
+          },
+        ),
       );
 
       // Also update cache without page (for backwards compatibility)
@@ -387,12 +388,12 @@ export const initializeSocket = (token = null) => {
 
             draft.messages.forEach((msg) => {
               if (msg.sender_id !== data.reader_id) {
-                msg.status = 'read';  // lowercase to match backend enum and UI
+                msg.status = 'read'; // lowercase to match backend enum and UI
               }
             });
             // Don't return - Immer handles it
-          }
-        )
+          },
+        ),
       );
     } catch (error) {
       console.error('Error handling messages_read:', error);
@@ -406,19 +407,15 @@ export const initializeSocket = (token = null) => {
       if (data && data.id) {
         // Add to thread list
         store.dispatch(
-          networkingApi.util.updateQueryData(
-            'getDirectMessageThreads',
-            undefined,
-            (draft) => {
-              if (!Array.isArray(draft)) return;
+          networkingApi.util.updateQueryData('getDirectMessageThreads', undefined, (draft) => {
+            if (!Array.isArray(draft)) return;
 
-              const exists = draft.some((t) => t.id === data.id);
-              if (!exists) {
-                draft.unshift(data);
-              }
-              // Don't return anything - let Immer handle it
+            const exists = draft.some((t) => t.id === data.id);
+            if (!exists) {
+              draft.unshift(data);
             }
-          )
+            // Don't return anything - let Immer handle it
+          }),
         );
       } else {
         console.error('Invalid thread creation data received:', data);
@@ -428,7 +425,6 @@ export const initializeSocket = (token = null) => {
     }
   });
 
-
   // ============================================
   // CHAT ROOM EVENT HANDLERS
   // ============================================
@@ -436,11 +432,11 @@ export const initializeSocket = (token = null) => {
   // Handle message moderation events
   socket.on('chat_message_moderated', (data) => {
     console.log('🔴 SOCKET EVENT: chat_message_moderated received:', data);
-    
+
     if (data && data.room_id && data.message_id) {
       const roomId = parseInt(data.room_id);
       const messageId = parseInt(data.message_id);
-      
+
       // Notify the registered callback for this room
       const callback = messageCallbacks.get(roomId);
       if (callback) {
@@ -449,10 +445,10 @@ export const initializeSocket = (token = null) => {
           type: 'message_moderated',
           messageId,
           deleted_by: data.deleted_by,
-          deleted_at: new Date().toISOString()
+          deleted_at: new Date().toISOString(),
         });
       }
-      
+
       // Also update the RTK Query cache for backwards compatibility
       store.dispatch(
         chatApi.util.updateQueryData(
@@ -460,41 +456,40 @@ export const initializeSocket = (token = null) => {
           { chatRoomId: roomId, limit: 100, offset: 0 },
           (draft) => {
             if (draft?.messages) {
-              const messageIndex = draft.messages.findIndex(m => m.id === messageId);
+              const messageIndex = draft.messages.findIndex((m) => m.id === messageId);
               if (messageIndex >= 0) {
                 // Update the message to show as deleted with moderator info
                 draft.messages[messageIndex] = {
                   ...draft.messages[messageIndex],
                   is_deleted: true,
                   deleted_at: new Date().toISOString(),
-                  deleted_by: data.deleted_by
+                  deleted_by: data.deleted_by,
                 };
               }
             }
-          }
-        )
+          },
+        ),
       );
     }
   });
 
-
   socket.on('chat_message_removed', (data) => {
     console.log('🔴 SOCKET EVENT: chat_message_removed received:', data);
-    
+
     if (data && data.room_id && data.message_id) {
       const roomId = parseInt(data.room_id);
       const messageId = parseInt(data.message_id);
-      
+
       // Notify the registered callback for this room
       const callback = messageCallbacks.get(roomId);
       if (callback) {
         console.log('🔴 Notifying callback for room (removed):', roomId);
         callback({
           type: 'message_removed',
-          messageId
+          messageId,
         });
       }
-      
+
       // Remove the message from the cache entirely
       store.dispatch(
         chatApi.util.updateQueryData(
@@ -502,77 +497,70 @@ export const initializeSocket = (token = null) => {
           { chatRoomId: roomId, limit: 100, offset: 0 },
           (draft) => {
             if (draft?.messages) {
-              draft.messages = draft.messages.filter(m => m.id !== messageId);
+              draft.messages = draft.messages.filter((m) => m.id !== messageId);
             }
-          }
-        )
+          },
+        ),
       );
     }
   });
 
   socket.on('new_chat_message', (data) => {
     console.log('🔵 SOCKET EVENT: new_chat_message received:', data);
-    
+
     if (data && data.room_id) {
       const roomId = parseInt(data.room_id);
-      
+
       // Notify the registered callback for this room
       const callback = messageCallbacks.get(roomId);
       if (callback) {
         console.log('🔵 Notifying callback for new message in room:', roomId);
         callback({
           type: 'new_message',
-          message: data
+          message: data,
         });
       }
-      
+
       // Also update RTK Query cache for components that might still use it
       // Note: The main ChatRoom uses local state now, but keep for backwards compatibility
       const cacheKey = { chatRoomId: roomId, page: 1, per_page: 50 };
-      
-      
+
       // Update the cache to append the new message
       const updateResult = store.dispatch(
-        chatApi.util.updateQueryData(
-          'getChatRoomMessages',
-          cacheKey,
-          (draft) => {
-            console.log('🔵 Updating cache for key:', cacheKey);
-            console.log('🔵 Current draft:', draft);
+        chatApi.util.updateQueryData('getChatRoomMessages', cacheKey, (draft) => {
+          console.log('🔵 Updating cache for key:', cacheKey);
+          console.log('🔵 Current draft:', draft);
 
-            if (!draft) {
-              console.log('🔵 No draft found - query might not be active');
-              return; // Early return - no modifications
-            }
-
-            if (!draft.messages) {
-              console.log('🔵 No messages array in draft');
-              draft.messages = [];
-            }
-
-            // Check if message already exists
-            const messageExists = draft.messages.some((m) => m.id === data.id);
-            if (!messageExists) {
-              draft.messages.push(data);
-              console.log(`🔵 ✅ Added message to cache! New count: ${draft.messages.length}`);
-            } else {
-              console.log('🔵 Message already exists, skipping');
-            }
-
-            // Don't return - Immer handles it
+          if (!draft) {
+            console.log('🔵 No draft found - query might not be active');
+            return; // Early return - no modifications
           }
-        )
+
+          if (!draft.messages) {
+            console.log('🔵 No messages array in draft');
+            draft.messages = [];
+          }
+
+          // Check if message already exists
+          const messageExists = draft.messages.some((m) => m.id === data.id);
+          if (!messageExists) {
+            draft.messages.push(data);
+            console.log(`🔵 ✅ Added message to cache! New count: ${draft.messages.length}`);
+          } else {
+            console.log('🔵 Message already exists, skipping');
+          }
+
+          // Don't return - Immer handles it
+        }),
       );
-      
+
       console.log('🔵 Update result:', updateResult);
-      
+
       // If the cache update failed (no active query), we might need to let the user know
       if (!updateResult.data) {
         console.log('🔵 ⚠️ Cache update failed - no active query for this room');
         // Only invalidate if we couldn't update the cache
-        store.dispatch(
-          chatApi.util.invalidateTags([{ type: 'ChatMessage', id: roomId }])
-        );
+        store.dispatch(chatApi.util.invalidateTags([{ type: 'ChatMessage', id: roomId }]));
       }
     } else {
       console.log('🔵 No room_id in message data:', data);
@@ -581,61 +569,49 @@ export const initializeSocket = (token = null) => {
 
   socket.on('chat_notification', (data) => {
     console.log('Chat room notification:', data);
-    
+
     // Update room list with unread counts
     if (data && data.room_id) {
       store.dispatch(
-        chatApi.util.updateQueryData(
-          'getChatRooms',
-          data.event_id,
-          (draft) => {
-            if (!draft || !draft.chat_rooms) return; // Early return - no modifications
+        chatApi.util.updateQueryData('getChatRooms', data.event_id, (draft) => {
+          if (!draft || !draft.chat_rooms) return; // Early return - no modifications
 
-            const room = draft.chat_rooms.find(r => r.id === data.room_id);
-            if (room) {
-              room.unread_count = data.unread_count;
-              room.latest_message = data.latest_message;
-              room.updated_at = data.updated_at;
-            }
-            // Don't return - Immer handles it
+          const room = draft.chat_rooms.find((r) => r.id === data.room_id);
+          if (room) {
+            room.unread_count = data.unread_count;
+            room.latest_message = data.latest_message;
+            room.updated_at = data.updated_at;
           }
-        )
+          // Don't return - Immer handles it
+        }),
       );
     }
   });
 
   socket.on('chat_room_created', (data) => {
     console.log('New chat room created:', data);
-    
+
     // Invalidate chat rooms list
     if (data && data.event_id) {
-      store.dispatch(
-        chatApi.util.invalidateTags([
-          { type: 'ChatRoom', id: 'LIST' }
-        ])
-      );
+      store.dispatch(chatApi.util.invalidateTags([{ type: 'ChatRoom', id: 'LIST' }]));
     }
   });
 
   socket.on('chat_room_updated', (data) => {
     console.log('Chat room updated:', data);
-    
+
     // Update specific room
     if (data && data.room_id) {
       store.dispatch(
-        chatApi.util.updateQueryData(
-          'getChatRooms',
-          data.event_id,
-          (draft) => {
-            if (!draft || !draft.chat_rooms) return; // Early return - no modifications
+        chatApi.util.updateQueryData('getChatRooms', data.event_id, (draft) => {
+          if (!draft || !draft.chat_rooms) return; // Early return - no modifications
 
-            const room = draft.chat_rooms.find(r => r.id === data.room_id);
-            if (room && data.updates) {
-              Object.assign(room, data.updates);
-            }
-            // Don't return - Immer handles it
+          const room = draft.chat_rooms.find((r) => r.id === data.room_id);
+          if (room && data.updates) {
+            Object.assign(room, data.updates);
           }
-        )
+          // Don't return - Immer handles it
+        }),
       );
     }
   });
@@ -643,7 +619,7 @@ export const initializeSocket = (token = null) => {
   // Room presence events
   socket.on('room_user_count', (data) => {
     console.log('Room user count update:', data);
-    
+
     // Update user count for specific room
     if (data && data.room_id) {
       store.dispatch(
@@ -655,15 +631,15 @@ export const initializeSocket = (token = null) => {
             // Store user count in the response
             draft.active_users = data.user_count;
             // Don't return - Immer handles it
-          }
-        )
+          },
+        ),
       );
     }
   });
 
   socket.on('user_joined_room', (data) => {
     console.log('User joined room:', data);
-    
+
     // Increment user count
     if (data && data.room_id) {
       store.dispatch(
@@ -674,15 +650,15 @@ export const initializeSocket = (token = null) => {
             if (!draft) return; // Early return - no modifications
             draft.active_users = (draft.active_users || 0) + 1;
             // Don't return - Immer handles it
-          }
-        )
+          },
+        ),
       );
     }
   });
 
   socket.on('user_left_room', (data) => {
     console.log('User left room:', data);
-    
+
     // Decrement user count
     if (data && data.room_id) {
       store.dispatch(
@@ -693,8 +669,8 @@ export const initializeSocket = (token = null) => {
             if (!draft) return; // Early return - no modifications
             draft.active_users = Math.max(0, (draft.active_users || 1) - 1);
             // Don't return - Immer handles it
-          }
-        )
+          },
+        ),
       );
     }
   });
@@ -702,7 +678,7 @@ export const initializeSocket = (token = null) => {
   // Chat room joined/left events
   socket.on('chat_room_joined', (data) => {
     console.log('Successfully joined chat room:', data);
-    
+
     // Update messages with the initial set
     if (data && data.room_id && data.messages) {
       store.dispatch(
@@ -713,8 +689,8 @@ export const initializeSocket = (token = null) => {
             if (!draft) return { messages: data.messages }; // Replacement pattern - valid
             draft.messages = data.messages;
             // Don't return - Immer handles it
-          }
-        )
+          },
+        ),
       );
     }
   });
@@ -735,7 +711,7 @@ export const initializeSocket = (token = null) => {
         callback({
           type: 'user_count_update',
           room_id: roomId,
-          user_count: data.user_count
+          user_count: data.user_count,
         });
       }
     }
@@ -754,7 +730,7 @@ export const initializeSocket = (token = null) => {
           type: 'typing_status',
           thread_id: threadId,
           user_id: data.user_id,
-          is_typing: data.is_typing
+          is_typing: data.is_typing,
         });
       }
     }
@@ -766,13 +742,18 @@ export const initializeSocket = (token = null) => {
 export const getSocket = () => {
   // Check same env variable as initializeSocket
   const FORCE_HTTP_FALLBACK = import.meta.env.VITE_FORCE_HTTP_FALLBACK === 'true';
-  
+
   if (FORCE_HTTP_FALLBACK) {
     console.log('⚠️ getSocket: WebSocket disabled via env - returning null');
     return null;
   }
-  
-  console.log('🔌 getSocket called, socket is:', socket ? 'EXISTS' : 'NULL', 'connected:', socket?.connected);
+
+  console.log(
+    '🔌 getSocket called, socket is:',
+    socket ? 'EXISTS' : 'NULL',
+    'connected:',
+    socket?.connected,
+  );
   return socket;
 };
 
@@ -826,17 +807,17 @@ export const unregisterDMTypingCallback = (threadId) => {
 
 export const waitForSocket = async () => {
   console.log('⏳ waitForSocket called');
-  
+
   if (socket && socket.connected) {
     console.log('✅ Socket already connected');
     return socket;
   }
-  
+
   if (connectionPromise) {
     console.log('⏳ Waiting for connection promise...');
     return connectionPromise;
   }
-  
+
   console.log('❌ No socket or connection promise available');
   return null;
 };
@@ -942,9 +923,7 @@ export const getDirectMessages = (threadId, page = 1, perPage = 50) => {
     return Promise.reject('User not authenticated');
   }
 
-  console.log(
-    `Requesting direct messages for thread ${threadId}, page ${page}`
-  );
+  console.log(`Requesting direct messages for thread ${threadId}, page ${page}`);
 
   return new Promise((resolve, reject) => {
     // Create a one-time event listener for the response
@@ -978,11 +957,7 @@ export const getDirectMessages = (threadId, page = 1, perPage = 50) => {
   });
 };
 
-export const sendDirectMessage = (
-  threadId,
-  content,
-  encryptedContent = null
-) => {
+export const sendDirectMessage = (threadId, content, encryptedContent = null) => {
   if (!socket || !socket.connected) {
     console.warn('Cannot send message: Socket not connected');
     return Promise.reject('Socket not connected');
@@ -1156,10 +1131,10 @@ let activeChatRoom = null;
 // Join a specific chat room for direct updates
 export const joinChatRoom = async (roomId) => {
   console.log(`🟢 joinChatRoom called for room ${roomId}`);
-  
+
   // Wait for socket connection first
   const connectedSocket = await waitForSocket();
-  
+
   if (!connectedSocket || !connectedSocket.connected) {
     console.warn('Cannot join chat room: Socket not connected after waiting');
     return Promise.reject('Socket not connected');
@@ -1174,7 +1149,7 @@ export const joinChatRoom = async (roomId) => {
   }
 
   console.log(`🟢 JOINING chat room ${roomId}`);
-  
+
   return new Promise((resolve) => {
     // Set up one-time listener for join confirmation
     const onJoined = (data) => {
@@ -1185,13 +1160,13 @@ export const joinChatRoom = async (roomId) => {
         resolve(data);
       }
     };
-    
+
     connectedSocket.once('chat_room_joined', onJoined);
-    
+
     // Emit the join request
     connectedSocket.emit('join_chat_room', { room_id: parseInt(roomId) });
     console.log(`🟢 EMITTED join_chat_room for room ${roomId}`);
-    
+
     // Fallback timeout in case no confirmation
     const timeoutId = setTimeout(() => {
       console.log(`🟢 TIMEOUT: Assuming join succeeded for room ${roomId}`);
@@ -1308,7 +1283,7 @@ export const sendChatMessage = (roomId, content) => {
     socket.once('chat_message_sent', onMessageSent);
     socket.emit('chat_message', {
       room_id: roomId,
-      content: content.trim()
+      content: content.trim(),
     });
 
     const timeoutId = setTimeout(() => {

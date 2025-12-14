@@ -1,11 +1,4 @@
-import {
-  Loader,
-  LoadingOverlay,
-  Skeleton,
-  Center,
-  Text,
-  Stack,
-} from '@mantine/core';
+import { Loader, LoadingOverlay, Skeleton, Center, Text, Stack } from '@mantine/core';
 import styles from './styles/LoadingState.module.css';
 
 /**
@@ -36,10 +29,10 @@ export const LoadingContent = ({
   showMessage = true,
 }: LoadingContentProps) => (
   <Center className={styles.loadingContent || ''}>
-    <Stack align="center" gap="md">
+    <Stack align='center' gap='md'>
       <LoadingSpinner size={size} />
       {showMessage && (
-        <Text c="dimmed" size="sm" className={styles.loadingText || ''}>
+        <Text c='dimmed' size='sm' className={styles.loadingText || ''}>
           {message}
         </Text>
       )}
@@ -63,7 +56,11 @@ interface LoadingOverlayCustomProps {
   blur?: number;
 }
 
-export const LoadingOverlayCustom = ({ visible, blur = 2, ...props }: LoadingOverlayCustomProps) => (
+export const LoadingOverlayCustom = ({
+  visible,
+  blur = 2,
+  ...props
+}: LoadingOverlayCustomProps) => (
   <LoadingOverlay
     visible={visible}
     zIndex={1000}
@@ -82,19 +79,19 @@ interface LoadingSkeletonProps {
 }
 
 export const LoadingSkeleton = ({ lines = 3, height = 10, ...props }: LoadingSkeletonProps) => (
-  <Stack gap="xs">
+  <Stack gap='xs'>
     {Array.from({ length: lines }).map((_, index) => (
-      <Skeleton key={index} height={height} radius="md" {...props} />
+      <Skeleton key={index} height={height} radius='md' {...props} />
     ))}
   </Stack>
 );
 
 export const LoadingCard = () => (
   <div className={styles.loadingCard}>
-    <Skeleton height={60} circle mb="sm" />
-    <Skeleton height={8} radius="md" />
-    <Skeleton height={8} mt={6} radius="md" />
-    <Skeleton height={8} mt={6} width="70%" radius="md" />
+    <Skeleton height={60} circle mb='sm' />
+    <Skeleton height={8} radius='md' />
+    <Skeleton height={8} mt={6} radius='md' />
+    <Skeleton height={8} mt={6} width='70%' radius='md' />
   </div>
 );
 
@@ -106,7 +103,7 @@ export const LoadingTableRow = ({ columns = 4 }: LoadingTableRowProps) => (
   <tr>
     {Array.from({ length: columns }).map((_, index) => (
       <td key={index}>
-        <Skeleton height={8} radius="md" />
+        <Skeleton height={8} radius='md' />
       </td>
     ))}
   </tr>
@@ -118,13 +115,11 @@ interface LoadingPageProps {
 
 export const LoadingPage = ({ message = 'Loading page...' }: LoadingPageProps) => (
   <div className={styles.loadingPage}>
-    <LoadingContent message={message} size="lg" />
+    <LoadingContent message={message} size='lg' />
   </div>
 );
 
-export const ButtonLoader = () => (
-  <LoadingSpinner size="xs" color="currentColor" />
-);
+export const ButtonLoader = () => <LoadingSpinner size='xs' color='currentColor' />;
 
 // Export all components as default object for convenient imports
 const LoadingState = {

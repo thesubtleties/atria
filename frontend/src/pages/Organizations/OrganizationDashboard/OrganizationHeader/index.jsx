@@ -1,11 +1,6 @@
 import { useState } from 'react';
 import { Badge, ActionIcon, Text, Collapse } from '@mantine/core';
-import {
-  IconBuilding,
-  IconUsers,
-  IconChevronDown,
-  IconChevronUp,
-} from '@tabler/icons-react';
+import { IconBuilding, IconUsers, IconChevronDown, IconChevronUp } from '@tabler/icons-react';
 import OrganizationNameSection from './OrganizationNameSection';
 import MuxCredentialsSection from './MuxCredentialsSection';
 import JaasCredentialsSection from './JaasCredentialsSection';
@@ -28,9 +23,9 @@ const OrganizationHeader = ({ organization, currentUserRole }) => {
             <div className={styles.metadata}>
               <Badge
                 leftSection={<IconUsers size={14} />}
-                variant="light"
-                color="violet"
-                size="lg"
+                variant='light'
+                color='violet'
+                size='lg'
                 className={styles.memberBadge}
               >
                 {organization.member_count || 0} member
@@ -38,15 +33,14 @@ const OrganizationHeader = ({ organization, currentUserRole }) => {
               </Badge>
 
               <Badge
-                variant="outline"
+                variant='outline'
                 color={
-                  currentUserRole === 'OWNER'
-                    ? 'violet'
-                    : currentUserRole === 'ADMIN'
-                      ? 'pink'
-                      : 'blue'
+                  currentUserRole === 'OWNER' ? 'violet'
+                  : currentUserRole === 'ADMIN' ?
+                    'pink'
+                  : 'blue'
                 }
-                size="lg"
+                size='lg'
                 className={styles.roleBadge}
               >
                 {currentUserRole}
@@ -58,23 +52,21 @@ const OrganizationHeader = ({ organization, currentUserRole }) => {
         {/* Settings toggle */}
         <div className={styles.headerActions}>
           <ActionIcon
-            size="lg"
-            variant="subtle"
+            size='lg'
+            variant='subtle'
             onClick={() => setSettingsExpanded(!settingsExpanded)}
             className={styles.settingsButton}
             title={settingsExpanded ? 'Hide Settings' : 'Show Settings'}
           >
-            {settingsExpanded ? (
+            {settingsExpanded ?
               <IconChevronUp size={22} />
-            ) : (
-              <IconChevronDown size={22} />
-            )}
+            : <IconChevronDown size={22} />}
           </ActionIcon>
         </div>
       </div>
 
       {organization.description && (
-        <Text className={styles.description} size="sm" c="dimmed">
+        <Text className={styles.description} size='sm' c='dimmed'>
           {organization.description}
         </Text>
       )}
@@ -82,18 +74,9 @@ const OrganizationHeader = ({ organization, currentUserRole }) => {
       {/* Expandable Settings Section */}
       <Collapse in={settingsExpanded}>
         <div className={styles.settingsContainer}>
-          <OrganizationNameSection
-            organization={organization}
-            currentUserRole={currentUserRole}
-          />
-          <MuxCredentialsSection
-            organization={organization}
-            currentUserRole={currentUserRole}
-          />
-          <JaasCredentialsSection
-            organization={organization}
-            currentUserRole={currentUserRole}
-          />
+          <OrganizationNameSection organization={organization} currentUserRole={currentUserRole} />
+          <MuxCredentialsSection organization={organization} currentUserRole={currentUserRole} />
+          <JaasCredentialsSection organization={organization} currentUserRole={currentUserRole} />
         </div>
       </Collapse>
     </section>

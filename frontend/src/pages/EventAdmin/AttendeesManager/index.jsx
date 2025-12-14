@@ -2,27 +2,11 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useMediaQuery } from '@mantine/hooks';
-import {
-  Group,
-  TextInput,
-  Select,
-  Tabs,
-  Text,
-  Pagination,
-} from '@mantine/core';
+import { Group, TextInput, Select, Tabs, Text, Pagination } from '@mantine/core';
 import { LoadingOverlay } from '../../../shared/components/loading';
-import {
-  IconSearch,
-  IconFilter,
-  IconUsers,
-  IconMail,
-  IconChevronDown,
-} from '@tabler/icons-react';
+import { IconSearch, IconFilter, IconUsers, IconMail, IconChevronDown } from '@tabler/icons-react';
 import { useGetEventInvitationsQuery } from '../../../app/features/eventInvitations/api';
-import {
-  useGetEventQuery,
-  useGetEventUsersAdminQuery,
-} from '../../../app/features/events/api';
+import { useGetEventQuery, useGetEventUsersAdminQuery } from '../../../app/features/events/api';
 import { Button } from '../../../shared/components/buttons';
 import { getNameSortValue } from '../../../shared/utils/sorting';
 import HeaderSection from './HeaderSection';
@@ -64,7 +48,9 @@ const AttendeesManager = () => {
   const currentUserId = currentUser?.id;
 
   // Fetch event details to get current user's role
-  const { data: eventData } = useGetEventQuery(eventId);
+  const { data: eventData } = useGetEventQuery(eventId, {
+    skip: !eventId,
+  });
   const currentUserRole = eventData?.user_role || 'ATTENDEE';
 
   // Fetch attendees with pagination (using admin endpoint for email/full name access)
@@ -108,8 +94,7 @@ const AttendeesManager = () => {
     setFilters((prev) => ({
       ...prev,
       sortBy: field,
-      sortOrder:
-        prev.sortBy === field && prev.sortOrder === 'asc' ? 'desc' : 'asc',
+      sortOrder: prev.sortBy === field && prev.sortOrder === 'asc' ? 'desc' : 'asc',
     }));
   };
 
@@ -185,10 +170,10 @@ const AttendeesManager = () => {
         <div className={styles.contentWrapper}>
           <section className={styles.mainContent}>
             <div style={{ textAlign: 'center', padding: '3rem' }}>
-              <Text c="red" size="lg" mb="md">
+              <Text c='red' size='lg' mb='md'>
                 Error loading attendees: {attendeesError.message}
               </Text>
-              <Button variant="primary" onClick={refetchAttendees}>
+              <Button variant='primary' onClick={refetchAttendees}>
                 Retry
               </Button>
             </div>
@@ -206,10 +191,7 @@ const AttendeesManager = () => {
 
       <div className={styles.contentWrapper}>
         {/* Header Section */}
-        <HeaderSection
-          roleCounts={roleCounts}
-          onInviteClick={() => setInviteModalOpen(true)}
-        />
+        <HeaderSection roleCounts={roleCounts} onInviteClick={() => setInviteModalOpen(true)} />
 
         {/* Main Content Section */}
         <section className={styles.mainContent}>
@@ -229,11 +211,7 @@ const AttendeesManager = () => {
                 },
               ]}
               leftSection={
-                viewMode === 'attendees' ? (
-                  <IconUsers size={16} />
-                ) : (
-                  <IconMail size={16} />
-                )
+                viewMode === 'attendees' ? <IconUsers size={16} /> : <IconMail size={16} />
               }
               rightSection={<IconChevronDown size={16} />}
               className={styles.mobileSelect}
@@ -248,21 +226,17 @@ const AttendeesManager = () => {
 
           {/* Desktop Tabs - Hidden on mobile */}
           {!isMobile && (
-            <Tabs
-              value={viewMode}
-              onChange={handleViewChange}
-              className={styles.tabsContainer}
-            >
+            <Tabs value={viewMode} onChange={handleViewChange} className={styles.tabsContainer}>
               <Tabs.List className={styles.tabsList}>
                 <Tabs.Tab
-                  value="attendees"
+                  value='attendees'
                   className={styles.tab}
                   leftSection={<IconUsers size={16} />}
                 >
                   Attendees ({roleCounts.total || 0})
                 </Tabs.Tab>
                 <Tabs.Tab
-                  value="invitations"
+                  value='invitations'
                   className={styles.tab}
                   leftSection={<IconMail size={16} />}
                 >
@@ -273,24 +247,24 @@ const AttendeesManager = () => {
           )}
 
           {/* Content based on viewMode */}
-          {viewMode === 'attendees' ? (
+          {viewMode === 'attendees' ?
             <div className={styles.tabPanel}>
               <div className={styles.searchFilterContainer}>
                 <TextInput
                   className={styles.searchInput}
-                  placeholder="Search by name, email, or company..."
+                  placeholder='Search by name, email, or company...'
                   leftSection={<IconSearch size={16} />}
                   value={filters.search}
                   onChange={(e) => handleSearch(e.target.value)}
-                  size="md"
+                  size='md'
                 />
                 <Select
                   className={styles.filterSelect}
-                  placeholder="Filter by role"
+                  placeholder='Filter by role'
                   leftSection={<IconFilter size={16} />}
                   value={filters.role}
                   onChange={handleRoleFilter}
-                  size="md"
+                  size='md'
                   clearable={false}
                   data={[
                     { value: 'ALL', label: 'All Roles' },
@@ -309,8 +283,7 @@ const AttendeesManager = () => {
                 currentUserId={currentUserId}
                 adminCount={
                   attendeesData?.role_counts?.admins ||
-                  attendeesData?.event_users?.filter((u) => u.role === 'ADMIN')
-                    .length ||
+                  attendeesData?.event_users?.filter((u) => u.role === 'ADMIN').length ||
                   1
                 }
                 eventIcebreakers={eventData?.icebreakers || []}
@@ -322,7 +295,7 @@ const AttendeesManager = () => {
                 sortOrder={filters.sortOrder}
               />
               {attendeesData?.total_pages > 1 && (
-                <Group justify="center" mt="xl">
+                <Group justify='center' mt='xl'>
                   <Pagination
                     value={page}
                     onChange={setPage}
@@ -332,15 +305,14 @@ const AttendeesManager = () => {
                 </Group>
               )}
             </div>
-          ) : (
-            <div className={styles.tabPanel}>
+          : <div className={styles.tabPanel}>
               <LoadingOverlay visible={isLoadingInvitations} />
               <PendingInvitations
                 invitations={invitationsData?.invitations || []}
                 onRefresh={refetchInvitations}
               />
               {invitationsData?.total_pages > 1 && (
-                <Group justify="center" mt="xl">
+                <Group justify='center' mt='xl'>
                   <Pagination
                     value={invitationsPage}
                     onChange={setInvitationsPage}
@@ -350,7 +322,7 @@ const AttendeesManager = () => {
                 </Group>
               )}
             </div>
-          )}
+          }
         </section>
 
         <InviteModal
@@ -373,8 +345,7 @@ const AttendeesManager = () => {
           currentUserId={currentUserId}
           adminCount={
             attendeesData?.role_counts?.admins ||
-            attendeesData?.event_users?.filter((u) => u.role === 'ADMIN')
-              .length ||
+            attendeesData?.event_users?.filter((u) => u.role === 'ADMIN').length ||
             1
           }
           onSuccess={refetchAttendees}

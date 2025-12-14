@@ -11,10 +11,10 @@ export const SessionErrorState = ({ error: _error, onRetry }) => {
       <div className={styles.contentWrapper}>
         <section className={styles.mainContent}>
           <div style={{ textAlign: 'center', padding: '3rem' }}>
-            <Text c="red" size="lg" mb="md">
+            <Text c='red' size='lg' mb='md'>
               Error loading event information
             </Text>
-            <Button variant="primary" onClick={onRetry}>
+            <Button variant='primary' onClick={onRetry}>
               Retry
             </Button>
           </div>

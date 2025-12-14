@@ -1,9 +1,10 @@
 .connectionImpact {
   position: relative;
   padding: calc(var(--space-breath) * 2) 0;
-  background: linear-gradient(180deg, 
-    var(--color-almost-white) 0%, 
-    var(--color-accent-yellow) 10%, 
+  background: linear-gradient(
+    180deg,
+    var(--color-almost-white) 0%,
+    var(--color-accent-yellow) 10%,
     rgba(253, 224, 71, 0.08) 100%
   );
   overflow: hidden;
@@ -196,10 +197,7 @@
 .floatingCircle2 {
   position: absolute;
   border-radius: 50%;
-  background: radial-gradient(circle, 
-    rgba(139, 92, 246, 0.1) 0%, 
-    transparent 70%
-  );
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
   filter: blur(30px);
 }
 
@@ -215,10 +213,7 @@
   height: 600px;
   bottom: -20%;
   right: -15%;
-  background: radial-gradient(circle, 
-    var(--color-accent-yellow) 0%, 
-    transparent 70%
-  );
+  background: radial-gradient(circle, var(--color-accent-yellow) 0%, transparent 70%);
   opacity: 0.15;
 }
 
@@ -227,38 +222,38 @@
   .connectionImpact {
     padding: var(--space-breath) 0;
   }
-  
+
   .statsGrid {
     grid-template-columns: 1fr;
     gap: var(--space-cozy);
   }
-  
+
   .statCard {
     padding: var(--space-cozy);
   }
-  
+
   .statNumber {
     font-size: 2rem;
   }
-  
+
   .networkVisualization {
     padding: 0;
   }
-  
+
   .testimonialCard {
     padding: var(--space-comfort);
   }
-  
+
   .quoteIcon {
     font-size: 2.5rem;
   }
-  
+
   .testimonialText {
     font-size: var(--text-body);
     padding-left: 0;
     margin-top: var(--space-comfort);
   }
-  
+
   .testimonialAuthor {
     padding-left: 0;
   }

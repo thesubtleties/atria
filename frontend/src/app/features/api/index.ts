@@ -40,4 +40,3 @@ export const baseApi = createApi({
   tagTypes: TAG_TYPES,
   endpoints: () => ({}),
 });
-

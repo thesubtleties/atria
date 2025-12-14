@@ -196,7 +196,15 @@ export const SKIN_OPTIONS = [
 ];
 
 // Hat types that support hatColor (headwear with customizable color)
-export const HAT_TYPES = ['hat', 'hijab', 'turban', 'winterHat1', 'winterHat02', 'winterHat03', 'winterHat04'];
+export const HAT_TYPES = [
+  'hat',
+  'hijab',
+  'turban',
+  'winterHat1',
+  'winterHat02',
+  'winterHat03',
+  'winterHat04',
+];
 
 // Default values for initial avatar
 export const DEFAULT_AVATAR_OPTIONS = {

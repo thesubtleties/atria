@@ -1,5 +1,5 @@
 // Convenient exports for loading components
-export { 
+export {
   default as LoadingState,
   LoadingSpinner,
   LoadingContent,
@@ -9,7 +9,7 @@ export {
   LoadingCard,
   LoadingTableRow,
   LoadingPage,
-  ButtonLoader
+  ButtonLoader,
 } from './LoadingState';
 
 // Quick import pattern:

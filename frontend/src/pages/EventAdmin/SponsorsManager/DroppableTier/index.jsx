@@ -15,7 +15,8 @@ const DroppableTier = ({ id, tier, children }) => {
   });
 
   // Get the tier color from the tier itself
-  const tierColor = tier.tier_color || (tier.sponsors.length > 0 ? tier.sponsors[0].tier_color : null);
+  const tierColor =
+    tier.tier_color || (tier.sponsors.length > 0 ? tier.sponsors[0].tier_color : null);
   const badgeStyles = tierColor ? getGradientBadgeStyles(tierColor) : {};
 
   return (
@@ -24,27 +25,22 @@ const DroppableTier = ({ id, tier, children }) => {
         <Title order={4} className={styles.tierTitle}>
           {tier.name}
         </Title>
-        <Badge 
-          size={isMobile ? "md" : "lg"} 
-          radius="sm"
+        <Badge
+          size={isMobile ? 'md' : 'lg'}
+          radius='sm'
           className={styles.tierBadge}
           style={badgeStyles}
         >
           {tier.sponsors.length} sponsor{tier.sponsors.length !== 1 ? 's' : ''}
         </Badge>
       </div>
-      
+
       {/* Mobile drag hint */}
       {isMobile && tier.sponsors.length > 0 && (
-        <Text className={styles.dragHint}>
-          Press down on cards and drag to reorder
-        </Text>
+        <Text className={styles.dragHint}>Press down on cards and drag to reorder</Text>
       )}
-      
-      <div 
-        ref={ref}
-        className={`${styles.sponsorCards} ${isOver ? styles.dragOver : ''}`}
-      >
+
+      <div ref={ref} className={`${styles.sponsorCards} ${isOver ? styles.dragOver : ''}`}>
         {children}
         {tier.sponsors.length === 0 && (
           <div className={styles.emptyTier}>

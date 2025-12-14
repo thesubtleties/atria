@@ -4,14 +4,14 @@ import { useSelector } from 'react-redux';
 import { useMediaQuery } from '@mantine/hooks';
 import { Tabs, Alert, Text, Select } from '@mantine/core';
 import { LoadingOverlay } from '../../../shared/components/loading';
-import { 
-  IconInfoCircle, 
-  IconMapPin, 
-  IconPalette, 
+import {
+  IconInfoCircle,
+  IconMapPin,
+  IconPalette,
   IconFileText,
   IconUsers,
   IconAlertTriangle,
-  IconChevronDown
+  IconChevronDown,
 } from '@tabler/icons-react';
 import { useGetEventQuery } from '@/app/features/events/api';
 import { useGetOrganizationQuery } from '@/app/features/organizations/api';
@@ -29,21 +29,22 @@ const EventSettings = () => {
   const currentUserId = useSelector((state) => state.auth.user?.id);
   const isMobile = useMediaQuery('(max-width: 768px)');
 
-  const { 
-    data: event, 
-    isLoading, 
-    error 
-  } = useGetEventQuery(parseInt(eventId));
-  
+  const {
+    data: event,
+    isLoading,
+    error,
+  } = useGetEventQuery(parseInt(eventId), {
+    skip: !eventId,
+  });
+
   // Fetch organization data to check user role
-  const { data: organization } = useGetOrganizationQuery(
-    event?.organization_id, 
-    { skip: !event?.organization_id }
-  );
-  
+  const { data: organization } = useGetOrganizationQuery(event?.organization_id, {
+    skip: !event?.organization_id,
+  });
+
   // Check if current user is org owner
   const isOrgOwner = organization?.users?.some(
-    (user) => user.id === currentUserId && user.role === 'OWNER'
+    (user) => user.id === currentUserId && user.role === 'OWNER',
   );
 
   // Tab/dropdown options
@@ -53,12 +54,12 @@ const EventSettings = () => {
     { value: 'branding', label: 'Branding & Hero', icon: IconPalette },
     { value: 'content', label: 'Content', icon: IconFileText },
     { value: 'networking', label: 'Networking', icon: IconUsers },
-    ...(isOrgOwner ? [{ value: 'danger', label: 'Danger Zone', icon: IconAlertTriangle }] : [])
+    ...(isOrgOwner ? [{ value: 'danger', label: 'Danger Zone', icon: IconAlertTriangle }] : []),
   ];
 
   // Get current tab icon for mobile dropdown
   const getCurrentIcon = () => {
-    const current = tabOptions.find(tab => tab.value === activeTab);
+    const current = tabOptions.find((tab) => tab.value === activeTab);
     return current ? <current.icon size={16} /> : null;
   };
 
@@ -81,7 +82,7 @@ const EventSettings = () => {
         <div className={styles.bgShape2} />
         <div className={styles.contentWrapper}>
           <section className={styles.mainContent}>
-            <Alert color="red" title="Error">
+            <Alert color='red' title='Error'>
               Failed to load event settings. Please try again.
             </Alert>
           </section>
@@ -95,12 +96,12 @@ const EventSettings = () => {
       {/* Background Shapes */}
       <div className={styles.bgShape1} />
       <div className={styles.bgShape2} />
-      
+
       <div className={styles.contentWrapper}>
         {/* Header Section */}
         <section className={styles.headerSection}>
           <h1 className={styles.pageTitle}>Event Settings</h1>
-          <Text c="dimmed" size="sm" className={styles.pageSubtitle}>
+          <Text c='dimmed' size='sm' className={styles.pageSubtitle}>
             Manage your event configuration and preferences
           </Text>
         </section>
@@ -113,9 +114,9 @@ const EventSettings = () => {
               <Select
                 value={activeTab}
                 onChange={setActiveTab}
-                data={tabOptions.map(tab => ({
+                data={tabOptions.map((tab) => ({
                   value: tab.value,
-                  label: tab.label
+                  label: tab.label,
                 }))}
                 leftSection={getCurrentIcon()}
                 rightSection={<IconChevronDown size={16} />}
@@ -134,8 +135,8 @@ const EventSettings = () => {
           <Tabs value={activeTab} onChange={setActiveTab} className={styles.tabsContainer}>
             {!isMobile && (
               <Tabs.List className={styles.tabsList}>
-                {tabOptions.map(tab => (
-                  <Tabs.Tab 
+                {tabOptions.map((tab) => (
+                  <Tabs.Tab
                     key={tab.value}
                     value={tab.value}
                     className={styles.tab}
@@ -147,28 +148,28 @@ const EventSettings = () => {
               </Tabs.List>
             )}
 
-            <Tabs.Panel value="basic" className={styles.tabPanel}>
+            <Tabs.Panel value='basic' className={styles.tabPanel}>
               <BasicInfoSection event={event} eventId={parseInt(eventId)} />
             </Tabs.Panel>
 
-            <Tabs.Panel value="venue" className={styles.tabPanel}>
+            <Tabs.Panel value='venue' className={styles.tabPanel}>
               <VenueSection event={event} eventId={parseInt(eventId)} />
             </Tabs.Panel>
 
-            <Tabs.Panel value="branding" className={styles.tabPanel}>
+            <Tabs.Panel value='branding' className={styles.tabPanel}>
               <BrandingSection event={event} eventId={parseInt(eventId)} />
             </Tabs.Panel>
 
-            <Tabs.Panel value="content" className={styles.tabPanel}>
+            <Tabs.Panel value='content' className={styles.tabPanel}>
               <ContentSections event={event} eventId={parseInt(eventId)} />
             </Tabs.Panel>
 
-            <Tabs.Panel value="networking" className={styles.tabPanel}>
+            <Tabs.Panel value='networking' className={styles.tabPanel}>
               <NetworkingSection event={event} eventId={parseInt(eventId)} />
             </Tabs.Panel>
 
             {isOrgOwner && (
-              <Tabs.Panel value="danger" className={styles.tabPanel}>
+              <Tabs.Panel value='danger' className={styles.tabPanel}>
                 <DangerZoneSection event={event} />
               </Tabs.Panel>
             )}

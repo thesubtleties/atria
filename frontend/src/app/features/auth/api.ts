@@ -97,9 +97,7 @@ export const authApi = baseApi.injectEndpoints({
         try {
           await queryFulfilled;
           // After successful refresh, get current user data
-          const userData = await dispatch(
-            authApi.endpoints.getCurrentUser.initiate()
-          ).unwrap();
+          const userData = await dispatch(authApi.endpoints.getCurrentUser.initiate()).unwrap();
           dispatch(setUser(userData));
         } catch (error) {
           console.error('Refresh failed:', error);
@@ -131,9 +129,7 @@ export const authApi = baseApi.injectEndpoints({
           dispatch(baseApi.util.resetApiState());
 
           // Force page refresh even on error
-          console.log(
-            '🔄 LOGOUT: Error occurred, but still forcing page refresh'
-          );
+          console.log('🔄 LOGOUT: Error occurred, but still forcing page refresh');
           window.location.reload();
         }
       },
@@ -232,4 +228,3 @@ export const {
   useVerifyPasswordMutation,
   useChangePasswordMutation,
 } = authApi;
-

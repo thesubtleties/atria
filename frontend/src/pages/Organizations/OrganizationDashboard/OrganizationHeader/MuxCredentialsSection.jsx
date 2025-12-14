@@ -41,10 +41,8 @@ const MuxCredentialsSection = ({ organization, currentUserRole }) => {
   const [privateKey, setPrivateKey] = useState('');
   const [dirtyFields, setDirtyFields] = useState({ keyId: false, privateKey: false });
 
-  const [updateMuxCredentials, { isLoading: isUpdating }] =
-    useUpdateMuxCredentialsMutation();
-  const [deleteMuxCredentials, { isLoading: isDeleting }] =
-    useDeleteMuxCredentialsMutation();
+  const [updateMuxCredentials, { isLoading: isUpdating }] = useUpdateMuxCredentialsMutation();
+  const [deleteMuxCredentials, { isLoading: isDeleting }] = useDeleteMuxCredentialsMutation();
 
   const canEdit = currentUserRole === 'OWNER' || currentUserRole === 'ADMIN';
   const hasCredentials = organization.has_mux_signing_credentials;
@@ -154,37 +152,31 @@ const MuxCredentialsSection = ({ organization, currentUserRole }) => {
 
   return (
     <Paper className={styles.settingsCard} withBorder>
-      <Stack spacing="md">
+      <Stack spacing='md'>
         {/* Header with status */}
-        <Group position="apart" align="center">
-          <Group spacing="sm">
+        <Group position='apart' align='center'>
+          <Group spacing='sm'>
             <div className={styles.settingsIcon}>
               <IconKey size={20} stroke={1.5} />
             </div>
             <Text className={styles.settingLabel}>Mux Video Signing</Text>
-            {hasCredentials ? (
+            {hasCredentials ?
               <Badge
                 leftSection={<IconShieldCheck size={14} />}
-                color="green"
-                variant="light"
-                size="sm"
+                color='green'
+                variant='light'
+                size='sm'
               >
                 Enabled
               </Badge>
-            ) : (
-              <Badge
-                leftSection={<IconShieldX size={14} />}
-                color="gray"
-                variant="light"
-                size="sm"
-              >
+            : <Badge leftSection={<IconShieldX size={14} />} color='gray' variant='light' size='sm'>
                 Disabled
               </Badge>
-            )}
+            }
           </Group>
 
           {canEdit && !isEditing && (
-            <Button variant="subtle" onClick={() => setIsEditing(true)}>
+            <Button variant='subtle' onClick={() => setIsEditing(true)}>
               <IconKey size={16} />
               {hasCredentials ? 'Update Credentials' : 'Add Credentials'}
             </Button>
@@ -192,10 +184,10 @@ const MuxCredentialsSection = ({ organization, currentUserRole }) => {
 
           {canEdit && isEditing && (
             <ActionIcon
-              variant="subtle"
+              variant='subtle'
               onClick={handleCancel}
               disabled={isUpdating || isDeleting}
-              size="lg"
+              size='lg'
               className={styles.cancelButton}
             >
               <IconX size={18} />
@@ -205,55 +197,51 @@ const MuxCredentialsSection = ({ organization, currentUserRole }) => {
 
         {/* Info text for non-editors */}
         {!canEdit && (
-          <Text size="xs" c="dimmed" className={styles.settingHint}>
+          <Text size='xs' c='dimmed' className={styles.settingHint}>
             Mux signing protects video streams with JWT authentication
           </Text>
         )}
 
         {/* Editing form (ADMIN/OWNER only) */}
         <Collapse in={isEditing && canEdit}>
-          <Stack spacing="sm">
-              <Alert
-                icon={<IconAlertCircle size={16} />}
-                color="blue"
-                variant="light"
-              >
-                <Text size="xs" style={{ color: '#64748B' }}>
-                  Credentials are encrypted and never exposed. Enter new values to update.
-                </Text>
-              </Alert>
+          <Stack spacing='sm'>
+            <Alert icon={<IconAlertCircle size={16} />} color='blue' variant='light'>
+              <Text size='xs' style={{ color: '#64748B' }}>
+                Credentials are encrypted and never exposed. Enter new values to update.
+              </Text>
+            </Alert>
 
-              <TextInput
-                label="Mux Signing Key ID"
-                placeholder={hasCredentials ? 'sk_******' : 'Enter signing key ID'}
-                value={keyId}
-                onChange={handleKeyIdChange}
-                required
-                description={
-                  hasCredentials && !dirtyFields.keyId
-                    ? 'Leave empty to keep existing value'
-                    : 'Format: sk_xxxxx...'
-                }
-              />
+            <TextInput
+              label='Mux Signing Key ID'
+              placeholder={hasCredentials ? 'sk_******' : 'Enter signing key ID'}
+              value={keyId}
+              onChange={handleKeyIdChange}
+              required
+              description={
+                hasCredentials && !dirtyFields.keyId ?
+                  'Leave empty to keep existing value'
+                : 'Format: sk_xxxxx...'
+              }
+            />
 
-              <TextInput
-                label="Mux Private Key (Base64)"
-                placeholder={hasCredentials ? '********' : 'Enter private key'}
-                value={privateKey}
-                onChange={handlePrivateKeyChange}
-                required
-                type="password"
-                description={
-                  hasCredentials && !dirtyFields.privateKey
-                    ? 'Leave empty to keep existing value'
-                    : 'Paste the complete base64-encoded private key'
-                }
-              />
+            <TextInput
+              label='Mux Private Key (Base64)'
+              placeholder={hasCredentials ? '********' : 'Enter private key'}
+              value={privateKey}
+              onChange={handlePrivateKeyChange}
+              required
+              type='password'
+              description={
+                hasCredentials && !dirtyFields.privateKey ?
+                  'Leave empty to keep existing value'
+                : 'Paste the complete base64-encoded private key'
+              }
+            />
 
             {/* Action buttons at bottom left */}
             <div>
               <Button
-                variant="primary"
+                variant='primary'
                 onClick={handleSave}
                 disabled={isUpdating || isDeleting}
                 loading={isUpdating}
@@ -267,7 +255,7 @@ const MuxCredentialsSection = ({ organization, currentUserRole }) => {
             {hasCredentials && (
               <div>
                 <Button
-                  variant="danger"
+                  variant='danger'
                   onClick={handleDelete}
                   disabled={isUpdating || isDeleting}
                   loading={isDeleting}

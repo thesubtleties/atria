@@ -41,9 +41,7 @@ const uiSlice = createSlice({
       }
     },
     closeModal: (state, action: PayloadAction<string>) => {
-      state.activeModals = state.activeModals.filter(
-        (modal) => modal !== action.payload
-      );
+      state.activeModals = state.activeModals.filter((modal) => modal !== action.payload);
       delete state.modalData[action.payload];
     },
     closeAllModals: (state) => {
@@ -79,19 +77,13 @@ interface RootStateWithUI {
   ui: UISliceState;
 }
 
-export const selectActiveModals = (state: RootStateWithUI) =>
-  state.ui.activeModals;
-export const selectModalData =
-  (modalName: string) => (state: RootStateWithUI) =>
-    state.ui.modalData[modalName];
-export const selectIsModalOpen =
-  (modalName: string) => (state: RootStateWithUI) =>
-    state.ui.activeModals.includes(modalName);
-export const selectSidebarOpen = (state: RootStateWithUI) =>
-  state.ui.sidebarOpen;
-export const selectNavContext = (state: RootStateWithUI) =>
-  state.ui.currentNavContext;
+export const selectActiveModals = (state: RootStateWithUI) => state.ui.activeModals;
+export const selectModalData = (modalName: string) => (state: RootStateWithUI) =>
+  state.ui.modalData[modalName];
+export const selectIsModalOpen = (modalName: string) => (state: RootStateWithUI) =>
+  state.ui.activeModals.includes(modalName);
+export const selectSidebarOpen = (state: RootStateWithUI) => state.ui.sidebarOpen;
+export const selectNavContext = (state: RootStateWithUI) => state.ui.currentNavContext;
 
 // reducer
 export default uiSlice.reducer;
-

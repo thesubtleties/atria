@@ -35,7 +35,7 @@ export interface OrganizationDetail extends Organization {
   user_is_admin_or_owner: boolean;
   current_user_role: OrganizationUserRole | null;
   upcoming_events: EventNested[];
-  
+
   // Credential status flags (visible to all org members)
   has_mux_credentials: boolean;
   has_mux_signing_credentials: boolean;

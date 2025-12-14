@@ -34,9 +34,7 @@ export interface BaseQueryRequest {
 }
 
 /** RTK Query result shapes */
-export type QueryResult<T> =
-  | { data: T; error?: undefined }
-  | { data?: undefined; error: ApiError };
+export type QueryResult<T> = { data: T; error?: undefined } | { data?: undefined; error: ApiError };
 
 /** Upload response from the API */
 export interface UploadResponse {
@@ -45,4 +43,3 @@ export interface UploadResponse {
   content_type?: string;
   size?: number;
 }
-

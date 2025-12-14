@@ -1,5 +1,5 @@
-import { motion } from 'motion/react'
-import styles from './EventCard.module.css'
+import { motion } from 'motion/react';
+import styles from './EventCard.module.css';
 
 const EventCard = ({
   title = '',
@@ -12,7 +12,7 @@ const EventCard = ({
   onHover,
   onClick,
   delay = 0,
-  className = ''
+  className = '',
 }) => {
   return (
     <motion.div
@@ -35,14 +35,14 @@ const EventCard = ({
       {tags.length > 0 && (
         <div className={styles.tags}>
           {tags.map((tag, index) => (
-            <span key={index} className={styles.tag}>{tag}</span>
+            <span key={index} className={styles.tag}>
+              {tag}
+            </span>
           ))}
         </div>
       )}
 
-      {description && (
-        <p className={styles.description}>{description}</p>
-      )}
+      {description && <p className={styles.description}>{description}</p>}
 
       {speakers.length > 0 && (
         <div className={styles.speakers}>
@@ -58,7 +58,7 @@ const EventCard = ({
         </div>
       )}
     </motion.div>
-  )
-}
+  );
+};
 
-export default EventCard
+export default EventCard;

@@ -1,6 +1,19 @@
 import { useState, useEffect, useMemo } from 'react';
-import { LoadingOverlay, Center, Text, Pagination, Modal, Select, Stack, Group } from '@mantine/core';
-import { useGetOrganizationUsersQuery, useUpdateOrganizationUserMutation, useRemoveOrganizationUserMutation } from '../../../../../app/features/organizations/api';
+import {
+  LoadingOverlay,
+  Center,
+  Text,
+  Pagination,
+  Modal,
+  Select,
+  Stack,
+  Group,
+} from '@mantine/core';
+import {
+  useGetOrganizationUsersQuery,
+  useUpdateOrganizationUserMutation,
+  useRemoveOrganizationUserMutation,
+} from '../../../../../app/features/organizations/api';
 import { notifications } from '@mantine/notifications';
 import { Button } from '../../../../../shared/components/buttons';
 import MemberRow from '../MemberRow';
@@ -108,15 +121,16 @@ const MembersList = ({ orgId, searchQuery, roleFilter, currentUserRole }) => {
   // Filter members based on search query
   const filteredMembers = useMemo(() => {
     if (!data?.organization_users) return [];
-    
+
     if (!searchQuery) return data.organization_users;
 
     const query = searchQuery.toLowerCase();
-    return data.organization_users.filter(member => 
-      member.user_name?.toLowerCase().includes(query) ||
-      member.first_name?.toLowerCase().includes(query) ||
-      member.last_name?.toLowerCase().includes(query) ||
-      member.email?.toLowerCase().includes(query)
+    return data.organization_users.filter(
+      (member) =>
+        member.user_name?.toLowerCase().includes(query) ||
+        member.first_name?.toLowerCase().includes(query) ||
+        member.last_name?.toLowerCase().includes(query) ||
+        member.email?.toLowerCase().includes(query),
     );
   }, [data?.organization_users, searchQuery]);
 
@@ -138,7 +152,7 @@ const MembersList = ({ orgId, searchQuery, roleFilter, currentUserRole }) => {
   if (error) {
     return (
       <Center className={styles.emptyState}>
-        <Text color="red">Failed to load members</Text>
+        <Text color='red'>Failed to load members</Text>
       </Center>
     );
   }
@@ -147,11 +161,11 @@ const MembersList = ({ orgId, searchQuery, roleFilter, currentUserRole }) => {
     return (
       <Center className={styles.emptyState}>
         <div className={styles.emptyContent}>
-          <Text size="lg" weight={500} color="dimmed">
+          <Text size='lg' weight={500} color='dimmed'>
             {searchQuery ? 'No members found matching your search' : 'No members yet'}
           </Text>
           {!searchQuery && (
-            <Text size="sm" color="dimmed" mt="xs">
+            <Text size='sm' color='dimmed' mt='xs'>
               Invite members to start collaborating
             </Text>
           )}
@@ -219,34 +233,34 @@ const MembersList = ({ orgId, searchQuery, roleFilter, currentUserRole }) => {
       <Modal
         opened={roleModalOpened}
         onClose={() => setRoleModalOpened(false)}
-        title="Change Member Role"
-        size="sm"
+        title='Change Member Role'
+        size='sm'
       >
-        <Stack gap="md">
-          <Text size="sm">
+        <Stack gap='md'>
+          <Text size='sm'>
             Update role for <strong>{selectedMember?.user_name}</strong>
           </Text>
-          
+
           <Select
-            label="New Role"
+            label='New Role'
             data={roleOptions}
             value={selectedRole}
             onChange={setSelectedRole}
-            description="Admins can manage members and organization settings"
+            description='Admins can manage members and organization settings'
           />
 
           {selectedRole === 'OWNER' && (
-            <Text size="xs" c="orange">
+            <Text size='xs' c='orange'>
               Warning: Owners have full control over the organization
             </Text>
           )}
 
-          <Group justify="flex-end" mt="md">
-            <Button variant="subtle" onClick={() => setRoleModalOpened(false)}>
+          <Group justify='flex-end' mt='md'>
+            <Button variant='subtle' onClick={() => setRoleModalOpened(false)}>
               Cancel
             </Button>
-            <Button 
-              variant="primary" 
+            <Button
+              variant='primary'
               onClick={submitRoleUpdate}
               loading={isUpdating}
               disabled={selectedRole === selectedMember?.role}
@@ -261,27 +275,24 @@ const MembersList = ({ orgId, searchQuery, roleFilter, currentUserRole }) => {
       <Modal
         opened={removeModalOpened}
         onClose={() => setRemoveModalOpened(false)}
-        title="Remove Member"
-        size="sm"
+        title='Remove Member'
+        size='sm'
       >
-        <Stack gap="md">
-          <Text size="sm">
-            Are you sure you want to remove <strong>{selectedMember?.user_name}</strong> from the organization?
+        <Stack gap='md'>
+          <Text size='sm'>
+            Are you sure you want to remove <strong>{selectedMember?.user_name}</strong> from the
+            organization?
           </Text>
-          
-          <Text size="xs" c="dimmed">
+
+          <Text size='xs' c='dimmed'>
             They will lose access to all organization events and data.
           </Text>
 
-          <Group justify="flex-end" mt="md">
-            <Button variant="subtle" onClick={() => setRemoveModalOpened(false)}>
+          <Group justify='flex-end' mt='md'>
+            <Button variant='subtle' onClick={() => setRemoveModalOpened(false)}>
               Cancel
             </Button>
-            <Button 
-              variant="danger" 
-              onClick={submitRemove}
-              loading={isRemoving}
-            >
+            <Button variant='danger' onClick={submitRemove} loading={isRemoving}>
               Remove Member
             </Button>
           </Group>

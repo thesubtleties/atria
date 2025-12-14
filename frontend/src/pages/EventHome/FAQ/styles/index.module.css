@@ -1,5 +1,6 @@
 .faq {
-  padding: 0 clamp(var(--space-md), 4vw, var(--space-xl)) clamp(var(--space-xl), 4vw, var(--space-2xl));
+  padding: 0 clamp(var(--space-md), 4vw, var(--space-xl))
+    clamp(var(--space-xl), 4vw, var(--space-2xl));
 }
 
 .container {
@@ -46,6 +47,6 @@
 
 .faq :global(.mantine-Accordion-content) {
   padding: 0 1.25rem 1.25rem;
-  color: #64748B;
+  color: #64748b;
   line-height: 1.6;
 }

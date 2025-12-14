@@ -12,7 +12,7 @@ const SAMPLE_TESTIMONIAL = {
 
 export const Testimonials = () => (
   <section className={styles.testimonials}>
-    <Container size="lg">
+    <Container size='lg'>
       <TestimonialCard testimonial={SAMPLE_TESTIMONIAL} />
     </Container>
   </section>

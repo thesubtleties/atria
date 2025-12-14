@@ -30,65 +30,53 @@ const RoomTypeSection = ({
       </Box>
 
       <DragDropProvider onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
-        {isMobile ? (
-          // Mobile: Card view
-          <div className={styles.mobileCardList}>
-            {(localRooms[type] || []).map((roomId) => {
-              const room = roomLookup[roomId];
-              if (!room) return null;
-
-              return (
-                <DraggableCard
-                  key={roomId}
-                  id={roomId}
-                  room={room}
-                  color={color}
-                  onEdit={onEdit}
-                />
-              );
-            })}
-          </div>
-        ) : (
-          // Desktop: Table view
-          <Table>
-            <Table.Thead>
-              <Table.Tr>
-                <Table.Th style={{ width: '40px' }}></Table.Th>
-                <Table.Th>Room Name</Table.Th>
-                <Table.Th>Description</Table.Th>
-                <Table.Th style={{ width: '80px', textAlign: 'center' }}>
-                  Messages
-                </Table.Th>
-                <Table.Th style={{ width: '80px', textAlign: 'center' }}>
-                  Active
-                </Table.Th>
-                <Table.Th style={{ width: '100px', textAlign: 'center' }}>
-                  Status
-                </Table.Th>
-                <Table.Th style={{ width: '70px', textAlign: 'center' }}>
-                  Actions
-                </Table.Th>
-              </Table.Tr>
-            </Table.Thead>
-            <Table.Tbody>
+        {
+          isMobile ?
+            // Mobile: Card view
+            <div className={styles.mobileCardList}>
               {(localRooms[type] || []).map((roomId) => {
                 const room = roomLookup[roomId];
                 if (!room) return null;
 
                 return (
-                  <DraggableTableRow key={roomId} id={roomId} room={room}>
-                    <ChatRoomRow
-                      room={room}
-                      color={color}
-                      onEdit={onEdit}
-                      isTableRow={true}
-                    />
-                  </DraggableTableRow>
+                  <DraggableCard
+                    key={roomId}
+                    id={roomId}
+                    room={room}
+                    color={color}
+                    onEdit={onEdit}
+                  />
                 );
               })}
-            </Table.Tbody>
-          </Table>
-        )}
+            </div>
+            // Desktop: Table view
+          : <Table>
+              <Table.Thead>
+                <Table.Tr>
+                  <Table.Th style={{ width: '40px' }}></Table.Th>
+                  <Table.Th>Room Name</Table.Th>
+                  <Table.Th>Description</Table.Th>
+                  <Table.Th style={{ width: '80px', textAlign: 'center' }}>Messages</Table.Th>
+                  <Table.Th style={{ width: '80px', textAlign: 'center' }}>Active</Table.Th>
+                  <Table.Th style={{ width: '100px', textAlign: 'center' }}>Status</Table.Th>
+                  <Table.Th style={{ width: '70px', textAlign: 'center' }}>Actions</Table.Th>
+                </Table.Tr>
+              </Table.Thead>
+              <Table.Tbody>
+                {(localRooms[type] || []).map((roomId) => {
+                  const room = roomLookup[roomId];
+                  if (!room) return null;
+
+                  return (
+                    <DraggableTableRow key={roomId} id={roomId} room={room}>
+                      <ChatRoomRow room={room} color={color} onEdit={onEdit} isTableRow={true} />
+                    </DraggableTableRow>
+                  );
+                })}
+              </Table.Tbody>
+            </Table>
+
+        }
       </DragDropProvider>
     </Box>
   );

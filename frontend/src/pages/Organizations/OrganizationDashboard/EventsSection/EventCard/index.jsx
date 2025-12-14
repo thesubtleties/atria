@@ -15,7 +15,7 @@ const EventCard = ({ event }) => {
   const formatEventDates = () => {
     const startDate = formatDate(event.start_date);
     const endDate = formatDate(event.end_date);
-    
+
     if (startDate === endDate) {
       return startDate;
     }
@@ -26,7 +26,7 @@ const EventCard = ({ event }) => {
     <div className={styles.eventCard} onClick={handleCardClick}>
       <div className={styles.cardHeader}>
         <Badge
-          variant="unstyled"
+          variant='unstyled'
           className={styles.statusBadge}
           data-status={event.status?.toLowerCase()}
         >
@@ -36,11 +36,11 @@ const EventCard = ({ event }) => {
 
       <div className={styles.cardContent}>
         <h3 className={styles.eventTitle}>{event.title}</h3>
-        
+
         <div className={styles.eventMeta}>
           <div className={styles.metaItem}>
             <IconCalendar size={16} className={styles.metaIcon} />
-            <Text size="sm" className={styles.metaText}>
+            <Text size='sm' className={styles.metaText}>
               {formatEventDates()}
             </Text>
           </div>
@@ -48,7 +48,7 @@ const EventCard = ({ event }) => {
           {event.location && (
             <div className={styles.metaItem}>
               <IconMapPin size={16} className={styles.metaIcon} />
-              <Text size="sm" className={styles.metaText}>
+              <Text size='sm' className={styles.metaText}>
                 {event.location}
               </Text>
             </div>
@@ -57,7 +57,7 @@ const EventCard = ({ event }) => {
           {event.attendee_count !== undefined && (
             <div className={styles.metaItem}>
               <IconUsers size={16} className={styles.metaIcon} />
-              <Text size="sm" className={styles.metaText}>
+              <Text size='sm' className={styles.metaText}>
                 {event.attendee_count} attendees
               </Text>
             </div>
@@ -65,7 +65,7 @@ const EventCard = ({ event }) => {
         </div>
 
         {event.description && (
-          <Text size="sm" className={styles.eventDescription} lineClamp={2}>
+          <Text size='sm' className={styles.eventDescription} lineClamp={2}>
             {event.description}
           </Text>
         )}
@@ -73,7 +73,7 @@ const EventCard = ({ event }) => {
 
       <div className={styles.cardFooter}>
         <Badge
-          variant="unstyled"
+          variant='unstyled'
           className={styles.typeBadge}
           data-type={event.event_type?.toLowerCase()}
         >

@@ -7,7 +7,7 @@ import { openConfirmationModal } from '@/shared/components/modals/ConfirmationMo
 import { Button } from '@/shared/components/buttons';
 import {
   useGetEventAdminChatRoomsQuery,
-  useDisableAllPublicRoomsMutation
+  useDisableAllPublicRoomsMutation,
 } from '@/app/features/chat/api';
 import { joinEventAdmin, getSocket } from '@/app/features/networking/socketClient';
 import ChatRoomsList from './ChatRoomsList';
@@ -23,11 +23,7 @@ const NetworkingManager = () => {
   });
   const [disableAllPublic, { isLoading: isDisablingAll }] = useDisableAllPublicRoomsMutation();
 
-  const {
-    data: response,
-    isLoading,
-    error,
-  } = useGetEventAdminChatRoomsQuery(eventId);
+  const { data: response, isLoading, error } = useGetEventAdminChatRoomsQuery(eventId);
 
   const chatRooms = response?.chat_rooms || [];
 
@@ -50,7 +46,12 @@ const NetworkingManager = () => {
       if (joined || cleanedUp) return;
 
       const socket = getSocket();
-      console.log('  🔄 Attempting to join - socket:', socket?.connected ? 'connected' : socket ? 'exists but not connected' : 'null');
+      console.log(
+        '  🔄 Attempting to join - socket:',
+        socket?.connected ? 'connected'
+        : socket ? 'exists but not connected'
+        : 'null',
+      );
 
       if (!socket) {
         console.log('  ⏳ Socket not initialized yet, will retry...');
@@ -111,7 +112,8 @@ const NetworkingManager = () => {
   const handleDisableAllPublic = () => {
     openConfirmationModal({
       title: 'Disable All Public Chat Rooms',
-      message: 'Are you sure you want to disable all public chat rooms? This will prevent attendees from chatting until rooms are re-enabled.',
+      message:
+        'Are you sure you want to disable all public chat rooms? This will prevent attendees from chatting until rooms are re-enabled.',
       confirmLabel: 'Disable All',
       cancelLabel: 'Cancel',
       isDangerous: true,
@@ -146,18 +148,12 @@ const NetworkingManager = () => {
           <div className={styles.headerContent}>
             <h2 className={styles.pageTitle}>Networking & Chat Management</h2>
             <Group className={styles.buttonGroup}>
-              <Button
-                variant="danger"
-                onClick={handleDisableAllPublic}
-                disabled={isDisablingAll}
-              >
+              <Button variant='danger' onClick={handleDisableAllPublic} disabled={isDisablingAll}>
                 Disable All Public Rooms
               </Button>
               <Button
-                variant="primary"
-                onClick={() =>
-                  setModalState({ open: true, mode: 'create', room: null })
-                }
+                variant='primary'
+                onClick={() => setModalState({ open: true, mode: 'create', room: null })}
               >
                 <IconPlus size={18} />
                 Add Chat Room
@@ -169,7 +165,7 @@ const NetworkingManager = () => {
         {/* Main Content Section */}
         <section className={styles.mainContent}>
           {error && (
-            <Alert color="red" mb="lg">
+            <Alert color='red' mb='lg'>
               Failed to load chat rooms. Please try again.
             </Alert>
           )}
@@ -183,9 +179,7 @@ const NetworkingManager = () => {
 
         <ChatRoomModal
           opened={modalState.open}
-          onClose={() =>
-            setModalState({ open: false, mode: 'create', room: null })
-          }
+          onClose={() => setModalState({ open: false, mode: 'create', room: null })}
           mode={modalState.mode}
           room={modalState.room}
           eventId={eventId}

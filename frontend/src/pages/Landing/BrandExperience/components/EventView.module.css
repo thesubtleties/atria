@@ -68,7 +68,11 @@
 }
 
 .eventTitle {
-  font-family: 'M Plus 2', system-ui, -apple-system, sans-serif;
+  font-family:
+    'M Plus 2',
+    system-ui,
+    -apple-system,
+    sans-serif;
   font-size: 1.25rem;
   font-weight: 600;
   color: #ffffff;
@@ -255,7 +259,8 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
   }
   50% {
@@ -268,11 +273,11 @@
   .contentWrapper {
     height: 400px; /* Middle ground between 350px and 450px */
   }
-  
+
   .eventMain {
     min-height: 400px; /* Middle ground height */
   }
-  
+
   /* Hide the yellow "Your brand front and center" badge completely */
   .brandHighlight {
     display: none;
@@ -284,30 +289,30 @@
     flex-direction: column;
     height: auto;
   }
-  
+
   .sidebar {
     width: 100%;
     height: 200px;
   }
-  
+
   .eventContent {
     padding: 1rem;
   }
-  
+
   .eventHeader {
     padding: 0 1rem;
   }
-  
+
   .brandHighlight {
     bottom: -60px;
     left: 20px;
     right: auto;
   }
-  
+
   .eventHeroTitle {
     font-size: 1.5rem;
   }
-  
+
   .eventHeroText {
     font-size: 1rem;
   }

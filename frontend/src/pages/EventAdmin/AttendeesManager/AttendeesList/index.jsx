@@ -18,19 +18,14 @@ const AttendeesList = ({
 }) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
   const SortHeader = ({ field, children }) => (
-    <UnstyledButton
-      onClick={() => onSort(field)}
-      className={styles.sortHeader}
-    >
-      <Group gap="xs" wrap="nowrap">
+    <UnstyledButton onClick={() => onSort(field)} className={styles.sortHeader}>
+      <Group gap='xs' wrap='nowrap'>
         <Text fw={sortBy === field ? 600 : 400}>{children}</Text>
         {sortBy === field && (
-          <ActionIcon size="xs" variant="transparent">
-            {sortOrder === 'asc' ? (
+          <ActionIcon size='xs' variant='transparent'>
+            {sortOrder === 'asc' ?
               <IconChevronUp size={14} />
-            ) : (
-              <IconChevronDown size={14} />
-            )}
+            : <IconChevronDown size={14} />}
           </ActionIcon>
         )}
       </Group>
@@ -40,10 +35,10 @@ const AttendeesList = ({
   if (attendees.length === 0) {
     return (
       <div className={styles.emptyState}>
-        <Text size="lg" c="dimmed" ta="center">
+        <Text size='lg' c='dimmed' ta='center'>
           No attendees found
         </Text>
-        <Text size="sm" c="dimmed" ta="center" mt="xs">
+        <Text size='sm' c='dimmed' ta='center' mt='xs'>
           Start by inviting people to your event
         </Text>
       </div>
@@ -74,23 +69,25 @@ const AttendeesList = ({
   // Desktop view - table
   return (
     <div className={styles.tableContainer}>
-      <Table horizontalSpacing="md" verticalSpacing="sm" striped highlightOnHover>
+      <Table horizontalSpacing='md' verticalSpacing='sm' striped highlightOnHover>
         <Table.Thead>
           <Table.Tr>
             <Table.Th>
-              <SortHeader field="name">Attendee</SortHeader>
+              <SortHeader field='name'>Attendee</SortHeader>
             </Table.Th>
             <Table.Th style={{ textAlign: 'center' }}>
-              <SortHeader field="role">Role</SortHeader>
+              <SortHeader field='role'>Role</SortHeader>
             </Table.Th>
             <Table.Th>
-              <SortHeader field="company">Company</SortHeader>
+              <SortHeader field='company'>Company</SortHeader>
             </Table.Th>
             <Table.Th>Title</Table.Th>
             <Table.Th style={{ textAlign: 'center' }}>
-              <SortHeader field="joinDate">Joined Event</SortHeader>
+              <SortHeader field='joinDate'>Joined Event</SortHeader>
             </Table.Th>
-            <Table.Th width={100} style={{ textAlign: 'center' }}>Actions</Table.Th>
+            <Table.Th width={100} style={{ textAlign: 'center' }}>
+              Actions
+            </Table.Th>
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>

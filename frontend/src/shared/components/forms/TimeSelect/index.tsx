@@ -13,10 +13,13 @@ const generateTimeOptions = (): TimeOption[] => {
   for (let hour = 0; hour < 24; hour++) {
     for (let minute = 0; minute < 60; minute += 15) {
       const time24 = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-      const hour12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+      const hour12 =
+        hour === 0 ? 12
+        : hour > 12 ? hour - 12
+        : hour;
       const ampm = hour < 12 ? 'AM' : 'PM';
       const time12 = `${hour12}:${minute.toString().padStart(2, '0')} ${ampm}`;
-      
+
       options.push({
         value: time24,
         label: time12,
@@ -33,42 +36,49 @@ interface TimeSelectProps extends Omit<SelectProps, 'data' | 'value' | 'onChange
   onChange?: (value: string | null) => void;
 }
 
-export const TimeSelect = forwardRef<HTMLInputElement, TimeSelectProps>(function TimeSelectInner({
-  label,
-  placeholder = 'Select time',
-  error,
-  required = false,
-  disabled = false,
-  value,
-  onChange,
-  onBlur,
-  classNames,
-  ...props
-}, ref) {
+export const TimeSelect = forwardRef<HTMLInputElement, TimeSelectProps>(function TimeSelectInner(
+  {
+    label,
+    placeholder = 'Select time',
+    error,
+    required = false,
+    disabled = false,
+    value,
+    onChange,
+    onBlur,
+    classNames,
+    ...props
+  },
+  ref,
+) {
   // Wrap onChange to match Mantine's Select signature
-  const handleChange = useCallback((newValue: string | null, _option: ComboboxItem) => {
-    onChange?.(newValue);
-  }, [onChange]);
-  
+  const handleChange = useCallback(
+    (newValue: string | null, _option: ComboboxItem) => {
+      onChange?.(newValue);
+    },
+    [onChange],
+  );
+
   // Find the closest time option if value is provided but not in 15-min intervals
   const normalizedValue = useMemo(() => {
     if (!value) return value;
-    
+
     // If value is already in our options, use it
-    if (timeOptions.some(opt => opt.value === value)) {
+    if (timeOptions.some((opt) => opt.value === value)) {
       return value;
     }
-    
+
     // Otherwise, round to nearest 15 minutes
     const parts = value.split(':').map(Number);
     const hours = parts[0];
     const minutes = parts[1];
-    if (hours === undefined || minutes === undefined || isNaN(hours) || isNaN(minutes)) return value;
-    
+    if (hours === undefined || minutes === undefined || isNaN(hours) || isNaN(minutes))
+      return value;
+
     const roundedMinutes = Math.round(minutes / 15) * 15;
     const adjustedHours = roundedMinutes === 60 ? hours + 1 : hours;
     const finalMinutes = roundedMinutes === 60 ? 0 : roundedMinutes;
-    
+
     return `${adjustedHours.toString().padStart(2, '0')}:${finalMinutes.toString().padStart(2, '0')}`;
   }, [value]);
 

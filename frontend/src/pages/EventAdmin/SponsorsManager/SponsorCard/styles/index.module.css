@@ -72,7 +72,7 @@
 .dragHandle {
   cursor: grab;
   transition: all 0.2s ease;
-  color: #94A3B8 !important; /* Gray color for the dots */
+  color: #94a3b8 !important; /* Gray color for the dots */
   touch-action: none;
   user-select: none;
   min-width: 44px;
@@ -84,7 +84,7 @@
 
 .dragHandle:hover {
   background: rgba(139, 92, 246, 0.08) !important; /* Purple background on hover */
-  color: #94A3B8 !important; /* Keep dots gray on hover */
+  color: #94a3b8 !important; /* Keep dots gray on hover */
 }
 
 .dragHandle:active {
@@ -109,7 +109,7 @@
 .logoPlaceholder {
   width: 50px;
   height: 50px;
-  background: linear-gradient(135deg, #F1F5F9 0%, #E2E8F0 100%);
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
   border-radius: var(--radius-sm);
   display: block;
 }
@@ -132,7 +132,7 @@
 .logoPlaceholderMobile {
   width: 40px;
   height: 40px;
-  background: linear-gradient(135deg, #F1F5F9 0%, #E2E8F0 100%);
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
   border-radius: var(--radius-sm);
   display: block;
 }
@@ -239,12 +239,12 @@
   .sponsorCard {
     padding: 0.875rem 1.25rem;
   }
-  
+
   .logoContainer {
     width: 45px;
     height: 45px;
   }
-  
+
   .logo,
   .logoPlaceholder {
     width: 45px !important;

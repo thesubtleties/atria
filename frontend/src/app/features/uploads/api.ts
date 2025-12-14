@@ -46,21 +46,21 @@ export const uploadsApi = baseApi.injectEndpoints({
         }
       },
     }),
-    
+
     getAuthenticatedContent: builder.query<Blob, string>({
       query: (objectKey) => ({
         url: `/content/${objectKey}`,
         responseHandler: (response: Response) => response.blob(),
       }),
     }),
-    
+
     getPrivateContent: builder.query<Blob, string>({
       query: (objectKey) => ({
         url: `/private/${objectKey}`,
         responseHandler: (response: Response) => response.blob(),
       }),
     }),
-    
+
     deleteUpload: builder.mutation<void, DeleteUploadParams>({
       query: ({ objectKey }) => ({
         url: `/uploads/${objectKey}`,

@@ -10,10 +10,10 @@ export const SessionEmptyState = () => {
       <div className={styles.contentWrapper}>
         <section className={styles.mainContent}>
           <div style={{ textAlign: 'center', padding: '3rem' }}>
-            <Text size="lg" c="dimmed" mb="md">
+            <Text size='lg' c='dimmed' mb='md'>
               Configure your event dates first
             </Text>
-            <Text size="sm" c="dimmed">
+            <Text size='sm' c='dimmed'>
               {`Please set your event's start date and duration in the Event Settings to manage sessions.`}
             </Text>
           </div>

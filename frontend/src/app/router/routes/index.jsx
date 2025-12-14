@@ -11,9 +11,8 @@ import { LoadingPage } from '../../../shared/components/loading/LoadingState';
 const withSuspense = (routes) =>
   routes.map((route) => ({
     ...route,
-    element: route.element ? (
-      <Suspense fallback={<LoadingPage />}>{route.element}</Suspense>
-    ) : undefined,
+    element:
+      route.element ? <Suspense fallback={<LoadingPage />}>{route.element}</Suspense> : undefined,
     children: route.children ? withSuspense(route.children) : undefined,
   }));
 
@@ -21,9 +20,6 @@ export const router = createBrowserRouter([
   {
     element: <RootLayout />,
     errorElement: <ErrorPage />,
-    children: [
-      ...withSuspense(publicRoutes),
-      ...withSuspense(protectedRoutes),
-    ],
+    children: [...withSuspense(publicRoutes), ...withSuspense(protectedRoutes)],
   },
 ]);

@@ -10,16 +10,8 @@ const DraggableCard = ({ id, room, color, onEdit }) => {
   });
 
   return (
-    <div
-      ref={ref}
-      className={`${styles.mobileCard} ${isDragging ? styles.dragging : ''}`}
-    >
-      <ChatRoomRow
-        room={room}
-        color={color}
-        onEdit={onEdit}
-        isMobile={true}
-      />
+    <div ref={ref} className={`${styles.mobileCard} ${isDragging ? styles.dragging : ''}`}>
+      <ChatRoomRow room={room} color={color} onEdit={onEdit} isMobile={true} />
     </div>
   );
 };

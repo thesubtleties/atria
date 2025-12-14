@@ -14,13 +14,13 @@ export const OrganizationsList = () => {
 
   return (
     <Container className={styles.container}>
-      <Group position="right" mb="xl">
+      <Group position='right' mb='xl'>
         <Button
           onClick={() => setShowCreateModal(true)}
           className={styles.button}
-          variant="default"
+          variant='default'
         >
-          <Group spacing="xs">
+          <Group spacing='xs'>
             <IconPlus size={16} className={styles.plusIcon} />
             <span>New Organization</span>
           </Group>

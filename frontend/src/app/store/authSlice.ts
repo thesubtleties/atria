@@ -41,8 +41,5 @@ interface RootStateWithAuth {
 }
 
 export const selectUser = (state: RootStateWithAuth) => state.auth.user;
-export const selectIsAuthenticated = (state: RootStateWithAuth) =>
-  state.auth.isAuthenticated;
-export const selectAuthChecked = (state: RootStateWithAuth) =>
-  state.auth.authChecked;
-
+export const selectIsAuthenticated = (state: RootStateWithAuth) => state.auth.isAuthenticated;
+export const selectAuthChecked = (state: RootStateWithAuth) => state.auth.authChecked;

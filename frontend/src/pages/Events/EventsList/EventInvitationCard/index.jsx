@@ -31,7 +31,7 @@ export const EventInvitationCard = ({ invitation }) => {
       });
       // Navigate to event page
       navigate(
-        `/app/organizations/${invitation.event.organization.id}/events/${invitation.event.id}`
+        `/app/organizations/${invitation.event.organization.id}/events/${invitation.event.id}`,
       );
     } catch (error) {
       notifications.show({
@@ -72,9 +72,8 @@ export const EventInvitationCard = ({ invitation }) => {
   try {
     if (event.start_date) {
       // Handle date-only strings by appending time if needed
-      const startDateStr = event.start_date.includes('T')
-        ? event.start_date
-        : `${event.start_date}T00:00:00`;
+      const startDateStr =
+        event.start_date.includes('T') ? event.start_date : `${event.start_date}T00:00:00`;
       const startDate = new Date(startDateStr).toLocaleDateString('en-US', {
         month: 'short',
         day: 'numeric',
@@ -82,16 +81,14 @@ export const EventInvitationCard = ({ invitation }) => {
       });
 
       if (event.end_date) {
-        const endDateStr = event.end_date.includes('T')
-          ? event.end_date
-          : `${event.end_date}T00:00:00`;
+        const endDateStr =
+          event.end_date.includes('T') ? event.end_date : `${event.end_date}T00:00:00`;
         const endDate = new Date(endDateStr).toLocaleDateString('en-US', {
           month: 'short',
           day: 'numeric',
           year: 'numeric',
         });
-        dateInfo =
-          startDate !== endDate ? `${startDate} - ${endDate}` : startDate;
+        dateInfo = startDate !== endDate ? `${startDate} - ${endDate}` : startDate;
       } else {
         dateInfo = startDate;
       }
@@ -105,10 +102,10 @@ export const EventInvitationCard = ({ invitation }) => {
     <Card className={styles.invitationCard} withBorder>
       <div className={styles.invitationBadge}>
         <Badge
-          color="pink"
-          variant="light"
-          size="sm"
-          radius="sm"
+          color='pink'
+          variant='light'
+          size='sm'
+          radius='sm'
           styles={{
             root: {
               background: 'rgba(236, 72, 153, 0.08)',
@@ -119,60 +116,59 @@ export const EventInvitationCard = ({ invitation }) => {
         >
           Invitation
         </Badge>
-        <Text size="xs" color="dimmed">
+        <Text size='xs' color='dimmed'>
           Invited {invitedAgo}
         </Text>
       </div>
 
-      <Stack spacing="sm">
+      <Stack spacing='sm'>
         <div>
-          <Text size="lg" weight={600} className={styles.eventTitle}>
+          <Text size='lg' weight={600} className={styles.eventTitle}>
             {event.title}
           </Text>
-          <Text size="sm" color="dimmed">
+          <Text size='sm' color='dimmed'>
             {event.organization.name}
           </Text>
         </div>
 
-        <Stack spacing="xs">
-          <Group spacing="xs">
+        <Stack spacing='xs'>
+          <Group spacing='xs'>
             <IconCalendar size={16} className={styles.icon} />
-            <Text size="sm">{dateInfo}</Text>
+            <Text size='sm'>{dateInfo}</Text>
           </Group>
 
           {event.location && (
-            <Group spacing="xs">
+            <Group spacing='xs'>
               <IconMapPin size={16} className={styles.icon} />
-              <Text size="sm">{event.location}</Text>
+              <Text size='sm'>{event.location}</Text>
             </Group>
           )}
 
-          <Group spacing="xs">
+          <Group spacing='xs'>
             <IconUsers size={16} className={styles.icon} />
-            <Text size="sm">
+            <Text size='sm'>
               Invited as: <strong>{getRoleDisplayName(invitation.role)}</strong>
             </Text>
           </Group>
         </Stack>
 
         {invitation.message && (
-          <Text size="sm" className={styles.invitationMessage}>
+          <Text size='sm' className={styles.invitationMessage}>
             {`"${invitation.message}"`}
           </Text>
         )}
 
-        <Text size="xs" color="dimmed">
+        <Text size='xs' color='dimmed'>
           From: {invitation.invited_by?.name || 'Event Organizer'}
         </Text>
 
-        <Group spacing="sm" className={styles.actionButtons}>
-          {isProcessing ? (
-            <LoadingSpinner size="sm" />
-          ) : (
-            <>
+        <Group spacing='sm' className={styles.actionButtons}>
+          {isProcessing ?
+            <LoadingSpinner size='sm' />
+          : <>
               <Button
-                variant="primary"
-                size="sm"
+                variant='primary'
+                size='sm'
                 onClick={handleAccept}
                 disabled={isProcessing}
                 fullWidth
@@ -180,8 +176,8 @@ export const EventInvitationCard = ({ invitation }) => {
                 Accept Invitation
               </Button>
               <Button
-                variant="subtle"
-                size="sm"
+                variant='subtle'
+                size='sm'
                 onClick={handleDecline}
                 disabled={isProcessing}
                 fullWidth
@@ -189,7 +185,7 @@ export const EventInvitationCard = ({ invitation }) => {
                 Decline
               </Button>
             </>
-          )}
+          }
         </Group>
       </Stack>
     </Card>

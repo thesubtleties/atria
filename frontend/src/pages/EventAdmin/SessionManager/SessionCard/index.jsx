@@ -1,22 +1,10 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
-import {
-  TextInput,
-  Textarea,
-  Select,
-  Group,
-  Text,
-  ActionIcon,
-  Menu,
-  Badge,
-} from '@mantine/core';
+import { TextInput, Textarea, Select, Group, Text, ActionIcon, Menu, Badge } from '@mantine/core';
 import { TimeSelect } from '@/shared/components/forms/TimeSelect';
 import { IconDots, IconTrash, IconAlertCircle } from '@tabler/icons-react';
 import { useDebouncedValue } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
-import {
-  useUpdateSessionMutation,
-  useDeleteSessionMutation,
-} from '@/app/features/sessions/api';
+import { useUpdateSessionMutation, useDeleteSessionMutation } from '@/app/features/sessions/api';
 import { SessionSpeakers } from '@/pages/Session/SessionSpeakers';
 import { openConfirmationModal } from '@/shared/components/modals/ConfirmationModal';
 import { validateField, validateTimeOrder } from '../schemas/sessionCardSchema';
@@ -38,7 +26,7 @@ const CHAT_MODES = [
 ];
 
 const STREAMING_PLATFORMS = [
-  { value: '', label: 'No Streaming' },  // Empty string instead of null
+  { value: '', label: 'No Streaming' }, // Empty string instead of null
   { value: 'VIMEO', label: 'Vimeo' },
   { value: 'MUX', label: 'Mux' },
   { value: 'ZOOM', label: 'Zoom' },
@@ -58,9 +46,7 @@ export const SessionCard = ({ session, hasConflict }) => {
   // Local state for immediate UI updates
   const [title, setTitle] = useState(session.title);
   const [description, setDescription] = useState(session.description || '');
-  const [shortDescription, setShortDescription] = useState(
-    session.short_description || ''
-  );
+  const [shortDescription, setShortDescription] = useState(session.short_description || '');
   const [sessionType, setSessionType] = useState(session.session_type);
   const [startTime, setStartTime] = useState(session.start_time);
   const [endTime, setEndTime] = useState(session.end_time);
@@ -71,7 +57,9 @@ export const SessionCard = ({ session, hasConflict }) => {
   const [streamUrl, setStreamUrl] = useState(session.stream_url || '');
   const [zoomMeetingId, setZoomMeetingId] = useState(session.zoom_meeting_id || '');
   const [zoomPasscode, setZoomPasscode] = useState(session.zoom_passcode || '');
-  const [muxPlaybackPolicy, setMuxPlaybackPolicy] = useState(session.mux_playback_policy || 'PUBLIC');
+  const [muxPlaybackPolicy, setMuxPlaybackPolicy] = useState(
+    session.mux_playback_policy || 'PUBLIC',
+  );
   const [jitsiRoomName, setJitsiRoomName] = useState(session.jitsi_room_name || '');
   // Note: OTHER platform uses streamUrl state (same as VIMEO/MUX)
 
@@ -108,7 +96,7 @@ export const SessionCard = ({ session, hasConflict }) => {
         });
       }
     },
-    [session.id, updateSession]
+    [session.id, updateSession],
   );
 
   // Validate field before updating
@@ -135,10 +123,7 @@ export const SessionCard = ({ session, hasConflict }) => {
 
   // Update on debounced changes
   useEffect(() => {
-    if (
-      debouncedTitle !== session.title &&
-      validateAndUpdate('title', debouncedTitle)
-    ) {
+    if (debouncedTitle !== session.title && validateAndUpdate('title', debouncedTitle)) {
       handleUpdate({ title: debouncedTitle });
     }
   }, [debouncedTitle, session.title, handleUpdate, validateAndUpdate]);
@@ -156,24 +141,18 @@ export const SessionCard = ({ session, hasConflict }) => {
     ) {
       handleUpdate({ short_description: debouncedShortDescription });
     }
-  }, [
-    debouncedShortDescription,
-    session.short_description,
-    handleUpdate,
-    validateAndUpdate,
-  ]);
+  }, [debouncedShortDescription, session.short_description, handleUpdate, validateAndUpdate]);
 
   useEffect(() => {
     if (
       debouncedStreamUrl !== session.stream_url &&
-      (debouncedStreamUrl === '' ||
-        validateAndUpdate('stream_url', debouncedStreamUrl))
+      (debouncedStreamUrl === '' || validateAndUpdate('stream_url', debouncedStreamUrl))
     ) {
       // If we have a pending platform change, save platform + URL together
       if (pendingPlatformChangeRef.current) {
         handleUpdate({
           streaming_platform: streamingPlatform || null,
-          stream_url: debouncedStreamUrl
+          stream_url: debouncedStreamUrl,
         });
         pendingPlatformChangeRef.current = false;
       } else {
@@ -192,14 +171,20 @@ export const SessionCard = ({ session, hasConflict }) => {
       if (pendingPlatformChangeRef.current) {
         handleUpdate({
           streaming_platform: streamingPlatform || null,
-          zoom_meeting_id: debouncedZoomMeetingId
+          zoom_meeting_id: debouncedZoomMeetingId,
         });
         pendingPlatformChangeRef.current = false;
       } else {
         handleUpdate({ zoom_meeting_id: debouncedZoomMeetingId });
       }
     }
-  }, [debouncedZoomMeetingId, session.zoom_meeting_id, streamingPlatform, handleUpdate, validateAndUpdate]);
+  }, [
+    debouncedZoomMeetingId,
+    session.zoom_meeting_id,
+    streamingPlatform,
+    handleUpdate,
+    validateAndUpdate,
+  ]);
 
   useEffect(() => {
     if (debouncedZoomPasscode !== session.zoom_passcode) {
@@ -217,14 +202,20 @@ export const SessionCard = ({ session, hasConflict }) => {
       if (pendingPlatformChangeRef.current) {
         handleUpdate({
           streaming_platform: streamingPlatform || null,
-          jitsi_room_name: debouncedJitsiRoomName
+          jitsi_room_name: debouncedJitsiRoomName,
         });
         pendingPlatformChangeRef.current = false;
       } else {
         handleUpdate({ jitsi_room_name: debouncedJitsiRoomName });
       }
     }
-  }, [debouncedJitsiRoomName, session.jitsi_room_name, streamingPlatform, handleUpdate, validateAndUpdate]);
+  }, [
+    debouncedJitsiRoomName,
+    session.jitsi_room_name,
+    streamingPlatform,
+    handleUpdate,
+    validateAndUpdate,
+  ]);
 
   // Note: OTHER platform autosave handled by debouncedStreamUrl useEffect above (same as VIMEO/MUX)
 
@@ -277,9 +268,8 @@ export const SessionCard = ({ session, hasConflict }) => {
 
     // Always send both times when clearing a time order error to ensure backend is in sync
     // This handles the case where user had invalid times and is now fixing them
-    const updates = errors.time_order
-      ? { start_time: newStartTime, end_time: newEndTime }
-      : { [field]: value };
+    const updates =
+      errors.time_order ? { start_time: newStartTime, end_time: newEndTime } : { [field]: value };
 
     handleUpdate(updates);
   };
@@ -329,37 +319,27 @@ export const SessionCard = ({ session, hasConflict }) => {
   };
 
   return (
-    <div
-      className={`${styles.sessionCard} ${hasConflict ? styles.hasConflict : ''}`}
-    >
+    <div className={`${styles.sessionCard} ${hasConflict ? styles.hasConflict : ''}`}>
       {/* Header with title and actions */}
       <div className={styles.header}>
         <TextInput
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          variant="unstyled"
+          variant='unstyled'
           className={styles.titleInput}
-          placeholder="Session Title"
+          placeholder='Session Title'
           error={errors.title}
         />
 
         {/* Actions Menu */}
-        <Menu position="bottom-end" withinPortal>
+        <Menu position='bottom-end' withinPortal>
           <Menu.Target>
-            <ActionIcon
-              variant="subtle"
-              color="gray"
-              className={styles.actionButton}
-            >
+            <ActionIcon variant='subtle' color='gray' className={styles.actionButton}>
               <IconDots size={16} />
             </ActionIcon>
           </Menu.Target>
           <Menu.Dropdown>
-            <Menu.Item
-              color="red"
-              leftSection={<IconTrash size={14} />}
-              onClick={handleDelete}
-            >
+            <Menu.Item color='red' leftSection={<IconTrash size={14} />} onClick={handleDelete}>
               Delete
             </Menu.Item>
           </Menu.Dropdown>
@@ -372,34 +352,34 @@ export const SessionCard = ({ session, hasConflict }) => {
           <TimeSelect
             value={startTime}
             onChange={(value) => handleTimeChange('start_time', value)}
-            placeholder="Start time"
+            placeholder='Start time'
             classNames={{ input: styles.formTimeInput }}
             error={errors.start_time}
           />
-          <Text size="sm" c="dimmed">
+          <Text size='sm' c='dimmed'>
             to
           </Text>
           <TimeSelect
             value={endTime}
             onChange={(value) => handleTimeChange('end_time', value)}
-            placeholder="End time"
+            placeholder='End time'
             classNames={{ input: styles.formTimeInput }}
             error={errors.end_time || errors.time_order}
           />
         </Group>
 
         {/* Pills - pushed to the right */}
-        <Group ml="auto" gap="sm">
-          <Badge className={getSessionTypeBadgeClass(sessionType)} size="sm">
+        <Group ml='auto' gap='sm'>
+          <Badge className={getSessionTypeBadgeClass(sessionType)} size='sm'>
             {getSessionTypeLabel(sessionType)}
           </Badge>
-          <Badge className={styles.durationPill} size="sm">
+          <Badge className={styles.durationPill} size='sm'>
             {calculateDuration(startTime, endTime)}
           </Badge>
           {hasConflict && (
             <Badge
               className={styles.conflictPill}
-              size="sm"
+              size='sm'
               leftSection={<IconAlertCircle size={12} />}
             >
               Overlaps
@@ -412,7 +392,7 @@ export const SessionCard = ({ session, hasConflict }) => {
       <div className={styles.content}>
         {/* Info Bar */}
         <Group className={styles.infoBar}>
-          <Group gap="xs" align="center">
+          <Group gap='xs' align='center'>
             <Select
               value={sessionType}
               onChange={(value) => {
@@ -420,7 +400,7 @@ export const SessionCard = ({ session, hasConflict }) => {
                 handleUpdate({ session_type: value });
               }}
               data={SESSION_TYPES}
-              size="sm"
+              size='sm'
               allowDeselect={false}
               style={{ width: 140 }}
               classNames={{ input: styles.formSelect }}
@@ -433,13 +413,13 @@ export const SessionCard = ({ session, hasConflict }) => {
               handleUpdate({ chat_mode: value });
             }}
             data={CHAT_MODES}
-            size="sm"
+            size='sm'
             allowDeselect={false}
             style={{ width: 160 }}
             classNames={{ input: styles.formSelect }}
           />
           <Select
-            placeholder="Streaming Platform"
+            placeholder='Streaming Platform'
             value={streamingPlatform}
             onChange={(value) => {
               setStreamingPlatform(value);
@@ -468,7 +448,7 @@ export const SessionCard = ({ session, hasConflict }) => {
               }
             }}
             data={STREAMING_PLATFORMS}
-            size="sm"
+            size='sm'
             allowDeselect={false}
             style={{ width: 180 }}
             classNames={{ input: styles.formSelect }}
@@ -477,10 +457,10 @@ export const SessionCard = ({ session, hasConflict }) => {
 
         {/* Conditional streaming fields based on platform */}
         {streamingPlatform === 'VIMEO' && (
-          <Group gap="xs" style={{ marginTop: 8 }}>
+          <Group gap='xs' style={{ marginTop: 8 }}>
             <TextInput
-              placeholder="Vimeo URL or video ID"
-              size="sm"
+              placeholder='Vimeo URL or video ID'
+              size='sm'
               style={{ flex: 1 }}
               value={streamUrl}
               onChange={(e) => setStreamUrl(e.target.value)}
@@ -491,10 +471,10 @@ export const SessionCard = ({ session, hasConflict }) => {
         )}
 
         {streamingPlatform === 'MUX' && (
-          <Group gap="xs" style={{ marginTop: 8 }}>
+          <Group gap='xs' style={{ marginTop: 8 }}>
             <TextInput
-              placeholder="Mux Playback ID or stream URL"
-              size="sm"
+              placeholder='Mux Playback ID or stream URL'
+              size='sm'
               style={{ flex: 1 }}
               value={streamUrl}
               onChange={(e) => setStreamUrl(e.target.value)}
@@ -502,14 +482,14 @@ export const SessionCard = ({ session, hasConflict }) => {
               classNames={{ input: styles.formInput }}
             />
             <Select
-              placeholder="Policy"
+              placeholder='Policy'
               value={muxPlaybackPolicy}
               onChange={(value) => {
                 setMuxPlaybackPolicy(value);
                 handleUpdate({ mux_playback_policy: value });
               }}
               data={MUX_PLAYBACK_POLICIES}
-              size="sm"
+              size='sm'
               allowDeselect={false}
               style={{ width: 120 }}
               classNames={{ input: styles.formSelect }}
@@ -518,10 +498,10 @@ export const SessionCard = ({ session, hasConflict }) => {
         )}
 
         {streamingPlatform === 'ZOOM' && (
-          <Group gap="xs" style={{ marginTop: 8 }}>
+          <Group gap='xs' style={{ marginTop: 8 }}>
             <TextInput
-              placeholder="Zoom meeting URL or ID"
-              size="sm"
+              placeholder='Zoom meeting URL or ID'
+              size='sm'
               style={{ flex: 1 }}
               value={zoomMeetingId}
               onChange={(e) => setZoomMeetingId(e.target.value)}
@@ -529,8 +509,8 @@ export const SessionCard = ({ session, hasConflict }) => {
               classNames={{ input: styles.formInput }}
             />
             <TextInput
-              placeholder="Passcode (optional)"
-              size="sm"
+              placeholder='Passcode (optional)'
+              size='sm'
               style={{ width: 150 }}
               value={zoomPasscode}
               onChange={(e) => setZoomPasscode(e.target.value)}
@@ -540,10 +520,10 @@ export const SessionCard = ({ session, hasConflict }) => {
         )}
 
         {streamingPlatform === 'JITSI' && (
-          <Group gap="xs" style={{ marginTop: 8 }}>
+          <Group gap='xs' style={{ marginTop: 8 }}>
             <TextInput
-              placeholder="Jitsi room name or URL"
-              size="sm"
+              placeholder='Jitsi room name or URL'
+              size='sm'
               style={{ flex: 1 }}
               value={jitsiRoomName}
               onChange={(e) => setJitsiRoomName(e.target.value)}
@@ -554,10 +534,10 @@ export const SessionCard = ({ session, hasConflict }) => {
         )}
 
         {streamingPlatform === 'OTHER' && (
-          <Group gap="xs" style={{ marginTop: 8 }}>
+          <Group gap='xs' style={{ marginTop: 8 }}>
             <TextInput
-              placeholder="External stream URL (https://...)"
-              size="sm"
+              placeholder='External stream URL (https://...)'
+              size='sm'
               style={{ flex: 1 }}
               value={streamUrl}
               onChange={(e) => setStreamUrl(e.target.value)}
@@ -573,7 +553,7 @@ export const SessionCard = ({ session, hasConflict }) => {
             sessionId={session.id}
             eventId={session.event_id}
             canEdit={true}
-            variant="card"
+            variant='card'
             preloadedSpeakers={session.session_speakers}
           />
         </div>
@@ -582,12 +562,12 @@ export const SessionCard = ({ session, hasConflict }) => {
         <Textarea
           value={shortDescription}
           onChange={(e) => setShortDescription(e.target.value)}
-          placeholder="Short description for agenda (max 200 characters)"
+          placeholder='Short description for agenda (max 200 characters)'
           maxLength={200}
           autosize
           minRows={1}
           maxRows={3}
-          size="sm"
+          size='sm'
           error={errors.short_description}
           classNames={{ input: styles.formTextarea }}
         />
@@ -596,7 +576,7 @@ export const SessionCard = ({ session, hasConflict }) => {
         <Textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="Full session description"
+          placeholder='Full session description'
           autosize
           minRows={2}
           maxRows={6}

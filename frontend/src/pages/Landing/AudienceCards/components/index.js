@@ -1,2 +1,2 @@
-export { AudienceCard } from './AudienceCard'
-export { SectionHeader } from './SectionHeader'
+export { AudienceCard } from './AudienceCard';
+export { SectionHeader } from './SectionHeader';

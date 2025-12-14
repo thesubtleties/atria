@@ -1,23 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import {
-  Stack,
-  Title,
-  Text,
-  Divider,
-  Group,
-  Center,
-  Tabs,
-} from '@mantine/core';
+import { Stack, Title, Text, Divider, Group, Center, Tabs } from '@mantine/core';
 import { LoadingContent } from '../../../../shared/components/loading';
 import { useForm, zodResolver } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
-import {
-  IconCheck,
-  IconX,
-  IconWorld,
-  IconCalendarEvent,
-} from '@tabler/icons-react';
+import { IconCheck, IconX, IconWorld, IconCalendarEvent } from '@tabler/icons-react';
 import {
   useGetUserPrivacySettingsQuery,
   useUpdateUserPrivacySettingsMutation,
@@ -37,14 +24,12 @@ const PrivacySettings = () => {
   const [activeTab, setActiveTab] = useState('global');
 
   // Fetch privacy settings
-  const { data: privacyData, isLoading } = useGetUserPrivacySettingsQuery(
-    currentUser?.id,
-    { skip: !currentUser?.id }
-  );
+  const { data: privacyData, isLoading } = useGetUserPrivacySettingsQuery(currentUser?.id, {
+    skip: !currentUser?.id,
+  });
 
   // Update mutation
-  const [updatePrivacySettings, { isLoading: isUpdating }] =
-    useUpdateUserPrivacySettingsMutation();
+  const [updatePrivacySettings, { isLoading: isUpdating }] = useUpdateUserPrivacySettingsMutation();
 
   // Form setup
   const form = useForm({
@@ -116,42 +101,35 @@ const PrivacySettings = () => {
   if (isLoading) {
     return (
       <Center h={400}>
-        <LoadingContent message="Loading privacy settings..." size="lg" />
+        <LoadingContent message='Loading privacy settings...' size='lg' />
       </Center>
     );
   }
 
   return (
-    <Stack gap="lg">
+    <Stack gap='lg'>
       <div className={styles.headerSection}>
         <Title order={3} className={styles.sectionTitle}>
           Privacy Settings
         </Title>
-        <Text size="sm" className={styles.description}>
+        <Text size='sm' className={styles.description}>
           Control who can see your information and contact you
         </Text>
       </div>
 
-      <Tabs
-        value={activeTab}
-        onChange={setActiveTab}
-        className={styles.privacyTabs}
-      >
+      <Tabs value={activeTab} onChange={setActiveTab} className={styles.privacyTabs}>
         <Tabs.List>
-          <Tabs.Tab value="global" leftSection={<IconWorld size={16} />}>
+          <Tabs.Tab value='global' leftSection={<IconWorld size={16} />}>
             Global Privacy
           </Tabs.Tab>
-          <Tabs.Tab
-            value="events"
-            leftSection={<IconCalendarEvent size={16} />}
-          >
+          <Tabs.Tab value='events' leftSection={<IconCalendarEvent size={16} />}>
             Event Privacy
           </Tabs.Tab>
         </Tabs.List>
 
-        <Tabs.Panel value="global" pt="xl">
+        <Tabs.Panel value='global' pt='xl'>
           <form onSubmit={form.onSubmit(handleSubmit)}>
-            <Stack gap="lg">
+            <Stack gap='lg'>
               <EmailSection form={form} />
 
               <Divider className={styles.divider} />
@@ -163,20 +141,12 @@ const PrivacySettings = () => {
               <ProfileSection form={form} />
 
               {hasChanges && (
-                <Group
-                  justify="flex-end"
-                  mt="md"
-                  className={styles.buttonGroup}
-                >
-                  <Button
-                    variant="subtle"
-                    onClick={handleReset}
-                    disabled={isUpdating}
-                  >
+                <Group justify='flex-end' mt='md' className={styles.buttonGroup}>
+                  <Button variant='subtle' onClick={handleReset} disabled={isUpdating}>
                     <IconX size={16} />
                     Cancel
                   </Button>
-                  <Button variant="primary" type="submit" loading={isUpdating}>
+                  <Button variant='primary' type='submit' loading={isUpdating}>
                     <IconCheck size={16} />
                     Save Changes
                   </Button>
@@ -186,7 +156,7 @@ const PrivacySettings = () => {
           </form>
         </Tabs.Panel>
 
-        <Tabs.Panel value="events" pt="xl">
+        <Tabs.Panel value='events' pt='xl'>
           <EventOverrides />
         </Tabs.Panel>
       </Tabs>

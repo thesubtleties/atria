@@ -5,7 +5,7 @@ export const audienceData = [
     description: 'Advanced controls, custom branding, enterprise security',
     features: 'Multi-day events, sponsor management, detailed analytics',
     color: '#8B5CF6', // Purple
-    accent: 'purple'
+    accent: 'purple',
   },
   {
     id: 'single-session',
@@ -13,7 +13,7 @@ export const audienceData = [
     description: 'Galas, luncheons, fundraisers - polish without complexity',
     features: 'Streamlined check-in, instant setup, uncluttered experience',
     color: '#10B981', // Green
-    accent: 'green'
+    accent: 'green',
   },
   {
     id: 'gaming',
@@ -21,7 +21,7 @@ export const audienceData = [
     description: 'Discord alternative with your own domain',
     features: 'Custom chat rooms, streaming integration, community ownership',
     color: '#EF4444', // Red
-    accent: 'red'
+    accent: 'red',
   },
   {
     id: 'weddings',
@@ -29,7 +29,7 @@ export const audienceData = [
     description: 'Special moments, even from afar',
     features: 'Virtual attendance, live streaming, guest interaction',
     color: '#EC4899', // Pink
-    accent: 'pink'
+    accent: 'pink',
   },
   {
     id: 'nonprofit',
@@ -37,6 +37,6 @@ export const audienceData = [
     description: 'Professional networking for any budget',
     features: 'Fundraising integration, volunteer coordination, member engagement',
     color: '#FDE047', // Yellow
-    accent: 'yellow'
-  }
-]
+    accent: 'yellow',
+  },
+];

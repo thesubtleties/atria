@@ -313,7 +313,7 @@
 .modalHeader {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #1E293B;
+  color: #1e293b;
   padding: 1.5rem;
   border-bottom: 1px solid rgba(139, 92, 246, 0.04);
 }
@@ -326,53 +326,53 @@
     font-size: 1rem;
     text-align: center;
   }
-  
+
   /* Hide drag handle on mobile */
   .dragHandle {
     display: none !important;
   }
-  
+
   /* Center section header on mobile */
   .sectionHeader {
     flex-direction: column !important;
     align-items: center !important;
     gap: var(--space-md);
   }
-  
+
   .mobileCenter {
     text-align: center;
     width: 100%;
   }
-  
+
   .centerButton {
     width: auto;
     margin-top: var(--space-md);
   }
-  
+
   /* Optimize spacing for mobile */
   .welcomeSection {
     padding: var(--space-md);
   }
-  
+
   .draggableList {
     padding: 0.375rem;
   }
-  
+
   .cardInner {
     padding: 0.75rem;
   }
-  
+
   /* Menu button on mobile */
   .menuButton {
     min-width: 36px !important;
     min-height: 36px !important;
   }
-  
+
   /* Adjust card text for mobile */
   .cardTitle {
     font-size: 0.875rem;
   }
-  
+
   .cardDescription {
     font-size: 0.8125rem;
   }
@@ -383,11 +383,11 @@
   .draggableCard {
     padding: 0.625rem;
   }
-  
+
   .cardTitle {
     font-size: 0.875rem;
   }
-  
+
   .cardDescription {
     font-size: 0.75rem;
   }

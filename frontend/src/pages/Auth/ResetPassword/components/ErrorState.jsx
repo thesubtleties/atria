@@ -6,23 +6,23 @@ import styles from '../styles/index.module.css';
 
 const ErrorState = () => {
   const navigate = useNavigate();
-  
+
   return (
     <section className={styles.errorSection}>
-      <Stack align="center" gap="md" className={styles.error}>
+      <Stack align='center' gap='md' className={styles.error}>
         <div className={styles.iconWrapper}>
           <IconX size={48} stroke={2} />
         </div>
         <Title order={2} className={styles.errorTitle}>
           Invalid Reset Link
         </Title>
-        <Alert color="red" variant="light" className={styles.errorAlert}>
+        <Alert color='red' variant='light' className={styles.errorAlert}>
           This password reset link is invalid or has expired.
         </Alert>
-        <Text c="dimmed" ta="center" size="sm">
+        <Text c='dimmed' ta='center' size='sm'>
           Password reset links expire after 1 hour. Please request a new one.
         </Text>
-        <Button onClick={() => navigate('/')} variant="secondary">
+        <Button onClick={() => navigate('/')} variant='secondary'>
           Back to Home
         </Button>
       </Stack>

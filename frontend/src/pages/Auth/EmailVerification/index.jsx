@@ -17,49 +17,61 @@ export const EmailVerification = () => {
     if (data) {
       // Redirect to landing page after 3 seconds
       setTimeout(() => {
-        navigate('/', { state: { emailVerified: true, message: 'Email verified successfully! You can now log in.' } });
+        navigate('/', {
+          state: {
+            emailVerified: true,
+            message: 'Email verified successfully! You can now log in.',
+          },
+        });
       }, 3000);
     }
   }, [data, navigate]);
 
   return (
-    <Container size="sm" className={styles.container}>
-      <Paper radius="md" p="xl" className={styles.paper}>
+    <Container size='sm' className={styles.container}>
+      <Paper radius='md' p='xl' className={styles.paper}>
         {isLoading && (
-          <LoadingContent 
-            message="Please wait while we verify your email address" 
-            size="lg" 
-          />
+          <LoadingContent message='Please wait while we verify your email address' size='lg' />
         )}
 
         {data && (
-          <Stack align="center" gap="md" className={styles.success}>
+          <Stack align='center' gap='md' className={styles.success}>
             <Center className={styles.iconWrapper}>
               <IconCheck size={48} stroke={2} />
             </Center>
             <Title order={2}>Email Verified!</Title>
-            <Text c="dimmed" ta="center">
+            <Text c='dimmed' ta='center'>
               {`Your email has been successfully verified. You'll be redirected to the login page in a few seconds.`}
             </Text>
-            <Button onClick={() => navigate('/', { state: { emailVerified: true, message: 'Email verified successfully! You can now log in.' } })} variant="filled">
+            <Button
+              onClick={() =>
+                navigate('/', {
+                  state: {
+                    emailVerified: true,
+                    message: 'Email verified successfully! You can now log in.',
+                  },
+                })
+              }
+              variant='filled'
+            >
               Go to Login
             </Button>
           </Stack>
         )}
 
         {error && (
-          <Stack align="center" gap="md" className={styles.error}>
+          <Stack align='center' gap='md' className={styles.error}>
             <Center className={styles.iconWrapper}>
               <IconX size={48} stroke={2} />
             </Center>
             <Title order={2}>Verification Failed</Title>
-            <Alert color="red" variant="light" className={styles.alert}>
+            <Alert color='red' variant='light' className={styles.alert}>
               {error.data?.message || 'Invalid or expired verification link'}
             </Alert>
-            <Text c="dimmed" ta="center" size="sm">
+            <Text c='dimmed' ta='center' size='sm'>
               If your verification link has expired, you can request a new one by signing up again.
             </Text>
-            <Button onClick={() => navigate('/signup')} variant="light">
+            <Button onClick={() => navigate('/signup')} variant='light'>
               Back to Sign Up
             </Button>
           </Stack>

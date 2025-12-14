@@ -3,15 +3,11 @@
   composes: card-base from '../../../../styles/design-tokens.css';
   margin-bottom: clamp(0.75rem, 2vw, var(--space-md));
   position: relative;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.95) 0%,
-    rgba(251, 250, 255, 0.9) 100%
-  );
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(251, 250, 255, 0.9) 100%);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.85);
-  box-shadow: 
+  box-shadow:
     0 2px 8px rgba(139, 92, 246, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.5);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -19,12 +15,8 @@
 }
 
 .card:hover {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 1) 0%,
-    rgba(251, 250, 255, 0.95) 100%
-  );
-  box-shadow: 
+  background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(251, 250, 255, 0.95) 100%);
+  box-shadow:
     0 8px 24px rgba(139, 92, 246, 0.12),
     inset 0 1px 0 rgba(255, 255, 255, 0.8);
   transform: translateY(-2px) scale(1.01);
@@ -98,21 +90,17 @@
 .avatar {
   flex-shrink: 0;
   border: 2px solid rgba(255, 255, 255, 0.9);
-  box-shadow: 
+  box-shadow:
     0 2px 8px rgba(139, 92, 246, 0.15),
     inset 0 1px 0 rgba(255, 255, 255, 0.5);
-  background: linear-gradient(
-    135deg, 
-    var(--gradient-purple-light), 
-    var(--gradient-purple-medium)
-  );
+  background: linear-gradient(135deg, var(--gradient-purple-light), var(--gradient-purple-medium));
   position: relative;
   transition: all 0.3s ease;
 }
 
 .card:hover .avatar {
   transform: scale(1.05);
-  box-shadow: 
+  box-shadow:
     0 4px 12px rgba(139, 92, 246, 0.25),
     inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
@@ -203,12 +191,8 @@
   gap: 4px !important;
 }
 
-.sessionBadge[data-status="active"] {
-  background: linear-gradient(
-    135deg,
-    rgba(34, 197, 94, 0.1),
-    rgba(16, 185, 129, 0.1)
-  ) !important;
+.sessionBadge[data-status='active'] {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(16, 185, 129, 0.1)) !important;
   border: 1px solid rgba(34, 197, 94, 0.2) !important;
   color: var(--color-success) !important;
 }
@@ -256,11 +240,7 @@
 .bioSection {
   padding-top: clamp(var(--space-sm), 2vw, var(--space-md));
   margin-top: clamp(var(--space-sm), 2vw, var(--space-md));
-  background: linear-gradient(
-    180deg,
-    transparent,
-    rgba(139, 92, 246, 0.02)
-  );
+  background: linear-gradient(180deg, transparent, rgba(139, 92, 246, 0.02));
   border-top: 1px solid transparent;
   background-image: linear-gradient(
     90deg,

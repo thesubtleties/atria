@@ -13,7 +13,7 @@ export const formatSessionTime = (
   timeStr: string,
   eventStartDate: string,
   dayNumber: number,
-  eventTimezone: string
+  eventTimezone: string,
 ): SessionTimeResult => {
   if (!timeStr || !eventStartDate || !dayNumber || !eventTimezone) {
     return { eventTime: '', userTime: null, showUserTime: false, timezone: '' };

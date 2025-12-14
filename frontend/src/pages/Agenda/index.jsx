@@ -13,27 +13,23 @@ export const AgendaPage = () => {
   const location = useLocation();
   const isOrgView = location.pathname.includes('/organizations/');
   const [searchParams, setSearchParams] = useSearchParams();
-  
+
   // Get current day from URL params, default to 1
   const dayParam = parseInt(searchParams.get('day') || '1');
   const currentDay = isNaN(dayParam) || dayParam < 1 ? 1 : dayParam;
 
-  const { data: event, isLoading: eventLoading } = useGetEventQuery(
-    parseInt(eventId),
+  const { data: event, isLoading: eventLoading } = useGetEventQuery(parseInt(eventId), {
+    skip: !eventId,
+  });
+  const { data: sessionsData, isLoading: sessionsLoading } = useGetSessionsQuery(
+    {
+      eventId: parseInt(eventId),
+      dayNumber: currentDay,
+    },
     {
       skip: !eventId,
-    }
+    },
   );
-  const { data: sessionsData, isLoading: sessionsLoading } =
-    useGetSessionsQuery(
-      {
-        eventId: parseInt(eventId),
-        dayNumber: currentDay,
-      },
-      {
-        skip: !eventId,
-      }
-    );
 
   // Validate and correct day parameter if it exceeds event's day count
   useEffect(() => {
@@ -43,7 +39,7 @@ export const AgendaPage = () => {
   }, [event?.day_count, currentDay, setSearchParams]);
 
   if (eventLoading || sessionsLoading) {
-    return <LoadingSection message="Loading event agenda..." height={400} />;
+    return <LoadingSection message='Loading event agenda...' height={400} />;
   }
 
   if (!event?.start_date || !event?.day_count) {
@@ -56,7 +52,7 @@ export const AgendaPage = () => {
       <div className={styles.animatedShape1} />
       <div className={styles.animatedShape2} />
       <div className={styles.animatedShape3} />
-      
+
       <div className={styles.contentWrapper}>
         <DateNavigation
           startDate={event.start_date}

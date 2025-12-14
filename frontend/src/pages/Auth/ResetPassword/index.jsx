@@ -1,10 +1,7 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useForm, zodResolver } from '@mantine/form';
-import {
-  useValidateResetTokenQuery,
-  useResetPasswordMutation,
-} from '@/app/features/auth/api';
+import { useValidateResetTokenQuery, useResetPasswordMutation } from '@/app/features/auth/api';
 import { resetPasswordSchema } from './schemas/resetPasswordSchema';
 
 // Components
@@ -18,7 +15,7 @@ export const ResetPassword = () => {
   const { token } = useParams();
   const navigate = useNavigate();
   const [showSuccess, setShowSuccess] = useState(false);
-  
+
   const {
     data: tokenData,
     error: tokenError,
@@ -26,7 +23,7 @@ export const ResetPassword = () => {
   } = useValidateResetTokenQuery(token, {
     skip: !token,
   });
-  
+
   const [resetPassword, { isLoading: isSubmitting, error: resetError }] =
     useResetPasswordMutation();
 

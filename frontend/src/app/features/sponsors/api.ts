@@ -84,12 +84,12 @@ export const sponsorsApi = baseApi.injectEndpoints({
         params: { active_only: activeOnly ? 1 : 0 },
       }),
       providesTags: (result) =>
-        result?.sponsors
-          ? [
-              ...result.sponsors.map((sponsor) => ({ type: 'Sponsor' as const, id: sponsor.id })),
-              { type: 'Sponsor' as const, id: 'LIST' },
-            ]
-          : [{ type: 'Sponsor' as const, id: 'LIST' }],
+        result?.sponsors ?
+          [
+            ...result.sponsors.map((sponsor) => ({ type: 'Sponsor' as const, id: sponsor.id })),
+            { type: 'Sponsor' as const, id: 'LIST' },
+          ]
+        : [{ type: 'Sponsor' as const, id: 'LIST' }],
     }),
 
     getSponsor: builder.query<Sponsor, GetSponsorParams>({
@@ -112,10 +112,7 @@ export const sponsorsApi = baseApi.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: [
-        { type: 'Sponsor' as const, id: 'LIST' },
-        'Events',
-      ],
+      invalidatesTags: [{ type: 'Sponsor' as const, id: 'LIST' }, 'Events'],
     }),
 
     updateSponsor: builder.mutation<Sponsor, UpdateSponsorParams>({

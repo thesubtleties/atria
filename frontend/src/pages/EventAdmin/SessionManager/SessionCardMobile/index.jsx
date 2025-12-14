@@ -22,10 +22,7 @@ import {
 } from '@tabler/icons-react';
 import { useDebouncedValue } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
-import {
-  useUpdateSessionMutation,
-  useDeleteSessionMutation,
-} from '@/app/features/sessions/api';
+import { useUpdateSessionMutation, useDeleteSessionMutation } from '@/app/features/sessions/api';
 import { SessionSpeakers } from '@/pages/Session/SessionSpeakers';
 import { openConfirmationModal } from '@/shared/components/modals/ConfirmationModal';
 import { validateField, validateTimeOrder } from '../schemas/sessionCardSchema';
@@ -67,9 +64,7 @@ export const SessionCardMobile = ({ session, hasConflict }) => {
   // Local state for immediate UI updates
   const [title, setTitle] = useState(session.title);
   const [description, setDescription] = useState(session.description || '');
-  const [shortDescription, setShortDescription] = useState(
-    session.short_description || ''
-  );
+  const [shortDescription, setShortDescription] = useState(session.short_description || '');
   const [sessionType, setSessionType] = useState(session.session_type);
   const [startTime, setStartTime] = useState(session.start_time);
   const [endTime, setEndTime] = useState(session.end_time);
@@ -80,7 +75,9 @@ export const SessionCardMobile = ({ session, hasConflict }) => {
   const [streamUrl, setStreamUrl] = useState(session.stream_url || '');
   const [zoomMeetingId, setZoomMeetingId] = useState(session.zoom_meeting_id || '');
   const [zoomPasscode, setZoomPasscode] = useState(session.zoom_passcode || '');
-  const [muxPlaybackPolicy, setMuxPlaybackPolicy] = useState(session.mux_playback_policy || 'PUBLIC');
+  const [muxPlaybackPolicy, setMuxPlaybackPolicy] = useState(
+    session.mux_playback_policy || 'PUBLIC',
+  );
 
   // Validation error states
   const [errors, setErrors] = useState({});
@@ -113,7 +110,7 @@ export const SessionCardMobile = ({ session, hasConflict }) => {
         });
       }
     },
-    [session.id, updateSession]
+    [session.id, updateSession],
   );
 
   // Validate field before updating
@@ -140,10 +137,7 @@ export const SessionCardMobile = ({ session, hasConflict }) => {
 
   // Update on debounced changes
   useEffect(() => {
-    if (
-      debouncedTitle !== session.title &&
-      validateAndUpdate('title', debouncedTitle)
-    ) {
+    if (debouncedTitle !== session.title && validateAndUpdate('title', debouncedTitle)) {
       handleUpdate({ title: debouncedTitle });
     }
   }, [debouncedTitle, session.title, handleUpdate, validateAndUpdate]);
@@ -161,24 +155,18 @@ export const SessionCardMobile = ({ session, hasConflict }) => {
     ) {
       handleUpdate({ short_description: debouncedShortDescription });
     }
-  }, [
-    debouncedShortDescription,
-    session.short_description,
-    handleUpdate,
-    validateAndUpdate,
-  ]);
+  }, [debouncedShortDescription, session.short_description, handleUpdate, validateAndUpdate]);
 
   useEffect(() => {
     if (
       debouncedStreamUrl !== session.stream_url &&
-      (debouncedStreamUrl === '' ||
-        validateAndUpdate('stream_url', debouncedStreamUrl))
+      (debouncedStreamUrl === '' || validateAndUpdate('stream_url', debouncedStreamUrl))
     ) {
       // If we have a pending platform change, save platform + URL together
       if (pendingPlatformChangeRef.current) {
         handleUpdate({
           streaming_platform: streamingPlatform || null,
-          stream_url: debouncedStreamUrl
+          stream_url: debouncedStreamUrl,
         });
         pendingPlatformChangeRef.current = false;
       } else {
@@ -197,14 +185,20 @@ export const SessionCardMobile = ({ session, hasConflict }) => {
       if (pendingPlatformChangeRef.current) {
         handleUpdate({
           streaming_platform: streamingPlatform || null,
-          zoom_meeting_id: debouncedZoomMeetingId
+          zoom_meeting_id: debouncedZoomMeetingId,
         });
         pendingPlatformChangeRef.current = false;
       } else {
         handleUpdate({ zoom_meeting_id: debouncedZoomMeetingId });
       }
     }
-  }, [debouncedZoomMeetingId, session.zoom_meeting_id, streamingPlatform, handleUpdate, validateAndUpdate]);
+  }, [
+    debouncedZoomMeetingId,
+    session.zoom_meeting_id,
+    streamingPlatform,
+    handleUpdate,
+    validateAndUpdate,
+  ]);
 
   useEffect(() => {
     if (debouncedZoomPasscode !== session.zoom_passcode) {
@@ -260,9 +254,8 @@ export const SessionCardMobile = ({ session, hasConflict }) => {
     });
 
     // Always send both times when clearing a time order error to ensure backend is in sync
-    const updates = errors.time_order
-      ? { start_time: newStartTime, end_time: newEndTime }
-      : { [field]: value };
+    const updates =
+      errors.time_order ? { start_time: newStartTime, end_time: newEndTime } : { [field]: value };
 
     handleUpdate(updates);
   };
@@ -312,15 +305,13 @@ export const SessionCardMobile = ({ session, hasConflict }) => {
   };
 
   return (
-    <div
-      className={`${styles.sessionCard} ${hasConflict ? styles.hasConflict : ''}`}
-    >
+    <div className={`${styles.sessionCard} ${hasConflict ? styles.hasConflict : ''}`}>
       {/* Actions Menu - Top right corner */}
-      <Menu position="bottom-end" withinPortal>
+      <Menu position='bottom-end' withinPortal>
         <Menu.Target>
           <ActionIcon
-            variant="subtle"
-            color="gray"
+            variant='subtle'
+            color='gray'
             className={styles.mobileActionButton}
             style={{
               position: 'absolute',
@@ -334,51 +325,47 @@ export const SessionCardMobile = ({ session, hasConflict }) => {
           </ActionIcon>
         </Menu.Target>
         <Menu.Dropdown>
-          <Menu.Item
-            color="red"
-            leftSection={<IconTrash size={14} />}
-            onClick={handleDelete}
-          >
+          <Menu.Item color='red' leftSection={<IconTrash size={14} />} onClick={handleDelete}>
             Delete
           </Menu.Item>
         </Menu.Dropdown>
       </Menu>
 
       {/* Collapsed View - Always Visible */}
-      <Stack gap="xs">
+      <Stack gap='xs'>
         {/* Title Input */}
         <TextInput
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          variant="unstyled"
+          variant='unstyled'
           className={styles.titleInput}
-          placeholder="Session Title"
+          placeholder='Session Title'
           error={errors.title}
           style={{ paddingRight: '2.5rem' }}
         />
 
         {/* Time and Basic Info */}
-        <Group justify="space-between" wrap="nowrap">
+        <Group justify='space-between' wrap='nowrap'>
           <div className={styles.mobileTimeDisplay}>
             <IconClock size={16} />
-            <Text size="sm">
+            <Text size='sm'>
               {formatTime(startTime)} - {formatTime(endTime)}
             </Text>
-            <Badge size="sm" className={styles.durationPill}>
+            <Badge size='sm' className={styles.durationPill}>
               {calculateDuration(startTime, endTime)}
             </Badge>
           </div>
         </Group>
 
         {/* Session Type and Conflict Badge */}
-        <Group gap="xs">
-          <Badge className={getSessionTypeBadgeClass(sessionType)} size="sm">
+        <Group gap='xs'>
+          <Badge className={getSessionTypeBadgeClass(sessionType)} size='sm'>
             {getSessionTypeLabel(sessionType)}
           </Badge>
           {hasConflict && (
             <Badge
               className={styles.conflictPill}
-              size="sm"
+              size='sm'
               leftSection={<IconAlertCircle size={12} />}
             >
               Overlaps
@@ -391,20 +378,18 @@ export const SessionCardMobile = ({ session, hasConflict }) => {
           className={styles.expandableSection}
           onClick={() => setDetailsExpanded(!detailsExpanded)}
         >
-          <Group justify="space-between" wrap="nowrap">
-            <Text size="sm" fw={500}>
+          <Group justify='space-between' wrap='nowrap'>
+            <Text size='sm' fw={500}>
               Session Details
             </Text>
             <ActionIcon
-              size="xs"
-              variant="transparent"
+              size='xs'
+              variant='transparent'
               style={{ color: 'var(--color-text-muted)' }}
             >
-              {detailsExpanded ? (
+              {detailsExpanded ?
                 <IconChevronUp size={14} />
-              ) : (
-                <IconChevronDown size={14} />
-              )}
+              : <IconChevronDown size={14} />}
             </ActionIcon>
           </Group>
         </div>
@@ -413,61 +398,61 @@ export const SessionCardMobile = ({ session, hasConflict }) => {
       {/* Expanded Content */}
       <Collapse in={detailsExpanded}>
         <div className={styles.collapsedContent}>
-          <Stack gap="md" mt="md">
+          <Stack gap='md' mt='md'>
             {/* Time Selection */}
             <Group grow>
               <TimeSelect
                 value={startTime}
                 onChange={(value) => handleTimeChange('start_time', value)}
-                placeholder="Start time"
-                label="Start Time"
+                placeholder='Start time'
+                label='Start Time'
                 error={errors.start_time}
-                size="sm"
+                size='sm'
                 classNames={{ input: styles.formTimeInput }}
               />
               <TimeSelect
                 value={endTime}
                 onChange={(value) => handleTimeChange('end_time', value)}
-                placeholder="End time"
-                label="End Time"
+                placeholder='End time'
+                label='End Time'
                 error={errors.end_time || errors.time_order}
-                size="sm"
+                size='sm'
                 classNames={{ input: styles.formTimeInput }}
               />
             </Group>
 
             {/* Session Type */}
             <Select
-              label="Session Type"
+              label='Session Type'
               value={sessionType}
               onChange={(value) => {
                 setSessionType(value);
                 handleUpdate({ session_type: value });
               }}
               data={SESSION_TYPES}
-              size="sm"
+              size='sm'
               allowDeselect={false}
               classNames={{ input: styles.formSelect }}
             />
 
             {/* Chat Mode */}
             <Select
-              label="Chat Mode"
+              label='Chat Mode'
               value={chatMode}
               onChange={(value) => {
                 setChatMode(value);
                 handleUpdate({ chat_mode: value });
               }}
               data={CHAT_MODES}
-              size="sm"
+              size='sm'
               allowDeselect={false}
               classNames={{ input: styles.formSelect }}
             />
 
             {/* Streaming Platform */}
             <Select
-              label="Streaming Platform"
-              placeholder="Select platform"
+              label='Streaming Platform'
+              placeholder='Select platform'
               value={streamingPlatform}
               onChange={(value) => {
                 setStreamingPlatform(value);
@@ -492,7 +477,7 @@ export const SessionCardMobile = ({ session, hasConflict }) => {
                 }
               }}
               data={STREAMING_PLATFORMS}
-              size="sm"
+              size='sm'
               allowDeselect={false}
               classNames={{ input: styles.formSelect }}
             />
@@ -500,9 +485,9 @@ export const SessionCardMobile = ({ session, hasConflict }) => {
             {/* Conditional streaming fields */}
             {streamingPlatform === 'VIMEO' && (
               <TextInput
-                label="Vimeo URL or Video ID"
-                placeholder="https://vimeo.com/123... or ID"
-                size="sm"
+                label='Vimeo URL or Video ID'
+                placeholder='https://vimeo.com/123... or ID'
+                size='sm'
                 value={streamUrl}
                 onChange={(e) => setStreamUrl(e.target.value)}
                 error={errors.stream_url}
@@ -513,23 +498,23 @@ export const SessionCardMobile = ({ session, hasConflict }) => {
             {streamingPlatform === 'MUX' && (
               <>
                 <TextInput
-                  label="Mux Playback ID or URL"
-                  placeholder="DS00Spx1CV902..."
-                  size="sm"
+                  label='Mux Playback ID or URL'
+                  placeholder='DS00Spx1CV902...'
+                  size='sm'
                   value={streamUrl}
                   onChange={(e) => setStreamUrl(e.target.value)}
                   error={errors.stream_url}
                   classNames={{ input: styles.formInput }}
                 />
                 <Select
-                  label="Mux Playback Policy"
+                  label='Mux Playback Policy'
                   value={muxPlaybackPolicy}
                   onChange={(value) => {
                     setMuxPlaybackPolicy(value);
                     handleUpdate({ mux_playback_policy: value });
                   }}
                   data={MUX_PLAYBACK_POLICIES}
-                  size="sm"
+                  size='sm'
                   allowDeselect={false}
                   classNames={{ input: styles.formSelect }}
                 />
@@ -539,18 +524,18 @@ export const SessionCardMobile = ({ session, hasConflict }) => {
             {streamingPlatform === 'ZOOM' && (
               <>
                 <TextInput
-                  label="Zoom Meeting URL or ID"
-                  placeholder="https://zoom.us/j/123... or ID"
-                  size="sm"
+                  label='Zoom Meeting URL or ID'
+                  placeholder='https://zoom.us/j/123... or ID'
+                  size='sm'
                   value={zoomMeetingId}
                   onChange={(e) => setZoomMeetingId(e.target.value)}
                   error={errors.zoom_meeting_id}
                   classNames={{ input: styles.formInput }}
                 />
                 <TextInput
-                  label="Passcode (Optional)"
-                  placeholder="Meeting passcode"
-                  size="sm"
+                  label='Passcode (Optional)'
+                  placeholder='Meeting passcode'
+                  size='sm'
                   value={zoomPasscode}
                   onChange={(e) => setZoomPasscode(e.target.value)}
                   classNames={{ input: styles.formInput }}
@@ -560,7 +545,7 @@ export const SessionCardMobile = ({ session, hasConflict }) => {
 
             {/* Speakers */}
             <div className={styles.speakersSection}>
-              <Text size="sm" fw={500} mb="xs">
+              <Text size='sm' fw={500} mb='xs'>
                 Speakers
               </Text>
               <SessionSpeakers
@@ -573,29 +558,29 @@ export const SessionCardMobile = ({ session, hasConflict }) => {
 
             {/* Short Description */}
             <Textarea
-              label="Short Description"
+              label='Short Description'
               value={shortDescription}
               onChange={(e) => setShortDescription(e.target.value)}
-              placeholder="Brief description for agenda (max 200 characters)"
+              placeholder='Brief description for agenda (max 200 characters)'
               maxLength={200}
               autosize
               minRows={2}
               maxRows={3}
-              size="sm"
+              size='sm'
               error={errors.short_description}
               classNames={{ input: styles.formTextarea }}
             />
 
             {/* Full Description */}
             <Textarea
-              label="Full Description"
+              label='Full Description'
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Detailed session description"
+              placeholder='Detailed session description'
               autosize
               minRows={3}
               maxRows={6}
-              size="sm"
+              size='sm'
               classNames={{ input: styles.formTextarea }}
             />
           </Stack>

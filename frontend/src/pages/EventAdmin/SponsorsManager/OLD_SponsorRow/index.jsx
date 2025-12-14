@@ -1,11 +1,4 @@
-import {
-  Table,
-  Text,
-  ActionIcon,
-  Switch,
-  Menu,
-  Box,
-} from '@mantine/core';
+import { Table, Text, ActionIcon, Switch, Menu, Box } from '@mantine/core';
 import {
   IconEdit,
   IconTrash,
@@ -26,29 +19,19 @@ import {
 import PrivateImage from '../../../../shared/components/PrivateImage';
 import styles from './styles/index.module.css';
 
-const SponsorRow = ({ 
-  sponsor, 
-  onEdit,
-  isDragging,
-  isOverlay
-}) => {
+const SponsorRow = ({ sponsor, onEdit, isDragging, isOverlay }) => {
   const [deleteSponsor] = useDeleteSponsorMutation();
   const [toggleActive] = useToggleSponsorActiveMutation();
   const [toggleFeatured] = useToggleSponsorFeaturedMutation();
 
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-  } = useSortable({ 
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
     id: sponsor.id,
-    disabled: isOverlay
+    disabled: isOverlay,
   });
 
-  const style = isOverlay 
-    ? {} 
+  const style =
+    isOverlay ?
+      {}
     : {
         transform: CSS.Transform.toString(transform),
         transition,
@@ -112,9 +95,9 @@ const SponsorRow = ({
       className={`${styles.sponsorRow} ${isDragging ? styles.dragging : ''}`}
     >
       <Table.Td className={styles.dragHandleCell}>
-        <ActionIcon 
-          variant="subtle" 
-          size="sm" 
+        <ActionIcon
+          variant='subtle'
+          size='sm'
           className={styles.dragHandle}
           {...attributes}
           {...listeners}
@@ -123,24 +106,24 @@ const SponsorRow = ({
         </ActionIcon>
       </Table.Td>
       <Table.Td className={styles.logoCell}>
-        {sponsor.logo_url ? (
+        {sponsor.logo_url ?
           <PrivateImage
             objectKey={sponsor.logo_url}
             alt={sponsor.name}
             width={40}
             height={40}
-            fit="contain"
+            fit='contain'
             className={styles.logo}
             placeholder={<Box className={styles.logoPlaceholder} />}
           />
-        ) : (
-          <Box className={styles.logoPlaceholder} />
-        )}
+        : <Box className={styles.logoPlaceholder} />}
       </Table.Td>
       <Table.Td>
-        <Text fw={500} className={styles.sponsorName}>{sponsor.name}</Text>
+        <Text fw={500} className={styles.sponsorName}>
+          {sponsor.name}
+        </Text>
         {sponsor.website_url && (
-          <Text size="sm" c="dimmed" className={styles.sponsorUrl}>
+          <Text size='sm' c='dimmed' className={styles.sponsorUrl}>
             {sponsor.website_url}
           </Text>
         )}
@@ -154,7 +137,7 @@ const SponsorRow = ({
             disabled={isOverlay}
             classNames={{
               root: styles.statusSwitch,
-              label: styles.switchLabel
+              label: styles.switchLabel,
             }}
           />
         </div>
@@ -162,26 +145,20 @@ const SponsorRow = ({
       <Table.Td className={styles.featuredCell}>
         <ActionIcon
           variant={sponsor.featured ? 'filled' : 'subtle'}
-          color="yellow"
+          color='yellow'
           onClick={handleToggleFeatured}
           disabled={isOverlay}
           className={styles.featuredButton}
         >
-          {sponsor.featured ? (
+          {sponsor.featured ?
             <IconStarFilled size={16} />
-          ) : (
-            <IconStar size={16} />
-          )}
+          : <IconStar size={16} />}
         </ActionIcon>
       </Table.Td>
       <Table.Td className={styles.actionsCell}>
-        <Menu 
-          shadow="md" 
-          width={200} 
-          position="bottom-end"
-        >
+        <Menu shadow='md' width={200} position='bottom-end'>
           <Menu.Target>
-            <ActionIcon variant="subtle" color="gray" className={styles.actionButton}>
+            <ActionIcon variant='subtle' color='gray' className={styles.actionButton}>
               <IconDots size={16} />
             </ActionIcon>
           </Menu.Target>
@@ -196,7 +173,7 @@ const SponsorRow = ({
             <Menu.Item
               className={`${styles.menuItem} ${styles.menuItemDanger}`}
               leftSection={<IconTrash size={14} />}
-              color="red"
+              color='red'
               onClick={handleDelete}
             >
               Delete

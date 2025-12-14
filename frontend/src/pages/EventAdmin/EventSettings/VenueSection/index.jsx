@@ -1,13 +1,5 @@
 import { useState, useEffect } from 'react';
-import {
-  Select,
-  TextInput,
-  Textarea,
-  Stack,
-  Group,
-  Text,
-  Alert,
-} from '@mantine/core';
+import { Select, TextInput, Textarea, Stack, Group, Text, Alert } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { IconInfoCircle, IconCheck, IconX } from '@tabler/icons-react';
@@ -49,8 +41,7 @@ const VenueSection = ({ event, eventId }) => {
 
   // Show/hide venue fields based on format
   const showVenueFields =
-    form.values.event_format === 'IN_PERSON' ||
-    form.values.event_format === 'HYBRID';
+    form.values.event_format === 'IN_PERSON' || form.values.event_format === 'HYBRID';
 
   const handleSubmit = async (values) => {
     try {
@@ -100,15 +91,15 @@ const VenueSection = ({ event, eventId }) => {
   return (
     <div className={`${parentStyles.section} ${styles.glassSection}`}>
       <h3 className={parentStyles.sectionTitle}>Event Format & Venue</h3>
-      <Text c="dimmed" size="sm" mb="xl">
+      <Text c='dimmed' size='sm' mb='xl'>
         Configure how attendees will participate in your event
       </Text>
 
       <form onSubmit={form.onSubmit(handleSubmit)}>
-        <Stack spacing="md">
-          <Group grow align="flex-start">
+        <Stack spacing='md'>
+          <Group grow align='flex-start'>
             <Select
-              label="Event Format"
+              label='Event Format'
               data={[
                 { value: 'VIRTUAL', label: 'Virtual' },
                 { value: 'IN_PERSON', label: 'In-Person' },
@@ -144,10 +135,7 @@ const VenueSection = ({ event, eventId }) => {
           </Group>
 
           {form.values.event_format === 'VIRTUAL' && (
-            <Alert
-              icon={<IconInfoCircle size={16} />}
-              className={styles.infoAlert}
-            >
+            <Alert icon={<IconInfoCircle size={16} />} className={styles.infoAlert}>
               {`Virtual events don't require venue information. Attendees will
               join online.`}
             </Alert>
@@ -158,8 +146,8 @@ const VenueSection = ({ event, eventId }) => {
               <h4 className={styles.subsectionTitle}>Venue Information</h4>
 
               <TextInput
-                label="Venue Name"
-                placeholder="Enter venue name"
+                label='Venue Name'
+                placeholder='Enter venue name'
                 required
                 classNames={{
                   input: styles.formInput,
@@ -169,8 +157,8 @@ const VenueSection = ({ event, eventId }) => {
               />
 
               <Textarea
-                label="Venue Address"
-                placeholder="Enter full address"
+                label='Venue Address'
+                placeholder='Enter full address'
                 minRows={2}
                 classNames={{
                   input: styles.formInput,
@@ -181,8 +169,8 @@ const VenueSection = ({ event, eventId }) => {
 
               <Group grow>
                 <TextInput
-                  label="City"
-                  placeholder="Enter city"
+                  label='City'
+                  placeholder='Enter city'
                   required
                   classNames={{
                     input: styles.formInput,
@@ -192,8 +180,8 @@ const VenueSection = ({ event, eventId }) => {
                 />
 
                 <Select
-                  label="State"
-                  placeholder="Select state"
+                  label='State'
+                  placeholder='Select state'
                   searchable
                   clearable
                   data={US_STATES}
@@ -205,8 +193,8 @@ const VenueSection = ({ event, eventId }) => {
                 />
 
                 <TextInput
-                  label="Country"
-                  placeholder="Enter country"
+                  label='Country'
+                  placeholder='Enter country'
                   required
                   classNames={{
                     input: styles.formInput,
@@ -219,12 +207,12 @@ const VenueSection = ({ event, eventId }) => {
           )}
 
           {hasChanges && (
-            <Group justify="flex-end" className={parentStyles.formActions}>
-              <Button variant="subtle" onClick={handleReset}>
+            <Group justify='flex-end' className={parentStyles.formActions}>
+              <Button variant='subtle' onClick={handleReset}>
                 <IconX size={16} />
                 Cancel
               </Button>
-              <Button type="submit" variant="primary" loading={isLoading}>
+              <Button type='submit' variant='primary' loading={isLoading}>
                 <IconCheck size={16} />
                 Save Changes
               </Button>

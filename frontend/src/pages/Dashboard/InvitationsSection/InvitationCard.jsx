@@ -52,7 +52,7 @@ function InvitationCard({ invitation, type }) {
         });
         // Navigate to event page
         navigate(
-          `/app/organizations/${invitation.event.organization.id}/events/${invitation.event.id}`
+          `/app/organizations/${invitation.event.organization.id}/events/${invitation.event.id}`,
         );
       }
     } catch (error) {
@@ -109,94 +109,76 @@ function InvitationCard({ invitation, type }) {
         <div className={styles.cardHeader}>
           <Badge
             color={type === 'organization' ? 'teal' : 'pink'}
-            variant="light"
-            radius="sm"
+            variant='light'
+            radius='sm'
             styles={{
               root: {
                 background:
-                  type === 'organization'
-                    ? 'rgba(16, 185, 129, 0.08)'
-                    : 'rgba(236, 72, 153, 0.08)',
+                  type === 'organization' ? 'rgba(16, 185, 129, 0.08)' : 'rgba(236, 72, 153, 0.08)',
                 border:
-                  type === 'organization'
-                    ? '1px solid rgba(16, 185, 129, 0.15)'
-                    : '1px solid rgba(236, 72, 153, 0.15)',
+                  type === 'organization' ?
+                    '1px solid rgba(16, 185, 129, 0.15)'
+                  : '1px solid rgba(236, 72, 153, 0.15)',
                 color: type === 'organization' ? '#10b981' : '#ec4899',
               },
             }}
           >
             {type === 'organization' ? 'Organization' : 'Event'}
           </Badge>
-          <Text size="sm" color="dimmed">
+          <Text size='sm' color='dimmed'>
             {timeAgo}
           </Text>
         </div>
 
         <div className={styles.cardMain}>
-          <Text size="lg" className={styles.title}>
-            {type === 'organization'
-              ? invitation.organization.name
-              : invitation.event.title}
+          <Text size='lg' className={styles.title}>
+            {type === 'organization' ? invitation.organization.name : invitation.event.title}
           </Text>
 
           {type === 'event' && (
-            <Text size="sm" color="dimmed">
+            <Text size='sm' color='dimmed'>
               {invitation.event.organization.name} •{' '}
-              {invitation.event.start_date
-                ? parseDateOnly(invitation.event.start_date).toLocaleDateString(
-                    'en-US',
-                    {
-                      month: 'short',
-                      day: 'numeric',
-                      year: 'numeric',
-                    }
-                  )
-                : 'Date TBD'}
+              {invitation.event.start_date ?
+                parseDateOnly(invitation.event.start_date).toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric',
+                })
+              : 'Date TBD'}
             </Text>
           )}
 
-          <Text size="sm" color="dimmed" className={styles.inviterInfo}>
+          <Text size='sm' color='dimmed' className={styles.inviterInfo}>
             {`Invited by ${invitation.invited_by?.name || 'Unknown'} • Role: `}
             <strong>{getRoleDisplayName(invitation.role)}</strong>
           </Text>
 
           {invitation.message && (
-            <Text size="sm" className={styles.message}>
+            <Text size='sm' className={styles.message}>
               {`"${invitation.message}"`}
             </Text>
           )}
 
           {isExpiringSoon && (
-            <Text size="xs" color="orange" weight={500}>
+            <Text size='xs' color='orange' weight={500}>
               Expires in {Math.floor(hoursUntilExpiry)} hours
             </Text>
           )}
         </div>
       </div>
 
-      <Group spacing="xs" className={styles.cardActions}>
-        {isProcessing ? (
-          <LoadingSpinner size="sm" />
-        ) : (
-          <>
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={handleAccept}
-              disabled={isProcessing}
-            >
+      <Group spacing='xs' className={styles.cardActions}>
+        {isProcessing ?
+          <LoadingSpinner size='sm' />
+        : <>
+            <Button variant='primary' size='sm' onClick={handleAccept} disabled={isProcessing}>
               Accept
             </Button>
-            <Button
-              variant="subtle"
-              size="sm"
-              onClick={handleDecline}
-              disabled={isProcessing}
-            >
+            <Button variant='subtle' size='sm' onClick={handleDecline} disabled={isProcessing}>
               Decline
             </Button>
           </>
-        )}
+        }
       </Group>
     </div>
   );

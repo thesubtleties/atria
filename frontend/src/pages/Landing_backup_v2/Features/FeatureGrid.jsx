@@ -22,8 +22,7 @@ const FEATURES_DATA = [
   },
   {
     title: 'Service Integration',
-    description:
-      'Integrates with popular streaming platforms including Vimeo, DaCast, and Zoom.',
+    description: 'Integrates with popular streaming platforms including Vimeo, DaCast, and Zoom.',
     icon: IconBrandZoom,
     color: 'indigo',
   },
@@ -43,8 +42,7 @@ const FEATURES_DATA = [
   },
   {
     title: 'Sponsor Showcase',
-    description:
-      'Highlight sponsors in unique and valuable ways with customizable sponsor levels.',
+    description: 'Highlight sponsors in unique and valuable ways with customizable sponsor levels.',
     icon: IconBuildingStore,
     color: 'pink',
   },

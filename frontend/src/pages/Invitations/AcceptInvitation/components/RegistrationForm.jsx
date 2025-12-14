@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import { 
-  TextInput, 
-  PasswordInput, 
-  Title, 
-  Text, 
+import {
+  TextInput,
+  PasswordInput,
+  Title,
+  Text,
   Stack,
   Alert,
   Progress,
   List,
-  Group
+  Group,
 } from '@mantine/core';
 import { Button } from '../../../../shared/components/buttons';
 import { useForm, zodResolver } from '@mantine/form';
@@ -29,9 +29,9 @@ const RegistrationForm = ({ email, selectedInvitations, onSuccess }) => {
       first_name: '',
       last_name: '',
       password: '',
-      confirmPassword: ''
+      confirmPassword: '',
     },
-    validate: zodResolver(registrationSchema)
+    validate: zodResolver(registrationSchema),
   });
 
   const calculatePasswordStrength = (password) => {
@@ -68,19 +68,19 @@ const RegistrationForm = ({ email, selectedInvitations, onSuccess }) => {
           email,
           first_name: values.first_name,
           last_name: values.last_name,
-          password: values.password
+          password: values.password,
         },
         org_invitation_ids: selectedInvitations.organization_ids,
-        event_invitation_ids: selectedInvitations.event_ids
+        event_invitation_ids: selectedInvitations.event_ids,
       }).unwrap();
 
       // Update auth state with user
       dispatch(setUser(result.user));
-      
+
       // Store tokens (they'll be in cookies, but we might need them)
       localStorage.setItem('access_token', result.access_token);
       localStorage.setItem('refresh_token', result.refresh_token);
-      
+
       // Call success callback
       onSuccess();
     } catch (err) {
@@ -88,26 +88,28 @@ const RegistrationForm = ({ email, selectedInvitations, onSuccess }) => {
     }
   };
 
-  const totalSelected = selectedInvitations.organization_ids.length + 
-                       selectedInvitations.event_ids.length;
+  const totalSelected =
+    selectedInvitations.organization_ids.length + selectedInvitations.event_ids.length;
 
   return (
     <div className={styles.container}>
-      <Title order={3} mb="md" className={styles.title}>Create Your Account</Title>
-      <Text size="sm" c="dimmed" mb="xl" className={styles.subtitle}>
+      <Title order={3} mb='md' className={styles.title}>
+        Create Your Account
+      </Title>
+      <Text size='sm' c='dimmed' mb='xl' className={styles.subtitle}>
         Complete your registration to accept your invitations
       </Text>
 
       {error && (
-        <Alert color="red" mb="md" icon={<IconX />} className={styles.errorAlert}>
+        <Alert color='red' mb='md' icon={<IconX />} className={styles.errorAlert}>
           {error.data?.message || 'Registration failed. Please try again.'}
         </Alert>
       )}
 
       <form onSubmit={form.onSubmit(handleSubmit)}>
-        <Stack gap="md">
+        <Stack gap='md'>
           <TextInput
-            label="Email"
+            label='Email'
             value={email}
             disabled
             leftSection={<IconMail size={16} />}
@@ -116,16 +118,16 @@ const RegistrationForm = ({ email, selectedInvitations, onSuccess }) => {
 
           <Group grow>
             <TextInput
-              label="First Name"
-              placeholder="Enter your first name"
+              label='First Name'
+              placeholder='Enter your first name'
               required
               classNames={{ input: styles.input }}
               {...form.getInputProps('first_name')}
             />
 
             <TextInput
-              label="Last Name"
-              placeholder="Enter your last name"
+              label='Last Name'
+              placeholder='Enter your last name'
               required
               classNames={{ input: styles.input }}
               {...form.getInputProps('last_name')}
@@ -134,8 +136,8 @@ const RegistrationForm = ({ email, selectedInvitations, onSuccess }) => {
 
           <div>
             <PasswordInput
-              label="Password"
-              placeholder="Create a password"
+              label='Password'
+              placeholder='Create a password'
               required
               leftSection={<IconLock size={16} />}
               value={form.values.password}
@@ -145,14 +147,19 @@ const RegistrationForm = ({ email, selectedInvitations, onSuccess }) => {
             />
             {form.values.password && (
               <div className={styles.passwordStrength}>
-                <Progress 
-                  value={passwordStrength} 
+                <Progress
+                  value={passwordStrength}
                   color={getPasswordStrengthColor()}
-                  size="xs"
+                  size='xs'
                   mt={4}
                   className={styles.progressBar}
                 />
-                <Text size="xs" c={getPasswordStrengthColor()} mt={2} className={styles.strengthText}>
+                <Text
+                  size='xs'
+                  c={getPasswordStrengthColor()}
+                  mt={2}
+                  className={styles.strengthText}
+                >
                   Password strength: {getPasswordStrengthLabel()}
                 </Text>
               </div>
@@ -160,8 +167,8 @@ const RegistrationForm = ({ email, selectedInvitations, onSuccess }) => {
           </div>
 
           <PasswordInput
-            label="Confirm Password"
-            placeholder="Re-enter your password"
+            label='Confirm Password'
+            placeholder='Re-enter your password'
             required
             leftSection={<IconLock size={16} />}
             classNames={{ input: styles.input }}
@@ -169,10 +176,18 @@ const RegistrationForm = ({ email, selectedInvitations, onSuccess }) => {
           />
 
           <div className={styles.summary}>
-            <Text size="sm" fw={500} mb="xs" className={styles.summaryTitle}>
-              {"You're accepting "}{totalSelected}{" invitation"}{totalSelected !== 1 ? 's' : ''}:
+            <Text size='sm' fw={500} mb='xs' className={styles.summaryTitle}>
+              {"You're accepting "}
+              {totalSelected}
+              {' invitation'}
+              {totalSelected !== 1 ? 's' : ''}:
             </Text>
-            <List size="sm" spacing={4} icon={<IconCheck size={14} />} className={styles.summaryList}>
+            <List
+              size='sm'
+              spacing={4}
+              icon={<IconCheck size={14} />}
+              className={styles.summaryList}
+            >
               {selectedInvitations.organization_ids.length > 0 && (
                 <List.Item className={styles.listItem}>
                   {selectedInvitations.organization_ids.length} organization invitation
@@ -188,9 +203,9 @@ const RegistrationForm = ({ email, selectedInvitations, onSuccess }) => {
             </List>
           </div>
 
-          <Button 
-            type="submit" 
-            variant="primary"
+          <Button
+            type='submit'
+            variant='primary'
             disabled={totalSelected === 0 || isLoading}
             className={`${styles.submitButton} ${styles.fullWidth}`}
           >

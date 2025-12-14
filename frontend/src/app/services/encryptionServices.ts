@@ -27,7 +27,7 @@ class EncryptionService {
   async encryptMessage(
     message: string,
     _threadId?: string,
-    _recipientId?: number
+    _recipientId?: number,
   ): Promise<string> {
     // For now, just return the message as is
     // Later, this will use the thread key to encrypt
@@ -36,10 +36,7 @@ class EncryptionService {
   }
 
   /** Decrypt a message (placeholder) */
-  async decryptMessage(
-    encryptedMessage: string,
-    _threadId?: string
-  ): Promise<string> {
+  async decryptMessage(encryptedMessage: string, _threadId?: string): Promise<string> {
     // For now, just return the message as is
     // Later, this will use the thread key to decrypt
     // TODO: Implement with threadId when encryption is added
@@ -56,4 +53,3 @@ class EncryptionService {
 
 // Create singleton instance
 export const encryptionService = new EncryptionService();
-

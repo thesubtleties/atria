@@ -48,11 +48,7 @@ export default defineConfig(({ mode }) => ({
           }
 
           // Form libraries (only on certain pages)
-          if (
-            id.includes('react-hook-form') ||
-            id.includes('zod') ||
-            id.includes('@hookform')
-          ) {
+          if (id.includes('react-hook-form') || id.includes('zod') || id.includes('@hookform')) {
             return 'forms';
           }
 
@@ -99,4 +95,3 @@ export default defineConfig(({ mode }) => ({
     },
   },
 }));
-

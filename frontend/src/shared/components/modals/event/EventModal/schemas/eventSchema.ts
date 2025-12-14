@@ -20,11 +20,12 @@ export const eventSchema = z
       return data.end_date >= data.start_date;
     },
     (data) => ({
-      message: data.event_type === 'SINGLE_SESSION'
-        ? 'Single session events must start and end on the same day'
+      message:
+        data.event_type === 'SINGLE_SESSION' ?
+          'Single session events must start and end on the same day'
         : 'End date must be after or equal to start date',
       path: ['end_date'],
-    })
+    }),
   )
   .refine(
     (data) => {
@@ -35,7 +36,7 @@ export const eventSchema = z
     {
       message: 'Start date cannot be in the past',
       path: ['start_date'],
-    }
+    },
   );
 export const eventUpdateSchema = z
   .object({
@@ -65,13 +66,14 @@ export const eventUpdateSchema = z
       return data.end_date! >= data.start_date!;
     },
     (data) => ({
-      message: (data.start_date && !data.end_date) || (!data.start_date && data.end_date)
-        ? 'Both start and end dates must be provided together'
-        : data.event_type === 'SINGLE_SESSION'
-          ? 'Single session events must start and end on the same day'
-          : 'End date must be after or equal to start date',
+      message:
+        (data.start_date && !data.end_date) || (!data.start_date && data.end_date) ?
+          'Both start and end dates must be provided together'
+        : data.event_type === 'SINGLE_SESSION' ?
+          'Single session events must start and end on the same day'
+        : 'End date must be after or equal to start date',
       path: ['end_date'],
-    })
+    }),
   )
   .refine(
     (data) => {
@@ -85,5 +87,5 @@ export const eventUpdateSchema = z
     {
       message: 'Start date cannot be in the past',
       path: ['start_date'],
-    }
+    },
   );

@@ -14,11 +14,11 @@ const ConnectionSection = ({ form }) => {
             { value: 'speakers_organizers', label: 'Speakers & Organizers Only' },
             { value: 'none', label: 'No One' },
           ]}
-          description="Who can send you connection requests"
+          description='Who can send you connection requests'
           allowDeselect={false}
         />
       </div>
-      
+
       <div className={styles.formSection}>
         <Text className={styles.sectionLabel}>Social Links</Text>
         <Select
@@ -29,7 +29,7 @@ const ConnectionSection = ({ form }) => {
             { value: 'connections', label: 'Connections Only' },
             { value: 'hidden', label: 'Hidden' },
           ]}
-          description="Who can see your social media links"
+          description='Who can see your social media links'
           allowDeselect={false}
         />
       </div>

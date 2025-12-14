@@ -1,11 +1,4 @@
-import {
-  Text,
-  Group,
-  ActionIcon,
-  Switch,
-  Menu,
-  Box,
-} from '@mantine/core';
+import { Text, Group, ActionIcon, Switch, Menu, Box } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import {
   IconEdit,
@@ -26,19 +19,13 @@ import {
 import PrivateImage from '../../../../shared/components/PrivateImage';
 import styles from './styles/index.module.css';
 
-const SponsorCard = ({ 
-  id,
-  sponsor, 
-  tierId,
-  index,
-  onEdit,
-}) => {
+const SponsorCard = ({ id, sponsor, tierId, index, onEdit }) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
   const [deleteSponsor] = useDeleteSponsorMutation();
   const [toggleActive] = useToggleSponsorActiveMutation();
   const [toggleFeatured] = useToggleSponsorFeaturedMutation();
 
-  const { ref, isDragging } = useSortable({ 
+  const { ref, isDragging } = useSortable({
     id,
     index,
     group: tierId,
@@ -108,37 +95,30 @@ const SponsorCard = ({
           {/* Logo and Info */}
           <div className={styles.mobileCardContent}>
             <div className={styles.logoContainerMobile}>
-              {sponsor.logo_url ? (
+              {sponsor.logo_url ?
                 <PrivateImage
                   objectKey={sponsor.logo_url}
                   alt={sponsor.name}
                   width={40}
                   height={40}
-                  fit="contain"
+                  fit='contain'
                   className={styles.logoMobile}
                   placeholder={<Box className={styles.logoPlaceholderMobile} />}
                 />
-              ) : (
-                <Box className={styles.logoPlaceholderMobile} />
-              )}
+              : <Box className={styles.logoPlaceholderMobile} />}
             </div>
-            
+
             <div className={styles.sponsorInfoMobile}>
-              <Text fw={600} size="md" className={styles.sponsorNameMobile}>
+              <Text fw={600} size='md' className={styles.sponsorNameMobile}>
                 {sponsor.name}
               </Text>
             </div>
           </div>
 
           {/* Menu in top-right corner */}
-          <Menu position="bottom-end" withinPortal>
+          <Menu position='bottom-end' withinPortal>
             <Menu.Target>
-              <ActionIcon 
-                variant="subtle" 
-                color="gray" 
-                className={styles.mobileCardMenu}
-                size="md"
-              >
+              <ActionIcon variant='subtle' color='gray' className={styles.mobileCardMenu} size='md'>
                 <IconDots size={18} />
               </ActionIcon>
             </Menu.Target>
@@ -150,45 +130,43 @@ const SponsorCard = ({
               >
                 Edit
               </Menu.Item>
-              {sponsor.is_active ? (
+              {sponsor.is_active ?
                 <Menu.Item
                   className={styles.menuItem}
-                  leftSection={<Switch size="xs" checked={true} readOnly />}
+                  leftSection={<Switch size='xs' checked={true} readOnly />}
                   onClick={handleToggleActive}
                 >
                   Active
                 </Menu.Item>
-              ) : (
-                <Menu.Item
+              : <Menu.Item
                   className={styles.menuItem}
-                  leftSection={<Switch size="xs" checked={false} readOnly />}
+                  leftSection={<Switch size='xs' checked={false} readOnly />}
                   onClick={handleToggleActive}
                 >
                   Inactive
                 </Menu.Item>
-              )}
-              {sponsor.featured ? (
+              }
+              {sponsor.featured ?
                 <Menu.Item
                   className={styles.menuItem}
-                  leftSection={<IconStarFilled size={14} color="#FFD666" />}
+                  leftSection={<IconStarFilled size={14} color='#FFD666' />}
                   onClick={handleToggleFeatured}
                 >
                   Featured
                 </Menu.Item>
-              ) : (
-                <Menu.Item
+              : <Menu.Item
                   className={styles.menuItem}
                   leftSection={<IconStar size={14} />}
                   onClick={handleToggleFeatured}
                 >
                   Not Featured
                 </Menu.Item>
-              )}
+              }
               <Menu.Divider />
               <Menu.Item
                 className={`${styles.menuItem} ${styles.menuItemDanger}`}
                 leftSection={<IconTrash size={14} />}
-                color="red"
+                color='red'
                 onClick={handleDelete}
               >
                 Delete
@@ -207,11 +185,11 @@ const SponsorCard = ({
       className={`${styles.sponsorCard} ${isDragging ? styles.dragging : ''}`}
       style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
     >
-      <Group align="center" justify="space-between" wrap="nowrap">
-        <Group wrap="nowrap" gap="md">
-          <ActionIcon 
-            variant="subtle" 
-            size="lg" 
+      <Group align='center' justify='space-between' wrap='nowrap'>
+        <Group wrap='nowrap' gap='md'>
+          <ActionIcon
+            variant='subtle'
+            size='lg'
             className={styles.dragHandle}
             style={{ cursor: 'grab' }}
           >
@@ -219,34 +197,32 @@ const SponsorCard = ({
           </ActionIcon>
 
           <div className={styles.logoContainer}>
-            {sponsor.logo_url ? (
+            {sponsor.logo_url ?
               <PrivateImage
                 objectKey={sponsor.logo_url}
                 alt={sponsor.name}
                 width={50}
                 height={50}
-                fit="contain"
+                fit='contain'
                 className={styles.logo}
                 placeholder={<Box className={styles.logoPlaceholder} />}
               />
-            ) : (
-              <Box className={styles.logoPlaceholder} />
-            )}
+            : <Box className={styles.logoPlaceholder} />}
           </div>
 
           <div className={styles.sponsorInfo}>
-            <Text fw={600} size="md" className={styles.sponsorName}>
+            <Text fw={600} size='md' className={styles.sponsorName}>
               {sponsor.name}
             </Text>
             {sponsor.website_url && (
-              <Text size="sm" c="dimmed" className={styles.sponsorUrl}>
+              <Text size='sm' c='dimmed' className={styles.sponsorUrl}>
                 {sponsor.website_url}
               </Text>
             )}
           </div>
         </Group>
 
-        <Group wrap="nowrap" gap="lg">
+        <Group wrap='nowrap' gap='lg'>
           <div className={styles.statusContainer}>
             <Switch
               checked={sponsor.is_active}
@@ -254,7 +230,7 @@ const SponsorCard = ({
               label={sponsor.is_active ? 'Active' : 'Inactive'}
               classNames={{
                 root: styles.statusSwitch,
-                label: styles.switchLabel
+                label: styles.switchLabel,
               }}
               styles={{
                 track: {
@@ -264,7 +240,7 @@ const SponsorCard = ({
                 thumb: {
                   border: '2px solid white',
                   boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-                }
+                },
               }}
             />
           </div>
@@ -278,16 +254,14 @@ const SponsorCard = ({
               color: sponsor.featured ? 'white' : '#FFD666',
             }}
           >
-            {sponsor.featured ? (
+            {sponsor.featured ?
               <IconStarFilled size={18} />
-            ) : (
-              <IconStar size={18} />
-            )}
+            : <IconStar size={18} />}
           </ActionIcon>
 
-          <Menu position="bottom-end">
+          <Menu position='bottom-end'>
             <Menu.Target>
-              <ActionIcon variant="subtle" color="gray" className={styles.actionButton}>
+              <ActionIcon variant='subtle' color='gray' className={styles.actionButton}>
                 <IconDots size={18} />
               </ActionIcon>
             </Menu.Target>
@@ -302,7 +276,7 @@ const SponsorCard = ({
               <Menu.Item
                 className={`${styles.menuItem} ${styles.menuItemDanger}`}
                 leftSection={<IconTrash size={14} />}
-                color="red"
+                color='red'
                 onClick={handleDelete}
               >
                 Delete

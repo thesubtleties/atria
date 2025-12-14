@@ -1,5 +1,5 @@
-import { motion } from 'motion/react'
-import styles from './AgendaLayout.module.css'
+import { motion } from 'motion/react';
+import styles from './AgendaLayout.module.css';
 
 const AgendaLayout = ({
   children,
@@ -7,10 +7,10 @@ const AgendaLayout = ({
   gap = 'medium', // 'small', 'medium', 'large'
   staggerAnimation = true,
   staggerDelay = 0.1,
-  className = ''
+  className = '',
 }) => {
   return (
-    <div 
+    <div
       className={`
         ${styles.agendaLayout} 
         ${styles[`columns-${columns}`]}
@@ -18,7 +18,7 @@ const AgendaLayout = ({
         ${className}
       `}
     >
-      {staggerAnimation ? (
+      {staggerAnimation ?
         children.map((child, index) => (
           <motion.div
             key={index}
@@ -29,11 +29,9 @@ const AgendaLayout = ({
             {child}
           </motion.div>
         ))
-      ) : (
-        children
-      )}
+      : children}
     </div>
-  )
-}
+  );
+};
 
-export default AgendaLayout
+export default AgendaLayout;

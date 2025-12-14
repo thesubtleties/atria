@@ -38,9 +38,7 @@ const chatSlice = createSlice({
     openThread: (state, action: PayloadAction<number>) => {
       const threadId = action.payload;
       // Remove from minimized if it was there
-      state.minimizedThreads = state.minimizedThreads.filter(
-        (id) => id !== threadId
-      );
+      state.minimizedThreads = state.minimizedThreads.filter((id) => id !== threadId);
 
       // Add to active if not already there
       if (!state.activeThreads.includes(threadId)) {
@@ -58,9 +56,7 @@ const chatSlice = createSlice({
     closeThread: (state, action: PayloadAction<number>) => {
       const threadId = action.payload;
       state.activeThreads = state.activeThreads.filter((id) => id !== threadId);
-      state.minimizedThreads = state.minimizedThreads.filter(
-        (id) => id !== threadId
-      );
+      state.minimizedThreads = state.minimizedThreads.filter((id) => id !== threadId);
     },
     minimizeThread: (state, action: PayloadAction<number>) => {
       const threadId = action.payload;
@@ -74,9 +70,7 @@ const chatSlice = createSlice({
     maximizeThread: (state, action: PayloadAction<number>) => {
       const threadId = action.payload;
       // Remove from minimized
-      state.minimizedThreads = state.minimizedThreads.filter(
-        (id) => id !== threadId
-      );
+      state.minimizedThreads = state.minimizedThreads.filter((id) => id !== threadId);
       // Add to active if not already there
       if (!state.activeThreads.includes(threadId)) {
         // Limit to 3 active windows (like LinkedIn)
@@ -95,7 +89,7 @@ const chatSlice = createSlice({
         '🔴 Redux: setCurrentEventId called with:',
         action.payload,
         'type:',
-        typeof action.payload
+        typeof action.payload,
       );
       state.currentEventId = action.payload;
       console.log('🔴 Redux: currentEventId now set to:', state.currentEventId);
@@ -142,22 +136,14 @@ interface RootStateWithChat {
   chat: ChatSliceState;
 }
 
-export const selectSidebarExpanded = (state: RootStateWithChat) =>
-  state.chat.sidebarExpanded;
-export const selectActiveThreads = (state: RootStateWithChat) =>
-  state.chat.activeThreads;
-export const selectMinimizedThreads = (state: RootStateWithChat) =>
-  state.chat.minimizedThreads;
-export const selectCurrentEventId = (state: RootStateWithChat) =>
-  state.chat.currentEventId;
-export const selectActiveTab = (state: RootStateWithChat) =>
-  state.chat.activeTab;
-export const selectActiveChatRoomId = (state: RootStateWithChat) =>
-  state.chat.activeChatRoomId;
-export const selectLastSessionId = (state: RootStateWithChat) =>
-  state.chat.lastSessionId;
+export const selectSidebarExpanded = (state: RootStateWithChat) => state.chat.sidebarExpanded;
+export const selectActiveThreads = (state: RootStateWithChat) => state.chat.activeThreads;
+export const selectMinimizedThreads = (state: RootStateWithChat) => state.chat.minimizedThreads;
+export const selectCurrentEventId = (state: RootStateWithChat) => state.chat.currentEventId;
+export const selectActiveTab = (state: RootStateWithChat) => state.chat.activeTab;
+export const selectActiveChatRoomId = (state: RootStateWithChat) => state.chat.activeChatRoomId;
+export const selectLastSessionId = (state: RootStateWithChat) => state.chat.lastSessionId;
 export const selectMobileActiveThreadId = (state: RootStateWithChat) =>
   state.chat.mobileActiveThreadId;
 
 export default chatSlice.reducer;
-

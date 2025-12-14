@@ -10,27 +10,35 @@ interface TargetUser {
 export const getModerationPermissions = (
   currentUserId: number,
   currentUserRole: string,
-  targetUser: TargetUser
+  targetUser: TargetUser,
 ) => {
   const isInvitation = !targetUser.user_id;
   const userId = targetUser.user_id;
   const isBanned = targetUser.is_banned;
   const isChatBanned = targetUser.is_chat_banned;
-  
+
   return {
-    canModerateUser: !isInvitation && currentUserId !== userId && 
+    canModerateUser:
+      !isInvitation &&
+      currentUserId !== userId &&
       (currentUserRole === 'ADMIN' || currentUserRole === 'ORGANIZER') &&
       !isBanned,
-    
-    canUnbanUser: !isInvitation && currentUserId !== userId && 
+
+    canUnbanUser:
+      !isInvitation &&
+      currentUserId !== userId &&
       (currentUserRole === 'ADMIN' || currentUserRole === 'ORGANIZER') &&
       isBanned,
-    
-    canChatModerateUser: !isInvitation && currentUserId !== userId && 
+
+    canChatModerateUser:
+      !isInvitation &&
+      currentUserId !== userId &&
       (currentUserRole === 'ADMIN' || currentUserRole === 'ORGANIZER') &&
       !isBanned,
-    
-    canChatUnmuteUser: !isInvitation && currentUserId !== userId && 
+
+    canChatUnmuteUser:
+      !isInvitation &&
+      currentUserId !== userId &&
       (currentUserRole === 'ADMIN' || currentUserRole === 'ORGANIZER') &&
       isChatBanned,
   };
@@ -110,7 +118,7 @@ export const createModerationHandlers = ({
             reason: 'Violation of event guidelines',
             moderation_notes: `Banned by ${currentUserRole}`,
           }).unwrap();
-          
+
           notifications.show({
             title: 'Success',
             message: `${user.full_name} has been banned from the event`,
@@ -142,7 +150,7 @@ export const createModerationHandlers = ({
             eventId: user.event_id,
             userId: user.user_id,
           }).unwrap();
-          
+
           notifications.show({
             title: 'Success',
             message: `${user.full_name} has been unbanned`,
@@ -176,7 +184,7 @@ export const createModerationHandlers = ({
             reason: 'Inappropriate chat behavior',
             moderation_notes: `Chat muted by ${currentUserRole}`,
           }).unwrap();
-          
+
           notifications.show({
             title: 'Success',
             message: `${user.full_name} has been muted from chat`,
@@ -208,7 +216,7 @@ export const createModerationHandlers = ({
             eventId: user.event_id,
             userId: user.user_id,
           }).unwrap();
-          
+
           notifications.show({
             title: 'Success',
             message: `${user.full_name} can now send chat messages`,

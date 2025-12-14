@@ -1,11 +1,5 @@
 import { Text, Badge } from '@mantine/core';
-import {
-  IconCalendar,
-  IconMapPin,
-  IconUsers,
-  IconBuilding,
-  IconClock,
-} from '@tabler/icons-react';
+import { IconCalendar, IconMapPin, IconUsers, IconBuilding, IconClock } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { useFormatDate } from '@/shared/hooks/formatDate';
 import { getEventStatusLabel } from '../utils/eventCategorization';
@@ -52,7 +46,7 @@ export const AttendeeEventCard = ({ event, status }) => {
       {/* Card Header with Status */}
       <div className={styles.cardHeader}>
         <Badge
-          variant="light"
+          variant='light'
           color={getStatusColor()}
           className={styles.statusBadge}
           data-status={status}
@@ -61,7 +55,7 @@ export const AttendeeEventCard = ({ event, status }) => {
           {getStatusBadgeLabel()}
         </Badge>
         <Badge
-          variant="subtle"
+          variant='subtle'
           className={styles.typeBadge}
           data-type={event.event_type?.toLowerCase()}
         >
@@ -74,15 +68,11 @@ export const AttendeeEventCard = ({ event, status }) => {
         <h3 className={styles.eventTitle}>{event.title}</h3>
 
         {/* Organization Info */}
-        {(event.organization?.name ||
-          event.organization_name ||
-          event.company_name) && (
+        {(event.organization?.name || event.organization_name || event.company_name) && (
           <div className={styles.organizationInfo}>
             <IconBuilding size={16} className={styles.metaIcon} />
-            <Text size="sm" className={styles.organizationName}>
-              {event.organization?.name ||
-                event.organization_name ||
-                event.company_name}
+            <Text size='sm' className={styles.organizationName}>
+              {event.organization?.name || event.organization_name || event.company_name}
             </Text>
           </div>
         )}
@@ -91,7 +81,7 @@ export const AttendeeEventCard = ({ event, status }) => {
         <div className={styles.eventMeta}>
           <div className={styles.metaItem}>
             <IconCalendar size={16} className={styles.metaIcon} />
-            <Text size="sm" className={styles.metaText}>
+            <Text size='sm' className={styles.metaText}>
               {formatEventDates()}
             </Text>
           </div>
@@ -99,7 +89,7 @@ export const AttendeeEventCard = ({ event, status }) => {
           {event.location && (
             <div className={styles.metaItem}>
               <IconMapPin size={16} className={styles.metaIcon} />
-              <Text size="sm" className={styles.metaText}>
+              <Text size='sm' className={styles.metaText}>
                 {event.location}
               </Text>
             </div>
@@ -108,9 +98,8 @@ export const AttendeeEventCard = ({ event, status }) => {
           {event.attendee_count !== undefined && event.attendee_count > 0 && (
             <div className={styles.metaItem}>
               <IconUsers size={16} className={styles.metaIcon} />
-              <Text size="sm" className={styles.metaText}>
-                {event.attendee_count}{' '}
-                {event.attendee_count === 1 ? 'attendee' : 'attendees'}
+              <Text size='sm' className={styles.metaText}>
+                {event.attendee_count} {event.attendee_count === 1 ? 'attendee' : 'attendees'}
               </Text>
             </div>
           )}
@@ -118,7 +107,7 @@ export const AttendeeEventCard = ({ event, status }) => {
 
         {/* Description */}
         {event.description && (
-          <Text size="sm" className={styles.eventDescription} lineClamp={3}>
+          <Text size='sm' className={styles.eventDescription} lineClamp={3}>
             {event.description}
           </Text>
         )}
@@ -126,7 +115,7 @@ export const AttendeeEventCard = ({ event, status }) => {
 
       {/* Card Footer - Action area */}
       <div className={styles.cardFooter}>
-        <Text size="sm" className={styles.viewDetailsText}>
+        <Text size='sm' className={styles.viewDetailsText}>
           {status === 'live' ? 'Join Event →' : 'View Details →'}
         </Text>
       </div>

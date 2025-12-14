@@ -70,7 +70,7 @@ export const networkingApi = baseApi.injectEndpoints({
               baseApi.endpoints.internalQuery.initiate({
                 url: '/direct-messages/threads',
                 method: 'GET',
-              })
+              }),
             )
             .unwrap();
 
@@ -108,7 +108,7 @@ export const networkingApi = baseApi.injectEndpoints({
                   page,
                   per_page: perPage,
                 },
-              })
+              }),
             )
             .unwrap();
 
@@ -117,9 +117,7 @@ export const networkingApi = baseApi.injectEndpoints({
           return { error: { status: error.status, data: error.data } };
         }
       },
-      providesTags: (result, error, { threadId }) => [
-        { type: 'DirectMessage', id: threadId },
-      ],
+      providesTags: (result, error, { threadId }) => [{ type: 'DirectMessage', id: threadId }],
     }),
 
     // Send a direct message
@@ -130,11 +128,7 @@ export const networkingApi = baseApi.injectEndpoints({
         // Try socket first if available
         if (socket?.connected) {
           try {
-            const result = await sendDirectMessage(
-              threadId,
-              content,
-              encryptedContent
-            );
+            const result = await sendDirectMessage(threadId, content, encryptedContent);
             return { data: result };
           } catch (error) {
             console.log('Socket failed, falling back to HTTP:', error);
@@ -152,7 +146,7 @@ export const networkingApi = baseApi.injectEndpoints({
                   content,
                   encrypted_content: encryptedContent,
                 },
-              })
+              }),
             )
             .unwrap();
 
@@ -161,9 +155,7 @@ export const networkingApi = baseApi.injectEndpoints({
           return { error: { status: error.status, data: error.data } };
         }
       },
-      invalidatesTags: (result, error, { threadId }) => [
-        { type: 'DirectMessage', id: threadId },
-      ],
+      invalidatesTags: (result, error, { threadId }) => [{ type: 'DirectMessage', id: threadId }],
     }),
 
     // Create a new thread
@@ -189,7 +181,7 @@ export const networkingApi = baseApi.injectEndpoints({
                 url: '/direct-messages/threads',
                 method: 'POST',
                 body: { user_id: userId },
-              })
+              }),
             )
             .unwrap();
 
@@ -223,7 +215,7 @@ export const networkingApi = baseApi.injectEndpoints({
               baseApi.endpoints.internalMutation.initiate({
                 url: `/direct-messages/threads/${threadId}/read`,
                 method: 'POST',
-              })
+              }),
             )
             .unwrap();
 
@@ -232,9 +224,7 @@ export const networkingApi = baseApi.injectEndpoints({
           return { error: { status: error.status, data: error.data } };
         }
       },
-      invalidatesTags: (result, error, threadId) => [
-        { type: 'DirectMessage', id: threadId },
-      ],
+      invalidatesTags: (result, error, threadId) => [{ type: 'DirectMessage', id: threadId }],
     }),
 
     // Connection endpoints (HTTP only - no socket implementation)

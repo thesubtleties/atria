@@ -2,11 +2,7 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { Alert, Container } from '@mantine/core';
-import {
-  selectIsAuthenticated,
-  selectAuthChecked,
-  selectUser,
-} from '@/app/store/authSlice';
+import { selectIsAuthenticated, selectAuthChecked, selectUser } from '@/app/store/authSlice';
 
 export const AuthGuard = ({ children, requireEmailVerification = true }) => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
@@ -21,15 +17,16 @@ export const AuthGuard = ({ children, requireEmailVerification = true }) => {
 
   // Redirect if not authenticated after check
   if (!isAuthenticated) {
-    return <Navigate to="/" state={{ from: location }} replace />;
+    return <Navigate to='/' state={{ from: location }} replace />;
   }
 
   // Check email verification if required
   if (requireEmailVerification && user && user.email_verified === false) {
     return (
-      <Container size="sm" mt="xl">
-        <Alert color="yellow" title="Email Verification Required">
-          Please verify your email address to access this page. Check your email for the verification link.
+      <Container size='sm' mt='xl'>
+        <Alert color='yellow' title='Email Verification Required'>
+          Please verify your email address to access this page. Check your email for the
+          verification link.
         </Alert>
       </Container>
     );

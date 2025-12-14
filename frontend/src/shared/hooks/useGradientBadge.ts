@@ -16,15 +16,12 @@ interface GradientBadgeStyles extends CSSProperties {
  * @param baseColor - Hex color (e.g., '#8B5CF6')
  * @returns Style object with gradient, shadows, and backdrop effects
  */
-export const useGradientBadge = (
-  baseColor: string | null | undefined
-): GradientBadgeStyles => {
+export const useGradientBadge = (baseColor: string | null | undefined): GradientBadgeStyles => {
   const styles = useMemo<GradientBadgeStyles>(() => {
     if (!baseColor) {
       return {
         background: 'rgba(107, 114, 128, 0.88)',
-        boxShadow:
-          '0 2px 12px rgba(107, 114, 128, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.2)',
+        boxShadow: '0 2px 12px rgba(107, 114, 128, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.2)',
         border: '1px solid rgba(255, 255, 255, 0.15)',
       };
     }
@@ -77,13 +74,12 @@ export const useGradientBadge = (
  * @returns Style object ready for inline use
  */
 export const getGradientBadgeStyles = (
-  baseColor: string | null | undefined
+  baseColor: string | null | undefined,
 ): GradientBadgeStyles => {
   if (!baseColor) {
     return {
       background: 'rgba(107, 114, 128, 0.88)',
-      boxShadow:
-        '0 2px 12px rgba(107, 114, 128, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.2)',
+      boxShadow: '0 2px 12px rgba(107, 114, 128, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.2)',
       border: '1px solid rgba(255, 255, 255, 0.15)',
       backdropFilter: 'blur(12px)',
       WebkitBackdropFilter: 'blur(12px)',
@@ -114,4 +110,3 @@ export const getGradientBadgeStyles = (
     color: textColor,
   };
 };
-

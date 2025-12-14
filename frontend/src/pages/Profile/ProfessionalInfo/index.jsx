@@ -29,7 +29,7 @@ export const ProfessionalInfo = ({ user }) => {
           </div>
         )}
         {!user.company_name && !user.title && (
-          <Text color="dimmed" size="sm">
+          <Text color='dimmed' size='sm'>
             No professional information added yet
           </Text>
         )}

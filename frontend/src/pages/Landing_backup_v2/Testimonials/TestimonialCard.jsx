@@ -4,10 +4,7 @@ import { TestimonialContent } from './TestimonialContent';
 
 export const TestimonialCard = ({ testimonial }) => (
   <div className={styles.card}>
-    <TestimonialImage
-      src={testimonial.image}
-      alt={`${testimonial.author} photo`}
-    />
+    <TestimonialImage src={testimonial.image} alt={`${testimonial.author} photo`} />
     <TestimonialContent
       quote={testimonial.quote}
       author={testimonial.author}

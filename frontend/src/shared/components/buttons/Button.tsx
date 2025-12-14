@@ -7,18 +7,18 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   loading?: boolean;
 }
 
-export const Button = ({ 
-  children, 
-  variant = 'primary', 
-  onClick, 
+export const Button = ({
+  children,
+  variant = 'primary',
+  onClick,
   type = 'button',
   disabled = false,
   loading = false,
   className = '',
-  ...props 
+  ...props
 }: ButtonProps) => {
   const buttonClass = `${styles.btn} ${styles[`btn-${variant}`]} ${className}`;
-  
+
   return (
     <button
       type={type}
@@ -27,14 +27,12 @@ export const Button = ({
       className={buttonClass}
       {...props}
     >
-      {loading ? (
+      {loading ?
         <>
           <ButtonLoader />
           <span style={{ marginLeft: '8px' }}>{children}</span>
         </>
-      ) : (
-        children
-      )}
+      : children}
     </button>
   );
 };

@@ -15,6 +15,7 @@
 ## Quick Start
 
 ### 1. Design tokens are globally available
+
 Design tokens are automatically imported in `main.jsx`, so you can use them anywhere:
 
 ```css
@@ -27,6 +28,7 @@ Design tokens are automatically imported in `main.jsx`, so you can use them anyw
 ```
 
 ### 2. Use semantic classes for common patterns
+
 ```css
 .mySection {
   composes: section-container from '../../styles/design-tokens.css';
@@ -38,12 +40,13 @@ Design tokens are automatically imported in `main.jsx`, so you can use them anyw
 ```
 
 ### 3. Import shared Button component
+
 ```jsx
 import { Button } from 'shared/components/buttons/Button';
 
-<Button variant="primary" onClick={handleClick}>
+<Button variant='primary' onClick={handleClick}>
   Click Me
-</Button>
+</Button>;
 ```
 
 ## Design Tokens
@@ -51,6 +54,7 @@ import { Button } from 'shared/components/buttons/Button';
 ### Colors
 
 #### Brand Colors (from actual assets)
+
 ```css
 var(--color-primary)        /* #8B5CF6 - Purple from wave-drape.svg */
 var(--color-primary-hover)  /* #7C3AED - Darker purple for hover */
@@ -58,6 +62,7 @@ var(--color-accent-yellow)  /* #FFD666 - Yellow from atria-logo.svg */
 ```
 
 #### Text Colors
+
 ```css
 var(--color-text-primary)   /* #1E293B - Dark gray for headings */
 var(--color-text-secondary) /* #64748B - Medium gray for body text */
@@ -65,12 +70,14 @@ var(--color-text-muted)     /* #94A3B8 - Light gray for meta info */
 ```
 
 #### Background Colors
+
 ```css
 var(--color-background)       /* #FBFAFF - Very light purple, almost white */
 var(--color-background-glass) /* rgba(255, 255, 255, 0.8) - Glass effect */
 ```
 
 #### Status Colors
+
 ```css
 var(--color-success) /* #16A34A - Green */
 var(--color-warning) /* #F59E0B - Amber */
@@ -81,6 +88,7 @@ var(--color-info)    /* #06B6D4 - Teal */
 #### Gradient Color Palette
 
 **Purple Family (Primary Brand Colors)**
+
 ```css
 var(--gradient-purple-light)  /* #8B5CF6 - Our brand purple */
 var(--gradient-purple-medium) /* #A855F7 - Medium purple */
@@ -89,6 +97,7 @@ var(--gradient-purple-deep)   /* #6D28D9 - Deep purple */
 ```
 
 **Orange/Yellow Family**
+
 ```css
 var(--gradient-orange-bright) /* #FFD93D - Bright yellow (from logo) */
 var(--gradient-orange-light)  /* #FCD34D - Light orange */
@@ -97,18 +106,17 @@ var(--gradient-orange-dark)   /* #EAB308 - Dark orange */
 ```
 
 **Usage Example**:
+
 ```css
 .backgroundShape {
-  background: linear-gradient(45deg, 
-    var(--gradient-orange-medium), 
-    var(--gradient-orange-dark)
-  );
+  background: linear-gradient(45deg, var(--gradient-orange-medium), var(--gradient-orange-dark));
 }
 ```
 
 [Additional color families: Pink, Blue/Teal, Green, Red/Orange, Neutral - see design-tokens.css for complete list]
 
 ### Typography Scale
+
 ```css
 var(--text-xs)   /* 0.75rem  - 12px */
 var(--text-sm)   /* 0.875rem - 14px */
@@ -119,6 +127,7 @@ var(--text-2xl)  /* 1.5rem   - 24px */
 ```
 
 ### Spacing Scale
+
 ```css
 var(--space-xs)  /* 0.25rem - 4px */
 var(--space-sm)  /* 0.5rem  - 8px */
@@ -129,6 +138,7 @@ var(--space-2xl) /* 3rem    - 48px */
 ```
 
 ### Shadows (purple-tinted)
+
 ```css
 var(--shadow-sm) /* 0 1px 2px rgba(139, 92, 246, 0.05) */
 var(--shadow-md) /* 0 2px 8px rgba(139, 92, 246, 0.1) */
@@ -137,6 +147,7 @@ var(--shadow-xl) /* 0 8px 32px rgba(139, 92, 246, 0.2) */
 ```
 
 ### Border Radius
+
 ```css
 var(--radius-sm) /* 4px */
 var(--radius-md) /* 6px */
@@ -146,6 +157,7 @@ var(--radius-lg) /* 8px */
 ## Semantic Component Classes
 
 ### Section Container
+
 Base class for page sections with glassmorphism:
 
 ```css
@@ -160,6 +172,7 @@ Base class for page sections with glassmorphism:
 ```
 
 **Usage:**
+
 ```css
 .mySection {
   composes: section-container from '../../styles/design-tokens.css';
@@ -167,6 +180,7 @@ Base class for page sections with glassmorphism:
 ```
 
 ### Page Header Layout Pattern
+
 Structured layout for management page headers with responsive mobile adaptation:
 
 ```css
@@ -208,11 +222,12 @@ Structured layout for management page headers with responsive mobile adaptation:
     align-items: center;
     text-align: center;
   }
-  
-  .headerLeft, .headerRight {
+
+  .headerLeft,
+  .headerRight {
     width: 100%;
   }
-  
+
   .headerRight {
     justify-content: center;
   }
@@ -220,14 +235,13 @@ Structured layout for management page headers with responsive mobile adaptation:
 ```
 
 **Usage Example:**
+
 ```jsx
 <div className={styles.headerSection}>
   <div className={styles.headerContent}>
     <div className={styles.headerLeft}>
       <h1 className={styles.pageTitle}>Page Title</h1>
-      <div className={styles.badgeGroup}>
-        {/* Badge components */}
-      </div>
+      <div className={styles.badgeGroup}>{/* Badge components */}</div>
     </div>
     <div className={styles.headerRight}>
       <Button>Action</Button>
@@ -237,6 +251,7 @@ Structured layout for management page headers with responsive mobile adaptation:
 ```
 
 ### Section Header Layout
+
 ```css
 .section-header {
   display: flex;
@@ -255,6 +270,7 @@ Structured layout for management page headers with responsive mobile adaptation:
 ```
 
 ### Card System
+
 ```css
 .card-base {
   background: var(--color-background-glass);
@@ -297,6 +313,7 @@ Cards are currently implemented as context-specific custom components rather tha
 Each card prioritizes different information and actions based on user needs in that context. Future consideration: Create a modular card system if pattern convergence emerges.
 
 ### Badge Composition System
+
 Badge styling using CSS Modules composition pattern for consistent role and status indicators:
 
 ```css
@@ -337,6 +354,7 @@ Badge styling using CSS Modules composition pattern for consistent role and stat
 ```
 
 **Usage with Composition:**
+
 ```css
 /* In component CSS module */
 .adminBadge {
@@ -351,12 +369,14 @@ Badge styling using CSS Modules composition pattern for consistent role and stat
 **Why !important:** Required to override Mantine's inline styles and ensure consistent appearance across all badge instances.
 
 **Available Badge Types:**
+
 - Role badges: `badge-admin`, `badge-organizer`, `badge-speaker`, `badge-attendee`
 - Status badges: `badge-success`, `badge-warning`, `badge-danger`, `badge-info`
 - Moderation badges: `badge-banned`, `badge-chat-banned`
 - Generic: `badge-primary`, `badge-neutral`
 
 ### Two-Row Badge Layout for Mobile
+
 Mobile-optimized badge layout that separates total count from role breakdowns:
 
 ```css
@@ -383,14 +403,14 @@ Mobile-optimized badge layout that separates total count from role breakdowns:
     gap: 0.5rem;
     margin: 0.75rem auto 0;
   }
-  
+
   /* Center content and allow wrapping */
   .badgeRow {
     justify-content: center;
     flex-wrap: wrap;
     gap: 0.375rem;
   }
-  
+
   /* Separate total from other badges */
   .badgeRow:first-child {
     margin-bottom: 0.25rem;
@@ -399,23 +419,18 @@ Mobile-optimized badge layout that separates total count from role breakdowns:
 ```
 
 **Usage Pattern:**
+
 ```jsx
 <div className={styles.badgeGroup}>
   {/* First row: Total count */}
   <div className={styles.badgeRow}>
-    <Badge className={styles.totalBadge}>
-      {total} Total
-    </Badge>
+    <Badge className={styles.totalBadge}>{total} Total</Badge>
   </div>
-  
+
   {/* Second row: Role breakdowns */}
   <div className={styles.badgeRow}>
-    <Badge className={styles.adminBadge}>
-      {adminCount} Admins
-    </Badge>
-    <Badge className={styles.speakerBadge}>
-      {speakerCount} Speakers
-    </Badge>
+    <Badge className={styles.adminBadge}>{adminCount} Admins</Badge>
+    <Badge className={styles.speakerBadge}>{speakerCount} Speakers</Badge>
     {/* More role badges... */}
   </div>
 </div>
@@ -428,6 +443,7 @@ This pattern provides visual hierarchy on mobile by emphasizing the total count 
 Atria uses distinct card layouts optimized for different viewport sizes:
 
 #### Mobile Cards (Vertical/Centered)
+
 Cards on mobile devices follow a vertical, centered layout pattern for better readability and touch interaction:
 
 ```css
@@ -462,6 +478,7 @@ Cards on mobile devices follow a vertical, centered layout pattern for better re
 ```
 
 #### Desktop Cards (Horizontal Layout)
+
 Desktop cards use horizontal layouts with left-aligned content and inline actions:
 
 ```css
@@ -499,17 +516,15 @@ Desktop cards use horizontal layouts with left-aligned content and inline action
 ```
 
 **Implementation Pattern:**
+
 ```jsx
 const isMobile = useMediaQuery('(max-width: 768px)');
 
-return isMobile ? (
-  <MobileCard data={data} />
-) : (
-  <DesktopCard data={data} />
-);
+return isMobile ? <MobileCard data={data} /> : <DesktopCard data={data} />;
 ```
 
 **Key Differences:**
+
 - **Mobile**: Vertical stacking, centered text, absolute-positioned menu
 - **Desktop**: Horizontal layout, left-aligned text, inline menu
 - **Mobile**: Larger touch targets (44px minimum)
@@ -520,6 +535,7 @@ return isMobile ? (
 Interactive drag-and-drop lists with responsive behavior:
 
 #### Draggable Container
+
 ```css
 .draggableList {
   position: relative;
@@ -544,6 +560,7 @@ Interactive drag-and-drop lists with responsive behavior:
 ```
 
 #### Draggable Cards
+
 ```css
 .draggableCard {
   background: rgba(255, 255, 255, 1);
@@ -565,6 +582,7 @@ Interactive drag-and-drop lists with responsive behavior:
 ```
 
 #### Drag Hint Text
+
 ```css
 .dragHint {
   font-size: clamp(0.625rem, 1.5vw, 0.7rem) !important;
@@ -577,12 +595,14 @@ Interactive drag-and-drop lists with responsive behavior:
 ```
 
 **Mobile Considerations:**
+
 - Hide drag handles on mobile (use long-press instead)
 - Show hint text: "Press down on cards and drag to reorder"
 - Disable drag cursor on mobile devices
 - Maintain larger touch targets for mobile dragging
 
 ### Empty State
+
 ```css
 .empty-state {
   text-align: center;
@@ -592,6 +612,7 @@ Interactive drag-and-drop lists with responsive behavior:
 ```
 
 ### Mobile View Selector Pattern
+
 Replace desktop tabs with dropdown on mobile for better space utilization:
 
 ```css
@@ -624,7 +645,7 @@ Replace desktop tabs with dropdown on mobile for better space utilization:
   .mobileViewSelector {
     display: block;
   }
-  
+
   .tabsList {
     display: none !important;
   }
@@ -632,87 +653,89 @@ Replace desktop tabs with dropdown on mobile for better space utilization:
 ```
 
 **Implementation Pattern:**
+
 ```jsx
-{isMobile ? (
-  <div className={styles.mobileViewSelector}>
-    <Select
-      value={activeView}
-      onChange={setActiveView}
-      data={[
-        { value: 'attendees', label: 'Attendees' },
-        { value: 'invitations', label: 'Pending Invitations' }
-      ]}
-      className={styles.mobileSelect}
-      classNames={{
-        input: styles.mobileSelectInput,
-        dropdown: styles.mobileSelectDropdown
-      }}
-    />
-  </div>
-) : (
-  <Tabs value={activeView} onChange={setActiveView}>
-    {/* Desktop tabs */}
-  </Tabs>
-)}
+{
+  isMobile ?
+    <div className={styles.mobileViewSelector}>
+      <Select
+        value={activeView}
+        onChange={setActiveView}
+        data={[
+          { value: 'attendees', label: 'Attendees' },
+          { value: 'invitations', label: 'Pending Invitations' },
+        ]}
+        className={styles.mobileSelect}
+        classNames={{
+          input: styles.mobileSelectInput,
+          dropdown: styles.mobileSelectDropdown,
+        }}
+      />
+    </div>
+  : <Tabs value={activeView} onChange={setActiveView}>
+      {/* Desktop tabs */}
+    </Tabs>;
+}
 ```
 
 **Key Points:**
+
 - No null/empty option in dropdown - always show a view
 - Maintains same state as tabs for consistency
 - Custom styling to match glassmorphic theme
 
 ### Adaptive Card Components
+
 Pattern for single component handling multiple data types with conditional rendering:
 
 ```jsx
-const AttendeeCard = ({ 
-  data, 
-  isInvitation = false,  // Prop to determine data type
+const AttendeeCard = ({
+  data,
+  isInvitation = false, // Prop to determine data type
   onUpdateRole,
   currentUserRole,
   // ... other props
 }) => {
   // Adaptive data extraction
-  const displayName = isInvitation 
-    ? data.email 
-    : data.full_name;
-    
-  const roleInfo = isInvitation
-    ? data.role
-    : data.event_role;
-    
+  const displayName = isInvitation ? data.email : data.full_name;
+
+  const roleInfo = isInvitation ? data.role : data.event_role;
+
   // Conditional feature availability
   const canMessage = !isInvitation && data.user_id;
   const showConnectionStatus = !isInvitation && data.is_connected;
-  
+
   return (
     <div className={styles.card}>
       {/* Common elements */}
       <Avatar>
-        {isInvitation ? <IconMail /> : getInitials(displayName)}
+        {isInvitation ?
+          <IconMail />
+        : getInitials(displayName)}
       </Avatar>
-      
+
       {/* Type-specific elements */}
-      {isInvitation ? (
+      {isInvitation ?
         <Badge>Invitation Pending</Badge>
-      ) : (
-        <>
+      : <>
           {showConnectionStatus && <IconCheck />}
           {canMessage && <Button>Message</Button>}
         </>
-      )}
+      }
     </div>
   );
 };
 ```
 
 **Benefits:**
+
 - Single component maintains consistency
 - Reduces code duplication
 - Easier to maintain styling
 - Graceful handling of different data shapes
 
 **When to Use:**
+
 - Entities share most UI/UX patterns
 - Data shapes are similar but not identical
 - Actions differ based on state/type
@@ -720,6 +743,7 @@ const AttendeeCard = ({
 ## Usage Examples
 
 ### Creating a New Page Section
+
 ```jsx
 // Component
 export const NewSection = () => {
@@ -727,11 +751,11 @@ export const NewSection = () => {
     <div className={styles.container}>
       <div className={styles.header}>
         <h2 className={styles.title}>Section Title</h2>
-        <Button variant="primary">Action</Button>
+        <Button variant='primary'>Action</Button>
       </div>
-      
+
       <div className={styles.cardList}>
-        {items.map(item => (
+        {items.map((item) => (
           <div key={item.id} className={styles.card}>
             <div className={styles.cardHeader}>
               <div className={styles.cardContent}>
@@ -785,6 +809,7 @@ export const NewSection = () => {
 ```
 
 ### Custom Component with Design Tokens
+
 ```css
 .customButton {
   background: var(--color-primary);
@@ -805,15 +830,13 @@ export const NewSection = () => {
 ```
 
 ### Background Shapes with Gradient Colors
+
 ```css
 .bgShape1 {
   position: fixed;
   width: 350px;
   height: 350px;
-  background: linear-gradient(45deg, 
-    var(--gradient-purple-light), 
-    var(--gradient-purple-medium)
-  );
+  background: linear-gradient(45deg, var(--gradient-purple-light), var(--gradient-purple-medium));
   border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
   opacity: 0.04;
   animation: float 15s ease-in-out infinite;
@@ -825,7 +848,9 @@ export const NewSection = () => {
 ## Responsive Patterns
 
 ### Responsive Typography
+
 Use `clamp()` for fluid typography that scales with viewport:
+
 ```css
 .responsiveTitle {
   font-size: clamp(var(--text-lg), 3vw, var(--text-2xl));
@@ -833,10 +858,11 @@ Use `clamp()` for fluid typography that scales with viewport:
 ```
 
 **Management Page Patterns:**
+
 ```css
 /* Page titles - reduced on mobile for better fit */
 .pageTitle {
-  font-size: clamp(1.25rem, 3vw, 1.5rem);  /* Mobile: 20px, Desktop: 24px */
+  font-size: clamp(1.25rem, 3vw, 1.5rem); /* Mobile: 20px, Desktop: 24px */
   font-weight: 600;
   color: var(--color-text-primary);
 }
@@ -844,8 +870,8 @@ Use `clamp()` for fluid typography that scales with viewport:
 /* Mobile-specific overrides */
 @media (max-width: 768px) {
   .pageTitle {
-    font-size: 1.25rem;  /* Fixed size on mobile */
-    text-align: center;  /* Center for mobile layouts */
+    font-size: 1.25rem; /* Fixed size on mobile */
+    text-align: center; /* Center for mobile layouts */
   }
 }
 
@@ -856,12 +882,13 @@ Use `clamp()` for fluid typography that scales with viewport:
 
 /* Badge text stays consistent */
 .badge {
-  font-size: 0.75rem !important;  /* Always 12px for readability */
+  font-size: 0.75rem !important; /* Always 12px for readability */
 }
 ```
 
 **Typography Scale Reference:**
-- Headers: `clamp(1.25rem, 3vw, 1.5rem)` 
+
+- Headers: `clamp(1.25rem, 3vw, 1.5rem)`
 - Subheaders: `clamp(1rem, 2.5vw, 1.125rem)`
 - Body: `clamp(0.875rem, 2vw, 1rem)`
 - Small text: `0.75rem` (fixed for legibility)
@@ -869,6 +896,7 @@ Use `clamp()` for fluid typography that scales with viewport:
 ### Responsive Spacing
 
 #### Advanced Responsive Spacing with clamp()
+
 Using `clamp()` for fluid spacing that scales smoothly:
 
 ```css
@@ -898,27 +926,38 @@ Using `clamp()` for fluid spacing that scales smoothly:
 ```
 
 **Clamp Formula Guide:**
+
 - First value: Minimum (mobile)
 - Middle value: Viewport-relative (scaling factor)
 - Last value: Maximum (desktop)
 
 **Recommended Scaling Factors:**
+
 - Padding: 3-4vw
 - Gaps: 2vw
 - Margins: 3vw
 - Text: 2-3vw
 
 ### Breakpoints
+
 Use these standard breakpoints:
+
 ```css
-@media (max-width: 768px) { /* Mobile */ }
-@media (min-width: 769px) and (max-width: 1023px) { /* Tablet */ }
-@media (min-width: 1024px) { /* Desktop */ }
+@media (max-width: 768px) {
+  /* Mobile */
+}
+@media (min-width: 769px) and (max-width: 1023px) {
+  /* Tablet */
+}
+@media (min-width: 1024px) {
+  /* Desktop */
+}
 ```
 
 ## Component Patterns
 
 ### Button Usage
+
 Use the shared Button component instead of custom buttons:
 
 ```jsx
@@ -960,12 +999,14 @@ Our form inputs use a subtle, clean approach that maintains readability while fi
 
 **⚠️ Important Implementation Note:**
 When applying these styles, check how your form library applies classes:
+
 - **Mantine forms**: Classes are applied directly to inputs via `classNames={{ input: styles.formInput }}`, so use `.formInput` (not `.formInput input`)
 - **Basic HTML forms**: If wrapping inputs in divs with classes, use `.formInput input`
 - **Always verify**: Check the rendered HTML to ensure your selectors match the actual DOM structure
 - **Use `!important`** when overriding Mantine defaults to ensure styles take precedence
 
 **Key Design Decisions:**
+
 - **Solid white background** instead of transparency for better readability and contrast
 - **Very subtle purple border** (0.1 opacity) for a clean, minimal look
 - **Gentle focus state** (0.3 opacity border) without shadow for minimal visual distraction
@@ -975,6 +1016,7 @@ When applying these styles, check how your form library applies classes:
 This approach provides just enough visual feedback without overwhelming the interface, keeping focus on the content rather than the form elements themselves.
 
 ### Glass Effect Pattern
+
 ```css
 .glassElement {
   background: var(--color-background-glass);
@@ -989,6 +1031,7 @@ This approach provides just enough visual feedback without overwhelming the inte
 ### Glass Morphism Styling Variations
 
 #### Primary Glass (Sections)
+
 ```css
 .glassSection {
   background: var(--color-background-glass); /* rgba(255, 255, 255, 0.8) */
@@ -1000,6 +1043,7 @@ This approach provides just enough visual feedback without overwhelming the inte
 ```
 
 #### Secondary Glass (Nested Elements)
+
 ```css
 .glassCard {
   background: rgba(255, 255, 255, 1); /* More opaque for nested elements */
@@ -1010,6 +1054,7 @@ This approach provides just enough visual feedback without overwhelming the inte
 ```
 
 #### Subtle Glass (Backgrounds)
+
 ```css
 .glassBackground {
   background: rgba(255, 255, 255, 0.3); /* Very transparent */
@@ -1018,6 +1063,7 @@ This approach provides just enough visual feedback without overwhelming the inte
 ```
 
 ### Status Indicators
+
 ```css
 .statusActive {
   background: rgba(34, 197, 94, 0.1);
@@ -1039,6 +1085,7 @@ This approach provides just enough visual feedback without overwhelming the inte
 ```
 
 ### Moderation Visual Indicators
+
 Visual cues for banned and muted users with different treatments for cards vs tables:
 
 ```javascript
@@ -1080,22 +1127,27 @@ export const getModerationRowStyles = (user) => {
 ```
 
 **Visual Hierarchy:**
+
 - **Banned (Red)**: Most severe, blocks all event access
 - **Chat Banned (Orange/Yellow)**: Can view but not participate in chat
 - **Table rows**: More visible indicators for admin scanning
 - **Cards**: Subtle indicators to avoid stigmatization
 
 **Badge Usage:**
+
 ```jsx
-{user.is_banned && (
-  <Badge className={styles.bannedBadge}>BANNED</Badge>
-)}
-{user.is_chat_banned && !user.is_banned && (
-  <Badge className={styles.chatBannedBadge}>CHAT BANNED</Badge>
-)}
+{
+  user.is_banned && <Badge className={styles.bannedBadge}>BANNED</Badge>;
+}
+{
+  user.is_chat_banned && !user.is_banned && (
+    <Badge className={styles.chatBannedBadge}>CHAT BANNED</Badge>
+  );
+}
 ```
 
 ### Pagination Styling
+
 Glassmorphic pagination controls with consistent hover states:
 
 ```css
@@ -1106,6 +1158,7 @@ Glassmorphic pagination controls with consistent hover states:
 ```
 
 **Applied Styles (from design-tokens.css):**
+
 - Glass effect with backdrop blur
 - Purple-tinted hover states
 - Active page with solid purple background (no gradient)
@@ -1115,15 +1168,12 @@ Glassmorphic pagination controls with consistent hover states:
 ```jsx
 // Component usage
 <div className={styles.pagination}>
-  <Pagination 
-    value={currentPage} 
-    onChange={setCurrentPage}
-    total={totalPages}
-  />
+  <Pagination value={currentPage} onChange={setCurrentPage} total={totalPages} />
 </div>
 ```
 
 **Design Decisions:**
+
 - Uses `:global()` selectors to override Mantine's internal classes
 - All controls styled uniformly (prev/next/page numbers)
 - `!important` required due to Mantine's specificity
@@ -1134,12 +1184,13 @@ Glassmorphic pagination controls with consistent hover states:
 Icons serve two distinct purposes in Atria: decorative and functional.
 
 #### Decorative Icons (Color-Coded)
+
 Used as visual anchors in cards to indicate content type:
 
 ```css
 /* Highlight icon - yellow/amber */
 .highlightIcon {
-  color: #FFC107;
+  color: #ffc107;
   size: 24px;
 }
 
@@ -1157,6 +1208,7 @@ Used as visual anchors in cards to indicate content type:
 ```
 
 #### Functional Icons
+
 Used for actions and navigation:
 
 ```css
@@ -1176,6 +1228,7 @@ Used for actions and navigation:
 ```
 
 **Color Coding Guidelines:**
+
 - **Yellow/Amber**: Highlights, important information
 - **Primary Purple**: FAQ, networking, brand-related
 - **Muted Gray**: Actions, handles, menus
@@ -1185,6 +1238,7 @@ Used for actions and navigation:
 ### Menu and Action Patterns
 
 #### Corner Menu Pattern (Mobile Cards)
+
 For mobile cards with centered content:
 
 ```css
@@ -1200,6 +1254,7 @@ For mobile cards with centered content:
 ```
 
 #### Inline Menu Pattern (Desktop Cards)
+
 For desktop horizontal layouts:
 
 ```css
@@ -1211,13 +1266,15 @@ For desktop horizontal layouts:
 ```
 
 **Menu Dropdown Positioning:**
+
 ```jsx
-<Menu position="bottom-end" withinPortal>
+<Menu position='bottom-end' withinPortal>
   {/* Ensures dropdown doesn't get cut off */}
 </Menu>
 ```
 
 ### Shared Utility Functions Pattern
+
 Extract common logic to `/shared/utils/` for consistency and reusability:
 
 ```javascript
@@ -1226,12 +1283,16 @@ export const getModerationPermissions = (currentUserId, currentUserRole, targetU
   const isInvitation = !targetUser.user_id;
   const userId = targetUser.user_id;
   const isBanned = targetUser.is_banned;
-  
+
   return {
-    canModerateUser: !isInvitation && currentUserId !== userId && 
+    canModerateUser:
+      !isInvitation &&
+      currentUserId !== userId &&
       (currentUserRole === 'ADMIN' || currentUserRole === 'ORGANIZER') &&
       !isBanned,
-    canUnbanUser: !isInvitation && currentUserId !== userId && 
+    canUnbanUser:
+      !isInvitation &&
+      currentUserId !== userId &&
       (currentUserRole === 'ADMIN' || currentUserRole === 'ORGANIZER') &&
       isBanned,
     // ... more permissions
@@ -1246,21 +1307,23 @@ export const createModerationHandlers = ({ user, currentUserRole, banUser, unban
       message: `Ban ${user.full_name} from the event?`,
       onConfirm: async () => {
         await banUser({ eventId: user.event_id, userId: user.user_id });
-      }
+      },
     });
   };
-  
+
   return { handleBan, handleUnban, handleChatBan, handleChatUnban };
 };
 ```
 
 **Benefits:**
+
 - Single source of truth for business logic
 - Consistent behavior across components
 - Easier testing and maintenance
 - Reduced duplication
 
 **Common Utility Categories:**
+
 - **Formatting** (`/shared/utils/formatting.js`) - dates, names, numbers
 - **Validation** (`/shared/utils/validation.js`) - form rules, data checks
 - **Permissions** (`/shared/utils/permissions.js`) - role-based access
@@ -1268,47 +1331,48 @@ export const createModerationHandlers = ({ user, currentUserRole, banUser, unban
 - **Sorting** (`/shared/utils/sorting.js`) - reusable comparators
 
 ### Mobile-First Component Simplification
+
 Reduce complexity on mobile to improve UX and performance:
 
 ```jsx
 // Example: InviteModal - Desktop has tabs, mobile has single form
 const InviteModal = ({ opened, onClose }) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
-  
+
   return (
     <Modal opened={opened} onClose={onClose}>
-      {!isMobile ? (
+      {!isMobile ?
         <Tabs>
           <Tabs.List>
-            <Tabs.Tab value="single">Single Invitation</Tabs.Tab>
-            <Tabs.Tab value="bulk">Bulk Invitations</Tabs.Tab>
+            <Tabs.Tab value='single'>Single Invitation</Tabs.Tab>
+            <Tabs.Tab value='bulk'>Bulk Invitations</Tabs.Tab>
           </Tabs.List>
           {/* Both tab panels */}
         </Tabs>
-      ) : (
-        /* Mobile: Only single invitation form */
-        <form onSubmit={handleSingleSubmit}>
-          {/* Simplified single form */}
-        </form>
-      )}
+      : /* Mobile: Only single invitation form */
+        <form onSubmit={handleSingleSubmit}>{/* Simplified single form */}</form>
+      }
     </Modal>
   );
 };
 ```
 
 **Simplification Patterns:**
+
 - **Remove secondary features**: Hide bulk operations, advanced filters
 - **Consolidate actions**: Group related actions in single menu
 - **Reduce visual complexity**: Hide non-essential badges/indicators
 - **Optimize interactions**: Larger touch targets, fewer nested menus
 
 **Common Simplifications:**
+
 - Tabs → Single view or dropdown
 - Multi-column → Single column
 - Inline editing → Separate modal
 - Multiple CTAs → Primary action + menu
 
 **Implementation:**
+
 ```jsx
 const isMobile = useMediaQuery('(max-width: 768px)');
 
@@ -1323,6 +1387,7 @@ if (isMobile) {
 ## Best Practices
 
 ### ✅ Do
+
 - Use design tokens for all colors, spacing, and typography
 - Compose semantic classes when possible
 - Use the shared Button component
@@ -1331,6 +1396,7 @@ if (isMobile) {
 - Test on mobile devices regularly
 
 ### ❌ Don't
+
 - Hardcode color values
 - Create custom buttons when shared component exists
 - Use semantic colors (success, warning) for decorative purposes
@@ -1339,12 +1405,14 @@ if (isMobile) {
 - Use excessive shadows or animations
 
 ### Performance Tips
+
 - Backdrop-filter is expensive - use sparingly
 - Test glassmorphism performance on lower-end devices
 - Keep animations subtle and fast (0.2s transitions)
 - Use `pointer-events: none` on decorative elements
 
 ### Accessibility
+
 - Maintain proper contrast ratios despite transparency
 - Ensure interactive elements are at least 44px tall
 - Use semantic HTML with CSS for styling
@@ -1353,6 +1421,7 @@ if (isMobile) {
 ## Migration Guide
 
 ### From Hardcoded Values
+
 ```css
 /* Before */
 .oldStyle {
@@ -1372,6 +1441,7 @@ if (isMobile) {
 ```
 
 ### From Custom Components to Semantic Classes
+
 ```css
 /* Before */
 .customCard {
@@ -1394,20 +1464,24 @@ if (isMobile) {
 ### Common Issues
 
 **Design tokens not working?**
+
 - Check that `design-tokens.css` is imported in `main.jsx`
 - Ensure you're using CSS custom property syntax: `var(--token-name)`
 
 **Glassmorphism not showing?**
+
 - Add `-webkit-backdrop-filter` for Safari
 - Ensure element has a background color
 - Check that parent doesn't have `overflow: hidden`
 
 **Responsive values not scaling?**
+
 - Use `clamp()` instead of fixed values
 - Test on actual devices, not just browser resize
 - Check viewport meta tag is set correctly
 
 **Components not matching design?**
+
 - Import shared components instead of recreating
 - Use semantic classes for common patterns
 - Reference existing components for examples

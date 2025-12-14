@@ -13,7 +13,7 @@ const AcceptInvitation = () => {
   const navigate = useNavigate();
   const [selectedInvitations, setSelectedInvitations] = useState({
     organization_ids: [],
-    event_ids: []
+    event_ids: [],
   });
 
   const { data, isLoading, error } = useGetInvitationDetailsQuery(token);
@@ -21,29 +21,29 @@ const AcceptInvitation = () => {
   useEffect(() => {
     // Pre-select all invitations by default when data loads
     if (data?.all_invitations) {
-      const orgIds = data.all_invitations.organization_invitations?.map(inv => inv.id) || [];
-      const eventIds = data.all_invitations.event_invitations?.map(inv => inv.id) || [];
-      
+      const orgIds = data.all_invitations.organization_invitations?.map((inv) => inv.id) || [];
+      const eventIds = data.all_invitations.event_invitations?.map((inv) => inv.id) || [];
+
       setSelectedInvitations({
         organization_ids: orgIds,
-        event_ids: eventIds
+        event_ids: eventIds,
       });
     }
   }, [data]);
 
   const handleSelectionChange = (type, id, isSelected) => {
-    setSelectedInvitations(prev => {
+    setSelectedInvitations((prev) => {
       const key = type === 'organization' ? 'organization_ids' : 'event_ids';
-      
+
       if (isSelected) {
         return {
           ...prev,
-          [key]: [...prev[key], id]
+          [key]: [...prev[key], id],
         };
       } else {
         return {
           ...prev,
-          [key]: prev[key].filter(invId => invId !== id)
+          [key]: prev[key].filter((invId) => invId !== id),
         };
       }
     });
@@ -60,7 +60,7 @@ const AcceptInvitation = () => {
         {/* Background Shapes */}
         <div className={styles.bgShape1} />
         <div className={styles.bgShape2} />
-        
+
         <div className={styles.contentWrapper}>
           <section className={styles.loadingSection}>
             <LoadingOverlay visible />
@@ -76,11 +76,12 @@ const AcceptInvitation = () => {
         {/* Background Shapes */}
         <div className={styles.bgShape1} />
         <div className={styles.bgShape2} />
-        
+
         <div className={styles.contentWrapper}>
           <section className={styles.errorSection}>
-            <Alert color="red" title="Invalid Invitation" className={styles.errorAlert}>
-              The invitation link is invalid or has expired. Please contact the person who invited you for a new invitation.
+            <Alert color='red' title='Invalid Invitation' className={styles.errorAlert}>
+              The invitation link is invalid or has expired. Please contact the person who invited
+              you for a new invitation.
             </Alert>
           </section>
         </div>
@@ -99,7 +100,7 @@ const AcceptInvitation = () => {
         {/* Background Shapes */}
         <div className={styles.bgShape1} />
         <div className={styles.bgShape2} />
-        
+
         <div className={styles.contentWrapper}>
           <section className={styles.mainContent}>
             <ExistingUserNotice email={data.invitation.email} />
@@ -115,25 +116,25 @@ const AcceptInvitation = () => {
       {/* Background Shapes */}
       <div className={styles.bgShape1} />
       <div className={styles.bgShape2} />
-      
+
       <div className={styles.contentWrapper}>
         <section className={styles.mainContent}>
           <div className={styles.pageContent}>
             <InvitationHeader invitation={data.invitation} />
-            
+
             {data.all_invitations && (
               <AllInvitations
                 invitations={data.all_invitations}
                 selectedInvitations={selectedInvitations}
                 onSelectionChange={handleSelectionChange}
                 primaryInvitationId={
-                  data.invitation.type === 'organization' 
-                    ? data.invitation.organization?.id 
-                    : data.invitation.event?.id
+                  data.invitation.type === 'organization' ?
+                    data.invitation.organization?.id
+                  : data.invitation.event?.id
                 }
               />
             )}
-            
+
             <RegistrationForm
               email={data.invitation.email}
               selectedInvitations={selectedInvitations}

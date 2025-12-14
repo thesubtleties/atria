@@ -1,5 +1,5 @@
-import { motion } from 'motion/react'
-import styles from './TimeSlotCard.module.css'
+import { motion } from 'motion/react';
+import styles from './TimeSlotCard.module.css';
 
 const TimeSlotCard = ({
   time = '',
@@ -10,7 +10,7 @@ const TimeSlotCard = ({
   isActive = false,
   onClick,
   delay = 0,
-  className = ''
+  className = '',
 }) => {
   return (
     <motion.div
@@ -24,21 +24,15 @@ const TimeSlotCard = ({
       <div className={styles.timeWrapper}>
         <span className={styles.time}>{time}</span>
       </div>
-      
+
       <div className={styles.content}>
         <h4 className={styles.title}>{title}</h4>
-        {subtitle && (
-          <p className={styles.subtitle}>{subtitle}</p>
-        )}
+        {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
       </div>
 
-      {badge && (
-        <div className={`${styles.badge} ${styles[`badge-${badgeColor}`]}`}>
-          {badge}
-        </div>
-      )}
+      {badge && <div className={`${styles.badge} ${styles[`badge-${badgeColor}`]}`}>{badge}</div>}
     </motion.div>
-  )
-}
+  );
+};
 
-export default TimeSlotCard
+export default TimeSlotCard;

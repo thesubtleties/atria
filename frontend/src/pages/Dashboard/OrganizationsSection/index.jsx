@@ -35,25 +35,22 @@ export const OrganizationsSection = ({ organizations }) => {
     <section className={styles.dashboardSection}>
       <div className={styles.sectionHeader}>
         <h2 className={styles.sectionTitle}>Your Organizations</h2>
-        <Button 
-          variant="primary"
-          onClick={() => navigate('/app/organizations/new')}
-        >
+        <Button variant='primary' onClick={() => navigate('/app/organizations/new')}>
           + Create Organization
         </Button>
       </div>
 
-      {organizations && organizations.length > 0 ? (
+      {organizations && organizations.length > 0 ?
         <div className={styles.cardList}>
           {organizations.map((org, index) => (
-            <div 
-              key={org.id} 
+            <div
+              key={org.id}
               className={styles.card}
               onClick={() => navigate(`/app/organizations/${org.id}`)}
             >
               <div className={styles.cardHeader}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <div 
+                  <div
                     className={styles.orgAvatar}
                     style={{ background: getAvatarGradient(index) }}
                   >
@@ -65,22 +62,20 @@ export const OrganizationsSection = ({ organizations }) => {
                 </div>
               </div>
               <div className={styles.cardMeta}>
-                {formatRole(org.role)} • {org.event_count} {org.event_count === 1 ? 'event' : 'events'} • {org.member_count} {org.member_count === 1 ? 'member' : 'members'}
+                {formatRole(org.role)} • {org.event_count}{' '}
+                {org.event_count === 1 ? 'event' : 'events'} • {org.member_count}{' '}
+                {org.member_count === 1 ? 'member' : 'members'}
               </div>
             </div>
           ))}
         </div>
-      ) : (
-        <div className={styles.emptyState}>
+      : <div className={styles.emptyState}>
           <p>{`You're not part of any organizations yet.`}</p>
-          <Button 
-            variant="primary"
-            onClick={() => navigate('/app/organizations/new')}
-          >
+          <Button variant='primary' onClick={() => navigate('/app/organizations/new')}>
             Create Your First Organization
           </Button>
         </div>
-      )}
+      }
     </section>
   );
 };

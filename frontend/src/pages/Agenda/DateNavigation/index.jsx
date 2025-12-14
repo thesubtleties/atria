@@ -5,15 +5,8 @@ import { format, addDays } from 'date-fns';
 import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import { parseDateOnly } from '@/shared/hooks/formatDate';
 
-export const DateNavigation = ({
-  startDate,
-  dayCount,
-  currentDay,
-  onDateChange,
-}) => {
-  const dates = Array.from({ length: dayCount }, (_, i) =>
-    addDays(parseDateOnly(startDate), i)
-  );
+export const DateNavigation = ({ startDate, dayCount, currentDay, onDateChange }) => {
+  const dates = Array.from({ length: dayCount }, (_, i) => addDays(parseDateOnly(startDate), i));
 
   const currentDate = dates[currentDay - 1];
 
@@ -25,18 +18,16 @@ export const DateNavigation = ({
           className={styles.navButton}
           onClick={() => onDateChange(currentDay - 1)}
           disabled={currentDay === 1}
-          aria-label="Previous day"
+          aria-label='Previous day'
         >
           <IconChevronLeft size={20} stroke={1.5} />
         </button>
-        <div className={styles.currentDate}>
-          {format(currentDate, 'MMMM d, yyyy')}
-        </div>
+        <div className={styles.currentDate}>{format(currentDate, 'MMMM d, yyyy')}</div>
         <button
           className={styles.navButton}
           onClick={() => onDateChange(currentDay + 1)}
           disabled={currentDay === dayCount}
-          aria-label="Next day"
+          aria-label='Next day'
         >
           <IconChevronRight size={20} stroke={1.5} />
         </button>

@@ -13,11 +13,11 @@
 
 /* Style close button to match EventNav patterns */
 .header :global(.mantine-ActionIcon-root) {
-  color: #64748B;
+  color: #64748b;
   transition: all 0.2s ease;
 }
 
 .header :global(.mantine-ActionIcon-root):hover {
-  color: #8B5CF6;
+  color: #8b5cf6;
   background: rgba(139, 92, 246, 0.04);
 }

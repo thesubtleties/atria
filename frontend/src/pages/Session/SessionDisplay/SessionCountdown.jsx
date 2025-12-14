@@ -18,9 +18,7 @@ export const SessionCountdown = ({ startTime }) => {
 
       // Calculate days, hours, minutes
       const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-      const hours = Math.floor(
-        (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-      );
+      const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
 
       return `${days}d ${hours}h ${minutes}m`;
@@ -39,12 +37,12 @@ export const SessionCountdown = ({ startTime }) => {
 
   return (
     <div className={styles.countdownContainer}>
-      <Stack align="center" spacing="md">
+      <Stack align='center' spacing='md'>
         <IconClock size={48} stroke={1.5} />
-        <Text size="xl" weight={500}>
+        <Text size='xl' weight={500}>
           Session starts in
         </Text>
-        <Text size="xxl" weight={700}>
+        <Text size='xxl' weight={700}>
           {timeLeft}
         </Text>
       </Stack>

@@ -56,7 +56,7 @@ const SponsorsList = ({ sponsors, eventId }) => {
   const { localItems, setLocalItems, handleDragOver, handleDragEnd } = useSponsorDragDrop(
     sponsorLookup,
     tierInfo,
-    updateSponsor
+    updateSponsor,
   );
 
   // Initialize local items from sponsors and all tiers
@@ -124,7 +124,7 @@ const SponsorsList = ({ sponsors, eventId }) => {
         <SponsorModal
           eventId={eventId}
           sponsor={selectedSponsor}
-          mode="edit"
+          mode='edit'
           opened={editModalOpen}
           onClose={() => {
             setEditModalOpen(false);

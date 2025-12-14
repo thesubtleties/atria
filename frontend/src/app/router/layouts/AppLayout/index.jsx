@@ -29,17 +29,21 @@ export const AppLayout = () => {
   console.log('🔐 AppLayout - Auth state:', { isAuthenticated, user });
 
   // Only fetch event data if eventId exists
-  const { data: event, error: eventError, isError: eventIsError } = useGetEventQuery(eventId, {
+  const {
+    data: event,
+    error: eventError,
+    isError: eventIsError,
+  } = useGetEventQuery(eventId, {
     skip: !eventId, // Skip the query if eventId is undefined
   });
-  
+
   // Redirect to dashboard if event is deleted (404) or user has no access (403)
   useEffect(() => {
     if (eventId && eventIsError && (eventError?.status === 404 || eventError?.status === 403)) {
       navigate('/app/dashboard', { replace: true });
     }
   }, [eventId, eventIsError, eventError, navigate]);
-  
+
   // Check if current user has ADMIN or ORGANIZER role in this event
   const isAdmin = event?.user_role === 'ADMIN' || event?.user_role === 'ORGANIZER';
 
@@ -62,9 +66,9 @@ export const AppLayout = () => {
           const response = await fetch(`${apiUrl}/auth/socket-token`, {
             credentials: 'include',
           });
-          
+
           console.log('Socket token response:', response.status, response.statusText);
-          
+
           if (response.ok) {
             const data = await response.json();
             console.log('Socket token data:', data);
@@ -75,9 +79,7 @@ export const AppLayout = () => {
             // If socket is already connected, fetch data immediately
             if (socket.connected) {
               console.log('Socket already connected, fetching initial data');
-              fetchInitialData().catch((err) =>
-                console.error('Error fetching initial data:', err)
-              );
+              fetchInitialData().catch((err) => console.error('Error fetching initial data:', err));
             }
             // Otherwise socket.on('connect') in socketClient will handle it
           } else {
@@ -103,15 +105,15 @@ export const AppLayout = () => {
       className={styles.layout}
       header={{ height: 60 }}
       navbar={
-        showEventNav
-          ? {
-              width: 300,
-              breakpoint: 'sm',
-              collapsed: { mobile: !mobileOpened, desktop: !desktopOpened },
-            }
-          : undefined
+        showEventNav ?
+          {
+            width: 300,
+            breakpoint: 'sm',
+            collapsed: { mobile: !mobileOpened, desktop: !desktopOpened },
+          }
+        : undefined
       }
-      padding="md"
+      padding='md'
     >
       <AppShell.Header>
         <TopNav
@@ -121,17 +123,17 @@ export const AppLayout = () => {
                 <Burger
                   opened={mobileOpened}
                   onClick={toggleMobile}
-                  hiddenFrom="sm"
-                  size="sm"
-                  color="#FFD666"
+                  hiddenFrom='sm'
+                  size='sm'
+                  color='#FFD666'
                   transitionDuration={200}
                 />
                 <Burger
                   opened={desktopOpened}
                   onClick={toggleDesktop}
-                  visibleFrom="sm"
-                  size="sm"
-                  color="#FFD666"
+                  visibleFrom='sm'
+                  size='sm'
+                  color='#FFD666'
                   transitionDuration={200}
                 />
               </>
@@ -142,7 +144,12 @@ export const AppLayout = () => {
 
       {showEventNav && (
         <AppShell.Navbar>
-          <EventNav eventId={eventId} event={event} isAdmin={isAdmin} onMobileNavClick={toggleMobile} />
+          <EventNav
+            eventId={eventId}
+            event={event}
+            isAdmin={isAdmin}
+            onMobileNavClick={toggleMobile}
+          />
         </AppShell.Navbar>
       )}
 

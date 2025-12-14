@@ -1,4 +1,4 @@
-// Export all shared components  
+// Export all shared components
 export { default as ChatContainer } from './chat';
 // TODO: Migrate these chat components to TypeScript
 // export { default as ChatInput } from './chat/ChatInput';

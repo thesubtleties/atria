@@ -10,14 +10,10 @@ export type Awaited<T> = T extends Promise<infer U> ? U : T;
 export type RequireKeys<T, K extends keyof T> = T & Required<Pick<T, K>>;
 
 /** Make specific keys of T optional */
-export type OptionalKeys<T, K extends keyof T> = Omit<T, K> &
-  Partial<Pick<T, K>>;
+export type OptionalKeys<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
 /** Ensure at least one property is present */
-export type AtLeastOne<T, Keys extends keyof T = keyof T> = Pick<
-  T,
-  Exclude<keyof T, Keys>
-> &
+export type AtLeastOne<T, Keys extends keyof T = keyof T> = Pick<T, Exclude<keyof T, Keys>> &
   {
     [K in Keys]-?: Required<Pick<T, K>> & Partial<Pick<T, Exclude<Keys, K>>>;
   }[Keys];
@@ -79,4 +75,3 @@ export interface FilterConfig<T> {
   operator: FilterOperator;
   value: unknown;
 }
-

@@ -19,14 +19,14 @@ const TierManagementModal = ({ opened, onClose, eventId }) => {
   useEffect(() => {
     if (opened) {
       setTierFormData(
-        sponsorTiers.length > 0
-          ? sponsorTiers.map((tier) => ({ ...tier })) // Deep copy each tier object
-          : [
-              { id: 'platinum', name: 'Platinum', order: 1, color: '#E5E4E2' },
-              { id: 'gold', name: 'Gold', order: 2, color: '#DEAE4A' },
-              { id: 'silver', name: 'Silver', order: 3, color: '#C7D3DB' },
-              { id: 'bronze', name: 'Bronze', order: 4, color: '#BB8F4C' },
-            ]
+        sponsorTiers.length > 0 ?
+          sponsorTiers.map((tier) => ({ ...tier })) // Deep copy each tier object
+        : [
+            { id: 'platinum', name: 'Platinum', order: 1, color: '#E5E4E2' },
+            { id: 'gold', name: 'Gold', order: 2, color: '#DEAE4A' },
+            { id: 'silver', name: 'Silver', order: 3, color: '#C7D3DB' },
+            { id: 'bronze', name: 'Bronze', order: 4, color: '#BB8F4C' },
+          ],
       );
     }
   }, [opened, sponsorTiers]);
@@ -84,9 +84,7 @@ const TierManagementModal = ({ opened, onClose, eventId }) => {
     const errorKey = `${index}.${field}`;
 
     if (!validation.success) {
-      const fieldError = validation.error.errors.find((err) =>
-        err.path.includes(field)
-      );
+      const fieldError = validation.error.errors.find((err) => err.path.includes(field));
       if (fieldError) {
         setErrors({ ...errors, [errorKey]: fieldError.message });
       }
@@ -122,43 +120,43 @@ const TierManagementModal = ({ opened, onClose, eventId }) => {
     <Modal
       opened={opened}
       onClose={onClose}
-      title="Manage Sponsor Tiers"
-      size="lg"
+      title='Manage Sponsor Tiers'
+      size='lg'
       lockScroll={false}
       classNames={{
         content: styles.modalContent,
         header: styles.modalHeader,
       }}
     >
-      <Stack spacing="md" p="lg">
+      <Stack spacing='md' p='lg'>
         <Text className={styles.description}>
-          Define the sponsorship tiers for your event. Sponsors will be grouped
-          and sorted by these tiers.
+          Define the sponsorship tiers for your event. Sponsors will be grouped and sorted by these
+          tiers.
         </Text>
 
-        <Text size="xs" c="dimmed" ta="center" mb="xs">
+        <Text size='xs' c='dimmed' ta='center' mb='xs'>
           {'Tier IDs should be lowercase with no spaces (e.g., "platinum", "gold", "silver")'}
         </Text>
 
         {/* Header row */}
-        <Grid align="center" gutter="sm" className={styles.tierHeader}>
+        <Grid align='center' gutter='sm' className={styles.tierHeader}>
           <Grid.Col span={1}>
-            <Text size="sm" fw={500} ta="center">
+            <Text size='sm' fw={500} ta='center'>
               Order
             </Text>
           </Grid.Col>
           <Grid.Col span={3}>
-            <Text size="sm" fw={500} ta="center">
+            <Text size='sm' fw={500} ta='center'>
               Tier ID
             </Text>
           </Grid.Col>
           <Grid.Col span={4}>
-            <Text size="sm" fw={500} ta="center">
+            <Text size='sm' fw={500} ta='center'>
               Display Name
             </Text>
           </Grid.Col>
           <Grid.Col span={3}>
-            <Text size="sm" fw={500} ta="center">
+            <Text size='sm' fw={500} ta='center'>
               Color
             </Text>
           </Grid.Col>
@@ -166,14 +164,9 @@ const TierManagementModal = ({ opened, onClose, eventId }) => {
         </Grid>
 
         {tierFormData.map((tier, index) => (
-          <Grid
-            key={index}
-            align="center"
-            gutter="sm"
-            className={styles.tierGrid}
-          >
+          <Grid key={index} align='center' gutter='sm' className={styles.tierGrid}>
             <Grid.Col span={1}>
-              <Text size="lg" fw={600} c="dimmed" ta="center">
+              <Text size='lg' fw={600} c='dimmed' ta='center'>
                 {tier.order}
               </Text>
             </Grid.Col>
@@ -181,7 +174,7 @@ const TierManagementModal = ({ opened, onClose, eventId }) => {
               <TextInput
                 value={tier.id}
                 onChange={(e) => updateTier(index, 'id', e.target.value)}
-                placeholder="tier-id"
+                placeholder='tier-id'
                 error={errors[`${index}.id`]}
                 classNames={{ input: styles.formInput }}
               />
@@ -190,7 +183,7 @@ const TierManagementModal = ({ opened, onClose, eventId }) => {
               <TextInput
                 value={tier.name}
                 onChange={(e) => updateTier(index, 'name', e.target.value)}
-                placeholder="Tier Name"
+                placeholder='Tier Name'
                 error={errors[`${index}.name`]}
                 classNames={{ input: styles.formInput }}
               />
@@ -199,17 +192,26 @@ const TierManagementModal = ({ opened, onClose, eventId }) => {
               <ColorInput
                 value={tier.color}
                 onChange={(value) => updateTier(index, 'color', value)}
-                placeholder="#000000"
+                placeholder='#000000'
                 error={errors[`${index}.color`]}
                 classNames={{ input: styles.formInput }}
-                format="hex"
-                swatches={['#E5E4E2', '#DEAE4A', '#C7D3DB', '#BB8F4C', '#8B5CF6', '#10B981', '#0891B2', '#6366F1']}
+                format='hex'
+                swatches={[
+                  '#E5E4E2',
+                  '#DEAE4A',
+                  '#C7D3DB',
+                  '#BB8F4C',
+                  '#8B5CF6',
+                  '#10B981',
+                  '#0891B2',
+                  '#6366F1',
+                ]}
               />
             </Grid.Col>
             <Grid.Col span={1}>
               <ActionIcon
-                color="red"
-                variant="subtle"
+                color='red'
+                variant='subtle'
                 onClick={() => deleteTier(index)}
                 className={styles.deleteButton}
               >
@@ -219,21 +221,16 @@ const TierManagementModal = ({ opened, onClose, eventId }) => {
           </Grid>
         ))}
 
-        <Button
-          variant="subtle"
-          onClick={addTier}
-          fullWidth
-          className={styles.addTierButton}
-        >
+        <Button variant='subtle' onClick={addTier} fullWidth className={styles.addTierButton}>
           <IconPlus size={16} />
           Add Tier
         </Button>
 
         <div className={styles.buttonGroup}>
-          <Button variant="subtle" onClick={onClose}>
+          <Button variant='subtle' onClick={onClose}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleUpdateTiers}>
+          <Button variant='primary' onClick={handleUpdateTiers}>
             Save Tiers
           </Button>
         </div>

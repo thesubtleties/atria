@@ -114,4 +114,3 @@ export interface PasswordResetData {
   token: string;
   password: string;
 }
-

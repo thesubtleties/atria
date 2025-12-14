@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   postgres-test:
@@ -9,19 +9,19 @@ services:
       POSTGRES_PASSWORD: test_pass
       POSTGRES_DB: test_atria
     ports:
-      - "5433:5432"  # Different port to avoid conflicts with dev
+      - "5433:5432" # Different port to avoid conflicts with dev
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U test_user -d test_atria"]
       interval: 2s
       timeout: 3s
       retries: 10
     tmpfs:
-      - /var/lib/postgresql/data  # Use RAM for faster tests
+      - /var/lib/postgresql/data # Use RAM for faster tests
 
   redis-test:
     image: redis:7
     ports:
-      - "6380:6379"  # Different port to avoid conflicts
+      - "6380:6379" # Different port to avoid conflicts
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -48,7 +48,7 @@ services:
       SMTP_PORT: 1025
       SMTP_USE_TLS: "false"
     ports:
-      - "5001:5000"  # Different port to avoid conflicts
+      - "5001:5000" # Different port to avoid conflicts
     depends_on:
       postgres-test:
         condition: service_healthy
@@ -70,14 +70,14 @@ services:
       args:
         VITE_API_URL: http://backend-test:5000/api
     ports:
-      - "5174:80"  # Different port to avoid conflicts
+      - "5174:80" # Different port to avoid conflicts
     depends_on:
       - backend-test
 
   minio-test:
     image: minio/minio:latest
     ports:
-      - "9001:9000"  # Different port to avoid conflicts
+      - "9001:9000" # Different port to avoid conflicts
       - "9091:9090"
     environment:
       MINIO_ROOT_USER: minioadmin
@@ -94,10 +94,10 @@ services:
   mailhog:
     image: mailhog/mailhog:latest
     ports:
-      - "1025:1025"  # SMTP
-      - "8025:8025"  # Web UI
+      - "1025:1025" # SMTP
+      - "8025:8025" # Web UI
     logging:
-      driver: 'none'  # Disable logs to avoid clutter
+      driver: "none" # Disable logs to avoid clutter
 
 volumes:
   test_postgres_data:

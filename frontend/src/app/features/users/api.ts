@@ -8,10 +8,18 @@ import type {
   PaginatedResponse,
 } from '@/types';
 
+/** User basic info (from UserCheckResponse) */
+interface UserBasicInfo {
+  id: number;
+  email: string;
+  first_name: string;
+  last_name: string;
+  full_name?: string;
+}
+
 /** User exists check response */
 interface UserExistsResponse {
-  exists: boolean;
-  user_id?: number;
+  user: UserBasicInfo | null;
 }
 
 /** Get user events params */
@@ -150,10 +158,7 @@ export const usersApi = baseApi.injectEndpoints({
       ],
     }),
 
-    getUserEvents: builder.query<
-      PaginatedResponse<UserEvent>,
-      GetUserEventsParams
-    >({
+    getUserEvents: builder.query<PaginatedResponse<UserEvent>, GetUserEventsParams>({
       query: ({ userId, role, page = 1, per_page = 50 }) => ({
         url: `/users/${userId}/events`,
         params: { role, page, per_page },
@@ -194,10 +199,7 @@ export const usersApi = baseApi.injectEndpoints({
       providesTags: (_result, _error, id) => [{ type: 'Users', id }],
     }),
 
-    updateUserPrivacySettings: builder.mutation<
-      PrivacySettings,
-      UpdatePrivacySettingsParams
-    >({
+    updateUserPrivacySettings: builder.mutation<PrivacySettings, UpdatePrivacySettingsParams>({
       query: ({ id, ...settings }) => ({
         url: `/users/${id}/privacy-settings`,
         method: 'PUT',
@@ -209,10 +211,7 @@ export const usersApi = baseApi.injectEndpoints({
       ],
     }),
 
-    getEventPrivacyOverrides: builder.query<
-      EventPrivacyOverrides,
-      GetEventPrivacyOverridesParams
-    >({
+    getEventPrivacyOverrides: builder.query<EventPrivacyOverrides, GetEventPrivacyOverridesParams>({
       query: ({ userId, eventId }) => ({
         url: `/users/${userId}/events/${eventId}/privacy-overrides`,
       }),
@@ -237,10 +236,7 @@ export const usersApi = baseApi.injectEndpoints({
       ],
     }),
 
-    deleteEventPrivacyOverrides: builder.mutation<
-      void,
-      DeleteEventPrivacyOverridesParams
-    >({
+    deleteEventPrivacyOverrides: builder.mutation<void, DeleteEventPrivacyOverridesParams>({
       query: ({ userId, eventId }) => ({
         url: `/users/${userId}/events/${eventId}/privacy-overrides`,
         method: 'DELETE',
@@ -268,4 +264,3 @@ export const {
   useUpdateEventPrivacyOverridesMutation,
   useDeleteEventPrivacyOverridesMutation,
 } = usersApi;
-

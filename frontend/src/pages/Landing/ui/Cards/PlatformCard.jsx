@@ -1,5 +1,5 @@
-import { motion } from 'motion/react'
-import styles from './PlatformCard.module.css'
+import { motion } from 'motion/react';
+import styles from './PlatformCard.module.css';
 
 const PlatformCard = ({
   title = '',
@@ -11,7 +11,7 @@ const PlatformCard = ({
   variant = 'default', // 'default', 'primary', 'gradient'
   onCtaClick,
   delay = 0,
-  className = ''
+  className = '',
 }) => {
   return (
     <motion.div
@@ -55,7 +55,7 @@ const PlatformCard = ({
         </motion.button>
       )}
     </motion.div>
-  )
-}
+  );
+};
 
-export default PlatformCard
+export default PlatformCard;

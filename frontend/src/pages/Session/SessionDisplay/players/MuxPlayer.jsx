@@ -18,7 +18,8 @@ export const MuxPlayer = ({ playbackId, playbackPolicy, tokens, session, event, 
   const metadata = {
     // Viewer info
     viewer_user_id: currentUser?.id?.toString(),
-    viewer_user_name: currentUser ? `${currentUser.first_name} ${currentUser.last_name}` : 'Anonymous',
+    viewer_user_name:
+      currentUser ? `${currentUser.first_name} ${currentUser.last_name}` : 'Anonymous',
 
     // Video/Session info
     video_id: session?.id?.toString(),
@@ -41,7 +42,7 @@ export const MuxPlayer = ({ playbackId, playbackPolicy, tokens, session, event, 
           playbackId={playbackId}
           tokens={tokens}
           metadata={metadata}
-          accentColor="#8B5CF6"
+          accentColor='#8B5CF6'
           controls
           style={{ width: '100%', aspectRatio: '16/9' }}
         />
@@ -55,7 +56,7 @@ export const MuxPlayer = ({ playbackId, playbackPolicy, tokens, session, event, 
       <MuxPlayerReact
         playbackId={playbackId}
         metadata={metadata}
-        accentColor="#8B5CF6"
+        accentColor='#8B5CF6'
         controls
         style={{ width: '100%', aspectRatio: '16/9' }}
       />

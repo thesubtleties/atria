@@ -22,8 +22,7 @@
   /* Optimized transitions with different speeds for different properties */
   transition:
     transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
-    /* Slight overshoot for natural feel */ box-shadow 0.4s
-      cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    /* Slight overshoot for natural feel */ box-shadow 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
     /* Smoother shadow transition */ border-color 0.3s ease-out,
     z-index 0s; /* Instant z-index change */
   /* Performance optimization */
@@ -96,11 +95,7 @@
   border: 1px solid rgba(255, 255, 255, 0.15);
 }
 .panel {
-  background: linear-gradient(
-    135deg,
-    var(--session-panel-from) 0%,
-    var(--session-panel-to) 100%
-  );
+  background: linear-gradient(135deg, var(--session-panel-from) 0%, var(--session-panel-to) 100%);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   box-shadow:
@@ -135,11 +130,7 @@
   border: 1px solid rgba(255, 255, 255, 0.15);
 }
 .qa {
-  background: linear-gradient(
-    135deg,
-    var(--session-qa-from) 0%,
-    var(--session-qa-to) 100%
-  );
+  background: linear-gradient(135deg, var(--session-qa-from) 0%, var(--session-qa-to) 100%);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   box-shadow:
@@ -493,7 +484,7 @@
   .sessionCard:hover .expandedContent {
     padding: var(--space-sm) var(--space-md) var(--space-sm) var(--space-md);
   }
-  
+
   /* Ensure session type badge remains readable on mobile */
   .sessionType {
     padding: 4px 10px;

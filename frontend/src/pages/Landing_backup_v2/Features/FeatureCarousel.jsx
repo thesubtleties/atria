@@ -24,8 +24,7 @@ const FEATURES_DATA = [
   },
   {
     title: 'Service Integration',
-    description:
-      'Integrates with popular streaming platforms including Vimeo, DaCast, and Zoom.',
+    description: 'Integrates with popular streaming platforms including Vimeo, DaCast, and Zoom.',
     icon: IconBrandZoom,
     color: 'indigo',
   },
@@ -45,8 +44,7 @@ const FEATURES_DATA = [
   },
   {
     title: 'Sponsor Showcase',
-    description:
-      'Highlight sponsors in unique and valuable ways with customizable sponsor levels.',
+    description: 'Highlight sponsors in unique and valuable ways with customizable sponsor levels.',
     icon: IconBuildingStore,
     color: 'pink',
   },
@@ -80,7 +78,7 @@ export const FeatureCarousel = () => {
     <Carousel
       slideSize={{ base: '100%', sm: '50%', md: '33.333333%' }}
       slideGap={{ base: 'md', sm: 'lg' }}
-      align="start"
+      align='start'
       slidesToScroll={1}
       withControls
       withIndicators

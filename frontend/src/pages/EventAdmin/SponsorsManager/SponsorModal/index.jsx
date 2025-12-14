@@ -16,14 +16,7 @@ import SocialLinksSection from './SocialLinksSection';
 import LogoUploadSection from './LogoUploadSection';
 import styles from './styles/index.module.css';
 
-const SponsorModal = ({
-  opened,
-  onClose,
-  eventId,
-  mode,
-  sponsor,
-  sponsors = [],
-}) => {
+const SponsorModal = ({ opened, onClose, eventId, mode, sponsor, sponsors = [] }) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
   const [contactExpanded, setContactExpanded] = useState(false);
   const [socialExpanded, setSocialExpanded] = useState(false);
@@ -46,7 +39,6 @@ const SponsorModal = ({
   const [createSponsor, { isLoading: isCreating }] = useCreateSponsorMutation();
   const [updateSponsor, { isLoading: isUpdating }] = useUpdateSponsorMutation();
   const [uploadImage] = useUploadImageMutation();
-
 
   const handleSubmit = async () => {
     if (!validateForm()) {
@@ -81,20 +73,14 @@ const SponsorModal = ({
         let newDisplayOrder = 10.0;
         if (formData.tierId && sponsors.length > 0) {
           // Find the highest display_order in the selected tier
-          const tierSponsors = sponsors.filter(
-            (s) => s.tier_id === formData.tierId
-          );
+          const tierSponsors = sponsors.filter((s) => s.tier_id === formData.tierId);
           if (tierSponsors.length > 0) {
-            const maxOrder = Math.max(
-              ...tierSponsors.map((s) => s.display_order || 0)
-            );
+            const maxOrder = Math.max(...tierSponsors.map((s) => s.display_order || 0));
             newDisplayOrder = maxOrder + 10.0;
           }
         } else if (sponsors.length > 0) {
           // No tier selected, just get the highest overall
-          const maxOrder = Math.max(
-            ...sponsors.map((s) => s.display_order || 0)
-          );
+          const maxOrder = Math.max(...sponsors.map((s) => s.display_order || 0));
           newDisplayOrder = maxOrder + 10.0;
         }
 
@@ -136,7 +122,7 @@ const SponsorModal = ({
       opened={opened}
       onClose={handleClose}
       title={mode === 'edit' ? 'Edit Sponsor' : 'Add New Sponsor'}
-      size="lg"
+      size='lg'
       lockScroll={false}
       classNames={{
         content: styles.modalContent,
@@ -178,14 +164,10 @@ const SponsorModal = ({
         />
 
         <div className={styles.buttonGroup}>
-          <Button variant="subtle" onClick={handleClose}>
+          <Button variant='subtle' onClick={handleClose}>
             Cancel
           </Button>
-          <Button
-            variant="primary"
-            onClick={handleSubmit}
-            loading={isCreating || isUpdating}
-          >
+          <Button variant='primary' onClick={handleSubmit} loading={isCreating || isUpdating}>
             {mode === 'edit' ? 'Update' : 'Create'} Sponsor
           </Button>
         </div>

@@ -1,0 +1,107 @@
+import { TextInput, Button, Stack, Modal } from '@mantine/core';
+import { useForm, zodResolver } from '@mantine/form';
+import { useEffect } from 'react';
+import {
+  useCreateOrganizationMutation,
+  useUpdateOrganizationMutation,
+} from '@/app/features/organizations/api';
+import { organizationSchema } from './schemas/organizationSchema';
+import styles from './styles/index.module.css';
+import type { Organization } from '@/types/organizations';
+import type { ApiError } from '@/types/api';
+
+interface OrganizationFormValues {
+  name: string;
+}
+
+interface OrganizationModalProps {
+  organization?: Organization | null;
+  opened: boolean;
+  onClose: () => void;
+  onSuccess?: () => void;
+}
+
+export const OrganizationModal = ({
+  organization,
+  opened,
+  onClose,
+  onSuccess,
+}: OrganizationModalProps) => {
+  const isEditing = !!organization;
+
+  const [createOrganization, { isLoading: isCreating }] = useCreateOrganizationMutation();
+  const [updateOrganization, { isLoading: isUpdating }] = useUpdateOrganizationMutation();
+
+  const isLoading = isCreating || isUpdating;
+
+  const form = useForm<OrganizationFormValues>({
+    initialValues: {
+      name: organization?.name || '',
+    },
+    validate: zodResolver(organizationSchema),
+  });
+
+  useEffect(() => {
+    if (!opened) {
+      form.reset();
+    }
+  }, [opened, form]);
+
+  const handleSubmit = async (values: OrganizationFormValues) => {
+    try {
+      if (isEditing && organization) {
+        await updateOrganization({
+          id: organization.id,
+          ...values,
+        }).unwrap();
+      } else {
+        await createOrganization(values).unwrap();
+      }
+
+      onSuccess?.();
+      onClose();
+    } catch (err: unknown) {
+      const error = err as ApiError;
+      if (error.status === 409) {
+        form.setErrors({
+          name: 'An organization with this name already exists',
+        });
+      } else {
+        form.setErrors({ name: 'An unexpected error occurred' });
+      }
+    }
+  };
+
+  return (
+    <Modal
+      opened={opened}
+      onClose={onClose}
+      title={isEditing ? 'Edit Organization' : 'Create Organization'}
+      centered
+      size='md'
+      lockScroll={false}
+    >
+      <form onSubmit={form.onSubmit(handleSubmit)} className={styles.form || ''}>
+        <Stack gap='md'>
+          <TextInput
+            label='Organization Name'
+            placeholder='Enter organization name'
+            required
+            {...form.getInputProps('name')}
+            disabled={isLoading}
+          />
+
+          <Button type='submit' loading={isLoading} fullWidth>
+            {isLoading ?
+              isEditing ?
+                'Updating...'
+              : 'Creating...'
+            : isEditing ?
+              'Update Organization'
+            : 'Create Organization'}
+          </Button>
+        </Stack>
+      </form>
+    </Modal>
+  );
+};

@@ -3,7 +3,14 @@ import { useSessionLayout } from '../hooks/useSessionLayout';
 import { SessionCard } from '../SessionCard';
 import styles from './styles/index.module.css';
 
-export const AgendaView = ({ sessions, eventStartDate, eventTimezone, isOrgView, orgId, eventId }) => {
+export const AgendaView = ({
+  sessions,
+  eventStartDate,
+  eventTimezone,
+  isOrgView,
+  orgId,
+  eventId,
+}) => {
   const { rows, getSessionWidth, getSessionHeight, getSessionTop, isKeynote } =
     useSessionLayout(sessions);
 
@@ -32,9 +39,7 @@ export const AgendaView = ({ sessions, eventStartDate, eventTimezone, isOrgView,
                     orgId={orgId}
                     eventId={eventId}
                     style={{
-                      width: isKeynote(session)
-                        ? '100%'
-                        : getSessionWidth(rowIndex),
+                      width: isKeynote(session) ? '100%' : getSessionWidth(rowIndex),
                       height: getSessionHeight(session),
                     }}
                   />

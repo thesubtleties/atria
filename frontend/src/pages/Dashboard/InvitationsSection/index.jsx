@@ -11,9 +11,7 @@ function InvitationsSection({ userId }) {
 
   if (isLoading) {
     return (
-      <section
-        className={`${dashboardStyles.dashboardSection} ${dashboardStyles.fullWidth}`}
-      >
+      <section className={`${dashboardStyles.dashboardSection} ${dashboardStyles.fullWidth}`}>
         <div className={dashboardStyles.sectionHeader}>
           <h2 className={dashboardStyles.sectionTitle}>Pending Invitations</h2>
         </div>
@@ -27,14 +25,8 @@ function InvitationsSection({ userId }) {
 
   if (error) {
     return (
-      <section
-        className={`${dashboardStyles.dashboardSection} ${dashboardStyles.fullWidth}`}
-      >
-        <Alert
-          icon={<IconInfoCircle size={16} />}
-          title="Unable to load invitations"
-          color="red"
-        >
+      <section className={`${dashboardStyles.dashboardSection} ${dashboardStyles.fullWidth}`}>
+        <Alert icon={<IconInfoCircle size={16} />} title='Unable to load invitations' color='red'>
           There was an error loading your invitations. Please try again later.
         </Alert>
       </section>
@@ -49,9 +41,7 @@ function InvitationsSection({ userId }) {
   }
 
   return (
-    <section
-      className={`${dashboardStyles.dashboardSection} ${dashboardStyles.fullWidth}`}
-    >
+    <section className={`${dashboardStyles.dashboardSection} ${dashboardStyles.fullWidth}`}>
       <div className={dashboardStyles.sectionHeader}>
         <h2 className={dashboardStyles.sectionTitle}>
           Pending Invitations
@@ -65,7 +55,7 @@ function InvitationsSection({ userId }) {
           <InvitationCard
             key={`org-${invitation.id}`}
             invitation={invitation}
-            type="organization"
+            type='organization'
             userId={userId}
           />
         ))}
@@ -75,7 +65,7 @@ function InvitationsSection({ userId }) {
           <InvitationCard
             key={`event-${invitation.id}`}
             invitation={invitation}
-            type="event"
+            type='event'
             userId={userId}
           />
         ))}

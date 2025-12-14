@@ -273,7 +273,7 @@
   .tabPanel {
     padding: var(--space-lg);
   }
-  
+
   /* Adjust tab sizing for laptop */
   .tab {
     padding: 0.875rem 1.25rem;
@@ -299,7 +299,7 @@
     font-size: 1.25rem;
     text-align: center;
   }
-  
+
   .pageSubtitle {
     text-align: center;
   }
@@ -308,7 +308,7 @@
   .mobileViewSelector {
     display: block;
   }
-  
+
   .tabsList {
     display: none !important;
   }
@@ -328,12 +328,12 @@
   .formActions button {
     width: 100%;
   }
-  
+
   /* Optimize section spacing for mobile */
   .section {
     padding: var(--space-md);
   }
-  
+
   .sectionTitle {
     font-size: var(--text-lg);
     margin-bottom: var(--space-md);
@@ -345,15 +345,15 @@
   .contentWrapper {
     padding: var(--space-sm);
   }
-  
+
   .headerSection {
     padding: var(--space-md);
   }
-  
+
   .tabPanel {
     padding: var(--space-sm);
   }
-  
+
   .pageTitle {
     font-size: 1.125rem;
   }

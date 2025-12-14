@@ -20,7 +20,7 @@
   font-size: var(--text-body);
   line-height: 1.6;
   color: var(--color-text-speak);
-  background-color: #F3EACE; /* Light yellow background */
+  background-color: #f3eace; /* Light yellow background */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;

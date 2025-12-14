@@ -13,30 +13,18 @@ export const StatsList = () => {
 
   return (
     <>
-      {isMobile ? (
-        <Stack align="center" gap="md">
+      {isMobile ?
+        <Stack align='center' gap='md'>
           {STATS_DATA.map((stat) => (
-            <StatItem
-              key={stat.label}
-              value={stat.value}
-              label={stat.label}
-              w="100%"
-              fz="lg"
-            />
+            <StatItem key={stat.label} value={stat.value} label={stat.label} w='100%' fz='lg' />
           ))}
         </Stack>
-      ) : (
-        <Group justify="center" gap="xl">
+      : <Group justify='center' gap='xl'>
           {STATS_DATA.map((stat) => (
-            <StatItem
-              key={stat.label}
-              value={stat.value}
-              label={stat.label}
-              fz="xl"
-            />
+            <StatItem key={stat.label} value={stat.value} label={stat.label} fz='xl' />
           ))}
         </Group>
-      )}
+      }
     </>
   );
 };

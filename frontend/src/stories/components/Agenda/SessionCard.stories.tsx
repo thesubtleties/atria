@@ -128,8 +128,7 @@ export const Panel: Story = {
     session_type: 'PANEL',
     start_time: '10:00:00',
     end_time: '11:00:00',
-    description:
-      'Industry experts discuss the impact of AI on software development practices',
+    description: 'Industry experts discuss the impact of AI on software development practices',
     speakers: mockSpeakers,
   },
 };
@@ -151,8 +150,7 @@ export const Playground: Story = {
     session_type: 'WORKSHOP',
     start_time: '14:00:00',
     end_time: '16:00:00',
-    description:
-      'This is a playground story where you can test different configurations',
+    description: 'This is a playground story where you can test different configurations',
     speakers: mockSpeakers,
   },
   parameters: {

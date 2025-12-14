@@ -130,10 +130,7 @@ export const chatApi = baseApi.injectEndpoints({
     }),
 
     // Get messages for a specific chat room
-    getChatRoomMessages: builder.query<
-      PaginatedResponse<ChatMessage>,
-      GetChatRoomMessagesParams
-    >({
+    getChatRoomMessages: builder.query<PaginatedResponse<ChatMessage>, GetChatRoomMessagesParams>({
       query: ({ chatRoomId, page = 1, per_page = 50 }) => ({
         url: `/chat-rooms/${chatRoomId}/messages`,
         params: { page, per_page },
@@ -209,4 +206,3 @@ export const {
   useLeaveChatRoomMutation,
   useGetSessionChatRoomsQuery,
 } = chatApi;
-

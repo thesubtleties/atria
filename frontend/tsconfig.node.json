@@ -20,4 +20,3 @@
   },
   "include": ["vite.config.ts", "*.config.ts"]
 }
-

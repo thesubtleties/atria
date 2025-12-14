@@ -1,14 +1,5 @@
 import { useState } from 'react';
-import {
-  Modal,
-  TextInput,
-  Select,
-  Textarea,
-  Stack,
-  Tabs,
-  Text,
-  Alert,
-} from '@mantine/core';
+import { Modal, TextInput, Select, Textarea, Stack, Tabs, Text, Alert } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconAlertCircle, IconUsers, IconUserPlus } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
@@ -23,7 +14,8 @@ const InviteModal = ({ opened, onClose, orgId, onSuccess }) => {
   const [activeTab, setActiveTab] = useState('single');
   const [bulkEmails, setBulkEmails] = useState('');
   const [sendInvitation, { isLoading: isSending }] = useSendOrganizationInvitationMutation();
-  const [sendBulkInvitations, { isLoading: isSendingBulk }] = useBulkSendOrganizationInvitationsMutation();
+  const [sendBulkInvitations, { isLoading: isSendingBulk }] =
+    useBulkSendOrganizationInvitationsMutation();
 
   // Single invitation form
   const singleForm = useForm({
@@ -98,7 +90,7 @@ const InviteModal = ({ opened, onClose, orgId, onSuccess }) => {
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const invalidEmails = emailList.filter((email) => !emailRegex.test(email));
-    
+
     if (invalidEmails.length > 0) {
       notifications.show({
         title: 'Invalid Emails',
@@ -137,7 +129,7 @@ const InviteModal = ({ opened, onClose, orgId, onSuccess }) => {
           message: `${failedCount} invitation${failedCount !== 1 ? 's' : ''} failed. Check the details.`,
           color: 'yellow',
         });
-        
+
         // Show failed emails
         console.error('Failed invitations:', result.failed);
       }
@@ -175,8 +167,8 @@ const InviteModal = ({ opened, onClose, orgId, onSuccess }) => {
     <Modal
       opened={opened}
       onClose={handleClose}
-      title="Invite Organization Members"
-      size="lg"
+      title='Invite Organization Members'
+      size='lg'
       lockScroll={false}
       classNames={{
         content: styles.modalContent,
@@ -185,81 +177,74 @@ const InviteModal = ({ opened, onClose, orgId, onSuccess }) => {
     >
       <Tabs value={activeTab} onChange={setActiveTab} className={styles.tabsContainer}>
         <Tabs.List className={styles.tabsList}>
-          <Tabs.Tab 
-            value="single" 
-            leftSection={<IconUserPlus size={16} />}
-            className={styles.tab}
-          >
+          <Tabs.Tab value='single' leftSection={<IconUserPlus size={16} />} className={styles.tab}>
             Single Invitation
           </Tabs.Tab>
-          <Tabs.Tab 
-            value="bulk" 
-            leftSection={<IconUsers size={16} />}
-            className={styles.tab}
-          >
+          <Tabs.Tab value='bulk' leftSection={<IconUsers size={16} />} className={styles.tab}>
             Bulk Invitations
           </Tabs.Tab>
         </Tabs.List>
 
-        <Tabs.Panel value="single" className={styles.tabPanel}>
+        <Tabs.Panel value='single' className={styles.tabPanel}>
           <form onSubmit={singleForm.onSubmit(handleSingleSubmit)}>
-            <Stack spacing="md">
+            <Stack spacing='md'>
               <TextInput
-                label="Email Address"
-                placeholder="member@example.com"
+                label='Email Address'
+                placeholder='member@example.com'
                 required
                 className={styles.formInput}
                 {...singleForm.getInputProps('email')}
               />
 
               <Select
-                label="Role"
+                label='Role'
                 data={roleOptions}
                 required
                 className={styles.formSelect}
-                description="Choose the level of access for this member"
+                description='Choose the level of access for this member'
                 {...singleForm.getInputProps('role')}
               />
 
               <Textarea
-                label="Personal Message"
-                placeholder="Add a personal message to the invitation (optional)"
+                label='Personal Message'
+                placeholder='Add a personal message to the invitation (optional)'
                 rows={3}
                 className={styles.formTextarea}
                 {...singleForm.getInputProps('message')}
               />
 
               <Alert icon={<IconAlertCircle size={16} />} className={styles.infoAlert}>
-                <Text size="sm">
-                  {"The recipient will receive an email invitation to join your organization. If they don't have an account, they'll be prompted to create one."}
+                <Text size='sm'>
+                  {
+                    "The recipient will receive an email invitation to join your organization. If they don't have an account, they'll be prompted to create one."
+                  }
                 </Text>
               </Alert>
 
-              <Text size="xs" color="dimmed">
-                <strong>Role Permissions:</strong><br />
-                • <strong>Member:</strong> Can view organization content and create events<br />
-                • <strong>Admin:</strong> Can manage members and organization settings<br />
-                • <strong>Owner:</strong> Full control including billing and deletion
+              <Text size='xs' color='dimmed'>
+                <strong>Role Permissions:</strong>
+                <br />• <strong>Member:</strong> Can view organization content and create events
+                <br />• <strong>Admin:</strong> Can manage members and organization settings
+                <br />• <strong>Owner:</strong> Full control including billing and deletion
               </Text>
-
             </Stack>
             <div className={styles.buttonGroup}>
-              <Button variant="subtle" onClick={handleClose}>
+              <Button variant='subtle' onClick={handleClose}>
                 Cancel
               </Button>
-              <Button type="submit" variant="primary" disabled={isSending}>
+              <Button type='submit' variant='primary' disabled={isSending}>
                 {isSending ? 'Sending...' : 'Send Invitation'}
               </Button>
             </div>
           </form>
         </Tabs.Panel>
 
-        <Tabs.Panel value="bulk" className={styles.tabPanel}>
-          <Stack spacing="md">
+        <Tabs.Panel value='bulk' className={styles.tabPanel}>
+          <Stack spacing='md'>
             <Textarea
-              label="Email Addresses"
-              placeholder="Enter email addresses separated by commas, semicolons, or new lines"
-              description="Example: john@example.com, jane@example.com"
+              label='Email Addresses'
+              placeholder='Enter email addresses separated by commas, semicolons, or new lines'
+              description='Example: john@example.com, jane@example.com'
               rows={6}
               value={bulkEmails}
               onChange={(e) => setBulkEmails(e.target.value)}
@@ -268,8 +253,8 @@ const InviteModal = ({ opened, onClose, orgId, onSuccess }) => {
             />
 
             <Select
-              label="Default Role"
-              description="All invitees will be assigned this role"
+              label='Default Role'
+              description='All invitees will be assigned this role'
               data={roleOptions}
               required
               className={styles.formSelect}
@@ -277,26 +262,25 @@ const InviteModal = ({ opened, onClose, orgId, onSuccess }) => {
             />
 
             <Textarea
-              label="Personal Message"
-              placeholder="Add a personal message to all invitations (optional)"
+              label='Personal Message'
+              placeholder='Add a personal message to all invitations (optional)'
               rows={3}
               className={styles.formTextarea}
               {...bulkForm.getInputProps('message')}
             />
 
             <Alert icon={<IconAlertCircle size={16} />} className={styles.infoAlert}>
-              <Text size="sm">
-                You can invite up to 100 people at once. Each person will receive
-                an individual invitation email.
+              <Text size='sm'>
+                You can invite up to 100 people at once. Each person will receive an individual
+                invitation email.
               </Text>
             </Alert>
-
           </Stack>
           <div className={styles.buttonGroup}>
-            <Button variant="subtle" onClick={handleClose}>
+            <Button variant='subtle' onClick={handleClose}>
               Cancel
             </Button>
-            <Button onClick={handleBulkSubmit} variant="primary" disabled={isSendingBulk}>
+            <Button onClick={handleBulkSubmit} variant='primary' disabled={isSendingBulk}>
               {isSendingBulk ? 'Sending...' : 'Send Invitations'}
             </Button>
           </div>

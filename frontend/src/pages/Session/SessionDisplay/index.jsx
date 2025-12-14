@@ -27,12 +27,9 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
       setError(null);
 
       try {
-        const response = await fetch(
-          `/api/sessions/${session.id}/playback-data`,
-          {
-            credentials: 'include', // Send cookies for auth
-          }
-        );
+        const response = await fetch(`/api/sessions/${session.id}/playback-data`, {
+          credentials: 'include', // Send cookies for auth
+        });
 
         if (!response.ok) {
           throw new Error('Failed to fetch playback data');
@@ -60,8 +57,8 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
       return (
         <div className={styles.messageContainer}>
           <Alert
-            color="blue"
-            title="No stream available"
+            color='blue'
+            title='No stream available'
             styles={{
               root: {
                 maxWidth: '500px',
@@ -93,8 +90,8 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
       return (
         <div className={styles.messageContainer}>
           <Alert
-            color="blue"
-            title="No stream available"
+            color='blue'
+            title='No stream available'
             styles={{
               root: {
                 maxWidth: '500px',
@@ -125,8 +122,8 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
       return (
         <div className={styles.messageContainer}>
           <Alert
-            color="blue"
-            title="No stream available"
+            color='blue'
+            title='No stream available'
             styles={{
               root: {
                 maxWidth: '500px',
@@ -157,8 +154,8 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
       return (
         <div className={styles.messageContainer}>
           <Alert
-            color="blue"
-            title="No meeting URL available"
+            color='blue'
+            title='No meeting URL available'
             styles={{
               root: {
                 maxWidth: '500px',
@@ -199,7 +196,7 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
         return (
           <MuxPlayer
             playbackId={session.stream_url}
-            playbackPolicy="PUBLIC"
+            playbackPolicy='PUBLIC'
             session={session}
             event={event}
             currentUser={currentUser}
@@ -211,7 +208,7 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
       if (loading) {
         return (
           <div className={styles.messageContainer}>
-            <Loader size="lg" />
+            <Loader size='lg' />
           </div>
         );
       }
@@ -220,8 +217,8 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
         return (
           <div className={styles.messageContainer}>
             <Alert
-              color="red"
-              title="Error loading stream"
+              color='red'
+              title='Error loading stream'
               styles={{
                 root: {
                   maxWidth: '500px',
@@ -252,8 +249,8 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
         return (
           <div className={styles.messageContainer}>
             <Alert
-              color="yellow"
-              title="Stream not available"
+              color='yellow'
+              title='Stream not available'
               styles={{
                 root: {
                   maxWidth: '500px',
@@ -283,7 +280,7 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
       return (
         <MuxPlayer
           playbackId={session.stream_url}
-          playbackPolicy="SIGNED"
+          playbackPolicy='SIGNED'
           tokens={playbackData.tokens}
           session={session}
           event={event}
@@ -294,12 +291,7 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
 
     // ZOOM
     if (platform === 'ZOOM') {
-      return (
-        <ZoomJoinCard
-          joinUrl={session.zoom_meeting_id}
-          passcode={session.zoom_passcode}
-        />
-      );
+      return <ZoomJoinCard joinUrl={session.zoom_meeting_id} passcode={session.zoom_passcode} />;
     }
 
     // JITSI
@@ -307,8 +299,8 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
       return (
         <div className={styles.messageContainer}>
           <Alert
-            color="blue"
-            title="No meeting configured"
+            color='blue'
+            title='No meeting configured'
             styles={{
               root: {
                 maxWidth: '500px',
@@ -340,7 +332,7 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
       if (loading) {
         return (
           <div className={styles.messageContainer}>
-            <Loader size="lg" />
+            <Loader size='lg' />
           </div>
         );
       }
@@ -350,8 +342,8 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
         return (
           <div className={styles.messageContainer}>
             <Alert
-              color="red"
-              title="Error loading meeting"
+              color='red'
+              title='Error loading meeting'
               styles={{
                 root: {
                   maxWidth: '500px',
@@ -383,8 +375,8 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
         return (
           <div className={styles.messageContainer}>
             <Alert
-              color="yellow"
-              title="Meeting not available"
+              color='yellow'
+              title='Meeting not available'
               styles={{
                 root: {
                   maxWidth: '500px',
@@ -405,7 +397,8 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
                 },
               }}
             >
-              Unable to load Jitsi meeting. Please ensure the organization has JaaS credentials configured.
+              Unable to load Jitsi meeting. Please ensure the organization has JaaS credentials
+              configured.
             </Alert>
           </div>
         );
@@ -428,8 +421,8 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
       return (
         <div className={styles.messageContainer}>
           <Alert
-            color="blue"
-            title="No stream URL available"
+            color='blue'
+            title='No stream URL available'
             styles={{
               root: {
                 maxWidth: '500px',
@@ -464,8 +457,8 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
     return (
       <div className={styles.messageContainer}>
         <Alert
-          color="red"
-          title="Unsupported platform"
+          color='red'
+          title='Unsupported platform'
           styles={{
             root: {
               maxWidth: '500px',

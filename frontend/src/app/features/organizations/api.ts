@@ -50,10 +50,15 @@ interface GetOrganizationInvitationsParams {
   per_page?: number;
 }
 
-/** Add organization user payload */
+/** Add organization user payload
+ * This endpoint can create a new user or add existing user by email
+ */
 interface AddOrganizationUserParams {
   orgId: number;
-  user_id: number;
+  email: string;
+  first_name: string;
+  last_name: string;
+  password?: string | undefined; // Optional - used only for new user creation
   role: OrganizationUserRole;
 }
 
@@ -145,19 +150,17 @@ export const organizationsApi = baseApi.injectEndpoints({
       invalidatesTags: ['Organizations'],
     }),
 
-    updateOrganization: builder.mutation<Organization, UpdateOrganizationParams>(
-      {
-        query: ({ id, ...updates }) => ({
-          url: `/organizations/${id}`,
-          method: 'PUT',
-          body: updates,
-        }),
-        invalidatesTags: (_result, _error, { id }) => [
-          { type: 'Organizations', id },
-          'Organizations',
-        ],
-      }
-    ),
+    updateOrganization: builder.mutation<Organization, UpdateOrganizationParams>({
+      query: ({ id, ...updates }) => ({
+        url: `/organizations/${id}`,
+        method: 'PUT',
+        body: updates,
+      }),
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: 'Organizations', id },
+        'Organizations',
+      ],
+    }),
 
     deleteOrganization: builder.mutation<void, number>({
       query: (id) => ({
@@ -182,10 +185,7 @@ export const organizationsApi = baseApi.injectEndpoints({
       ],
     }),
 
-    addOrganizationUser: builder.mutation<
-      OrganizationUserNested,
-      AddOrganizationUserParams
-    >({
+    addOrganizationUser: builder.mutation<OrganizationUserNested, AddOrganizationUserParams>({
       query: ({ orgId, ...userData }) => ({
         url: `/organizations/${orgId}/users`,
         method: 'POST',
@@ -198,10 +198,7 @@ export const organizationsApi = baseApi.injectEndpoints({
       ],
     }),
 
-    updateOrganizationUser: builder.mutation<
-      OrganizationUserNested,
-      UpdateOrganizationUserParams
-    >({
+    updateOrganizationUser: builder.mutation<OrganizationUserNested, UpdateOrganizationUserParams>({
       query: ({ orgId, userId, ...updates }) => ({
         url: `/organizations/${orgId}/users/${userId}`,
         method: 'PUT',
@@ -210,15 +207,13 @@ export const organizationsApi = baseApi.injectEndpoints({
       invalidatesTags: ['OrganizationUsers'],
     }),
 
-    removeOrganizationUser: builder.mutation<void, RemoveOrganizationUserParams>(
-      {
-        query: ({ orgId, userId }) => ({
-          url: `/organizations/${orgId}/users/${userId}`,
-          method: 'DELETE',
-        }),
-        invalidatesTags: ['OrganizationUsers'],
-      }
-    ),
+    removeOrganizationUser: builder.mutation<void, RemoveOrganizationUserParams>({
+      query: ({ orgId, userId }) => ({
+        url: `/organizations/${orgId}/users/${userId}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['OrganizationUsers'],
+    }),
 
     // Organization Invitations endpoints
     getOrganizationInvitations: builder.query<
@@ -256,10 +251,7 @@ export const organizationsApi = baseApi.injectEndpoints({
       invalidatesTags: ['Organizations'],
     }),
 
-    getOrganizationInvitationByToken: builder.query<
-      OrganizationInvitationPreview,
-      string
-    >({
+    getOrganizationInvitationByToken: builder.query<OrganizationInvitationPreview, string>({
       query: (token) => ({
         url: `/invitations/organization/${token}`,
         method: 'GET',
@@ -272,12 +264,7 @@ export const organizationsApi = baseApi.injectEndpoints({
         method: 'POST',
         body: {},
       }),
-      invalidatesTags: [
-        'Organizations',
-        'OrganizationUsers',
-        'Dashboard',
-        'Invitations',
-      ],
+      invalidatesTags: ['Organizations', 'OrganizationUsers', 'Dashboard', 'Invitations'],
     }),
 
     declineOrganizationInvitation: builder.mutation<MessageResponse, string>({
@@ -289,10 +276,7 @@ export const organizationsApi = baseApi.injectEndpoints({
       invalidatesTags: ['Organizations'],
     }),
 
-    cancelOrganizationInvitation: builder.mutation<
-      void,
-      CancelOrganizationInvitationParams
-    >({
+    cancelOrganizationInvitation: builder.mutation<void, CancelOrganizationInvitationParams>({
       query: ({ orgId, invitationId }) => ({
         url: `/organizations/${orgId}/invitations/${invitationId}`,
         method: 'DELETE',
@@ -301,10 +285,7 @@ export const organizationsApi = baseApi.injectEndpoints({
     }),
 
     // Mux Credentials endpoints
-    updateMuxCredentials: builder.mutation<
-      OrganizationDetail,
-      UpdateMuxCredentialsParams
-    >({
+    updateMuxCredentials: builder.mutation<OrganizationDetail, UpdateMuxCredentialsParams>({
       query: ({ orgId, ...credentials }) => ({
         url: `/organizations/${orgId}/mux-credentials`,
         method: 'PUT',
@@ -328,10 +309,7 @@ export const organizationsApi = baseApi.injectEndpoints({
     }),
 
     // JaaS Credentials endpoints
-    updateJaasCredentials: builder.mutation<
-      OrganizationDetail,
-      UpdateJaasCredentialsParams
-    >({
+    updateJaasCredentials: builder.mutation<OrganizationDetail, UpdateJaasCredentialsParams>({
       query: ({ orgId, ...credentials }) => ({
         url: `/organizations/${orgId}/jaas-credentials`,
         method: 'PUT',
@@ -378,4 +356,3 @@ export const {
   useUpdateJaasCredentialsMutation,
   useDeleteJaasCredentialsMutation,
 } = organizationsApi;
-

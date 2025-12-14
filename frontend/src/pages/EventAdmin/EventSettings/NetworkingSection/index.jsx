@@ -1,15 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import {
-  Textarea,
-  Stack,
-  Group,
-  Title,
-  Text,
-  ActionIcon,
-  Badge,
-  Modal,
-  Menu,
-} from '@mantine/core';
+import { Textarea, Stack, Group, Title, Text, ActionIcon, Badge, Modal, Menu } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { useMediaQuery } from '@mantine/hooks';
@@ -31,14 +21,7 @@ import styles from './styles.module.css';
 import parentStyles from '../styles/index.module.css';
 
 // Desktop Icebreaker Card Component
-const DesktopIcebreakerCard = ({
-  id,
-  message,
-  icebreakerId,
-  onEdit,
-  onDelete,
-  canDelete,
-}) => {
+const DesktopIcebreakerCard = ({ id, message, icebreakerId, onEdit, onDelete, canDelete }) => {
   const { ref, isDragging } = useSortable({
     id,
     type: 'icebreaker',
@@ -54,39 +37,33 @@ const DesktopIcebreakerCard = ({
       }}
     >
       <Group
-        align="center"
-        justify="space-between"
-        wrap="nowrap"
+        align='center'
+        justify='space-between'
+        wrap='nowrap'
         className={styles.desktopCardInner}
       >
-        <Group wrap="nowrap" gap="md" align="center">
+        <Group wrap='nowrap' gap='md' align='center'>
           <div className={styles.desktopCardIcon}>
-            <IconMessageCircle
-              size={24}
-              style={{ color: 'var(--color-primary)' }}
-            />
+            <IconMessageCircle size={24} style={{ color: 'var(--color-primary)' }} />
           </div>
           <Text className={styles.desktopMessageText}>{message}</Text>
         </Group>
 
-        <Menu position="bottom-end" withinPortal>
+        <Menu position='bottom-end' withinPortal>
           <Menu.Target>
-            <ActionIcon variant="subtle" className={styles.desktopMenuButton}>
+            <ActionIcon variant='subtle' className={styles.desktopMenuButton}>
               <IconDots size={18} />
             </ActionIcon>
           </Menu.Target>
           <Menu.Dropdown>
-            <Menu.Item
-              leftSection={<IconEdit size={16} />}
-              onClick={() => onEdit(icebreakerId)}
-            >
+            <Menu.Item leftSection={<IconEdit size={16} />} onClick={() => onEdit(icebreakerId)}>
               Edit
             </Menu.Item>
             <Menu.Item
               leftSection={<IconTrash size={16} />}
               onClick={() => onDelete(icebreakerId)}
               disabled={!canDelete}
-              color="red"
+              color='red'
             >
               Delete
             </Menu.Item>
@@ -118,7 +95,10 @@ const DraggableIcebreaker = ({
       ref={ref}
       className={`${styles.draggableCard} ${isDragging ? styles.dragging : ''}`}
       style={{
-        cursor: isMobile ? 'default' : isDragging ? 'grabbing' : 'grab',
+        cursor:
+          isMobile ? 'default'
+          : isDragging ? 'grabbing'
+          : 'grab',
       }}
     >
       <div className={styles.cardInner}>
@@ -126,8 +106,8 @@ const DraggableIcebreaker = ({
           {!isMobile && (
             <div className={styles.dragHandleWrapper}>
               <ActionIcon
-                variant="subtle"
-                size="lg"
+                variant='subtle'
+                size='lg'
                 className={styles.dragHandle}
                 style={{ cursor: 'grab' }}
               >
@@ -135,24 +115,21 @@ const DraggableIcebreaker = ({
               </ActionIcon>
             </div>
           )}
-          <Menu position="bottom-end" withinPortal>
+          <Menu position='bottom-end' withinPortal>
             <Menu.Target>
-              <ActionIcon variant="subtle" className={styles.menuButton}>
+              <ActionIcon variant='subtle' className={styles.menuButton}>
                 <IconDots size={16} />
               </ActionIcon>
             </Menu.Target>
             <Menu.Dropdown>
-              <Menu.Item
-                leftSection={<IconEdit size={16} />}
-                onClick={() => onEdit(icebreakerId)}
-              >
+              <Menu.Item leftSection={<IconEdit size={16} />} onClick={() => onEdit(icebreakerId)}>
                 Edit
               </Menu.Item>
               <Menu.Item
                 leftSection={<IconTrash size={16} />}
                 onClick={() => onDelete(icebreakerId)}
                 disabled={!canDelete}
-                color="red"
+                color='red'
               >
                 Delete
               </Menu.Item>
@@ -221,8 +198,7 @@ const NetworkingSection = ({ event, eventId }) => {
     // Compare without _id field
     const icebreakersMessages = icebreakers.map((ice) => ice.message);
     const changed =
-      JSON.stringify(icebreakersMessages) !==
-      JSON.stringify(event?.icebreakers || []);
+      JSON.stringify(icebreakersMessages) !== JSON.stringify(event?.icebreakers || []);
     setHasChanges(changed);
   }, [icebreakers, event]);
 
@@ -249,7 +225,7 @@ const NetworkingSection = ({ event, eventId }) => {
       setNextIcebreakerId(nextIcebreakerId + 1);
     } else {
       const updated = icebreakers.map((ice) =>
-        ice._id === modalState.id ? { ...ice, message: values.message } : ice
+        ice._id === modalState.id ? { ...ice, message: values.message } : ice,
       );
       setIcebreakers(updated);
     }
@@ -287,9 +263,7 @@ const NetworkingSection = ({ event, eventId }) => {
 
     // Find new position based on the current order in localIcebreakers
     const newOrder = localIcebreakers.default || [];
-    const newIcebreakers = newOrder
-      .map((id) => icebreakerLookup[id])
-      .filter(Boolean);
+    const newIcebreakers = newOrder.map((id) => icebreakerLookup[id]).filter(Boolean);
 
     setIcebreakers(newIcebreakers);
   };
@@ -331,12 +305,10 @@ const NetworkingSection = ({ event, eventId }) => {
   const handleReset = () => {
     // Re-add stable IDs when resetting
     const timestamp = Date.now();
-    const resetIcebreakers = (event?.icebreakers || []).map(
-      (message, index) => ({
-        message,
-        _id: `ice-${timestamp}-${index}`,
-      })
-    );
+    const resetIcebreakers = (event?.icebreakers || []).map((message, index) => ({
+      message,
+      _id: `ice-${timestamp}-${index}`,
+    }));
     setIcebreakers(resetIcebreakers);
 
     // Reset the local drag state with new IDs
@@ -353,29 +325,27 @@ const NetworkingSection = ({ event, eventId }) => {
     <>
       <div className={`${parentStyles.section} ${styles.glassSection}`}>
         <h3 className={parentStyles.sectionTitle}>Networking Settings</h3>
-        <Text c="dimmed" size="sm" mb="xl">
+        <Text c='dimmed' size='sm' mb='xl'>
           Configure icebreaker messages to help attendees start conversations
         </Text>
 
-        <Stack spacing="lg">
+        <Stack spacing='lg'>
           <div>
             <Group
               justify={isMobile ? 'center' : 'space-between'}
-              mb="md"
+              mb='md'
               className={styles.sectionHeader}
             >
-              <div
-                className={isMobile ? styles.mobileCenter : styles.desktopLeft}
-              >
+              <div className={isMobile ? styles.mobileCenter : styles.desktopLeft}>
                 <Title order={4} className={styles.subsectionTitle}>
                   Icebreaker Messages
                 </Title>
-                <Text size="sm" c="dimmed" mt="xs">
+                <Text size='sm' c='dimmed' mt='xs'>
                   Pre-written messages attendees can use to start conversations
                 </Text>
               </div>
               <Button
-                variant="primary"
+                variant='primary'
                 onClick={handleAddIcebreaker}
                 className={isMobile ? styles.centerButton : ''}
               >
@@ -384,65 +354,52 @@ const NetworkingSection = ({ event, eventId }) => {
               </Button>
             </Group>
 
-            <Text className={styles.dragHint}>
-              Press down on cards and drag to reorder
-            </Text>
+            <Text className={styles.dragHint}>Press down on cards and drag to reorder</Text>
 
-            <DragDropProvider
-              onDragOver={handleDragOver}
-              onDragEnd={handleDragEnd}
-            >
+            <DragDropProvider onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
               <div className={styles.draggableList}>
-                {icebreakers.length === 0 ? (
+                {icebreakers.length === 0 ?
                   <div className={styles.emptyState}>
-                    <Text c="dimmed" ta="center">
+                    <Text c='dimmed' ta='center'>
                       No icebreaker messages added yet
                     </Text>
                   </div>
-                ) : (
-                  localIcebreakers.default?.map((id) => {
+                : localIcebreakers.default?.map((id) => {
                     const icebreaker = icebreakerLookup[id];
                     if (!icebreaker) return null;
 
-                    return isMobile ? (
-                      <DraggableIcebreaker
-                        key={id}
-                        id={id}
-                        message={icebreaker.message}
-                        icebreakerId={id}
-                        onEdit={handleEditIcebreaker}
-                        onDelete={handleDeleteIcebreaker}
-                        canDelete={icebreakers.length > 1}
-                        isMobile={isMobile}
-                      />
-                    ) : (
-                      <DesktopIcebreakerCard
-                        key={id}
-                        id={id}
-                        message={icebreaker.message}
-                        icebreakerId={id}
-                        onEdit={handleEditIcebreaker}
-                        onDelete={handleDeleteIcebreaker}
-                        canDelete={icebreakers.length > 1}
-                      />
-                    );
+                    return isMobile ?
+                        <DraggableIcebreaker
+                          key={id}
+                          id={id}
+                          message={icebreaker.message}
+                          icebreakerId={id}
+                          onEdit={handleEditIcebreaker}
+                          onDelete={handleDeleteIcebreaker}
+                          canDelete={icebreakers.length > 1}
+                          isMobile={isMobile}
+                        />
+                      : <DesktopIcebreakerCard
+                          key={id}
+                          id={id}
+                          message={icebreaker.message}
+                          icebreakerId={id}
+                          onEdit={handleEditIcebreaker}
+                          onDelete={handleDeleteIcebreaker}
+                          canDelete={icebreakers.length > 1}
+                        />;
                   })
-                )}
+                }
               </div>
             </DragDropProvider>
 
-            <Group justify="space-between" mt="md">
-              <Badge
-                variant="light"
-                size="lg"
-                radius="sm"
-                className={styles.countBadge}
-              >
+            <Group justify='space-between' mt='md'>
+              <Badge variant='light' size='lg' radius='sm' className={styles.countBadge}>
                 {icebreakers.length} icebreaker
                 {icebreakers.length !== 1 ? 's' : ''}
               </Badge>
               {icebreakers.length < 1 && (
-                <Text size="sm" c="red">
+                <Text size='sm' c='red'>
                   At least one icebreaker message is required
                 </Text>
               )}
@@ -450,15 +407,11 @@ const NetworkingSection = ({ event, eventId }) => {
           </div>
 
           {hasChanges && (
-            <Group justify="flex-end" mt="xl">
-              <Button variant="subtle" onClick={handleReset}>
+            <Group justify='flex-end' mt='xl'>
+              <Button variant='subtle' onClick={handleReset}>
                 Cancel
               </Button>
-              <Button
-                variant="primary"
-                onClick={handleSubmit}
-                disabled={isLoading}
-              >
+              <Button variant='primary' onClick={handleSubmit} disabled={isLoading}>
                 Save Changes
               </Button>
             </Group>
@@ -470,12 +423,8 @@ const NetworkingSection = ({ event, eventId }) => {
       <Modal
         opened={modalState.open}
         onClose={() => setModalState({ open: false, mode: 'create', id: null })}
-        title={
-          modalState.mode === 'create'
-            ? 'Add Icebreaker Message'
-            : 'Edit Icebreaker Message'
-        }
-        size="lg"
+        title={modalState.mode === 'create' ? 'Add Icebreaker Message' : 'Edit Icebreaker Message'}
+        size='lg'
         lockScroll={false}
         classNames={{
           content: styles.modalContent,
@@ -485,24 +434,22 @@ const NetworkingSection = ({ event, eventId }) => {
         <form onSubmit={form.onSubmit(handleSaveIcebreaker)}>
           <Stack>
             <Textarea
-              label="Message"
-              description="Write a friendly message that attendees can use to start conversations"
+              label='Message'
+              description='Write a friendly message that attendees can use to start conversations'
               placeholder="Hi! I noticed we're both interested in similar sessions. Would you like to connect?"
               minRows={3}
               required
               classNames={{ input: styles.formTextarea }}
               {...form.getInputProps('message')}
             />
-            <Group justify="flex-end">
+            <Group justify='flex-end'>
               <Button
-                variant="subtle"
-                onClick={() =>
-                  setModalState({ open: false, mode: 'create', id: null })
-                }
+                variant='subtle'
+                onClick={() => setModalState({ open: false, mode: 'create', id: null })}
               >
                 Cancel
               </Button>
-              <Button variant="primary" type="submit">
+              <Button variant='primary' type='submit'>
                 {modalState.mode === 'create' ? 'Add' : 'Update'}
               </Button>
             </Group>

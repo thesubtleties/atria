@@ -3,10 +3,7 @@ import { Modal, Select, Group, Stack, Text, Alert, Box } from '@mantine/core';
 import { LoadingContent } from '../../../../shared/components/loading';
 import { useMediaQuery } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
-import { 
-  useGetEventUsersAdminQuery,
-  useUpdateEventUserMutation,
-} from '@/app/features/events/api';
+import { useGetEventUsersAdminQuery, useUpdateEventUserMutation } from '@/app/features/events/api';
 import { IconInfoCircle, IconUserPlus } from '@tabler/icons-react';
 import { Button } from '../../../../shared/components/buttons';
 import styles from './styles.module.css';
@@ -24,18 +21,19 @@ const AddSpeakerModal = ({ opened, onClose, eventId, onSuccess }) => {
     },
     {
       skip: !opened,
-    }
+    },
   );
 
   // Filter out speakers and format for select
-  const availableUsers = usersData?.event_users
-    ?.filter(user => user.role !== 'SPEAKER')
-    .map(user => ({
-      value: user.user_id.toString(),
-      label: `${user.full_name} (${user.role})`,
-      email: user.email,
-      role: user.role,
-    })) || [];
+  const availableUsers =
+    usersData?.event_users
+      ?.filter((user) => user.role !== 'SPEAKER')
+      .map((user) => ({
+        value: user.user_id.toString(),
+        label: `${user.full_name} (${user.role})`,
+        email: user.email,
+        role: user.role,
+      })) || [];
 
   const handleSubmit = async () => {
     if (!selectedUserId) {
@@ -79,8 +77,8 @@ const AddSpeakerModal = ({ opened, onClose, eventId, onSuccess }) => {
     <Modal
       opened={opened}
       onClose={handleClose}
-      title="Add Speaker"
-      size="md"
+      title='Add Speaker'
+      size='md'
       centered
       lockScroll={false}
       classNames={{
@@ -90,71 +88,68 @@ const AddSpeakerModal = ({ opened, onClose, eventId, onSuccess }) => {
       }}
     >
       <Stack className={styles.formStack}>
-        <Alert 
-          icon={<IconInfoCircle size={14} />} 
-          color="blue" 
+        <Alert
+          icon={<IconInfoCircle size={14} />}
+          color='blue'
           className={styles.infoAlert}
           styles={{
             root: { padding: 'var(--space-sm) !important' },
-            message: { fontSize: 'var(--text-xs) !important' }
+            message: { fontSize: 'var(--text-xs) !important' },
           }}
         >
-          <Text size="xs">
+          <Text size='xs'>
             Select an attendee to make them a speaker.
             {!isMobile && ' Customize their info after adding.'}
           </Text>
         </Alert>
 
-        {isLoading ? (
-          <Box p="xl" ta="center">
-            <LoadingContent message="Loading attendees..." />
+        {isLoading ?
+          <Box p='xl' ta='center'>
+            <LoadingContent message='Loading attendees...' />
           </Box>
-        ) : availableUsers.length === 0 ? (
-          <Alert color="yellow" className={styles.warningAlert}>
-            <Text size="sm">
+        : availableUsers.length === 0 ?
+          <Alert color='yellow' className={styles.warningAlert}>
+            <Text size='sm'>
               No non-speaker attendees found. Invite more people to your event first.
             </Text>
           </Alert>
-        ) : (
-          <>
+        : <>
             <Select
-              label="Select User"
-              placeholder="Choose an attendee to make speaker"
+              label='Select User'
+              placeholder='Choose an attendee to make speaker'
               data={availableUsers}
               value={selectedUserId?.toString()}
               onChange={(value) => setSelectedUserId(value ? parseInt(value) : null)}
               searchable
-              nothingFoundMessage="No users found"
+              nothingFoundMessage='No users found'
               required
               leftSection={<IconUserPlus size={16} />}
               className={styles.selectInput}
-              size="sm"
+              size='sm'
               classNames={{
                 dropdown: styles.selectDropdown,
               }}
               renderOption={({ option }) => (
-                <Group justify="space-between" wrap="nowrap">
+                <Group justify='space-between' wrap='nowrap'>
                   <div>
-                    <Text size="xs">{option.label}</Text>
-                    <Text size="xs" c="dimmed">{option.email}</Text>
+                    <Text size='xs'>{option.label}</Text>
+                    <Text size='xs' c='dimmed'>
+                      {option.email}
+                    </Text>
                   </div>
                 </Group>
               )}
             />
           </>
-        )}
+        }
       </Stack>
-      
+
       {availableUsers.length > 0 && !isLoading && (
         <div className={styles.buttonGroup}>
-          <Button variant="subtle" onClick={handleClose}>
+          <Button variant='subtle' onClick={handleClose}>
             Cancel
           </Button>
-          <Button 
-            variant="primary"
-            onClick={handleSubmit} 
-            disabled={!selectedUserId || isUpdating}
-          >
+          <Button variant='primary' onClick={handleSubmit} disabled={!selectedUserId || isUpdating}>
             {isUpdating ? 'Adding...' : 'Add as Speaker'}
           </Button>
         </div>

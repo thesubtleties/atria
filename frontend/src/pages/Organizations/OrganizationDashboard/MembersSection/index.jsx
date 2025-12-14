@@ -13,12 +13,7 @@ import PendingInvitations from './PendingInvitations';
 import InviteModal from './InviteModal';
 import styles from './styles/index.module.css';
 
-const MembersSection = ({
-  orgId,
-  currentUserRole,
-  activeTab,
-  onTabChange,
-}) => {
+const MembersSection = ({ orgId, currentUserRole, activeTab, onTabChange }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
   const [inviteModalOpened, setInviteModalOpened] = useState(false);
@@ -28,9 +23,7 @@ const MembersSection = ({
   // Tab configuration with icons and labels
   const tabConfig = [
     { value: 'members', label: 'Active Members', icon: IconUsers },
-    ...(canInvite
-      ? [{ value: 'invitations', label: 'Pending Invitations', icon: IconMail }]
-      : []),
+    ...(canInvite ? [{ value: 'invitations', label: 'Pending Invitations', icon: IconMail }] : []),
   ];
 
   // Get current tab info for mobile dropdown
@@ -49,7 +42,7 @@ const MembersSection = ({
       <div className={styles.sectionHeader}>
         <h2 className={styles.sectionTitle}>Organization Members</h2>
         {canInvite && (
-          <Button variant="primary" onClick={() => setInviteModalOpened(true)}>
+          <Button variant='primary' onClick={() => setInviteModalOpened(true)}>
             <IconUserPlus size={18} style={{ marginRight: '0.5rem' }} />
             Invite Members
           </Button>
@@ -72,17 +65,13 @@ const MembersSection = ({
             input: styles.mobileSelectInput,
             dropdown: styles.mobileSelectDropdown,
           }}
-          placeholder="Select Tab"
+          placeholder='Select Tab'
           searchable={false}
           allowDeselect={false}
         />
       </div>
 
-      <Tabs
-        value={activeTab}
-        onChange={onTabChange}
-        className={styles.tabsContainer}
-      >
+      <Tabs value={activeTab} onChange={onTabChange} className={styles.tabsContainer}>
         {/* Desktop Tabs - Hidden on mobile */}
         <Tabs.List className={styles.tabsList}>
           {tabConfig.map((tab) => {
@@ -102,7 +91,7 @@ const MembersSection = ({
 
         <div className={styles.filterBar}>
           <TextInput
-            placeholder="Search by name or email..."
+            placeholder='Search by name or email...'
             leftSection={<IconSearch size={16} />}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -121,7 +110,7 @@ const MembersSection = ({
           )}
         </div>
 
-        <Tabs.Panel value="members" className={styles.tabPanel}>
+        <Tabs.Panel value='members' className={styles.tabPanel}>
           <MembersList
             orgId={orgId}
             searchQuery={searchQuery}
@@ -131,7 +120,7 @@ const MembersSection = ({
         </Tabs.Panel>
 
         {canInvite && (
-          <Tabs.Panel value="invitations" className={styles.tabPanel}>
+          <Tabs.Panel value='invitations' className={styles.tabPanel}>
             <PendingInvitations orgId={orgId} searchQuery={searchQuery} />
           </Tabs.Panel>
         )}

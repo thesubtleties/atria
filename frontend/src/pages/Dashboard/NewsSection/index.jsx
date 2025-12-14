@@ -6,11 +6,12 @@ export const NewsSection = ({ news }) => {
     const now = new Date();
     const newsDate = new Date(date);
     const diffInDays = Math.floor((now - newsDate) / (1000 * 60 * 60 * 24));
-    
+
     if (diffInDays === 0) return 'Today';
     if (diffInDays === 1) return 'Yesterday';
     if (diffInDays < 7) return `${diffInDays} days ago`;
-    if (diffInDays < 30) return `${Math.floor(diffInDays / 7)} week${Math.floor(diffInDays / 7) > 1 ? 's' : ''} ago`;
+    if (diffInDays < 30)
+      return `${Math.floor(diffInDays / 7)} week${Math.floor(diffInDays / 7) > 1 ? 's' : ''} ago`;
     return `${Math.floor(diffInDays / 30)} month${Math.floor(diffInDays / 30) > 1 ? 's' : ''} ago`;
   };
 
@@ -18,7 +19,7 @@ export const NewsSection = ({ news }) => {
     const now = new Date();
     const newsDate = new Date(date);
     const diffInDays = Math.floor((now - newsDate) / (1000 * 60 * 60 * 24));
-    
+
     if (isNew || diffInDays < 3) return styles.new;
     if (diffInDays < 14) return styles.recent;
     return styles.older;
@@ -82,8 +83,8 @@ export const NewsSection = ({ news }) => {
           <a
             key={index}
             href={link}
-            target="_blank"
-            rel="noopener noreferrer"
+            target='_blank'
+            rel='noopener noreferrer'
             className={styles.inlineLink}
             onClick={(e) => e.stopPropagation()}
           >
@@ -101,34 +102,36 @@ export const NewsSection = ({ news }) => {
         <h2 className={styles.sectionTitle}>News</h2>
       </div>
 
-      {news && news.length > 0 ? (
+      {news && news.length > 0 ?
         <div className={styles.newsList}>
-          {news.slice().reverse().map((item) => (
-            <div key={item.id} className={`${styles.newsItem} ${getItemClass(item.type)}`}>
-              <div className={`${styles.newsDot} ${getDotClass(item.date, item.is_new)}`} />
-              <div className={styles.newsContent}>
-                <div className={styles.newsTitle}>{item.title}</div>
-                <div className={styles.newsDescription}>
-                  {renderDescription(item.description, item.link)}
-                </div>
-                <div className={styles.newsMeta}>
-                  <span>{getTimeDifference(item.date)}</span>
-                  <Badge
-                    className={getBadgeClass(item.type)}
-                    styles={{ root: { textTransform: 'none' } }}
-                  >
-                    {getTagLabel(item.type)}
-                  </Badge>
+          {news
+            .slice()
+            .reverse()
+            .map((item) => (
+              <div key={item.id} className={`${styles.newsItem} ${getItemClass(item.type)}`}>
+                <div className={`${styles.newsDot} ${getDotClass(item.date, item.is_new)}`} />
+                <div className={styles.newsContent}>
+                  <div className={styles.newsTitle}>{item.title}</div>
+                  <div className={styles.newsDescription}>
+                    {renderDescription(item.description, item.link)}
+                  </div>
+                  <div className={styles.newsMeta}>
+                    <span>{getTimeDifference(item.date)}</span>
+                    <Badge
+                      className={getBadgeClass(item.type)}
+                      styles={{ root: { textTransform: 'none' } }}
+                    >
+                      {getTagLabel(item.type)}
+                    </Badge>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
-      ) : (
-        <div className={styles.emptyState}>
+      : <div className={styles.emptyState}>
           <p>No news at this time.</p>
         </div>
-      )}
+      }
     </section>
   );
 };

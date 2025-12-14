@@ -141,7 +141,7 @@ function App() {
           currentVelocity = self.getVelocity();
           document.documentElement.style.setProperty(
             '--scroll-velocity',
-            Math.abs(currentVelocity)
+            Math.abs(currentVelocity),
           );
         });
       },
@@ -215,10 +215,7 @@ function App() {
 
       // Ensure all animations are properly initialized
       if (debugMode) {
-        console.log(
-          '📊 ScrollTrigger instances:',
-          ScrollTrigger.getAll().length
-        );
+        console.log('📊 ScrollTrigger instances:', ScrollTrigger.getAll().length);
         console.log('✅ Animation system initialized');
       }
     }, 100);

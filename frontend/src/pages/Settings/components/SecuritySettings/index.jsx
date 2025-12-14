@@ -28,11 +28,11 @@ const getPasswordStrength = (password) => {
     numbers: /\d/.test(password),
     symbols: /[^A-Za-z0-9]/.test(password),
   };
-  
-  Object.values(checks).forEach(check => {
+
+  Object.values(checks).forEach((check) => {
     if (check) strength += 20;
   });
-  
+
   return { strength, checks };
 };
 
@@ -46,10 +46,10 @@ const getPasswordStrengthColor = (strength) => {
 const SecuritySettings = () => {
   const [hasChanges, setHasChanges] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState({ strength: 0, checks: {} });
-  
+
   // Change password mutation
   const [changePassword, { isLoading: isSubmitting }] = useChangePasswordMutation();
-  
+
   // Form setup
   const form = useForm({
     initialValues: {
@@ -59,12 +59,12 @@ const SecuritySettings = () => {
     },
     validate: zodResolver(securitySettingsSchema),
   });
-  
+
   // Track changes and password strength
   React.useEffect(() => {
-    const hasAnyValue = Object.values(form.values).some(value => value.trim() !== '');
+    const hasAnyValue = Object.values(form.values).some((value) => value.trim() !== '');
     setHasChanges(hasAnyValue);
-    
+
     // Update password strength for new password
     if (form.values.newPassword) {
       const strengthData = getPasswordStrength(form.values.newPassword);
@@ -73,18 +73,18 @@ const SecuritySettings = () => {
       setPasswordStrength({ strength: 0, checks: {} });
     }
   }, [form.values]);
-  
+
   const handleSubmit = async (values) => {
     try {
       await changePassword({
         current_password: values.currentPassword,
         new_password: values.newPassword,
       }).unwrap();
-      
+
       // Reset form after successful change
       form.reset();
       setHasChanges(false);
-      
+
       notifications.show({
         title: 'Success',
         message: 'Password updated successfully',
@@ -104,7 +104,7 @@ const SecuritySettings = () => {
           form.setFieldError(formField, errors[0]);
         });
       }
-      
+
       notifications.show({
         title: 'Error',
         message: error.data?.message || 'Failed to update password',
@@ -113,108 +113,155 @@ const SecuritySettings = () => {
       });
     }
   };
-  
+
   const handleReset = () => {
     form.reset();
     setHasChanges(false);
   };
-  
+
   return (
-    <Stack gap="lg">
+    <Stack gap='lg'>
       {/* Header Section */}
       <div className={styles.headerSection}>
-        <Title order={3} className={styles.sectionTitle}>Security Settings</Title>
-        <Text size="sm" className={styles.description}>
+        <Title order={3} className={styles.sectionTitle}>
+          Security Settings
+        </Title>
+        <Text size='sm' className={styles.description}>
           Keep your account secure with a strong password and security best practices
         </Text>
       </div>
-      
-      
+
       {/* Password Change Card */}
       <Card className={styles.passwordCard}>
-        <Group mb="md" justify="space-between" align="flex-start">
+        <Group mb='md' justify='space-between' align='flex-start'>
           <div>
             <Text fw={500} className={styles.cardTitle}>
               <IconLock size={18} style={{ marginRight: 8, verticalAlign: 'text-bottom' }} />
               Change Password
             </Text>
-            <Text size="sm" c="dimmed" mt={4}>
+            <Text size='sm' c='dimmed' mt={4}>
               Update your password to maintain account security
             </Text>
           </div>
         </Group>
-        
+
         <form onSubmit={form.onSubmit(handleSubmit)}>
-          <Stack gap="md">
+          <Stack gap='md'>
             <PasswordInput
               className={styles.formInput}
-              label="Current Password"
-              placeholder="Enter your current password"
+              label='Current Password'
+              placeholder='Enter your current password'
               {...form.getInputProps('currentPassword')}
               leftSection={<IconLock size={16} />}
-              size="md"
+              size='md'
             />
-            
+
             <div>
               <PasswordInput
                 className={styles.formInput}
-                label="New Password"
-                placeholder="Enter your new password"
+                label='New Password'
+                placeholder='Enter your new password'
                 {...form.getInputProps('newPassword')}
                 leftSection={<IconLock size={16} />}
-                size="md"
+                size='md'
               />
-              
+
               {/* Password Strength Indicator */}
               {form.values.newPassword && (
                 <div className={styles.passwordStrength}>
-                  <Group justify="space-between" mb={4}>
-                    <Text size="xs" c="dimmed">Password Strength</Text>
-                    <Text size="xs" c="dimmed">
-                      {passwordStrength.strength < 40 ? 'Weak' : 
-                       passwordStrength.strength < 60 ? 'Fair' : 
-                       passwordStrength.strength < 80 ? 'Good' : 'Strong'}
+                  <Group justify='space-between' mb={4}>
+                    <Text size='xs' c='dimmed'>
+                      Password Strength
+                    </Text>
+                    <Text size='xs' c='dimmed'>
+                      {passwordStrength.strength < 40 ?
+                        'Weak'
+                      : passwordStrength.strength < 60 ?
+                        'Fair'
+                      : passwordStrength.strength < 80 ?
+                        'Good'
+                      : 'Strong'}
                     </Text>
                   </Group>
-                  <Progress 
-                    value={passwordStrength.strength} 
+                  <Progress
+                    value={passwordStrength.strength}
                     color={getPasswordStrengthColor(passwordStrength.strength)}
-                    size="xs"
-                    mb="xs"
+                    size='xs'
+                    mb='xs'
                   />
-                  <List spacing={2} size="xs" c="dimmed">
-                    <List.Item 
-                      icon={<ThemeIcon size={12} color={passwordStrength.checks.length ? 'green' : 'gray'} variant="filled">
-                        {passwordStrength.checks.length ? <IconCheck size={8} /> : <IconX size={8} />}
-                      </ThemeIcon>}
+                  <List spacing={2} size='xs' c='dimmed'>
+                    <List.Item
+                      icon={
+                        <ThemeIcon
+                          size={12}
+                          color={passwordStrength.checks.length ? 'green' : 'gray'}
+                          variant='filled'
+                        >
+                          {passwordStrength.checks.length ?
+                            <IconCheck size={8} />
+                          : <IconX size={8} />}
+                        </ThemeIcon>
+                      }
                     >
                       At least 8 characters
                     </List.Item>
-                    <List.Item 
-                      icon={<ThemeIcon size={12} color={passwordStrength.checks.uppercase ? 'green' : 'gray'} variant="filled">
-                        {passwordStrength.checks.uppercase ? <IconCheck size={8} /> : <IconX size={8} />}
-                      </ThemeIcon>}
+                    <List.Item
+                      icon={
+                        <ThemeIcon
+                          size={12}
+                          color={passwordStrength.checks.uppercase ? 'green' : 'gray'}
+                          variant='filled'
+                        >
+                          {passwordStrength.checks.uppercase ?
+                            <IconCheck size={8} />
+                          : <IconX size={8} />}
+                        </ThemeIcon>
+                      }
                     >
                       Uppercase letter
                     </List.Item>
-                    <List.Item 
-                      icon={<ThemeIcon size={12} color={passwordStrength.checks.lowercase ? 'green' : 'gray'} variant="filled">
-                        {passwordStrength.checks.lowercase ? <IconCheck size={8} /> : <IconX size={8} />}
-                      </ThemeIcon>}
+                    <List.Item
+                      icon={
+                        <ThemeIcon
+                          size={12}
+                          color={passwordStrength.checks.lowercase ? 'green' : 'gray'}
+                          variant='filled'
+                        >
+                          {passwordStrength.checks.lowercase ?
+                            <IconCheck size={8} />
+                          : <IconX size={8} />}
+                        </ThemeIcon>
+                      }
                     >
                       Lowercase letter
                     </List.Item>
-                    <List.Item 
-                      icon={<ThemeIcon size={12} color={passwordStrength.checks.numbers ? 'green' : 'gray'} variant="filled">
-                        {passwordStrength.checks.numbers ? <IconCheck size={8} /> : <IconX size={8} />}
-                      </ThemeIcon>}
+                    <List.Item
+                      icon={
+                        <ThemeIcon
+                          size={12}
+                          color={passwordStrength.checks.numbers ? 'green' : 'gray'}
+                          variant='filled'
+                        >
+                          {passwordStrength.checks.numbers ?
+                            <IconCheck size={8} />
+                          : <IconX size={8} />}
+                        </ThemeIcon>
+                      }
                     >
                       Number
                     </List.Item>
-                    <List.Item 
-                      icon={<ThemeIcon size={12} color={passwordStrength.checks.symbols ? 'green' : 'gray'} variant="filled">
-                        {passwordStrength.checks.symbols ? <IconCheck size={8} /> : <IconX size={8} />}
-                      </ThemeIcon>}
+                    <List.Item
+                      icon={
+                        <ThemeIcon
+                          size={12}
+                          color={passwordStrength.checks.symbols ? 'green' : 'gray'}
+                          variant='filled'
+                        >
+                          {passwordStrength.checks.symbols ?
+                            <IconCheck size={8} />
+                          : <IconX size={8} />}
+                        </ThemeIcon>
+                      }
                     >
                       Special character
                     </List.Item>
@@ -222,32 +269,24 @@ const SecuritySettings = () => {
                 </div>
               )}
             </div>
-            
+
             <PasswordInput
               className={styles.formInput}
-              label="Confirm New Password"
-              placeholder="Confirm your new password"
+              label='Confirm New Password'
+              placeholder='Confirm your new password'
               {...form.getInputProps('confirmPassword')}
               leftSection={<IconLock size={16} />}
-              size="md"
+              size='md'
             />
-            
+
             {/* Button Group */}
             {hasChanges && (
-              <Group justify="flex-end" mt="md" className={styles.buttonGroup}>
-                <Button
-                  variant="subtle"
-                  onClick={handleReset}
-                  disabled={isSubmitting}
-                >
+              <Group justify='flex-end' mt='md' className={styles.buttonGroup}>
+                <Button variant='subtle' onClick={handleReset} disabled={isSubmitting}>
                   <IconX size={16} />
                   Cancel
                 </Button>
-                <Button
-                  variant="primary"
-                  type="submit"
-                  loading={isSubmitting}
-                >
+                <Button variant='primary' type='submit' loading={isSubmitting}>
                   <IconCheck size={16} />
                   Update Password
                 </Button>
@@ -256,24 +295,48 @@ const SecuritySettings = () => {
           </Stack>
         </form>
       </Card>
-      
+
       {/* Security Tips Card */}
       <Card className={styles.tipsCard}>
-        <Text fw={500} mb="md" className={styles.cardTitle}>
+        <Text fw={500} mb='md' className={styles.cardTitle}>
           <IconShield size={18} style={{ marginRight: 8, verticalAlign: 'text-bottom' }} />
           Security Best Practices
         </Text>
-        <List spacing="sm" size="sm" c="dimmed">
-          <List.Item icon={<ThemeIcon size={16} color="blue" variant="light"><IconCheck size={12} /></ThemeIcon>}>
+        <List spacing='sm' size='sm' c='dimmed'>
+          <List.Item
+            icon={
+              <ThemeIcon size={16} color='blue' variant='light'>
+                <IconCheck size={12} />
+              </ThemeIcon>
+            }
+          >
             {"Use a unique password that you don't use on other websites"}
           </List.Item>
-          <List.Item icon={<ThemeIcon size={16} color="blue" variant="light"><IconCheck size={12} /></ThemeIcon>}>
+          <List.Item
+            icon={
+              <ThemeIcon size={16} color='blue' variant='light'>
+                <IconCheck size={12} />
+              </ThemeIcon>
+            }
+          >
             Include a mix of uppercase, lowercase, numbers, and special characters
           </List.Item>
-          <List.Item icon={<ThemeIcon size={16} color="blue" variant="light"><IconCheck size={12} /></ThemeIcon>}>
+          <List.Item
+            icon={
+              <ThemeIcon size={16} color='blue' variant='light'>
+                <IconCheck size={12} />
+              </ThemeIcon>
+            }
+          >
             Avoid using personal information like birthdays or names
           </List.Item>
-          <List.Item icon={<ThemeIcon size={16} color="blue" variant="light"><IconCheck size={12} /></ThemeIcon>}>
+          <List.Item
+            icon={
+              <ThemeIcon size={16} color='blue' variant='light'>
+                <IconCheck size={12} />
+              </ThemeIcon>
+            }
+          >
             Consider using a password manager to generate and store secure passwords
           </List.Item>
         </List>

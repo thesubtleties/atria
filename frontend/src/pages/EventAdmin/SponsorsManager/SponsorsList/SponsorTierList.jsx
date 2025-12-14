@@ -2,13 +2,7 @@ import DroppableTier from '../DroppableTier';
 import SponsorCard from '../SponsorCard';
 import styles from './styles/index.module.css';
 
-const SponsorTierList = ({
-  sortedTierKeys,
-  localItems,
-  tierInfo,
-  sponsorLookup,
-  onEdit
-}) => {
+const SponsorTierList = ({ sortedTierKeys, localItems, tierInfo, sponsorLookup, onEdit }) => {
   return (
     <div className={styles.sponsorsList}>
       {sortedTierKeys.map((tierId) => {
@@ -21,9 +15,7 @@ const SponsorTierList = ({
             id={tierId}
             tier={{
               ...tier,
-              sponsors: tierSponsors
-                .map((id) => sponsorLookup[id])
-                .filter(Boolean),
+              sponsors: tierSponsors.map((id) => sponsorLookup[id]).filter(Boolean),
             }}
           >
             {tierSponsors.map((sponsorId, index) => {

@@ -20,22 +20,22 @@ export default function NetworkPage() {
   });
 
   // Filter connections based on search query
-  const filteredConnections = data?.connections?.filter((connection) => {
-    if (!searchQuery) return true;
-    
-    const query = searchQuery.toLowerCase();
-    // Determine the other user based on current user ID
-    const otherUser = connection.requester.id === currentUser?.id 
-      ? connection.recipient 
-      : connection.requester;
-    
-    return (
-      otherUser.full_name?.toLowerCase().includes(query) ||
-      otherUser.company_name?.toLowerCase().includes(query) ||
-      otherUser.title?.toLowerCase().includes(query) ||
-      connection.originating_event?.title?.toLowerCase().includes(query)
-    );
-  }) || [];
+  const filteredConnections =
+    data?.connections?.filter((connection) => {
+      if (!searchQuery) return true;
+
+      const query = searchQuery.toLowerCase();
+      // Determine the other user based on current user ID
+      const otherUser =
+        connection.requester.id === currentUser?.id ? connection.recipient : connection.requester;
+
+      return (
+        otherUser.full_name?.toLowerCase().includes(query) ||
+        otherUser.company_name?.toLowerCase().includes(query) ||
+        otherUser.title?.toLowerCase().includes(query) ||
+        connection.originating_event?.title?.toLowerCase().includes(query)
+      );
+    }) || [];
 
   return (
     <div className={styles.pageContainer}>
@@ -44,27 +44,25 @@ export default function NetworkPage() {
       <div className={styles.bgShape2} />
 
       <PageHeader
-        title="My Network"
-        subtitle="Manage your professional connections across all events"
+        title='My Network'
+        subtitle='Manage your professional connections across all events'
       />
 
       {/* Main Content */}
       <section className={styles.contentSection}>
         <div className={styles.sectionHeader}>
           <h2 className={styles.sectionTitle}>Connections</h2>
-          <div className={styles.connectionCount}>
-            {data?.total_items || 0} total
-          </div>
+          <div className={styles.connectionCount}>{data?.total_items || 0} total</div>
         </div>
 
         <div className={styles.searchWrapper}>
           <TextInput
-            placeholder="Search by name, company, title, or event..."
+            placeholder='Search by name, company, title, or event...'
             leftSection={<IconSearch size={16} />}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className={styles.searchInput}
-            size="md"
+            size='md'
           />
         </div>
 

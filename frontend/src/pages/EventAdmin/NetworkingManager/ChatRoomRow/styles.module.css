@@ -23,19 +23,19 @@
 /* Room type colors */
 .global {
   background-color: rgba(59, 130, 246, 0.08);
-  color: #3B82F6;
+  color: #3b82f6;
   border-color: rgba(59, 130, 246, 0.15);
 }
 
 .admin {
   background-color: rgba(139, 92, 246, 0.08);
-  color: #8B5CF6;
+  color: #8b5cf6;
   border-color: rgba(139, 92, 246, 0.15);
 }
 
 .greenRoom {
   background-color: rgba(20, 184, 166, 0.08);
-  color: #14B8A6;
+  color: #14b8a6;
   border-color: rgba(20, 184, 166, 0.15);
 }
 

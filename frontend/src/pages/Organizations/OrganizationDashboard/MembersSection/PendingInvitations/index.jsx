@@ -2,10 +2,10 @@ import { useState, useEffect, useMemo } from 'react';
 import { LoadingOverlay, Center, Text, Badge, Group, ActionIcon, Pagination } from '@mantine/core';
 import { IconMail, IconClock, IconRefresh, IconX } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
-import { 
+import {
   useGetOrganizationInvitationsQuery,
   useCancelOrganizationInvitationMutation,
-  useSendOrganizationInvitationMutation
+  useSendOrganizationInvitationMutation,
 } from '../../../../../app/features/organizations/api';
 import { formatDistanceToNow } from 'date-fns';
 import styles from './styles/index.module.css';
@@ -31,13 +31,11 @@ const PendingInvitations = ({ orgId, searchQuery }) => {
   // Filter invitations based on search query
   const filteredInvitations = useMemo(() => {
     if (!data?.invitations) return [];
-    
+
     if (!searchQuery) return data.invitations;
 
     const query = searchQuery.toLowerCase();
-    return data.invitations.filter(invitation => 
-      invitation.email?.toLowerCase().includes(query)
-    );
+    return data.invitations.filter((invitation) => invitation.email?.toLowerCase().includes(query));
   }, [data?.invitations, searchQuery]);
 
   const handleCancel = async (invitationId, email) => {
@@ -66,7 +64,7 @@ const PendingInvitations = ({ orgId, searchQuery }) => {
         role: invitation.role,
         message: invitation.message,
       }).unwrap();
-      
+
       notifications.show({
         title: 'Success',
         message: `Resent invitation to ${invitation.email}`,
@@ -82,16 +80,23 @@ const PendingInvitations = ({ orgId, searchQuery }) => {
     }
   };
 
-
   const getStatusBadge = (invitation) => {
     const now = new Date();
     const expiresAt = new Date(invitation.expires_at);
-    
+
     if (expiresAt < now) {
-      return <Badge variant="unstyled" className={styles.statusBadge} data-status="expired">Expired</Badge>;
+      return (
+        <Badge variant='unstyled' className={styles.statusBadge} data-status='expired'>
+          Expired
+        </Badge>
+      );
     }
-    
-    return <Badge variant="unstyled" className={styles.statusBadge} data-status="active">Active</Badge>;
+
+    return (
+      <Badge variant='unstyled' className={styles.statusBadge} data-status='active'>
+        Active
+      </Badge>
+    );
   };
 
   if (isLoading) {
@@ -101,7 +106,7 @@ const PendingInvitations = ({ orgId, searchQuery }) => {
   if (error) {
     return (
       <Center className={styles.emptyState}>
-        <Text color="red">Failed to load invitations</Text>
+        <Text color='red'>Failed to load invitations</Text>
       </Center>
     );
   }
@@ -110,12 +115,12 @@ const PendingInvitations = ({ orgId, searchQuery }) => {
     return (
       <Center className={styles.emptyState}>
         <div className={styles.emptyContent}>
-          <IconMail size={48} color="#94a3b8" stroke={1.5} />
-          <Text size="lg" weight={500} color="dimmed" mt="md">
+          <IconMail size={48} color='#94a3b8' stroke={1.5} />
+          <Text size='lg' weight={500} color='dimmed' mt='md'>
             {searchQuery ? 'No invitations found matching your search' : 'No pending invitations'}
           </Text>
           {!searchQuery && (
-            <Text size="sm" color="dimmed" mt="xs">
+            <Text size='sm' color='dimmed' mt='xs'>
               Invitations you send will appear here
             </Text>
           )}
@@ -141,14 +146,14 @@ const PendingInvitations = ({ orgId, searchQuery }) => {
             {filteredInvitations.map((invitation) => (
               <tr key={invitation.id} className={styles.invitationRow}>
                 <td>
-                  <Group spacing="xs">
-                    <IconMail size={16} color="#64748b" />
-                    <Text size="sm">{invitation.email}</Text>
+                  <Group spacing='xs'>
+                    <IconMail size={16} color='#64748b' />
+                    <Text size='sm'>{invitation.email}</Text>
                   </Group>
                 </td>
                 <td className={styles.centerCell}>
                   <Badge
-                    variant="unstyled"
+                    variant='unstyled'
                     className={styles.roleBadge}
                     data-role={invitation.role}
                   >
@@ -157,27 +162,27 @@ const PendingInvitations = ({ orgId, searchQuery }) => {
                 </td>
                 <td className={styles.centerCell}>{getStatusBadge(invitation)}</td>
                 <td className={styles.centerCell}>
-                  <Group spacing="xs" justify="center">
-                    <IconClock size={14} color="#94a3b8" />
-                    <Text size="sm" color="dimmed">
+                  <Group spacing='xs' justify='center'>
+                    <IconClock size={14} color='#94a3b8' />
+                    <Text size='sm' color='dimmed'>
                       {formatDistanceToNow(new Date(invitation.created_at), { addSuffix: true })}
                     </Text>
                   </Group>
                 </td>
                 <td className={styles.centerCell}>
-                  <Group gap={4} justify="center">
+                  <Group gap={4} justify='center'>
                     <ActionIcon
-                      variant="subtle"
+                      variant='subtle'
                       onClick={() => handleResend(invitation)}
-                      title="Resend invitation"
+                      title='Resend invitation'
                       className={styles.actionButton}
                     >
                       <IconRefresh size={16} />
                     </ActionIcon>
                     <ActionIcon
-                      variant="subtle"
+                      variant='subtle'
                       onClick={() => handleCancel(invitation.id, invitation.email)}
-                      title="Cancel invitation"
+                      title='Cancel invitation'
                       className={styles.cancelActionButton}
                     >
                       <IconX size={16} />

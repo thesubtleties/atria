@@ -22,7 +22,7 @@ interface Thread {
  */
 export function useThreadFiltering<T extends Thread>(
   threadsArray: T[] | null | undefined,
-  currentEventId: number | null
+  currentEventId: number | null,
 ): T[] {
   return useMemo(() => {
     if (!threadsArray) return [];
@@ -38,10 +38,7 @@ export function useThreadFiltering<T extends Thread>(
 
         // Show global threads where the other user is in this event
         // Backend ALWAYS provides shared_event_ids array (empty array [] if no shared events)
-        if (
-          !thread.event_scope_id &&
-          thread.shared_event_ids?.includes(currentEventId)
-        ) {
+        if (!thread.event_scope_id && thread.shared_event_ids?.includes(currentEventId)) {
           return true;
         }
 
@@ -50,4 +47,3 @@ export function useThreadFiltering<T extends Thread>(
     }
   }, [threadsArray, currentEventId]);
 }
-

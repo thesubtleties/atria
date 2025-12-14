@@ -23,7 +23,7 @@ export const OrganizationEvents = () => {
   return (
     <Container className={styles.container}>
       <div className={styles.eventsSection}>
-        <Title order={1} align="center" mb="md">
+        <Title order={1} align='center' mb='md'>
           Events
         </Title>
 
@@ -32,9 +32,9 @@ export const OrganizationEvents = () => {
             <Button
               onClick={() => setShowCreateModal(true)}
               className={styles.button}
-              variant="default"
+              variant='default'
             >
-              <Group spacing="xs">
+              <Group spacing='xs'>
                 <IconPlus size={16} className={styles.plusIcon} />
                 <span>New Event</span>
               </Group>
@@ -42,24 +42,18 @@ export const OrganizationEvents = () => {
           </div>
         )}
 
-        {events.length > 0 ? (
+        {events.length > 0 ?
           <div className={styles.grid}>
             {events.map((event) => (
-              <EventCard
-                key={event.id}
-                event={event}
-                isOrgView={true}
-                canEdit={canCreateEvents}
-              />
+              <EventCard key={event.id} event={event} isOrgView={true} canEdit={canCreateEvents} />
             ))}
           </div>
-        ) : (
-          <div className={styles.emptyState}>
-            <Text size="xl" color="dimmed" align="center">
+        : <div className={styles.emptyState}>
+            <Text size='xl' color='dimmed' align='center'>
               Organization has no events...
             </Text>
           </div>
-        )}
+        }
       </div>
 
       <MembersList organizationId={orgId} />

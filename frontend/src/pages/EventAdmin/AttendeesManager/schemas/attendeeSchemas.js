@@ -10,20 +10,17 @@ export const EventUserRole = {
 
 // Invitation schema for single invite
 export const invitationSchema = z.object({
-  email: z.string()
-    .email('Invalid email address')
-    .min(1, 'Email is required'),
+  email: z.string().email('Invalid email address').min(1, 'Email is required'),
   role: z.enum(['ADMIN', 'ORGANIZER', 'SPEAKER', 'ATTENDEE'], {
     required_error: 'Role is required',
   }),
-  message: z.string()
-    .max(500, 'Message too long')
-    .optional(),
+  message: z.string().max(500, 'Message too long').optional(),
 });
 
 // Bulk invitation schema
 export const bulkInvitationSchema = z.object({
-  invitations: z.array(invitationSchema)
+  invitations: z
+    .array(invitationSchema)
     .min(1, 'At least one invitation is required')
     .max(100, 'Maximum 100 invitations at once'),
 });
@@ -37,8 +34,7 @@ export const roleUpdateSchema = z.object({
 
 // Bulk role update schema
 export const bulkRoleUpdateSchema = z.object({
-  userIds: z.array(z.number())
-    .min(1, 'Select at least one user'),
+  userIds: z.array(z.number()).min(1, 'Select at least one user'),
   role: z.enum(['ADMIN', 'ORGANIZER', 'SPEAKER', 'ATTENDEE'], {
     required_error: 'Role is required',
   }),
@@ -54,14 +50,12 @@ export const attendeeFilterSchema = z.object({
 
 // CSV import schema
 export const csvImportSchema = z.object({
-  file: z.instanceof(File, {
-    message: 'Please select a CSV file',
-  }).refine(
-    (file) => file.type === 'text/csv' || file.name.endsWith('.csv'),
-    'File must be a CSV'
-  ),
-  defaultRole: z.enum(['ADMIN', 'ORGANIZER', 'SPEAKER', 'ATTENDEE'])
-    .default('ATTENDEE'),
+  file: z
+    .instanceof(File, {
+      message: 'Please select a CSV file',
+    })
+    .refine((file) => file.type === 'text/csv' || file.name.endsWith('.csv'), 'File must be a CSV'),
+  defaultRole: z.enum(['ADMIN', 'ORGANIZER', 'SPEAKER', 'ATTENDEE']).default('ATTENDEE'),
 });
 
 // Helper functions
@@ -116,10 +110,17 @@ export const canChangeRole = (currentUserRole, targetRole) => {
 };
 
 // Validate if a specific role change is allowed
-export const canChangeUserRole = (currentUserRole, currentUserId, targetUserId, targetCurrentRole, targetNewRole, adminCount = 1) => {
+export const canChangeUserRole = (
+  currentUserRole,
+  currentUserId,
+  targetUserId,
+  targetCurrentRole,
+  targetNewRole,
+  adminCount = 1,
+) => {
   // Cannot change own role
   if (currentUserId === targetUserId) {
-    return { allowed: false, reason: "You cannot change your own role" };
+    return { allowed: false, reason: 'You cannot change your own role' };
   }
 
   // Only admins and organizers can change roles
@@ -131,17 +132,20 @@ export const canChangeUserRole = (currentUserRole, currentUserId, targetUserId, 
   if (currentUserRole === 'ORGANIZER') {
     // Can only change between ATTENDEE and SPEAKER
     const allowedRoles = ['ATTENDEE', 'SPEAKER'];
-    
+
     // Cannot change roles of ORGANIZERS or ADMINS
     if (!allowedRoles.includes(targetCurrentRole)) {
-      return { allowed: false, reason: "Organizers cannot change roles of other organizers or admins" };
+      return {
+        allowed: false,
+        reason: 'Organizers cannot change roles of other organizers or admins',
+      };
     }
-    
+
     // Can only assign ATTENDEE or SPEAKER roles
     if (!allowedRoles.includes(targetNewRole)) {
-      return { allowed: false, reason: "Organizers can only assign attendee or speaker roles" };
+      return { allowed: false, reason: 'Organizers can only assign attendee or speaker roles' };
     }
-    
+
     return { allowed: true };
   }
 
@@ -149,11 +153,11 @@ export const canChangeUserRole = (currentUserRole, currentUserId, targetUserId, 
   if (currentUserRole === 'ADMIN') {
     // Check if trying to demote last admin
     if (targetCurrentRole === 'ADMIN' && targetNewRole !== 'ADMIN' && adminCount <= 1) {
-      return { allowed: false, reason: "Cannot remove or change role of last admin" };
+      return { allowed: false, reason: 'Cannot remove or change role of last admin' };
     }
-    
+
     return { allowed: true };
   }
 
-  return { allowed: false, reason: "Invalid permission state" };
+  return { allowed: false, reason: 'Invalid permission state' };
 };

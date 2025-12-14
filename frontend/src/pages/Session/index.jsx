@@ -1,8 +1,4 @@
-import {
-  Alert,
-  Title,
-  Text,
-} from '@mantine/core';
+import { Alert, Title, Text } from '@mantine/core';
 import { IconMessage } from '@tabler/icons-react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -31,37 +27,37 @@ export const SessionPage = () => {
   });
   const [updateStatus] = useUpdateSessionStatusMutation();
   const [updateSession] = useUpdateSessionMutation();
-  
+
   // Get current user's role in the event
   const getCurrentUserEventRole = () => {
     if (!event || !currentUser) return null;
-    
+
     // Check if user is an event organizer/admin using user_role
     if (event.user_role === 'ADMIN' || event.user_role === 'ORGANIZER') {
       return event.user_role;
     }
-    
+
     // Check if user is a speaker for this session
     const isSpeaker = session?.session_speakers?.some(
-      speaker => speaker?.user?.id === currentUser.id
+      (speaker) => speaker?.user?.id === currentUser.id,
     );
     if (isSpeaker) return 'SPEAKER';
-    
+
     // Otherwise they're an attendee
     return 'ATTENDEE';
   };
-  
+
   const userEventRole = getCurrentUserEventRole();
 
   // No timing logic needed for CSS approach
 
   if (isLoading) {
-    return <LoadingPage message="Loading session details..." />;
+    return <LoadingPage message='Loading session details...' />;
   }
 
   if (!session) {
     return (
-      <Alert color="red" title="Error">
+      <Alert color='red' title='Error'>
         Session not found
       </Alert>
     );
@@ -69,8 +65,7 @@ export const SessionPage = () => {
 
   // Check if current user is an organizer/admin
   const canEdit = event?.organizers?.some(
-    (org) =>
-      org.id === currentUser?.id && ['ADMIN', 'ORGANIZER'].includes(org.role)
+    (org) => org.id === currentUser?.id && ['ADMIN', 'ORGANIZER'].includes(org.role),
   );
 
   const handleStatusChange = async (newStatus) => {
@@ -94,25 +89,25 @@ export const SessionPage = () => {
       console.error('Failed to update session:', error);
     }
   };
-  
+
   // Determine if chat should be shown based on chat_mode and user role
   const shouldShowChat = () => {
     if (!session?.chat_mode) return true; // Default to showing chat if no mode set
-    
+
     const chatMode = session.chat_mode;
-    
+
     // If chat is disabled, don't show for anyone
     if (chatMode === 'DISABLED') return false;
-    
+
     // If backstage only, only show for speakers, organizers, and admins
     if (chatMode === 'BACKSTAGE_ONLY') {
       return ['ADMIN', 'ORGANIZER', 'SPEAKER'].includes(userEventRole);
     }
-    
+
     // If enabled, show for everyone
     return true;
   };
-  
+
   const chatEnabled = shouldShowChat();
 
   return (
@@ -121,9 +116,11 @@ export const SessionPage = () => {
       <div className={styles.bgShape1} />
       <div className={styles.bgShape2} />
       <div className={styles.bgShape3} />
-      
+
       {/* Grid Layout Container */}
-      <div className={`${styles.layoutGrid} ${!chatEnabled || (chatEnabled && !isChatOpen) ? styles.chatClosed : ''}`}>
+      <div
+        className={`${styles.layoutGrid} ${!chatEnabled || (chatEnabled && !isChatOpen) ? styles.chatClosed : ''}`}
+      >
         {/* Content Wrapper */}
         <div className={styles.contentWrapper}>
           {/* Section 1 - Video Section (wrapped video player) */}
@@ -132,23 +129,13 @@ export const SessionPage = () => {
             <div className={styles.videoContainer}>
               {/* Title at the TOP of this container */}
               <div className={styles.sectionHeader}>
-                <Title className={styles.title}>
-                  {session.title}
-                </Title>
-                {session.is_live && (
-                  <div className={styles.liveBadge}>
-                    LIVE
-                  </div>
-                )}
+                <Title className={styles.title}>{session.title}</Title>
+                {session.is_live && <div className={styles.liveBadge}>LIVE</div>}
               </div>
 
               {/* Video Display */}
               <div className={styles.videoWrapper}>
-                <SessionDisplay
-                  session={session}
-                  event={event}
-                  currentUser={currentUser}
-                />
+                <SessionDisplay session={session} event={event} currentUser={currentUser} />
               </div>
 
               {/* Session Details - Under video within same container */}
@@ -173,19 +160,15 @@ export const SessionPage = () => {
 
             {/* Description */}
             {session.description && (
-              <Text className={styles.description}>
-                {session.description}
-              </Text>
+              <Text className={styles.description}>{session.description}</Text>
             )}
           </section>
         </div>
 
         {/* Ghost spacer element - maintains grid space for chat */}
-        {chatEnabled && (
-          <div className={styles.chatGhost} aria-hidden="true" />
-        )}
+        {chatEnabled && <div className={styles.chatGhost} aria-hidden='true' />}
       </div>
-      
+
       {/* Fixed position chat - outside of grid */}
       {chatEnabled && (
         <div className={styles.fixedChatContainer}>
@@ -197,13 +180,10 @@ export const SessionPage = () => {
           />
         </div>
       )}
-      
+
       {/* Floating chat button - outside grid */}
       {chatEnabled && !isChatOpen && (
-        <button
-          onClick={() => setIsChatOpen(true)}
-          className={styles.floatingChatButton}
-        >
+        <button onClick={() => setIsChatOpen(true)} className={styles.floatingChatButton}>
           <IconMessage size={24} />
         </button>
       )}

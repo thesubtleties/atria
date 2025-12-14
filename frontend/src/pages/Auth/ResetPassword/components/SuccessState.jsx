@@ -6,19 +6,19 @@ import styles from '../styles/index.module.css';
 
 const SuccessState = () => {
   const navigate = useNavigate();
-  
+
   return (
     <section className={styles.successSection}>
-      <Stack align="center" gap="md" className={styles.success}>
+      <Stack align='center' gap='md' className={styles.success}>
         <div className={styles.iconWrapper}>
           <IconCheck size={48} stroke={2} />
         </div>
         <Title order={2} className={styles.successTitle}>
           Password Reset Successfully!
         </Title>
-        <Text c="dimmed" ta="center">
-          Your password has been reset. You&apos;ll be redirected to the
-          login page in a few seconds.
+        <Text c='dimmed' ta='center'>
+          Your password has been reset. You&apos;ll be redirected to the login page in a few
+          seconds.
         </Text>
         <Button
           onClick={() =>
@@ -29,7 +29,7 @@ const SuccessState = () => {
               },
             })
           }
-          variant="primary"
+          variant='primary'
         >
           Go to Login
         </Button>

@@ -34,10 +34,10 @@ const SponsorsManager = () => {
         <div className={styles.contentWrapper}>
           <section className={styles.mainContent}>
             <div style={{ textAlign: 'center', padding: '3rem' }}>
-              <Text c="red" size="lg" mb="md">
+              <Text c='red' size='lg' mb='md'>
                 Error loading sponsors: {error.data?.message || 'Unknown error'}
               </Text>
-              <Button variant="primary" onClick={refetch}>
+              <Button variant='primary' onClick={refetch}>
                 Retry
               </Button>
             </div>
@@ -71,7 +71,7 @@ const SponsorsManager = () => {
           opened={createModalOpen}
           onClose={() => setCreateModalOpen(false)}
           eventId={parseInt(eventId)}
-          mode="create"
+          mode='create'
           sponsors={sponsors}
         />
 

@@ -1,5 +1,5 @@
-import { motion } from 'motion/react'
-import styles from './Button.module.css'
+import { motion } from 'motion/react';
+import styles from './Button.module.css';
 
 const Button = ({
   children,
@@ -20,7 +20,7 @@ const Button = ({
       <span>{children}</span>
       {icon && iconPosition === 'right' && <span className={styles.icon}>{icon}</span>}
     </>
-  )
+  );
 
   const buttonClass = `
     ${styles.button} 
@@ -29,7 +29,7 @@ const Button = ({
     ${fullWidth ? styles.fullWidth : ''}
     ${disabled ? styles.disabled : ''}
     ${className}
-  `.trim()
+  `.trim();
 
   if (animate) {
     return (
@@ -43,19 +43,14 @@ const Button = ({
       >
         {buttonContent}
       </motion.button>
-    )
+    );
   }
 
   return (
-    <button
-      className={buttonClass}
-      onClick={onClick}
-      disabled={disabled}
-      {...props}
-    >
+    <button className={buttonClass} onClick={onClick} disabled={disabled} {...props}>
       {buttonContent}
     </button>
-  )
-}
+  );
+};
 
-export default Button
+export default Button;

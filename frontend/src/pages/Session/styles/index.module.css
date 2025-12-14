@@ -256,12 +256,7 @@
 
 /* Section 2 - About Section (separate glass container) */
 .aboutSection {
-  background: rgba(
-    255,
-    255,
-    255,
-    0.8
-  ); /* Opaque white glass matching video section */
+  background: rgba(255, 255, 255, 0.8); /* Opaque white glass matching video section */
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   padding: 2rem;
@@ -287,7 +282,7 @@
   position: relative;
   width: 370px;
   min-width: 0;
-  transition: 
+  transition:
     opacity 0.3s ease,
     visibility 0.3s ease,
     width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -349,7 +344,7 @@
   .sectionHeader {
     padding: 2rem 1.5rem 1.5rem 1.5rem !important;
   }
-  
+
   .videoFooter {
     padding: 0.75rem 1.5rem 1rem 1.5rem !important;
   }
@@ -360,7 +355,7 @@
   .aboutSection {
     padding: 1.5rem !important;
   }
-  
+
   .sectionTitle {
     font-size: 1.375rem !important;
     margin-bottom: 0.5rem !important;
@@ -371,7 +366,7 @@
   .aboutSection {
     padding: 1.25rem !important;
   }
-  
+
   .sectionTitle {
     font-size: 1.25rem !important;
   }
@@ -408,11 +403,11 @@
   .videoContainer {
     max-width: 800px; /* Slightly smaller on medium screens */
   }
-  
+
   .chatGhost {
     width: 350px;
   }
-  
+
   .fixedChatContainer {
     width: 350px;
   }
@@ -430,11 +425,11 @@
   .videoContainer {
     max-width: 700px; /* Even smaller */
   }
-  
+
   .chatGhost {
     width: 320px;
   }
-  
+
   .fixedChatContainer {
     width: 320px;
   }
@@ -474,7 +469,7 @@
   .videoSection {
     padding: 0; /* Keep at 0 for consistent width */
   }
-  
+
   .videoContainer {
     padding: clamp(var(--space-md), 3vw, var(--space-lg));
     border-radius: var(--radius-lg);
@@ -484,16 +479,16 @@
     padding: clamp(var(--space-md), 3vw, var(--space-lg));
     border-radius: var(--radius-lg);
   }
-  
+
   .sectionTitle {
     font-size: clamp(1.125rem, 4vw, 1.25rem);
     margin-bottom: clamp(var(--space-md), 3vw, var(--space-lg));
   }
-  
+
   .title {
     font-size: clamp(1.25rem, 5vw, 1.75rem);
   }
-  
+
   /* Hide background shapes on mobile to improve performance */
   .bgShape1,
   .bgShape2,
@@ -502,20 +497,28 @@
   }
 
   .sectionHeader {
-    margin: calc(-1 * clamp(var(--space-md), 3vw, var(--space-lg))) calc(-1 * clamp(var(--space-md), 3vw, var(--space-lg))) 0 calc(-1 * clamp(var(--space-md), 3vw, var(--space-lg)));
-    padding: clamp(var(--space-md), 3vw, var(--space-lg)) clamp(var(--space-md), 3vw, var(--space-lg)) clamp(var(--space-sm), 2vw, var(--space-md)) clamp(var(--space-md), 3vw, var(--space-lg));
+    margin: calc(-1 * clamp(var(--space-md), 3vw, var(--space-lg)))
+      calc(-1 * clamp(var(--space-md), 3vw, var(--space-lg))) 0
+      calc(-1 * clamp(var(--space-md), 3vw, var(--space-lg)));
+    padding: clamp(var(--space-md), 3vw, var(--space-lg))
+      clamp(var(--space-md), 3vw, var(--space-lg)) clamp(var(--space-sm), 2vw, var(--space-md))
+      clamp(var(--space-md), 3vw, var(--space-lg));
   }
-  
+
   .videoWrapper {
     width: calc(100% + 2 * clamp(var(--space-md), 3vw, var(--space-lg)));
     margin: 0 calc(-1 * clamp(var(--space-md), 3vw, var(--space-lg)));
   }
-  
+
   .videoFooter {
-    margin: 0 calc(-1 * clamp(var(--space-md), 3vw, var(--space-lg))) calc(-1 * clamp(var(--space-md), 3vw, var(--space-lg))) calc(-1 * clamp(var(--space-md), 3vw, var(--space-lg)));
-    padding: clamp(var(--space-sm), 2vw, var(--space-md)) clamp(var(--space-md), 3vw, var(--space-lg)) clamp(var(--space-md), 3vw, var(--space-lg)) clamp(var(--space-md), 3vw, var(--space-lg));
+    margin: 0 calc(-1 * clamp(var(--space-md), 3vw, var(--space-lg)))
+      calc(-1 * clamp(var(--space-md), 3vw, var(--space-lg)))
+      calc(-1 * clamp(var(--space-md), 3vw, var(--space-lg)));
+    padding: clamp(var(--space-sm), 2vw, var(--space-md))
+      clamp(var(--space-md), 3vw, var(--space-lg)) clamp(var(--space-md), 3vw, var(--space-lg))
+      clamp(var(--space-md), 3vw, var(--space-lg));
   }
-  
+
   /* Floating chat button positioning on mobile */
   .floatingChatButton {
     right: 1rem;
@@ -533,17 +536,17 @@
     padding: var(--space-sm);
     gap: var(--space-lg);
   }
-  
+
   .videoContainer,
   .aboutSection {
     padding: var(--space-md);
     border-radius: var(--radius-md);
   }
-  
+
   .sectionTitle {
     font-size: 1.125rem;
   }
-  
+
   .title {
     font-size: 1.25rem;
     line-height: 1.3;

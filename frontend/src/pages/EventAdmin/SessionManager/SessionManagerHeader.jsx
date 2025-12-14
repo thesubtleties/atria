@@ -13,10 +13,10 @@ export const SessionManagerHeader = ({ currentDay, sessionStats, onCreateClick }
             {/* First row: Day indicator */}
             <div className={styles.badgeRow}>
               <Badge
-                size="lg"
-                variant="light"
-                color="blue"
-                radius="sm"
+                size='lg'
+                variant='light'
+                color='blue'
+                radius='sm'
                 leftSection={<IconCalendar size={14} />}
               >
                 Day {currentDay}
@@ -24,20 +24,20 @@ export const SessionManagerHeader = ({ currentDay, sessionStats, onCreateClick }
             </div>
             {/* Second row: Stats */}
             <div className={styles.badgeRow}>
-              <Badge className={styles.statsBadge} size="lg" radius="sm">
+              <Badge className={styles.statsBadge} size='lg' radius='sm'>
                 {sessionStats.total} Total
               </Badge>
               {sessionStats.speakers > 0 && (
-                <Badge size="lg" variant="light" color="grape" radius="sm">
+                <Badge size='lg' variant='light' color='grape' radius='sm'>
                   {sessionStats.speakers} Speakers
                 </Badge>
               )}
               {sessionStats.overlapping > 0 && (
                 <Badge
-                  size="lg"
-                  variant="light"
-                  color="yellow"
-                  radius="sm"
+                  size='lg'
+                  variant='light'
+                  color='yellow'
+                  radius='sm'
                   className={styles.warningBadge}
                 >
                   {sessionStats.overlapping} Overlapping
@@ -48,11 +48,7 @@ export const SessionManagerHeader = ({ currentDay, sessionStats, onCreateClick }
         </div>
 
         <div className={styles.headerRight}>
-          <Button
-            variant="primary"
-            onClick={onCreateClick}
-            className={styles.addButton}
-          >
+          <Button variant='primary' onClick={onCreateClick} className={styles.addButton}>
             <IconPlus size={16} />
             New Session
           </Button>

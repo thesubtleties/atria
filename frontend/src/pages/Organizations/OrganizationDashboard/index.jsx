@@ -27,7 +27,7 @@ const OrganizationDashboard = () => {
   }, [error, navigate]);
 
   if (isLoading) {
-    return <LoadingPage message="Loading organization..." />;
+    return <LoadingPage message='Loading organization...' />;
   }
 
   if (!organization) {
@@ -44,8 +44,8 @@ const OrganizationDashboard = () => {
       {/* Content Wrapper */}
       <div className={styles.contentWrapper}>
         {/* Header Section */}
-        <OrganizationHeader 
-          organization={organization} 
+        <OrganizationHeader
+          organization={organization}
           currentUserRole={organization.current_user_role}
         />
 
@@ -58,10 +58,7 @@ const OrganizationDashboard = () => {
         />
 
         {/* Events Section */}
-        <EventsSection
-          orgId={orgId}
-          currentUserRole={organization.current_user_role}
-        />
+        <EventsSection orgId={orgId} currentUserRole={organization.current_user_role} />
       </div>
     </div>
   );

@@ -4,10 +4,7 @@ import { Group, TextInput, Badge, Text, Pagination } from '@mantine/core';
 import { LoadingOverlay } from '../../../shared/components/loading';
 import { IconPlus, IconSearch } from '@tabler/icons-react';
 // import { notifications } from '@mantine/notifications'; // TODO: Add when/if we add import/export
-import {
-  useGetEventQuery,
-  useGetEventUsersAdminQuery,
-} from '@/app/features/events/api';
+import { useGetEventQuery, useGetEventUsersAdminQuery } from '@/app/features/events/api';
 import { Button } from '../../../shared/components/buttons';
 import SpeakersList from './SpeakersList';
 import SpeakerEditModal from './SpeakerEditModal';
@@ -25,7 +22,9 @@ const SpeakersManager = () => {
   const [addModalOpen, setAddModalOpen] = useState(false);
 
   // Fetch event details
-  const { data: eventData } = useGetEventQuery(eventId);
+  const { data: eventData } = useGetEventQuery(eventId, {
+    skip: !eventId,
+  });
   const currentUserRole = eventData?.user_role || 'ATTENDEE';
 
   // Fetch speakers with pagination
@@ -75,11 +74,8 @@ const SpeakersManager = () => {
   // Count session assignments
   const speakerCounts = {
     total: speakersData?.total_items || 0,
-    withSessions:
-      speakersData?.event_users?.filter((s) => s.session_count > 0).length || 0,
-    withoutSessions:
-      speakersData?.event_users?.filter((s) => s.session_count === 0).length ||
-      0,
+    withSessions: speakersData?.event_users?.filter((s) => s.session_count > 0).length || 0,
+    withoutSessions: speakersData?.event_users?.filter((s) => s.session_count === 0).length || 0,
   };
 
   if (error) {
@@ -91,10 +87,10 @@ const SpeakersManager = () => {
         <div className={styles.contentWrapper}>
           <section className={styles.mainContent}>
             <div style={{ textAlign: 'center', padding: '3rem' }}>
-              <Text c="red" size="lg" mb="md">
+              <Text c='red' size='lg' mb='md'>
                 Error loading speakers: {error.message}
               </Text>
-              <Button variant="primary" onClick={refetch}>
+              <Button variant='primary' onClick={refetch}>
                 Retry
               </Button>
             </div>
@@ -118,19 +114,15 @@ const SpeakersManager = () => {
               <h2 className={styles.pageTitle}>Speakers Management</h2>
               <div className={styles.badgeGroup}>
                 <div className={styles.badgeRow}>
-                  <Badge className={styles.totalBadge} size="md" radius="sm">
+                  <Badge className={styles.totalBadge} size='md' radius='sm'>
                     {speakerCounts.total} Total
                   </Badge>
                 </div>
                 <div className={styles.badgeRow}>
-                  <Badge className={styles.assignedBadge} size="md" radius="sm">
+                  <Badge className={styles.assignedBadge} size='md' radius='sm'>
                     {speakerCounts.withSessions} Assigned
                   </Badge>
-                  <Badge
-                    className={styles.unassignedBadge}
-                    size="md"
-                    radius="sm"
-                  >
+                  <Badge className={styles.unassignedBadge} size='md' radius='sm'>
                     {speakerCounts.withoutSessions} Unassigned
                   </Badge>
                 </div>
@@ -162,11 +154,7 @@ const SpeakersManager = () => {
                 </Menu.Dropdown>
               </Menu>
               */}
-              <Button
-                variant="primary"
-                onClick={handleAddSpeaker}
-                className={styles.addButton}
-              >
+              <Button variant='primary' onClick={handleAddSpeaker} className={styles.addButton}>
                 <IconPlus size={18} />
                 Add Speaker
               </Button>
@@ -179,11 +167,11 @@ const SpeakersManager = () => {
           <div className={styles.searchContainer}>
             <TextInput
               className={styles.searchInput}
-              placeholder="Search speakers by name, email, company, or title..."
+              placeholder='Search speakers by name, email, company, or title...'
               leftSection={<IconSearch size={16} />}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              size="md"
+              size='md'
             />
           </div>
 
@@ -195,7 +183,7 @@ const SpeakersManager = () => {
           />
 
           {speakersData?.total_pages > 1 && (
-            <Group justify="center" mt="xl">
+            <Group justify='center' mt='xl'>
               <Pagination
                 value={page}
                 onChange={setPage}

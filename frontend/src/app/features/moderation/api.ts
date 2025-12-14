@@ -45,7 +45,7 @@ export const moderationApi = baseApi.injectEndpoints({
         url: `/events/${eventId}/users/${userId}/moderation-status`,
       }),
       providesTags: (_result, _error, { eventId, userId }) => [
-        { type: 'ModerationStatus', id: `${eventId}-${userId}` }
+        { type: 'ModerationStatus', id: `${eventId}-${userId}` },
       ],
     }),
     banEventUser: builder.mutation<void, BanUserParams>({
@@ -56,7 +56,7 @@ export const moderationApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: (_result, _error, { eventId, userId }) => [
         'EventUsers',
-        { type: 'ModerationStatus', id: `${eventId}-${userId}` }
+        { type: 'ModerationStatus', id: `${eventId}-${userId}` },
       ],
     }),
     unbanEventUser: builder.mutation<void, UnbanUserParams>({
@@ -66,7 +66,7 @@ export const moderationApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: (_result, _error, { eventId, userId }) => [
         'EventUsers',
-        { type: 'ModerationStatus', id: `${eventId}-${userId}` }
+        { type: 'ModerationStatus', id: `${eventId}-${userId}` },
       ],
     }),
     chatBanEventUser: builder.mutation<void, ChatBanUserParams>({
@@ -77,7 +77,7 @@ export const moderationApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: (_result, _error, { eventId, userId }) => [
         'EventUsers',
-        { type: 'ModerationStatus', id: `${eventId}-${userId}` }
+        { type: 'ModerationStatus', id: `${eventId}-${userId}` },
       ],
     }),
     chatUnbanEventUser: builder.mutation<void, ChatUnbanUserParams>({
@@ -87,7 +87,7 @@ export const moderationApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: (_result, _error, { eventId, userId }) => [
         'EventUsers',
-        { type: 'ModerationStatus', id: `${eventId}-${userId}` }
+        { type: 'ModerationStatus', id: `${eventId}-${userId}` },
       ],
     }),
   }),

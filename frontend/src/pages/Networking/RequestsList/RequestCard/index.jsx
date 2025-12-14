@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import {
-  Card,
-  Stack,
-  Group,
-  Avatar,
-  Text,
-  ActionIcon,
-} from '@mantine/core';
+import { Card, Stack, Group, Avatar, Text, ActionIcon } from '@mantine/core';
 import { LoadingSpinner } from '../../../../shared/components/loading';
-import { IconCheck, IconX, IconBrandLinkedin, IconBrandTwitter, IconWorld, IconMail } from '@tabler/icons-react';
+import {
+  IconCheck,
+  IconX,
+  IconBrandLinkedin,
+  IconBrandTwitter,
+  IconWorld,
+  IconMail,
+} from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { useUpdateConnectionStatusMutation } from '@/app/features/networking/api';
 import { useNavigate } from 'react-router-dom';
@@ -81,47 +81,53 @@ export function RequestCard({ request }) {
   const initial = requester.full_name?.[0]?.toUpperCase() || '?';
 
   return (
-    <Card className={styles.card} padding="lg" radius="md" withBorder>
-      <Stack spacing="md">
-        <Group align="flex-start" spacing="md">
-          <Avatar
-            src={requester.image_url}
-            size={60}
-            radius="xl"
-            className={styles.avatar}
-          >
+    <Card className={styles.card} padding='lg' radius='md' withBorder>
+      <Stack spacing='md'>
+        <Group align='flex-start' spacing='md'>
+          <Avatar src={requester.image_url} size={60} radius='xl' className={styles.avatar}>
             {!requester.image_url && initial}
           </Avatar>
-          
-          <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem' }}>
+
+          <div
+            style={{
+              flex: 1,
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+              gap: '1rem',
+            }}
+          >
             <div style={{ flex: 1 }}>
-              <Text size="lg" weight={600} className={styles.name}>
+              <Text size='lg' weight={600} className={styles.name}>
                 {requester.full_name}
               </Text>
               {requester.title && (
-                <Text size="sm" c="dimmed" className={styles.title}>
+                <Text size='sm' c='dimmed' className={styles.title}>
                   {requester.title}
                 </Text>
               )}
               {requester.company_name && (
-                <Text size="sm" c="dimmed" className={styles.company}>
+                <Text size='sm' c='dimmed' className={styles.company}>
                   {requester.company_name}
                 </Text>
               )}
             </div>
-            
+
             {/* Social links aligned to the right */}
-            {(requester.social_links?.linkedin || requester.social_links?.twitter || requester.social_links?.website || requester.email) && (
+            {(requester.social_links?.linkedin ||
+              requester.social_links?.twitter ||
+              requester.social_links?.website ||
+              requester.email) && (
               <Group gap={0} className={styles.socialsRight}>
                 {requester.social_links?.linkedin && (
                   <div className={styles.linkedinIcon}>
                     <ActionIcon
-                      size="sm"
-                      variant="subtle"
-                      component="a"
+                      size='sm'
+                      variant='subtle'
+                      component='a'
                       href={requester.social_links.linkedin}
-                      target="_blank"
-                      aria-label="LinkedIn"
+                      target='_blank'
+                      aria-label='LinkedIn'
                       onClick={(e) => e.stopPropagation()}
                     >
                       <IconBrandLinkedin size={20} />
@@ -131,12 +137,12 @@ export function RequestCard({ request }) {
                 {requester.social_links?.twitter && (
                   <div className={styles.twitterIcon}>
                     <ActionIcon
-                      size="sm"
-                      variant="subtle"
-                      component="a"
+                      size='sm'
+                      variant='subtle'
+                      component='a'
                       href={requester.social_links.twitter}
-                      target="_blank"
-                      aria-label="Twitter"
+                      target='_blank'
+                      aria-label='Twitter'
                       onClick={(e) => e.stopPropagation()}
                     >
                       <IconBrandTwitter size={20} />
@@ -146,12 +152,12 @@ export function RequestCard({ request }) {
                 {requester.social_links?.website && (
                   <div className={styles.websiteIcon}>
                     <ActionIcon
-                      size="sm"
-                      variant="subtle"
-                      component="a"
+                      size='sm'
+                      variant='subtle'
+                      component='a'
                       href={requester.social_links.website}
-                      target="_blank"
-                      aria-label="Website"
+                      target='_blank'
+                      aria-label='Website'
                       onClick={(e) => e.stopPropagation()}
                     >
                       <IconWorld size={20} />
@@ -161,12 +167,12 @@ export function RequestCard({ request }) {
                 {requester.email && (
                   <div className={styles.emailIcon}>
                     <ActionIcon
-                      size="sm"
-                      variant="subtle"
-                      component="a"
+                      size='sm'
+                      variant='subtle'
+                      component='a'
                       href={`mailto:${requester.email}`}
-                      target="_blank"
-                      aria-label="Email"
+                      target='_blank'
+                      aria-label='Email'
                       onClick={(e) => e.stopPropagation()}
                     >
                       <IconMail size={20} />
@@ -178,47 +184,42 @@ export function RequestCard({ request }) {
           </div>
         </Group>
 
-
-        <Card.Section className={styles.messageSection} px="lg">
-          <Text className={styles.messageText}>
-            {`"${request.icebreaker_message}"`}
-          </Text>
+        <Card.Section className={styles.messageSection} px='lg'>
+          <Text className={styles.messageText}>{`"${request.icebreaker_message}"`}</Text>
         </Card.Section>
 
-        <Group justify="flex-end" align="center">
-          <Group gap="xs">
+        <Group justify='flex-end' align='center'>
+          <Group gap='xs'>
             <button
               onClick={handleAccept}
               disabled={isLoading || isRejecting}
               className={styles.acceptButton}
             >
-              {isAccepting ? (
-                <LoadingSpinner size="xs" color="#16A34A" />
-              ) : (
-                <>
+              {isAccepting ?
+                <LoadingSpinner size='xs' color='#16A34A' />
+              : <>
                   <IconCheck size={16} />
                   Accept
                 </>
-              )}
+              }
             </button>
             <button
               onClick={handleReject}
               disabled={isLoading || isAccepting}
               className={styles.declineButton}
             >
-              {isRejecting ? (
-                <LoadingSpinner size="xs" color="#64748B" />
-              ) : (
-                <>
+              {isRejecting ?
+                <LoadingSpinner size='xs' color='#64748B' />
+              : <>
                   <IconX size={16} />
                   Decline
                 </>
-              )}
+              }
             </button>
           </Group>
         </Group>
 
-        <Text size="xs" ta="right" className={styles.timestamp}>
+        <Text size='xs' ta='right' className={styles.timestamp}>
           Received {new Date(request.created_at).toLocaleDateString()}
         </Text>
       </Stack>

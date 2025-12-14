@@ -1,12 +1,5 @@
 import { useState, useEffect } from 'react';
-import {
-  TextInput,
-  Textarea,
-  Select,
-  Stack,
-  Group,
-  Text
-} from '@mantine/core';
+import { TextInput, Textarea, Select, Stack, Group, Text } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { DateInput } from '@mantine/dates';
 import { notifications } from '@mantine/notifications';
@@ -29,7 +22,7 @@ const BasicInfoSection = ({ event, eventId }) => {
   // Fetch sessions when event_type is single_session
   const { data: sessionsData } = useGetSessionsQuery(
     { eventId: parseInt(eventId) },
-    { skip: event?.event_type !== 'SINGLE_SESSION' }
+    { skip: event?.event_type !== 'SINGLE_SESSION' },
   );
 
   const form = useForm({
@@ -50,7 +43,7 @@ const BasicInfoSection = ({ event, eventId }) => {
   // Track changes
   useEffect(() => {
     const checkChanges = () => {
-      const changed = Object.keys(form.values).some(key => {
+      const changed = Object.keys(form.values).some((key) => {
         if (key === 'start_date' || key === 'end_date') {
           // Compare dates as YYYY-MM-DD strings to avoid timezone issues
           const eventDate = event?.[key] || null;
@@ -64,12 +57,13 @@ const BasicInfoSection = ({ event, eventId }) => {
 
     checkChanges();
   }, [form.values, event]);
-  
+
   // Prepare session options for dropdown
-  const sessionOptions = sessionsData?.sessions?.map(session => ({
-    value: session.id.toString(),
-    label: `Day ${session.day_number}: ${session.title} (${session.start_time})`
-  })) || [];
+  const sessionOptions =
+    sessionsData?.sessions?.map((session) => ({
+      value: session.id.toString(),
+      label: `Day ${session.day_number}: ${session.title} (${session.start_time})`,
+    })) || [];
 
   const handleSubmit = async (values) => {
     try {
@@ -114,37 +108,37 @@ const BasicInfoSection = ({ event, eventId }) => {
   return (
     <div className={`${parentStyles.section} ${styles.glassSection}`}>
       <h3 className={parentStyles.sectionTitle}>Basic Information</h3>
-      <Text c="dimmed" size="sm" mb="xl">
+      <Text c='dimmed' size='sm' mb='xl'>
         {`Update your event's core details and configuration`}
       </Text>
-      
+
       <form onSubmit={form.onSubmit(handleSubmit)}>
-        <Stack spacing="md">
+        <Stack spacing='md'>
           <TextInput
-            label="Event Title"
-            placeholder="Enter event title"
+            label='Event Title'
+            placeholder='Enter event title'
             required
             classNames={{
               input: styles.formInput,
-              label: styles.formLabel
+              label: styles.formLabel,
             }}
             {...form.getInputProps('title')}
           />
 
           <Textarea
-            label="Description"
-            placeholder="Enter event description"
+            label='Description'
+            placeholder='Enter event description'
             minRows={3}
             classNames={{
               input: styles.formInput,
-              label: styles.formLabel
+              label: styles.formLabel,
             }}
             {...form.getInputProps('description')}
           />
 
           <Group grow>
             <Select
-              label="Event Type"
+              label='Event Type'
               data={[
                 { value: 'CONFERENCE', label: 'Conference' },
                 { value: 'SINGLE_SESSION', label: 'Single Session' },
@@ -152,13 +146,13 @@ const BasicInfoSection = ({ event, eventId }) => {
               required
               classNames={{
                 input: styles.formInput,
-                label: styles.formLabel
+                label: styles.formLabel,
               }}
               {...form.getInputProps('event_type')}
             />
 
             <Select
-              label="Status"
+              label='Status'
               data={[
                 { value: 'DRAFT', label: 'Draft' },
                 { value: 'PUBLISHED', label: 'Published' },
@@ -170,11 +164,11 @@ const BasicInfoSection = ({ event, eventId }) => {
                 input: {
                   ...getStatusStyles(form.values.status),
                   fontWeight: 500,
-                }
+                },
               }}
               classNames={{
                 input: styles.formInput,
-                label: styles.formLabel
+                label: styles.formLabel,
               }}
               {...form.getInputProps('status')}
             />
@@ -182,63 +176,63 @@ const BasicInfoSection = ({ event, eventId }) => {
 
           <Group grow>
             <DateInput
-              label="Start Date"
-              placeholder="Select start date"
+              label='Start Date'
+              placeholder='Select start date'
               required
               classNames={{
                 input: styles.formInput,
-                label: styles.formLabel
+                label: styles.formLabel,
               }}
               {...form.getInputProps('start_date')}
             />
 
             <DateInput
-              label="End Date"
-              placeholder="Select end date"
+              label='End Date'
+              placeholder='Select end date'
               required
               classNames={{
                 input: styles.formInput,
-                label: styles.formLabel
+                label: styles.formLabel,
               }}
               {...form.getInputProps('end_date')}
             />
           </Group>
 
           <TextInput
-            label="Company Name"
-            placeholder="Enter company name"
+            label='Company Name'
+            placeholder='Enter company name'
             required
             classNames={{
               input: styles.formInput,
-              label: styles.formLabel
+              label: styles.formLabel,
             }}
             {...form.getInputProps('company_name')}
           />
 
           <Select
-            label="Event Timezone"
-            description="All session times are interpreted in this timezone"
+            label='Event Timezone'
+            description='All session times are interpreted in this timezone'
             data={COMMON_TIMEZONES}
             searchable
             required
             classNames={{
               input: styles.formInput,
-              label: styles.formLabel
+              label: styles.formLabel,
             }}
             {...form.getInputProps('timezone')}
           />
 
           {form.values.event_type === 'SINGLE_SESSION' && sessionOptions.length > 0 && (
             <Select
-              label="Main Session"
-              placeholder="Select the main session to link to"
-              description="For single-session events, this session will be directly linked from the navigation"
+              label='Main Session'
+              placeholder='Select the main session to link to'
+              description='For single-session events, this session will be directly linked from the navigation'
               data={sessionOptions}
               clearable
               searchable
               classNames={{
                 input: styles.formInput,
-                label: styles.formLabel
+                label: styles.formLabel,
               }}
               {...form.getInputProps('main_session_id')}
               value={form.values.main_session_id?.toString() || null}
@@ -247,16 +241,12 @@ const BasicInfoSection = ({ event, eventId }) => {
           )}
 
           {hasChanges && (
-            <Group justify="flex-end" className={parentStyles.formActions}>
-              <Button variant="subtle" onClick={handleReset}>
+            <Group justify='flex-end' className={parentStyles.formActions}>
+              <Button variant='subtle' onClick={handleReset}>
                 <IconX size={16} />
                 Cancel
               </Button>
-              <Button 
-                type="submit" 
-                variant="primary"
-                loading={isLoading}
-              >
+              <Button type='submit' variant='primary' loading={isLoading}>
                 <IconCheck size={16} />
                 Save Changes
               </Button>

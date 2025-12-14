@@ -30,20 +30,21 @@ export const SpeakersPage = () => {
       <div className={styles.bgShape1} />
       <div className={styles.bgShape2} />
       <div className={styles.bgShape3} />
-      
-      <Container size="xl" className={styles.contentWrapper}>
+
+      <Container size='xl' className={styles.contentWrapper}>
         <PageHeader
-          title="Featured Speakers"
-          subtitle={speakers.length > 0 ? "Meet the experts sharing their knowledge at this event" : null}
+          title='Featured Speakers'
+          subtitle={
+            speakers.length > 0 ? 'Meet the experts sharing their knowledge at this event' : null
+          }
         />
-        
-        {speakers.length > 0 ? (
+
+        {speakers.length > 0 ?
           <SpeakersList speakers={speakers} />
-        ) : (
-          <div className={styles.emptyState}>
+        : <div className={styles.emptyState}>
             <p>No speakers have been announced yet.</p>
           </div>
-        )}
+        }
       </Container>
     </div>
   );

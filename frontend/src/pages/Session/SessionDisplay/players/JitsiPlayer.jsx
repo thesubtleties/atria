@@ -26,13 +26,13 @@ export const JitsiPlayer = ({ appId, roomName, jwt, currentUser }) => {
 
   // Configuration overrides for Jitsi interface
   const configOverwrite = {
-    startWithAudioMuted: true,  // Start muted by default
-    requireDisplayName: true,    // Require display name
+    startWithAudioMuted: true, // Start muted by default
+    requireDisplayName: true, // Require display name
   };
 
   // Interface configuration overrides
   const interfaceConfigOverwrite = {
-    SHOW_JITSI_WATERMARK: false,  // Hide Jitsi branding
+    SHOW_JITSI_WATERMARK: false, // Hide Jitsi branding
   };
 
   // Handle iframe styling (make it fill the container)

@@ -22,12 +22,12 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <ReduxProvider store={store}>
         <MantineProvider>
           <Analytics />
-          <Notifications position="bottom-left" />
+          <Notifications position='bottom-left' />
           <ModalsProvider>
             <RouterProvider router={router} />
           </ModalsProvider>
         </MantineProvider>
       </ReduxProvider>
     </ErrorBoundary>
-  </React.StrictMode>
+  </React.StrictMode>,
 );

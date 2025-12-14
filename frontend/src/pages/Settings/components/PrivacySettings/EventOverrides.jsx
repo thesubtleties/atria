@@ -1,15 +1,5 @@
 import { useState, useEffect } from 'react';
-import {
-  Alert,
-  Text,
-  Group,
-  Select,
-  Switch,
-  Stack,
-  Card,
-  Divider,
-  Center,
-} from '@mantine/core';
+import { Alert, Text, Group, Select, Switch, Stack, Card, Divider, Center } from '@mantine/core';
 import { LoadingSpinner } from '../../../../shared/components/loading';
 import { IconAlertCircle, IconCalendarEvent } from '@tabler/icons-react';
 import { useSelector } from 'react-redux';
@@ -42,21 +32,18 @@ const EventOverrides = () => {
       page: 1,
       per_page: 100, // Get all events for dropdown
     },
-    { skip: !currentUser?.id }
+    { skip: !currentUser?.id },
   );
 
   // Fetch privacy overrides for selected event
-  const { data: overridesData, isLoading: overridesLoading } =
-    useGetEventPrivacyOverridesQuery(
-      { userId: currentUser?.id, eventId: selectedEventId },
-      { skip: !currentUser?.id || !selectedEventId }
-    );
+  const { data: overridesData, isLoading: overridesLoading } = useGetEventPrivacyOverridesQuery(
+    { userId: currentUser?.id, eventId: selectedEventId },
+    { skip: !currentUser?.id || !selectedEventId },
+  );
 
   // Mutations
-  const [updateOverrides, { isLoading: isUpdating }] =
-    useUpdateEventPrivacyOverridesMutation();
-  const [deleteOverrides, { isLoading: isDeleting }] =
-    useDeleteEventPrivacyOverridesMutation();
+  const [updateOverrides, { isLoading: isUpdating }] = useUpdateEventPrivacyOverridesMutation();
+  const [deleteOverrides, { isLoading: isDeleting }] = useDeleteEventPrivacyOverridesMutation();
 
   // Form for privacy settings
   const form = useForm({
@@ -77,8 +64,7 @@ const EventOverrides = () => {
     if (!selectedEventId) return;
 
     if (overridesData?.privacy_overrides) {
-      const hasOverrides =
-        Object.keys(overridesData.privacy_overrides).length > 0;
+      const hasOverrides = Object.keys(overridesData.privacy_overrides).length > 0;
       setOverrideEnabled(hasOverrides);
       if (hasOverrides) {
         form.setValues(overridesData.privacy_overrides);
@@ -206,66 +192,61 @@ const EventOverrides = () => {
   if (eventsLoading) {
     return (
       <Center h={200}>
-        <LoadingSpinner size="lg" />
+        <LoadingSpinner size='lg' />
       </Center>
     );
   }
 
   if (!eventOptions.length) {
     return (
-      <Alert
-        icon={<IconAlertCircle />}
-        variant="light"
-        className={styles.infoAlert}
-      >
-        <Text fw={500} mb="xs" className={styles.sectionLabel}>
+      <Alert icon={<IconAlertCircle />} variant='light' className={styles.infoAlert}>
+        <Text fw={500} mb='xs' className={styles.sectionLabel}>
           No Events Available
         </Text>
-        <Text size="sm" className={styles.alertText}>
-          {"You're not currently part of any events. Event-specific privacy overrides will be available when you join or create events."}
+        <Text size='sm' className={styles.alertText}>
+          {
+            "You're not currently part of any events. Event-specific privacy overrides will be available when you join or create events."
+          }
         </Text>
       </Alert>
     );
   }
 
   return (
-    <Stack gap="lg">
-      <Text size="sm" className={styles.description}>
-        Customize your privacy settings for specific events. These settings will
-        override your global privacy settings when participating in the selected
-        event.
+    <Stack gap='lg'>
+      <Text size='sm' className={styles.description}>
+        Customize your privacy settings for specific events. These settings will override your
+        global privacy settings when participating in the selected event.
       </Text>
 
       <Select
-        label="Select Event"
-        placeholder="Choose an event to configure"
+        label='Select Event'
+        placeholder='Choose an event to configure'
         data={eventOptions}
         value={selectedEventId?.toString()}
         onChange={handleEventSelect}
         leftSection={<IconCalendarEvent size={16} />}
         className={styles.formInput}
-        description="Select an event to view or configure privacy overrides"
+        description='Select an event to view or configure privacy overrides'
       />
 
       {selectedEventId && (
         <>
           <Card className={styles.overrideCard}>
-            <Group justify="space-between" mb="md">
+            <Group justify='space-between' mb='md'>
               <div>
                 <Text fw={500}>Override Privacy Settings for This Event</Text>
-                <Text size="sm" c="dimmed">
-                  When enabled, these settings will override your global privacy
-                  settings for this event only
+                <Text size='sm' c='dimmed'>
+                  When enabled, these settings will override your global privacy settings for this
+                  event only
                 </Text>
               </div>
               <Switch
                 checked={overrideEnabled}
-                onChange={(event) =>
-                  handleOverrideToggle(event.currentTarget.checked)
-                }
+                onChange={(event) => handleOverrideToggle(event.currentTarget.checked)}
                 disabled={isDeleting}
-                size="lg"
-                color="var(--color-primary)"
+                size='lg'
+                color='var(--color-primary)'
                 styles={{
                   track: {
                     '&[data-checked]': {
@@ -277,14 +258,13 @@ const EventOverrides = () => {
               />
             </Group>
 
-            {overridesLoading ? (
+            {overridesLoading ?
               <Center h={100}>
-                <LoadingSpinner size="sm" />
+                <LoadingSpinner size='sm' />
               </Center>
-            ) : (
-              overrideEnabled && (
+            : overrideEnabled && (
                 <form onSubmit={form.onSubmit(handleSubmit)}>
-                  <Stack gap="md" mt="lg">
+                  <Stack gap='md' mt='lg'>
                     <Divider className={styles.divider} />
 
                     <EmailSection form={form} />
@@ -298,21 +278,13 @@ const EventOverrides = () => {
                     <ProfileSection form={form} />
 
                     {hasChanges && (
-                      <Group
-                        justify="flex-end"
-                        mt="md"
-                        className={styles.buttonGroup}
-                      >
-                        <Button
-                          variant="subtle"
-                          onClick={handleReset}
-                          disabled={isUpdating}
-                        >
+                      <Group justify='flex-end' mt='md' className={styles.buttonGroup}>
+                        <Button variant='subtle' onClick={handleReset} disabled={isUpdating}>
                           Cancel
                         </Button>
                         <Button
-                          variant="primary"
-                          type="submit"
+                          variant='primary'
+                          type='submit'
                           loading={isUpdating ? true : undefined}
                         >
                           Save Event Overrides
@@ -322,7 +294,7 @@ const EventOverrides = () => {
                   </Stack>
                 </form>
               )
-            )}
+            }
           </Card>
         </>
       )}

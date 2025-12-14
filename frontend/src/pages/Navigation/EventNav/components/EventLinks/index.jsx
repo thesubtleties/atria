@@ -5,7 +5,7 @@ import styles from './EventLinks.module.css';
 
 export const EventLinks = ({ eventId, event, onMobileNavClick }) => {
   const location = useLocation();
-  
+
   const isActive = (path) => {
     // For Event Home, only match exact path
     if (path === `/app/events/${eventId}`) {
@@ -21,7 +21,7 @@ export const EventLinks = ({ eventId, event, onMobileNavClick }) => {
       onMobileNavClick();
     }
   };
-  
+
   // Determine the main session for single_session events
   const mainSessionInfo = useMemo(() => {
     if (event?.event_type !== 'SINGLE_SESSION') {
@@ -32,7 +32,7 @@ export const EventLinks = ({ eventId, event, onMobileNavClick }) => {
     if (event.main_session_id) {
       return {
         id: event.main_session_id,
-        label: 'Main Stage'
+        label: 'Main Stage',
       };
     }
 
@@ -48,7 +48,7 @@ export const EventLinks = ({ eventId, event, onMobileNavClick }) => {
 
       return {
         id: sortedSessions[0].id,
-        label: 'Main Stage'
+        label: 'Main Stage',
       };
     }
 
@@ -63,11 +63,11 @@ export const EventLinks = ({ eventId, event, onMobileNavClick }) => {
       <NavLink
         component={RouterNavLink}
         to={`/app/events/${eventId}`}
-        label="Event Home"
+        label='Event Home'
         active={isActive(`/app/events/${eventId}`)}
         onClick={handleNavClick}
       />
-      {event?.event_type === 'SINGLE_SESSION' && mainSessionInfo ? (
+      {event?.event_type === 'SINGLE_SESSION' && mainSessionInfo ?
         <NavLink
           component={RouterNavLink}
           to={`/app/events/${eventId}/sessions/${mainSessionInfo.id}`}
@@ -75,26 +75,25 @@ export const EventLinks = ({ eventId, event, onMobileNavClick }) => {
           active={isActive(`/app/events/${eventId}/sessions/${mainSessionInfo.id}`)}
           onClick={handleNavClick}
         />
-      ) : (
-        <NavLink
+      : <NavLink
           component={RouterNavLink}
           to={`/app/events/${eventId}/agenda`}
-          label="Agenda"
+          label='Agenda'
           active={isActive(`/app/events/${eventId}/agenda`)}
           onClick={handleNavClick}
         />
-      )}
+      }
       <NavLink
         component={RouterNavLink}
         to={`/app/events/${eventId}/speakers`}
-        label="Speakers"
+        label='Speakers'
         active={isActive(`/app/events/${eventId}/speakers`)}
         onClick={handleNavClick}
       />
       <NavLink
         component={RouterNavLink}
         to={`/app/events/${eventId}/networking`}
-        label="Networking"
+        label='Networking'
         active={isActive(`/app/events/${eventId}/networking`)}
         onClick={handleNavClick}
       />
@@ -102,7 +101,7 @@ export const EventLinks = ({ eventId, event, onMobileNavClick }) => {
         <NavLink
           component={RouterNavLink}
           to={`/app/events/${eventId}/sponsors`}
-          label="Sponsors"
+          label='Sponsors'
           active={isActive(`/app/events/${eventId}/sponsors`)}
           onClick={handleNavClick}
         />

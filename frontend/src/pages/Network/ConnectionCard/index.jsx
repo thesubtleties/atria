@@ -19,15 +19,12 @@ export function ConnectionCard({ connection }) {
   const currentUser = useSelector((state) => state.auth.user);
   const openThread = useOpenThread();
   const isMobile = useMediaQuery('(max-width: 768px)');
-  const [createThread, { isLoading: isCreatingThread }] =
-    useCreateDirectMessageThreadMutation();
+  const [createThread, { isLoading: isCreatingThread }] = useCreateDirectMessageThreadMutation();
   const [isMessaging, setIsMessaging] = useState(false);
 
   // Determine the other user based on current user
   const otherUser =
-    connection.requester.id === currentUser?.id
-      ? connection.recipient
-      : connection.requester;
+    connection.requester.id === currentUser?.id ? connection.recipient : connection.requester;
 
   const handleMessage = async () => {
     setIsMessaging(true);
@@ -36,11 +33,7 @@ export function ConnectionCard({ connection }) {
       console.log('Create thread result:', result);
 
       // Handle different response formats
-      const threadId =
-        result.thread_id ||
-        result.id ||
-        result.data?.thread_id ||
-        result.data?.id;
+      const threadId = result.thread_id || result.id || result.data?.thread_id || result.data?.id;
 
       if (threadId) {
         openThread(threadId);
@@ -86,7 +79,7 @@ export function ConnectionCard({ connection }) {
           <Avatar
             src={otherUser.image_url}
             alt={otherUser.full_name}
-            radius="xl"
+            radius='xl'
             size={50}
             className={styles.avatar}
           >
@@ -101,12 +94,12 @@ export function ConnectionCard({ connection }) {
               {otherUser.full_name}
             </Text>
             {otherUser.title && (
-              <Text size="sm" className={styles.userTitle}>
+              <Text size='sm' className={styles.userTitle}>
                 {otherUser.title}
               </Text>
             )}
             {otherUser.company_name && (
-              <Text size="sm" className={styles.userCompany}>
+              <Text size='sm' className={styles.userCompany}>
                 {otherUser.company_name}
               </Text>
             )}
@@ -117,22 +110,16 @@ export function ConnectionCard({ connection }) {
       {/* Connection info */}
       <div className={styles.connectionInfo}>
         <div className={styles.connectionEvent}>
-          {connection.originating_event ? (
-            <Badge
-              variant="light"
-              size="sm"
-              radius="sm"
-              className={styles.eventBadge}
-            >
+          {connection.originating_event ?
+            <Badge variant='light' size='sm' radius='sm' className={styles.eventBadge}>
               {connection.originating_event.title}
             </Badge>
-          ) : (
-            <Text size="sm" className={styles.directConnection}>
+          : <Text size='sm' className={styles.directConnection}>
               Direct connection
             </Text>
-          )}
+          }
         </div>
-        <Text size="xs" className={styles.connectionDate}>
+        <Text size='xs' className={styles.connectionDate}>
           Connected {formatDate(connection.created_at)}
         </Text>
       </div>
@@ -144,12 +131,12 @@ export function ConnectionCard({ connection }) {
           {otherUser.social_links?.linkedin && (
             <div className={styles.linkedinIcon}>
               <ActionIcon
-                size="md"
-                variant="subtle"
-                component="a"
+                size='md'
+                variant='subtle'
+                component='a'
                 href={otherUser.social_links.linkedin}
-                target="_blank"
-                aria-label="LinkedIn"
+                target='_blank'
+                aria-label='LinkedIn'
               >
                 <IconBrandLinkedin size={18} />
               </ActionIcon>
@@ -158,12 +145,12 @@ export function ConnectionCard({ connection }) {
           {otherUser.social_links?.twitter && (
             <div className={styles.twitterIcon}>
               <ActionIcon
-                size="md"
-                variant="subtle"
-                component="a"
+                size='md'
+                variant='subtle'
+                component='a'
                 href={otherUser.social_links.twitter}
-                target="_blank"
-                aria-label="Twitter"
+                target='_blank'
+                aria-label='Twitter'
               >
                 <IconBrandTwitter size={18} />
               </ActionIcon>
@@ -172,12 +159,12 @@ export function ConnectionCard({ connection }) {
           {otherUser.social_links?.website && (
             <div className={styles.websiteIcon}>
               <ActionIcon
-                size="md"
-                variant="subtle"
-                component="a"
+                size='md'
+                variant='subtle'
+                component='a'
                 href={otherUser.social_links.website}
-                target="_blank"
-                aria-label="Website"
+                target='_blank'
+                aria-label='Website'
               >
                 <IconWorld size={18} />
               </ActionIcon>
@@ -186,25 +173,21 @@ export function ConnectionCard({ connection }) {
         </div>
 
         {/* Email */}
-        {otherUser.email &&
-          otherUser.privacy_settings?.show_email !== false && (
-            <Text size="xs" className={styles.email}>
-              <a
-                href={`mailto:${otherUser.email}`}
-                className={styles.emailLink}
-              >
-                {otherUser.email}
-              </a>
-            </Text>
-          )}
+        {otherUser.email && otherUser.privacy_settings?.show_email !== false && (
+          <Text size='xs' className={styles.email}>
+            <a href={`mailto:${otherUser.email}`} className={styles.emailLink}>
+              {otherUser.email}
+            </a>
+          </Text>
+        )}
       </div>
 
       {/* Actions */}
       <div className={styles.cardActions}>
         <Button
-          size="sm"
-          variant="filled"
-          color="violet"
+          size='sm'
+          variant='filled'
+          color='violet'
           leftSection={<IconMessageCircle size={16} />}
           onClick={handleMessage}
           loading={isMessaging || isCreatingThread}

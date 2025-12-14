@@ -4,6 +4,8 @@ import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import tseslint from 'typescript-eslint';
+import eslintConfigPrettier from 'eslint-config-prettier';
+import eslintPluginPrettier from 'eslint-plugin-prettier';
 
 export default [
   { ignores: ['dist', '*.config.js', '*.config.ts', '.storybook/**', 'src/stories/**'] },
@@ -36,10 +38,7 @@ export default [
       ...reactHooks.configs.recommended.rules,
       'react/prop-types': 'off',
       'react/jsx-no-target-blank': 'off',
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true },
-      ],
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     },
   },
 
@@ -76,10 +75,7 @@ export default [
       ...reactHooks.configs.recommended.rules,
       'react/prop-types': 'off',
       'react/jsx-no-target-blank': 'off',
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true },
-      ],
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
       // TypeScript-specific rules
       '@typescript-eslint/no-unused-vars': [
         'error',
@@ -93,6 +89,17 @@ export default [
       // Disable base rules that conflict with TS versions
       'no-unused-vars': 'off',
       'no-undef': 'off',
+    },
+  },
+
+  // Prettier config - must be last to override other formatting rules
+  eslintConfigPrettier,
+  {
+    plugins: {
+      prettier: eslintPluginPrettier,
+    },
+    rules: {
+      'prettier/prettier': 'error',
     },
   },
 ];

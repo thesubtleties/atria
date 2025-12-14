@@ -210,7 +210,9 @@
   height: 18px;
   cursor: pointer;
   opacity: 0.6;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 
 /* Flow variant - more visible social icons like Agenda */
@@ -297,7 +299,7 @@
   .card {
     padding: 10px;
   }
-  
+
   /* Flow variant - full width on mobile */
   .card.flow {
     width: 100% !important;
@@ -305,35 +307,35 @@
     margin-bottom: 4px !important;
     display: flex !important;
   }
-  
+
   /* Ensure layout spans full width on mobile */
   .flow .speakerLayout {
     width: 100% !important;
     display: flex !important;
     justify-content: space-between !important;
   }
-  
+
   /* Ensure actions stay at the end on mobile */
   .flow .actions {
     margin-left: auto !important;
     position: relative !important;
     right: 0 !important;
   }
-  
+
   .avatar,
   .avatarPlaceholder {
     width: 36px;
     height: 36px;
   }
-  
+
   .speakerName {
     font-size: 13px;
   }
-  
+
   .speakerDetails {
     font-size: 11px;
   }
-  
+
   /* Ensure social icons are touch-friendly on mobile */
   /* Commented out since social links are hidden in flow variant */
   /* .flow .socialLink {

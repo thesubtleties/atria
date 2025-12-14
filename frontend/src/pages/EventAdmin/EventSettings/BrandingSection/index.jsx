@@ -12,7 +12,13 @@ import {
 } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
-import { IconUpload, IconX, IconDeviceDesktop, IconDeviceMobile, IconCheck } from '@tabler/icons-react';
+import {
+  IconUpload,
+  IconX,
+  IconDeviceDesktop,
+  IconDeviceMobile,
+  IconCheck,
+} from '@tabler/icons-react';
 import { useUpdateEventBrandingMutation, useUpdateEventMutation } from '@/app/features/events/api';
 import { useUploadImageMutation } from '@/app/features/uploads/api';
 import { eventBrandingSchema } from '../schemas/eventSettingsSchemas';
@@ -51,7 +57,7 @@ const BrandingSection = ({ event, eventId }) => {
   // Track changes
   useEffect(() => {
     const checkChanges = () => {
-      const changed = Object.keys(form.values).some(key => {
+      const changed = Object.keys(form.values).some((key) => {
         return form.values[key] !== event?.branding?.[key];
       });
       setHasChanges(changed);
@@ -66,7 +72,7 @@ const BrandingSection = ({ event, eventId }) => {
       const descChanged = heroForm.values.hero_description !== event?.hero_description;
       const desktopChanged = heroForm.values.desktop_image !== event?.hero_images?.desktop;
       const mobileChanged = heroForm.values.mobile_image !== event?.hero_images?.mobile;
-      
+
       setHasHeroChanges(descChanged || desktopChanged || mobileChanged);
     };
 
@@ -87,23 +93,30 @@ const BrandingSection = ({ event, eventId }) => {
       const result = await uploadImage({
         file,
         context,
-        eventId
+        eventId,
       }).unwrap();
-      
+
       // Store the object_key instead of URL for private images
       if (field === 'logo_url') {
         form.setFieldValue(field, result.object_key);
       } else {
         heroForm.setFieldValue(field, result.object_key);
       }
-      
+
       notifications.show({
         title: 'Success',
-        message: `${field === 'logo_url' ? 'Logo' : field === 'desktop_image' ? 'Desktop hero image' : 'Mobile hero image'} uploaded successfully`,
+        message: `${
+          field === 'logo_url' ? 'Logo'
+          : field === 'desktop_image' ? 'Desktop hero image'
+          : 'Mobile hero image'
+        } uploaded successfully`,
         color: 'green',
       });
     } catch (error) {
-      const errorMessage = error.data?.message || error.message || `Failed to upload ${field === 'logo_url' ? 'logo' : 'hero image'}`;
+      const errorMessage =
+        error.data?.message ||
+        error.message ||
+        `Failed to upload ${field === 'logo_url' ? 'logo' : 'hero image'}`;
       notifications.show({
         title: 'Error',
         message: errorMessage,
@@ -293,144 +306,138 @@ const BrandingSection = ({ event, eventId }) => {
       {/* Hero Section */}
       <div className={styles.heroSection}>
         <h3 className={parentStyles.sectionTitle}>Hero Section</h3>
-        <Text c="dimmed" size="sm" mb="xl">
+        <Text c='dimmed' size='sm' mb='xl'>
           The hero section appears at the top of your event page
         </Text>
-        
+
         <form onSubmit={heroForm.onSubmit(handleHeroSubmit)}>
-          <Stack spacing="lg">
+          <Stack spacing='lg'>
             <Textarea
-              label="Hero Description"
-              description="A compelling description that appears in the hero section"
-              placeholder="Join us for an amazing event..."
+              label='Hero Description'
+              description='A compelling description that appears in the hero section'
+              placeholder='Join us for an amazing event...'
               minRows={4}
               classNames={{
                 input: styles.formInput,
                 label: styles.formLabel,
-                description: styles.formDescription
+                description: styles.formDescription,
               }}
               {...heroForm.getInputProps('hero_description')}
             />
 
             <div>
               <h4 className={styles.subsectionTitle}>Hero Images</h4>
-              <Text c="dimmed" size="sm" mb="md">
+              <Text c='dimmed' size='sm' mb='md'>
                 Upload different images for desktop and mobile views
               </Text>
 
-              <Tabs 
-                value={activeTab} 
+              <Tabs
+                value={activeTab}
                 onChange={setActiveTab}
                 classNames={{
                   root: styles.heroTabs,
                   list: styles.heroTabsList,
-                  tab: styles.heroTab
+                  tab: styles.heroTab,
                 }}
               >
                 <Tabs.List>
-                  <Tabs.Tab value="desktop" leftSection={<IconDeviceDesktop size={16} />}>
+                  <Tabs.Tab value='desktop' leftSection={<IconDeviceDesktop size={16} />}>
                     <span className={styles.tabTextFull}>Desktop Image</span>
                     <span className={styles.tabTextShort}>Desktop</span>
                   </Tabs.Tab>
-                  <Tabs.Tab value="mobile" leftSection={<IconDeviceMobile size={16} />}>
+                  <Tabs.Tab value='mobile' leftSection={<IconDeviceMobile size={16} />}>
                     <span className={styles.tabTextFull}>Mobile Image</span>
                     <span className={styles.tabTextShort}>Mobile</span>
                   </Tabs.Tab>
                 </Tabs.List>
 
-                <Tabs.Panel value="desktop" className={styles.heroTabPanel}>
-                  {heroForm.values.desktop_image ? (
+                <Tabs.Panel value='desktop' className={styles.heroTabPanel}>
+                  {heroForm.values.desktop_image ?
                     <div className={styles.heroImagePreviewCard}>
                       <Box className={styles.heroImagePreviewWrapper}>
                         <PrivateImage
                           objectKey={heroForm.values.desktop_image}
-                          alt="Desktop hero image"
-                          fit="cover"
+                          alt='Desktop hero image'
+                          fit='cover'
                           height={300}
                         />
                       </Box>
                       <Button
-                        variant="subtle"
-                        color="red"
-                        size="sm"
+                        variant='subtle'
+                        color='red'
+                        size='sm'
                         onClick={() => handleRemoveImage('desktop_image')}
-                        mt="md"
+                        mt='md'
                       >
                         <IconX size={16} />
                         Remove Desktop Image
                       </Button>
                     </div>
-                  ) : (
-                    <FileInput
-                      label="Upload Desktop Hero Image"
-                      description="Recommended: 1920x600px, PNG or JPG"
-                      placeholder="Click to upload desktop hero image"
-                      accept="image/*"
+                  : <FileInput
+                      label='Upload Desktop Hero Image'
+                      description='Recommended: 1920x600px, PNG or JPG'
+                      placeholder='Click to upload desktop hero image'
+                      accept='image/*'
                       leftSection={<IconUpload size={16} />}
                       onChange={(file) => handleFileUpload(file, 'desktop_image')}
                       disabled={isUploading}
                       classNames={{
                         input: styles.formInput,
                         label: styles.formLabel,
-                        description: styles.formDescription
+                        description: styles.formDescription,
                       }}
                     />
-                  )}
+                  }
                 </Tabs.Panel>
 
-                <Tabs.Panel value="mobile" className={styles.heroTabPanel}>
-                  {heroForm.values.mobile_image ? (
+                <Tabs.Panel value='mobile' className={styles.heroTabPanel}>
+                  {heroForm.values.mobile_image ?
                     <div className={styles.heroImagePreviewCard}>
                       <Box className={styles.heroImagePreviewWrapper}>
                         <PrivateImage
                           objectKey={heroForm.values.mobile_image}
-                          alt="Mobile hero image"
-                          fit="cover"
+                          alt='Mobile hero image'
+                          fit='cover'
                           height={300}
                         />
                       </Box>
                       <Button
-                        variant="subtle"
-                        color="red"
-                        size="sm"
+                        variant='subtle'
+                        color='red'
+                        size='sm'
                         onClick={() => handleRemoveImage('mobile_image')}
-                        mt="md"
+                        mt='md'
                       >
                         <IconX size={16} />
                         Remove Mobile Image
                       </Button>
                     </div>
-                  ) : (
-                    <FileInput
-                      label="Upload Mobile Hero Image"
-                      description="Recommended: 800x400px, PNG or JPG"
-                      placeholder="Click to upload mobile hero image"
-                      accept="image/*"
+                  : <FileInput
+                      label='Upload Mobile Hero Image'
+                      description='Recommended: 800x400px, PNG or JPG'
+                      placeholder='Click to upload mobile hero image'
+                      accept='image/*'
                       leftSection={<IconUpload size={16} />}
                       onChange={(file) => handleFileUpload(file, 'mobile_image')}
                       disabled={isUploading}
                       classNames={{
                         input: styles.formInput,
                         label: styles.formLabel,
-                        description: styles.formDescription
+                        description: styles.formDescription,
                       }}
                     />
-                  )}
+                  }
                 </Tabs.Panel>
               </Tabs>
             </div>
 
             {hasHeroChanges && (
-              <Group justify="flex-end" className={parentStyles.formActions}>
-                <Button variant="subtle" onClick={handleHeroReset}>
+              <Group justify='flex-end' className={parentStyles.formActions}>
+                <Button variant='subtle' onClick={handleHeroReset}>
                   <IconX size={16} />
                   Cancel
                 </Button>
-                <Button 
-                  type="submit" 
-                  variant="primary"
-                  loading={isUpdatingHero}
-                >
+                <Button type='submit' variant='primary' loading={isUpdatingHero}>
                   <IconCheck size={16} />
                   Save Hero Section
                 </Button>

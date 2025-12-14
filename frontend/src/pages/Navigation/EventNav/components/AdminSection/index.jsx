@@ -4,7 +4,7 @@ import styles from './AdminSection.module.css';
 
 export const AdminSection = ({ eventId, onMobileNavClick }) => {
   const location = useLocation();
-  
+
   const isActive = (path) => {
     return location.pathname.startsWith(path);
   };
@@ -18,49 +18,49 @@ export const AdminSection = ({ eventId, onMobileNavClick }) => {
 
   return (
     <div className={styles.container}>
-      <Divider my="sm" />
-      <Text size="sm" fw={500} mb="xs">
+      <Divider my='sm' />
+      <Text size='sm' fw={500} mb='xs'>
         Admin
       </Text>
       <NavLink
         component={RouterNavLink}
         to={`/app/events/${eventId}/admin/sessions`}
-        label="Sessions"
+        label='Sessions'
         active={isActive(`/app/events/${eventId}/admin/sessions`)}
         onClick={handleNavClick}
       />
       <NavLink
         component={RouterNavLink}
         to={`/app/events/${eventId}/admin/attendees`}
-        label="Attendees"
+        label='Attendees'
         active={isActive(`/app/events/${eventId}/admin/attendees`)}
         onClick={handleNavClick}
       />
       <NavLink
         component={RouterNavLink}
         to={`/app/events/${eventId}/admin/speakers`}
-        label="Speakers"
+        label='Speakers'
         active={isActive(`/app/events/${eventId}/admin/speakers`)}
         onClick={handleNavClick}
       />
       <NavLink
         component={RouterNavLink}
         to={`/app/events/${eventId}/admin/sponsors`}
-        label="Sponsors"
+        label='Sponsors'
         active={isActive(`/app/events/${eventId}/admin/sponsors`)}
         onClick={handleNavClick}
       />
       <NavLink
         component={RouterNavLink}
         to={`/app/events/${eventId}/admin/networking`}
-        label="Networking"
+        label='Networking'
         active={isActive(`/app/events/${eventId}/admin/networking`)}
         onClick={handleNavClick}
       />
       <NavLink
         component={RouterNavLink}
         to={`/app/events/${eventId}/admin/settings`}
-        label="Event Settings"
+        label='Event Settings'
         active={isActive(`/app/events/${eventId}/admin/settings`)}
         onClick={handleNavClick}
       />

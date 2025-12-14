@@ -1,13 +1,5 @@
 import { useState } from 'react';
-import {
-  Table,
-  Group,
-  Text,
-  Badge,
-  Avatar,
-  Menu,
-  ActionIcon,
-} from '@mantine/core';
+import { Table, Group, Text, Badge, Avatar, Menu, ActionIcon } from '@mantine/core';
 import {
   IconDots,
   IconUserCircle,
@@ -38,10 +30,7 @@ import {
   useCreateDirectMessageThreadMutation,
 } from '../../../../app/features/networking/api';
 import { IcebreakerModal } from '../../../../shared/components/IcebreakerModal';
-import {
-  getModerationPermissions,
-  getModerationRowStyles,
-} from '@/shared/utils/moderation';
+import { getModerationPermissions, getModerationRowStyles } from '@/shared/utils/moderation';
 import { useDispatch } from 'react-redux';
 import { openThread } from '../../../../app/store/chatSlice';
 import styles from './styles.module.css';
@@ -73,9 +62,8 @@ const AttendeeRow = ({
   });
   const isConnected = connectionsData?.connections?.some(
     (conn) =>
-      (conn.requester.id === attendee.user_id ||
-        conn.recipient.id === attendee.user_id) &&
-      conn.status === 'ACCEPTED'
+      (conn.requester.id === attendee.user_id || conn.recipient.id === attendee.user_id) &&
+      conn.status === 'ACCEPTED',
   );
 
   const handleRemove = () => {
@@ -240,11 +228,7 @@ const AttendeeRow = ({
       }).unwrap();
 
       // Get the thread ID from various possible response formats
-      const threadId =
-        result.thread_id ||
-        result.id ||
-        result.data?.thread_id ||
-        result.data?.id;
+      const threadId = result.thread_id || result.id || result.data?.thread_id || result.data?.id;
 
       if (threadId) {
         // Add a small delay to ensure the thread is in the cache before opening
@@ -294,9 +278,7 @@ const AttendeeRow = ({
     } catch (error) {
       notifications.show({
         title: 'Error',
-        message:
-          error.data?.message ||
-          'Failed to send connection request. Please try again.',
+        message: error.data?.message || 'Failed to send connection request. Please try again.',
         color: 'red',
       });
     }
@@ -322,46 +304,41 @@ const AttendeeRow = ({
   const canChangeThisUserRole =
     currentUserId !== attendee.user_id &&
     (currentUserRole === 'ADMIN' ||
-      (currentUserRole === 'ORGANIZER' &&
-        ['ATTENDEE', 'SPEAKER'].includes(attendee.role)));
+      (currentUserRole === 'ORGANIZER' && ['ATTENDEE', 'SPEAKER'].includes(attendee.role)));
 
   // Get moderation permissions using shared utility
-  const {
-    canModerateUser,
-    canUnbanUser,
-    canChatModerateUser,
-    canChatUnmuteUser,
-  } = getModerationPermissions(currentUserId, currentUserRole, attendee);
+  const { canModerateUser, canUnbanUser, canChatModerateUser, canChatUnmuteUser } =
+    getModerationPermissions(currentUserId, currentUserRole, attendee);
 
   return (
     <>
       <Table.Tr style={getModerationRowStyles(attendee)}>
         <Table.Td>
-          <Group gap="sm" wrap="nowrap">
+          <Group gap='sm' wrap='nowrap'>
             <Avatar
               src={attendee.image_url}
               alt={attendee.full_name}
-              radius="xl"
-              size="md"
+              radius='xl'
+              size='md'
               className={styles.userAvatar}
             >
               {attendee.first_name?.[0]}
               {attendee.last_name?.[0]}
             </Avatar>
             <div style={{ minWidth: 0, flex: 1 }}>
-              <Group gap="xs" wrap="nowrap">
-                <Text size="sm" fw={500} truncate>
+              <Group gap='xs' wrap='nowrap'>
+                <Text size='sm' fw={500} truncate>
                   {attendee.full_name}
                 </Text>
                 {isConnected && (
                   <IconUserCheck
                     size={14}
                     style={{ color: 'rgba(139, 92, 246, 0.7)', flexShrink: 0 }}
-                    title="Connected"
+                    title='Connected'
                   />
                 )}
               </Group>
-              <Text size="xs" c="dimmed" truncate>
+              <Text size='xs' c='dimmed' truncate>
                 {attendee.email}
               </Text>
             </div>
@@ -369,34 +346,28 @@ const AttendeeRow = ({
         </Table.Td>
         <Table.Td style={{ textAlign: 'center' }}>
           <Badge
-            size="md"
-            radius="sm"
-            className={
-              styles[`${attendee.role.toLowerCase()}Badge`] || styles.roleBadge
-            }
+            size='md'
+            radius='sm'
+            className={styles[`${attendee.role.toLowerCase()}Badge`] || styles.roleBadge}
           >
             {getRoleDisplayName(attendee.role)}
           </Badge>
         </Table.Td>
         <Table.Td>
-          <Text size="sm">{attendee.company_name || '-'}</Text>
+          <Text size='sm'>{attendee.company_name || '-'}</Text>
         </Table.Td>
         <Table.Td>
-          <Text size="sm">{attendee.title || '-'}</Text>
+          <Text size='sm'>{attendee.title || '-'}</Text>
         </Table.Td>
         <Table.Td style={{ textAlign: 'center' }}>
-          <Text size="sm" c="dimmed">
+          <Text size='sm' c='dimmed'>
             {formatDate(attendee.created_at)}
           </Text>
         </Table.Td>
         <Table.Td style={{ textAlign: 'center' }}>
-          <Menu shadow="md" width={200} position="bottom-end">
+          <Menu shadow='md' width={200} position='bottom-end'>
             <Menu.Target>
-              <ActionIcon
-                variant="subtle"
-                color="gray"
-                className={styles.actionIcon}
-              >
+              <ActionIcon variant='subtle' color='gray' className={styles.actionIcon}>
                 <IconDots size={16} />
               </ActionIcon>
             </Menu.Target>
@@ -405,16 +376,12 @@ const AttendeeRow = ({
                 className={styles.menuItem}
                 leftSection={<IconUserCircle size={16} />}
                 onClick={
-                  isConnected || currentUserId === attendee.user_id
-                    ? () => navigate(`/app/users/${attendee.user_id}`)
-                    : undefined
+                  isConnected || currentUserId === attendee.user_id ?
+                    () => navigate(`/app/users/${attendee.user_id}`)
+                  : undefined
                 }
                 disabled={!isConnected && currentUserId !== attendee.user_id}
-                color={
-                  isConnected || currentUserId === attendee.user_id
-                    ? undefined
-                    : 'gray'
-                }
+                color={isConnected || currentUserId === attendee.user_id ? undefined : 'gray'}
               >
                 View Profile
               </Menu.Item>
@@ -433,19 +400,16 @@ const AttendeeRow = ({
                 <Menu.Item
                   className={styles.menuItem}
                   leftSection={<IconMicrophone size={16} />}
-                  onClick={() =>
-                    navigate(`/app/events/${attendee.event_id}/admin/speakers`)
-                  }
+                  onClick={() => navigate(`/app/events/${attendee.event_id}/admin/speakers`)}
                 >
                   Manage Speaker Info
                 </Menu.Item>
               )}
 
               {/* Moderation Actions */}
-              {(canModerateUser ||
-                canUnbanUser ||
-                canChatModerateUser ||
-                canChatUnmuteUser) && <Menu.Divider />}
+              {(canModerateUser || canUnbanUser || canChatModerateUser || canChatUnmuteUser) && (
+                <Menu.Divider />
+              )}
 
               {canUnbanUser && (
                 <Menu.Item

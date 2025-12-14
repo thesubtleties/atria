@@ -13,11 +13,7 @@ export const HeroActions = () => {
   const handleForgotPassword = () => {
     modals.openModal({
       title: 'Reset Password',
-      children: (
-        <ForgotPasswordModal
-          onClose={() => modals.closeAll()}
-        />
-      ),
+      children: <ForgotPasswordModal onClose={() => modals.closeAll()} />,
       size: 'md',
       centered: true,
       closeOnClickOutside: true,
@@ -70,21 +66,11 @@ export const HeroActions = () => {
 
   return (
     <div className={styles.actionsWrapper}>
-      <Group className={styles.buttonGroup} justify="center" gap="md">
-        <Button
-          className={styles.loginButton}
-          variant="filled"
-          onClick={handleLogin}
-          size="lg"
-        >
+      <Group className={styles.buttonGroup} justify='center' gap='md'>
+        <Button className={styles.loginButton} variant='filled' onClick={handleLogin} size='lg'>
           Log In
         </Button>
-        <Button
-          className={styles.signupButton}
-          variant="outline"
-          onClick={handleSignup}
-          size="lg"
-        >
+        <Button className={styles.signupButton} variant='outline' onClick={handleSignup} size='lg'>
           Sign Up
         </Button>
       </Group>

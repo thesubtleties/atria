@@ -2,24 +2,21 @@ import { useState, useEffect } from 'react';
 import { Modal, TextInput, Textarea, Select, Switch, Stack } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { Button } from '@/shared/components/buttons';
-import { 
-  useCreateChatRoomMutation, 
-  useUpdateChatRoomMutation 
-} from '@/app/features/chat/api';
+import { useCreateChatRoomMutation, useUpdateChatRoomMutation } from '@/app/features/chat/api';
 import { chatRoomSchema } from '../schemas/chatRoomSchema';
 import styles from './styles/index.module.css';
 
 const ChatRoomModal = ({ opened, onClose, mode, room, eventId }) => {
   const [createChatRoom, { isLoading: isCreating }] = useCreateChatRoomMutation();
   const [updateChatRoom, { isLoading: isUpdating }] = useUpdateChatRoomMutation();
-  
+
   const [formData, setFormData] = useState({
     name: '',
     description: '',
     roomType: 'GLOBAL',
     isEnabled: false,
   });
-  
+
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
@@ -45,7 +42,7 @@ const ChatRoomModal = ({ opened, onClose, mode, room, eventId }) => {
   const handleSubmit = async () => {
     // Validate form data
     const validation = chatRoomSchema.safeParse(formData);
-    
+
     if (!validation.success) {
       const fieldErrors = {};
       validation.error.errors.forEach((error) => {
@@ -104,17 +101,17 @@ const ChatRoomModal = ({ opened, onClose, mode, room, eventId }) => {
       opened={opened}
       onClose={onClose}
       title={mode === 'create' ? 'Create Chat Room' : 'Edit Chat Room'}
-      size="md"
+      size='md'
       lockScroll={false}
       classNames={{
         content: styles.modalContent,
         header: styles.modalHeader,
       }}
     >
-      <Stack spacing="md" p="lg">
+      <Stack spacing='md' p='lg'>
         <TextInput
-          label="Room Name"
-          placeholder="Enter room name"
+          label='Room Name'
+          placeholder='Enter room name'
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           error={errors.name}
@@ -126,8 +123,8 @@ const ChatRoomModal = ({ opened, onClose, mode, room, eventId }) => {
         />
 
         <Textarea
-          label="Description"
-          placeholder="Enter room description (optional)"
+          label='Description'
+          placeholder='Enter room description (optional)'
           value={formData.description}
           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           error={errors.description}
@@ -139,8 +136,8 @@ const ChatRoomModal = ({ opened, onClose, mode, room, eventId }) => {
         />
 
         <Select
-          label="Room Type"
-          placeholder="Select room type"
+          label='Room Type'
+          placeholder='Select room type'
           data={roomTypeOptions}
           value={formData.roomType}
           onChange={(value) => setFormData({ ...formData, roomType: value })}
@@ -155,7 +152,7 @@ const ChatRoomModal = ({ opened, onClose, mode, room, eventId }) => {
 
         <div className={styles.switchWrapper}>
           <Switch
-            label="Enable room immediately"
+            label='Enable room immediately'
             description="If disabled, the room won't be visible to users until you enable it"
             checked={formData.isEnabled}
             onChange={(e) => setFormData({ ...formData, isEnabled: e.currentTarget.checked })}
@@ -163,14 +160,10 @@ const ChatRoomModal = ({ opened, onClose, mode, room, eventId }) => {
         </div>
 
         <div className={styles.buttonGroup}>
-          <Button variant="subtle" onClick={onClose}>
+          <Button variant='subtle' onClick={onClose}>
             Cancel
           </Button>
-          <Button 
-            variant="primary"
-            onClick={handleSubmit} 
-            disabled={isCreating || isUpdating}
-          >
+          <Button variant='primary' onClick={handleSubmit} disabled={isCreating || isUpdating}>
             {mode === 'create' ? 'Create' : 'Update'}
           </Button>
         </div>

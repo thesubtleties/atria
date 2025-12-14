@@ -7,7 +7,7 @@ import styles from './styles/index.module.css';
 export function ConnectionsList({ connections, isLoading, error, pagination, onPageChange }) {
   if (error) {
     return (
-      <Alert color="red" title="Error loading connections">
+      <Alert color='red' title='Error loading connections'>
         {error.message || 'Failed to load connections. Please try again.'}
       </Alert>
     );
@@ -23,7 +23,7 @@ export function ConnectionsList({ connections, isLoading, error, pagination, onP
 
   if (!connections || connections.length === 0) {
     return (
-      <Alert color="blue" title="No connections yet">
+      <Alert color='blue' title='No connections yet'>
         Start building your network by connecting with attendees at events!
       </Alert>
     );
@@ -48,10 +48,7 @@ export function ConnectionsList({ connections, isLoading, error, pagination, onP
             </Table.Thead>
             <Table.Tbody>
               {connections.map((connection) => (
-                <ConnectionRow
-                  key={connection.id}
-                  connection={connection}
-                />
+                <ConnectionRow key={connection.id} connection={connection} />
               ))}
             </Table.Tbody>
           </Table>
@@ -62,10 +59,7 @@ export function ConnectionsList({ connections, isLoading, error, pagination, onP
       <div className={styles.mobileView}>
         <div className={styles.connectionGrid}>
           {connections.map((connection) => (
-            <ConnectionCard
-              key={connection.id}
-              connection={connection}
-            />
+            <ConnectionCard key={connection.id} connection={connection} />
           ))}
         </div>
       </div>

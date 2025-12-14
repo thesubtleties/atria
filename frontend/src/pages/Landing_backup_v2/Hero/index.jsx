@@ -8,8 +8,8 @@ import styles from './styles/index.module.css';
 export const Hero = () => (
   <section className={styles.heroSection}>
     <div className={styles.heroBackground} />
-    <Container size="md" className={styles.heroContainer}>
-      <Stack align="center" gap="xl" className={styles.heroContent}>
+    <Container size='md' className={styles.heroContainer}>
+      <Stack align='center' gap='xl' className={styles.heroContent}>
         <HeroTitle />
         <HeroTagline />
         <HeroActions />

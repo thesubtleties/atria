@@ -10,12 +10,16 @@ import styles from './styles/index.module.css';
 
 export const EventHome = () => {
   const { eventId } = useParams();
-  const { data: event, isLoading, isError } = useGetEventQuery(eventId, {
+  const {
+    data: event,
+    isLoading,
+    isError,
+  } = useGetEventQuery(eventId, {
     skip: !eventId,
   });
 
   console.log(event);
-  if (isLoading) return <LoadingPage message="Loading event home..." />;
+  if (isLoading) return <LoadingPage message='Loading event home...' />;
   if (isError) return <div>Error loading event</div>;
   if (!event) return <div>Event not found</div>;
 
@@ -45,10 +49,7 @@ export const EventHome = () => {
 
       <div className={styles.contentWrapper}>
         {sections?.welcome && (
-          <Welcome
-            title={sections.welcome.title}
-            content={sections.welcome.content}
-          />
+          <Welcome title={sections.welcome.title} content={sections.welcome.content} />
         )}
 
         {sections?.highlights && <Highlights highlights={sections.highlights} />}

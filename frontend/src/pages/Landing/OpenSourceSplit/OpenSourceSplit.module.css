@@ -30,10 +30,28 @@
   backface-visibility: hidden; /* Prevent flickering */
 }
 
-.blob1, .blob2, .blob3, .blob4, .blob5, .blob6,
-.blob7, .blob8, .blob9, .blob10, .blob11, .blob12,
-.blob13, .blob14, .blob15, .blob16, .blob17, .blob18,
-.blob19, .blob20, .blob21, .blob22 {
+.blob1,
+.blob2,
+.blob3,
+.blob4,
+.blob5,
+.blob6,
+.blob7,
+.blob8,
+.blob9,
+.blob10,
+.blob11,
+.blob12,
+.blob13,
+.blob14,
+.blob15,
+.blob16,
+.blob17,
+.blob18,
+.blob19,
+.blob20,
+.blob21,
+.blob22 {
   position: absolute;
   border-radius: 50%;
   opacity: 0.04;
@@ -249,7 +267,6 @@
   left: 110%;
   animation-delay: 1s;
 }
-
 
 .blob11 {
   width: 500px;
@@ -538,9 +555,21 @@
   animation-delay: 1s;
 }
 
-.blob2_1, .blob2_2, .blob2_3, .blob2_4, .blob2_5,
-.blob2_6, .blob2_7, .blob2_8, .blob2_9, .blob2_10,
-.blob2_11, .blob2_12, .blob2_13, .blob2_14, .blob2_15 {
+.blob2_1,
+.blob2_2,
+.blob2_3,
+.blob2_4,
+.blob2_5,
+.blob2_6,
+.blob2_7,
+.blob2_8,
+.blob2_9,
+.blob2_10,
+.blob2_11,
+.blob2_12,
+.blob2_13,
+.blob2_14,
+.blob2_15 {
   position: absolute;
   border-radius: 50%;
   opacity: 0.04;
@@ -573,7 +602,7 @@
 
 .opensourcePanel .panelTitle {
   font-weight: 300;
-  color: #14B8A6; /* Teal color */
+  color: #14b8a6; /* Teal color */
 }
 
 .enterprisePanel .panelTitle {
@@ -594,7 +623,6 @@
   margin: 0 auto 1rem;
   line-height: 1.6;
 }
-
 
 .featuresList {
   display: grid;
@@ -668,13 +696,13 @@
 }
 
 .opensourcePanel .ctaButton {
-  background: #14B8A6; /* Teal */
+  background: #14b8a6; /* Teal */
   border-radius: 8px; /* Corporate style */
   box-shadow: 0 4px 16px rgba(20, 184, 166, 0.2);
 }
 
 .opensourcePanel .ctaButton:hover {
-  background: #10B981; /* Darker teal on hover */
+  background: #10b981; /* Darker teal on hover */
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(20, 184, 166, 0.3);
 }
@@ -700,8 +728,7 @@
 .opensourcePattern {
   position: absolute;
   inset: 0;
-  background-image: 
-    radial-gradient(circle at 20% 50%, var(--color-primary) 0%, transparent 50%),
+  background-image: radial-gradient(circle at 20% 50%, var(--color-primary) 0%, transparent 50%),
     radial-gradient(circle at 80% 80%, var(--color-accent-green) 0%, transparent 50%);
   opacity: 0.03;
 }
@@ -709,8 +736,11 @@
 .enterprisePattern {
   position: absolute;
   inset: 0;
-  background-image: 
-    radial-gradient(circle at 80% 50%, var(--color-accent-purple) 0%, transparent 50%),
+  background-image: radial-gradient(
+      circle at 80% 50%,
+      var(--color-accent-purple) 0%,
+      transparent 50%
+    ),
     radial-gradient(circle at 20% 20%, var(--color-accent-yellow) 0%, transparent 50%);
   opacity: 0.03;
 }
@@ -785,8 +815,7 @@
 .philosophyGradient {
   position: absolute;
   inset: 0;
-  background: 
-    radial-gradient(circle at 30% 30%, var(--color-primary) 0%, transparent 40%),
+  background: radial-gradient(circle at 30% 30%, var(--color-primary) 0%, transparent 40%),
     radial-gradient(circle at 70% 70%, var(--color-accent-purple) 0%, transparent 40%);
   opacity: 0.03;
 }
@@ -881,10 +910,11 @@
 .splitGradient {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, 
-    var(--color-primary) 0%, 
-    transparent 30%, 
-    transparent 70%, 
+  background: linear-gradient(
+    90deg,
+    var(--color-primary) 0%,
+    transparent 30%,
+    transparent 70%,
     var(--color-accent-purple) 100%
   );
   opacity: 0.02;
@@ -892,7 +922,8 @@
 
 /* Animations */
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translate(-50%, -50%) scale(1);
   }
   50% {

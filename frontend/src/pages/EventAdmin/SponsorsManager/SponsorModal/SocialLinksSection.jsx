@@ -22,27 +22,19 @@ const SocialLinksSection = ({
 }) => {
   return (
     <>
-      {isMobile ? (
+      {isMobile ?
         <Badge
-          variant="light"
-          color="gray"
-          radius="sm"
+          variant='light'
+          color='gray'
+          radius='sm'
           className={styles.collapsibleHeader}
           onClick={() => onExpandedChange(!expanded)}
-          rightSection={
-            expanded ? (
-              <IconChevronUp size={14} />
-            ) : (
-              <IconChevronDown size={14} />
-            )
-          }
+          rightSection={expanded ? <IconChevronUp size={14} /> : <IconChevronDown size={14} />}
           fullWidth
         >
           Social Media Links
         </Badge>
-      ) : (
-        <Text className={styles.sectionTitle}>Social Media Links</Text>
-      )}
+      : <Text className={styles.sectionTitle}>Social Media Links</Text>}
 
       <Collapse in={!isMobile || expanded}>
         <Grid gutter={isMobile ? 'xs' : 'md'}>

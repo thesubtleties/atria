@@ -48,9 +48,7 @@ const CallToAction = () => {
         // Adjust final position based on screen size
         const isMobile = window.innerWidth <= 767;
         const isMacBookAir =
-          window.innerWidth >= 1024 &&
-          window.innerWidth <= 1680 &&
-          window.innerHeight <= 1050;
+          window.innerWidth >= 1024 && window.innerWidth <= 1680 && window.innerHeight <= 1050;
 
         let finalPosition = 5; // Desktop default
         if (isMobile)
@@ -86,29 +84,20 @@ const CallToAction = () => {
   });
 
   return (
-    <section
-      ref={containerRef}
-      className={`${styles.finalSection} finalSection`}
-    >
+    <section ref={containerRef} className={`${styles.finalSection} finalSection`}>
       {/* Purple drape that comes down */}
       <div ref={drapeRef} className={styles.closingDrape}>
-        <svg
-          viewBox="0 0 100 100"
-          preserveAspectRatio="none"
-          className={styles.drapeSvg}
-        >
+        <svg viewBox='0 0 100 100' preserveAspectRatio='none' className={styles.drapeSvg}>
           <path
-            d="M0,0 L100,0 L100,94 C93.75,92.2 87.5,96.7 75,94 C62.5,92.2 50,97.8 37.5,95.6 C25,93.3 12.5,97.8 0,94 Z"
-            fill="#8B5CF6"
+            d='M0,0 L100,0 L100,94 C93.75,92.2 87.5,96.7 75,94 C62.5,92.2 50,97.8 37.5,95.6 C25,93.3 12.5,97.8 0,94 Z'
+            fill='#8B5CF6'
           />
         </svg>
 
         {/* CTA content on the drape */}
         <div ref={contentRef} className={styles.drapeContent}>
-          <div className="cta-header">
-            <h2 className={styles.sectionTitle}>
-              Ready to Transform Your Events?
-            </h2>
+          <div className='cta-header'>
+            <h2 className={styles.sectionTitle}>Ready to Transform Your Events?</h2>
             <p className={styles.sectionSubtitle}>
               Join thousands creating meaningful connections every day
             </p>
@@ -117,7 +106,7 @@ const CallToAction = () => {
           {/* Primary CTA */}
           <div ref={primaryRef} className={styles.primaryCta}>
             <MagneticButton
-              variant="primary"
+              variant='primary'
               className={styles.mainButton}
               magnetStrength={0.4}
               onClick={handleSignup}
@@ -125,9 +114,7 @@ const CallToAction = () => {
               <span className={styles.buttonText}>START YOUR STORY</span>
               <span className={styles.buttonIcon}>→</span>
             </MagneticButton>
-            <p className={styles.ctaSubtext}>
-              Free forever for up to 50 attendees
-            </p>
+            <p className={styles.ctaSubtext}>Free forever for up to 50 attendees</p>
           </div>
         </div>
       </div>

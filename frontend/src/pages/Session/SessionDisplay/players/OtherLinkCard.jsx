@@ -23,7 +23,7 @@ export const OtherLinkCard = ({ streamUrl }) => {
 
   return (
     <div className={styles.messageContainer}>
-      <Stack align="center" spacing="lg" style={{ width: '100%', maxWidth: '500px' }}>
+      <Stack align='center' spacing='lg' style={{ width: '100%', maxWidth: '500px' }}>
         {/* External Link Icon with Atria purple gradient */}
         <div
           style={{
@@ -37,22 +37,22 @@ export const OtherLinkCard = ({ streamUrl }) => {
             boxShadow: '0 8px 24px rgba(139, 92, 246, 0.3)',
           }}
         >
-          <IconExternalLink size={48} stroke={1.5} color="white" />
+          <IconExternalLink size={48} stroke={1.5} color='white' />
         </div>
 
-        <Text size="xl" fw={600} style={{ color: '#1E293B' }}>
+        <Text size='xl' fw={600} style={{ color: '#1E293B' }}>
           External Streaming Platform
         </Text>
 
-        <Text size="sm" ta="center" style={{ color: '#64748B', maxWidth: '400px' }}>
+        <Text size='sm' ta='center' style={{ color: '#64748B', maxWidth: '400px' }}>
           {truncateUrl(streamUrl)}
         </Text>
 
         {/* Disclaimer about external platform */}
         <Alert
           icon={<IconAlertCircle size={18} />}
-          color="violet"
-          variant="light"
+          color='violet'
+          variant='light'
           style={{
             maxWidth: '400px',
             width: '100%',
@@ -60,13 +60,13 @@ export const OtherLinkCard = ({ streamUrl }) => {
             borderColor: 'rgba(139, 92, 246, 0.15)',
           }}
         >
-          <Text size="xs" style={{ color: '#64748B' }}>
+          <Text size='xs' style={{ color: '#64748B' }}>
             This link opens an external platform outside of Atria
           </Text>
         </Alert>
 
         <Button
-          size="lg"
+          size='lg'
           onClick={handleOpenStream}
           style={{
             marginTop: 'var(--space-md)',

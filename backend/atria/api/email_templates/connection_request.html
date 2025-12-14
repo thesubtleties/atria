@@ -1,60 +1,134 @@
-{% extends "base.html" %}
-
-{% block title %}New Connection Request{% endblock %}
-
+{% extends "base.html" %} {% block title %}New Connection Request{% endblock %}
 {% block header_subtitle %}
-<p style="margin: 12px 0 0 0; color: rgba(255, 255, 255, 0.9); font-size: 16px; font-weight: 400;">Someone wants to connect with you!</p>
-{% endblock %}
+<p
+  style="
+    margin: 12px 0 0 0;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 16px;
+    font-weight: 400;
+  "
+>
+  Someone wants to connect with you!
+</p>
+{% endblock %} {% block content %}
+<h2
+  style="
+    font-size: 24px;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0 0 24px 0;
+    line-height: 1.3;
+  "
+>
+  {{ requester_name }} wants to connect!
+</h2>
 
-{% block content %}
-<h2 style="font-size: 24px; font-weight: 600; color: #1e293b; margin: 0 0 24px 0; line-height: 1.3;">{{ requester_name }} wants to connect!</h2>
-
-<div style="background-color: rgba(139, 92, 246, 0.04); border: 1px solid rgba(139, 92, 246, 0.08); border-radius: 8px; padding: 20px; margin: 24px 0;">
-    <h3 style="font-size: 18px; font-weight: 600; color: #1e293b; margin: 0 0 16px 0; line-height: 1.4;">About {{ requester_name }}</h3>
-    <table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
-        <tr>
-            <td style="padding: 8px 0; color: #64748b;">
-                <strong style="color: #8b5cf6;">Name:</strong> {{ requester_name }}
-            </td>
-        </tr>
-        {% if requester_title %}
-        <tr>
-            <td style="padding: 8px 0; color: #64748b;">
-                <strong style="color: #8b5cf6;">Title:</strong> {{ requester_title }}
-            </td>
-        </tr>
-        {% endif %}
-        {% if requester_company %}
-        <tr>
-            <td style="padding: 8px 0; color: #64748b;">
-                <strong style="color: #8b5cf6;">Company:</strong> {{ requester_company }}
-            </td>
-        </tr>
-        {% endif %}
-        {% if event_title %}
-        <tr>
-            <td style="padding: 8px 0; color: #64748b;">
-                <strong style="color: #8b5cf6;">Event:</strong> {{ event_title }}
-            </td>
-        </tr>
-        {% endif %}
-    </table>
+<div
+  style="
+    background-color: rgba(139, 92, 246, 0.04);
+    border: 1px solid rgba(139, 92, 246, 0.08);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 24px 0;
+  "
+>
+  <h3
+    style="
+      font-size: 18px;
+      font-weight: 600;
+      color: #1e293b;
+      margin: 0 0 16px 0;
+      line-height: 1.4;
+    "
+  >
+    About {{ requester_name }}
+  </h3>
+  <table cellpadding="0" cellspacing="0" border="0" style="width: 100%">
+    <tr>
+      <td style="padding: 8px 0; color: #64748b">
+        <strong style="color: #8b5cf6">Name:</strong> {{ requester_name }}
+      </td>
+    </tr>
+    {% if requester_title %}
+    <tr>
+      <td style="padding: 8px 0; color: #64748b">
+        <strong style="color: #8b5cf6">Title:</strong> {{ requester_title }}
+      </td>
+    </tr>
+    {% endif %} {% if requester_company %}
+    <tr>
+      <td style="padding: 8px 0; color: #64748b">
+        <strong style="color: #8b5cf6">Company:</strong> {{ requester_company }}
+      </td>
+    </tr>
+    {% endif %} {% if event_title %}
+    <tr>
+      <td style="padding: 8px 0; color: #64748b">
+        <strong style="color: #8b5cf6">Event:</strong> {{ event_title }}
+      </td>
+    </tr>
+    {% endif %}
+  </table>
 </div>
 
-<h3 style="font-size: 18px; font-weight: 600; color: #1e293b; margin: 24px 0 12px 0; line-height: 1.4;">Their message to you:</h3>
-<div style="background-color: rgba(139, 92, 246, 0.04); border-left: 3px solid #8b5cf6; padding: 16px 20px; margin: 20px 0; border-radius: 0 6px 6px 0; font-style: italic; color: #64748b;">
-    "{{ icebreaker_message }}"
+<h3
+  style="
+    font-size: 18px;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 24px 0 12px 0;
+    line-height: 1.4;
+  "
+>
+  Their message to you:
+</h3>
+<div
+  style="
+    background-color: rgba(139, 92, 246, 0.04);
+    border-left: 3px solid #8b5cf6;
+    padding: 16px 20px;
+    margin: 20px 0;
+    border-radius: 0 6px 6px 0;
+    font-style: italic;
+    color: #64748b;
+  "
+>
+  "{{ icebreaker_message }}"
 </div>
 
-<p style="font-size: 16px; color: #64748b; line-height: 1.6; margin: 24px 0;">Would you like to connect? Once connected, you'll be able to chat directly with each other.</p>
+<p style="font-size: 16px; color: #64748b; line-height: 1.6; margin: 24px 0">
+  Would you like to connect? Once connected, you'll be able to chat directly
+  with each other.
+</p>
 
-<div style="text-align: center; margin: 32px 0;">
-    <a href="{{ accept_url }}" style="display: inline-block; padding: 14px 32px; background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%); color: #ffffff !important; text-decoration: none; border-radius: 6px; font-weight: 500; font-size: 16px; box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2);">View Request</a>
+<div style="text-align: center; margin: 32px 0">
+  <a
+    href="{{ accept_url }}"
+    style="
+      display: inline-block;
+      padding: 14px 32px;
+      background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+      color: #ffffff !important;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 500;
+      font-size: 16px;
+      box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2);
+    "
+    >View Request</a
+  >
 </div>
 
-<div style="background-color: rgba(139, 92, 246, 0.02); border-radius: 6px; padding: 16px; text-align: center;">
-    <p style="color: #94a3b8; font-size: 14px; margin: 0;">
-        You can accept or decline this request by logging into your Atria account.
-    </p>
+<div
+  style="
+    background-color: rgba(139, 92, 246, 0.02);
+    border-radius: 6px;
+    padding: 16px;
+    text-align: center;
+  "
+>
+  <p style="color: #94a3b8; font-size: 14px; margin: 0">
+    You can accept or decline this request by logging into your Atria account.
+  </p>
 </div>
 {% endblock %}

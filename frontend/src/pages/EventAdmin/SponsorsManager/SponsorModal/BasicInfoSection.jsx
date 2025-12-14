@@ -1,20 +1,14 @@
 import { Grid, TextInput, Textarea, Select } from '@mantine/core';
 import styles from './styles/index.module.css';
 
-const BasicInfoSection = ({
-  formData,
-  errors,
-  isMobile,
-  sponsorTiers,
-  onFieldChange,
-}) => {
+const BasicInfoSection = ({ formData, errors, isMobile, sponsorTiers, onFieldChange }) => {
   return (
     <>
       <Grid>
         <Grid.Col span={isMobile ? 12 : 8}>
           <TextInput
-            label="Sponsor Name"
-            placeholder="Enter sponsor name"
+            label='Sponsor Name'
+            placeholder='Enter sponsor name'
             required
             value={formData.name}
             onChange={(e) => onFieldChange('name', e.target.value)}
@@ -24,8 +18,8 @@ const BasicInfoSection = ({
         </Grid.Col>
         <Grid.Col span={isMobile ? 12 : 4}>
           <Select
-            label="Tier"
-            placeholder="Select tier"
+            label='Tier'
+            placeholder='Select tier'
             required
             clearable={false}
             allowDeselect={false}
@@ -47,8 +41,8 @@ const BasicInfoSection = ({
       </Grid>
 
       <Textarea
-        label="Description"
-        placeholder="Enter sponsor description"
+        label='Description'
+        placeholder='Enter sponsor description'
         rows={3}
         value={formData.description}
         onChange={(e) => onFieldChange('description', e.target.value)}
@@ -57,8 +51,8 @@ const BasicInfoSection = ({
       />
 
       <TextInput
-        label="Website URL"
-        placeholder="https://example.com"
+        label='Website URL'
+        placeholder='https://example.com'
         value={formData.websiteUrl}
         onChange={(e) => onFieldChange('websiteUrl', e.target.value)}
         error={errors.websiteUrl}

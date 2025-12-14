@@ -41,9 +41,9 @@ export const useModalManager = () => {
         <Modal
           opened={activeModal === 'login'}
           onClose={closeModal}
-          title="Log In"
+          title='Log In'
           centered
-          size="md"
+          size='md'
         >
           <LoginModal
             onClose={closeModal}
@@ -55,26 +55,21 @@ export const useModalManager = () => {
         <Modal
           opened={activeModal === 'signup'}
           onClose={closeModal}
-          title="Create Account"
+          title='Create Account'
           centered
-          size="md"
+          size='md'
         >
-          <SignupModal
-            onClose={closeModal}
-            onSuccess={handleSignupSuccess}
-          />
+          <SignupModal onClose={closeModal} onSuccess={handleSignupSuccess} />
         </Modal>
 
         <Modal
           opened={activeModal === 'forgotPassword'}
           onClose={closeModal}
-          title="Reset Password"
+          title='Reset Password'
           centered
-          size="md"
+          size='md'
         >
-          <ForgotPasswordModal
-            onClose={closeModal}
-          />
+          <ForgotPasswordModal onClose={closeModal} />
         </Modal>
       </>
     );

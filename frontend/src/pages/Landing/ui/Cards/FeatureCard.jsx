@@ -1,5 +1,5 @@
-import { motion } from 'motion/react'
-import styles from './FeatureCard.module.css'
+import { motion } from 'motion/react';
+import styles from './FeatureCard.module.css';
 
 const FeatureCard = ({
   icon = '',
@@ -8,9 +8,9 @@ const FeatureCard = ({
   hoverDirection = 'right', // 'left' or 'right'
   delay = 0,
   onClick,
-  className = ''
+  className = '',
 }) => {
-  const hoverX = hoverDirection === 'right' ? 10 : -10
+  const hoverX = hoverDirection === 'right' ? 10 : -10;
 
   return (
     <motion.div
@@ -18,10 +18,10 @@ const FeatureCard = ({
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       whileHover={{ x: hoverX }}
-      transition={{ 
-        type: "spring", 
+      transition={{
+        type: 'spring',
         stiffness: 300,
-        delay
+        delay,
       }}
       onClick={onClick}
       viewport={{ once: true }}
@@ -31,15 +31,13 @@ const FeatureCard = ({
           <span className={styles.icon}>{icon}</span>
         </div>
       )}
-      
+
       <div className={styles.content}>
         <h4 className={styles.title}>{title}</h4>
-        {description && (
-          <p className={styles.description}>{description}</p>
-        )}
+        {description && <p className={styles.description}>{description}</p>}
       </div>
     </motion.div>
-  )
-}
+  );
+};
 
-export default FeatureCard
+export default FeatureCard;

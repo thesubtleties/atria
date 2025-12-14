@@ -26,7 +26,7 @@ export interface Sponsor {
   is_active: boolean;
   featured: boolean;
   social_links: SponsorSocialLinks | null;
-  
+
   // Computed from tier_info
   tier_name: string | null;
   tier_order: number;

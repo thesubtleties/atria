@@ -18,14 +18,14 @@ export const MembersList = ({ organizationId }) => {
     <div className={styles.membersSection}>
       <div className={styles.membersContainer}>
         <div className={styles.header}>
-          <Text size="md" weight={500}>
+          <Text size='md' weight={500}>
             Members ({organization.member_count})
           </Text>
           {canInvite && (
             <Button
               onClick={() => setShowInviteModal(true)}
-              variant="subtle"
-              size="sm"
+              variant='subtle'
+              size='sm'
               p={0}
               className={styles.addButton}
             >

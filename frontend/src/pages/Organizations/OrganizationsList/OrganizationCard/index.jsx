@@ -15,12 +15,11 @@ export const OrganizationCard = ({ organization }) => {
   const [deleteOrganization] = useDeleteOrganizationMutation();
 
   const canEdit = organization.users?.some(
-    (user) =>
-      user.id === currentUserId && ['OWNER', 'ADMIN'].includes(user.role)
+    (user) => user.id === currentUserId && ['OWNER', 'ADMIN'].includes(user.role),
   );
 
   const isOwner = organization.users?.some(
-    (user) => user.id === currentUserId && user.role === 'OWNER'
+    (user) => user.id === currentUserId && user.role === 'OWNER',
   );
 
   const handleEditClick = (e) => {
@@ -47,10 +46,7 @@ export const OrganizationCard = ({ organization }) => {
   return (
     <>
       <div className={styles.cardWrapper}>
-        <Link
-          to={`/app/organizations/${organization.id}/events`}
-          className={styles.card}
-        >
+        <Link to={`/app/organizations/${organization.id}/events`} className={styles.card}>
           <div className={styles.content}>
             <Text className={styles.title}>{organization.name}</Text>
             <Text className={styles.date}>
@@ -62,22 +58,22 @@ export const OrganizationCard = ({ organization }) => {
             <Group spacing={8} className={styles.actions}>
               {canEdit && (
                 <ActionIcon
-                  variant="subtle"
-                  color="gray"
+                  variant='subtle'
+                  color='gray'
                   onClick={handleEditClick}
                   className={styles.actionButton}
-                  size="sm"
+                  size='sm'
                 >
                   <IconPencil size={16} />
                 </ActionIcon>
               )}
               {isOwner && (
                 <ActionIcon
-                  variant="subtle"
-                  color="red"
+                  variant='subtle'
+                  color='red'
                   onClick={handleDeleteClick}
                   className={styles.actionButton}
-                  size="sm"
+                  size='sm'
                 >
                   <IconTrash size={16} />
                 </ActionIcon>
@@ -97,19 +93,18 @@ export const OrganizationCard = ({ organization }) => {
       <Modal
         opened={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
-        title="Delete Organization"
-        size="sm"
+        title='Delete Organization'
+        size='sm'
         lockScroll={false}
       >
-        <Text size="sm" mb="lg">
-          Are you sure you want to delete this organization? This action cannot
-          be undone.
+        <Text size='sm' mb='lg'>
+          Are you sure you want to delete this organization? This action cannot be undone.
         </Text>
-        <Group position="right">
-          <Button variant="default" onClick={() => setShowDeleteModal(false)}>
+        <Group position='right'>
+          <Button variant='default' onClick={() => setShowDeleteModal(false)}>
             Cancel
           </Button>
-          <Button color="red" onClick={handleDelete}>
+          <Button color='red' onClick={handleDelete}>
             Delete
           </Button>
         </Group>

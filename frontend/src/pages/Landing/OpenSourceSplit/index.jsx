@@ -1,11 +1,11 @@
-import { useRef } from 'react'
-import { gsap } from 'gsap'
-import { useGSAP } from '@gsap/react'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { IntroPanel, OptionPanel, PhilosophyPanel } from './components'
-import styles from './OpenSourceSplit.module.css'
+import { useRef } from 'react';
+import { gsap } from 'gsap';
+import { useGSAP } from '@gsap/react';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { IntroPanel, OptionPanel, PhilosophyPanel } from './components';
+import styles from './OpenSourceSplit.module.css';
 
-gsap.registerPlugin(ScrollTrigger)
+gsap.registerPlugin(ScrollTrigger);
 
 const panels = [
   {
@@ -13,168 +13,174 @@ const panels = [
     type: 'intro',
     title: 'Two Paths, One Vision',
     subtitle: 'Build meaningful connections your way',
-    description: 'Whether you value complete control or managed convenience, Atria adapts to your needs',
-    gradient: 'radial'
+    description:
+      'Whether you value complete control or managed convenience, Atria adapts to your needs',
+    gradient: 'radial',
   },
   {
     id: 'opensource',
     type: 'opensource',
     title: 'Open Source Freedom',
     subtitle: 'Built with love, shared with the world',
-    description: 'We believe great software should be accessible to everyone. Join hundreds of communities using Atria to create meaningful connections.',
+    description:
+      'We believe great software should be accessible to everyone. Join hundreds of communities using Atria to create meaningful connections.',
     cta: 'Explore on GitHub',
-    ctaIcon: 'github'
+    ctaIcon: 'github',
   },
   {
     id: 'enterprise',
     type: 'enterprise',
     title: 'Enterprise Solutions',
     subtitle: 'When you need more than software',
-    description: 'Get the full power of Atria with enterprise-grade support, custom integrations, and managed hosting options.',
+    description:
+      'Get the full power of Atria with enterprise-grade support, custom integrations, and managed hosting options.',
     cta: 'Talk to Sales',
-    ctaIcon: 'calendar'
+    ctaIcon: 'calendar',
   },
   {
     id: 'philosophy',
     type: 'philosophy',
     title: 'Why Open Source?',
     quote: '"When we share our code, we share our vision."',
-    content: 'No vendor lock-in. No hidden algorithms. No surprises. Atria is built by event organizers, for event organizers. Every line of code is yours to inspect, modify, and improve. Your feedback directly shapes our roadmap because transparency isn\'t just a feature—it\'s our foundation.',
-    footer: 'Whether you choose open source or enterprise, you\'re joining a movement to make events more human.'
-  }
-]
+    content:
+      "No vendor lock-in. No hidden algorithms. No surprises. Atria is built by event organizers, for event organizers. Every line of code is yours to inspect, modify, and improve. Your feedback directly shapes our roadmap because transparency isn't just a feature—it's our foundation.",
+    footer:
+      "Whether you choose open source or enterprise, you're joining a movement to make events more human.",
+  },
+];
 
 const OpenSourceSplit = () => {
-  const containerRef = useRef(null)
-  const panelsRef = useRef(null)
-  const blobsRef = useRef(null)
-  const blobsLayer2Ref = useRef(null)
-  const horizontalScrollRef = useRef(null)
+  const containerRef = useRef(null);
+  const panelsRef = useRef(null);
+  const blobsRef = useRef(null);
+  const blobsLayer2Ref = useRef(null);
+  const horizontalScrollRef = useRef(null);
 
-  useGSAP(() => {
-    const container = containerRef.current
-    const panelsContainer = panelsRef.current
-    
-    if (!container || !panelsContainer) return
+  useGSAP(
+    () => {
+      const container = containerRef.current;
+      const panelsContainer = panelsRef.current;
 
-    const panelElements = gsap.utils.toArray('.panel')
-    const totalPanels = panelElements.length
-    
-    // Create horizontal scroll animation
-    horizontalScrollRef.current = gsap.to(panelElements, {
-      xPercent: -100 * (totalPanels - 1),
-      ease: "none",
-      force3D: true,
-      scrollTrigger: {
-        trigger: container,
-        start: "top top",
-        end: () => `+=${(totalPanels - 1) * window.innerWidth}`,
-        pin: true,
-        scrub: 1,
-        anticipatePin: 1,
-        invalidateOnRefresh: true,
-        fastScrollEnd: true,
-        preventOverlaps: true,
-      }
-    })
-    
-    // Parallax animation for blobs - move slower for depth effect
-    if (blobsRef.current) {
-      gsap.to(blobsRef.current, {
-        xPercent: -100 * (totalPanels - 1) * 0.5, // Move at half speed
-        ease: "none",
+      if (!container || !panelsContainer) return;
+
+      const panelElements = gsap.utils.toArray('.panel');
+      const totalPanels = panelElements.length;
+
+      // Create horizontal scroll animation
+      horizontalScrollRef.current = gsap.to(panelElements, {
+        xPercent: -100 * (totalPanels - 1),
+        ease: 'none',
         force3D: true,
         scrollTrigger: {
           trigger: container,
-          start: "top top",
+          start: 'top top',
           end: () => `+=${(totalPanels - 1) * window.innerWidth}`,
+          pin: true,
           scrub: 1,
+          anticipatePin: 1,
           invalidateOnRefresh: true,
           fastScrollEnd: true,
-        }
-      })
-    }
-    
-    // Second layer parallax - move even slower for more depth
-    if (blobsLayer2Ref.current) {
-      gsap.to(blobsLayer2Ref.current, {
-        xPercent: -100 * (totalPanels - 1) * 0.4, // Move at 40% speed
-        ease: "none",
-        force3D: true,
-        scrollTrigger: {
-          trigger: container,
-          start: "top top",
-          end: () => `+=${(totalPanels - 1) * window.innerWidth}`,
-          scrub: 1,
-          invalidateOnRefresh: true,
-          fastScrollEnd: true,
-        }
-      })
-    }
+          preventOverlaps: true,
+        },
+      });
 
-    // Animate content as panels come into view
-    panelElements.forEach((panel, i) => {
-      // Panel content fade in
-      const content = panel.querySelector('.panel-content')
-      if (content) {
-        gsap.from(content, {
-          opacity: 0,
-          y: 100,
+      // Parallax animation for blobs - move slower for depth effect
+      if (blobsRef.current) {
+        gsap.to(blobsRef.current, {
+          xPercent: -100 * (totalPanels - 1) * 0.5, // Move at half speed
+          ease: 'none',
           force3D: true,
           scrollTrigger: {
-            trigger: panel,
-            containerAnimation: horizontalScrollRef.current,
-            start: "left center",
-            end: "center center",
+            trigger: container,
+            start: 'top top',
+            end: () => `+=${(totalPanels - 1) * window.innerWidth}`,
             scrub: 1,
-            id: `panel-content-${i}`,
-          }
-        })
+            invalidateOnRefresh: true,
+            fastScrollEnd: true,
+          },
+        });
       }
 
-      // Feature items stagger
-      const features = panel.querySelectorAll('.feature-item')
-      if (features.length > 0) {
-        gsap.from(features, {
-          opacity: 0,
-          x: 50,
-          stagger: 0.1,
+      // Second layer parallax - move even slower for more depth
+      if (blobsLayer2Ref.current) {
+        gsap.to(blobsLayer2Ref.current, {
+          xPercent: -100 * (totalPanels - 1) * 0.4, // Move at 40% speed
+          ease: 'none',
           force3D: true,
           scrollTrigger: {
-            trigger: panel,
-            containerAnimation: horizontalScrollRef.current,
-            start: "left 40%",
-            end: "center center",
+            trigger: container,
+            start: 'top top',
+            end: () => `+=${(totalPanels - 1) * window.innerWidth}`,
             scrub: 1,
-          }
-        })
+            invalidateOnRefresh: true,
+            fastScrollEnd: true,
+          },
+        });
       }
 
-    })
+      // Animate content as panels come into view
+      panelElements.forEach((panel, i) => {
+        // Panel content fade in
+        const content = panel.querySelector('.panel-content');
+        if (content) {
+          gsap.from(content, {
+            opacity: 0,
+            y: 100,
+            force3D: true,
+            scrollTrigger: {
+              trigger: panel,
+              containerAnimation: horizontalScrollRef.current,
+              start: 'left center',
+              end: 'center center',
+              scrub: 1,
+              id: `panel-content-${i}`,
+            },
+          });
+        }
 
-    // Add velocity-based effects
-    ScrollTrigger.addEventListener("scrollEnd", () => {
-      console.log("Scroll ended")
-    })
+        // Feature items stagger
+        const features = panel.querySelectorAll('.feature-item');
+        if (features.length > 0) {
+          gsap.from(features, {
+            opacity: 0,
+            x: 50,
+            stagger: 0.1,
+            force3D: true,
+            scrollTrigger: {
+              trigger: panel,
+              containerAnimation: horizontalScrollRef.current,
+              start: 'left 40%',
+              end: 'center center',
+              scrub: 1,
+            },
+          });
+        }
+      });
 
-  }, { scope: containerRef })
+      // Add velocity-based effects
+      ScrollTrigger.addEventListener('scrollEnd', () => {
+        console.log('Scroll ended');
+      });
+    },
+    { scope: containerRef },
+  );
 
   const renderPanel = (panel) => {
-    switch(panel.type) {
+    switch (panel.type) {
       case 'intro':
-        return <IntroPanel key={panel.id} {...panel} />
+        return <IntroPanel key={panel.id} {...panel} />;
 
       case 'opensource':
       case 'enterprise':
-        return <OptionPanel key={panel.id} {...panel} />
+        return <OptionPanel key={panel.id} {...panel} />;
 
       case 'philosophy':
-        return <PhilosophyPanel key={panel.id} {...panel} />
+        return <PhilosophyPanel key={panel.id} {...panel} />;
 
       default:
-        return null
+        return null;
     }
-  }
+  };
 
   return (
     <section ref={containerRef} className={`${styles.openSourceSplit} openSourceSplit`}>
@@ -196,7 +202,7 @@ const OpenSourceSplit = () => {
         <div className={`${styles.blob2Layer} ${styles.blob2_14}`} />
         <div className={`${styles.blob2Layer} ${styles.blob2_15}`} />
       </div>
-      
+
       {/* First layer of blobs - moves at medium speed */}
       <div ref={blobsRef} className={styles.floatingBlobs}>
         <div className={`${styles.blob} ${styles.blob1}`} />
@@ -222,12 +228,12 @@ const OpenSourceSplit = () => {
         <div className={`${styles.blob} ${styles.blob21}`} />
         <div className={`${styles.blob} ${styles.blob22}`} />
       </div>
-      
+
       <div ref={panelsRef} className={styles.panelsContainer}>
-        {panels.map(panel => renderPanel(panel))}
+        {panels.map((panel) => renderPanel(panel))}
       </div>
     </section>
-  )
-}
+  );
+};
 
-export default OpenSourceSplit
+export default OpenSourceSplit;

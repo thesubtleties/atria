@@ -26,10 +26,7 @@ export const SessionManager = () => {
     skip: !eventId,
   });
 
-  const {
-    data: sessionsData,
-    isLoading: sessionsLoading,
-  } = useGetSessionsQuery(
+  const { data: sessionsData, isLoading: sessionsLoading } = useGetSessionsQuery(
     {
       eventId: parseInt(eventId),
       dayNumber: currentDay,
@@ -37,7 +34,7 @@ export const SessionManager = () => {
     },
     {
       skip: !eventId,
-    }
+    },
   );
 
   const sessions = sessionsData?.sessions || [];
@@ -79,7 +76,7 @@ export const SessionManager = () => {
 
       return acc;
     },
-    { total: 0, overlapping: 0, speakers: 0 }
+    { total: 0, overlapping: 0, speakers: 0 },
   );
 
   // TODO: Implement export/import functionality
@@ -134,11 +131,7 @@ export const SessionManager = () => {
           />
 
           {/* Sessions List */}
-          <SessionList
-            sessions={sessions}
-            currentDay={currentDay}
-            eventId={eventId}
-          />
+          <SessionList sessions={sessions} currentDay={currentDay} eventId={eventId} />
         </section>
 
         {/* Create Session Modal */}

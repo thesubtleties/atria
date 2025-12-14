@@ -3,7 +3,8 @@ import { useLocation } from 'react-router-dom';
 import App from './App';
 
 // Lazy-load notifications - only needed for email verification/password reset redirects
-const loadNotifications = () => import('@mantine/notifications').then(m => ({ showNotification: m.showNotification }));
+const loadNotifications = () =>
+  import('@mantine/notifications').then((m) => ({ showNotification: m.showNotification }));
 
 export const Landing = () => {
   const location = useLocation();
@@ -25,8 +26,10 @@ export const Landing = () => {
 
   useEffect(() => {
     // Skip during pre-rendering
-    if (navigator.userAgent.includes('PrerendererBot') ||
-        navigator.userAgent.includes('Headless')) {
+    if (
+      navigator.userAgent.includes('PrerendererBot') ||
+      navigator.userAgent.includes('Headless')
+    ) {
       return;
     }
 

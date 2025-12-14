@@ -66,8 +66,8 @@ const SpeakerEditModal = ({ opened, onClose, speaker, eventId, onSuccess }) => {
     <Modal
       opened={opened}
       onClose={onClose}
-      title="Edit Speaker Info"
-      size="lg"
+      title='Edit Speaker Info'
+      size='lg'
       centered
       lockScroll={false}
       classNames={{
@@ -82,71 +82,78 @@ const SpeakerEditModal = ({ opened, onClose, speaker, eventId, onSuccess }) => {
             <Avatar
               src={speaker.image_url}
               alt={speaker.full_name}
-              radius="xl"
+              radius='xl'
               size={isMobile ? 'md' : 'lg'}
               className={styles.userAvatar}
             >
-              {speaker.first_name?.[0]}{speaker.last_name?.[0]}
+              {speaker.first_name?.[0]}
+              {speaker.last_name?.[0]}
             </Avatar>
             <div className={styles.userDetails}>
-              <Text fw={500} size={isMobile ? 'sm' : 'md'}>{speaker.full_name}</Text>
-              <Text size={isMobile ? 'xs' : 'sm'} c="dimmed">{speaker.email}</Text>
+              <Text fw={500} size={isMobile ? 'sm' : 'md'}>
+                {speaker.full_name}
+              </Text>
+              <Text size={isMobile ? 'xs' : 'sm'} c='dimmed'>
+                {speaker.email}
+              </Text>
             </div>
           </Group>
 
-          <Alert 
-            icon={<IconInfoCircle size={14} />} 
-            color="blue" 
+          <Alert
+            icon={<IconInfoCircle size={14} />}
+            color='blue'
             className={styles.infoAlert}
             styles={{
               root: { padding: 'var(--space-sm) !important' },
-              message: { fontSize: 'var(--text-xs) !important' }
+              message: { fontSize: 'var(--text-xs) !important' },
             }}
           >
-            <Text size="xs">
+            <Text size='xs'>
               {`Override speaker's profile info for this event only.
               Leave blank to use defaults.`}
             </Text>
           </Alert>
 
           <TextInput
-            label="Speaker Title"
-            placeholder={speaker.title || "Enter title for this event"}
+            label='Speaker Title'
+            placeholder={speaker.title || 'Enter title for this event'}
             description={!isMobile && "How they should be introduced (e.g., 'CEO @ Atria')"}
             className={styles.formInput}
-            size="sm"
+            size='sm'
             {...form.getInputProps('speaker_title')}
           />
 
           <Textarea
-            label="Speaker Bio"
-            placeholder={speaker.bio || "Enter bio for this event"}
-            description={!isMobile && "Biography to display on the speakers page"}
+            label='Speaker Bio'
+            placeholder={speaker.bio || 'Enter bio for this event'}
+            description={!isMobile && 'Biography to display on the speakers page'}
             rows={isMobile ? 3 : 4}
             className={styles.formTextarea}
-            size="sm"
+            size='sm'
             {...form.getInputProps('speaker_bio')}
           />
 
           {!isMobile && (speaker.title || speaker.bio) && (
-            <Alert 
-              color="gray" 
-              variant="light" 
+            <Alert
+              color='gray'
+              variant='light'
               className={styles.grayAlert}
               styles={{
                 root: { padding: 'var(--space-sm) !important' },
-                message: { fontSize: 'var(--text-xs) !important' }
+                message: { fontSize: 'var(--text-xs) !important' },
               }}
             >
               <Stack gap={4}>
-                <Text size="xs" fw={500}>Current Profile:</Text>
+                <Text size='xs' fw={500}>
+                  Current Profile:
+                </Text>
                 {speaker.title && (
-                  <Text size="xs" lineClamp={1}>
+                  <Text size='xs' lineClamp={1}>
                     <strong>Title:</strong> {speaker.title}
                   </Text>
                 )}
                 {speaker.bio && (
-                  <Text size="xs" lineClamp={2}>
+                  <Text size='xs' lineClamp={2}>
                     <strong>Bio:</strong> {speaker.bio}
                   </Text>
                 )}
@@ -156,14 +163,10 @@ const SpeakerEditModal = ({ opened, onClose, speaker, eventId, onSuccess }) => {
         </Stack>
 
         <div className={styles.buttonGroup}>
-          <Button variant="subtle" onClick={onClose}>
+          <Button variant='subtle' onClick={onClose}>
             Cancel
           </Button>
-          <Button 
-            variant="primary" 
-            type="submit" 
-            disabled={isLoading}
-          >
+          <Button variant='primary' type='submit' disabled={isLoading}>
             {isLoading ? 'Saving...' : 'Save Changes'}
           </Button>
         </div>

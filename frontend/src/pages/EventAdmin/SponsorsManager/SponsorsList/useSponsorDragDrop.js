@@ -88,7 +88,7 @@ const useSponsorDragDrop = (sponsorLookup, tierInfo, updateSponsor) => {
       fromTier: oldTierId,
       toTier: newTierIdStr,
       newIndex,
-      newDisplayOrder
+      newDisplayOrder,
     });
 
     // Check if tier actually changed

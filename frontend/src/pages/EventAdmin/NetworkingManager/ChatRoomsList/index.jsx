@@ -14,34 +14,36 @@ import styles from './styles.module.css';
 const ChatRoomsList = ({ chatRooms, isLoading, onEdit }) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
   const [reorderChatRoom] = useReorderChatRoomMutation();
-  
+
   // Initialize rooms with stable IDs
   const [rooms, setRooms] = useState(() => {
     return chatRooms.map((room) => ({
       ...room,
-      _id: `room-${room.id}`
+      _id: `room-${room.id}`,
     }));
   });
 
   // Update rooms when chatRooms prop changes
   useEffect(() => {
-    setRooms(chatRooms.map((room) => ({
-      ...room,
-      _id: `room-${room.id}`
-    })));
+    setRooms(
+      chatRooms.map((room) => ({
+        ...room,
+        _id: `room-${room.id}`,
+      })),
+    );
   }, [chatRooms]);
 
   // Local state for drag and drop per room type
   const [localRooms, setLocalRooms] = useState({
     GLOBAL: [],
     ADMIN: [],
-    GREEN_ROOM: []
+    GREEN_ROOM: [],
   });
 
   // Create lookup maps
   const roomLookup = useMemo(() => {
     const lookup = {};
-    rooms.forEach(room => {
+    rooms.forEach((room) => {
       lookup[room._id] = room;
     });
     return lookup;
@@ -54,18 +56,18 @@ const ChatRoomsList = ({ chatRooms, isLoading, onEdit }) => {
       ADMIN: [],
       GREEN_ROOM: [],
     };
-    
-    rooms.forEach(room => {
+
+    rooms.forEach((room) => {
       if (grouped[room.room_type]) {
         grouped[room.room_type].push(room);
       }
     });
 
     // Sort each group by display_order
-    Object.keys(grouped).forEach(type => {
+    Object.keys(grouped).forEach((type) => {
       grouped[type].sort((a, b) => a.display_order - b.display_order);
     });
-    
+
     return grouped;
   }, [rooms]);
 
@@ -74,13 +76,13 @@ const ChatRoomsList = ({ chatRooms, isLoading, onEdit }) => {
     const grouped = {
       GLOBAL: [],
       ADMIN: [],
-      GREEN_ROOM: []
+      GREEN_ROOM: [],
     };
-    
+
     Object.entries(roomsByType).forEach(([type, typeRooms]) => {
-      grouped[type] = typeRooms.map(room => room._id);
+      grouped[type] = typeRooms.map((room) => room._id);
     });
-    
+
     setLocalRooms(grouped);
   }, [roomsByType]);
 
@@ -91,7 +93,7 @@ const ChatRoomsList = ({ chatRooms, isLoading, onEdit }) => {
       if (result && result[roomType]) {
         return {
           ...current,
-          [roomType]: result[roomType]
+          [roomType]: result[roomType],
         };
       }
       return current;
@@ -104,7 +106,7 @@ const ChatRoomsList = ({ chatRooms, isLoading, onEdit }) => {
 
     const draggedId = operation.source.id;
     const draggedRoom = roomLookup[draggedId];
-    
+
     if (!draggedRoom) {
       console.error('Could not find room with id:', draggedId);
       return;
@@ -113,13 +115,13 @@ const ChatRoomsList = ({ chatRooms, isLoading, onEdit }) => {
     // Find new position
     const newOrder = localRooms[roomType] || [];
     const newIndex = newOrder.indexOf(draggedId);
-    
+
     if (newIndex === -1) return;
 
     // Calculate new display_order
     let newDisplayOrder;
-    const roomsInType = newOrder.map(id => roomLookup[id]).filter(Boolean);
-    
+    const roomsInType = newOrder.map((id) => roomLookup[id]).filter(Boolean);
+
     if (newIndex === 0) {
       // Moving to the beginning
       const nextRoom = roomsInType[1];
@@ -132,7 +134,7 @@ const ChatRoomsList = ({ chatRooms, isLoading, onEdit }) => {
       // Moving between two rooms
       const prevRoom = roomsInType[newIndex - 1];
       const nextRoom = roomsInType[newIndex + 1];
-      
+
       if (prevRoom && nextRoom) {
         newDisplayOrder = (prevRoom.display_order + nextRoom.display_order) / 2;
       } else {
@@ -144,7 +146,7 @@ const ChatRoomsList = ({ chatRooms, isLoading, onEdit }) => {
     try {
       await reorderChatRoom({
         roomId: draggedRoom.id,
-        display_order: newDisplayOrder
+        display_order: newDisplayOrder,
       }).unwrap();
 
       notifications.show({
@@ -159,18 +161,18 @@ const ChatRoomsList = ({ chatRooms, isLoading, onEdit }) => {
         message: error.data?.message || 'Failed to reorder chat room',
         color: 'red',
       });
-      
+
       // Revert the local state on error
       const grouped = {
         GLOBAL: [],
         ADMIN: [],
-        GREEN_ROOM: []
+        GREEN_ROOM: [],
       };
-      
+
       Object.entries(roomsByType).forEach(([type, typeRooms]) => {
-        grouped[type] = typeRooms.map(room => room._id);
+        grouped[type] = typeRooms.map((room) => room._id);
       });
-      
+
       setLocalRooms(grouped);
     }
   };
@@ -180,26 +182,36 @@ const ChatRoomsList = ({ chatRooms, isLoading, onEdit }) => {
   }
 
   const roomTypeInfo = {
-    GLOBAL: { title: 'General Chat Rooms', color: 'blue', help: 'Accessible to all event attendees' },
-    ADMIN: { title: 'Admin Chat Rooms', color: 'violet', help: 'Restricted to event admins and organizers' },
-    GREEN_ROOM: { title: 'Green Room', color: 'teal', help: 'For speakers, admins, and organizers' },
+    GLOBAL: {
+      title: 'General Chat Rooms',
+      color: 'blue',
+      help: 'Accessible to all event attendees',
+    },
+    ADMIN: {
+      title: 'Admin Chat Rooms',
+      color: 'violet',
+      help: 'Restricted to event admins and organizers',
+    },
+    GREEN_ROOM: {
+      title: 'Green Room',
+      color: 'teal',
+      help: 'For speakers, admins, and organizers',
+    },
   };
 
   return (
     <div className={styles.roomsList}>
       <LoadingOverlay visible={isLoading} />
-      
+
       {/* Mobile hint text */}
       {isMobile && chatRooms.length > 0 && (
-        <Text className={styles.dragHint}>
-          Press and hold cards to reorder
-        </Text>
+        <Text className={styles.dragHint}>Press and hold cards to reorder</Text>
       )}
-      
+
       {Object.entries(roomTypeInfo).map(([type, { title, color, help }]) => {
         const rooms = roomsByType[type];
         if (!rooms || rooms.length === 0) return null;
-        
+
         return (
           <RoomTypeSection
             key={type}

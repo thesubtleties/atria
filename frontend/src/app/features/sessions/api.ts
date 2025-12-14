@@ -162,10 +162,7 @@ export const sessionsApi = baseApi.injectEndpoints({
         method: 'PUT',
         body: updates,
       }),
-      invalidatesTags: (_result, _error, { id }) => [
-        'Sessions',
-        { type: 'Sessions' as const, id },
-      ],
+      invalidatesTags: (_result, _error, { id }) => ['Sessions', { type: 'Sessions' as const, id }],
     }),
     updateSessionStatus: builder.mutation<void, UpdateSessionStatusParams>({
       query: ({ id, status }) => ({

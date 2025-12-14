@@ -37,7 +37,7 @@
 .roomTab {
   padding: 0.5rem 0.75rem;
   font-size: 0.85rem;
-  color: #64748B;
+  color: #64748b;
   font-weight: 500;
   transition: all 0.2s ease;
   border-radius: 4px;
@@ -51,7 +51,7 @@
 }
 
 .roomTab:hover {
-  color: #8B5CF6;
+  color: #8b5cf6;
   background: rgba(139, 92, 246, 0.04);
   border-color: rgba(139, 92, 246, 0.1);
 }
@@ -62,7 +62,7 @@
 }
 
 .roomTabActive {
-  color: #8B5CF6;
+  color: #8b5cf6;
   background: rgba(255, 255, 255, 0.8);
   border-color: rgba(139, 92, 246, 0.15);
   box-shadow: 0 1px 4px rgba(139, 92, 246, 0.08);
@@ -93,13 +93,13 @@
 
 .adminLabel {
   background: rgba(168, 85, 247, 0.1);
-  color: #7C3AED;
+  color: #7c3aed;
   border-color: rgba(168, 85, 247, 0.2);
 }
 
 .speakerLabel {
   background: rgba(6, 182, 212, 0.1);
-  color: #0891B2;
+  color: #0891b2;
   border-color: rgba(6, 182, 212, 0.2);
 }
 
@@ -177,7 +177,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #64748B;
+  color: #64748b;
 }
 
 .restricted {
@@ -185,7 +185,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #64748B;
+  color: #64748b;
   flex-direction: column;
   gap: 1rem;
 }
@@ -199,7 +199,7 @@
   padding: 0.5rem 0.75rem;
   font-size: 0.75rem;
   font-weight: 600;
-  color: #94A3B8;
+  color: #94a3b8;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   display: flex;

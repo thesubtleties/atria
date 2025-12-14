@@ -1,15 +1,15 @@
-import styles from './SectionWrapper.module.css'
+import styles from './SectionWrapper.module.css';
 
-const SectionWrapper = ({ 
-  children, 
+const SectionWrapper = ({
+  children,
   className = '',
   background = 'default',
   padding = 'normal',
   overflow = 'hidden',
-  id = ''
+  id = '',
 }) => {
   return (
-    <section 
+    <section
       id={id}
       className={`
         ${styles.section} 
@@ -21,7 +21,7 @@ const SectionWrapper = ({
     >
       {children}
     </section>
-  )
-}
+  );
+};
 
-export default SectionWrapper
+export default SectionWrapper;

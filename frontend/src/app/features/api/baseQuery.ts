@@ -25,9 +25,7 @@ export const axiosBaseQuery = async ({
   body,
   data,
   params,
-}: BaseQueryRequest): Promise<
-  { data: unknown } | { error: BaseQueryError }
-> => {
+}: BaseQueryRequest): Promise<{ data: unknown } | { error: BaseQueryError }> => {
   try {
     const result = await axiosInstance({
       url,
@@ -46,11 +44,8 @@ export const axiosBaseQuery = async ({
       error: {
         status: axiosError.response?.status ?? 500,
         ...(errorData !== undefined ? { data: errorData } : {}),
-        ...(axiosError.message !== undefined
-          ? { message: axiosError.message }
-          : {}),
+        ...(axiosError.message !== undefined ? { message: axiosError.message } : {}),
       },
     };
   }
 };
-

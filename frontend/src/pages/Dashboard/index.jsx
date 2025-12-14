@@ -13,19 +13,23 @@ import styles from './styles/index.module.css';
 
 export const Dashboard = () => {
   const userId = useSelector((state) => state.auth.user?.id);
-  
-  const { data: dashboard, isLoading, error } = useGetUserDashboardQuery(userId, {
+
+  const {
+    data: dashboard,
+    isLoading,
+    error,
+  } = useGetUserDashboardQuery(userId, {
     skip: !userId,
   });
 
   if (isLoading) {
-    return <LoadingPage message="Loading dashboard..." />;
+    return <LoadingPage message='Loading dashboard...' />;
   }
 
   if (error) {
     return (
       <Container className={styles.errorContainer}>
-        <Text color="red">Failed to load dashboard. Please try again later.</Text>
+        <Text color='red'>Failed to load dashboard. Please try again later.</Text>
       </Container>
     );
   }

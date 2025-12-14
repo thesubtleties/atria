@@ -1,6 +1,10 @@
 .title {
   font-size: 4rem;
-  font-family: 'M Plus 2', system-ui, -apple-system, sans-serif;
+  font-family:
+    'M Plus 2',
+    system-ui,
+    -apple-system,
+    sans-serif;
   font-weight: 700;
   text-align: center;
   color: #e4e4e4;

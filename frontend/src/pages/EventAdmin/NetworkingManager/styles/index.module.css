@@ -112,7 +112,7 @@
   .contentWrapper {
     padding: var(--space-lg);
   }
-  
+
   .headerSection,
   .mainContent {
     padding: 1.5rem;
@@ -129,14 +129,14 @@
   .headerSection {
     padding: var(--space-lg);
   }
-  
+
   /* Stack header content on mobile */
   .headerContent {
     flex-direction: column;
     align-items: center;
     text-align: center;
   }
-  
+
   .mainContent {
     padding: var(--space-md);
     min-height: 300px;
@@ -165,7 +165,7 @@
     width: 100% !important;
     justify-content: center !important;
   }
-  
+
   /* Ensure buttons are touch-friendly */
   .buttonGroup button {
     min-height: 44px !important;
@@ -177,15 +177,15 @@
   .contentWrapper {
     padding: var(--space-sm);
   }
-  
+
   .headerSection {
     padding: var(--space-md);
   }
-  
+
   .mainContent {
     padding: var(--space-sm);
   }
-  
+
   .pageTitle {
     font-size: 1.125rem;
   }

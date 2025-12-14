@@ -33,8 +33,7 @@ export const ErrorPage = () => {
     if (error?.status === 500) {
       return {
         title: 'Server Error',
-        message:
-          "We're experiencing technical difficulties. Please try again later.",
+        message: "We're experiencing technical difficulties. Please try again later.",
         showDetails: true,
       };
     }
@@ -42,8 +41,7 @@ export const ErrorPage = () => {
     // Generic error
     return {
       title: 'Something Went Wrong',
-      message:
-        "We encountered an unexpected error. Don't worry — we're working to fix it.",
+      message: "We encountered an unexpected error. Don't worry — we're working to fix it.",
       showDetails: true,
     };
   };
@@ -57,16 +55,16 @@ export const ErrorPage = () => {
         <div className={styles.iconContainer}>
           <svg
             className={styles.errorIcon}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
+            fill='none'
+            stroke='currentColor'
+            viewBox='0 0 24 24'
+            xmlns='http://www.w3.org/2000/svg'
           >
             <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
+              strokeLinecap='round'
+              strokeLinejoin='round'
               strokeWidth={2}
-              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              d='M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
             />
           </svg>
         </div>
@@ -78,9 +76,7 @@ export const ErrorPage = () => {
         {/* Error Details (if applicable) */}
         {errorInfo.showDetails && error && (
           <details className={styles.errorDetails}>
-            <summary className={styles.errorDetailsSummary}>
-              Technical Details
-            </summary>
+            <summary className={styles.errorDetailsSummary}>Technical Details</summary>
             <div className={styles.errorDetailsContent}>
               {error.status && (
                 <p className={styles.errorName}>
@@ -89,24 +85,22 @@ export const ErrorPage = () => {
               )}
               {error.data && (
                 <p className={styles.errorData}>
-                  {typeof error.data === 'string'
-                    ? error.data
-                    : JSON.stringify(error.data, null, 2)}
+                  {typeof error.data === 'string' ?
+                    error.data
+                  : JSON.stringify(error.data, null, 2)}
                 </p>
               )}
-              {error.message && (
-                <p className={styles.errorData}>{error.message}</p>
-              )}
+              {error.message && <p className={styles.errorData}>{error.message}</p>}
             </div>
           </details>
         )}
 
         {/* Action Buttons */}
         <div className={styles.actionButtons}>
-          <Button onClick={() => navigate(-1)} variant="secondary">
+          <Button onClick={() => navigate(-1)} variant='secondary'>
             Go Back
           </Button>
-          <Button onClick={() => navigate('/app/dashboard')} variant="primary">
+          <Button onClick={() => navigate('/app/dashboard')} variant='primary'>
             Go to Dashboard
           </Button>
         </div>
@@ -115,9 +109,9 @@ export const ErrorPage = () => {
         <p className={styles.helpText}>
           If this problem persists, please{' '}
           <a
-            href="https://github.com/anthropics/claude-code/issues"
-            target="_blank"
-            rel="noopener noreferrer"
+            href='https://github.com/anthropics/claude-code/issues'
+            target='_blank'
+            rel='noopener noreferrer'
             className={styles.helpLink}
           >
             report the issue

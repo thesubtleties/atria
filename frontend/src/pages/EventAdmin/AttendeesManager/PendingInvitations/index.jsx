@@ -1,26 +1,9 @@
-import {
-  Table,
-  Badge,
-  Text,
-  Group,
-  ActionIcon,
-  Menu,
-  Avatar,
-} from '@mantine/core';
-import {
-  IconDots,
-  IconX,
-  IconRefresh,
-  IconClock,
-  IconCheck,
-} from '@tabler/icons-react';
+import { Table, Badge, Text, Group, ActionIcon, Menu, Avatar } from '@mantine/core';
+import { IconDots, IconX, IconRefresh, IconClock, IconCheck } from '@tabler/icons-react';
 import { useMediaQuery } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { openConfirmationModal } from '@/shared/components/modals/ConfirmationModal';
-import {
-  getRoleBadgeColor,
-  getRoleDisplayName,
-} from '../schemas/attendeeSchemas';
+import { getRoleBadgeColor, getRoleDisplayName } from '../schemas/attendeeSchemas';
 import { useCancelEventInvitationMutation } from '../../../../app/features/eventInvitations/api';
 import AttendeeCard from '../AttendeeCard';
 import styles from './styles.module.css';
@@ -80,32 +63,20 @@ const PendingInvitations = ({ invitations, onRefresh }) => {
   const getStatusBadge = (invitation) => {
     if (invitation.is_expired) {
       return (
-        <Badge
-          color="gray"
-          variant="light"
-          leftSection={<IconClock size={14} />}
-        >
+        <Badge color='gray' variant='light' leftSection={<IconClock size={14} />}>
           Expired
         </Badge>
       );
     }
     if (invitation.status === 'ACCEPTED') {
       return (
-        <Badge
-          color="green"
-          variant="light"
-          leftSection={<IconCheck size={14} />}
-        >
+        <Badge color='green' variant='light' leftSection={<IconCheck size={14} />}>
           Accepted
         </Badge>
       );
     }
     return (
-      <Badge
-        color="yellow"
-        variant="light"
-        leftSection={<IconClock size={14} />}
-      >
+      <Badge color='yellow' variant='light' leftSection={<IconClock size={14} />}>
         Pending
       </Badge>
     );
@@ -114,10 +85,10 @@ const PendingInvitations = ({ invitations, onRefresh }) => {
   if (invitations.length === 0) {
     return (
       <div className={styles.emptyState}>
-        <Text size="lg" c="dimmed" ta="center">
+        <Text size='lg' c='dimmed' ta='center'>
           No pending invitations
         </Text>
-        <Text size="sm" c="dimmed" ta="center" mt="xs">
+        <Text size='sm' c='dimmed' ta='center' mt='xs'>
           All invitations have been accepted or expired
         </Text>
       </div>
@@ -137,7 +108,7 @@ const PendingInvitations = ({ invitations, onRefresh }) => {
             }}
             isInvitation={true}
             onRefresh={onRefresh}
-            currentUserRole="ADMIN"
+            currentUserRole='ADMIN'
           />
         ))}
       </div>
@@ -147,12 +118,7 @@ const PendingInvitations = ({ invitations, onRefresh }) => {
   // Desktop view - table
   return (
     <div className={styles.tableContainer}>
-      <Table
-        horizontalSpacing="md"
-        verticalSpacing="sm"
-        striped
-        highlightOnHover
-      >
+      <Table horizontalSpacing='md' verticalSpacing='sm' striped highlightOnHover>
         <Table.Thead>
           <Table.Tr>
             <Table.Th>Email</Table.Th>
@@ -168,16 +134,16 @@ const PendingInvitations = ({ invitations, onRefresh }) => {
           {invitations.map((invitation) => (
             <Table.Tr key={invitation.id}>
               <Table.Td>
-                <Group gap="sm">
-                  <Avatar radius="xl" size="sm">
+                <Group gap='sm'>
+                  <Avatar radius='xl' size='sm'>
                     {invitation.email[0].toUpperCase()}
                   </Avatar>
                   <div>
-                    <Text size="sm" fw={500}>
+                    <Text size='sm' fw={500}>
                       {invitation.email}
                     </Text>
                     {invitation.user && (
-                      <Text size="xs" c="dimmed">
+                      <Text size='xs' c='dimmed'>
                         {invitation.user.full_name}
                       </Text>
                     )}
@@ -186,34 +152,32 @@ const PendingInvitations = ({ invitations, onRefresh }) => {
               </Table.Td>
               <Table.Td>
                 <Badge
-                  size="md"
-                  radius="sm"
+                  size='md'
+                  radius='sm'
                   color={getRoleBadgeColor(invitation.role)}
-                  variant="light"
+                  variant='light'
                 >
                   {getRoleDisplayName(invitation.role)}
                 </Badge>
               </Table.Td>
               <Table.Td>{getStatusBadge(invitation)}</Table.Td>
               <Table.Td>
-                <Text size="sm">
-                  {invitation.invited_by?.full_name || 'System'}
-                </Text>
+                <Text size='sm'>{invitation.invited_by?.full_name || 'System'}</Text>
               </Table.Td>
               <Table.Td>
-                <Text size="sm" c="dimmed">
+                <Text size='sm' c='dimmed'>
                   {formatDate(invitation.created_at)}
                 </Text>
               </Table.Td>
               <Table.Td>
-                <Text size="sm" c={invitation.is_expired ? 'red' : 'dimmed'}>
+                <Text size='sm' c={invitation.is_expired ? 'red' : 'dimmed'}>
                   {formatDate(invitation.expires_at)}
                 </Text>
               </Table.Td>
               <Table.Td>
-                <Menu shadow="md" width={150} position="bottom-end">
+                <Menu shadow='md' width={150} position='bottom-end'>
                   <Menu.Target>
-                    <ActionIcon variant="subtle" color="gray">
+                    <ActionIcon variant='subtle' color='gray'>
                       <IconDots size={16} />
                     </ActionIcon>
                   </Menu.Target>
@@ -228,7 +192,7 @@ const PendingInvitations = ({ invitations, onRefresh }) => {
                     )}
                     <Menu.Item
                       leftSection={<IconX size={16} />}
-                      color="red"
+                      color='red'
                       onClick={() => handleCancel(invitation)}
                     >
                       Cancel

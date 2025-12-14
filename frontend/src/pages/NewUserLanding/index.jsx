@@ -23,7 +23,7 @@ export const NewUserCheck = () => {
   }
 
   if (organizations.length > 0 || events.length > 0) {
-    return <Navigate to="/app/dashboard" replace />;
+    return <Navigate to='/app/dashboard' replace />;
   }
 
   return <NewUserLanding />;

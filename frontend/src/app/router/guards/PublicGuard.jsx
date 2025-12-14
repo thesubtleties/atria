@@ -1,10 +1,7 @@
 // PublicGuard.jsx
 import { Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import {
-  selectIsAuthenticated,
-  selectAuthChecked,
-} from '@/app/store/authSlice';
+import { selectIsAuthenticated, selectAuthChecked } from '@/app/store/authSlice';
 
 export const PublicGuard = ({ children }) => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
@@ -16,7 +13,7 @@ export const PublicGuard = ({ children }) => {
 
   // Redirect if authenticated (only after auth check completes)
   if (authChecked && isAuthenticated) {
-    return <Navigate to="/app" replace />;
+    return <Navigate to='/app' replace />;
   }
 
   return children;

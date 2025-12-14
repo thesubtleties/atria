@@ -5,7 +5,7 @@ import styles from './styles/index.module.css';
 export default function SponsorsList({ sponsors, tiers }) {
   // Filter out sponsors without tiers and group by tier
   const sponsorsByTier = sponsors
-    .filter(sponsor => sponsor.tier_id) // Only include sponsors with tiers
+    .filter((sponsor) => sponsor.tier_id) // Only include sponsors with tiers
     .reduce((acc, sponsor) => {
       const tierId = sponsor.tier_id;
       if (!acc[tierId]) {
@@ -25,8 +25,8 @@ export default function SponsorsList({ sponsors, tiers }) {
         if (!tiersSponsors || tiersSponsors.length === 0) return null;
 
         // Sort sponsors within tier by display_order (create a copy to avoid mutating)
-        const sortedSponsors = [...tiersSponsors].sort((a, b) => 
-          (a.display_order || 999) - (b.display_order || 999)
+        const sortedSponsors = [...tiersSponsors].sort(
+          (a, b) => (a.display_order || 999) - (b.display_order || 999),
         );
 
         return (
@@ -39,7 +39,7 @@ export default function SponsorsList({ sponsors, tiers }) {
 
             <SimpleGrid
               cols={{ base: 1, sm: 2, md: 3 }}
-              spacing="xl"
+              spacing='xl'
               className={styles.sponsorGrid}
             >
               {sortedSponsors.map((sponsor) => (
@@ -52,7 +52,7 @@ export default function SponsorsList({ sponsors, tiers }) {
 
       {sponsors.length === 0 && (
         <div className={styles.noSponsors}>
-          <Text size="lg" c="dimmed" ta="center">
+          <Text size='lg' c='dimmed' ta='center'>
             No sponsors yet for this event.
           </Text>
         </div>

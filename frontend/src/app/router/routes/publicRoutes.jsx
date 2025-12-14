@@ -6,20 +6,18 @@ import { PublicGuard } from '../guards/PublicGuard';
 const EmailVerification = lazy(() =>
   import('../../../pages/Auth/EmailVerification').then((module) => ({
     default: module.EmailVerification,
-  }))
+  })),
 );
 const ResetPassword = lazy(() =>
   import('../../../pages/Auth/ResetPassword').then((module) => ({
     default: module.ResetPassword,
-  }))
+  })),
 );
-const AcceptInvitation = lazy(() =>
-  import('../../../pages/Invitations/AcceptInvitation')
-);
+const AcceptInvitation = lazy(() => import('../../../pages/Invitations/AcceptInvitation'));
 const NotFound = lazy(() =>
   import('../../../pages/Errors/NotFound').then((module) => ({
     default: module.NotFound,
-  }))
+  })),
 );
 
 export const publicRoutes = [

@@ -12,7 +12,7 @@ export const ActivityOverview = ({ userId }) => {
       <section className={styles.profileSection}>
         <h2 className={styles.sectionTitle}>Activity Overview</h2>
         <div className={styles.loadingState}>
-          <LoadingSpinner size="sm" />
+          <LoadingSpinner size='sm' />
         </div>
       </section>
     );
@@ -21,7 +21,7 @@ export const ActivityOverview = ({ userId }) => {
   const stats = dashboard?.stats || {
     events_attended: 0,
     events_hosted: 0,
-    connections_made: 0
+    connections_made: 0,
   };
 
   return (

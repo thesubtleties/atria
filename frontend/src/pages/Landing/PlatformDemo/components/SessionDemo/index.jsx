@@ -81,8 +81,7 @@ export const SessionDemo = ({ isFirefox }) => {
       if (!hasAnimatedRef.current && containerRef.current) {
         hasAnimatedRef.current = true;
 
-        const elements =
-          containerRef.current.querySelectorAll('[data-animate]');
+        const elements = containerRef.current.querySelectorAll('[data-animate]');
 
         const tl = gsap.timeline({ delay: 0.2 });
 
@@ -100,7 +99,7 @@ export const SessionDemo = ({ isFirefox }) => {
               ease: 'power2.out',
               force3D: !isFirefox,
             },
-            index * 0.1
+            index * 0.1,
           );
         });
       }
@@ -124,9 +123,9 @@ export const SessionDemo = ({ isFirefox }) => {
             <div className={styles.videoFrame}>
               <img
                 className={styles.videoPoster}
-                src="https://storage.sbtl.dev/atria-public/samplevideoimage.avif"
-                alt="Community Outreach Program"
-                loading="lazy"
+                src='https://storage.sbtl.dev/atria-public/samplevideoimage.avif'
+                alt='Community Outreach Program'
+                loading='lazy'
               />
               <div className={styles.liveIndicator}>
                 <span className={styles.liveDot}></span>
@@ -140,15 +139,13 @@ export const SessionDemo = ({ isFirefox }) => {
             <div className={styles.speakerHeader}>
               <img
                 className={styles.speakerAvatar}
-                src="https://api.dicebear.com/9.x/avataaars/svg?seed=emilyrodriguez"
-                alt="Dr. Emily Rodriguez"
-                loading="lazy"
+                src='https://api.dicebear.com/9.x/avataaars/svg?seed=emilyrodriguez'
+                alt='Dr. Emily Rodriguez'
+                loading='lazy'
               />
               <div className={styles.speakerDetails}>
                 <h4 className={styles.speakerName}>Dr. Emily Rodriguez</h4>
-                <p className={styles.speakerTitle}>
-                  Executive Director @ Hope Foundation
-                </p>
+                <p className={styles.speakerTitle}>Executive Director @ Hope Foundation</p>
                 <span className={styles.speakerRole}>KEYNOTE SPEAKER</span>
               </div>
             </div>
@@ -156,12 +153,10 @@ export const SessionDemo = ({ isFirefox }) => {
 
           {/* Session Description */}
           <div className={styles.sessionDescription}>
-            <h3 className={styles.sessionTitle}>
-              Building Sustainable Communities
-            </h3>
+            <h3 className={styles.sessionTitle}>Building Sustainable Communities</h3>
             <p className={styles.description}>
-              Exploring innovative approaches to community development through
-              grassroots education initiatives.
+              Exploring innovative approaches to community development through grassroots education
+              initiatives.
             </p>
           </div>
         </div>
@@ -191,17 +186,15 @@ export const SessionDemo = ({ isFirefox }) => {
                 className={styles.messageAvatar}
                 src={`https://api.dicebear.com/9.x/avataaars/svg?seed=${msg.avatar}`}
                 alt={msg.user}
-                loading="lazy"
+                loading='lazy'
               />
               <div className={styles.messageContent}>
                 <div className={styles.messageHeader}>
                   <span
                     className={`${styles.messageUser} ${
-                      msg.isOrganizer
-                        ? styles.organizer
-                        : msg.isSpeaker
-                          ? styles.speaker
-                          : ''
+                      msg.isOrganizer ? styles.organizer
+                      : msg.isSpeaker ? styles.speaker
+                      : ''
                     }`}
                   >
                     {msg.user}
@@ -215,11 +208,7 @@ export const SessionDemo = ({ isFirefox }) => {
         </div>
 
         <div className={styles.chatInput}>
-          <input
-            type="text"
-            placeholder="Type a message..."
-            className={styles.inputField}
-          />
+          <input type='text' placeholder='Type a message...' className={styles.inputField} />
           <button className={styles.sendButton}>Send</button>
         </div>
       </div>

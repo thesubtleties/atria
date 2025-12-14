@@ -29,7 +29,7 @@ interface TypingUpdate {
 
 export function useDMTyping(
   threadId: number,
-  currentUserId: number
+  currentUserId: number,
 ): {
   isOtherUserTyping: boolean;
   setTyping: (isTyping: boolean) => void;
@@ -142,7 +142,7 @@ export function useDMTyping(
         }
       }
     },
-    [threadId]
+    [threadId],
   );
 
   // Cleanup intervals and timeouts on unmount

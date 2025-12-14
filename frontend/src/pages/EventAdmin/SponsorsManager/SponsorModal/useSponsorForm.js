@@ -136,9 +136,7 @@ const useSponsorForm = (sponsor, mode) => {
             contact_email: 'contactEmail',
             contact_phone: 'contactPhone',
           }[path] ||
-          (path.startsWith('social_links.')
-            ? `social_${path.replace('social_links.', '')}`
-            : path);
+          (path.startsWith('social_links.') ? `social_${path.replace('social_links.', '')}` : path);
         fieldErrors[frontendField] = err.message;
       });
       setErrors(fieldErrors);

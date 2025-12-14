@@ -29,7 +29,7 @@ export const MenuButton = () => {
 
   return (
     <Menu
-      position="bottom-end"
+      position='bottom-end'
       offset={8}
       withArrow
       arrowOffset={16}
@@ -44,17 +44,8 @@ export const MenuButton = () => {
       }}
     >
       <Menu.Target>
-        <Button
-          variant="subtle"
-          className={styles.menuButton}
-        >
-          <img 
-            src={AtriaLogo} 
-            alt="Atria" 
-            className={styles.menuIcon}
-            width="24"
-            height="24"
-          />
+        <Button variant='subtle' className={styles.menuButton}>
+          <img src={AtriaLogo} alt='Atria' className={styles.menuIcon} width='24' height='24' />
         </Button>
       </Menu.Target>
 
@@ -74,9 +65,7 @@ export const MenuButton = () => {
 
         <Menu.Item
           leftSection={
-            <IconUser
-              style={{ width: rem(14), height: rem(14), color: 'var(--color-primary)' }}
-            />
+            <IconUser style={{ width: rem(14), height: rem(14), color: 'var(--color-primary)' }} />
           }
           onClick={() => navigate('/app/profile')}
         >
@@ -85,9 +74,7 @@ export const MenuButton = () => {
 
         <Menu.Item
           leftSection={
-            <IconUsers
-              style={{ width: rem(14), height: rem(14), color: 'var(--color-primary)' }}
-            />
+            <IconUsers style={{ width: rem(14), height: rem(14), color: 'var(--color-primary)' }} />
           }
           onClick={() => navigate('/app/network')}
         >
@@ -122,9 +109,7 @@ export const MenuButton = () => {
 
         <Menu.Item
           leftSection={
-            <IconBook
-              style={{ width: rem(14), height: rem(14), color: 'var(--color-primary)' }}
-            />
+            <IconBook style={{ width: rem(14), height: rem(14), color: 'var(--color-primary)' }} />
           }
           onClick={() => window.open('https://docs.atria.gg/docs/intro', '_blank')}
         >
@@ -135,9 +120,7 @@ export const MenuButton = () => {
 
         <Menu.Item
           className={styles.logoutItem}
-          leftSection={
-            <IconLogout style={{ width: rem(14), height: rem(14) }} />
-          }
+          leftSection={<IconLogout style={{ width: rem(14), height: rem(14) }} />}
           onClick={handleLogout}
         >
           Logout

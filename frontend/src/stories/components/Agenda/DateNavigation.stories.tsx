@@ -34,13 +34,7 @@ type Story = StoryObj<typeof meta>;
 const DateNavigationWrapper = (args: any) => {
   const [currentDay, setCurrentDay] = useState(args.currentDay);
 
-  return (
-    <DateNavigation
-      {...args}
-      currentDay={currentDay}
-      onDateChange={setCurrentDay}
-    />
-  );
+  return <DateNavigation {...args} currentDay={currentDay} onDateChange={setCurrentDay} />;
 };
 
 // Interactive stories using the wrapper

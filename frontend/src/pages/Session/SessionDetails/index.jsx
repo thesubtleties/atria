@@ -27,14 +27,14 @@ export const SessionDetails = ({ session, event, canEdit }) => {
       session.start_time,
       event.start_date,
       session.day_number,
-      event.timezone
+      event.timezone,
     );
 
     const endTimes = formatSessionTime(
       session.end_time,
       event.start_date,
       session.day_number,
-      event.timezone
+      event.timezone,
     );
 
     return {
@@ -48,47 +48,51 @@ export const SessionDetails = ({ session, event, canEdit }) => {
 
   return (
     <div className={styles.detailsSection}>
-      <Group gap="xl" className={styles.detailsGrid}>
+      <Group gap='xl' className={styles.detailsGrid}>
         {/* Type - moved to first position */}
         <div className={`${styles.typeTag} ${styles[session.session_type.toLowerCase()]}`}>
           {session.session_type.replace(/_/g, ' ')}
         </div>
 
-        <Divider orientation="vertical" />
+        <Divider orientation='vertical' />
 
         {/* Date */}
-        <Group gap="xs" align="center">
-          <IconCalendar size={16} stroke={1.5} color="#8B5CF6" />
-          <Text size="sm" c="dimmed">{getSessionDate()}</Text>
+        <Group gap='xs' align='center'>
+          <IconCalendar size={16} stroke={1.5} color='#8B5CF6' />
+          <Text size='sm' c='dimmed'>
+            {getSessionDate()}
+          </Text>
         </Group>
 
-        <Divider orientation="vertical" />
+        <Divider orientation='vertical' />
 
         {/* Time */}
-        <Group gap="xs" align="center">
-          <IconClock size={16} stroke={1.5} color="#8B5CF6" />
-          <Text size="sm" c="dimmed">
+        <Group gap='xs' align='center'>
+          <IconClock size={16} stroke={1.5} color='#8B5CF6' />
+          <Text size='sm' c='dimmed'>
             {formattedTimes.start} - {formattedTimes.end} {formattedTimes.timezone}
           </Text>
-          <Text size="xs" c="dimmed">
+          <Text size='xs' c='dimmed'>
             ({session.formatted_duration})
           </Text>
         </Group>
 
         {session.location && (
           <>
-            <Divider orientation="vertical" />
-            <Group gap="xs">
-              <Text size="xs" c="dimmed">Location:</Text>
-              <Text size="sm">{session.location}</Text>
+            <Divider orientation='vertical' />
+            <Group gap='xs'>
+              <Text size='xs' c='dimmed'>
+                Location:
+              </Text>
+              <Text size='sm'>{session.location}</Text>
             </Group>
           </>
         )}
-        
+
         {canEdit && (
           <ActionIcon
-            size="sm"
-            variant="subtle"
+            size='sm'
+            variant='subtle'
             onClick={() => setShowEditModal(true)}
             className={styles.editButton}
           >

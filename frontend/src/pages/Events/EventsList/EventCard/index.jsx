@@ -4,10 +4,7 @@ import { IconEdit, IconX } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { EventModal } from '@/shared/components/modals/event/EventModal';
-import {
-  useGetEventQuery,
-  useDeleteEventMutation,
-} from '@/app/features/events/api';
+import { useGetEventQuery, useDeleteEventMutation } from '@/app/features/events/api';
 import { useFormatDate } from '@/shared/hooks/formatDate';
 import styles from './styles/index.module.css';
 
@@ -27,13 +24,11 @@ export const EventCard = ({ event, isOrgView, canEdit }) => {
   const hasSession = eventDetails?.sessions?.length > 0;
 
   const cardClass =
-    event.event_type === 'CONFERENCE'
-      ? styles.cardConference
-      : styles.cardSingleDay;
+    event.event_type === 'CONFERENCE' ? styles.cardConference : styles.cardSingleDay;
   const cardColors =
-    event.event_type === 'CONFERENCE'
-      ? { gradient: '#9c42f5, #6d42f5' }
-      : { gradient: '#42b883, #42a5f5' };
+    event.event_type === 'CONFERENCE' ?
+      { gradient: '#9c42f5, #6d42f5' }
+    : { gradient: '#42b883, #42a5f5' };
 
   const handleCardClick = (e) => {
     e.preventDefault();
@@ -55,7 +50,7 @@ export const EventCard = ({ event, isOrgView, canEdit }) => {
       } else if (isOrgView) {
         // No session yet - route based on role (only in org view)
         const isOrganizerOrAdmin = eventDetails?.organizers?.some((org) =>
-          ['ADMIN', 'ORGANIZER'].includes(org.role)
+          ['ADMIN', 'ORGANIZER'].includes(org.role),
         );
 
         if (isOrganizerOrAdmin) {
@@ -83,8 +78,7 @@ export const EventCard = ({ event, isOrgView, canEdit }) => {
   };
 
   // Determine if the card should be clickable
-  const isClickable =
-    isOrgView || event.event_type === 'CONFERENCE' || hasSession;
+  const isClickable = isOrgView || event.event_type === 'CONFERENCE' || hasSession;
 
   return (
     <>
@@ -123,7 +117,7 @@ export const EventCard = ({ event, isOrgView, canEdit }) => {
           </div>
         )}
 
-        <Group position="apart" mb="md">
+        <Group position='apart' mb='md'>
           <Text className={styles.title}>{event.title}</Text>
         </Group>
 
@@ -137,18 +131,17 @@ export const EventCard = ({ event, isOrgView, canEdit }) => {
           <Badge
             className={styles.setupBadge}
             color={
-              event.event_type === 'CONFERENCE'
-                ? 'blue'
-                : hasSession
-                  ? 'blue'
-                  : 'gray'
+              event.event_type === 'CONFERENCE' ? 'blue'
+              : hasSession ?
+                'blue'
+              : 'gray'
             }
           >
-            {event.event_type === 'CONFERENCE'
-              ? `${event.day_count || 1} Day Conference`
-              : hasSession
-                ? 'Ready to Join'
-                : 'Coming Soon'}
+            {event.event_type === 'CONFERENCE' ?
+              `${event.day_count || 1} Day Conference`
+            : hasSession ?
+              'Ready to Join'
+            : 'Coming Soon'}
           </Badge>
         )}
 
@@ -156,10 +149,7 @@ export const EventCard = ({ event, isOrgView, canEdit }) => {
           event.event_type === 'SINGLE_SESSION' &&
           eventDetails &&
           !eventDetails.sessions?.length && (
-            <Badge
-              className={styles.setupBadge}
-              color={canEdit ? 'yellow' : 'gray'}
-            >
+            <Badge className={styles.setupBadge} color={canEdit ? 'yellow' : 'gray'}>
               {canEdit ? 'Setup Required' : 'Coming Soon'}
             </Badge>
           )}
@@ -177,19 +167,18 @@ export const EventCard = ({ event, isOrgView, canEdit }) => {
       <Modal
         opened={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
-        title="Delete Event"
-        size="sm"
+        title='Delete Event'
+        size='sm'
         lockScroll={false}
       >
-        <Text size="sm" mb="lg">
-          Are you sure you want to delete this event? This action cannot be
-          undone.
+        <Text size='sm' mb='lg'>
+          Are you sure you want to delete this event? This action cannot be undone.
         </Text>
-        <Group position="right">
-          <Button variant="default" onClick={() => setShowDeleteModal(false)}>
+        <Group position='right'>
+          <Button variant='default' onClick={() => setShowDeleteModal(false)}>
             Cancel
           </Button>
-          <Button color="red" onClick={handleDelete}>
+          <Button color='red' onClick={handleDelete}>
             Delete
           </Button>
         </Group>

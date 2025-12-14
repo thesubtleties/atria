@@ -39,8 +39,9 @@ const rootReducer: Reducer<AppState, UnknownAction> = (state, action) => {
     // Create a new state with empty API cache
     const newState = appReducer(clearedState, action);
     if (newState && baseApi.reducerPath) {
-      (newState as Record<string, unknown>)[baseApi.reducerPath] =
-        baseApi.reducer(undefined, { type: '@@INIT' });
+      (newState as Record<string, unknown>)[baseApi.reducerPath] = baseApi.reducer(undefined, {
+        type: '@@INIT',
+      });
     }
 
     console.log('🔄 LOGOUT: RTK Query cache manually cleared');
@@ -51,11 +52,9 @@ const rootReducer: Reducer<AppState, UnknownAction> = (state, action) => {
 
 export const store = configureStore({
   reducer: rootReducer,
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(baseApi.middleware),
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(baseApi.middleware),
 });
 
 // Infer the RootState and AppDispatch types from the store itself
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
-

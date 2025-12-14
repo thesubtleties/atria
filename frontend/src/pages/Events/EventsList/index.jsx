@@ -15,12 +15,12 @@ export const EventsList = () => {
 
   const { data, isLoading } = useGetUserEventsQuery(
     { userId: currentUser?.id },
-    { skip: !currentUser?.id }
+    { skip: !currentUser?.id },
   );
 
   const { data: invitationsData, isLoading: invitationsLoading } = useGetUserInvitationsQuery(
     currentUser?.id,
-    { skip: !currentUser?.id }
+    { skip: !currentUser?.id },
   );
 
   const eventInvitations = invitationsData?.event_invitations || [];
@@ -28,7 +28,7 @@ export const EventsList = () => {
   // Filter only published events and categorize them
   const categorizedEvents = useMemo(() => {
     const events = data?.events || [];
-    const publishedEvents = events.filter(event => event.status?.toLowerCase() === 'published');
+    const publishedEvents = events.filter((event) => event.status?.toLowerCase() === 'published');
     return categorizeEvents(publishedEvents);
   }, [data?.events]);
 
@@ -40,15 +40,16 @@ export const EventsList = () => {
         <div className={styles.bgShape3} />
 
         <div className={styles.contentWrapper}>
-          <LoadingSection message="Loading your events..." height={400} />
+          <LoadingSection message='Loading your events...' height={400} />
         </div>
       </div>
     );
   }
 
-  const hasAnyEvents = categorizedEvents.live.length > 0 ||
-                      categorizedEvents.upcoming.length > 0 ||
-                      categorizedEvents.past.length > 0;
+  const hasAnyEvents =
+    categorizedEvents.live.length > 0 ||
+    categorizedEvents.upcoming.length > 0 ||
+    categorizedEvents.past.length > 0;
   const hasInvitations = eventInvitations.length > 0;
   const hasAnyContent = hasAnyEvents || hasInvitations;
 
@@ -61,48 +62,43 @@ export const EventsList = () => {
 
       {/* Content Wrapper */}
       <div className={styles.contentWrapper}>
-        <PageHeader
-          title="Events"
-          subtitle="Discover and join events you're invited to"
-        />
+        <PageHeader title='Events' subtitle="Discover and join events you're invited to" />
 
         {/* Main Content */}
-        {hasAnyContent ? (
+        {hasAnyContent ?
           <div className={styles.eventSections}>
             <EventSection
               icon={IconMail}
-              title="Pending Invitations"
+              title='Pending Invitations'
               items={eventInvitations}
-              type="invitation"
+              type='invitation'
             />
 
             <EventSection
               icon={IconClock}
-              title="Events Live Now"
+              title='Events Live Now'
               items={categorizedEvents.live}
-              type="event"
-              status="live"
+              type='event'
+              status='live'
             />
 
             <EventSection
               icon={IconCalendar}
-              title="Upcoming Events"
+              title='Upcoming Events'
               items={categorizedEvents.upcoming}
-              type="event"
-              status="upcoming"
+              type='event'
+              status='upcoming'
             />
 
             <EventSection
               icon={IconHistory}
-              title="Past Events"
+              title='Past Events'
               items={categorizedEvents.past}
-              type="event"
-              status="past"
+              type='event'
+              status='past'
             />
           </div>
-        ) : (
-          <EmptyState />
-        )}
+        : <EmptyState />}
       </div>
     </div>
   );

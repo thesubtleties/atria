@@ -34,14 +34,14 @@
 .dragHandle {
   cursor: grab;
   transition: all 0.2s ease;
-  color: #94A3B8;
+  color: #94a3b8;
   touch-action: none;
   user-select: none;
 }
 
 .dragHandle:hover {
   background: rgba(139, 92, 246, 0.08);
-  color: #8B5CF6;
+  color: #8b5cf6;
 }
 
 .dragHandle:active {
@@ -58,19 +58,19 @@
 .logoPlaceholder {
   width: 40px;
   height: 40px;
-  background: linear-gradient(135deg, #F1F5F9 0%, #E2E8F0 100%);
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
   border-radius: 4px;
   display: inline-block;
 }
 
 /* Sponsor Name */
 .sponsorName {
-  color: #1E293B;
+  color: #1e293b;
   font-weight: 500;
 }
 
 .sponsorUrl {
-  color: #64748B;
+  color: #64748b;
   font-size: 0.85rem;
   margin-top: 0.25rem;
 }
@@ -88,7 +88,7 @@
 
 .switchLabel {
   font-size: 0.85rem;
-  color: #64748B;
+  color: #64748b;
 }
 
 /* Featured Button */
@@ -127,12 +127,12 @@
 
 .menuItem:hover {
   background: rgba(139, 92, 246, 0.04);
-  color: #8B5CF6;
+  color: #8b5cf6;
 }
 
 .menuItemDanger:hover {
   background: rgba(220, 38, 38, 0.04);
-  color: #DC2626;
+  color: #dc2626;
 }
 
 /* Responsive */
@@ -141,7 +141,7 @@
   .featuredCell {
     display: none;
   }
-  
+
   .sponsorUrl {
     display: none;
   }

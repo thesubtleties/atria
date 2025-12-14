@@ -97,4 +97,3 @@ export interface ChatMessageSocket {
     image_url: string | null;
   };
 }
-

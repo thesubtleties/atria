@@ -4,9 +4,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: linear-gradient(180deg, 
-    rgba(255, 255, 255, 0.95) 0%, 
-    rgba(251, 250, 255, 0.9) 100%);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(251, 250, 255, 0.9) 100%);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(139, 92, 246, 0.1) !important;
@@ -18,9 +16,7 @@
 
 .card:hover {
   box-shadow: 0 8px 32px rgba(139, 92, 246, 0.15) !important;
-  background: linear-gradient(180deg, 
-    rgba(255, 255, 255, 1) 0%, 
-    rgba(251, 250, 255, 0.95) 100%);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 1) 0%, rgba(251, 250, 255, 0.95) 100%);
   transform: translateY(-3px) scale(1.01);
   border-color: rgba(139, 92, 246, 0.2) !important;
 }
@@ -33,9 +29,7 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: linear-gradient(135deg, 
-    rgba(139, 92, 246, 0.03) 0%, 
-    rgba(168, 85, 247, 0.05) 100%);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.03) 0%, rgba(168, 85, 247, 0.05) 100%);
   border-bottom: 1px solid rgba(139, 92, 246, 0.06);
 }
 
@@ -68,10 +62,12 @@
 .avatar {
   position: relative;
   z-index: 2;
-  background: linear-gradient(135deg, 
-    var(--gradient-purple-light) 0%, 
+  background: linear-gradient(
+    135deg,
+    var(--gradient-purple-light) 0%,
     var(--gradient-purple-medium) 50%,
-    var(--gradient-purple-dark) 100%) !important;
+    var(--gradient-purple-dark) 100%
+  ) !important;
   color: white !important;
   font-size: clamp(2rem, 4vw, 2.5rem) !important;
   font-weight: 300 !important;
@@ -158,10 +154,12 @@
   border-top: 1px solid rgba(139, 92, 246, 0.08);
   display: flex;
   justify-content: center;
-  background: linear-gradient(90deg, 
-    transparent 0%, 
-    rgba(139, 92, 246, 0.02) 50%, 
-    transparent 100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(139, 92, 246, 0.02) 50%,
+    transparent 100%
+  );
 }
 
 .sessionIcon {
@@ -171,9 +169,11 @@
 
 .sessionText {
   font-size: clamp(var(--text-xs), 1.8vw, 0.875rem) !important;
-  background: linear-gradient(90deg, 
-    var(--gradient-purple-medium) 0%, 
-    var(--gradient-purple-dark) 100%);
+  background: linear-gradient(
+    90deg,
+    var(--gradient-purple-medium) 0%,
+    var(--gradient-purple-dark) 100%
+  );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -202,10 +202,12 @@
 }
 
 .card:hover .sessionsInfo {
-  background: linear-gradient(90deg, 
-    transparent 0%, 
-    rgba(139, 92, 246, 0.04) 50%, 
-    transparent 100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(139, 92, 246, 0.04) 50%,
+    transparent 100%
+  );
 }
 
 /* Responsive design */
@@ -214,7 +216,7 @@
   .avatarSection {
     height: 160px;
   }
-  
+
   .avatar {
     width: 110px !important;
     height: 110px !important;
@@ -226,21 +228,21 @@
   .avatarSection {
     height: 140px;
   }
-  
+
   .avatar {
     width: 100px !important;
     height: 100px !important;
     font-size: 1.75rem;
   }
-  
+
   .content {
     padding: var(--space-md);
   }
-  
+
   .speakerName {
     font-size: var(--text-base);
   }
-  
+
   .bio {
     font-size: var(--text-sm);
   }
@@ -251,13 +253,13 @@
   .avatarSection {
     height: 130px;
   }
-  
+
   .avatar {
     width: 90px !important;
     height: 90px !important;
     font-size: 1.5rem;
   }
-  
+
   .content {
     padding: var(--space-sm) var(--space-md);
   }
@@ -268,7 +270,7 @@
   .card {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Smooth animation on desktop */
   }
-  
+
   .speakerName {
     font-size: 1.425rem !important; /* Slightly larger on big screens */
   }

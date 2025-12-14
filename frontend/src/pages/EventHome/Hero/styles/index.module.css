@@ -67,12 +67,12 @@
   .heroBackground {
     background-image: var(--mobile-image-url) !important;
   }
-  
+
   .hero {
     height: clamp(350px, 50vh, 400px);
     margin-bottom: var(--space-lg);
   }
-  
+
   .heroContent {
     padding: clamp(40px, 8vh, 60px) var(--space-md);
   }

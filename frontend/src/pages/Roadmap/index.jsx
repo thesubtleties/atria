@@ -449,19 +449,16 @@ const RoadmapPage = () => {
       <header className={styles.roadmapHeader}>
         <h1 className={styles.roadmapTitle}>Atria Development Roadmap</h1>
         <p className={styles.roadmapDescription}>
-          Our development plan and progress for the Atria platform. This roadmap
-          shows our current focus areas and planned features to create a
-          comprehensive event management and networking experience.
+          Our development plan and progress for the Atria platform. This roadmap shows our current
+          focus areas and planned features to create a comprehensive event management and networking
+          experience.
         </p>
       </header>
 
       <div className={styles.phaseProgressContainer}>
         <div className={styles.progressBar}>
           {roadmapPhases.map((phase, index) => (
-            <div
-              key={phase.id}
-              className={`${styles.progressPhase} ${styles[phase.status]}`}
-            >
+            <div key={phase.id} className={`${styles.progressPhase} ${styles[phase.status]}`}>
               <span className={styles.progressLabel}>{index + 1}</span>
             </div>
           ))}
@@ -470,10 +467,7 @@ const RoadmapPage = () => {
 
       <div className={styles.phasesContainer}>
         {roadmapPhases.map((phase) => (
-          <div
-            key={phase.id}
-            className={`${styles.phaseCard} ${styles[phase.status]}`}
-          >
+          <div key={phase.id} className={`${styles.phaseCard} ${styles[phase.status]}`}>
             <div className={styles.phaseHeader}>
               <h2 className={styles.phaseTitle}>{phase.title}</h2>
               <span className={`${styles.phaseStatus} ${styles[phase.status]}`}>
@@ -484,15 +478,10 @@ const RoadmapPage = () => {
 
             <div className={styles.phaseItems}>
               {phase.items.map((item, itemIndex) => (
-                <div
-                  key={itemIndex}
-                  className={`${styles.itemCard} ${styles[item.status]}`}
-                >
+                <div key={itemIndex} className={`${styles.itemCard} ${styles[item.status]}`}>
                   <div className={styles.itemHeader}>
                     <h3 className={styles.itemTitle}>{item.title}</h3>
-                    <span
-                      className={`${styles.itemStatus} ${styles[item.status]}`}
-                    >
+                    <span className={`${styles.itemStatus} ${styles[item.status]}`}>
                       {getStatusLabel(item.status)}
                     </span>
                   </div>
@@ -506,11 +495,11 @@ const RoadmapPage = () => {
                           className={`${styles.detailItem} ${styles[detail.status]}`}
                         >
                           <span className={styles.detailStatus}>
-                            {detail.status === 'complete'
-                              ? '✓'
-                              : detail.status === 'in-progress'
-                                ? '⟳'
-                                : '○'}
+                            {detail.status === 'complete' ?
+                              '✓'
+                            : detail.status === 'in-progress' ?
+                              '⟳'
+                            : '○'}
                           </span>
                           {detail.text}
                         </li>

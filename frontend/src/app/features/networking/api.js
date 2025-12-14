@@ -22,19 +22,11 @@ const socketBaseQuery = () => async (args) => {
         return { data: result };
 
       case 'direct-messages':
-        result = await getDirectMessages(
-          body.threadId,
-          body.page || 1,
-          body.perPage || 50
-        );
+        result = await getDirectMessages(body.threadId, body.page || 1, body.perPage || 50);
         return { data: result };
 
       case 'send-message':
-        result = await sendDirectMessage(
-          body.threadId,
-          body.content,
-          body.encryptedContent
-        );
+        result = await sendDirectMessage(body.threadId, body.content, body.encryptedContent);
         return { data: result };
 
       case 'create-thread':
@@ -107,9 +99,7 @@ const queryWithFallback = async (args, api, extraOptions) => {
     }
 
     // Use the original baseQuery from baseApi
-    return api.dispatch(
-      baseApi.endpoints.customQuery.initiate(httpArgs, extraOptions)
-    );
+    return api.dispatch(baseApi.endpoints.customQuery.initiate(httpArgs, extraOptions));
   } catch (error) {
     return { error: { message: error.toString() } };
   }
@@ -144,7 +134,7 @@ export const networkingApi = baseApi.injectEndpoints({
             params: eventId ? { event_id: eventId } : undefined,
           },
           api,
-          extraOptions
+          extraOptions,
         );
 
         // Extract just the threads array here, since transformResponse
@@ -154,12 +144,12 @@ export const networkingApi = baseApi.injectEndpoints({
 
           // Standard format from backend: { threads: [...] }
           if (data.threads) {
-            return { data: data.threads };  // Return just the array
+            return { data: data.threads }; // Return just the array
           }
 
           // Fallback: already an array (legacy/socket format)
           if (Array.isArray(data)) {
-            return { data: data };  // Already an array
+            return { data: data }; // Already an array
           }
 
           // Unexpected format - log warning and return empty array
@@ -184,7 +174,7 @@ export const networkingApi = baseApi.injectEndpoints({
             body: arg,
           },
           api,
-          extraOptions
+          extraOptions,
         );
       },
       transformResponse: (response) => {
@@ -215,9 +205,7 @@ export const networkingApi = baseApi.injectEndpoints({
 
         return result;
       },
-      providesTags: (result, error, { threadId }) => [
-        { type: 'DirectMessage', id: threadId },
-      ],
+      providesTags: (result, error, { threadId }) => [{ type: 'DirectMessage', id: threadId }],
     }),
 
     // Send a direct message
@@ -232,7 +220,7 @@ export const networkingApi = baseApi.injectEndpoints({
             body: arg,
           },
           api,
-          extraOptions
+          extraOptions,
         );
       },
       // Don't invalidate - we handle updates via optimistic updates and socket callbacks
@@ -255,7 +243,7 @@ export const networkingApi = baseApi.injectEndpoints({
             body,
           },
           api,
-          extraOptions
+          extraOptions,
         );
       },
       invalidatesTags: ['Thread'],
@@ -273,7 +261,7 @@ export const networkingApi = baseApi.injectEndpoints({
             body: { threadId: arg },
           },
           api,
-          extraOptions
+          extraOptions,
         );
       },
       // Optimistically clear unread count when marking as read
@@ -294,8 +282,8 @@ export const networkingApi = baseApi.injectEndpoints({
                 console.log('✅ Cleared unread count for thread:', threadId);
               }
               // Immer handles returning the modified draft
-            }
-          )
+            },
+          ),
         );
 
         try {
@@ -407,14 +395,14 @@ export const networkingApi = baseApi.injectEndpoints({
             if (!Array.isArray(draft)) return;
 
             // Find and remove the thread using in-place mutation
-            const threadIndex = draft.findIndex(thread => thread.id === threadId);
+            const threadIndex = draft.findIndex((thread) => thread.id === threadId);
             if (threadIndex >= 0) {
               draft.splice(threadIndex, 1);
             }
             // Don't return anything - let Immer handle the modified draft
-          })
+          }),
         );
-        
+
         try {
           await queryFulfilled;
         } catch {

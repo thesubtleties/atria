@@ -6,20 +6,20 @@ const ResetForm = ({ form, onSubmit, tokenData, isSubmitting, resetError }) => {
   return (
     <section className={styles.mainContent}>
       <form onSubmit={form.onSubmit(onSubmit)} className={styles.formContainer}>
-        <Stack gap="lg">
+        <Stack gap='lg'>
           <div className={styles.headerSection}>
             <Title order={2} className={styles.pageTitle}>
               Reset Your Password
             </Title>
-            <Text c="dimmed" size="sm" className={styles.emailText}>
+            <Text c='dimmed' size='sm' className={styles.emailText}>
               Enter a new password for {tokenData?.email}
             </Text>
           </div>
 
           <div className={styles.formFields}>
             <PasswordInput
-              label="New Password"
-              placeholder="Enter new password"
+              label='New Password'
+              placeholder='Enter new password'
               {...form.getInputProps('password')}
               disabled={isSubmitting}
               autoFocus
@@ -27,24 +27,20 @@ const ResetForm = ({ form, onSubmit, tokenData, isSubmitting, resetError }) => {
             />
 
             <PasswordInput
-              label="Confirm Password"
-              placeholder="Confirm new password"
+              label='Confirm Password'
+              placeholder='Confirm new password'
               {...form.getInputProps('password_confirm')}
               disabled={isSubmitting}
               className={styles.passwordInput}
             />
           </div>
 
-          <Button
-            type="submit"
-            disabled={isSubmitting}
-            className={styles.submitButton}
-          >
+          <Button type='submit' disabled={isSubmitting} className={styles.submitButton}>
             {isSubmitting ? 'Resetting...' : 'Reset Password'}
           </Button>
 
           {resetError && (
-            <Alert color="red" variant="light" className={styles.errorAlert}>
+            <Alert color='red' variant='light' className={styles.errorAlert}>
               An error occurred while resetting your password. Please try again.
             </Alert>
           )}

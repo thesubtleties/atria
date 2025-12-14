@@ -28,7 +28,7 @@ axiosClient.interceptors.request.use(
 
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 // RES interceptor (adds to all responses)
@@ -59,7 +59,7 @@ axiosClient.interceptors.response.use(
       }
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 /** Request configuration for axiosInstance */
@@ -88,4 +88,3 @@ export const axiosInstance = <T = unknown>({
 };
 
 export default axiosInstance;
-

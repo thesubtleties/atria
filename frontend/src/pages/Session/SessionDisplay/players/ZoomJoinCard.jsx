@@ -16,7 +16,7 @@ export const ZoomJoinCard = ({ joinUrl, passcode }) => {
 
   return (
     <div className={styles.messageContainer}>
-      <Stack align="center" spacing="lg" style={{ width: '100%', maxWidth: '500px' }}>
+      <Stack align='center' spacing='lg' style={{ width: '100%', maxWidth: '500px' }}>
         {/* Zoom Logo Icon with brand color */}
         <div
           style={{
@@ -30,20 +30,20 @@ export const ZoomJoinCard = ({ joinUrl, passcode }) => {
             boxShadow: '0 8px 24px rgba(45, 140, 255, 0.3)',
           }}
         >
-          <IconBrandZoom size={48} stroke={1.5} color="white" />
+          <IconBrandZoom size={48} stroke={1.5} color='white' />
         </div>
 
-        <Text size="xl" fw={600} style={{ color: '#1E293B' }}>
+        <Text size='xl' fw={600} style={{ color: '#1E293B' }}>
           This session is hosted on Zoom
         </Text>
 
-        <Text size="sm" ta="center" style={{ color: '#64748B', maxWidth: '400px' }}>
+        <Text size='sm' ta='center' style={{ color: '#64748B', maxWidth: '400px' }}>
           Click the button below to join the meeting in a new window
         </Text>
 
         {passcode && (
           <Paper
-            p="md"
+            p='md'
             withBorder
             style={{
               background: 'rgba(139, 92, 246, 0.04)',
@@ -52,17 +52,17 @@ export const ZoomJoinCard = ({ joinUrl, passcode }) => {
               minWidth: '280px',
             }}
           >
-            <Stack spacing={8} align="center">
+            <Stack spacing={8} align='center'>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <IconLock size={18} color="#8B5CF6" />
-                <Text size="xs" fw={500} tt="uppercase" style={{ color: '#94A3B8' }}>
+                <IconLock size={18} color='#8B5CF6' />
+                <Text size='xs' fw={500} tt='uppercase' style={{ color: '#94A3B8' }}>
                   Meeting Passcode
                 </Text>
               </div>
               <Text
-                size="xl"
+                size='xl'
                 fw={700}
-                ff="monospace"
+                ff='monospace'
                 style={{
                   color: '#1E293B',
                   letterSpacing: '0.15em',
@@ -76,7 +76,7 @@ export const ZoomJoinCard = ({ joinUrl, passcode }) => {
         )}
 
         <Button
-          size="lg"
+          size='lg'
           onClick={handleJoinMeeting}
           style={{
             marginTop: 'var(--space-md)',

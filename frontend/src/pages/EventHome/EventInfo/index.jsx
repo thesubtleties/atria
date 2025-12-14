@@ -1,9 +1,5 @@
 // pages/EventHome/EventInfo/index.jsx
-import {
-  IconCalendar,
-  IconMapPin,
-  IconDeviceLaptop,
-} from '@tabler/icons-react';
+import { IconCalendar, IconMapPin, IconDeviceLaptop } from '@tabler/icons-react';
 import { format as formatDate, parseISO } from 'date-fns';
 import styles from './styles/index.module.css';
 
@@ -18,9 +14,7 @@ export default function EventInfo({ format, venue, dates }) {
             </div>
             <div className={styles.cardContent}>
               <h3 className={styles.cardTitle}>When</h3>
-              <p className={styles.cardText}>
-                {formatDate(parseISO(dates.start), 'MMMM d, yyyy')}
-              </p>
+              <p className={styles.cardText}>{formatDate(parseISO(dates.start), 'MMMM d, yyyy')}</p>
               {dates.end !== dates.start && (
                 <p className={styles.cardSubtext}>
                   to {formatDate(parseISO(dates.end), 'MMMM d, yyyy')}
@@ -38,7 +32,8 @@ export default function EventInfo({ format, venue, dates }) {
                 <h3 className={styles.cardTitle}>Where</h3>
                 <p className={styles.cardText}>{venue.name}</p>
                 <p className={styles.cardSubtext}>
-                  {venue.city}{venue.state ? `, ${venue.state}` : ''}, {venue.country}
+                  {venue.city}
+                  {venue.state ? `, ${venue.state}` : ''}, {venue.country}
                 </p>
               </div>
             </div>
@@ -54,9 +49,7 @@ export default function EventInfo({ format, venue, dates }) {
                 {format === 'HYBRID' ? 'Hybrid Event' : 'Virtual Event'}
               </p>
               <p className={styles.cardSubtext}>
-                {format === 'HYBRID' 
-                  ? 'Join in-person or online' 
-                  : 'Join from anywhere'}
+                {format === 'HYBRID' ? 'Join in-person or online' : 'Join from anywhere'}
               </p>
             </div>
           </div>

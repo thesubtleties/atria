@@ -1,18 +1,10 @@
 import React, { useState, useMemo } from 'react';
-import {
-  TextInput,
-  Select,
-  Center,
-  Text,
-} from '@mantine/core';
+import { TextInput, Select, Center, Text } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import { LoadingSpinner } from '../../../shared/components/loading';
 import { IconSearch, IconFilter } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
-import {
-  useGetEventUsersQuery,
-  useGetEventQuery,
-} from '@/app/features/events/api';
+import { useGetEventUsersQuery, useGetEventQuery } from '@/app/features/events/api';
 import {
   useCreateConnectionMutation,
   useCreateDirectMessageThreadMutation,
@@ -37,7 +29,11 @@ export function AttendeesGrid({ eventId }) {
   const { data: eventData } = useGetEventQuery(eventId, { skip: !eventId });
 
   // Fetch both ADMIN and ORGANIZER when "organizer" is selected
-  const { data: adminData, isLoading: isLoadingAdmins, isFetching: isFetchingAdmins } = useGetEventUsersQuery(
+  const {
+    data: adminData,
+    isLoading: isLoadingAdmins,
+    isFetching: isFetchingAdmins,
+  } = useGetEventUsersQuery(
     {
       eventId: eventId,
       role: 'ADMIN',
@@ -46,67 +42,59 @@ export function AttendeesGrid({ eventId }) {
     },
     {
       skip: !eventId || filterRole !== 'organizer',
-    }
+    },
   );
 
-  const { data: organizerData, isLoading: isLoadingOrganizers, isFetching: isFetchingOrganizers } =
-    useGetEventUsersQuery(
-      {
-        eventId: eventId,
-        role: 'ORGANIZER',
-        page: currentPage,
-        per_page: perPage,
-      },
-      {
-        skip: !eventId || filterRole !== 'organizer',
-      }
-    );
+  const {
+    data: organizerData,
+    isLoading: isLoadingOrganizers,
+    isFetching: isFetchingOrganizers,
+  } = useGetEventUsersQuery(
+    {
+      eventId: eventId,
+      role: 'ORGANIZER',
+      page: currentPage,
+      per_page: perPage,
+    },
+    {
+      skip: !eventId || filterRole !== 'organizer',
+    },
+  );
 
-  const { data: regularData, isLoading: isLoadingRegular, isFetching: isFetchingRegular } =
-    useGetEventUsersQuery(
-      {
-        eventId: eventId,
-        role:
-          filterRole === 'all'
-            ? undefined
-            : filterRole === 'organizer'
-              ? undefined
-              : filterRole?.toUpperCase(),
-        page: currentPage,
-        per_page: perPage,
-      },
-      {
-        skip: !eventId || filterRole === 'organizer',
-      }
-    );
+  const {
+    data: regularData,
+    isLoading: isLoadingRegular,
+    isFetching: isFetchingRegular,
+  } = useGetEventUsersQuery(
+    {
+      eventId: eventId,
+      role:
+        filterRole === 'all' ? undefined
+        : filterRole === 'organizer' ? undefined
+        : filterRole?.toUpperCase(),
+      page: currentPage,
+      per_page: perPage,
+    },
+    {
+      skip: !eventId || filterRole === 'organizer',
+    },
+  );
 
   // Determine which data to use based on filter
   const isInitialLoading =
-    filterRole === 'organizer'
-      ? isLoadingAdmins || isLoadingOrganizers
-      : isLoadingRegular;
-      
+    filterRole === 'organizer' ? isLoadingAdmins || isLoadingOrganizers : isLoadingRegular;
+
   const isFetchingMore =
-    filterRole === 'organizer'
-      ? isFetchingAdmins || isFetchingOrganizers
-      : isFetchingRegular;
+    filterRole === 'organizer' ? isFetchingAdmins || isFetchingOrganizers : isFetchingRegular;
 
   const currentData = useMemo(() => {
     if (filterRole === 'organizer') {
       return {
-        event_users: [
-          ...(adminData?.event_users || []),
-          ...(organizerData?.event_users || []),
-        ],
-        total_items:
-          (adminData?.total_items || 0) +
-          (organizerData?.total_items || 0),
-        total_pages: Math.max(
-          adminData?.total_pages || 0,
-          organizerData?.total_pages || 0
-        ),
+        event_users: [...(adminData?.event_users || []), ...(organizerData?.event_users || [])],
+        total_items: (adminData?.total_items || 0) + (organizerData?.total_items || 0),
+        total_pages: Math.max(adminData?.total_pages || 0, organizerData?.total_pages || 0),
         current_page: currentPage,
-        has_next: (adminData?.has_next || false) || (organizerData?.has_next || false),
+        has_next: adminData?.has_next || false || organizerData?.has_next || false,
       };
     }
     return regularData;
@@ -120,33 +108,30 @@ export function AttendeesGrid({ eventId }) {
         setLoadedAttendees(currentData.event_users);
       } else {
         // Append for subsequent pages
-        setLoadedAttendees(prev => {
+        setLoadedAttendees((prev) => {
           // Create a map to avoid duplicates
-          const existingIds = new Set(prev.map(a => a.user_id));
-          const newAttendees = currentData.event_users.filter(
-            a => !existingIds.has(a.user_id)
-          );
+          const existingIds = new Set(prev.map((a) => a.user_id));
+          const newAttendees = currentData.event_users.filter((a) => !existingIds.has(a.user_id));
           return [...prev, ...newAttendees];
         });
       }
-      
+
       // Update hasMore based on API response
       setHasMore(currentData.has_next || false);
     }
   }, [currentData, currentPage]);
-  console.log('AttendeesGrid debug:', { 
-    eventId, 
-    currentData, 
-    loadedAttendees, 
+  console.log('AttendeesGrid debug:', {
+    eventId,
+    currentData,
+    loadedAttendees,
     isInitialLoading,
     isFetchingMore,
     filterRole,
     currentPage,
     hasMore,
-    totalItems: currentData?.total_items
+    totalItems: currentData?.total_items,
   });
-  const [createConnection, { isLoading: isCreatingConnection }] =
-    useCreateConnectionMutation();
+  const [createConnection, { isLoading: isCreatingConnection }] = useCreateConnectionMutation();
   const [createThread] = useCreateDirectMessageThreadMutation();
   const openThread = useOpenThread();
 
@@ -218,10 +203,10 @@ export function AttendeesGrid({ eventId }) {
 
   const filteredAttendees = loadedAttendees?.filter((attendee) => {
     if (!searchQuery) return true;
-    
+
     const searchLower = searchQuery.toLowerCase();
-    
-    const matchesSearch = 
+
+    const matchesSearch =
       attendee.first_name?.toLowerCase().includes(searchLower) ||
       attendee.last_name?.toLowerCase().includes(searchLower) ||
       attendee.full_name?.toLowerCase().includes(searchLower) ||
@@ -235,7 +220,7 @@ export function AttendeesGrid({ eventId }) {
   if (isInitialLoading && currentPage === 1) {
     return (
       <Center className={styles.loader}>
-        <LoadingSpinner size="lg" />
+        <LoadingSpinner size='lg' />
       </Center>
     );
   }
@@ -253,10 +238,10 @@ export function AttendeesGrid({ eventId }) {
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
   };
-  
+
   const handleLoadMore = () => {
     if (!isFetchingMore && hasMore) {
-      setCurrentPage(prev => prev + 1);
+      setCurrentPage((prev) => prev + 1);
     }
   };
 
@@ -266,14 +251,14 @@ export function AttendeesGrid({ eventId }) {
       <div className={styles.header}>
         <div className={styles.filterGroup}>
           <TextInput
-            placeholder="Search attendees..."
+            placeholder='Search attendees...'
             leftSection={<IconSearch size={18} />}
             value={searchQuery}
             onChange={handleSearchChange}
             className={styles.searchInput}
           />
           <Select
-            placeholder="Filter by role"
+            placeholder='Filter by role'
             leftSection={<IconFilter size={18} />}
             value={filterRole}
             onChange={handleFilterChange}
@@ -288,7 +273,7 @@ export function AttendeesGrid({ eventId }) {
           />
         </div>
         <div className={styles.countDisplay}>
-          {searchQuery ? (
+          {searchQuery ?
             <>
               <span className={styles.countNumber}>{filteredAttendees?.length || 0}</span>
               <span className={styles.countLabel}>matching</span>
@@ -299,14 +284,13 @@ export function AttendeesGrid({ eventId }) {
               <span className={styles.countNumber}>{currentData?.total_items || 0}</span>
               <span className={styles.countLabel}>total</span>
             </>
-          ) : (
-            <>
+          : <>
               <span className={styles.countNumber}>{loadedAttendees?.length || 0}</span>
               <span className={styles.countLabel}>of</span>
               <span className={styles.countNumber}>{currentData?.total_items || 0}</span>
               <span className={styles.countLabel}>attendees</span>
             </>
-          )}
+          }
         </div>
       </div>
 
@@ -341,7 +325,7 @@ export function AttendeesGrid({ eventId }) {
 
         {filteredAttendees?.length === 0 && !isInitialLoading && (
           <div className={styles.emptyState}>
-            <Text c="dimmed">No attendees found matching your criteria</Text>
+            <Text c='dimmed'>No attendees found matching your criteria</Text>
           </div>
         )}
       </div>
@@ -365,14 +349,12 @@ export function AttendeesGrid({ eventId }) {
               transition: 'all 0.2s',
             }}
           >
-            {isFetchingMore ? (
+            {isFetchingMore ?
               <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <LoadingSpinner size="xs" />
+                <LoadingSpinner size='xs' />
                 Loading more...
               </span>
-            ) : (
-              'Load More Attendees'
-            )}
+            : 'Load More Attendees'}
           </button>
         </div>
       )}

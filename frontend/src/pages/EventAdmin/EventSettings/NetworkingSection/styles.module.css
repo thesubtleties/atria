@@ -352,54 +352,54 @@
     font-size: 1rem;
     text-align: center;
   }
-  
+
   /* Hide drag handle on mobile */
   .dragHandleWrapper {
     display: none !important;
   }
-  
+
   /* Center section header on mobile */
   .sectionHeader {
     flex-direction: column !important;
     align-items: center !important;
     gap: var(--space-md);
   }
-  
+
   .mobileCenter {
     text-align: center;
     width: 100%;
   }
-  
+
   .centerButton {
     width: auto;
     margin-top: var(--space-md);
   }
-  
+
   /* Optimize card spacing for mobile */
   .draggableList {
     padding: 0.375rem;
   }
-  
+
   .cardHeader {
     padding: 0.75rem;
   }
-  
+
   .cardBody {
     padding: 0.75rem;
   }
-  
+
   /* Menu button on mobile */
   .menuButton {
     min-width: 36px !important;
     min-height: 36px !important;
   }
-  
+
   /* Adjust message text for mobile */
   .messageText {
     font-size: 0.875rem;
     padding: 0 0.5rem;
   }
-  
+
   .messageText::before,
   .messageText::after {
     font-size: 1.125rem;
@@ -411,11 +411,11 @@
   .draggableCard {
     padding: 0.625rem;
   }
-  
+
   .messageText {
     font-size: 0.75rem;
   }
-  
+
   .countBadge {
     font-size: 0.75rem !important;
     padding: 0.375rem 0.75rem !important;

@@ -58,7 +58,6 @@
   padding: clamp(1rem, 4vw, 2rem);
 }
 
-
 /* Main Content Glass Section */
 .mainContent {
   background: var(--color-background-glass);
@@ -71,7 +70,6 @@
   position: relative;
   min-height: 400px;
 }
-
 
 /* Mobile Responsive (< 768px) */
 @media (max-width: 768px) {
@@ -97,7 +95,7 @@
   .contentWrapper {
     padding: 1.5rem;
   }
-  
+
   .mainContent {
     padding: 1.5rem;
   }

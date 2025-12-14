@@ -5,11 +5,7 @@ import { Button } from '../../../../shared/components/buttons';
 import { getGradientBadgeStyles } from '../../../../shared/hooks/useGradientBadge';
 import styles from './SponsorsHeader.module.css';
 
-const SponsorsHeader = ({ 
-  sponsors, 
-  onCreateClick, 
-  onTierManageClick
-}) => {
+const SponsorsHeader = ({ sponsors, onCreateClick, onTierManageClick }) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
   // Count sponsors by tier and collect tier colors (exclude sponsors without tiers)
   const tierCounts = sponsors.reduce((acc, sponsor) => {
@@ -17,20 +13,20 @@ const SponsorsHeader = ({
     if (!sponsor.tier_id) {
       return acc;
     }
-    
+
     const tierName = sponsor.tier_name;
     const tierId = sponsor.tier_id;
     const tierColor = sponsor.tier_color; // This comes from the sponsor's computed property
-    
+
     if (!acc[tierName]) {
       acc[tierName] = {
         count: 0,
         tierId: tierId,
         tierOrder: sponsor.tier_order || 999,
-        tierColor: tierColor
+        tierColor: tierColor,
       };
     }
-    
+
     acc[tierName].count += 1;
     acc.total = (acc.total || 0) + 1;
     return acc;
@@ -49,28 +45,24 @@ const SponsorsHeader = ({
           <div className={styles.badgeGroup}>
             {/* First row: Total count */}
             <div className={styles.badgeRow}>
-              <Badge 
-                className={styles.totalBadge} 
-                size={isMobile ? 'md' : 'lg'} 
-                radius="sm"
-              >
+              <Badge className={styles.totalBadge} size={isMobile ? 'md' : 'lg'} radius='sm'>
                 {tierCounts.total || 0} Total
               </Badge>
             </div>
-            
+
             {/* Second row: Tier breakdowns */}
             {sortedTiers.length > 0 && (
               <div className={styles.badgeRow}>
                 {sortedTiers.map(([tierName, tierData]) => {
                   const color = tierData.tierColor;
                   const badgeStyles = color ? getGradientBadgeStyles(color) : {};
-                  
+
                   return (
-                    <Badge 
-                      key={tierName} 
-                      className={styles.tierBadge} 
-                      size={isMobile ? 'md' : 'lg'} 
-                      radius="sm"
+                    <Badge
+                      key={tierName}
+                      className={styles.tierBadge}
+                      size={isMobile ? 'md' : 'lg'}
+                      radius='sm'
                       style={badgeStyles}
                     >
                       {tierData.count} {tierName}
@@ -81,7 +73,7 @@ const SponsorsHeader = ({
             )}
           </div>
         </div>
-        
+
         <div className={styles.headerRight}>
           {/* CSV Import/Export - Commented out for post-launch implementation
           <Menu shadow="md" width={200}>
@@ -108,31 +100,21 @@ const SponsorsHeader = ({
             </Menu.Dropdown>
           </Menu>
           */}
-          
+
           {!isMobile && (
-            <Button
-              variant="secondary"
-              onClick={onTierManageClick}
-            >
+            <Button variant='secondary' onClick={onTierManageClick}>
               <IconTags size={18} />
               Manage Tiers
             </Button>
           )}
-          
-          <Button
-            variant="primary"
-            onClick={onCreateClick}
-          >
+
+          <Button variant='primary' onClick={onCreateClick}>
             <IconPlus size={18} />
             Add Sponsor
           </Button>
-          
+
           {isMobile && (
-            <Button
-              variant="secondary"
-              onClick={onTierManageClick}
-              size="sm"
-            >
+            <Button variant='secondary' onClick={onTierManageClick} size='sm'>
               <IconTags size={18} />
             </Button>
           )}

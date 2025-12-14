@@ -11,16 +11,9 @@ const DraggableTableRow = ({ id, room, children }) => {
   });
 
   return (
-    <Table.Tr
-      ref={ref}
-      className={`${styles.draggableRow} ${isDragging ? styles.dragging : ''}`}
-    >
+    <Table.Tr ref={ref} className={`${styles.draggableRow} ${isDragging ? styles.dragging : ''}`}>
       <Table.Td className={styles.dragHandleCell}>
-        <ActionIcon
-          variant="subtle"
-          size="sm"
-          className={styles.dragHandle}
-        >
+        <ActionIcon variant='subtle' size='sm' className={styles.dragHandle}>
           <IconGripVertical size={16} />
         </ActionIcon>
       </Table.Td>

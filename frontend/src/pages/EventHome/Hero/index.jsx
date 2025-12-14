@@ -5,7 +5,7 @@ import styles from './styles/index.module.css';
 
 export default function Hero({ title, description, images }) {
   const [backgroundUrl, setBackgroundUrl] = useState(null);
-  
+
   // Get desktop image URL if available
   const { data: desktopData } = useGetPrivateContentQuery(images?.desktop, {
     skip: !images?.desktop,
@@ -32,7 +32,7 @@ export default function Hero({ title, description, images }) {
   const backgroundStyle = {
     backgroundImage: backgroundUrl ? `url(${backgroundUrl})` : defaultBackground,
   };
-  
+
   // Add CSS variables for responsive images
   if (desktopData?.url && mobileData?.url) {
     backgroundStyle['--mobile-image-url'] = `url(${mobileData.url})`;
@@ -40,10 +40,7 @@ export default function Hero({ title, description, images }) {
 
   return (
     <div className={styles.hero}>
-      <div
-        className={styles.heroBackground}
-        style={backgroundStyle}
-      >
+      <div className={styles.heroBackground} style={backgroundStyle}>
         <div className={styles.heroContent}>
           <h1 className={styles.title}>{title}</h1>
           <p className={styles.description}>{description}</p>

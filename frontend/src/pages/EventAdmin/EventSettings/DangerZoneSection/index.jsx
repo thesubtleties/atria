@@ -13,14 +13,13 @@ const DangerZoneSection = ({ event }) => {
   const currentUserId = useSelector((state) => state.auth.user?.id);
 
   // Fetch organization data to check user role
-  const { data: organization } = useGetOrganizationQuery(
-    event?.organization_id,
-    { skip: !event?.organization_id }
-  );
+  const { data: organization } = useGetOrganizationQuery(event?.organization_id, {
+    skip: !event?.organization_id,
+  });
 
   // Check if current user is org owner
   const isOrgOwner = organization?.users?.some(
-    (user) => user.id === currentUserId && user.role === 'OWNER'
+    (user) => user.id === currentUserId && user.role === 'OWNER',
   );
 
   // Only render if user is org owner
@@ -29,53 +28,38 @@ const DangerZoneSection = ({ event }) => {
   const isDeleteEnabled = deleteText === 'DELETE';
 
   return (
-    <div
-      className={styles.dangerZone}
-      role="region"
-      aria-labelledby="danger-zone-title"
-    >
-      <div className={styles.warningSection} role="alert">
+    <div className={styles.dangerZone} role='region' aria-labelledby='danger-zone-title'>
+      <div className={styles.warningSection} role='alert'>
         <div className={styles.warningHeader}>
-          <IconAlertTriangle
-            size={20}
-            className={styles.warningIcon}
-            aria-hidden="true"
-          />
-          <h3 id="danger-zone-title" className={styles.sectionTitle}>
+          <IconAlertTriangle size={20} className={styles.warningIcon} aria-hidden='true' />
+          <h3 id='danger-zone-title' className={styles.sectionTitle}>
             Danger Zone
           </h3>
         </div>
         <Text className={styles.warningText}>
-          Once you delete an event, there is no going back. This will
-          permanently delete the event, all attendees, sessions, chat history,
-          and associated data.
+          Once you delete an event, there is no going back. This will permanently delete the event,
+          all attendees, sessions, chat history, and associated data.
         </Text>
       </div>
 
       <div className={styles.deleteSection}>
-        <Stack gap="md">
-          <Text
-            size="sm"
-            fw={600}
-            className={styles.deleteLabel}
-            id="delete-confirmation-label"
-          >
-            Type <code className={styles.deleteCode}>DELETE</code> to confirm
-            deletion:
+        <Stack gap='md'>
+          <Text size='sm' fw={600} className={styles.deleteLabel} id='delete-confirmation-label'>
+            Type <code className={styles.deleteCode}>DELETE</code> to confirm deletion:
           </Text>
 
           <TextInput
             value={deleteText}
             onChange={(e) => setDeleteText(e.target.value)}
-            placeholder="Type DELETE to enable the delete button"
+            placeholder='Type DELETE to enable the delete button'
             className={styles.deleteInput}
-            aria-labelledby="delete-confirmation-label"
-            aria-describedby="delete-warning"
+            aria-labelledby='delete-confirmation-label'
+            aria-describedby='delete-warning'
             data-autofocus
           />
 
           <Button
-            variant="danger"
+            variant='danger'
             leftIcon={<IconTrash size={16} />}
             onClick={() => setModalOpened(true)}
             disabled={!isDeleteEnabled}

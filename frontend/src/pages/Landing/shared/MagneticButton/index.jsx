@@ -1,57 +1,57 @@
-import { useRef, useState, useEffect } from 'react'
-import { motion } from 'motion/react'
-import styles from './MagneticButton.module.css'
+import { useRef, useState, useEffect } from 'react';
+import { motion } from 'motion/react';
+import styles from './MagneticButton.module.css';
 
-const MagneticButton = ({ 
-  children, 
+const MagneticButton = ({
+  children,
   variant = 'primary',
   onClick,
   className = '',
   magnetStrength = 0.3,
-  ...props 
+  ...props
 }) => {
-  const buttonRef = useRef(null)
-  const [position, setPosition] = useState({ x: 0, y: 0 })
-  const [isTouchDevice, setIsTouchDevice] = useState(false)
+  const buttonRef = useRef(null);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
 
   // Detect touch device on mount
   useEffect(() => {
     const checkTouchDevice = () => {
-      setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0)
-    }
-    checkTouchDevice()
-  }, [])
+      setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
+    };
+    checkTouchDevice();
+  }, []);
 
   const handleMouseMove = (e) => {
     // Skip magnetic effect on touch devices for better performance
-    if (!buttonRef.current || isTouchDevice) return
+    if (!buttonRef.current || isTouchDevice) return;
 
-    const { left, top, width, height } = buttonRef.current.getBoundingClientRect()
-    const centerX = left + width / 2
-    const centerY = top + height / 2
+    const { left, top, width, height } = buttonRef.current.getBoundingClientRect();
+    const centerX = left + width / 2;
+    const centerY = top + height / 2;
 
-    const distanceX = e.clientX - centerX
-    const distanceY = e.clientY - centerY
+    const distanceX = e.clientX - centerX;
+    const distanceY = e.clientY - centerY;
 
     // Calculate distance from center
-    const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY)
-    const maxDistance = width
+    const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+    const maxDistance = width;
 
     // Only apply magnetic effect within range
     if (distance < maxDistance) {
-      const strength = 1 - (distance / maxDistance)
+      const strength = 1 - distance / maxDistance;
       setPosition({
         x: distanceX * magnetStrength * strength,
-        y: distanceY * magnetStrength * strength
-      })
+        y: distanceY * magnetStrength * strength,
+      });
     }
-  }
+  };
 
   const handleMouseLeave = () => {
     if (!isTouchDevice) {
-      setPosition({ x: 0, y: 0 })
+      setPosition({ x: 0, y: 0 });
     }
-  }
+  };
 
   return (
     <motion.button
@@ -62,13 +62,13 @@ const MagneticButton = ({
       onClick={onClick}
       animate={{
         x: isTouchDevice ? 0 : position.x,
-        y: isTouchDevice ? 0 : position.y
+        y: isTouchDevice ? 0 : position.y,
       }}
       transition={{
-        type: "spring",
+        type: 'spring',
         stiffness: isTouchDevice ? 300 : 150,
         damping: isTouchDevice ? 25 : 15,
-        mass: 0.5
+        mass: 0.5,
       }}
       whileHover={isTouchDevice ? undefined : { scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
@@ -78,11 +78,11 @@ const MagneticButton = ({
       <motion.div
         className={styles.glow}
         animate={{
-          opacity: !isTouchDevice && (position.x !== 0 || position.y !== 0) ? 0.3 : 0
+          opacity: !isTouchDevice && (position.x !== 0 || position.y !== 0) ? 0.3 : 0,
         }}
       />
     </motion.button>
-  )
-}
+  );
+};
 
-export default MagneticButton
+export default MagneticButton;

@@ -64,10 +64,7 @@ export function useChatScroll({
   useEffect(() => {
     if (!isLoading && messages.length > 0 && messagesEndRef.current) {
       // Initial load or user is near bottom
-      if (
-        !scrollState.current.hasInitialized ||
-        scrollState.current.isNearBottom
-      ) {
+      if (!scrollState.current.hasInitialized || scrollState.current.isNearBottom) {
         messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
       }
     }
@@ -100,24 +97,16 @@ export function useChatScroll({
       // Track if user is near bottom
       const threshold = 100;
       const isNearBottom =
-        container.scrollHeight - container.scrollTop - container.clientHeight <
-        threshold;
+        container.scrollHeight - container.scrollTop - container.clientHeight < threshold;
       scrollState.current.isNearBottom = isNearBottom;
 
       // Check if we should load more (25% from top)
       const scrollPercentage = container.scrollTop / container.scrollHeight;
-      if (
-        scrollPercentage < 0.25 &&
-        hasMore &&
-        !isFetching &&
-        !scrollState.current.scrollTimeout
-      ) {
+      if (scrollPercentage < 0.25 && hasMore && !isFetching && !scrollState.current.scrollTimeout) {
         // Debounce scroll loading
         scrollState.current.scrollTimeout = setTimeout(() => {
           // Save scroll position before loading
-          const firstMessage = container.querySelector(
-            '[data-message-id]'
-          ) as HTMLElement | null;
+          const firstMessage = container.querySelector('[data-message-id]') as HTMLElement | null;
           if (firstMessage?.dataset.messageId) {
             scrollState.current.scrollBeforeLoad = {
               messageId: firstMessage.dataset.messageId,
@@ -157,7 +146,7 @@ export function useChatScroll({
       if (container) {
         const savedState = scrollState.current.scrollBeforeLoad;
         const targetMessage = container.querySelector(
-          `[data-message-id="${savedState.messageId}"]`
+          `[data-message-id="${savedState.messageId}"]`,
         ) as HTMLElement | null;
 
         if (targetMessage) {
@@ -176,4 +165,3 @@ export function useChatScroll({
     messagesContainerRef,
   };
 }
-

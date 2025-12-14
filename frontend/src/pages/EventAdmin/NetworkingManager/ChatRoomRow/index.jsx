@@ -4,10 +4,7 @@ import { IconDots, IconEdit, IconTrash, IconMessages } from '@tabler/icons-react
 import { useNavigate } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
 import { openConfirmationModal } from '@/shared/components/modals/ConfirmationModal';
-import {
-  useToggleChatRoomMutation,
-  useDeleteChatRoomMutation
-} from '@/app/features/chat/api';
+import { useToggleChatRoomMutation, useDeleteChatRoomMutation } from '@/app/features/chat/api';
 import { useRoomPresence } from '@/shared/hooks/useRoomPresence';
 import MobileCard from './MobileCard';
 import styles from './styles.module.css';
@@ -93,21 +90,19 @@ const ChatRoomRow = ({ room, color, onEdit, isTableRow, isMobile }) => {
         <Text fw={500}>{room.name}</Text>
       </Table.Td>
       <Table.Td>
-        <Text size="sm" c="dimmed" lineClamp={1}>
+        <Text size='sm' c='dimmed' lineClamp={1}>
           {room.description || '-'}
         </Text>
       </Table.Td>
       <Table.Td style={{ textAlign: 'center' }}>
-        <Text size="sm">{room.message_count || 0}</Text>
+        <Text size='sm'>{room.message_count || 0}</Text>
       </Table.Td>
       <Table.Td style={{ textAlign: 'center' }}>
-        {userCount > 0 ? (
-          <Indicator processing color="green" size={10}>
-            <Text size="sm">{userCount}</Text>
+        {userCount > 0 ?
+          <Indicator processing color='green' size={10}>
+            <Text size='sm'>{userCount}</Text>
           </Indicator>
-        ) : (
-          <Text size="sm">{userCount}</Text>
-        )}
+        : <Text size='sm'>{userCount}</Text>}
       </Table.Td>
       <Table.Td>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -120,25 +115,21 @@ const ChatRoomRow = ({ room, color, onEdit, isTableRow, isMobile }) => {
         </div>
       </Table.Td>
       <Table.Td style={{ textAlign: 'center' }}>
-        <Menu 
-          shadow="md" 
-          width={200} 
-          position="bottom-end"
-        >
+        <Menu shadow='md' width={200} position='bottom-end'>
           <Menu.Target>
-            <ActionIcon variant="subtle" color="gray" className={styles.actionIcon}>
+            <ActionIcon variant='subtle' color='gray' className={styles.actionIcon}>
               <IconDots size={16} />
             </ActionIcon>
           </Menu.Target>
           <Menu.Dropdown className={styles.menuDropdown}>
-            <Menu.Item 
+            <Menu.Item
               className={styles.menuItem}
               leftSection={<IconMessages size={14} />}
               onClick={handleViewChat}
             >
               View Chat
             </Menu.Item>
-            <Menu.Item 
+            <Menu.Item
               className={styles.menuItem}
               leftSection={<IconEdit size={14} />}
               onClick={() => onEdit(room)}
@@ -146,10 +137,10 @@ const ChatRoomRow = ({ room, color, onEdit, isTableRow, isMobile }) => {
               Edit
             </Menu.Item>
             <Menu.Divider />
-            <Menu.Item 
+            <Menu.Item
               className={styles.menuItem}
               leftSection={<IconTrash size={14} />}
-              color="red"
+              color='red'
               onClick={handleDelete}
             >
               Delete

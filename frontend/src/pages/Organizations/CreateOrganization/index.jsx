@@ -27,18 +27,18 @@ export const CreateOrganization = () => {
   };
 
   return (
-    <Container size="sm" className={styles.container}>
-      <Stack spacing="xl" align="center">
-        <Title order={1} align="center">
+    <Container size='sm' className={styles.container}>
+      <Stack spacing='xl' align='center'>
+        <Title order={1} align='center'>
           Name Your Organization
         </Title>
 
         <form onSubmit={form.onSubmit(handleSubmit)} className={styles.form}>
-          <Stack spacing="xl" w="100%">
+          <Stack spacing='xl' w='100%'>
             <TextInput
               required
-              size="xl"
-              placeholder="Enter organization name"
+              size='xl'
+              placeholder='Enter organization name'
               {...form.getInputProps('name')}
               styles={(theme) => ({
                 input: {
@@ -52,11 +52,11 @@ export const CreateOrganization = () => {
             />
 
             <Button
-              type="submit"
+              type='submit'
               loading={isLoading}
-              size="lg"
+              size='lg'
               fullWidth
-              variant="gradient"
+              variant='gradient'
               gradient={{ from: '#9c42f5', to: '#6d42f5', deg: 135 }}
               className={styles.button}
             >

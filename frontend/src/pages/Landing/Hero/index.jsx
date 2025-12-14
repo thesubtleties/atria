@@ -32,7 +32,7 @@ const Hero = () => {
   const { openModal, ModalRenderer } = useModalManager();
   const dispatch = useDispatch();
   const [login] = useLoginMutation();
-  
+
   const containerRef = useRef(null);
   const scrambleRef = useRef(null);
   const scrollIndicatorRef = useRef(null);
@@ -52,15 +52,18 @@ const Hero = () => {
         // Check if Nunito is loaded
         const fontLoaded = document.fonts.check('1rem Nunito');
         setFontLoaded(fontLoaded);
-        
+
         // If not loaded yet, wait for it
         if (!fontLoaded) {
-          document.fonts.load('1rem Nunito').then(() => {
-            setFontLoaded(true);
-          }).catch(() => {
-            // Font failed to load, show anyway after a timeout
-            setTimeout(() => setFontLoaded(true), 500);
-          });
+          document.fonts
+            .load('1rem Nunito')
+            .then(() => {
+              setFontLoaded(true);
+            })
+            .catch(() => {
+              // Font failed to load, show anyway after a timeout
+              setTimeout(() => setFontLoaded(true), 500);
+            });
         }
       });
     } else {
@@ -85,9 +88,7 @@ const Hero = () => {
         password: 'changeme',
       }).unwrap();
       // Fetch user data after successful login
-      const userData = await dispatch(
-        authApi.endpoints.getCurrentUser.initiate()
-      ).unwrap();
+      const userData = await dispatch(authApi.endpoints.getCurrentUser.initiate()).unwrap();
       if (userData) {
         navigate('/app');
       }
@@ -101,7 +102,7 @@ const Hero = () => {
       console.log('🎬 [Hero] useGSAP starting', {
         timestamp: performance.now(),
         bodyClasses: document.body.className,
-        hasCriticalCSS: !!document.getElementById('critical-animations')
+        hasCriticalCSS: !!document.getElementById('critical-animations'),
       });
 
       // Note: We let GSAP run during pre-rendering to capture initial animation states
@@ -132,7 +133,7 @@ const Hero = () => {
               ease: 'power3.out',
               force3D: true,
             },
-            '-=0.5'
+            '-=0.5',
           );
         }
 
@@ -146,7 +147,7 @@ const Hero = () => {
               ease: 'power3.out',
               force3D: true,
             },
-            '-=0.4'
+            '-=0.4',
           );
         }
 
@@ -160,7 +161,7 @@ const Hero = () => {
               ease: 'power3.out',
               force3D: true,
             },
-            '-=0.6'
+            '-=0.6',
           );
         }
 
@@ -193,12 +194,15 @@ const Hero = () => {
           const viewportWidth = window.innerWidth;
           const isMobile = viewportWidth < 768;
           const isTablet = viewportWidth >= 768 && viewportWidth < 1024;
-          
+
           // Adjust scroll trigger based on device type
           const scrollConfig = {
             trigger: containerRef.current,
             start: 'top top',
-            end: isMobile ? '+=120%' : isTablet ? '+=130%' : '+=135%',
+            end:
+              isMobile ? '+=120%'
+              : isTablet ? '+=130%'
+              : '+=135%',
             scrub: 1,
             pin: true,
             pinSpacing: true,
@@ -206,15 +210,33 @@ const Hero = () => {
             fastScrollEnd: true,
             onUpdate: (self) => {
               // Responsive drape edge calculations
-              const baseEdge = isMobile ? 15 : isTablet ? 12 : 10;
-              const progressMultiplier = isMobile ? 85 : isTablet ? 90 : 100;
+              const baseEdge =
+                isMobile ? 15
+                : isTablet ? 12
+                : 10;
+              const progressMultiplier =
+                isMobile ? 85
+                : isTablet ? 90
+                : 100;
               const drapeEdgeFromBottom = baseEdge + self.progress * progressMultiplier;
 
               // Responsive opacity thresholds based on content positioning
-              const ctaThreshold = isMobile ? 35 : isTablet ? 32 : 30;
-              const taglineThreshold = isMobile ? 45 : isTablet ? 42 : 40;
-              const logoThreshold = isMobile ? 60 : isTablet ? 57 : 55;
-              const navThreshold = isMobile ? 85 : isTablet ? 82 : 80;
+              const ctaThreshold =
+                isMobile ? 35
+                : isTablet ? 32
+                : 30;
+              const taglineThreshold =
+                isMobile ? 45
+                : isTablet ? 42
+                : 40;
+              const logoThreshold =
+                isMobile ? 60
+                : isTablet ? 57
+                : 55;
+              const navThreshold =
+                isMobile ? 85
+                : isTablet ? 82
+                : 80;
 
               // CTA button opacity control
               if (ctaRef.current) {
@@ -270,11 +292,14 @@ const Hero = () => {
               }
             },
           };
-          
+
           drapeTl = gsap.timeline({ scrollTrigger: scrollConfig });
 
           // Animate drape with responsive distance
-          const drapeDistance = isMobile ? '-100vh' : isTablet ? '-105vh' : '-110vh';
+          const drapeDistance =
+            isMobile ? '-100vh'
+            : isTablet ? '-105vh'
+            : '-110vh';
           drapeTl
             .to(drapeRef.current, {
               y: drapeDistance,
@@ -291,7 +316,7 @@ const Hero = () => {
                 duration: 0.2,
                 force3D: !isFirefox && !isMobile,
               },
-              isMobile ? 0.3 : 0 // Delay fade on mobile
+              isMobile ? 0.3 : 0, // Delay fade on mobile
             );
         }
       }, containerRef); // Context scoped to container
@@ -301,7 +326,7 @@ const Hero = () => {
       // until ScrollTrigger is ready to take over
       console.log('✅ [Hero] GSAP initialized, adding .hydrated class', {
         timestamp: performance.now(),
-        scrollTriggers: ScrollTrigger.getAll().length
+        scrollTriggers: ScrollTrigger.getAll().length,
       });
       document.body.classList.add('hydrated');
 
@@ -314,7 +339,7 @@ const Hero = () => {
         document.body.classList.remove('hydrated'); // Remove hydrated class on cleanup
       };
     },
-    { scope: containerRef }
+    { scope: containerRef },
   );
 
   return (
@@ -324,13 +349,13 @@ const Hero = () => {
         {/* Purple drape as bottom layer that covers 90% of screen */}
         <div ref={drapeRef} className={`${styles.drape} drape`}>
           <svg
-            viewBox="0 0 100 100"
-            preserveAspectRatio="none"
+            viewBox='0 0 100 100'
+            preserveAspectRatio='none'
             className={`${styles.drapeSvg} drape-svg`}
           >
             <path
-              d="M0,0 L100,0 L100,94 C93.75,92.2 87.5,96.7 75,94 C62.5,92.2 50,97.8 37.5,95.6 C25,93.3 12.5,97.8 0,94 Z"
-              fill="#8B5CF6"
+              d='M0,0 L100,0 L100,94 C93.75,92.2 87.5,96.7 75,94 C62.5,92.2 50,97.8 37.5,95.6 C25,93.3 12.5,97.8 0,94 Z'
+              fill='#8B5CF6'
             />
           </svg>
         </div>
@@ -355,27 +380,37 @@ const Hero = () => {
           {/* Icon links - far right, desktop only */}
           <div className={styles.navIconLinks}>
             <a
-              href="https://docs.atria.gg"
-              target="_blank"
-              rel="noopener noreferrer"
+              href='https://docs.atria.gg'
+              target='_blank'
+              rel='noopener noreferrer'
               className={styles.navIconLink}
-              aria-label="Documentation"
+              aria-label='Documentation'
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                <path d="M7 3m0 2.667a2.667 2.667 0 0 1 2.667 -2.667h8.666a2.667 2.667 0 0 1 2.667 2.667v8.666a2.667 2.667 0 0 1 -2.667 2.667h-8.666a2.667 2.667 0 0 1 -2.667 -2.667z" />
-                <path d="M4.012 7.26a2.005 2.005 0 0 0 -1.012 1.737v10c0 1.1 .9 2 2 2h10c.75 0 1.158 -.385 1.5 -1" />
-                <path d="M11 7h5" />
-                <path d="M11 10h6" />
-                <path d="M11 13h3" />
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                width='20'
+                height='20'
+                viewBox='0 0 24 24'
+                fill='none'
+                stroke='currentColor'
+                strokeWidth='2'
+                strokeLinecap='round'
+                strokeLinejoin='round'
+              >
+                <path stroke='none' d='M0 0h24v24H0z' fill='none' />
+                <path d='M7 3m0 2.667a2.667 2.667 0 0 1 2.667 -2.667h8.666a2.667 2.667 0 0 1 2.667 2.667v8.666a2.667 2.667 0 0 1 -2.667 2.667h-8.666a2.667 2.667 0 0 1 -2.667 -2.667z' />
+                <path d='M4.012 7.26a2.005 2.005 0 0 0 -1.012 1.737v10c0 1.1 .9 2 2 2h10c.75 0 1.158 -.385 1.5 -1' />
+                <path d='M11 7h5' />
+                <path d='M11 10h6' />
+                <path d='M11 13h3' />
               </svg>
             </a>
             <a
-              href="https://github.com/thesubtleties/atria"
-              target="_blank"
-              rel="noopener noreferrer"
+              href='https://github.com/thesubtleties/atria'
+              target='_blank'
+              rel='noopener noreferrer'
               className={styles.navIconLink}
-              aria-label="GitHub Repository"
+              aria-label='GitHub Repository'
             >
               <IconBrandGithubFilled size={20} />
             </a>
@@ -388,9 +423,16 @@ const Hero = () => {
         <div className={styles.container}>
           <div className={styles.heroContent}>
             <div ref={logoRef} className={styles.logoContainer}>
-              <img src={AtriaLogo} alt="Atria" className={styles.logo} fetchPriority="high" width="512" height="512" />
-              <h1 
-                className={styles.logoText} 
+              <img
+                src={AtriaLogo}
+                alt='Atria'
+                className={styles.logo}
+                fetchPriority='high'
+                width='512'
+                height='512'
+              />
+              <h1
+                className={styles.logoText}
                 style={{ opacity: fontLoaded ? 1 : 0, transition: 'opacity 0.3s ease' }}
               >
                 atria
@@ -398,14 +440,14 @@ const Hero = () => {
             </div>
             <div ref={taglineRef} className={styles.tagline}>
               <p className={styles.taglineTop}>— a place for —</p>
-              <p ref={scrambleRef} id="hero-scramble-text" className={styles.scrambleText}>
+              <p ref={scrambleRef} id='hero-scramble-text' className={styles.scrambleText}>
                 connections
               </p>
             </div>
 
             <div ref={ctaRef} className={styles.ctaWrapper}>
               <MagneticButton
-                variant="primary"
+                variant='primary'
                 className={styles.ctaButton}
                 magnetStrength={0.4}
                 onClick={handleSignup}
@@ -413,7 +455,10 @@ const Hero = () => {
                 START YOUR STORY
               </MagneticButton>
               <p className={styles.loginText}>
-                or <button onClick={handleLogin} className={styles.loginLink}>login</button>
+                or{' '}
+                <button onClick={handleLogin} className={styles.loginLink}>
+                  login
+                </button>
               </p>
             </div>
           </div>
@@ -423,19 +468,13 @@ const Hero = () => {
       {/* Scroll indicator */}
       <div ref={scrollIndicatorRef} className={styles.scrollIndicator}>
         <span className={styles.scrollText}>Scroll to explore</span>
-        <svg
-          className={styles.scrollArrow}
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-        >
+        <svg className={styles.scrollArrow} width='24' height='24' viewBox='0 0 24 24' fill='none'>
           <path
-            d="M12 5v14m0 0l-7-7m7 7l7-7"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+            d='M12 5v14m0 0l-7-7m7 7l7-7'
+            stroke='currentColor'
+            strokeWidth='2'
+            strokeLinecap='round'
+            strokeLinejoin='round'
           />
         </svg>
       </div>

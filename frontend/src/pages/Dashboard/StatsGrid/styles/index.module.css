@@ -25,13 +25,13 @@
 .statNumber {
   font-size: clamp(1.5rem, 5vw, 2rem);
   font-weight: 700;
-  color: #8B5CF6;
+  color: #8b5cf6;
   margin-bottom: clamp(0.1rem, 1vw, 0.25rem);
   line-height: 1.1;
 }
 
 .statLabel {
-  color: #64748B;
+  color: #64748b;
   font-size: clamp(0.7rem, 2vw, 0.8rem);
   font-weight: 500;
   line-height: 1.3;

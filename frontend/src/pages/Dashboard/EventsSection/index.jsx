@@ -60,12 +60,12 @@ export const EventsSection = ({ events }) => {
     <section className={styles.dashboardSection}>
       <div className={styles.sectionHeader}>
         <h2 className={styles.sectionTitle}>Your Events</h2>
-        <Button variant="secondary" onClick={() => navigate('/app/events')}>
+        <Button variant='secondary' onClick={() => navigate('/app/events')}>
           View All
         </Button>
       </div>
 
-      {events && events.length > 0 ? (
+      {events && events.length > 0 ?
         <div className={styles.cardList}>
           {events.map((event) => (
             <div
@@ -82,29 +82,27 @@ export const EventsSection = ({ events }) => {
                 </div>
                 <Badge
                   color={getStatusColor(event.status)}
-                  variant="light"
-                  radius="sm"
+                  variant='light'
+                  radius='sm'
                   className={styles.responsiveBadge}
                 >
                   {getStatusLabel(event.status)}
                 </Badge>
               </div>
               <div className={styles.cardMeta}>
-                {event.attendee_count}{' '}
-                {event.attendee_count === 1 ? 'attendee' : 'attendees'} •{' '}
+                {event.attendee_count} {event.attendee_count === 1 ? 'attendee' : 'attendees'} •{' '}
                 {event.organization.name}
               </div>
             </div>
           ))}
         </div>
-      ) : (
-        <div className={styles.emptyState}>
+      : <div className={styles.emptyState}>
           <p>{`You're not registered for any events yet.`}</p>
-          <Button variant="primary" onClick={() => navigate('/app/events')}>
+          <Button variant='primary' onClick={() => navigate('/app/events')}>
             Browse Events
           </Button>
         </div>
-      )}
+      }
     </section>
   );
 };

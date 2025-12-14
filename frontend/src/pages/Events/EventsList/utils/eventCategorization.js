@@ -16,14 +16,14 @@ export const categorizeEvents = (events) => {
     past: [],
   };
 
-  events.forEach(event => {
+  events.forEach((event) => {
     const startDate = parseISO(event.start_date);
     const endDate = parseISO(event.end_date);
 
     // Check if event is happening today
     if (startDate <= todayEnd && endDate >= todayStart) {
       categorized.live.push(event);
-    } 
+    }
     // Check if event is in the future
     else if (startDate > now) {
       categorized.upcoming.push(event);
@@ -36,19 +36,17 @@ export const categorizeEvents = (events) => {
 
   // Sort events within each category
   // Live: by start time (earliest first)
-  categorized.live.sort((a, b) => 
-    parseISO(a.start_date).getTime() - parseISO(b.start_date).getTime()
+  categorized.live.sort(
+    (a, b) => parseISO(a.start_date).getTime() - parseISO(b.start_date).getTime(),
   );
 
   // Upcoming: by start date (soonest first)
-  categorized.upcoming.sort((a, b) => 
-    parseISO(a.start_date).getTime() - parseISO(b.start_date).getTime()
+  categorized.upcoming.sort(
+    (a, b) => parseISO(a.start_date).getTime() - parseISO(b.start_date).getTime(),
   );
 
   // Past: by end date (most recent first)
-  categorized.past.sort((a, b) => 
-    parseISO(b.end_date).getTime() - parseISO(a.end_date).getTime()
-  );
+  categorized.past.sort((a, b) => parseISO(b.end_date).getTime() - parseISO(a.end_date).getTime());
 
   return categorized;
 };

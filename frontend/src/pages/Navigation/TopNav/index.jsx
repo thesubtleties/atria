@@ -7,8 +7,7 @@ import styles from './TopNav.module.css';
 const TopNavComponent = ({ context, leftContent }) => {
   const location = useLocation();
   const isInEvent =
-    location.pathname.includes('/events/') &&
-    !location.pathname.includes('/events/join');
+    location.pathname.includes('/events/') && !location.pathname.includes('/events/join');
   const hasLeftContent = Boolean(leftContent);
 
   return (
@@ -20,13 +19,11 @@ const TopNavComponent = ({ context, leftContent }) => {
       >
         <div className={styles.navLeft}>
           {!isInEvent && (
-            <Link to="/app" className={styles.atriaTitle}>
+            <Link to='/app' className={styles.atriaTitle}>
               atria
             </Link>
           )}
-          {leftContent && (
-            <div className={styles.burgerWrapper}>{leftContent}</div>
-          )}
+          {leftContent && <div className={styles.burgerWrapper}>{leftContent}</div>}
         </div>
 
         <CenterContent context={context} />

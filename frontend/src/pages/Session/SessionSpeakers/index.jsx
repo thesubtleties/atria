@@ -5,10 +5,10 @@ import { useState, useEffect, useMemo } from 'react';
 import { DragDropProvider } from '@dnd-kit/react';
 import { useSortable } from '@dnd-kit/react/sortable';
 import { move } from '@dnd-kit/helpers';
-import { 
+import {
   useGetSessionSpeakersQuery,
   useRemoveSessionSpeakerMutation,
-  useReorderSessionSpeakerMutation 
+  useReorderSessionSpeakerMutation,
 } from '@/app/features/sessions/api';
 import { AddSpeakerModal } from '@/shared/components/modals/session/AddSpeakerModal';
 import { SpeakerCard } from './SpeakerCard';
@@ -16,7 +16,15 @@ import { SPEAKER_ROLE_ORDER, formatSpeakerRole } from '@/shared/constants/speake
 import styles from './styles/index.module.css';
 
 // Draggable speaker wrapper component - now includes role for scoped dragging
-const DraggableSpeakerCard = ({ id, speaker, canEdit, onRemove, role, variant = 'flow', isLast }) => {
+const DraggableSpeakerCard = ({
+  id,
+  speaker,
+  canEdit,
+  onRemove,
+  role,
+  variant = 'flow',
+  isLast,
+}) => {
   // Call useSortable unconditionally
   const sortableResult = useSortable({
     id,
@@ -25,9 +33,7 @@ const DraggableSpeakerCard = ({ id, speaker, canEdit, onRemove, role, variant = 
   });
 
   // Only use the sortable result if canEdit is true
-  const { ref, isDragging } = canEdit
-    ? sortableResult
-    : { ref: null, isDragging: false };
+  const { ref, isDragging } = canEdit ? sortableResult : { ref: null, isDragging: false };
 
   const wrapperProps = canEdit ? { ref } : {};
 
@@ -37,20 +43,25 @@ const DraggableSpeakerCard = ({ id, speaker, canEdit, onRemove, role, variant = 
       className={`${styles.speakerWrapper} ${isDragging ? styles.dragging : ''} ${variant === 'flow' && !isLast ? styles.withDivider : ''}`}
       style={{
         opacity: isDragging ? 0.5 : 1,
-        cursor: canEdit ? (isDragging ? 'grabbing' : 'grab') : 'default',
+        cursor:
+          canEdit ?
+            isDragging ? 'grabbing'
+            : 'grab'
+          : 'default',
       }}
     >
-      <SpeakerCard 
-        speaker={speaker} 
-        canEdit={canEdit}
-        onRemove={onRemove}
-        variant={variant}
-      />
+      <SpeakerCard speaker={speaker} canEdit={canEdit} onRemove={onRemove} variant={variant} />
     </div>
   );
 };
 
-export const SessionSpeakers = ({ sessionId, eventId, canEdit, variant = 'flow', preloadedSpeakers }) => {
+export const SessionSpeakers = ({
+  sessionId,
+  eventId,
+  canEdit,
+  variant = 'flow',
+  preloadedSpeakers,
+}) => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [removeSpeaker] = useRemoveSessionSpeakerMutation();
   const [reorderSpeaker] = useReorderSessionSpeakerMutation();
@@ -59,7 +70,7 @@ export const SessionSpeakers = ({ sessionId, eventId, canEdit, variant = 'flow',
   // Otherwise fetch the data (Session detail page case)
   const { data: speakersData, isLoading } = useGetSessionSpeakersQuery(
     { sessionId },
-    { skip: !!preloadedSpeakers } // Skip the query entirely if we have preloaded data
+    { skip: !!preloadedSpeakers }, // Skip the query entirely if we have preloaded data
   );
 
   // Use preloaded speakers if available, otherwise use fetched data
@@ -85,7 +96,7 @@ export const SessionSpeakers = ({ sessionId, eventId, canEdit, variant = 'flow',
   useEffect(() => {
     const speakersByRoleLocal = {};
     Object.entries(speakersByRole).forEach(([role, roleSpeakers]) => {
-      speakersByRoleLocal[role] = roleSpeakers.map(speaker => `speaker-${speaker.user_id}`);
+      speakersByRoleLocal[role] = roleSpeakers.map((speaker) => `speaker-${speaker.user_id}`);
     });
     setLocalSpeakersByRole(speakersByRoleLocal);
   }, [speakersByRole]);
@@ -101,14 +112,14 @@ export const SessionSpeakers = ({ sessionId, eventId, canEdit, variant = 'flow',
   // Handle drag operations for a specific role
   const handleDragOver = (role) => (event) => {
     if (!canEdit) return;
-    
+
     setLocalSpeakersByRole((current) => {
       const currentRoleSpeakers = current[role] || [];
       const result = move(currentRoleSpeakers, event);
       if (result) {
         return {
           ...current,
-          [role]: result
+          [role]: result,
         };
       }
       return current;
@@ -117,13 +128,13 @@ export const SessionSpeakers = ({ sessionId, eventId, canEdit, variant = 'flow',
 
   const handleDragEnd = (role) => async (event) => {
     if (!canEdit) return;
-    
+
     const { operation } = event;
     if (!operation) return;
 
     const draggedId = operation.source.id;
-    const draggedSpeaker = speakers.find(s => `speaker-${s.user_id}` === draggedId);
-    
+    const draggedSpeaker = speakers.find((s) => `speaker-${s.user_id}` === draggedId);
+
     if (!draggedSpeaker) {
       console.error('Could not find speaker with id:', draggedId);
       return;
@@ -138,20 +149,20 @@ export const SessionSpeakers = ({ sessionId, eventId, canEdit, variant = 'flow',
     const roleSpeakers = speakersByRole[role] || [];
     const baseOrder = speakers.indexOf(roleSpeakers[0]) + 1;
     const newOrder = baseOrder + newIndex;
-    
+
     try {
       // The API will return all speakers in their new order
       await reorderSpeaker({
         sessionId,
         userId: draggedSpeaker.user_id,
-        order: newOrder
+        order: newOrder,
       }).unwrap();
     } catch (error) {
       console.error('Failed to reorder speaker:', error);
       // Revert the local state on error
       const speakersByRoleLocal = {};
       Object.entries(speakersByRole).forEach(([r, roleSpeakers]) => {
-        speakersByRoleLocal[r] = roleSpeakers.map(speaker => `speaker-${speaker.user_id}`);
+        speakersByRoleLocal[r] = roleSpeakers.map((speaker) => `speaker-${speaker.user_id}`);
       });
       setLocalSpeakersByRole(speakersByRoleLocal);
     }
@@ -162,14 +173,12 @@ export const SessionSpeakers = ({ sessionId, eventId, canEdit, variant = 'flow',
   return (
     <div className={styles.speakersSection}>
       <div className={styles.header}>
-        <h3 className={styles.headerTitle}>
-          Speakers ({speakers.length})
-        </h3>
+        <h3 className={styles.headerTitle}>Speakers ({speakers.length})</h3>
         {canEdit && (
           <Button
             onClick={() => setShowAddModal(true)}
-            variant="subtle"
-            size="sm"
+            variant='subtle'
+            size='sm'
             p={0}
             className={styles.addButton}
           >
@@ -178,26 +187,27 @@ export const SessionSpeakers = ({ sessionId, eventId, canEdit, variant = 'flow',
         )}
       </div>
 
-      {speakers.length === 0 ? (
-        <Text size="sm" c="dimmed" ta="center" py="xl">
+      {speakers.length === 0 ?
+        <Text size='sm' c='dimmed' ta='center' py='xl'>
           No speakers assigned yet
         </Text>
-      ) : (
-        <div className={styles.speakers}>
+      : <div className={styles.speakers}>
           {Object.entries(speakersByRole).map(([role]) => {
             const roleSpeakerIds = localSpeakersByRole[role] || [];
             return (
               <div key={role} className={styles.roleGroup}>
                 <h4 className={styles.roleTitle}>{formatSpeakerRole(role)}</h4>
-                <div className={`${styles.speakersRow} ${variant === 'flow' ? styles.flowRow : ''}`}>
+                <div
+                  className={`${styles.speakersRow} ${variant === 'flow' ? styles.flowRow : ''}`}
+                >
                   <DragDropProvider
                     onDragOver={handleDragOver(role)}
                     onDragEnd={handleDragEnd(role)}
                   >
                     {roleSpeakerIds.map((speakerId, index) => {
-                      const speaker = speakers.find(s => `speaker-${s.user_id}` === speakerId);
+                      const speaker = speakers.find((s) => `speaker-${s.user_id}` === speakerId);
                       if (!speaker) return null;
-                      
+
                       return (
                         <DraggableSpeakerCard
                           key={speakerId}
@@ -217,7 +227,7 @@ export const SessionSpeakers = ({ sessionId, eventId, canEdit, variant = 'flow',
             );
           })}
         </div>
-      )}
+      }
 
       <AddSpeakerModal
         sessionId={sessionId}

@@ -16,14 +16,9 @@ export const CenterContent = () => {
 
   return (
     <div className={styles.centerContent}>
-      {titleData.subtitle ? (
-        <TitleWithSubtitle
-          title={titleData.text}
-          subtitle={titleData.subtitle}
-        />
-      ) : (
-        <SimpleTitle>{titleData.text}</SimpleTitle>
-      )}
+      {titleData.subtitle ?
+        <TitleWithSubtitle title={titleData.text} subtitle={titleData.subtitle} />
+      : <SimpleTitle>{titleData.text}</SimpleTitle>}
     </div>
   );
 };

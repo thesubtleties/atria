@@ -18,11 +18,9 @@ export const SessionCard = ({
   isOrgView = false,
   orgId,
   eventId,
-  id
+  id,
 }) => {
-  const sessionTypeClass = session_type
-    ? styles[session_type.toLowerCase()]
-    : '';
+  const sessionTypeClass = session_type ? styles[session_type.toLowerCase()] : '';
 
   const speakers = session_speakers.map((speaker) => ({
     id: speaker.user_id,
@@ -46,16 +44,15 @@ export const SessionCard = ({
   const startTimes = formatSessionTime(start_time, eventStartDate, day_number, eventTimezone);
   const endTimes = formatSessionTime(end_time, eventStartDate, day_number, eventTimezone);
 
-  const sessionUrl = isOrgView
-    ? `/app/organizations/${orgId}/events/${eventId}/sessions/${id}`
+  const sessionUrl =
+    isOrgView ?
+      `/app/organizations/${orgId}/events/${eventId}/sessions/${id}`
     : `/app/events/${eventId}/sessions/${id}`;
 
   return (
     <Link to={sessionUrl} className={styles.sessionCard}>
       <div className={styles.typeTag}>
-        <span className={`${styles.sessionType} ${sessionTypeClass}`}>
-          {session_type}
-        </span>
+        <span className={`${styles.sessionType} ${sessionTypeClass}`}>{session_type}</span>
       </div>
 
       <div className={styles.content}>
@@ -63,7 +60,8 @@ export const SessionCard = ({
         <div className={styles.time}>
           {/* Show user's local time by default (or event time if same timezone) */}
           <div>
-            {startTimes.userTime || startTimes.eventTime} - {endTimes.userTime || endTimes.eventTime} {startTimes.timezone}
+            {startTimes.userTime || startTimes.eventTime} -{' '}
+            {endTimes.userTime || endTimes.eventTime} {startTimes.timezone}
           </div>
           {/* Show event time on hover if different from user's timezone */}
           {startTimes.showUserTime && (
@@ -129,7 +127,7 @@ SessionCard.propTypes = {
         linkedin: PropTypes.string,
         website: PropTypes.string,
       }),
-    })
+    }),
   ),
   isOrgView: PropTypes.bool,
   orgId: PropTypes.string,
