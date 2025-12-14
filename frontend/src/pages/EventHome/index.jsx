@@ -10,13 +10,7 @@ import styles from './styles/index.module.css';
 
 export const EventHome = () => {
   const { eventId } = useParams();
-  const {
-    data: event,
-    isLoading,
-    isError,
-  } = useGetEventQuery(eventId, {
-    skip: !eventId,
-  });
+  const { data: event, isLoading, isError } = useGetEventQuery({ id: eventId }, { skip: !eventId });
 
   console.log(event);
   if (isLoading) return <LoadingPage message='Loading event home...' />;

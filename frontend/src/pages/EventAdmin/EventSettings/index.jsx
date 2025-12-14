@@ -33,9 +33,7 @@ const EventSettings = () => {
     data: event,
     isLoading,
     error,
-  } = useGetEventQuery(parseInt(eventId), {
-    skip: !eventId,
-  });
+  } = useGetEventQuery({ id: parseInt(eventId) }, { skip: !eventId });
 
   // Fetch organization data to check user role
   const { data: organization } = useGetOrganizationQuery(event?.organization_id, {

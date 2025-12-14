@@ -22,9 +22,7 @@ export const SessionPage = () => {
   const [isChatOpen, setIsChatOpen] = useState(true); // Start open by default
 
   const { data: session, isLoading } = useGetSessionQuery(sessionId);
-  const { data: event } = useGetEventQuery(session?.event_id, {
-    skip: !session?.event_id,
-  });
+  const { data: event } = useGetEventQuery({ id: session?.event_id }, { skip: !session?.event_id });
   const [updateStatus] = useUpdateSessionStatusMutation();
   const [updateSession] = useUpdateSessionMutation();
 

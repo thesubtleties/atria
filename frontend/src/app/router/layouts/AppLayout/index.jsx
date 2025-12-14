@@ -33,9 +33,10 @@ export const AppLayout = () => {
     data: event,
     error: eventError,
     isError: eventIsError,
-  } = useGetEventQuery(eventId, {
-    skip: !eventId, // Skip the query if eventId is undefined
-  });
+  } = useGetEventQuery(
+    { id: eventId },
+    { skip: !eventId }, // Skip the query if eventId is undefined
+  );
 
   // Redirect to dashboard if event is deleted (404) or user has no access (403)
   useEffect(() => {

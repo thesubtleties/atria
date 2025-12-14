@@ -22,9 +22,7 @@ const SpeakersManager = () => {
   const [addModalOpen, setAddModalOpen] = useState(false);
 
   // Fetch event details
-  const { data: eventData } = useGetEventQuery(eventId, {
-    skip: !eventId,
-  });
+  const { data: eventData } = useGetEventQuery({ id: eventId }, { skip: !eventId });
   const currentUserRole = eventData?.user_role || 'ATTENDEE';
 
   // Fetch speakers with pagination

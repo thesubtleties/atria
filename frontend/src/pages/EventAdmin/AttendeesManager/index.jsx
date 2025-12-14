@@ -48,9 +48,7 @@ const AttendeesManager = () => {
   const currentUserId = currentUser?.id;
 
   // Fetch event details to get current user's role
-  const { data: eventData } = useGetEventQuery(eventId, {
-    skip: !eventId,
-  });
+  const { data: eventData } = useGetEventQuery({ id: eventId }, { skip: !eventId });
   const currentUserRole = eventData?.user_role || 'ATTENDEE';
 
   // Fetch attendees with pagination (using admin endpoint for email/full name access)

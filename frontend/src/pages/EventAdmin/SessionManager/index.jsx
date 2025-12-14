@@ -22,9 +22,7 @@ export const SessionManager = () => {
     isLoading: eventLoading,
     error: eventError,
     refetch: refetchEvent,
-  } = useGetEventQuery(parseInt(eventId), {
-    skip: !eventId,
-  });
+  } = useGetEventQuery({ id: parseInt(eventId) }, { skip: !eventId });
 
   const { data: sessionsData, isLoading: sessionsLoading } = useGetSessionsQuery(
     {

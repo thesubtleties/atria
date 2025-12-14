@@ -16,9 +16,10 @@ export const EventCard = ({ event, isOrgView, canEdit }) => {
   const { formatDate } = useFormatDate();
 
   // Only fetch details if it's a single session event
-  const { data: eventDetails } = useGetEventQuery(event.id, {
-    skip: event.event_type !== 'SINGLE_SESSION',
-  });
+  const { data: eventDetails } = useGetEventQuery(
+    { id: event.id },
+    { skip: event.event_type !== 'SINGLE_SESSION' },
+  );
 
   const isAdmin = eventDetails?.organizers?.some((org) => org.role === 'ADMIN');
   const hasSession = eventDetails?.sessions?.length > 0;

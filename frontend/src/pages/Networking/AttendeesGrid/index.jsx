@@ -26,7 +26,7 @@ export function AttendeesGrid({ eventId }) {
   const perPage = 50;
 
   // Fetch event data for icebreakers
-  const { data: eventData } = useGetEventQuery(eventId, { skip: !eventId });
+  const { data: eventData } = useGetEventQuery({ id: eventId }, { skip: !eventId });
 
   // Fetch both ADMIN and ORGANIZER when "organizer" is selected
   const {

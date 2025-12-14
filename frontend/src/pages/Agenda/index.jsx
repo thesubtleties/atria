@@ -18,9 +18,10 @@ export const AgendaPage = () => {
   const dayParam = parseInt(searchParams.get('day') || '1');
   const currentDay = isNaN(dayParam) || dayParam < 1 ? 1 : dayParam;
 
-  const { data: event, isLoading: eventLoading } = useGetEventQuery(parseInt(eventId), {
-    skip: !eventId,
-  });
+  const { data: event, isLoading: eventLoading } = useGetEventQuery(
+    { id: parseInt(eventId) },
+    { skip: !eventId },
+  );
   const { data: sessionsData, isLoading: sessionsLoading } = useGetSessionsQuery(
     {
       eventId: parseInt(eventId),
