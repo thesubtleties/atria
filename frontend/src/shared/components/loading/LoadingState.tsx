@@ -13,24 +13,33 @@ import styles from './styles/LoadingState.module.css';
  * Uses brand purple (#8B5CF6) consistently across all loading states
  */
 
-// Standard inline loader - use for buttons, small sections
+interface LoadingSpinnerProps {
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  color?: string;
+}
+
 export const LoadingSpinner = ({
   size = 'md',
   color = 'var(--color-primary)',
   ...props
-}) => <Loader size={size} color={color} {...props} />;
+}: LoadingSpinnerProps) => <Loader size={size} color={color} {...props} />;
 
-// Centered loading state - use for card/section content
+interface LoadingContentProps {
+  message?: string;
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  showMessage?: boolean;
+}
+
 export const LoadingContent = ({
   message = 'Loading...',
   size = 'md',
   showMessage = true,
-}) => (
-  <Center className={styles.loadingContent}>
+}: LoadingContentProps) => (
+  <Center className={styles.loadingContent || ''}>
     <Stack align="center" gap="md">
       <LoadingSpinner size={size} />
       {showMessage && (
-        <Text c="dimmed" size="sm" className={styles.loadingText}>
+        <Text c="dimmed" size="sm" className={styles.loadingText || ''}>
           {message}
         </Text>
       )}
@@ -38,15 +47,23 @@ export const LoadingContent = ({
   </Center>
 );
 
-// Full section loading - use for page sections
-export const LoadingSection = ({ height = 200, message = 'Loading...' }) => (
+interface LoadingSectionProps {
+  height?: number;
+  message?: string;
+}
+
+export const LoadingSection = ({ height = 200, message = 'Loading...' }: LoadingSectionProps) => (
   <div className={styles.loadingSection} style={{ minHeight: height }}>
     <LoadingContent message={message} />
   </div>
 );
 
-// Loading overlay - use for forms, modals, or sections being updated
-export const LoadingOverlayCustom = ({ visible, blur = 2, ...props }) => (
+interface LoadingOverlayCustomProps {
+  visible: boolean;
+  blur?: number;
+}
+
+export const LoadingOverlayCustom = ({ visible, blur = 2, ...props }: LoadingOverlayCustomProps) => (
   <LoadingOverlay
     visible={visible}
     zIndex={1000}
@@ -59,8 +76,12 @@ export const LoadingOverlayCustom = ({ visible, blur = 2, ...props }) => (
   />
 );
 
-// Skeleton loader - use for content placeholders
-export const LoadingSkeleton = ({ lines = 3, height = 10, ...props }) => (
+interface LoadingSkeletonProps {
+  lines?: number;
+  height?: number;
+}
+
+export const LoadingSkeleton = ({ lines = 3, height = 10, ...props }: LoadingSkeletonProps) => (
   <Stack gap="xs">
     {Array.from({ length: lines }).map((_, index) => (
       <Skeleton key={index} height={height} radius="md" {...props} />
@@ -68,7 +89,6 @@ export const LoadingSkeleton = ({ lines = 3, height = 10, ...props }) => (
   </Stack>
 );
 
-// Card skeleton - use for card lists
 export const LoadingCard = () => (
   <div className={styles.loadingCard}>
     <Skeleton height={60} circle mb="sm" />
@@ -78,8 +98,11 @@ export const LoadingCard = () => (
   </div>
 );
 
-// Table row skeleton - use for table loading states
-export const LoadingTableRow = ({ columns = 4 }) => (
+interface LoadingTableRowProps {
+  columns?: number;
+}
+
+export const LoadingTableRow = ({ columns = 4 }: LoadingTableRowProps) => (
   <tr>
     {Array.from({ length: columns }).map((_, index) => (
       <td key={index}>
@@ -89,14 +112,16 @@ export const LoadingTableRow = ({ columns = 4 }) => (
   </tr>
 );
 
-// Page-level loading - use for initial page loads
-export const LoadingPage = ({ message = 'Loading page...' }) => (
+interface LoadingPageProps {
+  message?: string;
+}
+
+export const LoadingPage = ({ message = 'Loading page...' }: LoadingPageProps) => (
   <div className={styles.loadingPage}>
     <LoadingContent message={message} size="lg" />
   </div>
 );
 
-// Button loading state - use inside buttons
 export const ButtonLoader = () => (
   <LoadingSpinner size="xs" color="currentColor" />
 );

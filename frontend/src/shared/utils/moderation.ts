@@ -116,14 +116,17 @@ export const createModerationHandlers = ({
             message: `${user.full_name} has been banned from the event`,
             color: 'red',
           });
-        } catch (error) {
+        } catch (error: unknown) {
+          const apiError = error as { data?: { message?: string } };
           notifications.show({
             title: 'Error',
-            message: error.data?.message || 'Failed to ban user',
+            message: apiError.data?.message || 'Failed to ban user',
             color: 'red',
           });
         }
       },
+      onCancel: () => {},
+      children: null,
     });
   };
 
@@ -145,14 +148,17 @@ export const createModerationHandlers = ({
             message: `${user.full_name} has been unbanned`,
             color: 'green',
           });
-        } catch (error) {
+        } catch (error: unknown) {
+          const apiError = error as { data?: { message?: string } };
           notifications.show({
             title: 'Error',
-            message: error.data?.message || 'Failed to unban user',
+            message: apiError.data?.message || 'Failed to unban user',
             color: 'red',
           });
         }
       },
+      onCancel: () => {},
+      children: null,
     });
   };
 
@@ -176,14 +182,17 @@ export const createModerationHandlers = ({
             message: `${user.full_name} has been muted from chat`,
             color: 'yellow',
           });
-        } catch (error) {
+        } catch (error: unknown) {
+          const apiError = error as { data?: { message?: string } };
           notifications.show({
             title: 'Error',
-            message: error.data?.message || 'Failed to mute user from chat',
+            message: apiError.data?.message || 'Failed to mute user from chat',
             color: 'red',
           });
         }
       },
+      onCancel: () => {},
+      children: null,
     });
   };
 
@@ -205,14 +214,17 @@ export const createModerationHandlers = ({
             message: `${user.full_name} can now send chat messages`,
             color: 'green',
           });
-        } catch (error) {
+        } catch (error: unknown) {
+          const apiError = error as { data?: { message?: string } };
           notifications.show({
             title: 'Error',
-            message: error.data?.message || 'Failed to unmute user from chat',
+            message: apiError.data?.message || 'Failed to unmute user from chat',
             color: 'red',
           });
         }
       },
+      onCancel: () => {},
+      children: null,
     });
   };
 

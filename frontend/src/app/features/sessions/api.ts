@@ -137,14 +137,12 @@ export const sessionsApi = baseApi.injectEndpoints({
         params: { day_number: dayNumber, page, per_page },
       }),
       providesTags: ['Sessions'],
-      refetchOnMountOrArgChange: 300,
     }),
     getSession: builder.query<Session, GetSessionParams>({
       query: ({ id }) => ({
         url: `/sessions/${id}`,
       }),
-      providesTags: (result, error, { id }) => [{ type: 'Sessions' as const, id }],
-      refetchOnMountOrArgChange: 300,
+      providesTags: (_result, _error, { id }) => [{ type: 'Sessions' as const, id }],
     }),
     createSession: builder.mutation<Session, CreateSessionParams>({
       query: ({ eventId, ...sessionData }) => ({
@@ -152,7 +150,7 @@ export const sessionsApi = baseApi.injectEndpoints({
         method: 'POST',
         body: sessionData,
       }),
-      invalidatesTags: (result, error, { eventId }) => [
+      invalidatesTags: (_result, _error, { eventId }) => [
         { type: 'Events' as const, id: eventId },
         'Events',
         'Sessions',
@@ -164,7 +162,7 @@ export const sessionsApi = baseApi.injectEndpoints({
         method: 'PUT',
         body: updates,
       }),
-      invalidatesTags: (result, error, { id }) => [
+      invalidatesTags: (_result, _error, { id }) => [
         'Sessions',
         { type: 'Sessions' as const, id },
       ],
@@ -175,7 +173,7 @@ export const sessionsApi = baseApi.injectEndpoints({
         method: 'PUT',
         body: { status },
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'Sessions' as const, id }],
+      invalidatesTags: (_result, _error, { id }) => [{ type: 'Sessions' as const, id }],
     }),
     updateSessionTimes: builder.mutation<void, UpdateSessionTimesParams>({
       query: ({ id, ...times }) => ({
@@ -183,7 +181,7 @@ export const sessionsApi = baseApi.injectEndpoints({
         method: 'PUT',
         body: times,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'Sessions' as const, id }],
+      invalidatesTags: (_result, _error, { id }) => [{ type: 'Sessions' as const, id }],
     }),
     getSessionSpeakers: builder.query<GetSessionSpeakersResponse, GetSessionSpeakersParams>({
       query: ({ sessionId, role, page = 1, per_page = 50 }) => ({
@@ -191,7 +189,6 @@ export const sessionsApi = baseApi.injectEndpoints({
         params: { role, page, per_page },
       }),
       providesTags: ['SessionSpeakers'],
-      refetchOnMountOrArgChange: 300,
     }),
     addSessionSpeaker: builder.mutation<void, AddSessionSpeakerParams>({
       query: ({ sessionId, ...speakerData }) => ({

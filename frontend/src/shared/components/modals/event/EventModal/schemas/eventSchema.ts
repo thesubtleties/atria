@@ -19,19 +19,18 @@ export const eventSchema = z
       // For conferences, end_date must be >= start_date
       return data.end_date >= data.start_date;
     },
-    {
-      message: ({ data }) =>
-        data.event_type === 'SINGLE_SESSION'
-          ? 'Single session events must start and end on the same day'
-          : 'End date must be after or equal to start date',
+    (data) => ({
+      message: data.event_type === 'SINGLE_SESSION'
+        ? 'Single session events must start and end on the same day'
+        : 'End date must be after or equal to start date',
       path: ['end_date'],
-    }
+    })
   )
   .refine(
     (data) => {
       // Ensure start_date is not in the past
-      const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD
-      return data.start_date >= today;
+      const today = new Date().toISOString().split('T')[0];
+      return today !== undefined && data.start_date >= today;
     },
     {
       message: 'Start date cannot be in the past',
@@ -63,22 +62,16 @@ export const eventUpdateSchema = z
       }
 
       // For conferences, end_date must be >= start_date
-      return data.end_date >= data.start_date;
+      return data.end_date! >= data.start_date!;
     },
-    {
-      message: ({ data }) => {
-        if (
-          (data.start_date && !data.end_date) ||
-          (!data.start_date && data.end_date)
-        ) {
-          return 'Both start and end dates must be provided together';
-        }
-        return data.event_type === 'SINGLE_SESSION'
+    (data) => ({
+      message: (data.start_date && !data.end_date) || (!data.start_date && data.end_date)
+        ? 'Both start and end dates must be provided together'
+        : data.event_type === 'SINGLE_SESSION'
           ? 'Single session events must start and end on the same day'
-          : 'End date must be after or equal to start date';
-      },
+          : 'End date must be after or equal to start date',
       path: ['end_date'],
-    }
+    })
   )
   .refine(
     (data) => {
@@ -87,7 +80,7 @@ export const eventUpdateSchema = z
 
       // Ensure start_date is not in the past
       const today = new Date().toISOString().split('T')[0];
-      return data.start_date >= today;
+      return today !== undefined && data.start_date >= today;
     },
     {
       message: 'Start date cannot be in the past',

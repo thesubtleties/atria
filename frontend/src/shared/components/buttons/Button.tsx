@@ -1,6 +1,12 @@
 import { ButtonLoader } from '../loading';
 import styles from './Button.module.css';
 
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  children: React.ReactNode;
+  variant?: 'primary' | 'secondary' | 'danger';
+  loading?: boolean;
+}
+
 export const Button = ({ 
   children, 
   variant = 'primary', 
@@ -10,7 +16,7 @@ export const Button = ({
   loading = false,
   className = '',
   ...props 
-}) => {
+}: ButtonProps) => {
   const buttonClass = `${styles.btn} ${styles[`btn-${variant}`]} ${className}`;
   
   return (

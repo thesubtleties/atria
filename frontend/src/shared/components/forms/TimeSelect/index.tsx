@@ -1,9 +1,15 @@
 import { Select } from '@mantine/core';
-import { forwardRef, useMemo } from 'react';
+import type { ComboboxItem, SelectProps } from '@mantine/core';
+import { forwardRef, useCallback, useMemo } from 'react';
+
+interface TimeOption {
+  value: string;
+  label: string;
+}
 
 // Generate time options in 15-minute intervals
-const generateTimeOptions = () => {
-  const options = [];
+const generateTimeOptions = (): TimeOption[] => {
+  const options: TimeOption[] = [];
   for (let hour = 0; hour < 24; hour++) {
     for (let minute = 0; minute < 60; minute += 15) {
       const time24 = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
@@ -22,18 +28,28 @@ const generateTimeOptions = () => {
 
 const timeOptions = generateTimeOptions();
 
-export const TimeSelect = forwardRef(({
+interface TimeSelectProps extends Omit<SelectProps, 'data' | 'value' | 'onChange'> {
+  value?: string | null;
+  onChange?: (value: string | null) => void;
+}
+
+export const TimeSelect = forwardRef<HTMLInputElement, TimeSelectProps>(function TimeSelectInner({
   label,
   placeholder = 'Select time',
   error,
-  required,
-  disabled,
+  required = false,
+  disabled = false,
   value,
   onChange,
   onBlur,
   classNames,
   ...props
-}, ref) => {
+}, ref) {
+  // Wrap onChange to match Mantine's Select signature
+  const handleChange = useCallback((newValue: string | null, _option: ComboboxItem) => {
+    onChange?.(newValue);
+  }, [onChange]);
+  
   // Find the closest time option if value is provided but not in 15-min intervals
   const normalizedValue = useMemo(() => {
     if (!value) return value;
@@ -44,8 +60,10 @@ export const TimeSelect = forwardRef(({
     }
     
     // Otherwise, round to nearest 15 minutes
-    const [hours, minutes] = value.split(':').map(Number);
-    if (isNaN(hours) || isNaN(minutes)) return value;
+    const parts = value.split(':').map(Number);
+    const hours = parts[0];
+    const minutes = parts[1];
+    if (hours === undefined || minutes === undefined || isNaN(hours) || isNaN(minutes)) return value;
     
     const roundedMinutes = Math.round(minutes / 15) * 15;
     const adjustedHours = roundedMinutes === 60 ? hours + 1 : hours;
@@ -60,8 +78,8 @@ export const TimeSelect = forwardRef(({
       label={label}
       placeholder={placeholder}
       data={timeOptions}
-      value={normalizedValue}
-      onChange={onChange}
+      value={normalizedValue ?? null}
+      onChange={handleChange}
       onBlur={onBlur}
       error={error}
       required={required}
@@ -69,7 +87,7 @@ export const TimeSelect = forwardRef(({
       searchable
       clearable
       maxDropdownHeight={280}
-      classNames={classNames}
+      {...(classNames ? { classNames } : {})}
       comboboxProps={{
         position: 'bottom',
         middlewares: { flip: true, shift: true },
@@ -80,12 +98,8 @@ export const TimeSelect = forwardRef(({
         dropdown: {
           maxHeight: '280px',
         },
-        // Mobile-friendly styles
         input: {
-          fontSize: '16px', // Prevents zoom on iOS
-          '@media (max-width: 768px)': {
-            fontSize: '16px',
-          },
+          fontSize: '16px',
         },
       }}
       {...props}

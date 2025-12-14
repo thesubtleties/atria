@@ -54,7 +54,7 @@ export const invitationsApi = baseApi.injectEndpoints({
         accepted_invitations: response.accepted_invitations,
         message: response.message
       }),
-      invalidatesTags: ['User', 'Organizations', 'Events', 'Dashboard']
+      invalidatesTags: ['Users', 'Organizations', 'Events', 'Dashboard']
     })
   })
 });
