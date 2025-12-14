@@ -1,15 +1,20 @@
 import { format, parseISO, addDays } from 'date-fns';
 import { formatInTimeZone, toDate } from 'date-fns-tz';
 
-/**
- * Format session time showing both event timezone and user's local timezone
- * @param {string} timeStr - Time in HH:MM:SS format (e.g., "14:00:00")
- * @param {string} eventStartDate - Event start date in ISO format (e.g., "2024-12-15")
- * @param {number} dayNumber - Session day number (1, 2, 3...)
- * @param {string} eventTimezone - Event timezone (e.g., "America/New_York")
- * @returns {object} { eventTime, userTime, showUserTime }
- */
-export const formatSessionTime = (timeStr, eventStartDate, dayNumber, eventTimezone) => {
+interface SessionTimeResult {
+  eventTime: string;
+  userTime: string | null;
+  showUserTime: boolean;
+  timezone: string;
+  eventTimezone?: string;
+}
+
+export const formatSessionTime = (
+  timeStr: string,
+  eventStartDate: string,
+  dayNumber: number,
+  eventTimezone: string
+): SessionTimeResult => {
   if (!timeStr || !eventStartDate || !dayNumber || !eventTimezone) {
     return { eventTime: '', userTime: null, showUserTime: false, timezone: '' };
   }
@@ -60,13 +65,7 @@ export const formatSessionTime = (timeStr, eventStartDate, dayNumber, eventTimez
   }
 };
 
-/**
- * Get timezone abbreviation (EST, PST, etc.)
- * @param {string} dateTimeStr - Full datetime string
- * @param {string} timezone - IANA timezone (e.g., "America/New_York")
- * @returns {string} Timezone abbreviation
- */
-export const getTimezoneAbbr = (dateTimeStr, timezone) => {
+export const getTimezoneAbbr = (dateTimeStr: string, timezone: string): string => {
   try {
     return formatInTimeZone(dateTimeStr, timezone, 'zzz');
   } catch (error) {

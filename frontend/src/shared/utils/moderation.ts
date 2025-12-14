@@ -1,10 +1,17 @@
 import { openConfirmationModal } from '@/shared/components/modals/ConfirmationModal';
 import { notifications } from '@mantine/notifications';
 
-/**
- * Get moderation permissions for a user
- */
-export const getModerationPermissions = (currentUserId, currentUserRole, targetUser) => {
+interface TargetUser {
+  user_id?: number;
+  is_banned: boolean;
+  is_chat_banned: boolean;
+}
+
+export const getModerationPermissions = (
+  currentUserId: number,
+  currentUserRole: string,
+  targetUser: TargetUser
+) => {
   const isInvitation = !targetUser.user_id;
   const userId = targetUser.user_id;
   const isBanned = targetUser.is_banned;
@@ -29,10 +36,12 @@ export const getModerationPermissions = (currentUserId, currentUserRole, targetU
   };
 };
 
-/**
- * Get styling based on moderation status
- */
-export const getModerationStyles = (user) => {
+interface ModerationUser {
+  is_banned: boolean;
+  is_chat_banned: boolean;
+}
+
+export const getModerationStyles = (user: ModerationUser): React.CSSProperties => {
   if (user.is_banned) {
     return {
       backgroundColor: 'rgba(255, 250, 250, 0.95)',
@@ -48,10 +57,7 @@ export const getModerationStyles = (user) => {
   return {};
 };
 
-/**
- * Get row styling for table (more visible while still subtle)
- */
-export const getModerationRowStyles = (user) => {
+export const getModerationRowStyles = (user: ModerationUser): React.CSSProperties => {
   // Full ban takes precedence over chat ban
   if (user.is_banned) {
     return {
@@ -68,9 +74,19 @@ export const getModerationRowStyles = (user) => {
   return {};
 };
 
-/**
- * Create moderation handlers
- */
+interface ModerationHandlersParams {
+  user: {
+    full_name: string;
+    event_id: number;
+    user_id: number;
+  };
+  currentUserRole: string;
+  banUser: (params: any) => { unwrap: () => Promise<void> };
+  unbanUser: (params: any) => { unwrap: () => Promise<void> };
+  chatBanUser: (params: any) => { unwrap: () => Promise<void> };
+  chatUnbanUser: (params: any) => { unwrap: () => Promise<void> };
+}
+
 export const createModerationHandlers = ({
   user,
   currentUserRole,
@@ -78,7 +94,7 @@ export const createModerationHandlers = ({
   unbanUser,
   chatBanUser,
   chatUnbanUser,
-}) => {
+}: ModerationHandlersParams) => {
   const handleBan = () => {
     openConfirmationModal({
       title: 'Ban User from Event',

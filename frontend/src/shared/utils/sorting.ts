@@ -2,15 +2,12 @@
  * Utility functions for sorting user data
  */
 
-/**
- * Sorts by last name, then first name (natural alphabetical order)
- * @param {string} aLastName - First person's last name
- * @param {string} aFirstName - First person's first name  
- * @param {string} bLastName - Second person's last name
- * @param {string} bFirstName - Second person's first name
- * @returns {number} Sort comparison result (-1, 0, or 1)
- */
-export const compareByLastName = (aLastName, aFirstName, bLastName, bFirstName) => {
+export const compareByLastName = (
+  aLastName: string,
+  aFirstName: string,
+  bLastName: string,
+  bFirstName: string
+): number => {
   const aLast = (aLastName || '').toLowerCase().trim();
   const bLast = (bLastName || '').toLowerCase().trim();
   const aFirst = (aFirstName || '').toLowerCase().trim();
@@ -25,12 +22,13 @@ export const compareByLastName = (aLastName, aFirstName, bLastName, bFirstName) 
   return aFirst.localeCompare(bFirst);
 };
 
-/**
- * Gets the sort value for name sorting - tries individual fields first, falls back to full_name
- * @param {Object} person - Person object with name fields
- * @returns {string} Sort key for comparison
- */
-export const getNameSortValue = (person) => {
+interface Person {
+  last_name?: string;
+  first_name?: string;
+  full_name?: string;
+}
+
+export const getNameSortValue = (person: Person): string => {
   // If we have individual first/last name fields, use them for proper sorting
   if (person.last_name && person.first_name) {
     const lastName = (person.last_name || '').toLowerCase().trim();
@@ -54,13 +52,7 @@ export const getNameSortValue = (person) => {
   return fullName;
 };
 
-/**
- * Sorts an array of people by last name, then first name
- * @param {Array} people - Array of person objects
- * @param {string} sortOrder - 'asc' or 'desc' 
- * @returns {Array} Sorted array
- */
-export const sortByLastName = (people, sortOrder = 'asc') => {
+export const sortByLastName = <T extends Person>(people: T[], sortOrder: 'asc' | 'desc' = 'asc'): T[] => {
   return [...people].sort((a, b) => {
     const aValue = getNameSortValue(a);
     const bValue = getNameSortValue(b);
