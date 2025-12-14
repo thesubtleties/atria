@@ -1,20 +1,70 @@
 import { baseApi } from '../api';
 
+interface GetEventInvitationsParams {
+  eventId: number;
+  page?: number;
+  perPage?: number;
+}
+
+interface EventInvitation {
+  id: number;
+  email: string;
+  role: string;
+  status: string;
+  sent_at: string;
+  expires_at: string;
+}
+
+interface GetEventInvitationsResponse {
+  invitations: EventInvitation[];
+  pagination: {
+    page: number;
+    per_page: number;
+    total: number;
+    total_pages: number;
+  };
+}
+
+interface SendEventInvitationParams {
+  eventId: number;
+  email: string;
+  role: string;
+  message?: string;
+}
+
+interface SendBulkEventInvitationsParams {
+  eventId: number;
+  invitations: Array<{
+    email: string;
+    role: string;
+    message?: string;
+  }>;
+}
+
+interface AcceptInvitationParams {
+  token: string;
+}
+
+interface DeclineInvitationParams {
+  token: string;
+}
+
+interface CancelEventInvitationParams {
+  invitationId: number;
+}
+
 export const eventInvitationsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    // Get pending invitations for an event
-    getEventInvitations: builder.query({
+    getEventInvitations: builder.query<GetEventInvitationsResponse, GetEventInvitationsParams>({
       query: ({ eventId, page = 1, perPage = 50 }) => ({
         url: `/events/${eventId}/invitations`,
         params: { page, per_page: perPage },
       }),
       providesTags: ['EventInvitations'],
-      // Invitations change frequently during setup, refetch if older than 1 min
       refetchOnMountOrArgChange: 60,
     }),
 
-    // Send single invitation
-    sendEventInvitation: builder.mutation({
+    sendEventInvitation: builder.mutation<void, SendEventInvitationParams>({
       query: ({ eventId, ...invitationData }) => ({
         url: `/events/${eventId}/invitations`,
         method: 'POST',
@@ -23,8 +73,7 @@ export const eventInvitationsApi = baseApi.injectEndpoints({
       invalidatesTags: ['EventInvitations'],
     }),
 
-    // Send bulk invitations
-    sendBulkEventInvitations: builder.mutation({
+    sendBulkEventInvitations: builder.mutation<void, SendBulkEventInvitationsParams>({
       query: ({ eventId, invitations }) => ({
         url: `/events/${eventId}/invitations/bulk`,
         method: 'POST',
@@ -33,8 +82,7 @@ export const eventInvitationsApi = baseApi.injectEndpoints({
       invalidatesTags: ['EventInvitations'],
     }),
 
-    // Accept invitation
-    acceptInvitation: builder.mutation({
+    acceptInvitation: builder.mutation<void, AcceptInvitationParams>({
       query: ({ token }) => ({
         url: `/invitations/${token}/accept`,
         method: 'POST',
@@ -43,8 +91,7 @@ export const eventInvitationsApi = baseApi.injectEndpoints({
       invalidatesTags: ['EventUsers', 'Events', 'Invitations', 'Dashboard'],
     }),
 
-    // Decline invitation
-    declineInvitation: builder.mutation({
+    declineInvitation: builder.mutation<void, DeclineInvitationParams>({
       query: ({ token }) => ({
         url: `/invitations/${token}/decline`,
         method: 'POST',
@@ -53,9 +100,8 @@ export const eventInvitationsApi = baseApi.injectEndpoints({
       invalidatesTags: ['Invitations'],
     }),
 
-    // Cancel invitation
-    cancelEventInvitation: builder.mutation({
-      query: (invitationId) => ({
+    cancelEventInvitation: builder.mutation<void, CancelEventInvitationParams>({
+      query: ({ invitationId }) => ({
         url: `/invitations/${invitationId}`,
         method: 'DELETE',
       }),

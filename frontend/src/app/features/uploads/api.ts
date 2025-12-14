@@ -1,25 +1,38 @@
 import { baseApi } from '../api';
 
+interface UploadImageParams {
+  file: File;
+  context: string;
+  eventId?: number;
+}
+
+interface UploadImageResponse {
+  url: string;
+  object_key: string;
+}
+
+interface DeleteUploadParams {
+  objectKey: string;
+}
+
 export const uploadsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    uploadImage: builder.mutation({
+    uploadImage: builder.mutation<UploadImageResponse, UploadImageParams>({
       query: ({ file, context, eventId }) => {
         const formData = new FormData();
         formData.append('file', file);
         formData.append('context', context);
         if (eventId) {
-          formData.append('event_id', eventId);
+          formData.append('event_id', String(eventId));
         }
 
         return {
           url: '/uploads/image',
           method: 'POST',
           data: formData,
-          // Let axios set the Content-Type with boundary automatically
         };
       },
       invalidatesTags: (result, error, { context }) => {
-        // Invalidate relevant tags based on context
         switch (context) {
           case 'avatar':
             return ['Users'];
@@ -34,20 +47,22 @@ export const uploadsApi = baseApi.injectEndpoints({
       },
     }),
     
-    getAuthenticatedContent: builder.query({
+    getAuthenticatedContent: builder.query<Blob, string>({
       query: (objectKey) => ({
         url: `/content/${objectKey}`,
+        responseHandler: (response) => response.blob(),
       }),
     }),
     
-    getPrivateContent: builder.query({
+    getPrivateContent: builder.query<Blob, string>({
       query: (objectKey) => ({
         url: `/private/${objectKey}`,
+        responseHandler: (response) => response.blob(),
       }),
     }),
     
-    deleteUpload: builder.mutation({
-      query: (objectKey) => ({
+    deleteUpload: builder.mutation<void, DeleteUploadParams>({
+      query: ({ objectKey }) => ({
         url: `/uploads/${objectKey}`,
         method: 'DELETE',
       }),

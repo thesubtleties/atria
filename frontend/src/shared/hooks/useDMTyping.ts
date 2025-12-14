@@ -35,10 +35,10 @@ export function useDMTyping(
   setTyping: (isTyping: boolean) => void;
 } {
   const [isOtherUserTyping, setIsOtherUserTyping] = useState(false);
-  const typingTimeoutRef = useRef(null);
-  const heartbeatIntervalRef = useRef(null);
+  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const heartbeatIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const lastSentRef = useRef(false);
-  const clearTimeoutRef = useRef(null);
+  const clearTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Handle incoming typing events
   useEffect(() => {
@@ -80,7 +80,7 @@ export function useDMTyping(
 
   // Send typing status to backend with 1s heartbeat to refresh Redis TTL
   const setTyping = useCallback(
-    (isTyping) => {
+    (isTyping: boolean) => {
       if (!threadId) return;
 
       const socket = getSocket();

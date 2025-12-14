@@ -5,10 +5,10 @@
 export const formatTime = (timeStr: string): string => {
   if (!timeStr) return '';
   const [hours, minutes] = timeStr.split(':');
-  const hour = parseInt(hours);
+  const hour = parseInt(hours || '0');
   const ampm = hour >= 12 ? 'PM' : 'AM';
   const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
-  return `${displayHour}:${minutes} ${ampm}`;
+  return `${displayHour}:${minutes || '00'} ${ampm}`;
 };
 
 export const capitalizeWords = (str: string): string => {

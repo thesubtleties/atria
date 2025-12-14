@@ -1,0 +1,38 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+flask = "*"
+flask-restful = "*"
+flask-migrate = "*"
+flask-sqlalchemy = "*"
+flask-jwt-extended = "*"
+flask-socketio = "*"
+flask-cors = "*"
+gunicorn = "*"
+eventlet = "*"
+apscheduler = "*"
+marshmallow = ">=3"
+flask-marshmallow = "*"
+marshmallow-sqlalchemy = "*"
+flask-smorest = "*"
+apispec-webframeworks = "*"
+psycopg2-binary = "*"
+python-dotenv = "*"
+passlib = "*"
+python-slugify = "*"
+requests = "*"
+cryptography = "*"
+minio = "*"
+pillow = "*"
+tox = "*"
+redis = ">=4.5.0"
+hiredis = ">=2.2.0"
+apispec = {extras = ["yaml"], version = "*"}
+
+[dev-packages]
+
+[requires]
+python_version = "3.14"

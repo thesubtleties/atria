@@ -12,7 +12,7 @@ export const parseDateOnly = (dateString: string): Date | null => {
   if (dateString.length === 10 && dateString.match(/^\d{4}-\d{2}-\d{2}$/)) {
     const [year, month, day] = dateString.split('-').map(Number);
     // Create date at midnight local time (not UTC)
-    return new Date(year, month - 1, day);
+    return new Date(year!, (month! || 1) - 1, day || 1);
   }
 
   // For datetime strings, use parseISO
@@ -39,6 +39,7 @@ export const useFormatDate = (defaultFormat = 'M/d/yyyy') => {
 
     try {
       const date = parseDateOnly(dateString);
+      if (!date) return 'Invalid date';
       return format(date, pattern);
     } catch (error) {
       console.error('Error formatting date:', error);
@@ -59,6 +60,7 @@ export const useFormatDate = (defaultFormat = 'M/d/yyyy') => {
 
     try {
       const date = parseDateOnly(dateString);
+      if (!date) return 'Invalid date';
 
       if (isToday(date)) {
         return 'Today';

@@ -56,7 +56,7 @@ export function useMobileInputHandler(
         onSend();
         // Blur the input to close keyboard
         setTimeout(() => {
-          e.target.blur();
+          (e.target as HTMLTextAreaElement).blur();
           forceViewportReset();
         }, 50);
       }
@@ -80,10 +80,10 @@ export function useMobileInputHandler(
     // Prevent default zoom behavior on iOS
     if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
       // Set font size to prevent zoom
-      e.target.style.fontSize = '16px';
+      (e.target as HTMLTextAreaElement).style.fontSize = '16px';
       // Also set transform origin for better control
-      e.target.style.transformOrigin = 'left top';
-      e.target.style.transform = 'scale(1)';
+      (e.target as HTMLTextAreaElement).style.transformOrigin = 'left top';
+      (e.target as HTMLTextAreaElement).style.transform = 'scale(1)';
     }
   }, []);
 
@@ -94,9 +94,9 @@ export function useMobileInputHandler(
     
     // Reset any style changes
     if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
-      e.target.style.fontSize = '';
-      e.target.style.transform = '';
-      e.target.style.transformOrigin = '';
+      (e.target as HTMLTextAreaElement).style.fontSize = '';
+      (e.target as HTMLTextAreaElement).style.transform = '';
+      (e.target as HTMLTextAreaElement).style.transformOrigin = '';
     }
   }, [forceViewportReset]);
 

@@ -35,9 +35,9 @@ export function useSocketMessages(threadId: number) {
   const [messageInput, setMessageInput] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [loadedMessages, setLoadedMessages] = useState([]);
-  const { currentUser } = useSelector((state) => state.auth);
-  const previousThreadIdRef = useRef(null);
+  const [loadedMessages, setLoadedMessages] = useState<Message[]>([]);
+  const { currentUser } = useSelector((state: any) => state.auth);
+  const previousThreadIdRef = useRef<number | null>(null);
 
   // Get messages with RTK Query (but we'll manage accumulation locally)
   const {
@@ -49,8 +49,6 @@ export function useSocketMessages(threadId: number) {
     { threadId, page: currentPage },
     {
       skip: !threadId,
-      // Don't keep in cache since we manage locally
-      keepUnusedDataFor: 0,
     }
   );
 
@@ -117,7 +115,7 @@ export function useSocketMessages(threadId: number) {
           if (update.message.sender_id === currentUser?.id) {
             // Find temp message with same content sent in last 5 seconds
             const tempIndex = prev.findIndex(msg => 
-              msg.id.startsWith('temp-') &&
+              String(msg.id).startsWith('temp-') &&
               msg.content === update.message.content &&
               msg.sender_id === currentUser?.id
             );
@@ -195,7 +193,7 @@ export function useSocketMessages(threadId: number) {
         console.error('Failed to send message:', error);
         // Remove optimistic message on error
         setLoadedMessages(prev => 
-          prev.filter(msg => !msg.id.startsWith('temp-'))
+          prev.filter(msg => !String(msg.id).startsWith('temp-'))
         );
       }
     },

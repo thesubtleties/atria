@@ -20,10 +20,7 @@ def create_app(testing=False):
     app.config.from_object("api.config")
 
     # Use environment variable or function parameter for TESTING config
-    if (
-        testing is True
-        or os.getenv("FLASK_TESTING", "false").lower() == "true"
-    ):
+    if testing is True or os.getenv("FLASK_TESTING", "false").lower() == "true":
         app.config["TESTING"] = True
 
     configure_extensions(app)
@@ -44,28 +41,39 @@ def configure_extensions(app):
     # Initialize Redis if configured
     import redis as redis_lib
     from api import extensions
+
     redis_url = app.config.get("REDIS_URL")
 
     if redis_url:
         try:
             # General purpose Redis client (DB 0) - currently unused
-            extensions.redis_client = redis_lib.from_url(redis_url, decode_responses=True)
+            extensions.redis_client = redis_lib.from_url(
+                redis_url, decode_responses=True
+            )
             extensions.redis_client.ping()
 
             # Application caching client (DB 2)
-            cache_url = redis_url.rsplit('/', 1)[0] + '/2'
-            extensions.cache_redis = redis_lib.from_url(cache_url, decode_responses=True)
+            cache_url = redis_url.rsplit("/", 1)[0] + "/2"
+            extensions.cache_redis = redis_lib.from_url(
+                cache_url, decode_responses=True
+            )
             extensions.cache_redis.ping()
 
             # Presence & typing indicators client (DB 3)
-            presence_url = redis_url.rsplit('/', 1)[0] + '/3'
-            extensions.presence_redis = redis_lib.from_url(presence_url, decode_responses=True)
+            presence_url = redis_url.rsplit("/", 1)[0] + "/3"
+            extensions.presence_redis = redis_lib.from_url(
+                presence_url, decode_responses=True
+            )
             extensions.presence_redis.ping()
 
-            app.logger.info("✅ Redis connected: General (DB0), Cache (DB2), Presence (DB3)")
+            app.logger.info(
+                "✅ Redis connected: General (DB0), Cache (DB2), Presence (DB3)"
+            )
             # Note: Socket.IO pub/sub uses DB 1 via message_queue parameter (configured below)
         except redis_lib.ConnectionError as e:
-            app.logger.warning(f"⚠️ Redis not available ({e}) - falling back to in-memory")
+            app.logger.warning(
+                f"⚠️ Redis not available ({e}) - falling back to in-memory"
+            )
             extensions.redis_client = None
             extensions.cache_redis = None
             extensions.presence_redis = None
@@ -80,6 +88,7 @@ def configure_extensions(app):
             app,
             origins=[
                 "http://localhost:3000",
+                "http://localhost:5000",
                 "http://localhost:5173",
                 "http://localhost:8080",
                 "http://100.67.207.5:5173",
@@ -93,6 +102,7 @@ def configure_extensions(app):
             "async_mode": app.config.get("SOCKETIO_ASYNC_MODE", "eventlet"),
             "cors_allowed_origins": [
                 "http://localhost:3000",
+                "http://localhost:5000",
                 "http://localhost:5173",
                 "http://localhost:8080",
                 "http://100.67.207.5:5173",
