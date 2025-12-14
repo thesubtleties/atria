@@ -1,23 +1,158 @@
 import { baseApi } from '../api';
 
+interface Event {
+  id: number;
+  name: string;
+  description?: string;
+  start_date: string;
+  end_date: string;
+  timezone: string;
+  location?: string;
+  status: string;
+  is_published: boolean;
+  organization_id: number;
+  created_at: string;
+  updated_at: string;
+  branding?: {
+    logo_url?: string;
+    banner_url?: string;
+    primary_color?: string;
+  };
+}
+
+interface EventUser {
+  user_id: number;
+  full_name: string;
+  email: string;
+  avatar_url?: string;
+  role: string;
+  is_banned: boolean;
+  is_chat_banned: boolean;
+  speaker_bio?: string;
+  speaker_title?: string;
+  speaker_company?: string;
+  joined_at: string;
+}
+
+interface GetEventsParams {
+  orgId: number;
+  page?: number;
+  per_page?: number;
+}
+
+interface GetEventsResponse {
+  events: Event[];
+  pagination: {
+    page: number;
+    per_page: number;
+    total: number;
+    total_pages: number;
+  };
+}
+
+interface GetEventParams {
+  id: number;
+}
+
+interface CreateEventParams {
+  orgId: number;
+  name: string;
+  description?: string;
+  start_date: string;
+  end_date: string;
+  timezone: string;
+  location?: string;
+}
+
+interface UpdateEventParams {
+  id: number;
+  name?: string;
+  description?: string;
+  start_date?: string;
+  end_date?: string;
+  timezone?: string;
+  location?: string;
+  status?: string;
+  is_published?: boolean;
+}
+
+interface UpdateEventBrandingParams {
+  id: number;
+  logo_url?: string;
+  banner_url?: string;
+  primary_color?: string;
+}
+
+interface GetEventUsersParams {
+  eventId: number;
+  role?: string;
+  page?: number;
+  per_page?: number;
+}
+
+interface GetEventUsersResponse {
+  users: EventUser[];
+  pagination: {
+    page: number;
+    per_page: number;
+    total: number;
+    total_pages: number;
+  };
+}
+
+interface AddEventUserParams {
+  eventId: number;
+  user_id: number;
+  role: string;
+}
+
+interface AddOrCreateEventUserParams {
+  eventId: number;
+  email: string;
+  role: string;
+  full_name?: string;
+}
+
+interface UpdateEventUserParams {
+  eventId: number;
+  userId: number;
+  role?: string;
+}
+
+interface UpdateEventSpeakerInfoParams {
+  eventId: number;
+  userId: number;
+  speaker_bio?: string;
+  speaker_title?: string;
+  speaker_company?: string;
+}
+
+interface RemoveEventUserParams {
+  eventId: number;
+  userId: number;
+}
+
+interface DeleteEventParams {
+  id: number;
+}
+
 export const eventsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getEvents: builder.query({
+    getEvents: builder.query<GetEventsResponse, GetEventsParams>({
       query: ({ orgId, page = 1, per_page = 50 }) => ({
         url: `/organizations/${orgId}/events`,
         params: { page, per_page },
       }),
       providesTags: ['Events'],
     }),
-    getEvent: builder.query({
-      query: (id) => ({
+    getEvent: builder.query<Event, GetEventParams>({
+      query: ({ id }) => ({
         url: `/events/${id}`,
       }),
-      providesTags: (result, error, id) => [{ type: 'Events', id }],
-      // Refetch if cache is older than 5 minutes when navigating back
+      providesTags: (result, error, { id }) => [{ type: 'Events' as const, id }],
       refetchOnMountOrArgChange: 300,
     }),
-    createEvent: builder.mutation({
+    createEvent: builder.mutation<Event, CreateEventParams>({
       query: ({ orgId, ...eventData }) => ({
         url: `/organizations/${orgId}/events`,
         method: 'POST',
@@ -25,53 +160,49 @@ export const eventsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Events'],
     }),
-    deleteEvent: builder.mutation({
-      query: (id) => ({
+    deleteEvent: builder.mutation<void, DeleteEventParams>({
+      query: ({ id }) => ({
         url: `/events/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Events'],
     }),
-    updateEvent: builder.mutation({
+    updateEvent: builder.mutation<Event, UpdateEventParams>({
       query: ({ id, ...updates }) => ({
         url: `/events/${id}`,
         method: 'PUT',
         body: updates,
       }),
       invalidatesTags: (result, error, { id }) => [
-        { type: 'Events', id },
+        { type: 'Events' as const, id },
         'Events',
       ],
     }),
-    updateEventBranding: builder.mutation({
+    updateEventBranding: builder.mutation<void, UpdateEventBrandingParams>({
       query: ({ id, ...branding }) => ({
         url: `/events/${id}/branding`,
         method: 'PUT',
         body: branding,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'Events', id }],
+      invalidatesTags: (result, error, { id }) => [{ type: 'Events' as const, id }],
     }),
-    // Event Users endpoints
-    getEventUsers: builder.query({
+    getEventUsers: builder.query<GetEventUsersResponse, GetEventUsersParams>({
       query: ({ eventId, role, page = 1, per_page = 50 }) => ({
         url: `/events/${eventId}/users`,
         params: { role, page, per_page },
       }),
       providesTags: ['EventUsers'],
-      // Refetch if cache is older than 3 minutes (attendees can change during events)
       refetchOnMountOrArgChange: 180,
     }),
-    // Admin view with sensitive information
-    getEventUsersAdmin: builder.query({
+    getEventUsersAdmin: builder.query<GetEventUsersResponse, GetEventUsersParams>({
       query: ({ eventId, role, page = 1, per_page = 50 }) => ({
         url: `/events/${eventId}/users/admin`,
         params: { role, page, per_page },
       }),
       providesTags: ['EventUsers'],
-      // Refetch if cache is older than 3 minutes (attendees can change during events)
       refetchOnMountOrArgChange: 180,
     }),
-    addEventUser: builder.mutation({
+    addEventUser: builder.mutation<void, AddEventUserParams>({
       query: ({ eventId, ...userData }) => ({
         url: `/events/${eventId}/users`,
         method: 'POST',
@@ -79,15 +210,15 @@ export const eventsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['EventUsers'],
     }),
-    addOrCreateEventUser: builder.mutation({
+    addOrCreateEventUser: builder.mutation<void, AddOrCreateEventUserParams>({
       query: ({ eventId, ...userData }) => ({
-        url: `/events/${eventId}/users/add`, // Note the /add here
+        url: `/events/${eventId}/users/add`,
         method: 'POST',
         body: userData,
       }),
       invalidatesTags: ['EventUsers'],
     }),
-    updateEventUser: builder.mutation({
+    updateEventUser: builder.mutation<void, UpdateEventUserParams>({
       query: ({ eventId, userId, ...updates }) => ({
         url: `/events/${eventId}/users/${userId}`,
         method: 'PUT',
@@ -95,7 +226,7 @@ export const eventsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['EventUsers'],
     }),
-    updateEventSpeakerInfo: builder.mutation({
+    updateEventSpeakerInfo: builder.mutation<void, UpdateEventSpeakerInfoParams>({
       query: ({ eventId, userId, ...info }) => ({
         url: `/events/${eventId}/users/${userId}/speaker-info`,
         method: 'PUT',
@@ -103,7 +234,7 @@ export const eventsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['EventUsers'],
     }),
-    removeEventUser: builder.mutation({
+    removeEventUser: builder.mutation<void, RemoveEventUserParams>({
       query: ({ eventId, userId }) => ({
         url: `/events/${eventId}/users/${userId}`,
         method: 'DELETE',
