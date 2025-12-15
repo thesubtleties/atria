@@ -63,6 +63,9 @@ export interface DirectMessageThread {
   };
   last_message?: DirectMessage;
   unread_count?: number;
+  shared_event_ids?: number[];
+  other_user_in_event?: boolean;
+  is_new?: boolean;
 }
 
 /** Direct message in a thread */

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSelector } from 'react-redux';
+import { selectUser } from '../../app/store/authSlice';
 import {
   useGetDirectMessagesQuery,
   useSendDirectMessageMutation,
@@ -26,7 +27,7 @@ export function useSocketMessages(threadId: number) {
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loadedMessages, setLoadedMessages] = useState<Message[]>([]);
-  const { currentUser } = useSelector((state: any) => state.auth);
+  const currentUser = useSelector(selectUser);
   const previousThreadIdRef = useRef<number | null>(null);
 
   // Get messages with RTK Query (but we'll manage accumulation locally)
@@ -147,14 +148,14 @@ export function useSocketMessages(threadId: number) {
   // Send message function
   const sendMessage = useCallback(
     async (content: string) => {
-      if (!threadId || !content.trim()) return;
+      if (!threadId || !content.trim() || !currentUser?.id) return;
 
       try {
         // Create optimistic message
-        const optimisticMessage = {
+        const optimisticMessage: Message = {
           id: `temp-${Date.now()}`,
           thread_id: threadId,
-          sender_id: currentUser?.id,
+          sender_id: currentUser.id,
           content,
           created_at: new Date().toISOString(),
           is_sender: true,
@@ -174,7 +175,7 @@ export function useSocketMessages(threadId: number) {
 
         // Replace optimistic message with real one
         setLoadedMessages((prev) =>
-          prev.map((msg) => (msg.id === optimisticMessage.id ? result : msg)),
+          prev.map((msg) => (msg.id === optimisticMessage.id ? (result as Message) : msg)),
         );
       } catch (error) {
         console.error('Failed to send message:', error);

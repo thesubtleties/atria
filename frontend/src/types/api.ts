@@ -11,11 +11,16 @@ export interface ApiError {
 
 /** Paginated API response wrapper */
 export interface PaginatedResponse<T> {
-  items: T[];
-  total: number;
-  page: number;
+  items?: T[];
+  total_items: number;
+  total_pages: number;
+  current_page: number;
   per_page: number;
-  pages: number;
+  self?: string;
+  first?: string;
+  last?: string;
+  next?: string;
+  prev?: string;
 }
 
 /** Common query parameters for paginated endpoints */

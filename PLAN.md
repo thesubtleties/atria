@@ -51,21 +51,21 @@
 
 ---
 
-## Phase 4: Shared Components
+## Phase 4: Shared Components ✅
 
-| Task                                                                           | Files | Status |
-| ------------------------------------------------------------------------------ | ----- | ------ |
-| **4.1** Index/barrel exports                                                   | 5     | ✅     |
-| **4.2** UI primitives (`Button`, `LoadingState`, `ErrorBoundary`, `Analytics`) | 4     | ✅     |
-| **4.3** Forms (`TimeSelect`)                                                   | 1     | ✅     |
-| **4.4** Constants (`speakerRoles`, `timezones`, `usStates`)                    | 3     |        |
-| **4.5** Standalone cards (`PersonCard`, `SpeakerCard`, `SponsorCard`, `PrivateImage`) | 4     |        |
-| **4.6** Auth modals (Login, Signup, ForgotPassword)                            | 3     |        |
-| **4.7** Entity modals (Event, Organization, Profile, Session)                  | 6     |        |
-| **4.8** Other modals (`ConfirmationModal`, `IcebreakerModal`, `PageHeader`)    | 3     |        |
-| **4.9** Chat components (17 files - desktop + mobile variants)                 | 17    |        |
+| Task                                                                                  | Files | Status |
+| ------------------------------------------------------------------------------------- | ----- | ------ |
+| **4.1** Index/barrel exports                                                          | 5     | ✅     |
+| **4.2** UI primitives (`Button`, `LoadingState`, `ErrorBoundary`, `Analytics`)        | 4     | ✅     |
+| **4.3** Forms (`TimeSelect`)                                                          | 1     | ✅     |
+| **4.4** Constants (`speakerRoles`, `timezones`, `usStates`)                           | 3     | ✅     |
+| **4.5** Standalone cards (`PersonCard`, `SpeakerCard`, `SponsorCard`, `PrivateImage`) | 4     | ✅     |
+| **4.6** Auth modals (Login, Signup, ForgotPassword)                                   | 3     | ✅     |
+| **4.7** Entity modals (Event, Organization, Profile, Session)                         | 6     | ✅     |
+| **4.8** Other modals (`ConfirmationModal`, `IcebreakerModal`, `PageHeader`)           | 3     | ✅     |
+| **4.9** Chat components (shared + Networking/ChatArea + Session/SessionChat)          | 26    | ✅     |
 
-**Checkpoint:** `npm run check`
+**Checkpoint:** `npm run check` ✅
 
 ---
 
@@ -176,7 +176,7 @@ Complex Socket.IO integration - migrated separately.
 | 1 ✅      | Foundation Types & Utilities | 12       |
 | 2 ✅      | Feature API Modules          | 7        |
 | 3 ✅      | Shared Component Schemas     | 10       |
-| 4         | Shared Components            | 46       |
+| 4 ✅      | Shared Components            | 55       |
 | 5         | Page Schemas & Utilities     | 21       |
 | 6         | Router & Entry Point         | 8        |
 | 7         | Pages                        | 249      |
@@ -201,3 +201,45 @@ Complex Socket.IO integration - migrated separately.
 - [x] Phase 2: Feature API Modules
 - [x] Phase 3: Shared Component Schemas
 - [x] Phase 4.1-4.3: Index exports, UI primitives, Forms
+
+---
+
+## Type Schema Mismatch Prevention
+
+**IMPORTANT**: When defining TypeScript types for API responses, always verify the backend schema returns the same structure. Several type mismatches were discovered and fixed during this migration.
+
+### Pattern 1: Flat vs Nested Objects
+- **Backend**: Uses Marshmallow `Method` fields or `dump_only` computed properties to flatten nested relationships
+- **TypeScript**: Must match the flat structure, not the database model
+- **Example**: `SessionSpeaker` has flat `speaker_name`, `image_url`, etc. fields, not a nested `user: {...}` object
+
+### Pattern 2: Pagination Structure
+- **Backend**: `paginate()` in `commons/pagination.py` returns flat keys at root level:
+  - `total_items`, `total_pages`, `current_page`, `per_page`
+  - Link fields: `self`, `first`, `last`, `next`, `prev`
+  - Collection: matched by `collection_name` parameter
+- **TypeScript**: Do NOT nest pagination fields - keep them flat at root
+- **Fixed**: `PaginatedResponse<T>` interface updated
+
+### Pattern 3: Dynamic/Meta Fields from Services
+- Fields added dynamically by services (not in database models):
+  - Connection status fields from networking service (added to EventUser)
+  - Privacy-filtered computed fields (speaker_name, image_url, etc.)
+  - Event context fields for DMs (shared_event_ids, other_user_in_event, is_new)
+- **Check**: backend services that add transient attributes before schema serialization
+
+### Verification Process for Future Types
+1. Check backend schema file (e.g., `backend/atria/api/schemas/session_speaker.py`)
+2. Verify Marshmallow fields - flat vs nested using `Method` or `dump_only`
+3. Check service layer for computed/dynamic fields
+4. Confirm pagination structure in `commons/pagination.py`
+5. Test with actual API responses or consult API documentation
+6. Check existing frontend code for actual field usage patterns
+
+### Fixed Type Mismatches
+- **frontend/src/types/api.ts** - Pagination structure (flat keys, link fields)
+- **frontend/src/types/events.ts** - SessionSpeaker (flat name/image/title fields), EventUser (connection fields)
+- **frontend/src/types/networking.ts** - DirectMessageThread (event context fields)
+- **frontend/src/app/features/invitations/api.ts** - Invitation response types
+- **frontend/src/shared/hooks/useSocketMessages.ts** - Redux state typing
+- **frontend/src/shared/utils/moderation.ts** - Mutation function types

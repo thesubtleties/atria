@@ -26,6 +26,7 @@ dist/
 .vscode/
 *.swp
 *.swo
+PLAN.md
 
 # Docker
 postgres_data/

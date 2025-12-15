@@ -7,6 +7,43 @@ interface TargetUser {
   is_chat_banned: boolean;
 }
 
+interface BanMutationParams {
+  eventId: number;
+  userId: number;
+  reason?: string;
+  moderation_notes?: string;
+}
+
+interface UnbanMutationParams {
+  eventId: number;
+  userId: number;
+}
+
+interface ModerationHandlersParams {
+  user: {
+    full_name: string;
+    event_id: number;
+    user_id: number;
+  };
+  currentUserRole: string;
+  banUser: (params: BanMutationParams) => { unwrap: () => Promise<void> };
+  unbanUser: (params: UnbanMutationParams) => { unwrap: () => Promise<void> };
+  chatBanUser: (params: BanMutationParams) => { unwrap: () => Promise<void> };
+  chatUnbanUser: (params: UnbanMutationParams) => { unwrap: () => Promise<void> };
+}
+
+interface BanMutationParams {
+  eventId: number;
+  userId: number;
+  reason?: string;
+  moderation_notes?: string;
+}
+
+interface UnbanMutationParams {
+  eventId: number;
+  userId: number;
+}
+
 export const getModerationPermissions = (
   currentUserId: number,
   currentUserRole: string,
@@ -89,10 +126,10 @@ interface ModerationHandlersParams {
     user_id: number;
   };
   currentUserRole: string;
-  banUser: (params: any) => { unwrap: () => Promise<void> };
-  unbanUser: (params: any) => { unwrap: () => Promise<void> };
-  chatBanUser: (params: any) => { unwrap: () => Promise<void> };
-  chatUnbanUser: (params: any) => { unwrap: () => Promise<void> };
+  banUser: (params: BanMutationParams) => { unwrap: () => Promise<void> };
+  unbanUser: (params: UnbanMutationParams) => { unwrap: () => Promise<void> };
+  chatBanUser: (params: BanMutationParams) => { unwrap: () => Promise<void> };
+  chatUnbanUser: (params: UnbanMutationParams) => { unwrap: () => Promise<void> };
 }
 
 export const createModerationHandlers = ({

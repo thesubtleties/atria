@@ -1,26 +1,57 @@
 import { baseApi } from '../api';
+import type { User } from '@/types/auth';
 
 interface InvitationDetailsParams {
   token: string;
 }
 
+interface OrganizationInvitation {
+  id: number;
+  organization_id: number;
+  email: string;
+  role: string;
+  status: string;
+  message?: string | null;
+  created_at: string;
+  expires_at: string;
+}
+
+interface EventInvitation {
+  id: number;
+  event_id: number;
+  email: string;
+  role: string;
+  status: string;
+  message?: string | null;
+  created_at: string;
+  expires_at: string;
+}
+
 interface InvitationDetailsResponse {
-  invitation: any;
+  invitation: OrganizationInvitation | EventInvitation;
   user_exists: boolean;
-  all_invitations: any[] | null;
+  all_invitations: (OrganizationInvitation | EventInvitation)[] | null;
 }
 
 interface RegisterAndAcceptParams {
-  user_data: any;
+  user_data: {
+    email: string;
+    first_name: string;
+    last_name: string;
+    password: string;
+  };
   org_invitation_ids: number[];
   event_invitation_ids: number[];
 }
 
 interface RegisterAndAcceptResponse {
-  user: any;
+  user: Pick<User, 'id' | 'email' | 'first_name' | 'last_name' | 'full_name'>;
   access_token: string;
   refresh_token: string;
-  accepted_invitations: any[];
+  accepted_invitations: {
+    organizations: number;
+    events: number;
+  };
   message: string;
 }
 

@@ -189,14 +189,11 @@ export interface SessionSpeaker {
   user_id: number;
   role: SessionSpeakerRole;
   order: number | null;
-  user: {
-    id: number;
-    full_name: string;
-    title: string | null;
-    company_name: string | null;
-    image_url: string | null;
-    social_links: SocialLinks;
-  };
+  speaker_name: string;
+  image_url: string | null;
+  title: string | null;
+  company_name: string | null;
+  social_links: SocialLinks | null;
 }
 
 /** Session summary for event listings */
@@ -366,6 +363,16 @@ export interface EventUser {
     role: SessionSpeakerRole | null;
     session_type: SessionType | null;
   }>;
+
+  // Connection status fields (added by networking service)
+  connection_status?: string | null;
+  connection_id?: number | null;
+  connection_direction?: string | null;
+
+  // Additional computed fields
+  user_name?: string;
+  is_speaker?: boolean;
+  is_organizer?: boolean;
 }
 
 /** Add user to event payload */
