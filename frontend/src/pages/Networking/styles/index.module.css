@@ -192,7 +192,8 @@
   background: rgba(139, 92, 246, 0.8) !important; /* 0.8 opacity */
   color: #ffd666 !important; /* Yellow from logo */
   border: none !important; /* No border */
-  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace !important;
+  font-family:
+    'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace !important;
   font-weight: 600 !important;
   height: 22px !important;
   min-width: 22px !important;

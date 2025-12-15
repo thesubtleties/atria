@@ -264,12 +264,10 @@ if (isLoading) return <LoadingContent />;
 ## Best Practices
 
 1. **Use semantic messages** - Be specific about what's loading
-
    - ❌ "Loading..."
    - ✅ "Loading event details..."
 
 2. **Match size to context**
-
    - Buttons: `size="xs"`
    - Cards: `size="sm"` or `size="md"`
    - Pages: `size="lg"`
