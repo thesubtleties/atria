@@ -18,7 +18,7 @@ import {
   closeThreadMobile,
 } from '@/app/store/chatSlice';
 import type { ChatRoom } from '@/types/chat';
-import type { DirectMessageThread } from '@/types/networking';
+import type { FilterableThread } from '@/types/networking';
 import type { EventUserRole } from '@/types/enums';
 import MobileChatSidebar from '../MobileChatSidebar';
 import MobileChatWindow from '../MobileChatWindow';
@@ -38,11 +38,8 @@ interface SidebarChatRoom extends ChatRoom {
   unread_count?: number;
 }
 
-/** DirectMessageThread extended with event scope properties (returned by backend API) */
-interface DirectMessageThreadWithScope extends DirectMessageThread {
-  event_scope_id: number | null;
-  shared_event_ids?: number[];
-}
+/** Re-export FilterableThread for use in this component (aliased for clarity) */
+type DirectMessageThreadWithScope = FilterableThread;
 
 /**
  * Mobile-first chat container that manages:
@@ -114,21 +111,12 @@ function MobileChatContainer(): React.ReactElement {
   // Fetch event data for permissions
   const { data: eventData } = useGetEventQuery({ id: currentEventId! }, { skip: !currentEventId });
 
-  // Extract threads array from the response - cast to DirectMessageThreadWithScope[] for type safety
+  // Extract threads array from the response
   // Backend returns threads with event_scope_id and shared_event_ids properties
   const threadsArray = (data?.threads || data || []) as DirectMessageThreadWithScope[];
 
   // Filter threads based on context using shared hook
-  // Cast is safe because DirectMessageThreadWithScope extends the Thread interface requirements
-  const filteredThreads = useThreadFiltering(
-    threadsArray as unknown as Array<{
-      id: number;
-      event_scope_id: number | null;
-      shared_event_ids?: number[];
-      [key: string]: unknown;
-    }>,
-    currentEventId,
-  ) as unknown as DirectMessageThreadWithScope[];
+  const filteredThreads = useThreadFiltering(threadsArray, currentEventId);
 
   const handleThreadClick = (threadId: number): void => {
     setActiveThreadId(threadId);

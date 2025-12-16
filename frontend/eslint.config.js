@@ -42,6 +42,14 @@ export default [
     },
   },
 
+  // Route configuration files - export data, not components
+  {
+    files: ['**/router/routes/*.{js,jsx}'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
+  },
+
   // TypeScript/TSX files
   ...tseslint.configs.recommended.map((config) => ({
     ...config,

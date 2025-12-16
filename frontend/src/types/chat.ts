@@ -1,4 +1,5 @@
 import type { ChatRoomType } from './enums';
+import type { Patch } from './utils';
 
 /** Chat room */
 export interface ChatRoom {
@@ -46,13 +47,16 @@ export interface ChatRoomCreateData {
   is_enabled?: boolean;
 }
 
-/** Chat room update payload */
-export interface ChatRoomUpdateData {
-  name?: string;
-  description?: string;
-  is_enabled?: boolean;
-  display_order?: number;
+/** Mutable fields for chat room updates */
+interface ChatRoomMutableFields {
+  name: string;
+  description: string | null;
+  is_enabled: boolean;
+  display_order: number;
 }
+
+/** Chat room update payload - requires at least one field */
+export type ChatRoomUpdateData = Patch<ChatRoomMutableFields>;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Chat Messages
@@ -84,16 +88,8 @@ export interface ChatMessageCreateData {
   content: string;
 }
 
-/** Chat message for real-time socket events */
-export interface ChatMessageSocket {
-  id: number;
-  room_id: number;
-  user_id: number;
-  content: string;
-  created_at: string;
-  user: {
-    id: number;
-    full_name: string;
-    image_url: string | null;
-  };
-}
+/** Chat message for real-time socket events - subset of ChatMessage */
+export type ChatMessageSocket = Pick<
+  ChatMessage,
+  'id' | 'room_id' | 'user_id' | 'content' | 'created_at' | 'user'
+>;

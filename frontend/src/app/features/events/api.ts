@@ -1,38 +1,11 @@
 import { baseApi } from '../api';
-
-interface Event {
-  id: number;
-  name: string;
-  description?: string;
-  start_date: string;
-  end_date: string;
-  timezone: string;
-  location?: string;
-  status: string;
-  is_published: boolean;
-  organization_id: number;
-  created_at: string;
-  updated_at: string;
-  branding?: {
-    logo_url?: string;
-    banner_url?: string;
-    primary_color?: string;
-  };
-}
-
-interface EventUser {
-  user_id: number;
-  full_name: string;
-  email: string;
-  avatar_url?: string;
-  role: string;
-  is_banned: boolean;
-  is_chat_banned: boolean;
-  speaker_bio?: string;
-  speaker_title?: string;
-  speaker_company?: string;
-  joined_at: string;
-}
+import type {
+  Event,
+  EventCreateData,
+  EventUpdateData,
+  EventBrandingUpdate,
+  EventUser,
+} from '@/types';
 
 interface GetEventsParams {
   orgId: number;
@@ -54,34 +27,14 @@ interface GetEventParams {
   id: number;
 }
 
-interface CreateEventParams {
-  orgId: number;
-  name: string;
-  description?: string;
-  start_date: string;
-  end_date: string;
-  timezone: string;
-  location?: string;
-}
+/** Create event params - org ID plus event data */
+type CreateEventParams = { orgId: number } & EventCreateData;
 
-interface UpdateEventParams {
-  id: number;
-  name?: string;
-  description?: string;
-  start_date?: string;
-  end_date?: string;
-  timezone?: string;
-  location?: string;
-  status?: string;
-  is_published?: boolean;
-}
+/** Update event params - event ID plus update data */
+type UpdateEventParams = { id: number } & EventUpdateData;
 
-interface UpdateEventBrandingParams {
-  id: number;
-  logo_url?: string;
-  banner_url?: string;
-  primary_color?: string;
-}
+/** Update event branding params */
+type UpdateEventBrandingParams = { id: number } & EventBrandingUpdate;
 
 interface GetEventUsersParams {
   eventId: number;

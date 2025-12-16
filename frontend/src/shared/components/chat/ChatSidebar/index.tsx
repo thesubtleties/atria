@@ -10,10 +10,10 @@ import {
   setCurrentEventId,
   selectSidebarExpanded,
   selectCurrentEventId,
-} from '../../../../app/store/chatSlice';
-import { useGetDirectMessageThreadsQuery } from '../../../../app/features/networking/api';
+} from '@/app/store/chatSlice';
+import { useGetDirectMessageThreadsQuery } from '@/app/features/networking/api';
 import { useThreadFiltering } from '@/shared/hooks/useThreadFiltering';
-import type { DirectMessageThread } from '../../../../types/networking';
+import type { FilterableThread } from '@/types/networking';
 import ChatThreadList from '../ChatThreadList';
 import styles from './styles/index.module.css';
 
@@ -23,12 +23,8 @@ interface EventRouteParams {
   [key: string]: string | undefined;
 }
 
-/** Extended thread type with filtering metadata from API */
-interface ThreadWithFilterMetadata extends DirectMessageThread {
-  event_scope_id: number | null;
-  shared_event_ids?: number[];
-  [key: string]: unknown;
-}
+/** Re-export FilterableThread for use in this component */
+type ThreadWithFilterMetadata = FilterableThread;
 
 function ChatSidebar() {
   const dispatch = useDispatch();
@@ -48,11 +44,10 @@ function ChatSidebar() {
   // Fetch threads - ALWAYS query with undefined (single cache approach)
   const { data, isLoading, error } = useGetDirectMessageThreadsQuery(undefined);
 
-  // Extract threads array from the response
-  const threadsArray: ThreadWithFilterMetadata[] =
-    (data as { threads?: ThreadWithFilterMetadata[] })?.threads ||
+  // Extract threads array from the response - API returns threads with event_scope_id and shared_event_ids
+  const threadsArray = ((data as { threads?: ThreadWithFilterMetadata[] })?.threads ||
     (data as ThreadWithFilterMetadata[]) ||
-    [];
+    []) as ThreadWithFilterMetadata[];
 
   // Filter threads based on context using shared hook
   const filteredThreads = useThreadFiltering(threadsArray, currentEventId);

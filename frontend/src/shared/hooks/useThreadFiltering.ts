@@ -1,12 +1,5 @@
 import { useMemo } from 'react';
-
-/** Thread with event scope information */
-interface Thread {
-  id: number;
-  event_scope_id: number | null;
-  shared_event_ids?: number[];
-  [key: string]: unknown;
-}
+import type { FilterableThread } from '@/types/networking';
 
 /**
  * Custom hook for filtering chat threads based on event context
@@ -20,7 +13,7 @@ interface Thread {
  * @param currentEventId - Current event ID, null for general view
  * @returns Filtered array of threads appropriate for the current context
  */
-export function useThreadFiltering<T extends Thread>(
+export function useThreadFiltering<T extends FilterableThread>(
   threadsArray: T[] | null | undefined,
   currentEventId: number | null,
 ): T[] {

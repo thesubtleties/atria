@@ -28,12 +28,12 @@ export const useModalManager = () => {
   const handleLoginSuccess = useCallback(() => {
     closeModal();
     navigate('/app');
-  }, [navigate]);
+  }, [closeModal, navigate]);
 
   const handleSignupSuccess = useCallback(() => {
     closeModal();
     navigate('/app');
-  }, [navigate]);
+  }, [closeModal, navigate]);
 
   const ModalRenderer = useCallback(() => {
     return (

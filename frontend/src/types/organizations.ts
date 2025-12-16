@@ -4,6 +4,7 @@
 
 import type { OrganizationUserRole } from './enums';
 import type { EventNested } from './events';
+import type { Patch } from './utils';
 
 /** Core organization model */
 export interface Organization {
@@ -47,10 +48,8 @@ export interface OrganizationCreateData {
   name: string;
 }
 
-/** Organization update payload */
-export interface OrganizationUpdateData {
-  name?: string;
-}
+/** Organization update payload - requires at least one field */
+export type OrganizationUpdateData = Patch<{ name: string }>;
 
 /** Organization user role update payload */
 export interface OrganizationUserRoleUpdateData {

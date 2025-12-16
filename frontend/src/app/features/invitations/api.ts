@@ -61,10 +61,10 @@ export const invitationsApi = baseApi.injectEndpoints({
       query: ({ token }) => ({
         url: `/invitations/${token}`,
       }),
-      transformResponse: (response: any) => ({
+      transformResponse: (response: InvitationDetailsResponse) => ({
         invitation: response.invitation,
         user_exists: response.user_exists,
-        all_invitations: response.all_invitations || null,
+        all_invitations: response.all_invitations ?? null,
       }),
     }),
 
@@ -81,7 +81,7 @@ export const invitationsApi = baseApi.injectEndpoints({
           event_invitation_ids,
         },
       }),
-      transformResponse: (response: any) => ({
+      transformResponse: (response: RegisterAndAcceptResponse) => ({
         user: response.user,
         access_token: response.access_token,
         refresh_token: response.refresh_token,

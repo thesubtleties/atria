@@ -34,10 +34,8 @@ interface CreateChatRoomParams extends ChatRoomCreateData {
   eventId: number;
 }
 
-/** Update chat room payload */
-interface UpdateChatRoomParams extends ChatRoomUpdateData {
-  roomId: number;
-}
+/** Update chat room payload - requires roomId and at least one update field */
+type UpdateChatRoomParams = { roomId: number } & ChatRoomUpdateData;
 
 /** Reorder chat room payload */
 interface ReorderChatRoomParams {

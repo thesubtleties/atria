@@ -15,6 +15,7 @@ import type {
   StreamingPlatform,
 } from './enums';
 import type { UserWithRole, SocialLinks } from './auth';
+import type { Patch } from './utils';
 
 /** Event branding stored as JSON */
 export interface EventBranding {
@@ -125,13 +126,8 @@ export interface EventDetail extends Event {
   main_session: SessionMinimal | null;
 }
 
-/** Nested event for other schemas */
-export interface EventNested {
-  id: number;
-  title: string;
-  start_date: string;
-  status: EventStatus;
-}
+/** Nested event for other schemas - derived from Event */
+export type EventNested = Pick<Event, 'id' | 'title' | 'start_date' | 'status'>;
 
 /** Event creation payload */
 export interface EventCreateData {
@@ -146,37 +142,36 @@ export interface EventCreateData {
   branding?: Partial<EventBranding>;
 }
 
-/** Event update payload */
-export interface EventUpdateData {
-  title?: string;
-  description?: string;
-  event_type?: EventType;
-  start_date?: string;
-  end_date?: string;
-  timezone?: string;
-  company_name?: string;
-  status?: EventStatus;
-  branding?: Partial<EventBranding>;
-  event_format?: EventFormat;
-  is_private?: boolean;
-  venue_name?: string | null;
-  venue_address?: string | null;
-  venue_city?: string | null;
-  venue_state?: USState | null;
-  venue_country?: string | null;
-  hero_description?: string | null;
-  hero_images?: Partial<HeroImages>;
-  sections?: Partial<EventSections>;
-  icebreakers?: string[];
-  main_session_id?: number | null;
+/** Mutable fields for event updates */
+interface EventMutableFields {
+  title: string;
+  description: string | null;
+  event_type: EventType;
+  start_date: string;
+  end_date: string;
+  timezone: string;
+  company_name: string;
+  status: EventStatus;
+  branding: Partial<EventBranding>;
+  event_format: EventFormat;
+  is_private: boolean;
+  venue_name: string | null;
+  venue_address: string | null;
+  venue_city: string | null;
+  venue_state: USState | null;
+  venue_country: string | null;
+  hero_description: string | null;
+  hero_images: Partial<HeroImages>;
+  sections: Partial<EventSections>;
+  icebreakers: string[];
+  main_session_id: number | null;
 }
 
-/** Event branding update payload */
-export interface EventBrandingUpdate {
-  primary_color?: string;
-  secondary_color?: string;
-  logo_url?: string | null;
-}
+/** Event update payload - requires at least one field */
+export type EventUpdateData = Patch<EventMutableFields>;
+
+/** Event branding update payload - banner_url is excluded as it's set via file upload */
+export type EventBrandingUpdate = Partial<Omit<EventBranding, 'banner_url'>>;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Session types
@@ -208,14 +203,11 @@ export interface SessionSummary {
   speakers: SessionSpeaker[];
 }
 
-/** Minimal session for dropdowns */
-export interface SessionMinimal {
-  id: number;
-  title: string;
-  day_number: number;
-  start_time: string;
-  end_time: string;
-}
+/** Minimal session for dropdowns - derived from Session */
+export type SessionMinimal = Pick<
+  Session,
+  'id' | 'title' | 'day_number' | 'start_time' | 'end_time'
+>;
 
 /** Full session model */
 export interface Session {
@@ -282,24 +274,27 @@ export interface SessionCreateData {
   jitsi_room_name?: string | null;
 }
 
-/** Session update payload */
-export interface SessionUpdateData {
-  title?: string;
-  session_type?: SessionType;
-  status?: SessionStatus;
-  short_description?: string;
-  description?: string;
-  start_time?: string;
-  end_time?: string;
-  stream_url?: string | null;
-  day_number?: number;
-  chat_mode?: SessionChatMode;
-  streaming_platform?: StreamingPlatform | null;
-  zoom_meeting_id?: string | null;
-  zoom_passcode?: string | null;
-  mux_playback_policy?: 'PUBLIC' | 'SIGNED' | null;
-  jitsi_room_name?: string | null;
+/** Mutable fields for session updates */
+interface SessionMutableFields {
+  title: string;
+  session_type: SessionType;
+  status: SessionStatus;
+  short_description: string | null;
+  description: string | null;
+  start_time: string;
+  end_time: string;
+  stream_url: string | null;
+  day_number: number;
+  chat_mode: SessionChatMode;
+  streaming_platform: StreamingPlatform | null;
+  zoom_meeting_id: string | null;
+  zoom_passcode: string | null;
+  mux_playback_policy: 'PUBLIC' | 'SIGNED' | null;
+  jitsi_room_name: string | null;
 }
+
+/** Session update payload - requires at least one field */
+export type SessionUpdateData = Patch<SessionMutableFields>;
 
 /** Playback data returned for streaming */
 export interface SessionPlaybackData {

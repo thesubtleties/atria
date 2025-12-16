@@ -18,6 +18,9 @@ export type AtLeastOne<T, Keys extends keyof T = keyof T> = Pick<T, Exclude<keyo
     [K in Keys]-?: Required<Pick<T, K>> & Partial<Pick<T, Exclude<Keys, K>>>;
   }[Keys];
 
+/** Non-empty partial update type - use for PATCH/PUT payloads to ensure at least one field is provided */
+export type Patch<T> = AtLeastOne<Partial<T>>;
+
 /** Component props with children */
 export interface WithChildren {
   children: React.ReactNode;

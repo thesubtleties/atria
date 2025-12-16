@@ -123,7 +123,7 @@ export const EventModal = ({
       if (isEditing && event) {
         await updateEvent({
           id: event.id,
-          name: values.title,
+          title: values.title,
           description: values.description,
           start_date: values.start_date,
           end_date: values.end_date,
@@ -132,7 +132,9 @@ export const EventModal = ({
       } else {
         await createEvent({
           orgId,
-          name: values.title,
+          title: values.title,
+          event_type: values.event_type,
+          company_name: values.company_name,
           description: values.description,
           start_date: values.start_date,
           end_date: values.end_date,

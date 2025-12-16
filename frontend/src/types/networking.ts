@@ -1,5 +1,6 @@
 import type { ConnectionStatus, MessageStatus } from './enums';
 import type { SocialLinks } from './auth';
+import type { Patch } from './utils';
 
 /** User info in connection response (privacy-filtered) */
 export interface ConnectionUser {
@@ -37,10 +38,8 @@ export interface ConnectionCreateData {
   originating_event_id?: number;
 }
 
-/** Connection update payload */
-export interface ConnectionUpdateData {
-  status: ConnectionStatus;
-}
+/** Connection update payload - requires at least one field */
+export type ConnectionUpdateData = Patch<{ status: ConnectionStatus }>;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Direct Messages
@@ -63,9 +62,20 @@ export interface DirectMessageThread {
   };
   last_message?: DirectMessage;
   unread_count?: number;
-  shared_event_ids?: number[];
+  /** Event IDs shared between both users - ALWAYS present from backend (empty array if none) */
+  shared_event_ids: number[];
   other_user_in_event?: boolean;
   is_new?: boolean;
+}
+
+/**
+ * Thread with event scope metadata for filtering.
+ * Extends DirectMessageThread with scope information returned by API.
+ * Use this type for threads that can be filtered by event context.
+ */
+export interface FilterableThread extends DirectMessageThread {
+  /** Event ID this thread is scoped to, or null for global threads */
+  event_scope_id: number | null;
 }
 
 /** Direct message in a thread */
