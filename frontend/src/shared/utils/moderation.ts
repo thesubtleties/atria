@@ -32,18 +32,6 @@ interface ModerationHandlersParams {
   chatUnbanUser: (params: UnbanMutationParams) => { unwrap: () => Promise<void> };
 }
 
-interface BanMutationParams {
-  eventId: number;
-  userId: number;
-  reason?: string;
-  moderation_notes?: string;
-}
-
-interface UnbanMutationParams {
-  eventId: number;
-  userId: number;
-}
-
 export const getModerationPermissions = (
   currentUserId: number,
   currentUserRole: string,
@@ -118,19 +106,6 @@ export const getModerationRowStyles = (user: ModerationUser): React.CSSPropertie
   }
   return {};
 };
-
-interface ModerationHandlersParams {
-  user: {
-    full_name: string;
-    event_id: number;
-    user_id: number;
-  };
-  currentUserRole: string;
-  banUser: (params: BanMutationParams) => { unwrap: () => Promise<void> };
-  unbanUser: (params: UnbanMutationParams) => { unwrap: () => Promise<void> };
-  chatBanUser: (params: BanMutationParams) => { unwrap: () => Promise<void> };
-  chatUnbanUser: (params: UnbanMutationParams) => { unwrap: () => Promise<void> };
-}
 
 export const createModerationHandlers = ({
   user,

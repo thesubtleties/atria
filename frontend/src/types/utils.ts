@@ -1,11 +1,3 @@
-/** Make all properties of T optional and nullable */
-export type PartialNullable<T> = {
-  [P in keyof T]?: T[P] | null;
-};
-
-/** Extract the resolved type from a Promise */
-export type Awaited<T> = T extends Promise<infer U> ? U : T;
-
 /** Make specific keys of T required */
 export type RequireKeys<T, K extends keyof T> = T & Required<Pick<T, K>>;
 
