@@ -37,21 +37,34 @@ export const sessionFieldSchemas = {
     .optional()
     .or(z.literal('')),
   // Note: OTHER platform uses stream_url (validated by backend for HTTPS)
-};
+} as const;
+
+export type SessionFieldName = keyof typeof sessionFieldSchemas;
 
 // Helper to validate individual fields
-export const validateField = (field, value) => {
+export const validateField = (
+  field: SessionFieldName,
+  value: unknown,
+): z.SafeParseReturnType<unknown, unknown> => {
   const schema = sessionFieldSchemas[field];
-  if (!schema) return { success: true };
+  if (!schema) return { success: true, data: value } as z.SafeParseSuccess<unknown>;
 
-  const result = schema.safeParse(value);
-  return result;
+  return schema.safeParse(value);
+};
+
+type TimeValidationResult = {
+  success: boolean;
+  error: { message: string } | null;
 };
 
 // Helper to validate time logic
-export const validateTimeOrder = (startTime, endTime) => {
-  const [startHour, startMin] = startTime.split(':').map(Number);
-  const [endHour, endMin] = endTime.split(':').map(Number);
+export const validateTimeOrder = (startTime: string, endTime: string): TimeValidationResult => {
+  const startParts = startTime.split(':').map(Number);
+  const endParts = endTime.split(':').map(Number);
+  const startHour = startParts[0] ?? 0;
+  const startMin = startParts[1] ?? 0;
+  const endHour = endParts[0] ?? 0;
+  const endMin = endParts[1] ?? 0;
 
   const isValid = endHour > startHour || (endHour === startHour && endMin > startMin);
 
@@ -60,3 +73,7 @@ export const validateTimeOrder = (startTime, endTime) => {
     error: isValid ? null : { message: 'End time must be after start time' },
   };
 };
+
+export type SessionTypeValue = z.infer<typeof SessionType>;
+export type StreamingPlatformValue = z.infer<typeof StreamingPlatform>;
+export type MuxPlaybackPolicyValue = z.infer<typeof MuxPlaybackPolicy>;

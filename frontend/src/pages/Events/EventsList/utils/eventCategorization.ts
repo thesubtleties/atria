@@ -1,16 +1,21 @@
 import { parseISO, startOfDay, endOfDay } from 'date-fns';
+import type { Event } from '@/types/events';
+
+type CategorizedEvents = {
+  live: Event[];
+  upcoming: Event[];
+  past: Event[];
+};
 
 /**
  * Categorizes events into live, upcoming, and past
- * @param {Array} events - Array of event objects
- * @returns {Object} Categorized events { live: [], upcoming: [], past: [] }
  */
-export const categorizeEvents = (events) => {
+export const categorizeEvents = (events: Event[]): CategorizedEvents => {
   const now = new Date();
   const todayStart = startOfDay(now);
   const todayEnd = endOfDay(now);
 
-  const categorized = {
+  const categorized: CategorizedEvents = {
     live: [],
     upcoming: [],
     past: [],
@@ -51,12 +56,12 @@ export const categorizeEvents = (events) => {
   return categorized;
 };
 
+type EventStatusLabel = 'Live Now' | 'Coming Soon' | 'Ended';
+
 /**
  * Get a status label for an event based on its dates
- * @param {Object} event - Event object
- * @returns {string} Status label
  */
-export const getEventStatusLabel = (event) => {
+export const getEventStatusLabel = (event: Event): EventStatusLabel => {
   const now = new Date();
   const startDate = parseISO(event.start_date);
   const endDate = parseISO(event.end_date);

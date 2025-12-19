@@ -11,3 +11,5 @@ export const chatRoomSchema = z.object({
   }),
   isEnabled: z.boolean().default(false),
 });
+
+export type ChatRoomFormData = z.infer<typeof chatRoomSchema>;

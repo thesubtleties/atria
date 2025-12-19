@@ -6,13 +6,17 @@ export const EventUserRole = {
   ORGANIZER: 'ORGANIZER',
   SPEAKER: 'SPEAKER',
   ATTENDEE: 'ATTENDEE',
-};
+} as const;
+
+export type EventUserRoleType = (typeof EventUserRole)[keyof typeof EventUserRole];
+
+const roleEnum = z.enum(['ADMIN', 'ORGANIZER', 'SPEAKER', 'ATTENDEE']);
 
 // Invitation schema for single invite
 export const invitationSchema = z.object({
   email: z.string().email('Invalid email address').min(1, 'Email is required'),
-  role: z.enum(['ADMIN', 'ORGANIZER', 'SPEAKER', 'ATTENDEE'], {
-    required_error: 'Role is required',
+  role: roleEnum.refine((val) => val !== undefined, {
+    message: 'Role is required',
   }),
   message: z.string().max(500, 'Message too long').optional(),
 });
@@ -27,16 +31,16 @@ export const bulkInvitationSchema = z.object({
 
 // Role update schema
 export const roleUpdateSchema = z.object({
-  role: z.enum(['ADMIN', 'ORGANIZER', 'SPEAKER', 'ATTENDEE'], {
-    required_error: 'Role is required',
+  role: roleEnum.refine((val) => val !== undefined, {
+    message: 'Role is required',
   }),
 });
 
 // Bulk role update schema
 export const bulkRoleUpdateSchema = z.object({
   userIds: z.array(z.number()).min(1, 'Select at least one user'),
-  role: z.enum(['ADMIN', 'ORGANIZER', 'SPEAKER', 'ATTENDEE'], {
-    required_error: 'Role is required',
+  role: roleEnum.refine((val) => val !== undefined, {
+    message: 'Role is required',
   }),
 });
 
@@ -59,7 +63,7 @@ export const csvImportSchema = z.object({
 });
 
 // Helper functions
-export const getRoleBadgeColor = (role) => {
+export const getRoleBadgeColor = (role: EventUserRoleType): string => {
   switch (role) {
     case 'ADMIN':
       return 'red';
@@ -74,7 +78,7 @@ export const getRoleBadgeColor = (role) => {
   }
 };
 
-export const getRoleDisplayName = (role) => {
+export const getRoleDisplayName = (role: EventUserRoleType): string => {
   switch (role) {
     case 'ADMIN':
       return 'Admin';
@@ -90,9 +94,12 @@ export const getRoleDisplayName = (role) => {
 };
 
 // Validate if user can change roles based on their own role
-export const canChangeRole = (currentUserRole, targetRole) => {
+export const canChangeRole = (
+  currentUserRole: EventUserRoleType,
+  targetRole: EventUserRoleType,
+): boolean => {
   // Only admins and organizers can change roles
-  if (!['ADMIN', 'ORGANIZER'].includes(currentUserRole)) {
+  if (!(['ADMIN', 'ORGANIZER'] as EventUserRoleType[]).includes(currentUserRole)) {
     return false;
   }
 
@@ -103,35 +110,40 @@ export const canChangeRole = (currentUserRole, targetRole) => {
 
   // Organizers can only assign ATTENDEE or SPEAKER roles
   if (currentUserRole === 'ORGANIZER') {
-    return ['ATTENDEE', 'SPEAKER'].includes(targetRole);
+    return (['ATTENDEE', 'SPEAKER'] as EventUserRoleType[]).includes(targetRole);
   }
 
   return false;
 };
 
+type RoleChangeResult = {
+  allowed: boolean;
+  reason?: string;
+};
+
 // Validate if a specific role change is allowed
 export const canChangeUserRole = (
-  currentUserRole,
-  currentUserId,
-  targetUserId,
-  targetCurrentRole,
-  targetNewRole,
+  currentUserRole: EventUserRoleType,
+  currentUserId: number,
+  targetUserId: number,
+  targetCurrentRole: EventUserRoleType,
+  targetNewRole: EventUserRoleType,
   adminCount = 1,
-) => {
+): RoleChangeResult => {
   // Cannot change own role
   if (currentUserId === targetUserId) {
     return { allowed: false, reason: 'You cannot change your own role' };
   }
 
   // Only admins and organizers can change roles
-  if (!['ADMIN', 'ORGANIZER'].includes(currentUserRole)) {
+  if (!(['ADMIN', 'ORGANIZER'] as EventUserRoleType[]).includes(currentUserRole)) {
     return { allowed: false, reason: "You don't have permission to change roles" };
   }
 
   // Organizers have limited permissions
   if (currentUserRole === 'ORGANIZER') {
     // Can only change between ATTENDEE and SPEAKER
-    const allowedRoles = ['ATTENDEE', 'SPEAKER'];
+    const allowedRoles: EventUserRoleType[] = ['ATTENDEE', 'SPEAKER'];
 
     // Cannot change roles of ORGANIZERS or ADMINS
     if (!allowedRoles.includes(targetCurrentRole)) {
@@ -161,3 +173,10 @@ export const canChangeUserRole = (
 
   return { allowed: false, reason: 'Invalid permission state' };
 };
+
+export type InvitationFormData = z.infer<typeof invitationSchema>;
+export type BulkInvitationFormData = z.infer<typeof bulkInvitationSchema>;
+export type RoleUpdateFormData = z.infer<typeof roleUpdateSchema>;
+export type BulkRoleUpdateFormData = z.infer<typeof bulkRoleUpdateSchema>;
+export type AttendeeFilterFormData = z.infer<typeof attendeeFilterSchema>;
+export type CsvImportFormData = z.infer<typeof csvImportSchema>;

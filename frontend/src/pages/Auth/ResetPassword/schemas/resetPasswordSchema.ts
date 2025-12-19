@@ -9,3 +9,5 @@ export const resetPasswordSchema = z
     message: "Passwords don't match",
     path: ['password_confirm'],
   });
+
+export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;

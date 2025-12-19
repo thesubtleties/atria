@@ -2,18 +2,29 @@ import { useLocation, useParams } from 'react-router-dom';
 import { useGetEventQuery } from '@/app/features/events/api';
 import { ROUTES } from '../constants/routes';
 
-// src/pages/Navigation/hooks/useNavigationTitle.js
-export const useNavigationTitle = () => {
+type TitleData = {
+  text: string;
+};
+
+type UseNavigationTitleResult = {
+  titleData: TitleData | null;
+  isLoading: boolean;
+};
+
+export const useNavigationTitle = (): UseNavigationTitleResult => {
   const location = useLocation();
-  const { eventId } = useParams();
+  const { eventId } = useParams<{ eventId: string }>();
 
   const needsEventData = location.pathname.includes(`/events/${eventId}`);
 
-  const { data: event, isLoading: isLoadingEvent } = useGetEventQuery(eventId, {
-    skip: !needsEventData || !eventId,
-  });
+  const { data: event, isLoading: isLoadingEvent } = useGetEventQuery(
+    { id: Number(eventId) },
+    {
+      skip: !needsEventData || !eventId,
+    },
+  );
 
-  const getTitle = () => {
+  const getTitle = (): TitleData | null => {
     // Only show titles for event-related pages
     if (location.pathname === ROUTES.EVENTS_JOIN) {
       return { text: 'Join Event' };

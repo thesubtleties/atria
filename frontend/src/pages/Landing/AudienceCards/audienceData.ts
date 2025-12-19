@@ -1,4 +1,13 @@
-export const audienceData = [
+export type AudienceItem = {
+  id: string;
+  title: string;
+  description: string;
+  features: string;
+  color: string;
+  accent: string;
+};
+
+export const audienceData: AudienceItem[] = [
   {
     id: 'corporate',
     title: 'Enterprise Conferences',

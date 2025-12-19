@@ -1,11 +1,18 @@
 import { useMemo } from 'react';
+import type { Session } from '@/types/events';
 
-function timeToMinutes(timeStr) {
+type SessionRow = Session[];
+
+function timeToMinutes(timeStr: string): number {
   if (!timeStr) return 0;
 
   // Handle "3:00 PM" format
-  const [time, period] = timeStr.split(' ');
-  const [hours, minutes] = time.split(':').map(Number);
+  const parts = timeStr.split(' ');
+  const time = parts[0] || '';
+  const period = parts[1];
+  const timeParts = time.split(':').map(Number);
+  const hours = timeParts[0] ?? 0;
+  const minutes = timeParts[1] ?? 0;
 
   let totalHours = hours;
   if (period === 'PM' && hours !== 12) {
@@ -17,15 +24,15 @@ function timeToMinutes(timeStr) {
   return totalHours * 60 + minutes;
 }
 
-function organizeTimeSlots(sessions) {
+function organizeTimeSlots(sessions: Session[]): SessionRow[] {
   // Sort ALL sessions strictly by start time
   const sorted = [...sessions].sort((a, b) => {
     return timeToMinutes(a.start_time) - timeToMinutes(b.start_time);
   });
 
-  const rows = [];
-  let currentTimeSlot = null;
-  let currentSessions = [];
+  const rows: SessionRow[] = [];
+  let currentTimeSlot: number | null = null;
+  let currentSessions: Session[] = [];
 
   // Group all concurrent sessions
   sorted?.forEach((session) => {
@@ -53,7 +60,7 @@ function organizeTimeSlots(sessions) {
   return rows;
 }
 
-function balanceSessionRows(sessions) {
+function balanceSessionRows(sessions: Session[]): SessionRow[] {
   if (sessions.length <= 4) {
     return [sessions];
   }
@@ -74,7 +81,7 @@ function balanceSessionRows(sessions) {
   }
 
   // For 8 or more: split into rows of 4 until remainder
-  const rows = [];
+  const rows: SessionRow[] = [];
   for (let i = 0; i < sessions.length; i += 4) {
     rows.push(sessions.slice(i, Math.min(i + 4, sessions.length)));
   }
@@ -82,12 +89,20 @@ function balanceSessionRows(sessions) {
   return rows;
 }
 
-export function useSessionLayout(sessions) {
+type UseSessionLayoutResult = {
+  rows: SessionRow[];
+  getSessionWidth: (rowIndex: number) => string;
+  getSessionHeight: (session: Session) => string;
+  getSessionTop: (session: Session) => string;
+  isKeynote: (session: Session) => boolean;
+};
+
+export function useSessionLayout(sessions: Session[]): UseSessionLayoutResult {
   const rows = useMemo(() => {
     return organizeTimeSlots(sessions);
   }, [sessions]);
 
-  const getSessionWidth = (rowIndex) => {
+  const getSessionWidth = (rowIndex: number): string => {
     const row = rows[rowIndex];
     if (!row || row.length === 0) return '100%';
     // Add console.log to debug
@@ -99,7 +114,7 @@ export function useSessionLayout(sessions) {
     return `${100 / row.length}%`;
   };
 
-  function getSessionHeight(session) {
+  function getSessionHeight(session: Session): string {
     if (!session?.start_time || !session?.end_time) {
       console.warn('Missing time data for session:', session);
       return 'auto'; // fallback height
@@ -121,7 +136,7 @@ export function useSessionLayout(sessions) {
     return `${durationMinutes * 2}px`;
   }
 
-  const getSessionTop = (session) => {
+  const getSessionTop = (session: Session): string => {
     if (!session?.start_time) return '0px';
     const dayStart = timeToMinutes('09:00');
     const sessionStart = timeToMinutes(session.start_time);
@@ -142,6 +157,6 @@ export function useSessionLayout(sessions) {
     getSessionWidth,
     getSessionHeight,
     getSessionTop,
-    isKeynote: (session) => session?.session_type === 'KEYNOTE',
+    isKeynote: (session: Session) => session?.session_type === 'keynote',
   };
 }

@@ -1,5 +1,15 @@
 import { z } from 'zod';
 
+const socialLinksSchema = z.object({
+  twitter: z.string().url('Invalid Twitter URL').optional().or(z.literal('')),
+  linkedin: z.string().url('Invalid LinkedIn URL').optional().or(z.literal('')),
+  facebook: z.string().url('Invalid Facebook URL').optional().or(z.literal('')),
+  instagram: z.string().url('Invalid Instagram URL').optional().or(z.literal('')),
+  youtube: z.string().url('Invalid YouTube URL').optional().or(z.literal('')),
+  tiktok: z.string().url('Invalid TikTok URL').optional().or(z.literal('')),
+  other: z.string().url('Invalid URL').optional().or(z.literal('')),
+});
+
 // Schema for individual field validation
 export const sponsorFieldSchemas = {
   name: z.string().min(1, 'Sponsor name is required').max(255, 'Name too long'),
@@ -25,18 +35,11 @@ export const sponsorFieldSchemas = {
   tier_id: z.string().min(1, 'Tier selection is required'),
 
   // Social links
-  social_links: z
-    .object({
-      twitter: z.string().url('Invalid Twitter URL').optional().or(z.literal('')),
-      linkedin: z.string().url('Invalid LinkedIn URL').optional().or(z.literal('')),
-      facebook: z.string().url('Invalid Facebook URL').optional().or(z.literal('')),
-      instagram: z.string().url('Invalid Instagram URL').optional().or(z.literal('')),
-      youtube: z.string().url('Invalid YouTube URL').optional().or(z.literal('')),
-      tiktok: z.string().url('Invalid TikTok URL').optional().or(z.literal('')),
-      other: z.string().url('Invalid URL').optional().or(z.literal('')),
-    })
-    .optional(),
-};
+  social_links: socialLinksSchema.optional(),
+} as const;
+
+export type SponsorFieldName = keyof typeof sponsorFieldSchemas;
+export type SocialLinkPlatform = keyof z.infer<typeof socialLinksSchema>;
 
 // Full sponsor schema for form validation
 export const sponsorSchema = z.object({
@@ -51,20 +54,25 @@ export const sponsorSchema = z.object({
 });
 
 // Helper to validate individual fields
-export const validateField = (field, value) => {
+export const validateField = (
+  field: SponsorFieldName,
+  value: unknown,
+): z.SafeParseReturnType<unknown, unknown> => {
   const schema = sponsorFieldSchemas[field];
-  if (!schema) return { success: true };
+  if (!schema) return { success: true, data: value } as z.SafeParseSuccess<unknown>;
 
-  const result = schema.safeParse(value);
-  return result;
+  return schema.safeParse(value);
 };
 
 // Helper to validate social link field
-export const validateSocialLink = (platform, url) => {
-  if (!url || url === '') return { success: true };
+export const validateSocialLink = (
+  platform: SocialLinkPlatform,
+  url: string,
+): z.SafeParseReturnType<unknown, unknown> => {
+  if (!url || url === '') return { success: true, data: '' } as z.SafeParseSuccess<string>;
 
-  const socialSchema = sponsorFieldSchemas.social_links.shape[platform];
-  if (!socialSchema) return { success: true };
+  const socialSchema = socialLinksSchema.shape[platform];
+  if (!socialSchema) return { success: true, data: url } as z.SafeParseSuccess<string>;
 
   return socialSchema.safeParse(url);
 };
@@ -84,3 +92,7 @@ export const tierSchema = z.object({
 });
 
 export const tierArraySchema = z.array(tierSchema).min(1, 'At least one tier is required');
+
+export type SponsorFormData = z.infer<typeof sponsorSchema>;
+export type TierFormData = z.infer<typeof tierSchema>;
+export type SocialLinksFormData = z.infer<typeof socialLinksSchema>;

@@ -12,3 +12,5 @@ export const profileSchema = z.object({
     website: z.string().url('Must be a valid URL').or(z.literal('')).optional(),
   }),
 });
+
+export type ProfileFormData = z.infer<typeof profileSchema>;

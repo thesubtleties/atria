@@ -24,8 +24,11 @@ export const speakerImportSchema = z.object({
 });
 
 // Helper function to format session count
-export const formatSessionCount = (count) => {
+export const formatSessionCount = (count: number): string => {
   if (count === 0) return 'No sessions';
   if (count === 1) return '1 session';
   return `${count} sessions`;
 };
+
+export type SpeakerInfoFormData = z.infer<typeof speakerInfoSchema>;
+export type SpeakerImportFormData = z.infer<typeof speakerImportSchema>;

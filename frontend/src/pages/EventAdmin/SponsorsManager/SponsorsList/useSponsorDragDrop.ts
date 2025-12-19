@@ -1,16 +1,49 @@
 import { useState } from 'react';
 import { move } from '@dnd-kit/helpers';
 import { notifications } from '@mantine/notifications';
+import type { Sponsor } from '@/types/sponsors';
 
-const useSponsorDragDrop = (sponsorLookup, tierInfo, updateSponsor) => {
-  const [localItems, setLocalItems] = useState({});
+type SponsorLookup = Record<string, Sponsor>;
 
-  const handleDragOver = (event) => {
+type TierInfo = Record<
+  string,
+  {
+    name: string;
+    order: number;
+    color: string;
+  }
+>;
+
+type LocalItems = Record<string, string[]>;
+
+type DragEndEvent = Parameters<typeof move>[1];
+
+type UpdateSponsorMutation = {
+  (args: { sponsorId: number; tier_id: string; display_order: number }): {
+    unwrap: () => Promise<void>;
+  };
+};
+
+type UseSponsorDragDropResult = {
+  localItems: LocalItems;
+  setLocalItems: React.Dispatch<React.SetStateAction<LocalItems>>;
+  handleDragOver: (event: DragEndEvent) => void;
+  handleDragEnd: (event: DragEndEvent) => Promise<void>;
+};
+
+const useSponsorDragDrop = (
+  sponsorLookup: SponsorLookup,
+  tierInfo: TierInfo,
+  updateSponsor: UpdateSponsorMutation,
+): UseSponsorDragDropResult => {
+  const [localItems, setLocalItems] = useState<LocalItems>({});
+
+  const handleDragOver = (event: DragEndEvent): void => {
     // Use the move helper to update local state during drag
     setLocalItems((items) => move(items, event));
   };
 
-  const handleDragEnd = async (event) => {
+  const handleDragEnd = async (event: DragEndEvent): Promise<void> => {
     console.log('Drag end event:', event);
     const { operation } = event;
 
@@ -18,8 +51,10 @@ const useSponsorDragDrop = (sponsorLookup, tierInfo, updateSponsor) => {
 
     const { source } = operation;
 
+    if (!source) return;
+
     // Extract the sponsor ID and tier information
-    const draggedSponsorId = source.id;
+    const draggedSponsorId = String(source.id);
     const draggedSponsor = sponsorLookup[draggedSponsorId];
 
     if (!draggedSponsor) {
@@ -28,7 +63,7 @@ const useSponsorDragDrop = (sponsorLookup, tierInfo, updateSponsor) => {
     }
 
     // Find which tier the sponsor is now in
-    let newTierId = null;
+    let newTierId: string | null = null;
     let newIndex = 0;
 
     for (const [tierId, sponsorIds] of Object.entries(localItems)) {
@@ -49,7 +84,7 @@ const useSponsorDragDrop = (sponsorLookup, tierInfo, updateSponsor) => {
     const sponsorIdsInNewTier = localItems[newTierId] || [];
 
     // Calculate new display_order based on position
-    let newDisplayOrder;
+    let newDisplayOrder: number;
 
     if (sponsorIdsInNewTier.length === 1) {
       // Only sponsor in tier (just moved here)
@@ -58,12 +93,13 @@ const useSponsorDragDrop = (sponsorLookup, tierInfo, updateSponsor) => {
       // Moved to beginning
       const nextId = sponsorIdsInNewTier[1];
       const nextSponsor = nextId ? sponsorLookup[nextId] : null;
-      newDisplayOrder = nextSponsor ? nextSponsor.display_order / 2 : 5;
+      newDisplayOrder = nextSponsor?.display_order ? nextSponsor.display_order / 2 : 5;
     } else if (newIndex === sponsorIdsInNewTier.length - 1) {
       // Moved to end
       const prevId = sponsorIdsInNewTier[newIndex - 1];
       const prevSponsor = prevId ? sponsorLookup[prevId] : null;
-      newDisplayOrder = prevSponsor ? prevSponsor.display_order + 10 : (newIndex + 1) * 10;
+      newDisplayOrder =
+        prevSponsor?.display_order ? prevSponsor.display_order + 10 : (newIndex + 1) * 10;
     } else {
       // Moved between two sponsors
       const prevId = sponsorIdsInNewTier[newIndex - 1];
@@ -71,7 +107,7 @@ const useSponsorDragDrop = (sponsorLookup, tierInfo, updateSponsor) => {
       const prevSponsor = prevId ? sponsorLookup[prevId] : null;
       const nextSponsor = nextId ? sponsorLookup[nextId] : null;
 
-      if (prevSponsor && nextSponsor) {
+      if (prevSponsor?.display_order && nextSponsor?.display_order) {
         newDisplayOrder = (prevSponsor.display_order + nextSponsor.display_order) / 2;
       } else {
         newDisplayOrder = (newIndex + 1) * 10;
@@ -103,7 +139,7 @@ const useSponsorDragDrop = (sponsorLookup, tierInfo, updateSponsor) => {
       }).unwrap();
 
       if (tierChanged) {
-        const sourceTierName = tierInfo[oldTierId]?.name || 'No Tier';
+        const sourceTierName = oldTierId ? tierInfo[oldTierId]?.name || 'No Tier' : 'No Tier';
         const targetTierName = tierInfo[newTierId]?.name || 'No Tier';
 
         notifications.show({
@@ -118,14 +154,19 @@ const useSponsorDragDrop = (sponsorLookup, tierInfo, updateSponsor) => {
       }
     } catch (error) {
       console.error('Failed to update sponsor:', error);
+      const errorMessage =
+        error && typeof error === 'object' && 'data' in error ?
+          (error.data as { message?: string })?.message
+        : undefined;
+
       notifications.show({
         title: 'Error',
-        message: error.data?.message || 'Failed to update sponsor position',
+        message: errorMessage || 'Failed to update sponsor position',
         color: 'red',
       });
 
       // Revert local state on error
-      const grouped = {};
+      const grouped: LocalItems = {};
 
       // Re-initialize all tiers
       Object.keys(tierInfo).forEach((tierId) => {
@@ -139,7 +180,7 @@ const useSponsorDragDrop = (sponsorLookup, tierInfo, updateSponsor) => {
           if (!grouped[tierKey]) {
             grouped[tierKey] = [];
           }
-          grouped[tierKey].push(sponsor.id);
+          grouped[tierKey].push(String(sponsor.id));
         }
       });
 

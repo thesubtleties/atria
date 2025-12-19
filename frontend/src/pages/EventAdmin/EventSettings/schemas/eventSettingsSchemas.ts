@@ -77,3 +77,12 @@ export const contentSectionsSchema = z.object({
 export const icebreakersSchema = z.object({
   message: z.string().min(10, 'Icebreaker message must be at least 10 characters'),
 });
+
+export type EventUpdateFormData = z.infer<typeof eventUpdateSchema>;
+export type EventFormatFormData = z.infer<typeof eventFormatSchema>;
+export type EventBrandingFormData = z.infer<typeof eventBrandingSchema>;
+export type HeroSectionFormData = z.infer<typeof heroSectionSchema>;
+export type HighlightFormData = z.infer<typeof highlightSchema>;
+export type FaqFormData = z.infer<typeof faqSchema>;
+export type ContentSectionsFormData = z.infer<typeof contentSectionsSchema>;
+export type IcebreakersFormData = z.infer<typeof icebreakersSchema>;

@@ -96,3 +96,8 @@ export const privacySettingsUpdateSchema = z.object({
   show_company: z.boolean().optional(),
   show_bio: z.boolean().optional(),
 });
+
+export type PrivacySettingsFormData = z.infer<typeof privacySettingsSchema>;
+export type EventPrivacyOverride = z.infer<typeof eventPrivacyOverrideSchema>;
+export type EventPrivacyOverrideFormData = z.infer<typeof eventPrivacyOverrideFormSchema>;
+export type PrivacySettingsUpdate = z.infer<typeof privacySettingsUpdateSchema>;

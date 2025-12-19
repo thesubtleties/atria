@@ -10,3 +10,5 @@ export const securitySettingsSchema = z
     message: "Passwords don't match",
     path: ['confirmPassword'],
   });
+
+export type SecuritySettingsFormData = z.infer<typeof securitySettingsSchema>;
