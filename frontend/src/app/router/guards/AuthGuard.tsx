@@ -1,10 +1,15 @@
-// AuthGuard.jsx
+import type { ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { Alert, Container } from '@mantine/core';
 import { selectIsAuthenticated, selectAuthChecked, selectUser } from '@/app/store/authSlice';
 
-export const AuthGuard = ({ children, requireEmailVerification = true }) => {
+type AuthGuardProps = {
+  children: ReactNode;
+  requireEmailVerification?: boolean;
+};
+
+export const AuthGuard = ({ children, requireEmailVerification = true }: AuthGuardProps) => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const authChecked = useSelector(selectAuthChecked);
   const user = useSelector(selectUser);
@@ -32,5 +37,5 @@ export const AuthGuard = ({ children, requireEmailVerification = true }) => {
     );
   }
 
-  return children;
+  return <>{children}</>;
 };

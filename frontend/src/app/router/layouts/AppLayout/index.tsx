@@ -1,4 +1,3 @@
-// src/app/router/layouts/AppLayout/index.jsx
 import { useEffect } from 'react';
 import { AppShell, Burger } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
@@ -15,8 +14,13 @@ import { selectUser, selectIsAuthenticated } from '@/app/store/authSlice';
 import ChatContainer from '@/shared/components/chat';
 import styles from './AppLayout.module.css';
 
+type FetchError = {
+  status?: number;
+  data?: unknown;
+};
+
 export const AppLayout = () => {
-  const { eventId } = useParams();
+  const { eventId } = useParams<{ eventId: string }>();
   const navigate = useNavigate();
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
@@ -33,14 +37,12 @@ export const AppLayout = () => {
     data: event,
     error: eventError,
     isError: eventIsError,
-  } = useGetEventQuery(
-    { id: eventId },
-    { skip: !eventId }, // Skip the query if eventId is undefined
-  );
+  } = useGetEventQuery({ id: Number(eventId) }, { skip: !eventId });
 
   // Redirect to dashboard if event is deleted (404) or user has no access (403)
   useEffect(() => {
-    if (eventId && eventIsError && (eventError?.status === 404 || eventError?.status === 403)) {
+    const error = eventError as FetchError | undefined;
+    if (eventId && eventIsError && (error?.status === 404 || error?.status === 403)) {
       navigate('/app/dashboard', { replace: true });
     }
   }, [eventId, eventIsError, eventError, navigate]);
@@ -71,16 +73,19 @@ export const AppLayout = () => {
           console.log('Socket token response:', response.status, response.statusText);
 
           if (response.ok) {
-            const data = await response.json();
+            const data = (await response.json()) as { token: string };
             console.log('Socket token data:', data);
             const { token } = data;
             console.log('Initializing socket in AppLayout with token:', token ? 'YES' : 'NO');
+            // @ts-expect-error socketClient.js not yet typed
             const socket = initializeSocket(token);
 
             // If socket is already connected, fetch data immediately
             if (socket.connected) {
               console.log('Socket already connected, fetching initial data');
-              fetchInitialData().catch((err) => console.error('Error fetching initial data:', err));
+              fetchInitialData().catch((err: unknown) =>
+                console.error('Error fetching initial data:', err),
+              );
             }
             // Otherwise socket.on('connect') in socketClient will handle it
           } else {
@@ -101,23 +106,22 @@ export const AppLayout = () => {
     };
   }, [isAuthenticated, user]);
 
+  const navbarConfig = {
+    width: 300,
+    breakpoint: 'sm' as const,
+    collapsed: { mobile: !mobileOpened, desktop: !desktopOpened },
+  };
+
   return (
     <AppShell
-      className={styles.layout}
+      className={styles.layout ?? ''}
       header={{ height: 60 }}
-      navbar={
-        showEventNav ?
-          {
-            width: 300,
-            breakpoint: 'sm',
-            collapsed: { mobile: !mobileOpened, desktop: !desktopOpened },
-          }
-        : undefined
-      }
+      {...(showEventNav && { navbar: navbarConfig })}
       padding='md'
     >
       <AppShell.Header>
         <TopNav
+          context={undefined}
           leftContent={
             showEventNav && (
               <>
@@ -154,7 +158,7 @@ export const AppLayout = () => {
         </AppShell.Navbar>
       )}
 
-      <AppShell.Main className={styles.main}>
+      <AppShell.Main className={styles.main ?? ''}>
         <Outlet />
         {/* Use user instead of currentUser */}
         {user && <ChatContainer />}

@@ -1,5 +1,5 @@
-// src/app/router/routes/protectedRoutes.js
 import { lazy } from 'react';
+import type { RouteObject } from 'react-router-dom';
 import { Outlet, Navigate } from 'react-router-dom';
 import { AuthGuard } from '../guards/AuthGuard';
 
@@ -93,7 +93,7 @@ const NotFound = lazy(() =>
   })),
 );
 
-export const protectedRoutes = [
+export const protectedRoutes: RouteObject[] = [
   {
     path: '/app',
     element: (

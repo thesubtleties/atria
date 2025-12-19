@@ -1,4 +1,5 @@
 import { lazy } from 'react';
+import type { RouteObject } from 'react-router-dom';
 import { Landing } from '../../../pages/Landing';
 import { PublicGuard } from '../guards/PublicGuard';
 
@@ -20,7 +21,7 @@ const NotFound = lazy(() =>
   })),
 );
 
-export const publicRoutes = [
+export const publicRoutes: RouteObject[] = [
   {
     path: '/',
     element: (

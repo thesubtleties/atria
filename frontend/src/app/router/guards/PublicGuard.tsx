@@ -1,9 +1,13 @@
-// PublicGuard.jsx
+import type { ReactNode } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { selectIsAuthenticated, selectAuthChecked } from '@/app/store/authSlice';
 
-export const PublicGuard = ({ children }) => {
+type PublicGuardProps = {
+  children: ReactNode;
+};
+
+export const PublicGuard = ({ children }: PublicGuardProps) => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const authChecked = useSelector(selectAuthChecked);
 
@@ -16,5 +20,5 @@ export const PublicGuard = ({ children }) => {
     return <Navigate to='/app' replace />;
   }
 
-  return children;
+  return <>{children}</>;
 };

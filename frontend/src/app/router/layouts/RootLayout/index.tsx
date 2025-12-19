@@ -1,13 +1,12 @@
-// RootLayout.js
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import { authApi } from '@/app/features/auth/api';
 import { setUser } from '../../../store/authSlice';
+import type { AppDispatch } from '@/app/store';
 
 export const RootLayout = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -23,7 +22,7 @@ export const RootLayout = () => {
     };
 
     initializeAuth();
-  }, [dispatch, navigate]);
+  }, [dispatch]);
 
   return <Outlet />;
 };
