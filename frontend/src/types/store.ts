@@ -8,11 +8,11 @@
 import type { User } from './auth';
 
 /** Auth slice state */
-export interface AuthState {
+export type AuthState = {
   user: User | null;
   isAuthenticated: boolean;
   authChecked: boolean;
-}
+};
 
 // Re-export RootState and AppDispatch from the actual store
 export type { RootState, AppDispatch } from '@/app/store';

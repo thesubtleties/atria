@@ -12,6 +12,7 @@ import {
 import type { Icon } from '@tabler/icons-react';
 import PrivateImage from '../PrivateImage';
 import { useGradientBadge } from '../../hooks/useGradientBadge';
+import type { Sponsor } from '@/types';
 import styles from './SponsorCard.module.css';
 
 type SocialPlatform =
@@ -33,30 +34,9 @@ const socialIcons: Record<SocialPlatform, Icon> = {
   other: IconWorld,
 };
 
-interface SocialLinks {
-  linkedin?: string;
-  twitter?: string;
-  youtube?: string;
-  tiktok?: string;
-  instagram?: string;
-  facebook?: string;
-  other?: string;
-}
-
-interface Sponsor {
-  name: string;
-  description?: string;
-  logo_url?: string;
-  website_url?: string;
-  tier_name?: string;
-  tier_color?: string;
-  social_links?: SocialLinks;
-  featured?: boolean;
-}
-
-interface SponsorCardProps {
+type SponsorCardProps = {
   sponsor: Sponsor;
-}
+};
 
 export const SponsorCard = ({ sponsor }: SponsorCardProps) => {
   const {

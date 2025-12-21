@@ -9,10 +9,10 @@ export const SPEAKER_ROLES = {
 
 export type SpeakerRole = (typeof SPEAKER_ROLES)[keyof typeof SPEAKER_ROLES];
 
-interface SpeakerRoleOption {
+type SpeakerRoleOption = {
   value: SpeakerRole;
   label: string;
-}
+};
 
 // Role display options for select components
 export const SPEAKER_ROLE_OPTIONS: SpeakerRoleOption[] = [

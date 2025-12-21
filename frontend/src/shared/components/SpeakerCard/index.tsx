@@ -2,27 +2,27 @@ import { Card, Avatar, Text, Group } from '@mantine/core';
 import { IconBriefcase, IconMicrophone } from '@tabler/icons-react';
 import styles from './SpeakerCard.module.css';
 
-interface Session {
+type Session = {
   id: number;
   title: string;
-}
+};
 
-interface Speaker {
-  full_name?: string;
-  first_name?: string;
-  last_name?: string;
-  speaker_title?: string; // Event-specific title (takes priority)
-  speaker_bio?: string; // Event-specific bio (takes priority)
-  title?: string; // User's profile title (fallback)
-  bio?: string; // User's profile bio (fallback)
-  company_name?: string;
-  image_url?: string;
+type Speaker = {
+  full_name?: string | null;
+  first_name?: string | null;
+  last_name?: string | null;
+  speaker_title?: string | null; // Event-specific title (takes priority)
+  speaker_bio?: string | null; // Event-specific bio (takes priority)
+  title?: string | null; // User's profile title (fallback)
+  bio?: string | null; // User's profile bio (fallback)
+  company_name?: string | null;
+  image_url?: string | null;
   sessions?: Session[]; // sessions this speaker is presenting
-}
+};
 
-interface SpeakerCardProps {
+type SpeakerCardProps = {
   speaker: Speaker;
-}
+};
 
 export const SpeakerCard = ({ speaker }: SpeakerCardProps) => {
   const {

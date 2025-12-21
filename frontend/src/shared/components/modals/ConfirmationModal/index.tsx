@@ -4,7 +4,7 @@ import { modals } from '@mantine/modals';
 import { Button } from '../../buttons';
 import styles from './styles/index.module.css';
 
-interface ConfirmationModalOptions {
+type ConfirmationModalOptions = {
   title: string;
   message?: string;
   confirmLabel?: string;
@@ -13,7 +13,7 @@ interface ConfirmationModalOptions {
   onCancel?: () => void;
   isDangerous?: boolean;
   children?: React.ReactNode;
-}
+};
 
 export const openConfirmationModal = ({
   title,

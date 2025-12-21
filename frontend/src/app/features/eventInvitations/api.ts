@@ -1,21 +1,21 @@
 import { baseApi } from '../api';
 
-interface GetEventInvitationsParams {
+type GetEventInvitationsParams = {
   eventId: number;
   page?: number;
   perPage?: number;
-}
+};
 
-interface EventInvitation {
+type EventInvitation = {
   id: number;
   email: string;
   role: string;
   status: string;
   created_at: string;
   expires_at: string;
-}
+};
 
-interface GetEventInvitationsResponse {
+type GetEventInvitationsResponse = {
   invitations: EventInvitation[];
   total_items: number;
   total_pages: number;
@@ -26,35 +26,35 @@ interface GetEventInvitationsResponse {
   last?: string;
   next?: string;
   prev?: string;
-}
+};
 
-interface SendEventInvitationParams {
+type SendEventInvitationParams = {
   eventId: number;
   email: string;
   role: string;
   message?: string;
-}
+};
 
-interface SendBulkEventInvitationsParams {
+type SendBulkEventInvitationsParams = {
   eventId: number;
   invitations: Array<{
     email: string;
     role: string;
     message?: string;
   }>;
-}
+};
 
-interface AcceptInvitationParams {
+type AcceptInvitationParams = {
   token: string;
-}
+};
 
-interface DeclineInvitationParams {
+type DeclineInvitationParams = {
   token: string;
-}
+};
 
-interface CancelEventInvitationParams {
+type CancelEventInvitationParams = {
   invitationId: number;
-}
+};
 
 export const eventInvitationsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({

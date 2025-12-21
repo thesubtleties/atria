@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/shared/components/buttons';
 import styles from './styles.module.css';
 
-interface Suggestion {
+type Suggestion = {
   title: string;
   description: string;
   path: string;
   icon: ReactNode;
-}
+};
 
 /**
  * NotFound - Branded 404 page

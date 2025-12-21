@@ -11,7 +11,7 @@ import type {
 } from '@/types';
 
 /** Response for getChatRooms - paginated */
-interface GetChatRoomsResponse {
+type GetChatRoomsResponse = {
   chat_rooms: ChatRoom[];
   total_items: number;
   total_pages: number;
@@ -22,45 +22,45 @@ interface GetChatRoomsResponse {
   last?: string;
   next?: string;
   prev?: string;
-}
+};
 
 /** Response for getEventAdminChatRooms - wrapped object */
-interface GetEventAdminChatRoomsResponse {
+type GetEventAdminChatRoomsResponse = {
   chat_rooms: ChatRoomAdmin[];
-}
+};
 
 /** Get chat rooms query parameters */
-interface GetChatRoomMessagesParams {
+type GetChatRoomMessagesParams = {
   chatRoomId: number;
   page?: number;
   per_page?: number;
-}
+};
 
 /** Send message payload */
-interface SendMessageParams {
+type SendMessageParams = {
   chatRoomId: number;
   content: string;
-}
+};
 
 /** Delete message payload */
-interface DeleteMessageParams {
+type DeleteMessageParams = {
   chatRoomId: number;
   messageId: number;
-}
+};
 
 /** Create chat room payload */
-interface CreateChatRoomParams extends ChatRoomCreateData {
+type CreateChatRoomParams = ChatRoomCreateData & {
   eventId: number;
-}
+};
 
 /** Update chat room payload - requires roomId and at least one update field */
 type UpdateChatRoomParams = { roomId: number } & ChatRoomUpdateData;
 
 /** Reorder chat room payload */
-interface ReorderChatRoomParams {
+type ReorderChatRoomParams = {
   roomId: number;
   display_order: number;
-}
+};
 
 // socket connectivity handled in networking/socketClient.js
 export const chatApi = baseApi.injectEndpoints({

@@ -7,18 +7,18 @@ import type { SerializedError } from '@reduxjs/toolkit';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import styles from './styles/index.module.css';
 
-interface PaginationInfo {
+type PaginationInfo = {
   total_pages: number;
   current_page: number;
-}
+};
 
-interface ConnectionsListProps {
+type ConnectionsListProps = {
   connections: Connection[];
   isLoading: boolean;
-  error: FetchBaseQueryError | SerializedError | undefined;
+  error?: FetchBaseQueryError | SerializedError;
   pagination?: PaginationInfo;
   onPageChange: (page: number) => void;
-}
+};
 
 export function ConnectionsList({
   connections,
@@ -28,7 +28,8 @@ export function ConnectionsList({
   onPageChange,
 }: ConnectionsListProps) {
   if (error) {
-    const errorMessage = 'message' in error ? error.message : 'Failed to load connections. Please try again.';
+    const errorMessage =
+      'message' in error ? error.message : 'Failed to load connections. Please try again.';
     return (
       <Alert color='red' title='Error loading connections'>
         {errorMessage}
@@ -57,7 +58,7 @@ export function ConnectionsList({
       {/* Desktop Table View */}
       <div className={styles.desktopView}>
         <ScrollArea>
-          <Table className={styles.table}>
+          <Table className={styles.table ?? ''}>
             <Table.Thead>
               <Table.Tr>
                 <Table.Th>Name</Table.Th>
@@ -88,7 +89,7 @@ export function ConnectionsList({
       </div>
 
       {pagination && pagination.total_pages > 1 && (
-        <Center className={styles.pagination}>
+        <Center className={styles.pagination ?? ''}>
           <Pagination
             total={pagination.total_pages}
             value={pagination.current_page}

@@ -11,7 +11,7 @@ import {
   unregisterDirectMessageCallback,
 } from '../../app/features/networking/socketClient';
 
-interface Message {
+type Message = {
   id: string | number;
   thread_id: number;
   sender_id: number;
@@ -20,7 +20,7 @@ interface Message {
   is_sender: boolean;
   status: string;
   pending?: boolean;
-}
+};
 
 export function useSocketMessages(threadId: number) {
   const [messageInput, setMessageInput] = useState('');

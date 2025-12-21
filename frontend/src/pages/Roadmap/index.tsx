@@ -2,25 +2,25 @@ import styles from './styles/index.module.css';
 
 type RoadmapStatus = 'complete' | 'partial' | 'in-progress' | 'planned';
 
-interface RoadmapDetail {
+type RoadmapDetail = {
   text: string;
   status: RoadmapStatus;
-}
+};
 
-interface RoadmapItem {
+type RoadmapItem = {
   title: string;
   status: RoadmapStatus;
   description: string;
   details?: RoadmapDetail[];
-}
+};
 
-interface RoadmapPhase {
+type RoadmapPhase = {
   id: string;
   title: string;
   status: RoadmapStatus;
   description: string;
   items: RoadmapItem[];
-}
+};
 
 const RoadmapPage = () => {
   // Define the roadmap phases
@@ -515,11 +515,11 @@ const RoadmapPage = () => {
                           className={`${styles.detailItem} ${styles[detail.status]}`}
                         >
                           <span className={styles.detailStatus}>
-                            {detail.status === 'complete'
-                              ? '✓'
-                              : detail.status === 'in-progress'
-                                ? '⟳'
-                                : '○'}
+                            {detail.status === 'complete' ?
+                              '✓'
+                            : detail.status === 'in-progress' ?
+                              '⟳'
+                            : '○'}
                           </span>
                           {detail.text}
                         </li>

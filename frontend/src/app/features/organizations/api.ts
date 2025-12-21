@@ -13,17 +13,17 @@ import type {
 } from '@/types';
 
 /** Organization invitation */
-interface OrganizationInvitation {
+type OrganizationInvitation = {
   id: number;
   email: string;
   role: OrganizationUserRole;
   status: 'pending' | 'accepted' | 'expired' | 'declined' | 'cancelled';
   created_at: string;
   expires_at: string;
-}
+};
 
 /** Invitation preview from token */
-interface OrganizationInvitationPreview {
+type OrganizationInvitationPreview = {
   email: string;
   role: OrganizationUserRole;
   organization: {
@@ -33,86 +33,86 @@ interface OrganizationInvitationPreview {
   invited_by: {
     full_name: string;
   };
-}
+};
 
 /** Get organization users query parameters */
-interface GetOrganizationUsersParams {
+type GetOrganizationUsersParams = {
   orgId: number;
   role?: OrganizationUserRole;
   page?: number;
   per_page?: number;
-}
+};
 
 /** Get organization invitations query parameters */
-interface GetOrganizationInvitationsParams {
+type GetOrganizationInvitationsParams = {
   orgId: number;
   page?: number;
   per_page?: number;
-}
+};
 
 /** Add organization user payload
  * This endpoint can create a new user or add existing user by email
  */
-interface AddOrganizationUserParams {
+type AddOrganizationUserParams = {
   orgId: number;
   email: string;
   first_name: string;
   last_name: string;
   password?: string | undefined; // Optional - used only for new user creation
   role: OrganizationUserRole;
-}
+};
 
 /** Update organization user payload */
-interface UpdateOrganizationUserParams extends OrganizationUserRoleUpdateData {
+type UpdateOrganizationUserParams = OrganizationUserRoleUpdateData & {
   orgId: number;
   userId: number;
-}
+};
 
 /** Remove organization user payload */
-interface RemoveOrganizationUserParams {
+type RemoveOrganizationUserParams = {
   orgId: number;
   userId: number;
-}
+};
 
 /** Send organization invitation payload */
-interface SendOrganizationInvitationParams {
+type SendOrganizationInvitationParams = {
   orgId: number;
   email: string;
   role: OrganizationUserRole;
-}
+};
 
 /** Bulk send organization invitations payload */
-interface BulkSendOrganizationInvitationsParams {
+type BulkSendOrganizationInvitationsParams = {
   orgId: number;
   invitations: Array<{
     email: string;
     role: OrganizationUserRole;
   }>;
-}
+};
 
 /** Cancel organization invitation payload */
-interface CancelOrganizationInvitationParams {
+type CancelOrganizationInvitationParams = {
   orgId: number;
   invitationId: number;
-}
+};
 
 /** Update organization payload with ID */
-interface UpdateOrganizationParams extends OrganizationUpdateData {
+type UpdateOrganizationParams = OrganizationUpdateData & {
   id: number;
-}
+};
 
 /** Update Mux credentials payload with org ID */
-interface UpdateMuxCredentialsParams extends OrganizationMuxCredentialsData {
+type UpdateMuxCredentialsParams = OrganizationMuxCredentialsData & {
   orgId: number;
-}
+};
 
 /** Update JaaS credentials payload with org ID */
-interface UpdateJaasCredentialsParams extends OrganizationJaasCredentialsData {
+type UpdateJaasCredentialsParams = OrganizationJaasCredentialsData & {
   orgId: number;
-}
+};
 
 /** Response for getOrganizations - paginated */
-interface GetOrganizationsResponse {
+type GetOrganizationsResponse = {
   organizations: Organization[];
   total_items: number;
   total_pages: number;
@@ -123,19 +123,19 @@ interface GetOrganizationsResponse {
   last?: string;
   next?: string;
   prev?: string;
-}
+};
 
 /** Generic message response */
-interface MessageResponse {
+type MessageResponse = {
   message: string;
-}
+};
 
 /** Bulk invitation response */
-interface BulkInvitationResponse {
+type BulkInvitationResponse = {
   sent: number;
   failed: number;
   errors?: Array<{ email: string; error: string }>;
-}
+};
 
 export const organizationsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({

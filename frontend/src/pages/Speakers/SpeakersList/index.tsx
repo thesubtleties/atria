@@ -3,9 +3,9 @@ import { SpeakerCard } from '@/shared/components/SpeakerCard';
 import type { EventUser } from '@/types';
 import styles from './styles/index.module.css';
 
-interface SpeakersListProps {
+type SpeakersListProps = {
   speakers: EventUser[];
-}
+};
 
 export default function SpeakersList({ speakers }: SpeakersListProps) {
   // Group speakers by type if needed (keynote, featured, etc.)
@@ -23,7 +23,11 @@ export default function SpeakersList({ speakers }: SpeakersListProps) {
 
   return (
     <div className={styles.container}>
-      <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing='xl' className={styles.speakersGrid}>
+      <SimpleGrid
+        cols={{ base: 1, sm: 2, md: 3 }}
+        spacing='xl'
+        className={styles.speakersGrid ?? ''}
+      >
         {speakers.map((speaker) => (
           <SpeakerCard key={speaker.user_id} speaker={speaker} />
         ))}

@@ -22,11 +22,11 @@ export const compareByLastName = (
   return aFirst.localeCompare(bFirst);
 };
 
-interface Person {
+type Person = {
   last_name?: string;
   first_name?: string;
   full_name?: string;
-}
+};
 
 export const getNameSortValue = (person: Person): string => {
   // If we have individual first/last name fields, use them for proper sorting

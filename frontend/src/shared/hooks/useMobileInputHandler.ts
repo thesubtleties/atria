@@ -11,12 +11,12 @@ import { useCallback } from 'react';
  * @param {boolean} canSend - Whether sending is allowed
  * @returns {Object} Event handlers for input
  */
-interface MobileInputHandlers {
+type MobileInputHandlers = {
   handleKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   handleSendClick: () => void;
   handleFocus: (e: React.FocusEvent<HTMLTextAreaElement>) => void;
   handleBlur: (e: React.FocusEvent<HTMLTextAreaElement>) => void;
-}
+};
 
 export function useMobileInputHandler(
   onSend: () => void,

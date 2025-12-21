@@ -15,18 +15,18 @@ import type { RootState, AppDispatch } from '@/app/store';
 import type { Connection } from '@/types';
 import styles from './styles/index.module.css';
 
-interface ConnectionRowProps {
+type ConnectionRowProps = {
   connection: Connection;
-}
+};
 
-interface ThreadResult {
+type ThreadResult = {
   thread_id?: number;
   id?: number;
   data?: {
     thread_id?: number;
     id?: number;
   };
-}
+};
 
 export function ConnectionRow({ connection }: ConnectionRowProps) {
   const dispatch = useDispatch<AppDispatch>();
@@ -82,15 +82,15 @@ export function ConnectionRow({ connection }: ConnectionRowProps) {
   };
 
   return (
-    <Table.Tr className={styles.row}>
+    <Table.Tr className={styles.row ?? ''}>
       <Table.Td>
         <Group gap='sm'>
-          <Avatar src={otherUser.image_url} alt={otherUser.full_name} radius='xl' size={40}>
+          <Avatar src={otherUser.image_url} alt={otherUser.full_name ?? ''} radius='xl' size={40}>
             {otherUser.full_name?.[0]?.toUpperCase()}
           </Avatar>
           <Text
             fw={500}
-            className={styles.clickableName}
+            className={styles.clickableName ?? ''}
             onClick={() => navigate(`/app/users/${otherUser.id}`)}
             style={{ cursor: 'pointer', color: '#6366f1' }}
           >
@@ -111,21 +111,20 @@ export function ConnectionRow({ connection }: ConnectionRowProps) {
       </Table.Td>
 
       <Table.Td style={{ textAlign: 'center' }}>
-        {connection.originating_event ? (
+        {connection.originating_event ?
           <Badge variant='light' size='md' radius='sm' color='gray'>
             {connection.originating_event.title}
           </Badge>
-        ) : (
-          <Text size='sm' c='dimmed'>
+        : <Text size='sm' c='dimmed'>
             Direct connection
           </Text>
-        )}
+        }
       </Table.Td>
 
       <Table.Td>
-        <Group gap={0} justify='flex-start' className={styles.socialLinks}>
+        <Group gap={0} justify='flex-start' className={styles.socialLinks ?? ''}>
           {/* LinkedIn - always render space */}
-          {otherUser.social_links?.linkedin ? (
+          {otherUser.social_links?.linkedin ?
             <div className={styles.linkedinIcon}>
               <ActionIcon
                 size='md'
@@ -138,12 +137,10 @@ export function ConnectionRow({ connection }: ConnectionRowProps) {
                 <IconBrandLinkedin size={18} />
               </ActionIcon>
             </div>
-          ) : (
-            <div className={styles.iconPlaceholder} />
-          )}
+          : <div className={styles.iconPlaceholder} />}
 
           {/* Twitter - always render space */}
-          {otherUser.social_links?.twitter ? (
+          {otherUser.social_links?.twitter ?
             <div className={styles.twitterIcon}>
               <ActionIcon
                 size='md'
@@ -156,12 +153,10 @@ export function ConnectionRow({ connection }: ConnectionRowProps) {
                 <IconBrandTwitter size={18} />
               </ActionIcon>
             </div>
-          ) : (
-            <div className={styles.iconPlaceholder} />
-          )}
+          : <div className={styles.iconPlaceholder} />}
 
           {/* Website - always render space */}
-          {otherUser.social_links?.website ? (
+          {otherUser.social_links?.website ?
             <div className={styles.websiteIcon}>
               <ActionIcon
                 size='md'
@@ -174,24 +169,21 @@ export function ConnectionRow({ connection }: ConnectionRowProps) {
                 <IconWorld size={18} />
               </ActionIcon>
             </div>
-          ) : (
-            <div className={styles.iconPlaceholder} />
-          )}
+          : <div className={styles.iconPlaceholder} />}
         </Group>
       </Table.Td>
 
       <Table.Td>
-        {otherUser.email ? (
+        {otherUser.email ?
           <Text size='sm'>
             <a href={`mailto:${otherUser.email}`} className={styles.emailLink}>
               {otherUser.email}
             </a>
           </Text>
-        ) : (
-          <Text size='sm' c='dimmed'>
+        : <Text size='sm' c='dimmed'>
             -
           </Text>
-        )}
+        }
       </Table.Td>
 
       <Table.Td style={{ textAlign: 'center' }}>

@@ -18,55 +18,55 @@ import type { UserWithRole, SocialLinks } from './auth';
 import type { Patch } from './utils';
 
 /** Event branding stored as JSON */
-export interface EventBranding {
+export type EventBranding = {
   primary_color: string;
   secondary_color: string;
   logo_url: string | null;
   banner_url: string | null;
-}
+};
 
 /** Hero images structure */
-export interface HeroImages {
+export type HeroImages = {
   desktop: string | null;
   mobile: string | null;
-}
+};
 
 /** Welcome section in event sections */
-export interface WelcomeSection {
+export type WelcomeSection = {
   title: string | null;
   content: string | null;
-}
+};
 
 /** Highlight item in event sections */
-export interface EventHighlight {
+export type EventHighlight = {
   title: string;
   description: string;
   icon: string | null;
-}
+};
 
 /** FAQ item in event sections */
-export interface EventFAQ {
+export type EventFAQ = {
   question: string;
   answer: string;
-}
+};
 
 /** Event sections JSON structure */
-export interface EventSections {
+export type EventSections = {
   welcome: WelcomeSection;
   highlights: EventHighlight[];
   faqs: EventFAQ[];
-}
+};
 
 /** Sponsor tier configuration stored on event */
-export interface SponsorTier {
+export type SponsorTier = {
   id: string;
   name: string;
   order: number;
   color: string;
-}
+};
 
 /** Core event model */
-export interface Event {
+export type Event = {
   id: number;
   organization_id: number;
   title: string;
@@ -106,10 +106,10 @@ export interface Event {
   last_session_time: string | null;
   event_hours: { start: string; end: string } | null;
   user_role?: EventUserRole; // Current user's role if authenticated
-}
+};
 
 /** Detailed event with relationships */
-export interface EventDetail extends Event {
+export type EventDetail = Event & {
   sponsors_count: number;
   organization: {
     id: number;
@@ -124,13 +124,13 @@ export interface EventDetail extends Event {
     company_name: string | null;
   }>;
   main_session: SessionMinimal | null;
-}
+};
 
 /** Nested event for other schemas - derived from Event */
 export type EventNested = Pick<Event, 'id' | 'title' | 'start_date' | 'status'>;
 
 /** Event creation payload */
-export interface EventCreateData {
+export type EventCreateData = {
   title: string;
   event_type: EventType;
   start_date: string;
@@ -140,10 +140,10 @@ export interface EventCreateData {
   description?: string;
   status?: EventStatus;
   branding?: Partial<EventBranding>;
-}
+};
 
 /** Mutable fields for event updates */
-interface EventMutableFields {
+type EventMutableFields = {
   title: string;
   description: string | null;
   event_type: EventType;
@@ -165,7 +165,7 @@ interface EventMutableFields {
   sections: Partial<EventSections>;
   icebreakers: string[];
   main_session_id: number | null;
-}
+};
 
 /** Event update payload - requires at least one field */
 export type EventUpdateData = Patch<EventMutableFields>;
@@ -178,7 +178,7 @@ export type EventBrandingUpdate = Partial<Omit<EventBranding, 'banner_url'>>;
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** Session speaker with role */
-export interface SessionSpeaker {
+export type SessionSpeaker = {
   id: number;
   session_id: number;
   user_id: number;
@@ -189,10 +189,10 @@ export interface SessionSpeaker {
   title: string | null;
   company_name: string | null;
   social_links: SocialLinks | null;
-}
+};
 
 /** Session summary for event listings */
-export interface SessionSummary {
+export type SessionSummary = {
   id: number;
   title: string;
   start_time: string; // Time as HH:MM:SS
@@ -201,7 +201,7 @@ export interface SessionSummary {
   session_type: SessionType;
   description: string | null;
   speakers: SessionSpeaker[];
-}
+};
 
 /** Minimal session for dropdowns - derived from Session */
 export type SessionMinimal = Pick<
@@ -210,7 +210,7 @@ export type SessionMinimal = Pick<
 >;
 
 /** Full session model */
-export interface Session {
+export type Session = {
   id: number;
   event_id: number;
   status: SessionStatus;
@@ -242,10 +242,10 @@ export interface Session {
   has_chat_enabled: boolean;
   has_public_chat_enabled: boolean;
   has_backstage_chat_enabled: boolean;
-}
+};
 
 /** Detailed session with relationships */
-export interface SessionDetail extends Session {
+export type SessionDetail = Session & {
   event: {
     id: number;
     title: string;
@@ -253,10 +253,10 @@ export interface SessionDetail extends Session {
     end_date: string;
   };
   session_speakers: SessionSpeaker[];
-}
+};
 
 /** Session creation payload */
-export interface SessionCreateData {
+export type SessionCreateData = {
   title: string;
   session_type: SessionType;
   start_time: string;
@@ -272,10 +272,10 @@ export interface SessionCreateData {
   zoom_passcode?: string | null;
   mux_playback_policy?: 'PUBLIC' | 'SIGNED' | null;
   jitsi_room_name?: string | null;
-}
+};
 
 /** Mutable fields for session updates */
-interface SessionMutableFields {
+type SessionMutableFields = {
   title: string;
   session_type: SessionType;
   status: SessionStatus;
@@ -291,13 +291,13 @@ interface SessionMutableFields {
   zoom_passcode: string | null;
   mux_playback_policy: 'PUBLIC' | 'SIGNED' | null;
   jitsi_room_name: string | null;
-}
+};
 
 /** Session update payload - requires at least one field */
 export type SessionUpdateData = Patch<SessionMutableFields>;
 
 /** Playback data returned for streaming */
-export interface SessionPlaybackData {
+export type SessionPlaybackData = {
   platform: StreamingPlatform;
   // Vimeo/Mux/Other
   playback_url?: string | null;
@@ -312,14 +312,14 @@ export interface SessionPlaybackData {
   room_name?: string | null;
   token?: string | null;
   expires_at?: string | null;
-}
+};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Event User types
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** Event user association */
-export interface EventUser {
+export type EventUser = {
   event_id: number;
   user_id: number;
   role: EventUserRole;
@@ -368,13 +368,13 @@ export interface EventUser {
   user_name?: string;
   is_speaker?: boolean;
   is_organizer?: boolean;
-}
+};
 
 /** Add user to event payload */
-export interface AddUserToEventData {
+export type AddUserToEventData = {
   email: string;
   password?: string;
   first_name: string;
   last_name: string;
   role: EventUserRole;
-}
+};

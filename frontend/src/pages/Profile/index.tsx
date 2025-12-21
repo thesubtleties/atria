@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Container, Stack, Group, TextInput, Alert } from '@mantine/core';
+import { Container, Stack, Group, TextInput, Alert, Button as MantineButton } from '@mantine/core';
 import { IconCheck, IconX, IconUserPlus } from '@tabler/icons-react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -22,7 +22,7 @@ import type { RootState, AppDispatch } from '@/app/store';
 import type { Connection, User } from '@/types';
 import styles from './styles/index.module.css';
 
-interface ProfileFormValues {
+type ProfileFormValues = {
   first_name: string;
   last_name: string;
   company_name: string;
@@ -34,14 +34,14 @@ interface ProfileFormValues {
     twitter: string;
     website: string;
   };
-}
+};
 
-interface ApiError {
+type ApiError = {
   status?: number;
   data?: {
     message?: string;
   };
-}
+};
 
 export const ProfilePage = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -77,14 +77,14 @@ export const ProfilePage = () => {
 
   // Find the connection object if it exists
   const connection: Connection | undefined =
-    !isOwnProfile
-      ? connectionsData?.connections?.find((conn) => {
-          const isRequester = conn.requester.id === profileUserId;
-          const isRecipient = conn.recipient.id === profileUserId;
-          const isAccepted = conn.status === 'accepted' || conn.status === 'ACCEPTED';
-          return (isRequester || isRecipient) && isAccepted;
-        })
-      : undefined;
+    !isOwnProfile ?
+      (connectionsData?.connections as Connection[] | undefined)?.find((conn: Connection) => {
+        const isRequester = conn.requester.id === profileUserId;
+        const isRecipient = conn.recipient.id === profileUserId;
+        const isAccepted = conn.status === 'accepted';
+        return (isRequester || isRecipient) && isAccepted;
+      })
+    : undefined;
 
   const form = useForm<ProfileFormValues>({
     initialValues: {
@@ -269,7 +269,7 @@ export const ProfilePage = () => {
     // Handle 403 error for non-connected users
     if (apiError?.status === 403) {
       return (
-        <Container size='xl' className={styles.profileContainer}>
+        <Container size='xl' className={styles.profileContainer ?? ''}>
           <Alert color='yellow' title='Connection Required' icon={<IconUserPlus size={20} />}>
             You must be connected with this user to view their profile.
           </Alert>
@@ -278,7 +278,7 @@ export const ProfilePage = () => {
     }
 
     return (
-      <Container size='xl' className={styles.profileContainer}>
+      <Container size='xl' className={styles.profileContainer ?? ''}>
         <Alert color='red' title='Error'>
           Failed to load profile
         </Alert>
@@ -287,17 +287,17 @@ export const ProfilePage = () => {
   }
 
   // Prepare user data with form values when editing
-  const displayUser: Partial<User> | undefined =
-    isEditing
-      ? {
-          ...userProfile,
-          full_name:
-            `${form.values.first_name} ${form.values.last_name}`.trim() || userProfile?.full_name,
-          title: form.values.title,
-          company_name: form.values.company_name,
-          image_url: tempImageUrl || form.values.image_url || userProfile?.image_url,
-        }
-      : userProfile;
+  const displayUser =
+    isEditing && userProfile ?
+      {
+        ...userProfile,
+        full_name:
+          `${form.values.first_name} ${form.values.last_name}`.trim() || userProfile.full_name,
+        title: form.values.title,
+        company_name: form.values.company_name,
+        image_url: tempImageUrl ?? form.values.image_url ?? userProfile.image_url,
+      }
+    : userProfile;
 
   return (
     <main className={styles.profileContainer} ref={parallaxRef}>
@@ -322,7 +322,7 @@ export const ProfilePage = () => {
         {/* Left Column */}
         <div>
           {/* Professional Info */}
-          {isEditing ? (
+          {isEditing ?
             <section className={styles.profileSection}>
               <h2 className={styles.sectionTitle}>Professional Information</h2>
               <form onSubmit={form.onSubmit(handleSave)}>
@@ -332,13 +332,13 @@ export const ProfilePage = () => {
                       label='First Name'
                       {...form.getInputProps('first_name')}
                       required
-                      classNames={{ input: styles.formInput }}
+                      classNames={{ input: styles.formInput ?? '' }}
                     />
                     <TextInput
                       label='Last Name'
                       {...form.getInputProps('last_name')}
                       required
-                      classNames={{ input: styles.formInput }}
+                      classNames={{ input: styles.formInput ?? '' }}
                     />
                   </Group>
                   <TextInput
@@ -346,29 +346,27 @@ export const ProfilePage = () => {
                     value={userProfile?.email}
                     disabled
                     description='Email cannot be changed'
-                    classNames={{ input: styles.formInput }}
+                    classNames={{ input: styles.formInput ?? '' }}
                   />
                   <TextInput
                     label='Job Title'
                     placeholder='e.g., Software Engineer'
                     {...form.getInputProps('title')}
-                    classNames={{ input: styles.formInput }}
+                    classNames={{ input: styles.formInput ?? '' }}
                   />
                   <TextInput
                     label='Company'
                     placeholder='e.g., Acme Corp'
                     {...form.getInputProps('company_name')}
-                    classNames={{ input: styles.formInput }}
+                    classNames={{ input: styles.formInput ?? '' }}
                   />
                 </Stack>
               </form>
             </section>
-          ) : (
-            <ProfessionalInfo user={userProfile} />
-          )}
+          : <ProfessionalInfo user={userProfile as User | undefined} />}
 
           {/* Social Links */}
-          {isEditing ? (
+          {isEditing ?
             <section className={`${styles.profileSection} ${styles.sectionMarginTop}`}>
               <h2 className={styles.sectionTitle}>Social Links</h2>
               <Stack gap='sm'>
@@ -376,25 +374,23 @@ export const ProfilePage = () => {
                   label='LinkedIn'
                   placeholder='https://linkedin.com/in/username'
                   {...form.getInputProps('social_links.linkedin')}
-                  classNames={{ input: styles.formInput }}
+                  classNames={{ input: styles.formInput ?? '' }}
                 />
                 <TextInput
                   label='Twitter'
                   placeholder='https://twitter.com/username'
                   {...form.getInputProps('social_links.twitter')}
-                  classNames={{ input: styles.formInput }}
+                  classNames={{ input: styles.formInput ?? '' }}
                 />
                 <TextInput
                   label='Website'
                   placeholder='https://example.com'
                   {...form.getInputProps('social_links.website')}
-                  classNames={{ input: styles.formInput }}
+                  classNames={{ input: styles.formInput ?? '' }}
                 />
               </Stack>
             </section>
-          ) : (
-            <SocialLinks socialLinks={userProfile?.social_links} />
-          )}
+          : <SocialLinks socialLinks={userProfile?.social_links ?? null} />}
         </div>
 
         {/* Right Column */}
@@ -404,7 +400,7 @@ export const ProfilePage = () => {
 
           {/* About */}
           <AboutSection
-            bio={userProfile?.bio}
+            bio={userProfile?.bio ?? null}
             isEditing={isEditing}
             value={form.values.bio}
             onChange={(value) => form.setFieldValue('bio', value)}
@@ -417,10 +413,10 @@ export const ProfilePage = () => {
         <div className={styles.editActions}>
           <form onSubmit={form.onSubmit(handleSave)} className={styles.editForm}>
             <div className={styles.editButtonGroup}>
-              <Button variant='subtle' onClick={handleCancel}>
+              <MantineButton variant='subtle' onClick={handleCancel}>
                 <IconX size={16} />
                 Cancel
-              </Button>
+              </MantineButton>
               <Button type='submit' variant='primary' disabled={isUpdating}>
                 <IconCheck size={16} />
                 Save Changes
@@ -435,7 +431,7 @@ export const ProfilePage = () => {
         opened={isAvatarModalOpen}
         onClose={() => setIsAvatarModalOpen(false)}
         onSave={handleAvatarSave}
-        currentUrl={form.values.image_url || userProfile?.image_url}
+        currentUrl={form.values.image_url || userProfile?.image_url || null}
       />
     </main>
   );

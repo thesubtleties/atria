@@ -1,14 +1,14 @@
 import { useMemo, type CSSProperties } from 'react';
 
 /** Gradient badge style properties */
-interface GradientBadgeStyles extends CSSProperties {
+type GradientBadgeStyles = CSSProperties & {
   background: string;
   boxShadow: string;
   border: string;
   backdropFilter?: string;
   WebkitBackdropFilter?: string;
   color?: string;
-}
+};
 
 /**
  * Hook to generate gradient badge styles from a single color

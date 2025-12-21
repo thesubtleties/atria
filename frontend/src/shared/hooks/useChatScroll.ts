@@ -1,7 +1,7 @@
 import { useRef, useEffect, type RefObject } from 'react';
 
 /** Parameters for useChatScroll hook */
-interface UseChatScrollParams {
+type UseChatScrollParams = {
   /** Array of messages */
   messages: unknown[];
   /** Whether initial messages are loading */
@@ -14,18 +14,18 @@ interface UseChatScrollParams {
   loadMoreMessages: () => void;
   /** Current thread ID (for resetting state) */
   threadId: string | number | null | undefined;
-}
+};
 
 /** Return type for useChatScroll hook */
-interface UseChatScrollReturn {
+type UseChatScrollReturn = {
   /** Ref for the scroll-to-end element */
   messagesEndRef: RefObject<HTMLDivElement | null>;
   /** Ref for the messages container */
   messagesContainerRef: RefObject<HTMLDivElement | null>;
-}
+};
 
 /** Internal scroll state */
-interface ScrollState {
+type ScrollState = {
   isNearBottom: boolean;
   scrollBeforeLoad: {
     messageId: string;
@@ -34,7 +34,7 @@ interface ScrollState {
   } | null;
   hasInitialized: boolean;
   scrollTimeout: ReturnType<typeof setTimeout> | null;
-}
+};
 
 /**
  * Custom hook for managing chat scroll behavior including:

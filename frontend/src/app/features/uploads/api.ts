@@ -1,19 +1,19 @@
 import { baseApi } from '../api';
 
-interface UploadImageParams {
+type UploadImageParams = {
   file: File;
   context: string;
   eventId?: number;
-}
+};
 
-interface UploadImageResponse {
+type UploadImageResponse = {
   url: string;
   object_key: string;
-}
+};
 
-interface DeleteUploadParams {
+type DeleteUploadParams = {
   objectKey: string;
-}
+};
 
 export const uploadsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({

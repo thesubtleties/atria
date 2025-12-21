@@ -1,5 +1,5 @@
 /** Social links for sponsors */
-export interface SponsorSocialLinks {
+export type SponsorSocialLinks = {
   linkedin: string | null;
   twitter: string | null;
   youtube: string | null;
@@ -7,10 +7,10 @@ export interface SponsorSocialLinks {
   instagram: string | null;
   facebook: string | null;
   other: string | null;
-}
+};
 
 /** Sponsor model */
-export interface Sponsor {
+export type Sponsor = {
   id: number;
   event_id: number;
   name: string;
@@ -37,10 +37,10 @@ export interface Sponsor {
     order: number;
     color: string;
   } | null;
-}
+};
 
 /** Detailed sponsor with event info */
-export interface SponsorDetail extends Sponsor {
+export type SponsorDetail = Sponsor & {
   event: {
     id: number;
     title: string;
@@ -52,10 +52,10 @@ export interface SponsorDetail extends Sponsor {
       color: string;
     }>;
   };
-}
+};
 
 /** Sponsor creation payload */
-export interface SponsorCreateData {
+export type SponsorCreateData = {
   name: string;
   description?: string | null;
   website_url?: string | null;
@@ -69,10 +69,10 @@ export interface SponsorCreateData {
   is_active?: boolean;
   featured?: boolean;
   social_links?: Partial<SponsorSocialLinks> | null;
-}
+};
 
 /** Sponsor update payload */
-export interface SponsorUpdateData {
+export type SponsorUpdateData = {
   name?: string;
   description?: string | null;
   website_url?: string | null;
@@ -86,4 +86,4 @@ export interface SponsorUpdateData {
   is_active?: boolean | null;
   featured?: boolean | null;
   social_links?: Partial<SponsorSocialLinks> | null;
-}
+};

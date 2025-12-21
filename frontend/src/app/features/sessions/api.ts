@@ -1,7 +1,7 @@
 import { baseApi } from '../api';
 import type { SessionSpeaker } from '@/types';
 
-interface Session {
+type Session = {
   id: number;
   title: string;
   description?: string;
@@ -15,16 +15,16 @@ interface Session {
   event_id: number;
   created_at: string;
   updated_at: string;
-}
+};
 
-interface GetSessionsParams {
+type GetSessionsParams = {
   eventId: number;
   dayNumber?: number;
   page?: number;
   per_page?: number;
-}
+};
 
-interface GetSessionsResponse {
+type GetSessionsResponse = {
   sessions: Session[];
   total_items: number;
   total_pages: number;
@@ -35,13 +35,13 @@ interface GetSessionsResponse {
   last?: string;
   next?: string;
   prev?: string;
-}
+};
 
-interface GetSessionParams {
+type GetSessionParams = {
   id: number;
-}
+};
 
-interface CreateSessionParams {
+type CreateSessionParams = {
   eventId: number;
   title: string;
   description?: string;
@@ -51,9 +51,9 @@ interface CreateSessionParams {
   end_time: string;
   location?: string;
   capacity?: number;
-}
+};
 
-interface UpdateSessionParams {
+type UpdateSessionParams = {
   id: number;
   title?: string;
   description?: string;
@@ -64,27 +64,27 @@ interface UpdateSessionParams {
   location?: string;
   capacity?: number;
   status?: string;
-}
+};
 
-interface UpdateSessionStatusParams {
+type UpdateSessionStatusParams = {
   id: number;
   status: string;
-}
+};
 
-interface UpdateSessionTimesParams {
+type UpdateSessionTimesParams = {
   id: number;
   start_time?: string;
   end_time?: string;
-}
+};
 
-interface GetSessionSpeakersParams {
+type GetSessionSpeakersParams = {
   sessionId: number;
   role?: string;
   page?: number;
   per_page?: number;
-}
+};
 
-interface GetSessionSpeakersResponse {
+type GetSessionSpeakersResponse = {
   speakers: SessionSpeaker[];
   total_items: number;
   total_pages: number;
@@ -95,37 +95,37 @@ interface GetSessionSpeakersResponse {
   last?: string;
   next?: string;
   prev?: string;
-}
+};
 
-interface AddSessionSpeakerParams {
+type AddSessionSpeakerParams = {
   sessionId: number;
   user_id: number;
   role: string;
   order?: number;
-}
+};
 
-interface UpdateSessionSpeakerParams {
+type UpdateSessionSpeakerParams = {
   sessionId: number;
   userId: number;
   role?: string;
   order?: number;
   bio?: string;
-}
+};
 
-interface ReorderSessionSpeakerParams {
+type ReorderSessionSpeakerParams = {
   sessionId: number;
   userId: number;
   order: number;
-}
+};
 
-interface RemoveSessionSpeakerParams {
+type RemoveSessionSpeakerParams = {
   sessionId: number;
   userId: number;
-}
+};
 
-interface DeleteSessionParams {
+type DeleteSessionParams = {
   id: number;
-}
+};
 
 export const sessionsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({

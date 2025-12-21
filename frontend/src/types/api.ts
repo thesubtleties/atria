@@ -1,5 +1,5 @@
 /** Standard API error response shape */
-export interface ApiError {
+export type ApiError = {
   status?: number;
   data?: {
     message?: string;
@@ -7,10 +7,10 @@ export interface ApiError {
     [key: string]: unknown;
   };
   message?: string;
-}
+};
 
 /** Paginated API response wrapper */
-export interface PaginatedResponse<T> {
+export type PaginatedResponse<T> = {
   items?: T[];
   total_items: number;
   total_pages: number;
@@ -21,30 +21,30 @@ export interface PaginatedResponse<T> {
   last?: string;
   next?: string;
   prev?: string;
-}
+};
 
 /** Common query parameters for paginated endpoints */
-export interface PaginationParams {
+export type PaginationParams = {
   page?: number;
   per_page?: number;
-}
+};
 
 /** Base query request shape for axios base query */
-export interface BaseQueryRequest {
+export type BaseQueryRequest = {
   url: string;
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   body?: unknown;
   data?: unknown;
   params?: Record<string, unknown>;
-}
+};
 
 /** RTK Query result shapes */
 export type QueryResult<T> = { data: T; error?: undefined } | { data?: undefined; error: ApiError };
 
 /** Upload response from the API */
-export interface UploadResponse {
+export type UploadResponse = {
   url: string;
   filename: string;
   content_type?: string;
   size?: number;
-}
+};

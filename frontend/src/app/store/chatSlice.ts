@@ -4,7 +4,7 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 export type ChatTab = 'general' | 'event' | 'chat' | 'session';
 
 /** Chat slice state */
-export interface ChatSliceState {
+export type ChatSliceState = {
   sidebarExpanded: boolean;
   activeThreads: number[]; // IDs of open chat windows
   minimizedThreads: number[]; // IDs of minimized chat windows
@@ -14,7 +14,7 @@ export interface ChatSliceState {
   activeChatRoomId: number | null; // Currently open chat room ID
   lastSessionId: number | null; // Remember last viewed session
   mobileActiveThreadId: number | null; // Active thread ID for mobile view
-}
+};
 
 const initialState: ChatSliceState = {
   sidebarExpanded: false,
@@ -132,9 +132,9 @@ export const {
 } = chatSlice.actions;
 
 // Selectors
-interface RootStateWithChat {
+type RootStateWithChat = {
   chat: ChatSliceState;
-}
+};
 
 export const selectSidebarExpanded = (state: RootStateWithChat) => state.chat.sidebarExpanded;
 export const selectActiveThreads = (state: RootStateWithChat) => state.chat.activeThreads;

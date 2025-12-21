@@ -1,25 +1,25 @@
 import { openConfirmationModal } from '@/shared/components/modals/ConfirmationModal';
 import { notifications } from '@mantine/notifications';
 
-interface TargetUser {
+type TargetUser = {
   user_id?: number;
   is_banned: boolean;
   is_chat_banned: boolean;
-}
+};
 
-interface BanMutationParams {
+type BanMutationParams = {
   eventId: number;
   userId: number;
   reason?: string;
   moderation_notes?: string;
-}
+};
 
-interface UnbanMutationParams {
+type UnbanMutationParams = {
   eventId: number;
   userId: number;
-}
+};
 
-interface ModerationHandlersParams {
+type ModerationHandlersParams = {
   user: {
     full_name: string;
     event_id: number;
@@ -30,7 +30,7 @@ interface ModerationHandlersParams {
   unbanUser: (params: UnbanMutationParams) => { unwrap: () => Promise<void> };
   chatBanUser: (params: BanMutationParams) => { unwrap: () => Promise<void> };
   chatUnbanUser: (params: UnbanMutationParams) => { unwrap: () => Promise<void> };
-}
+};
 
 export const getModerationPermissions = (
   currentUserId: number,
@@ -69,10 +69,10 @@ export const getModerationPermissions = (
   };
 };
 
-interface ModerationUser {
+type ModerationUser = {
   is_banned: boolean;
   is_chat_banned: boolean;
-}
+};
 
 export const getModerationStyles = (user: ModerationUser): React.CSSProperties => {
   if (user.is_banned) {

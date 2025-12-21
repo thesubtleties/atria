@@ -22,12 +22,12 @@ export const capitalizeWords = (str: string): string => {
     .join(' ');
 };
 
-interface TruncateOptions {
+type TruncateOptions = {
   maxLength?: number;
   suffix?: string;
   fallback?: string;
   wordBoundary?: boolean;
-}
+};
 
 export const truncateText = (text: string, options: TruncateOptions = {}): string => {
   const { maxLength = 80, suffix = '...', fallback = '', wordBoundary = false } = options;

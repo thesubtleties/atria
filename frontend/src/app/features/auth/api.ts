@@ -9,37 +9,37 @@ import type {
 } from '@/types';
 
 /** Login response from the API */
-interface LoginResponse {
+type LoginResponse = {
   user: User;
   message?: string;
-}
+};
 
 /** Signup response from the API */
-interface SignupResponse {
+type SignupResponse = {
   user: User;
   message?: string;
-}
+};
 
 /** Password verification response */
-interface VerifyPasswordResponse {
+type VerifyPasswordResponse = {
   valid: boolean;
-}
+};
 
 /** Email verification response */
-interface VerifyEmailResponse {
+type VerifyEmailResponse = {
   message: string;
-}
+};
 
 /** Token validation response */
-interface ValidateTokenResponse {
+type ValidateTokenResponse = {
   valid: boolean;
   email?: string;
-}
+};
 
 /** Generic message response */
-interface MessageResponse {
+type MessageResponse = {
   message: string;
-}
+};
 
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({

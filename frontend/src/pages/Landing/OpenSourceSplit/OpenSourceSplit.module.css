@@ -728,8 +728,7 @@
 .opensourcePattern {
   position: absolute;
   inset: 0;
-  background-image:
-    radial-gradient(circle at 20% 50%, var(--color-primary) 0%, transparent 50%),
+  background-image: radial-gradient(circle at 20% 50%, var(--color-primary) 0%, transparent 50%),
     radial-gradient(circle at 80% 80%, var(--color-accent-green) 0%, transparent 50%);
   opacity: 0.03;
 }
@@ -737,8 +736,11 @@
 .enterprisePattern {
   position: absolute;
   inset: 0;
-  background-image:
-    radial-gradient(circle at 80% 50%, var(--color-accent-purple) 0%, transparent 50%),
+  background-image: radial-gradient(
+      circle at 80% 50%,
+      var(--color-accent-purple) 0%,
+      transparent 50%
+    ),
     radial-gradient(circle at 20% 20%, var(--color-accent-yellow) 0%, transparent 50%);
   opacity: 0.03;
 }
@@ -813,8 +815,7 @@
 .philosophyGradient {
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(circle at 30% 30%, var(--color-primary) 0%, transparent 40%),
+  background: radial-gradient(circle at 30% 30%, var(--color-primary) 0%, transparent 40%),
     radial-gradient(circle at 70% 70%, var(--color-accent-purple) 0%, transparent 40%);
   opacity: 0.03;
 }

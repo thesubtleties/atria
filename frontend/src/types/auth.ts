@@ -1,7 +1,7 @@
 import type { EventUserRole } from './enums';
 
 /** Social links structure stored as JSON */
-export interface SocialLinks {
+export type SocialLinks = {
   linkedin?: string | null;
   twitter?: string | null;
   github?: string | null;
@@ -11,10 +11,10 @@ export interface SocialLinks {
   instagram?: string | null;
   facebook?: string | null;
   other?: string | null;
-}
+};
 
 /** Privacy settings stored as JSON on user */
-export interface PrivacySettings {
+export type PrivacySettings = {
   email_visibility: 'event_attendees' | 'connections_organizers' | 'organizers_only';
   show_public_email: boolean;
   public_email: string | null;
@@ -22,10 +22,10 @@ export interface PrivacySettings {
   show_social_links: 'event_attendees' | 'connections' | 'hidden';
   show_company: boolean;
   show_bio: boolean;
-}
+};
 
 /** Core user model returned by API */
-export interface User {
+export type User = {
   id: number;
   email: string;
   first_name: string;
@@ -41,10 +41,10 @@ export interface User {
   email_verified: boolean;
   created_at: string;
   updated_at: string | null;
-}
+};
 
 /** User with nested organization/event data */
-export interface UserDetail extends User {
+export type UserDetail = User & {
   organizations: Array<{
     id: number;
     name: string;
@@ -58,26 +58,26 @@ export interface UserDetail extends User {
     id: number;
     title: string;
   }>;
-}
+};
 
 /** Basic user info for nested responses */
-export interface UserBasic {
+export type UserBasic = {
   id: number;
   email: string;
   first_name: string;
   last_name: string;
-}
+};
 
 /** User with role info */
-export interface UserWithRole {
+export type UserWithRole = {
   id: number;
   full_name: string;
   email: string;
   role: EventUserRole;
-}
+};
 
 /** User profile update payload */
-export interface UserProfileUpdate {
+export type UserProfileUpdate = {
   first_name?: string;
   last_name?: string;
   company_name?: string | null;
@@ -85,32 +85,32 @@ export interface UserProfileUpdate {
   bio?: string | null;
   image_url?: string | null;
   social_links?: Partial<SocialLinks>;
-}
+};
 
 /** Login credentials */
-export interface LoginCredentials {
+export type LoginCredentials = {
   email: string;
   password: string;
-}
+};
 
 /** Signup data */
-export interface SignupData {
+export type SignupData = {
   email: string;
   password: string;
   first_name: string;
   last_name: string;
   company_name?: string;
   title?: string;
-}
+};
 
 /** Password change payload */
-export interface PasswordChangeData {
+export type PasswordChangeData = {
   current_password: string;
   new_password: string;
-}
+};
 
 /** Password reset payload */
-export interface PasswordResetData {
+export type PasswordResetData = {
   token: string;
   password: string;
-}
+};

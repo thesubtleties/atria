@@ -21,11 +21,11 @@ import {
  *   setTyping: (isTyping: boolean) => void
  * }}
  */
-interface TypingUpdate {
+type TypingUpdate = {
   type: string;
   user_id: number;
   is_typing: boolean;
-}
+};
 
 export function useDMTyping(
   threadId: number,

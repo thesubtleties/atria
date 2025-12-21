@@ -16,18 +16,18 @@ import type { RootState } from '@/app/store';
 import type { Connection } from '@/types';
 import styles from './styles/index.module.css';
 
-interface ConnectionCardProps {
+type ConnectionCardProps = {
   connection: Connection;
-}
+};
 
-interface ThreadResult {
+type ThreadResult = {
   thread_id?: number;
   id?: number;
   data?: {
     thread_id?: number;
     id?: number;
   };
-}
+};
 
 export function ConnectionCard({ connection }: ConnectionCardProps) {
   const navigate = useNavigate();
@@ -93,28 +93,28 @@ export function ConnectionCard({ connection }: ConnectionCardProps) {
         <div className={styles.userInfo}>
           <Avatar
             src={otherUser.image_url}
-            alt={otherUser.full_name}
+            alt={otherUser.full_name ?? ''}
             radius='xl'
             size={50}
-            className={styles.avatar}
+            className={styles.avatar ?? ''}
           >
             {otherUser.full_name?.[0]?.toUpperCase()}
           </Avatar>
           <div className={styles.userDetails}>
             <Text
               fw={600}
-              className={styles.userName}
+              className={styles.userName ?? ''}
               onClick={() => navigate(`/app/users/${otherUser.id}`)}
             >
               {otherUser.full_name}
             </Text>
             {otherUser.title && (
-              <Text size='sm' className={styles.userTitle}>
+              <Text size='sm' className={styles.userTitle ?? ''}>
                 {otherUser.title}
               </Text>
             )}
             {otherUser.company_name && (
-              <Text size='sm' className={styles.userCompany}>
+              <Text size='sm' className={styles.userCompany ?? ''}>
                 {otherUser.company_name}
               </Text>
             )}
@@ -125,17 +125,16 @@ export function ConnectionCard({ connection }: ConnectionCardProps) {
       {/* Connection info */}
       <div className={styles.connectionInfo}>
         <div className={styles.connectionEvent}>
-          {connection.originating_event ? (
-            <Badge variant='light' size='sm' radius='sm' className={styles.eventBadge}>
+          {connection.originating_event ?
+            <Badge variant='light' size='sm' radius='sm' className={styles.eventBadge ?? ''}>
               {connection.originating_event.title}
             </Badge>
-          ) : (
-            <Text size='sm' className={styles.directConnection}>
+          : <Text size='sm' className={styles.directConnection ?? ''}>
               Direct connection
             </Text>
-          )}
+          }
         </div>
-        <Text size='xs' className={styles.connectionDate}>
+        <Text size='xs' className={styles.connectionDate ?? ''}>
           Connected {formatDate(connection.created_at)}
         </Text>
       </div>
@@ -190,7 +189,7 @@ export function ConnectionCard({ connection }: ConnectionCardProps) {
 
         {/* Email */}
         {otherUser.email && (
-          <Text size='xs' className={styles.email}>
+          <Text size='xs' className={styles.email ?? ''}>
             <a href={`mailto:${otherUser.email}`} className={styles.emailLink}>
               {otherUser.email}
             </a>
@@ -207,7 +206,7 @@ export function ConnectionCard({ connection }: ConnectionCardProps) {
           leftSection={<IconMessageCircle size={16} />}
           onClick={handleMessage}
           loading={isMessaging || isCreatingThread}
-          className={styles.messageButton}
+          className={styles.messageButton ?? ''}
           fullWidth
         >
           Message

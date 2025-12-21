@@ -21,52 +21,52 @@ import type { ChatRoomType, EventUserRole } from '@/types/enums';
 import { useAppSelector } from '@/types/hooks';
 
 /** Room with optional subtype for session rooms */
-export interface MobileChatRoom extends ChatRoom {
+export type MobileChatRoom = ChatRoom & {
   subtype?: 'BACKSTAGE' | 'PUBLIC' | undefined;
-}
+};
 
 /** Event data with user role and ban status */
-export interface EventData {
+export type EventData = {
   user_role: EventUserRole | null;
   is_banned: boolean;
   is_chat_banned: boolean;
-}
+};
 
 /** Props for MobileChatRoomWindow component */
-interface MobileChatRoomWindowProps {
+type MobileChatRoomWindowProps = {
   room: MobileChatRoom;
   eventData: EventData | null;
   onClose: () => void;
-}
+};
 
 /** Chat messages API response (uses 'messages' key, not 'items') */
-interface ChatMessagesResponse {
+type ChatMessagesResponse = {
   messages: ChatMessage[];
   total?: number;
   page?: number;
   per_page?: number;
   pages?: number;
-}
+};
 
 /** Socket message update for new messages */
-interface NewMessageUpdate {
+type NewMessageUpdate = {
   type: 'new_message';
   message: ChatMessage;
-}
+};
 
 /** Socket message update for moderated messages */
-interface MessageModeratedUpdate {
+type MessageModeratedUpdate = {
   type: 'message_moderated';
   messageId: number;
   deleted_at: string;
   deleted_by: { id: number; full_name: string } | null;
-}
+};
 
 /** Socket message update for removed messages */
-interface MessageRemovedUpdate {
+type MessageRemovedUpdate = {
   type: 'message_removed';
   messageId: number;
-}
+};
 
 /** Union type for all socket message updates */
 type SocketMessageUpdate = NewMessageUpdate | MessageModeratedUpdate | MessageRemovedUpdate;

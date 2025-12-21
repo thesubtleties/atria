@@ -36,9 +36,9 @@ export const { setUser, updateUserProfile, logout } = authSlice.actions;
 export default authSlice.reducer;
 
 // selectors
-interface RootStateWithAuth {
+type RootStateWithAuth = {
   auth: AuthState;
-}
+};
 
 export const selectUser = (state: RootStateWithAuth) => state.auth.user;
 export const selectIsAuthenticated = (state: RootStateWithAuth) => state.auth.isAuthenticated;

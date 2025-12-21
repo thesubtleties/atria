@@ -3,9 +3,9 @@ import { IconBrandLinkedin, IconBrandTwitter, IconWorld } from '@tabler/icons-re
 import type { SocialLinks as SocialLinksType } from '@/types';
 import styles from './styles/index.module.css';
 
-interface SocialLinksProps {
+type SocialLinksProps = {
   socialLinks?: SocialLinksType | null;
-}
+};
 
 export const SocialLinks = ({ socialLinks }: SocialLinksProps) => {
   const hasLinks = socialLinks?.linkedin || socialLinks?.twitter || socialLinks?.website;

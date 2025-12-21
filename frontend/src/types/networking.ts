@@ -3,7 +3,7 @@ import type { SocialLinks } from './auth';
 import type { Patch } from './utils';
 
 /** User info in connection response (privacy-filtered) */
-export interface ConnectionUser {
+export type ConnectionUser = {
   id: number;
   full_name: string;
   email: string | null; // May be hidden based on privacy settings
@@ -11,10 +11,10 @@ export interface ConnectionUser {
   company_name: string | null;
   title: string | null;
   social_links: SocialLinks | null;
-}
+};
 
 /** Connection between users */
-export interface Connection {
+export type Connection = {
   id: number;
   requester_id: number;
   recipient_id: number;
@@ -29,14 +29,14 @@ export interface Connection {
     id: number;
     title: string;
   } | null;
-}
+};
 
 /** Connection request creation payload */
-export interface ConnectionCreateData {
+export type ConnectionCreateData = {
   recipient_id: number;
   icebreaker_message: string;
   originating_event_id?: number;
-}
+};
 
 /** Connection update payload - requires at least one field */
 export type ConnectionUpdateData = Patch<{ status: ConnectionStatus }>;
@@ -46,7 +46,7 @@ export type ConnectionUpdateData = Patch<{ status: ConnectionStatus }>;
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** Direct message thread between two users */
-export interface DirectMessageThread {
+export type DirectMessageThread = {
   id: number;
   user1_id: number;
   user2_id: number;
@@ -66,20 +66,20 @@ export interface DirectMessageThread {
   shared_event_ids: number[];
   other_user_in_event?: boolean;
   is_new?: boolean;
-}
+};
 
 /**
  * Thread with event scope metadata for filtering.
  * Extends DirectMessageThread with scope information returned by API.
  * Use this type for threads that can be filtered by event context.
  */
-export interface FilterableThread extends DirectMessageThread {
+export type FilterableThread = DirectMessageThread & {
   /** Event ID this thread is scoped to, or null for global threads */
   event_scope_id: number | null;
-}
+};
 
 /** Direct message in a thread */
-export interface DirectMessage {
+export type DirectMessage = {
   id: number;
   thread_id: number;
   sender_id: number;
@@ -92,10 +92,10 @@ export interface DirectMessage {
     full_name: string;
     image_url: string | null;
   };
-}
+};
 
 /** Direct message creation payload */
-export interface DirectMessageCreateData {
+export type DirectMessageCreateData = {
   content: string;
   encrypted_content?: string;
-}
+};

@@ -1,13 +1,13 @@
 import { format, parseISO, addDays } from 'date-fns';
 import { formatInTimeZone, toDate } from 'date-fns-tz';
 
-interface SessionTimeResult {
+type SessionTimeResult = {
   eventTime: string;
   userTime: string | null;
   showUserTime: boolean;
   timezone: string;
   eventTimezone?: string;
-}
+};
 
 export const formatSessionTime = (
   timeStr: string,

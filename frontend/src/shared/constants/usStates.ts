@@ -1,7 +1,7 @@
-export interface StateOption {
+export type StateOption = {
   value: string;
   label: string;
-}
+};
 
 export const US_STATES: StateOption[] = [
   { value: 'AL', label: 'Alabama' },

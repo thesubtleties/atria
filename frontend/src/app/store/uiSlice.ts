@@ -4,14 +4,14 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 export type NavContext = 'org' | 'event' | null;
 
 /** UI slice state */
-export interface UISliceState {
+export type UISliceState = {
   // Modals
   activeModals: string[];
   modalData: Record<string, unknown>;
   // Navigation
   sidebarOpen: boolean;
   currentNavContext: NavContext;
-}
+};
 
 const initialState: UISliceState = {
   // Modals
@@ -23,10 +23,10 @@ const initialState: UISliceState = {
 };
 
 /** Payload for opening a modal */
-interface OpenModalPayload {
+type OpenModalPayload = {
   modalName: string;
   data?: unknown;
-}
+};
 
 const uiSlice = createSlice({
   name: 'ui',
@@ -73,9 +73,9 @@ export const {
 } = uiSlice.actions;
 
 // selectors
-interface RootStateWithUI {
+type RootStateWithUI = {
   ui: UISliceState;
-}
+};
 
 export const selectActiveModals = (state: RootStateWithUI) => state.ui.activeModals;
 export const selectModalData = (modalName: string) => (state: RootStateWithUI) =>

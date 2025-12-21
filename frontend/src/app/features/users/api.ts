@@ -9,49 +9,49 @@ import type {
 } from '@/types';
 
 /** User basic info (from UserCheckResponse) */
-interface UserBasicInfo {
+type UserBasicInfo = {
   id: number;
   email: string;
   first_name: string;
   last_name: string;
   full_name?: string;
-}
+};
 
 /** User exists check response */
-interface UserExistsResponse {
+type UserExistsResponse = {
   user: UserBasicInfo | null;
-}
+};
 
 /** Get user events params */
-interface GetUserEventsParams {
+type GetUserEventsParams = {
   userId: number;
   role?: EventUserRole;
   page?: number;
   per_page?: number;
-}
+};
 
 /** User event summary */
-interface UserEvent {
+type UserEvent = {
   id: number;
   title: string;
   start_date: string;
   end_date: string;
   role: EventUserRole;
   status: string;
-}
+};
 
 /** User speaking session */
-interface UserSpeakingSession {
+type UserSpeakingSession = {
   id: number;
   title: string;
   event_id: number;
   event_title: string;
   start_time: string;
   day_number: number;
-}
+};
 
 /** User dashboard data */
-interface UserDashboard {
+type UserDashboard = {
   organizations: Array<{
     id: number;
     name: string;
@@ -65,10 +65,10 @@ interface UserDashboard {
   }>;
   pending_invitations: number;
   pending_connections: number;
-}
+};
 
 /** User invitations summary */
-interface UserInvitations {
+type UserInvitations = {
   organization_invitations: Array<{
     id: number;
     organization_name: string;
@@ -83,10 +83,10 @@ interface UserInvitations {
     status: string;
     token: string;
   }>;
-}
+};
 
 /** Privacy overrides for a specific event */
-interface EventPrivacyOverrides {
+type EventPrivacyOverrides = {
   email_visibility?: string;
   show_public_email?: boolean;
   public_email?: string | null;
@@ -94,35 +94,35 @@ interface EventPrivacyOverrides {
   show_social_links?: string;
   show_company?: boolean;
   show_bio?: boolean;
-}
+};
 
 /** Update user params */
-interface UpdateUserParams extends UserProfileUpdate {
+type UpdateUserParams = UserProfileUpdate & {
   id: number;
-}
+};
 
 /** Update privacy settings params */
-interface UpdatePrivacySettingsParams extends Partial<PrivacySettings> {
+type UpdatePrivacySettingsParams = Partial<PrivacySettings> & {
   id: number;
-}
+};
 
 /** Get event privacy overrides params */
-interface GetEventPrivacyOverridesParams {
+type GetEventPrivacyOverridesParams = {
   userId: number;
   eventId: number;
-}
+};
 
 /** Update event privacy overrides params */
-interface UpdateEventPrivacyOverridesParams extends EventPrivacyOverrides {
+type UpdateEventPrivacyOverridesParams = EventPrivacyOverrides & {
   userId: number;
   eventId: number;
-}
+};
 
 /** Delete event privacy overrides params */
-interface DeleteEventPrivacyOverridesParams {
+type DeleteEventPrivacyOverridesParams = {
   userId: number;
   eventId: number;
-}
+};
 
 export const usersApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({

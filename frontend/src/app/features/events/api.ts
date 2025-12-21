@@ -7,13 +7,13 @@ import type {
   EventUser,
 } from '@/types';
 
-interface GetEventsParams {
+type GetEventsParams = {
   orgId: number;
   page?: number;
   per_page?: number;
-}
+};
 
-interface GetEventsResponse {
+type GetEventsResponse = {
   events: Event[];
   total_items: number;
   total_pages: number;
@@ -24,11 +24,11 @@ interface GetEventsResponse {
   last?: string;
   next?: string;
   prev?: string;
-}
+};
 
-interface GetEventParams {
+type GetEventParams = {
   id: number;
-}
+};
 
 /** Create event params - org ID plus event data */
 type CreateEventParams = { orgId: number } & EventCreateData;
@@ -39,14 +39,14 @@ type UpdateEventParams = { id: number } & EventUpdateData;
 /** Update event branding params */
 type UpdateEventBrandingParams = { id: number } & EventBrandingUpdate;
 
-interface GetEventUsersParams {
+type GetEventUsersParams = {
   eventId: number;
   role?: string;
   page?: number;
   per_page?: number;
-}
+};
 
-interface GetEventUsersResponse {
+type GetEventUsersResponse = {
   users: EventUser[];
   total_items: number;
   total_pages: number;
@@ -57,46 +57,46 @@ interface GetEventUsersResponse {
   last?: string;
   next?: string;
   prev?: string;
-}
+};
 
-interface AddEventUserParams {
+type AddEventUserParams = {
   eventId: number;
   user_id: number;
   role: string;
-}
+};
 
 /** Add or create event user */
-interface AddOrCreateEventUserParams {
+type AddOrCreateEventUserParams = {
   eventId: number;
   email: string;
   first_name: string;
   last_name: string;
   password?: string | undefined; // Optional - used only for new user creation
   role: string;
-}
+};
 
-interface UpdateEventUserParams {
+type UpdateEventUserParams = {
   eventId: number;
   userId: number;
   role?: string;
-}
+};
 
-interface UpdateEventSpeakerInfoParams {
+type UpdateEventSpeakerInfoParams = {
   eventId: number;
   userId: number;
   speaker_bio?: string;
   speaker_title?: string;
   speaker_company?: string;
-}
+};
 
-interface RemoveEventUserParams {
+type RemoveEventUserParams = {
   eventId: number;
   userId: number;
-}
+};
 
-interface DeleteEventParams {
+type DeleteEventParams = {
   id: number;
-}
+};
 
 export const eventsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({

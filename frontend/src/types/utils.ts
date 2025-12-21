@@ -14,44 +14,44 @@ export type AtLeastOne<T, Keys extends keyof T = keyof T> = Pick<T, Exclude<keyo
 export type Patch<T> = AtLeastOne<Partial<T>>;
 
 /** Component props with children */
-export interface WithChildren {
+export type WithChildren = {
   children: React.ReactNode;
-}
+};
 
 /** Component props with optional className */
-export interface WithClassName {
+export type WithClassName = {
   className?: string;
-}
+};
 
 /** Common component base props */
-export interface BaseComponentProps extends WithClassName {
+export type BaseComponentProps = WithClassName & {
   id?: string;
   'data-testid'?: string;
-}
+};
 
 /** Form field error state */
-export interface FieldError {
+export type FieldError = {
   message?: string;
   type?: string;
-}
+};
 
 /** Generic form state */
-export interface FormState<T> {
+export type FormState<T> = {
   values: T;
   errors: Partial<Record<keyof T, FieldError>>;
   isSubmitting: boolean;
   isDirty: boolean;
   isValid: boolean;
-}
+};
 
 /** Sort direction */
 export type SortDirection = 'asc' | 'desc';
 
 /** Sort configuration */
-export interface SortConfig<T> {
+export type SortConfig<T> = {
   key: keyof T;
   direction: SortDirection;
-}
+};
 
 /** Filter operator types */
 export type FilterOperator =
@@ -65,8 +65,8 @@ export type FilterOperator =
   | 'lte';
 
 /** Generic filter configuration */
-export interface FilterConfig<T> {
+export type FilterConfig<T> = {
   key: keyof T;
   operator: FilterOperator;
   value: unknown;
-}
+};

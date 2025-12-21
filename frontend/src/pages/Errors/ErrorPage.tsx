@@ -2,11 +2,11 @@ import { useRouteError, useNavigate, isRouteErrorResponse } from 'react-router-d
 import { Button } from '@/shared/components/buttons';
 import styles from './styles.module.css';
 
-interface ErrorInfo {
+type ErrorInfo = {
   title: string;
   message: string;
   showDetails: boolean;
-}
+};
 
 /**
  * ErrorPage - Generic route error page
@@ -82,12 +82,12 @@ export const ErrorPage = () => {
         </div>
 
         {/* Error Message */}
-        <h1 className={styles.errorTitle}>{errorInfo.title}</h1>
-        <p className={styles.errorMessage}>{errorInfo.message}</p>
+        <h1 className={styles.errorTitle ?? ''}>{errorInfo.title}</h1>
+        <p className={styles.errorMessage ?? ''}>{errorInfo.message}</p>
 
         {/* Error Details (if applicable) */}
-        {errorInfo.showDetails && error && (
-          <details className={styles.errorDetails}>
+        {errorInfo.showDetails && error != null && (
+          <details className={styles.errorDetails ?? ''}>
             <summary className={styles.errorDetailsSummary}>Technical Details</summary>
             <div className={styles.errorDetailsContent}>
               {routeError && (
@@ -97,9 +97,9 @@ export const ErrorPage = () => {
               )}
               {routeError?.data && (
                 <p className={styles.errorData}>
-                  {typeof routeError.data === 'string'
-                    ? routeError.data
-                    : JSON.stringify(routeError.data, null, 2)}
+                  {typeof routeError.data === 'string' ?
+                    routeError.data
+                  : JSON.stringify(routeError.data, null, 2)}
                 </p>
               )}
               {errorMessage && <p className={styles.errorData}>{errorMessage}</p>}

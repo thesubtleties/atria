@@ -1,11 +1,11 @@
 import { baseApi } from '../api';
 import type { User } from '@/types/auth';
 
-interface InvitationDetailsParams {
+type InvitationDetailsParams = {
   token: string;
-}
+};
 
-interface OrganizationInvitation {
+type OrganizationInvitation = {
   id: number;
   organization_id: number;
   email: string;
@@ -14,9 +14,9 @@ interface OrganizationInvitation {
   message?: string | null;
   created_at: string;
   expires_at: string;
-}
+};
 
-interface EventInvitation {
+type EventInvitation = {
   id: number;
   event_id: number;
   email: string;
@@ -25,15 +25,15 @@ interface EventInvitation {
   message?: string | null;
   created_at: string;
   expires_at: string;
-}
+};
 
-interface InvitationDetailsResponse {
+type InvitationDetailsResponse = {
   invitation: OrganizationInvitation | EventInvitation;
   user_exists: boolean;
   all_invitations: (OrganizationInvitation | EventInvitation)[] | null;
-}
+};
 
-interface RegisterAndAcceptParams {
+type RegisterAndAcceptParams = {
   user_data: {
     email: string;
     first_name: string;
@@ -42,9 +42,9 @@ interface RegisterAndAcceptParams {
   };
   org_invitation_ids: number[];
   event_invitation_ids: number[];
-}
+};
 
-interface RegisterAndAcceptResponse {
+type RegisterAndAcceptResponse = {
   user: Pick<User, 'id' | 'email' | 'first_name' | 'last_name' | 'full_name'>;
   access_token: string;
   refresh_token: string;
@@ -53,7 +53,7 @@ interface RegisterAndAcceptResponse {
     events: number;
   };
   message: string;
-}
+};
 
 export const invitationsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({

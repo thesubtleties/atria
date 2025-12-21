@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom';
 import styles from './styles/ActionCard.module.css';
 
-interface ActionCardProps {
+type ActionCardProps = {
   title: string;
   description: string;
   to: string;
-}
+};
 
 export const ActionCard = ({ title, description, to }: ActionCardProps) => (
   <Link to={to} className={styles.card}>

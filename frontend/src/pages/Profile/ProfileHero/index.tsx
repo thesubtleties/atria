@@ -1,19 +1,19 @@
-import { Avatar, Menu, ActionIcon } from '@mantine/core';
+import { Avatar, Menu, ActionIcon, Button as MantineButton } from '@mantine/core';
 import { IconEdit, IconDots, IconUserMinus } from '@tabler/icons-react';
 import { Button } from '@/shared/components/buttons';
 import type { User, Connection } from '@/types';
 import styles from './styles/index.module.css';
 
-interface ProfileHeroProps {
-  user?: Partial<User>;
+type ProfileHeroProps = {
+  user: Partial<User> | undefined;
   onEditClick: () => void;
   isOwnProfile?: boolean;
   isEditing?: boolean;
   onAvatarEdit?: () => void;
-  connection?: Connection;
+  connection: Connection | undefined;
   onRemoveConnection?: () => void;
   isRemovingConnection?: boolean;
-}
+};
 
 export const ProfileHero = ({
   user,
@@ -30,19 +30,19 @@ export const ProfileHero = ({
   const getInitials = (name?: string | null): string => {
     if (!name) return '?';
     const parts = name.split(' ');
-    if (parts.length >= 2) {
+    if (parts.length >= 2 && parts[0] && parts[1]) {
       return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
     }
     return name.substring(0, 2).toUpperCase();
   };
 
   const memberSince =
-    user.created_at
-      ? new Date(user.created_at).toLocaleDateString('en-US', {
-          month: 'long',
-          year: 'numeric',
-        })
-      : null;
+    user.created_at ?
+      new Date(user.created_at).toLocaleDateString('en-US', {
+        month: 'long',
+        year: 'numeric',
+      })
+    : null;
 
   return (
     <section className={styles.profileHero}>
@@ -87,24 +87,24 @@ export const ProfileHero = ({
       <div className={styles.profileHeroContent}>
         <div className={styles.avatarContainer}>
           <Avatar
-            src={user.image_url}
-            alt={user.full_name || user.email}
+            src={user.image_url ?? null}
+            alt={user.full_name ?? user.email ?? ''}
             size={120}
             radius={8}
-            className={styles.profileAvatarLarge}
+            className={styles.profileAvatarLarge ?? ''}
           >
-            {getInitials(user.full_name || user.email)}
+            {getInitials(user.full_name ?? user.email)}
           </Avatar>
           {isEditing && onAvatarEdit && (
-            <Button
+            <MantineButton
               variant='subtle'
               size='sm'
               onClick={onAvatarEdit}
-              className={styles.rerollButton}
+              className={styles.rerollButton ?? ''}
             >
               <IconEdit size={16} />
               Edit Avatar
-            </Button>
+            </MantineButton>
           )}
         </div>
 

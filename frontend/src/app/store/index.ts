@@ -13,12 +13,12 @@ import type { UISliceState } from './uiSlice';
 import type { ChatSliceState } from './chatSlice';
 
 /** Combined app state shape */
-interface AppState {
+type AppState = {
   [baseApi.reducerPath]: ReturnType<typeof baseApi.reducer>;
   auth: AuthState;
   ui: UISliceState;
   chat: ChatSliceState;
-}
+};
 
 // Combine all reducers
 const appReducer = combineReducers({

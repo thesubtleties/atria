@@ -2,9 +2,9 @@ import { useGetUserDashboardQuery } from '@/app/features/users/api';
 import { LoadingSpinner } from '@/shared/components/loading';
 import styles from './styles/index.module.css';
 
-interface ActivityOverviewProps {
+type ActivityOverviewProps = {
   userId: number;
-}
+};
 
 export const ActivityOverview = ({ userId }: ActivityOverviewProps) => {
   const { data: dashboard, isLoading } = useGetUserDashboardQuery(userId, {
@@ -22,10 +22,11 @@ export const ActivityOverview = ({ userId }: ActivityOverviewProps) => {
     );
   }
 
-  const stats = dashboard?.stats ?? {
-    events_attended: 0,
-    events_hosted: 0,
-    connections_made: 0,
+  // Dashboard doesn't have stats, compute from available data
+  const stats = {
+    events_attended: dashboard?.upcoming_events?.length ?? 0,
+    events_hosted: 0, // Not available in dashboard
+    connections_made: dashboard?.pending_connections ?? 0,
   };
 
   return (

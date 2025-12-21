@@ -63,13 +63,13 @@ axiosClient.interceptors.response.use(
 );
 
 /** Request configuration for axiosInstance */
-export interface AxiosRequestOptions {
+export type AxiosRequestOptions = {
   url: string;
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   params?: Record<string, unknown>;
   data?: unknown;
   headers?: Record<string, string>;
-}
+};
 
 export const axiosInstance = <T = unknown>({
   url,

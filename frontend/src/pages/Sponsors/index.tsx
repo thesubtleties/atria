@@ -13,7 +13,7 @@ export const SponsorsPage = () => {
   console.log('SponsorsPage - eventId from params:', eventId);
 
   const {
-    data: sponsors = [],
+    data: sponsorsResponse,
     isLoading: sponsorsLoading,
     error: sponsorsError,
   } = useGetSponsorsQuery(
@@ -24,7 +24,7 @@ export const SponsorsPage = () => {
   );
 
   const {
-    data: tiers = [],
+    data: tiersResponse,
     isLoading: tiersLoading,
     error: tiersError,
   } = useGetSponsorTiersQuery(
@@ -33,6 +33,13 @@ export const SponsorsPage = () => {
       skip: !eventId, // Skip query if no eventId
     },
   );
+
+  const sponsors = sponsorsResponse?.sponsors ?? [];
+  // Convert tiers record to array
+  const tiers =
+    tiersResponse?.tiers ?
+      Object.entries(tiersResponse.tiers).map(([id, tier]) => ({ ...tier, id }))
+    : [];
 
   const isLoading = sponsorsLoading || tiersLoading;
 
@@ -58,7 +65,7 @@ export const SponsorsPage = () => {
             icon={<IconInfoCircle size='1rem' />}
             title='Error'
             color='red'
-            className={styles.errorAlert}
+            className={styles.errorAlert ?? ''}
           >
             Failed to load sponsors. Please try again later.
           </Alert>
@@ -77,7 +84,7 @@ export const SponsorsPage = () => {
       <div className={styles.bgShape2} />
       <div className={styles.bgShape3} />
 
-      <Container size='xl' className={styles.contentWrapper}>
+      <Container size='xl' className={styles.contentWrapper ?? ''}>
         <div className={styles.header}>
           <h1 className={styles.pageTitle}>Our Sponsors</h1>
           {activeSponsors.length > 0 && (

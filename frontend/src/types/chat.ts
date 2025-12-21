@@ -2,7 +2,7 @@ import type { ChatRoomType } from './enums';
 import type { Patch } from './utils';
 
 /** Chat room */
-export interface ChatRoom {
+export type ChatRoom = {
   id: number;
   event_id: number;
   session_id: number | null;
@@ -13,10 +13,10 @@ export interface ChatRoom {
   display_order: number;
   created_at: string;
   updated_at: string | null;
-}
+};
 
 /** Detailed chat room with relationships */
-export interface ChatRoomDetail extends ChatRoom {
+export type ChatRoomDetail = ChatRoom & {
   event: {
     id: number;
     title: string;
@@ -25,35 +25,35 @@ export interface ChatRoomDetail extends ChatRoom {
     id: number;
     title: string;
   } | null;
-}
+};
 
 /** Chat room with message count (for session chat) */
-export interface SessionChatRoom extends ChatRoom {
+export type SessionChatRoom = ChatRoom & {
   message_count: number;
-}
+};
 
 /** Chat room for admin view with metadata */
-export interface ChatRoomAdmin extends ChatRoomDetail {
+export type ChatRoomAdmin = ChatRoomDetail & {
   message_count: number;
   participant_count: number;
   last_activity: string | null;
-}
+};
 
 /** Chat room creation payload */
-export interface ChatRoomCreateData {
+export type ChatRoomCreateData = {
   name: string;
   description?: string;
   room_type?: ChatRoomType;
   is_enabled?: boolean;
-}
+};
 
 /** Mutable fields for chat room updates */
-interface ChatRoomMutableFields {
+type ChatRoomMutableFields = {
   name: string;
   description: string | null;
   is_enabled: boolean;
   display_order: number;
-}
+};
 
 /** Chat room update payload - requires at least one field */
 export type ChatRoomUpdateData = Patch<ChatRoomMutableFields>;
@@ -63,7 +63,7 @@ export type ChatRoomUpdateData = Patch<ChatRoomMutableFields>;
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** Chat message */
-export interface ChatMessage {
+export type ChatMessage = {
   id: number;
   room_id: number;
   user_id: number;
@@ -81,12 +81,12 @@ export interface ChatMessage {
     id: number;
     full_name: string;
   } | null;
-}
+};
 
 /** Chat message creation payload */
-export interface ChatMessageCreateData {
+export type ChatMessageCreateData = {
   content: string;
-}
+};
 
 /** Chat message for real-time socket events - subset of ChatMessage */
 export type ChatMessageSocket = Pick<

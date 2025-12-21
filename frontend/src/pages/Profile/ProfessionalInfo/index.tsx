@@ -2,9 +2,9 @@ import { Text } from '@mantine/core';
 import type { User } from '@/types';
 import styles from './styles/index.module.css';
 
-interface ProfessionalInfoProps {
-  user?: User;
-}
+type ProfessionalInfoProps = {
+  user: User | undefined;
+};
 
 export const ProfessionalInfo = ({ user }: ProfessionalInfoProps) => {
   if (!user) return null;

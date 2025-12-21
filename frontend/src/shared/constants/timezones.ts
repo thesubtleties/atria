@@ -4,10 +4,10 @@
  * Organized by region for better UX
  */
 
-export interface TimezoneOption {
+export type TimezoneOption = {
   value: string;
   label: string;
-}
+};
 
 export const COMMON_TIMEZONES: TimezoneOption[] = [
   // United States

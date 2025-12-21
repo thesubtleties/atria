@@ -2,18 +2,18 @@ import axiosInstance from '@/lib/axios';
 import type { BaseQueryRequest } from '@/types';
 
 /** Error data shape */
-export interface ErrorData {
+export type ErrorData = {
   message?: string | undefined;
   errors?: Record<string, string[]> | undefined;
   [key: string]: unknown;
-}
+};
 
 /** Error shape returned by the base query */
-export interface BaseQueryError {
+export type BaseQueryError = {
   status: number;
   data?: ErrorData | undefined;
   message?: string | undefined;
-}
+};
 
 /**
  * Custom base query using axios for RTK Query.

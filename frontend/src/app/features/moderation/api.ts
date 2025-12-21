@@ -1,11 +1,11 @@
 import { baseApi } from '../api';
 
-interface ModerationStatusParams {
+type ModerationStatusParams = {
   eventId: number;
   userId: number;
-}
+};
 
-interface ModerationStatusResponse {
+type ModerationStatusResponse = {
   is_banned: boolean;
   is_chat_banned: boolean;
   ban_reason: string | null;
@@ -14,32 +14,32 @@ interface ModerationStatusResponse {
   chat_ban_until: string | null;
   banned_by: number | null;
   can_use_chat: boolean;
-}
+};
 
-interface BanUserParams {
+type BanUserParams = {
   eventId: number;
   userId: number;
   reason: string;
   moderation_notes?: string;
-}
+};
 
-interface UnbanUserParams {
+type UnbanUserParams = {
   eventId: number;
   userId: number;
-}
+};
 
-interface ChatBanUserParams {
+type ChatBanUserParams = {
   eventId: number;
   userId: number;
   reason: string;
   moderation_notes?: string;
   duration_hours?: number;
-}
+};
 
-interface ChatUnbanUserParams {
+type ChatUnbanUserParams = {
   eventId: number;
   userId: number;
-}
+};
 
 export const moderationApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({

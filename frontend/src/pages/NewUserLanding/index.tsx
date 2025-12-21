@@ -13,10 +13,12 @@ export const NewUserCheck = () => {
     isLoading: orgsLoading,
   } = useGetOrganizationsQuery();
 
-  const {
-    data: { events = [] } = {}, // Assuming similar structure for events
-    isLoading: eventsLoading,
-  } = useGetUserEventsQuery({ userId: userId as number }, { skip: !userId });
+  const { data: eventsData, isLoading: eventsLoading } = useGetUserEventsQuery(
+    { userId: userId as number },
+    { skip: !userId },
+  );
+
+  const events = eventsData?.items ?? [];
 
   if (orgsLoading || eventsLoading) {
     return null;

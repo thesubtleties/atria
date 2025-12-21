@@ -3,10 +3,10 @@ import { SponsorCard } from '@/shared/components/SponsorCard';
 import type { Sponsor, SponsorTier } from '@/types';
 import styles from './styles/index.module.css';
 
-interface SponsorsListProps {
+type SponsorsListProps = {
   sponsors: Sponsor[];
   tiers: SponsorTier[];
-}
+};
 
 export default function SponsorsList({ sponsors, tiers }: SponsorsListProps) {
   // Filter out sponsors without tiers and group by tier
@@ -40,7 +40,7 @@ export default function SponsorsList({ sponsors, tiers }: SponsorsListProps) {
         return (
           <div key={tier.id} className={styles.tierSection}>
             <div className={styles.tierHeader}>
-              <Title order={2} className={styles.tierTitle}>
+              <Title order={2} className={styles.tierTitle ?? ''}>
                 {tier.name}
               </Title>
             </div>
@@ -48,7 +48,7 @@ export default function SponsorsList({ sponsors, tiers }: SponsorsListProps) {
             <SimpleGrid
               cols={{ base: 1, sm: 2, md: 3 }}
               spacing='xl'
-              className={styles.sponsorGrid}
+              className={styles.sponsorGrid ?? ''}
             >
               {sortedSponsors.map((sponsor) => (
                 <SponsorCard key={sponsor.id} sponsor={sponsor} />
