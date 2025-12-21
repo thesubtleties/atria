@@ -9,11 +9,50 @@ import {
   useDeclineInvitationMutation,
 } from '@/app/features/eventInvitations/api';
 import { Button } from '@/shared/components/buttons';
-import { getRoleDisplayName } from '../../../EventAdmin/AttendeesManager/schemas/attendeeSchemas';
 import { formatDistanceToNow } from 'date-fns';
+import type { ApiError } from '@/types';
+import { cn } from '@/lib/cn';
 import styles from './styles.module.css';
 
-export const EventInvitationCard = ({ invitation }) => {
+// Format role display name
+const formatRoleDisplayName = (role: string): string => {
+  const roleMap: Record<string, string> = {
+    ADMIN: 'Admin',
+    ORGANIZER: 'Organizer',
+    SPEAKER: 'Speaker',
+    ATTENDEE: 'Attendee',
+    MEMBER: 'Member',
+  };
+  return roleMap[role.toUpperCase()] || role;
+};
+
+type EventInvitation = {
+  id: number;
+  token: string;
+  role: string;
+  message?: string;
+  created_at: string;
+  event: {
+    id: number;
+    title: string;
+    start_date?: string;
+    end_date?: string;
+    location?: string;
+    organization: {
+      id: number;
+      name: string;
+    };
+  };
+  invited_by?: {
+    name: string;
+  };
+};
+
+type EventInvitationCardProps = {
+  invitation: EventInvitation;
+};
+
+export const EventInvitationCard = ({ invitation }: EventInvitationCardProps) => {
   const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -26,14 +65,15 @@ export const EventInvitationCard = ({ invitation }) => {
       await acceptInvitation({ token: invitation.token }).unwrap();
       notifications.show({
         title: 'Invitation Accepted',
-        message: `You've joined ${invitation.event.title} as ${getRoleDisplayName(invitation.role)}`,
+        message: `You've joined ${invitation.event.title} as ${formatRoleDisplayName(invitation.role)}`,
         color: 'green',
       });
       // Navigate to event page
       navigate(
         `/app/organizations/${invitation.event.organization.id}/events/${invitation.event.id}`,
       );
-    } catch (error) {
+    } catch (err) {
+      const error = err as ApiError;
       notifications.show({
         title: 'Error',
         message: error.data?.message || 'Failed to accept invitation',
@@ -52,7 +92,8 @@ export const EventInvitationCard = ({ invitation }) => {
         message: `You've declined the invitation to ${invitation.event.title}`,
         color: 'gray',
       });
-    } catch (error) {
+    } catch (err) {
+      const error = err as ApiError;
       notifications.show({
         title: 'Error',
         message: error.data?.message || 'Failed to decline invitation',
@@ -99,8 +140,8 @@ export const EventInvitationCard = ({ invitation }) => {
   }
 
   return (
-    <Card className={styles.invitationCard} withBorder>
-      <div className={styles.invitationBadge}>
+    <Card className={cn(styles.invitationCard)} withBorder>
+      <div className={cn(styles.invitationBadge)}>
         <Badge
           color='pink'
           variant='light'
@@ -116,72 +157,60 @@ export const EventInvitationCard = ({ invitation }) => {
         >
           Invitation
         </Badge>
-        <Text size='xs' color='dimmed'>
+        <Text size='xs' c='dimmed'>
           Invited {invitedAgo}
         </Text>
       </div>
 
-      <Stack spacing='sm'>
+      <Stack gap='sm'>
         <div>
-          <Text size='lg' weight={600} className={styles.eventTitle}>
+          <Text size='lg' fw={600} className={cn(styles.eventTitle)}>
             {event.title}
           </Text>
-          <Text size='sm' color='dimmed'>
+          <Text size='sm' c='dimmed'>
             {event.organization.name}
           </Text>
         </div>
 
-        <Stack spacing='xs'>
-          <Group spacing='xs'>
-            <IconCalendar size={16} className={styles.icon} />
+        <Stack gap='xs'>
+          <Group gap='xs'>
+            <IconCalendar size={16} className={cn(styles.icon)} />
             <Text size='sm'>{dateInfo}</Text>
           </Group>
 
           {event.location && (
-            <Group spacing='xs'>
-              <IconMapPin size={16} className={styles.icon} />
+            <Group gap='xs'>
+              <IconMapPin size={16} className={cn(styles.icon)} />
               <Text size='sm'>{event.location}</Text>
             </Group>
           )}
 
-          <Group spacing='xs'>
-            <IconUsers size={16} className={styles.icon} />
+          <Group gap='xs'>
+            <IconUsers size={16} className={cn(styles.icon)} />
             <Text size='sm'>
-              Invited as: <strong>{getRoleDisplayName(invitation.role)}</strong>
+              Invited as: <strong>{formatRoleDisplayName(invitation.role)}</strong>
             </Text>
           </Group>
         </Stack>
 
         {invitation.message && (
-          <Text size='sm' className={styles.invitationMessage}>
+          <Text size='sm' className={cn(styles.invitationMessage)}>
             {`"${invitation.message}"`}
           </Text>
         )}
 
-        <Text size='xs' color='dimmed'>
+        <Text size='xs' c='dimmed'>
           From: {invitation.invited_by?.name || 'Event Organizer'}
         </Text>
 
-        <Group spacing='sm' className={styles.actionButtons}>
+        <Group gap='sm' className={cn(styles.actionButtons)}>
           {isProcessing ?
             <LoadingSpinner size='sm' />
           : <>
-              <Button
-                variant='primary'
-                size='sm'
-                onClick={handleAccept}
-                disabled={isProcessing}
-                fullWidth
-              >
+              <Button variant='primary' onClick={handleAccept} disabled={isProcessing}>
                 Accept Invitation
               </Button>
-              <Button
-                variant='subtle'
-                size='sm'
-                onClick={handleDecline}
-                disabled={isProcessing}
-                fullWidth
-              >
+              <Button variant='secondary' onClick={handleDecline} disabled={isProcessing}>
                 Decline
               </Button>
             </>

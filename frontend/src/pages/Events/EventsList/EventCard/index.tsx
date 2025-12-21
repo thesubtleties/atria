@@ -1,14 +1,22 @@
-// pages/Events/EventsList/EventCard/index.jsx
 import { Text, Group, Badge, Modal, Button } from '@mantine/core';
 import { IconEdit, IconX } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, type MouseEvent } from 'react';
 import { EventModal } from '@/shared/components/modals/event/EventModal';
 import { useGetEventQuery, useDeleteEventMutation } from '@/app/features/events/api';
 import { useFormatDate } from '@/shared/hooks/formatDate';
+import type { Event, EventDetail } from '@/types/events';
+import { cn } from '@/lib/cn';
 import styles from './styles/index.module.css';
 
-export const EventCard = ({ event, isOrgView, canEdit }) => {
+type EventCardProps = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  event: Event | Record<string, any>;
+  isOrgView?: boolean;
+  canEdit?: boolean;
+};
+
+export const EventCard = ({ event, isOrgView, canEdit }: EventCardProps) => {
   const navigate = useNavigate();
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -17,12 +25,13 @@ export const EventCard = ({ event, isOrgView, canEdit }) => {
 
   // Only fetch details if it's a single session event
   const { data: eventDetails } = useGetEventQuery(
-    { id: event.id },
+    { id: event.id as number },
     { skip: event.event_type !== 'SINGLE_SESSION' },
   );
 
-  const isAdmin = eventDetails?.organizers?.some((org) => org.role === 'ADMIN');
-  const hasSession = eventDetails?.sessions?.length > 0;
+  const typedDetails = eventDetails as EventDetail | undefined;
+  const isAdmin = typedDetails?.organizers?.some((org) => org.role === 'ADMIN');
+  const hasSession = (typedDetails?.sessions?.length ?? 0) > 0;
 
   const cardClass =
     event.event_type === 'CONFERENCE' ? styles.cardConference : styles.cardSingleDay;
@@ -31,7 +40,7 @@ export const EventCard = ({ event, isOrgView, canEdit }) => {
       { gradient: '#9c42f5, #6d42f5' }
     : { gradient: '#42b883, #42a5f5' };
 
-  const handleCardClick = (e) => {
+  const handleCardClick = (e: MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
 
     // Always use the /app/events/:eventId path regardless of where we're viewing from
@@ -45,12 +54,12 @@ export const EventCard = ({ event, isOrgView, canEdit }) => {
 
     // Single session logic
     if (event.event_type === 'SINGLE_SESSION') {
-      if (hasSession) {
+      if (hasSession && typedDetails?.sessions?.[0]) {
         // Has session - go directly to it
-        navigate(`${basePath}/sessions/${eventDetails.sessions[0].id}`);
+        navigate(`${basePath}/sessions/${typedDetails.sessions[0].id}`);
       } else if (isOrgView) {
         // No session yet - route based on role (only in org view)
-        const isOrganizerOrAdmin = eventDetails?.organizers?.some((org) =>
+        const isOrganizerOrAdmin = typedDetails?.organizers?.some((org) =>
           ['ADMIN', 'ORGANIZER'].includes(org.role),
         );
 
@@ -63,15 +72,9 @@ export const EventCard = ({ event, isOrgView, canEdit }) => {
     }
   };
 
-  // const formatDate = (dateString) => {
-  //   // Parse as UTC, then convert to local
-  //   const date = parseISO(dateString);
-  //   return format(date, 'M/d/yyyy');
-  // };
-
   const handleDelete = async () => {
     try {
-      await deleteEvent(event.id).unwrap();
+      await deleteEvent({ id: event.id as number }).unwrap();
       setShowDeleteModal(false);
     } catch (error) {
       console.error('Failed to delete event:', error);
@@ -84,17 +87,19 @@ export const EventCard = ({ event, isOrgView, canEdit }) => {
   return (
     <>
       <div
-        className={`${cardClass} ${!isClickable ? styles.notClickable : ''}`}
+        className={cn(cardClass, !isClickable && styles.notClickable)}
         onClick={isClickable ? handleCardClick : undefined}
-        style={{
-          '--card-gradient': cardColors.gradient,
-          cursor: isClickable ? 'pointer' : 'default',
-        }}
+        style={
+          {
+            '--card-gradient': cardColors.gradient,
+            cursor: isClickable ? 'pointer' : 'default',
+          } as React.CSSProperties
+        }
       >
         {canEdit && (
-          <div className={styles.actionButtons}>
+          <div className={cn(styles.actionButtons)}>
             <button
-              className={styles.editButton}
+              className={cn(styles.editButton)}
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -105,7 +110,7 @@ export const EventCard = ({ event, isOrgView, canEdit }) => {
             </button>
             {isAdmin && (
               <button
-                className={styles.deleteButton}
+                className={cn(styles.deleteButton)}
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
@@ -118,19 +123,19 @@ export const EventCard = ({ event, isOrgView, canEdit }) => {
           </div>
         )}
 
-        <Group position='apart' mb='md'>
-          <Text className={styles.title}>{event.title}</Text>
+        <Group justify='space-between' mb='md'>
+          <Text className={cn(styles.title)}>{event.title}</Text>
         </Group>
 
-        <Text className={styles.company}>{event.company_name}</Text>
+        <Text className={cn(styles.company)}>{event.company_name}</Text>
 
-        <Text className={styles.date}>
+        <Text className={cn(styles.date)}>
           {formatDate(event.start_date)} - {formatDate(event.end_date)}
         </Text>
 
         {!isOrgView && (
           <Badge
-            className={styles.setupBadge}
+            className={cn(styles.setupBadge)}
             color={
               event.event_type === 'CONFERENCE' ? 'blue'
               : hasSession ?
@@ -148,9 +153,9 @@ export const EventCard = ({ event, isOrgView, canEdit }) => {
 
         {isOrgView &&
           event.event_type === 'SINGLE_SESSION' &&
-          eventDetails &&
-          !eventDetails.sessions?.length && (
-            <Badge className={styles.setupBadge} color={canEdit ? 'yellow' : 'gray'}>
+          typedDetails &&
+          !typedDetails.sessions?.length && (
+            <Badge className={cn(styles.setupBadge)} color={canEdit ? 'yellow' : 'gray'}>
               {canEdit ? 'Setup Required' : 'Coming Soon'}
             </Badge>
           )}
@@ -158,8 +163,8 @@ export const EventCard = ({ event, isOrgView, canEdit }) => {
 
       {showEditModal && (
         <EventModal
-          event={event}
-          orgId={event.organization_id}
+          event={event as Event}
+          orgId={event.organization_id as number}
           opened={showEditModal}
           onClose={() => setShowEditModal(false)}
         />
@@ -175,7 +180,7 @@ export const EventCard = ({ event, isOrgView, canEdit }) => {
         <Text size='sm' mb='lg'>
           Are you sure you want to delete this event? This action cannot be undone.
         </Text>
-        <Group position='right'>
+        <Group justify='flex-end'>
           <Button variant='default' onClick={() => setShowDeleteModal(false)}>
             Cancel
           </Button>

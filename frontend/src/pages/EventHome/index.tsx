@@ -6,16 +6,23 @@ import Welcome from './Welcome';
 import Highlights from './Highlights';
 import FAQ from './FAQ';
 import EventInfo from './EventInfo';
+import type { EventDetail } from '@/types/events';
+import { cn } from '@/lib/cn';
 import styles from './styles/index.module.css';
 
 export const EventHome = () => {
-  const { eventId } = useParams();
-  const { data: event, isLoading, isError } = useGetEventQuery({ id: eventId }, { skip: !eventId });
+  const { eventId } = useParams<{ eventId: string }>();
+  const {
+    data: event,
+    isLoading,
+    isError,
+  } = useGetEventQuery({ id: Number(eventId) }, { skip: !eventId });
 
-  console.log(event);
+  const typedEvent = event as EventDetail | undefined;
+
   if (isLoading) return <LoadingPage message='Loading event home...' />;
   if (isError) return <div>Error loading event</div>;
-  if (!event) return <div>Event not found</div>;
+  if (!typedEvent) return <div>Event not found</div>;
 
   const {
     title,
@@ -30,18 +37,18 @@ export const EventHome = () => {
     venue_country,
     start_date,
     end_date,
-  } = event;
+  } = typedEvent;
 
   return (
-    <div className={styles.container}>
+    <div className={cn(styles.container)}>
       {/* Background Shapes */}
-      <div className={styles.bgShape1} />
-      <div className={styles.bgShape2} />
+      <div className={cn(styles.bgShape1)} />
+      <div className={cn(styles.bgShape2)} />
 
       {/* Hero outside contentWrapper for full-width */}
       <Hero title={title} description={hero_description} images={hero_images} />
 
-      <div className={styles.contentWrapper}>
+      <div className={cn(styles.contentWrapper)}>
         {sections?.welcome && (
           <Welcome title={sections.welcome.title} content={sections.welcome.content} />
         )}

@@ -1,4 +1,3 @@
-// src/pages/Events/EventsList/index.jsx
 import { useMemo } from 'react';
 import { useGetUserEventsQuery, useGetUserInvitationsQuery } from '@/app/features/users/api';
 import { useSelector } from 'react-redux';
@@ -8,38 +7,73 @@ import { PageHeader } from '../../../shared/components/PageHeader';
 import { EventSection } from './EventSection';
 import { EmptyState } from './EmptyState';
 import { categorizeEvents } from './utils/eventCategorization';
+import type { RootState } from '@/types';
+import type { Event } from '@/types/events';
+import { cn } from '@/lib/cn';
 import styles from './styles/index.module.css';
 
+type EventInvitation = {
+  id: number;
+  token: string;
+  role: string;
+  message?: string;
+  created_at: string;
+  event: {
+    id: number;
+    title: string;
+    start_date?: string;
+    end_date?: string;
+    location?: string;
+    organization: {
+      id: number;
+      name: string;
+    };
+  };
+  invited_by?: {
+    name: string;
+  };
+};
+
+type EventsResponse = {
+  events?: Event[];
+};
+
+type InvitationsResponse = {
+  event_invitations?: EventInvitation[];
+};
+
 export const EventsList = () => {
-  const currentUser = useSelector((state) => state.auth.user);
+  const currentUser = useSelector((state: RootState) => state.auth.user);
 
   const { data, isLoading } = useGetUserEventsQuery(
-    { userId: currentUser?.id },
+    { userId: currentUser?.id as number },
     { skip: !currentUser?.id },
   );
 
   const { data: invitationsData, isLoading: invitationsLoading } = useGetUserInvitationsQuery(
-    currentUser?.id,
+    currentUser?.id as number,
     { skip: !currentUser?.id },
   );
 
-  const eventInvitations = invitationsData?.event_invitations || [];
+  const typedData = data as EventsResponse | undefined;
+  const typedInvitations = invitationsData as InvitationsResponse | undefined;
+  const eventInvitations = typedInvitations?.event_invitations || [];
 
   // Filter only published events and categorize them
   const categorizedEvents = useMemo(() => {
-    const events = data?.events || [];
+    const events = typedData?.events || [];
     const publishedEvents = events.filter((event) => event.status?.toLowerCase() === 'published');
     return categorizeEvents(publishedEvents);
-  }, [data?.events]);
+  }, [typedData?.events]);
 
   if (isLoading || invitationsLoading) {
     return (
-      <div className={styles.container}>
-        <div className={styles.bgShape1} />
-        <div className={styles.bgShape2} />
-        <div className={styles.bgShape3} />
+      <div className={cn(styles.container)}>
+        <div className={cn(styles.bgShape1)} />
+        <div className={cn(styles.bgShape2)} />
+        <div className={cn(styles.bgShape3)} />
 
-        <div className={styles.contentWrapper}>
+        <div className={cn(styles.contentWrapper)}>
           <LoadingSection message='Loading your events...' height={400} />
         </div>
       </div>
@@ -54,19 +88,19 @@ export const EventsList = () => {
   const hasAnyContent = hasAnyEvents || hasInvitations;
 
   return (
-    <div className={styles.container}>
+    <div className={cn(styles.container)}>
       {/* Background Shapes */}
-      <div className={styles.bgShape1} />
-      <div className={styles.bgShape2} />
-      <div className={styles.bgShape3} />
+      <div className={cn(styles.bgShape1)} />
+      <div className={cn(styles.bgShape2)} />
+      <div className={cn(styles.bgShape3)} />
 
       {/* Content Wrapper */}
-      <div className={styles.contentWrapper}>
+      <div className={cn(styles.contentWrapper)}>
         <PageHeader title='Events' subtitle="Discover and join events you're invited to" />
 
         {/* Main Content */}
         {hasAnyContent ?
-          <div className={styles.eventSections}>
+          <div className={cn(styles.eventSections)}>
             <EventSection
               icon={IconMail}
               title='Pending Invitations'

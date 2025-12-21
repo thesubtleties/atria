@@ -1,12 +1,17 @@
-// pages/EventHome/Highlights/index.jsx
 import HighlightCard from './HighlightCard';
+import type { EventHighlight } from '@/types/events';
+import { cn } from '@/lib/cn';
 import styles from './styles/index.module.css';
 
-export default function Highlights({ highlights }) {
+type HighlightsProps = {
+  highlights: EventHighlight[];
+};
+
+export default function Highlights({ highlights }: HighlightsProps) {
   return (
-    <section className={styles.highlights}>
-      <div className={styles.container}>
-        <div className={styles.grid}>
+    <section className={cn(styles.highlights)}>
+      <div className={cn(styles.container)}>
+        <div className={cn(styles.grid)}>
           {highlights.map((highlight, index) => (
             <HighlightCard
               key={index}
