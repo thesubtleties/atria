@@ -105,7 +105,7 @@ export type Event = {
   first_session_time: string | null;
   last_session_time: string | null;
   event_hours: { start: string; end: string } | null;
-  user_role?: EventUserRole; // Current user's role if authenticated
+  user_role: EventUserRole | null; // Current user's role if authenticated
 };
 
 /** Detailed event with relationships */
@@ -339,17 +339,18 @@ export type EventUser = {
   // Computed from user relationship
   id: number; // user.id
   full_name: string;
-  email: string;
+  email: string | null; // May be null in networking view due to privacy filtering
   first_name: string;
   last_name: string;
   image_url: string | null;
   social_links: SocialLinks;
   company_name: string | null;
   title: string | null;
+  bio: string | null; // From EventUserNetworkingSchema
 
-  // Speaker-specific computed
-  session_count?: number;
-  sessions?: Array<{
+  // Speaker-specific computed (nullable in networking view, always present in admin view)
+  session_count: number | null;
+  sessions: Array<{
     id: number;
     title: string;
     start_time: string | null;
@@ -357,17 +358,20 @@ export type EventUser = {
     day_number: number;
     role: SessionSpeakerRole | null;
     session_type: SessionType | null;
-  }>;
+  }> | null;
 
   // Connection status fields (added by networking service)
-  connection_status?: string | null;
-  connection_id?: number | null;
-  connection_direction?: string | null;
+  connection_status: string | null;
+  connection_id: number | null;
+  connection_direction: string | null;
+  can_send_connection_request: boolean | null; // From EventUserNetworkingSchema
 
-  // Additional computed fields
-  user_name?: string;
-  is_speaker?: boolean;
-  is_organizer?: boolean;
+  // Additional computed fields from EventUserSchema
+  user_name: string | null;
+  is_speaker: boolean;
+  is_organizer: boolean;
+  sort_name: string | null;
+  can_use_chat: boolean;
 };
 
 /** Add user to event payload */

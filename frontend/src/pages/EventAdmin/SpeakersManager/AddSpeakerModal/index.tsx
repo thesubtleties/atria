@@ -19,7 +19,7 @@ type AddSpeakerModalProps = {
 type UserOption = {
   value: string;
   label: string;
-  email: string;
+  email: string | null;
   role: string;
 };
 

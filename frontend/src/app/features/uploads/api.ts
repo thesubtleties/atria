@@ -9,6 +9,8 @@ type UploadImageParams = {
 type UploadImageResponse = {
   url: string;
   object_key: string;
+  bucket: string;
+  context: string;
 };
 
 type DeleteUploadParams = {

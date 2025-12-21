@@ -17,7 +17,7 @@ type Speaker = {
   bio?: string | null; // User's profile bio (fallback)
   company_name?: string | null;
   image_url?: string | null;
-  sessions?: Session[]; // sessions this speaker is presenting
+  sessions?: Session[] | null; // sessions this speaker is presenting
 };
 
 type SpeakerCardProps = {
@@ -93,7 +93,7 @@ export const SpeakerCard = ({ speaker }: SpeakerCardProps) => {
         )}
 
         {/* Sessions count */}
-        {sessions.length > 0 && (
+        {sessions && sessions.length > 0 && (
           <div className={styles.sessionsInfo}>
             <Group gap={6}>
               <IconMicrophone size={16} className={styles.sessionIcon || ''} />

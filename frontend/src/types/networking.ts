@@ -74,9 +74,9 @@ export type DirectMessageThread = {
   other_user: ThreadParticipant | null;
   last_message: DirectMessage | null;
   unread_count: number;
-  shared_event_ids: number[]; // Empty array if none
-  other_user_in_event: boolean;
-  is_new: boolean;
+  shared_event_ids?: number[]; // Optional - empty array if none
+  other_user_in_event?: boolean; // Optional
+  is_new?: boolean; // Optional
 };
 
 /**

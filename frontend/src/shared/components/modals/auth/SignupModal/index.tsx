@@ -29,7 +29,9 @@ interface SignupFormValues {
 }
 
 interface SignupResponse {
-  requires_verification?: boolean;
+  message: string;
+  email: string;
+  requires_verification: boolean;
 }
 
 interface ApiError {

@@ -1,11 +1,11 @@
 import { Avatar, Menu, ActionIcon, Button as MantineButton } from '@mantine/core';
 import { IconEdit, IconDots, IconUserMinus } from '@tabler/icons-react';
 import { Button } from '@/shared/components/buttons';
-import type { User, Connection } from '@/types';
+import type { User, PrivacyAwareUser, Connection } from '@/types';
 import styles from './styles/index.module.css';
 
 type ProfileHeroProps = {
-  user: Partial<User> | undefined;
+  user: Partial<User> | Partial<PrivacyAwareUser> | undefined;
   onEditClick: () => void;
   isOwnProfile?: boolean;
   isEditing?: boolean;

@@ -99,6 +99,41 @@ export type UserDetail = User & {
   }>;
 };
 
+/** Privacy-aware user */
+export type PrivacyAwareUser = {
+  // Always visible fields
+  id: number;
+  first_name: string;
+  last_name: string;
+  full_name: string;
+  image_url: string | null;
+
+  // Conditionally visible fields (may be null based on privacy)
+  email: string | null;
+  company_name: string | null;
+  title: string | null;
+  bio: string | null;
+  social_links: SocialLinks;
+
+  // Privacy control fields
+  allow_connection_requests: string | null;
+  can_send_connection_request: boolean | null;
+  is_connected: boolean | null;
+
+  // Event-specific fields (only included when event context present)
+  event_role: string | null;
+  speaker_bio: string | null;
+  speaker_title: string | null;
+
+  // Privacy settings (only for self)
+  privacy_settings: PrivacySettings | null;
+
+  // Account info (only for self)
+  created_at: string | null;
+  is_active: boolean | null;
+  email_verified: boolean | null;
+};
+
 /** Basic user info for nested responses */
 export type UserBasic = Pick<User, 'id' | 'email' | 'first_name' | 'last_name'>;
 

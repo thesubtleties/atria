@@ -22,11 +22,11 @@ export const ActivityOverview = ({ userId }: ActivityOverviewProps) => {
     );
   }
 
-  // Dashboard doesn't have stats, compute from available data
+  // Use dashboard stats and events
   const stats = {
-    events_attended: dashboard?.upcoming_events?.length ?? 0,
-    events_hosted: 0, // Not available in dashboard
-    connections_made: dashboard?.pending_connections ?? 0,
+    events_attended: dashboard?.stats?.events_attended ?? 0,
+    events_hosted: dashboard?.stats?.events_hosted ?? 0,
+    connections_made: dashboard?.stats?.connections_made ?? 0,
   };
 
   return (

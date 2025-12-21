@@ -18,12 +18,6 @@ export type OrganizationUserNested = {
   full_name: string;
   email: string;
   role: OrganizationUserRole;
-  user_name: string | null;
-  first_name: string | null;
-  last_name: string | null;
-  image_url: string | null;
-  created_at: string | null;
-  is_current_user: boolean;
 };
 
 /** Core organization model */

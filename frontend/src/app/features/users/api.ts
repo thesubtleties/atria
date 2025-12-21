@@ -1,7 +1,7 @@
 import { baseApi } from '../api';
 import type {
   User,
-  UserDetail,
+  PrivacyAwareUser,
   UserProfileUpdate,
   PrivacySettings,
   EventUserRole,
@@ -52,19 +52,67 @@ type UserSpeakingSession = {
 
 /** User dashboard data */
 type UserDashboard = {
+  user: {
+    id: number;
+    email: string;
+    first_name: string;
+    last_name: string;
+    full_name: string;
+    company_name: string | null;
+    title: string | null;
+    bio: string | null;
+    image_url: string | null;
+    created_at: string;
+  };
+  stats: {
+    events_hosted: number;
+    attendees_reached: number;
+    connections_made: number;
+    events_attended: number;
+    organizations_count: number;
+  };
   organizations: Array<{
     id: number;
     name: string;
     role: string;
+    event_count: number;
+    member_count: number;
   }>;
-  upcoming_events: Array<{
+  events: Array<{
+    id: number;
+    name: string;
+    start_date: string;
+    end_date: string | null;
+    location: string | null;
+    status: string; // 'upcoming', 'live', 'past'
+    attendee_count: number;
+    organization: {
+      id: number;
+      name: string;
+    };
+    user_role: string;
+  }>;
+  connections: Array<{
+    id: number;
+    user: {
+      id: number;
+      username: string; // Maps to email
+      display_name: string; // Maps to full_name
+      avatar_url: string | null; // Maps to image_url
+    };
+    company: string | null;
+    title: string | null;
+    connected_at: string;
+  }>;
+  news: Array<{
     id: number;
     title: string;
-    start_date: string;
-    role: EventUserRole;
+    description: string;
+    date: string;
+    type: string; // 'platform_update', 'product_launch', 'feature_release', 'security'
+    is_new: boolean;
+    link: string | null;
   }>;
-  pending_invitations: number;
-  pending_connections: number;
 };
 
 /** User invitations summary */
@@ -126,7 +174,7 @@ type DeleteEventPrivacyOverridesParams = {
 
 export const usersApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getUser: builder.query<UserDetail, number>({
+    getUser: builder.query<PrivacyAwareUser, number>({
       query: (id) => ({
         url: `/users/${id}`,
       }),

@@ -100,9 +100,9 @@ export type QueryResult<T> = { data: T; error: null } | { data: null; error: Api
 /** Upload response from the API */
 export type UploadResponse = {
   url: string;
-  filename: string;
-  content_type: string | null;
-  size: number | null;
+  object_key: string;
+  bucket: string;
+  context: string;
 };
 
 /** Generic success response */

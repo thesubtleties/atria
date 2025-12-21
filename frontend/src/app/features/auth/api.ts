@@ -10,14 +10,15 @@ import type {
 
 /** Login response from the API */
 type LoginResponse = {
-  user: User;
-  message?: string;
+  message: string;
+  user_id: number;
 };
 
 /** Signup response from the API */
 type SignupResponse = {
-  user: User;
-  message?: string;
+  message: string;
+  email: string;
+  requires_verification: boolean;
 };
 
 /** Password verification response */

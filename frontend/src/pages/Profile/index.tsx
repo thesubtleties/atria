@@ -343,7 +343,7 @@ export const ProfilePage = () => {
                   </Group>
                   <TextInput
                     label='Email'
-                    value={userProfile?.email}
+                    value={userProfile?.email ?? ''}
                     disabled
                     description='Email cannot be changed'
                     classNames={{ input: styles.formInput ?? '' }}
