@@ -44,7 +44,7 @@ export default [
 
   // Route configuration files - export data, not components
   {
-    files: ['**/router/routes/*.{js,jsx}'],
+    files: ['**/router/routes/*.{js,jsx,ts,tsx}'],
     rules: {
       'react-refresh/only-export-components': 'off',
     },
@@ -97,6 +97,14 @@ export default [
       // Disable base rules that conflict with TS versions
       'no-unused-vars': 'off',
       'no-undef': 'off',
+    },
+  },
+
+  // Route configuration files - export data/lazy components, not regular components
+  {
+    files: ['**/router/routes/*.{ts,tsx}'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
     },
   },
 
