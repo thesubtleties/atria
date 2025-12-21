@@ -1,25 +1,45 @@
+/**
+ * Enum types matching backend API values exactly.
+ *
+ * Convention:
+ * - Types use the exact string values returned by the API
+ * - Most domain enums use lowercase (event_type, status, format)
+ * - Role/system enums use UPPERCASE (EventUserRole, ChatRoomType)
+ */
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Session Types
+// ─────────────────────────────────────────────────────────────────────────────
+
 export type SessionType = 'keynote' | 'workshop' | 'panel' | 'PRESENTATION' | 'networking' | 'qa';
 
-export type EventType = 'CONFERENCE' | 'SINGLE_SESSION' | 'conference' | 'single_session';
-
-export type EventStatus =
-  | 'DRAFT'
-  | 'PUBLISHED'
-  | 'ARCHIVED'
-  | 'draft'
-  | 'published'
-  | 'archived'
-  | 'deleted';
-
 export type SessionStatus = 'scheduled' | 'starting_soon' | 'live' | 'completed' | 'cancelled';
+
+export type SessionSpeakerRole = 'host' | 'speaker' | 'panelist' | 'moderator' | 'keynote';
+
+export type SessionChatMode = 'ENABLED' | 'BACKSTAGE_ONLY' | 'DISABLED';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Event Types
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type EventType = 'conference' | 'single_session';
+
+export type EventStatus = 'draft' | 'published' | 'archived' | 'deleted';
+
+export type EventFormat = 'virtual' | 'in_person' | 'hybrid';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// User Roles (UPPERCASE - matches backend)
+// ─────────────────────────────────────────────────────────────────────────────
 
 export type EventUserRole = 'ADMIN' | 'ORGANIZER' | 'MODERATOR' | 'SPEAKER' | 'ATTENDEE';
 
 export type OrganizationUserRole = 'ADMIN' | 'MEMBER' | 'OWNER';
 
-export type SessionSpeakerRole = 'host' | 'speaker' | 'panelist' | 'moderator' | 'keynote';
-
-export type EventFormat = 'VIRTUAL' | 'IN_PERSON' | 'HYBRID' | 'virtual' | 'in_person' | 'hybrid';
+// ─────────────────────────────────────────────────────────────────────────────
+// Networking & Connections
+// ─────────────────────────────────────────────────────────────────────────────
 
 export type ConnectionStatus = 'pending' | 'accepted' | 'rejected' | 'removed' | 'blocked';
 
@@ -29,17 +49,30 @@ export type ConnectionRequestPermission = 'event_attendees' | 'speakers_organize
 
 export type SocialLinksVisibility = 'event_attendees' | 'connections' | 'hidden';
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Messaging
+// ─────────────────────────────────────────────────────────────────────────────
+
 export type MessageStatus = 'sent' | 'delivered' | 'read';
 
 export type ChatRoomType = 'GLOBAL' | 'PUBLIC' | 'BACKSTAGE' | 'ADMIN' | 'GREEN_ROOM';
 
-export type SessionChatMode = 'ENABLED' | 'BACKSTAGE_ONLY' | 'DISABLED';
+// ─────────────────────────────────────────────────────────────────────────────
+// Invitations
+// ─────────────────────────────────────────────────────────────────────────────
 
 export type InvitationStatus = 'pending' | 'accepted' | 'expired' | 'declined' | 'cancelled';
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Streaming & Media
+// ─────────────────────────────────────────────────────────────────────────────
+
 export type StreamingPlatform = 'VIMEO' | 'MUX' | 'ZOOM' | 'JITSI' | 'OTHER';
 
-/** US State codes */
+// ─────────────────────────────────────────────────────────────────────────────
+// Location
+// ─────────────────────────────────────────────────────────────────────────────
+
 export type USState =
   | 'AL'
   | 'AK'

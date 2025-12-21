@@ -26,7 +26,7 @@ export const EventCard = ({ event, isOrgView, canEdit }: EventCardProps) => {
   // Only fetch details if it's a single session event
   const { data: eventDetails } = useGetEventQuery(
     { id: event.id as number },
-    { skip: event.event_type !== 'SINGLE_SESSION' },
+    { skip: event.event_type !== 'single_session' },
   );
 
   const typedDetails = eventDetails as EventDetail | undefined;
@@ -34,9 +34,9 @@ export const EventCard = ({ event, isOrgView, canEdit }: EventCardProps) => {
   const hasSession = (typedDetails?.sessions?.length ?? 0) > 0;
 
   const cardClass =
-    event.event_type === 'CONFERENCE' ? styles.cardConference : styles.cardSingleDay;
+    event.event_type === 'conference' ? styles.cardConference : styles.cardSingleDay;
   const cardColors =
-    event.event_type === 'CONFERENCE' ?
+    event.event_type === 'conference' ?
       { gradient: '#9c42f5, #6d42f5' }
     : { gradient: '#42b883, #42a5f5' };
 
@@ -46,14 +46,14 @@ export const EventCard = ({ event, isOrgView, canEdit }: EventCardProps) => {
     // Always use the /app/events/:eventId path regardless of where we're viewing from
     const basePath = `/app/events/${event.id}`;
 
-    if (event.event_type === 'CONFERENCE') {
+    if (event.event_type === 'conference') {
       // Always navigate for conferences
       navigate(basePath);
       return;
     }
 
     // Single session logic
-    if (event.event_type === 'SINGLE_SESSION') {
+    if (event.event_type === 'single_session') {
       if (hasSession && typedDetails?.sessions?.[0]) {
         // Has session - go directly to it
         navigate(`${basePath}/sessions/${typedDetails.sessions[0].id}`);
@@ -82,7 +82,7 @@ export const EventCard = ({ event, isOrgView, canEdit }: EventCardProps) => {
   };
 
   // Determine if the card should be clickable
-  const isClickable = isOrgView || event.event_type === 'CONFERENCE' || hasSession;
+  const isClickable = isOrgView || event.event_type === 'conference' || hasSession;
 
   return (
     <>
@@ -137,13 +137,13 @@ export const EventCard = ({ event, isOrgView, canEdit }: EventCardProps) => {
           <Badge
             className={cn(styles.setupBadge)}
             color={
-              event.event_type === 'CONFERENCE' ? 'blue'
+              event.event_type === 'conference' ? 'blue'
               : hasSession ?
                 'blue'
               : 'gray'
             }
           >
-            {event.event_type === 'CONFERENCE' ?
+            {event.event_type === 'conference' ?
               `${event.day_count || 1} Day Conference`
             : hasSession ?
               'Ready to Join'
@@ -152,7 +152,7 @@ export const EventCard = ({ event, isOrgView, canEdit }: EventCardProps) => {
         )}
 
         {isOrgView &&
-          event.event_type === 'SINGLE_SESSION' &&
+          event.event_type === 'single_session' &&
           typedDetails &&
           !typedDetails.sessions?.length && (
             <Badge className={cn(styles.setupBadge)} color={canEdit ? 'yellow' : 'gray'}>

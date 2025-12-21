@@ -92,9 +92,9 @@ const EventCard = ({ event }: EventCardProps) => {
         <Badge
           variant='light'
           className={cn(styles.typeBadge)}
-          data-type={event.event_type?.toLowerCase()}
+          data-type={event.event_type}
         >
-          {event.event_type === 'CONFERENCE' ? 'Conference' : 'Single Session'}
+          {event.event_type === 'conference' ? 'Conference' : 'Single Session'}
         </Badge>
       </div>
     </div>

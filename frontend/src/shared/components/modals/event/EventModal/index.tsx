@@ -31,12 +31,12 @@ const EVENT_TYPES = [
 
 const SINGLE_SESSION_TYPE = 'single_session';
 
-type LocalEventType = 'conference' | 'single_session' | 'CONFERENCE' | 'SINGLE_SESSION';
+type EventTypeValue = 'conference' | 'single_session';
 
 interface EventFormValues {
   title: string;
   description: string;
-  event_type: LocalEventType;
+  event_type: EventTypeValue;
   start_date: string;
   end_date: string;
   timezone: string;
@@ -47,7 +47,7 @@ interface EventData {
   id: number;
   title: string;
   description?: string | null;
-  event_type: LocalEventType;
+  event_type: EventTypeValue;
   start_date: string;
   end_date: string;
   timezone: string;

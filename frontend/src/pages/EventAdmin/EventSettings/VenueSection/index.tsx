@@ -18,10 +18,8 @@ type VenueSectionProps = {
   eventId: number;
 };
 
-type EventFormat = 'VIRTUAL' | 'IN_PERSON' | 'HYBRID';
-
 type FormValues = {
-  event_format: EventFormat;
+  event_format: 'virtual' | 'in_person' | 'hybrid';
   is_private: boolean;
   venue_name: string;
   venue_address: string;
@@ -36,7 +34,7 @@ const VenueSection = ({ event, eventId }: VenueSectionProps) => {
 
   const form = useForm<FormValues>({
     initialValues: {
-      event_format: (event?.event_format as EventFormat) ?? 'VIRTUAL',
+      event_format: event?.event_format ?? 'virtual',
       is_private: event?.is_private ?? false,
       venue_name: event?.venue_name ?? '',
       venue_address: event?.venue_address ?? '',
@@ -62,13 +60,13 @@ const VenueSection = ({ event, eventId }: VenueSectionProps) => {
 
   // Show/hide venue fields based on format
   const showVenueFields =
-    form.values.event_format === 'IN_PERSON' || form.values.event_format === 'HYBRID';
+    form.values.event_format === 'in_person' || form.values.event_format === 'hybrid';
 
   const handleSubmit = async (values: FormValues) => {
     try {
       // Clear venue fields if virtual
       const venueData =
-        values.event_format === 'VIRTUAL' ?
+        values.event_format === 'virtual' ?
           {
             venue_name: null,
             venue_address: null,
@@ -109,7 +107,7 @@ const VenueSection = ({ event, eventId }: VenueSectionProps) => {
 
   const handleReset = () => {
     form.setValues({
-      event_format: (event?.event_format as EventFormat) ?? 'VIRTUAL',
+      event_format: event?.event_format ?? 'virtual',
       is_private: event?.is_private ?? false,
       venue_name: event?.venue_name ?? '',
       venue_address: event?.venue_address ?? '',
@@ -133,9 +131,9 @@ const VenueSection = ({ event, eventId }: VenueSectionProps) => {
             <Select
               label='Event Format'
               data={[
-                { value: 'VIRTUAL', label: 'Virtual' },
-                { value: 'IN_PERSON', label: 'In-Person' },
-                { value: 'HYBRID', label: 'Hybrid' },
+                { value: 'virtual', label: 'Virtual' },
+                { value: 'in_person', label: 'In-Person' },
+                { value: 'hybrid', label: 'Hybrid' },
               ]}
               required
               classNames={{
@@ -146,7 +144,7 @@ const VenueSection = ({ event, eventId }: VenueSectionProps) => {
             />
           </Group>
 
-          {form.values.event_format === 'VIRTUAL' && (
+          {form.values.event_format === 'virtual' && (
             <Alert icon={<IconInfoCircle size={16} />} className={cn(styles.infoAlert)}>
               {`Virtual events don't require venue information. Attendees will
               join online.`}
