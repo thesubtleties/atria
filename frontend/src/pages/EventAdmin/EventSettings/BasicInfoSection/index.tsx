@@ -11,21 +11,41 @@ import { parseDateOnly, formatDateOnly } from '@/shared/hooks/formatDate';
 import { eventUpdateSchema } from '../schemas/eventSettingsSchemas';
 import { Button } from '@/shared/components/buttons';
 import { COMMON_TIMEZONES } from '@/shared/constants/timezones';
+import { cn } from '@/lib/cn';
+import type { Event, Session } from '@/types';
+import type { ApiError } from '@/types';
 import styles from './styles.module.css';
 import parentStyles from '../styles/index.module.css';
 
-const BasicInfoSection = ({ event, eventId }) => {
+type BasicInfoSectionProps = {
+  event: Event | undefined;
+  eventId: number;
+};
+
+type FormValues = {
+  title: string;
+  description: string;
+  event_type: string;
+  start_date: Date | null;
+  end_date: Date | null;
+  timezone: string;
+  company_name: string;
+  status: string;
+  main_session_id: string | null;
+};
+
+const BasicInfoSection = ({ event, eventId }: BasicInfoSectionProps) => {
   const [updateEvent, { isLoading }] = useUpdateEventMutation();
   const [hasChanges, setHasChanges] = useState(false);
   const { getStatusStyles } = useEventStatusStyle();
 
   // Fetch sessions when event_type is single_session
   const { data: sessionsData } = useGetSessionsQuery(
-    { eventId: parseInt(eventId) },
+    { eventId },
     { skip: event?.event_type !== 'SINGLE_SESSION' },
   );
 
-  const form = useForm({
+  const form = useForm<FormValues>({
     initialValues: {
       title: event?.title || '',
       description: event?.description || '',
@@ -35,22 +55,27 @@ const BasicInfoSection = ({ event, eventId }) => {
       timezone: event?.timezone || 'UTC',
       company_name: event?.company_name || '',
       status: event?.status || 'DRAFT',
-      main_session_id: event?.main_session_id || null,
+      main_session_id: event?.main_session_id?.toString() || null,
     },
-    resolver: zodResolver(eventUpdateSchema),
+    validate: zodResolver(eventUpdateSchema),
   });
 
   // Track changes
   useEffect(() => {
     const checkChanges = () => {
       const changed = Object.keys(form.values).some((key) => {
-        if (key === 'start_date' || key === 'end_date') {
+        const formKey = key as keyof FormValues;
+        if (formKey === 'start_date' || formKey === 'end_date') {
           // Compare dates as YYYY-MM-DD strings to avoid timezone issues
-          const eventDate = event?.[key] || null;
-          const formDate = formatDateOnly(form.values[key]);
+          const eventKey = formKey as 'start_date' | 'end_date';
+          const eventDate = event?.[eventKey] || null;
+          const formDate = formatDateOnly(form.values[formKey] as Date | null);
           return eventDate !== formDate;
         }
-        return form.values[key] !== event?.[key];
+        if (formKey === 'main_session_id') {
+          return form.values[formKey] !== (event?.main_session_id?.toString() || null);
+        }
+        return form.values[formKey] !== event?.[formKey as keyof Event];
       });
       setHasChanges(changed);
     };
@@ -59,20 +84,25 @@ const BasicInfoSection = ({ event, eventId }) => {
   }, [form.values, event]);
 
   // Prepare session options for dropdown
-  const sessionOptions =
-    sessionsData?.sessions?.map((session) => ({
-      value: session.id.toString(),
-      label: `Day ${session.day_number}: ${session.title} (${session.start_time})`,
-    })) || [];
+  const sessions = (sessionsData as { sessions?: Session[] } | undefined)?.sessions || [];
+  const sessionOptions = sessions.map((session) => ({
+    value: session.id.toString(),
+    label: `Day ${session.day_number}: ${session.title} (${session.start_time})`,
+  }));
 
-  const handleSubmit = async (values) => {
+  const handleSubmit = async (values: FormValues) => {
     try {
       await updateEvent({
         id: eventId,
-        ...values,
-        start_date: formatDateOnly(values.start_date),
-        end_date: formatDateOnly(values.end_date),
-        main_session_id: values.main_session_id ? parseInt(values.main_session_id) : null,
+        title: values.title,
+        description: values.description || null,
+        event_type: values.event_type as Event['event_type'],
+        start_date: formatDateOnly(values.start_date) || '',
+        end_date: formatDateOnly(values.end_date) || '',
+        timezone: values.timezone,
+        company_name: values.company_name,
+        status: values.status as Event['status'],
+        main_session_id: values.main_session_id ? parseInt(values.main_session_id, 10) : null,
       }).unwrap();
 
       notifications.show({
@@ -82,9 +112,10 @@ const BasicInfoSection = ({ event, eventId }) => {
       });
       setHasChanges(false);
     } catch (error) {
+      const apiError = error as ApiError;
       notifications.show({
         title: 'Error',
-        message: error.data?.message || 'Failed to update event',
+        message: apiError.data?.message || 'Failed to update event',
         color: 'red',
       });
     }
@@ -100,27 +131,27 @@ const BasicInfoSection = ({ event, eventId }) => {
       timezone: event?.timezone || 'UTC',
       company_name: event?.company_name || '',
       status: event?.status || 'DRAFT',
-      main_session_id: event?.main_session_id || null,
+      main_session_id: event?.main_session_id?.toString() || null,
     });
     setHasChanges(false);
   };
 
   return (
-    <div className={`${parentStyles.section} ${styles.glassSection}`}>
-      <h3 className={parentStyles.sectionTitle}>Basic Information</h3>
+    <div className={cn(parentStyles.section, styles.glassSection)}>
+      <h3 className={cn(parentStyles.sectionTitle)}>Basic Information</h3>
       <Text c='dimmed' size='sm' mb='xl'>
         {`Update your event's core details and configuration`}
       </Text>
 
-      <form onSubmit={form.onSubmit(handleSubmit)}>
-        <Stack spacing='md'>
+      <form onSubmit={form.onSubmit((values) => handleSubmit(values as FormValues))}>
+        <Stack gap='md'>
           <TextInput
             label='Event Title'
             placeholder='Enter event title'
             required
             classNames={{
-              input: styles.formInput,
-              label: styles.formLabel,
+              input: styles.formInput ?? '',
+              label: styles.formLabel ?? '',
             }}
             {...form.getInputProps('title')}
           />
@@ -130,8 +161,8 @@ const BasicInfoSection = ({ event, eventId }) => {
             placeholder='Enter event description'
             minRows={3}
             classNames={{
-              input: styles.formInput,
-              label: styles.formLabel,
+              input: styles.formInput ?? '',
+              label: styles.formLabel ?? '',
             }}
             {...form.getInputProps('description')}
           />
@@ -145,8 +176,8 @@ const BasicInfoSection = ({ event, eventId }) => {
               ]}
               required
               classNames={{
-                input: styles.formInput,
-                label: styles.formLabel,
+                input: styles.formInput ?? '',
+                label: styles.formLabel ?? '',
               }}
               {...form.getInputProps('event_type')}
             />
@@ -167,8 +198,8 @@ const BasicInfoSection = ({ event, eventId }) => {
                 },
               }}
               classNames={{
-                input: styles.formInput,
-                label: styles.formLabel,
+                input: styles.formInput ?? '',
+                label: styles.formLabel ?? '',
               }}
               {...form.getInputProps('status')}
             />
@@ -180,8 +211,8 @@ const BasicInfoSection = ({ event, eventId }) => {
               placeholder='Select start date'
               required
               classNames={{
-                input: styles.formInput,
-                label: styles.formLabel,
+                input: styles.formInput ?? '',
+                label: styles.formLabel ?? '',
               }}
               {...form.getInputProps('start_date')}
             />
@@ -191,8 +222,8 @@ const BasicInfoSection = ({ event, eventId }) => {
               placeholder='Select end date'
               required
               classNames={{
-                input: styles.formInput,
-                label: styles.formLabel,
+                input: styles.formInput ?? '',
+                label: styles.formLabel ?? '',
               }}
               {...form.getInputProps('end_date')}
             />
@@ -203,8 +234,8 @@ const BasicInfoSection = ({ event, eventId }) => {
             placeholder='Enter company name'
             required
             classNames={{
-              input: styles.formInput,
-              label: styles.formLabel,
+              input: styles.formInput ?? '',
+              label: styles.formLabel ?? '',
             }}
             {...form.getInputProps('company_name')}
           />
@@ -216,8 +247,8 @@ const BasicInfoSection = ({ event, eventId }) => {
             searchable
             required
             classNames={{
-              input: styles.formInput,
-              label: styles.formLabel,
+              input: styles.formInput ?? '',
+              label: styles.formLabel ?? '',
             }}
             {...form.getInputProps('timezone')}
           />
@@ -231,18 +262,17 @@ const BasicInfoSection = ({ event, eventId }) => {
               clearable
               searchable
               classNames={{
-                input: styles.formInput,
-                label: styles.formLabel,
+                input: styles.formInput ?? '',
+                label: styles.formLabel ?? '',
               }}
-              {...form.getInputProps('main_session_id')}
-              value={form.values.main_session_id?.toString() || null}
+              value={form.values.main_session_id}
               onChange={(value) => form.setFieldValue('main_session_id', value)}
             />
           )}
 
           {hasChanges && (
-            <Group justify='flex-end' className={parentStyles.formActions}>
-              <Button variant='subtle' onClick={handleReset}>
+            <Group justify='flex-end' className={cn(parentStyles.formActions)}>
+              <Button variant='secondary' onClick={handleReset}>
                 <IconX size={16} />
                 Cancel
               </Button>

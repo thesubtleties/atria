@@ -3,12 +3,16 @@ import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useMediaQuery } from '@mantine/hooks';
 import { Group, TextInput, Select, Tabs, Text, Pagination } from '@mantine/core';
-import { LoadingOverlay } from '../../../shared/components/loading';
+import { LoadingOverlay } from '@/shared/components/loading';
 import { IconSearch, IconFilter, IconUsers, IconMail, IconChevronDown } from '@tabler/icons-react';
-import { useGetEventInvitationsQuery } from '../../../app/features/eventInvitations/api';
-import { useGetEventQuery, useGetEventUsersAdminQuery } from '../../../app/features/events/api';
-import { Button } from '../../../shared/components/buttons';
-import { getNameSortValue } from '../../../shared/utils/sorting';
+import { useGetEventInvitationsQuery } from '@/app/features/eventInvitations/api';
+import { useGetEventQuery, useGetEventUsersAdminQuery } from '@/app/features/events/api';
+import { Button } from '@/shared/components/buttons';
+import { getNameSortValue } from '@/shared/utils/sorting';
+import { cn } from '@/lib/cn';
+import type { RootState } from '@/app/store';
+import type { EventUser, Event } from '@/types';
+import type { EventUserRoleType } from './schemas/attendeeSchemas';
 import HeaderSection from './HeaderSection';
 import AttendeesList from './AttendeesList';
 import PendingInvitations from './PendingInvitations';
@@ -16,27 +20,54 @@ import InviteModal from './InviteModal';
 import RoleUpdateModal from './RoleUpdateModal';
 import styles from './styles/index.module.css';
 
-const AttendeesManager = () => {
-  const { eventId } = useParams();
-  const isMobile = useMediaQuery('(max-width: 768px)');
-  const [viewMode, setViewMode] = useState('attendees');
+type RoleCounts = {
+  total: number;
+  admins?: number;
+  organizers?: number;
+  speakers?: number;
+  attendees?: number;
+  ADMIN?: number;
+  ORGANIZER?: number;
+  SPEAKER?: number;
+  ATTENDEE?: number;
+};
 
-  const handleViewChange = (value) => {
-    setViewMode(value);
-    // Reset pagination when switching views
-    if (value === 'invitations') {
-      setInvitationsPage(1);
-    } else {
-      setPage(1);
+type FilterState = {
+  search: string;
+  role: string;
+  sortBy: string;
+  sortOrder: 'asc' | 'desc';
+};
+
+type RoleUpdateModalState = {
+  open: boolean;
+  user: EventUser | null;
+};
+
+const AttendeesManager = () => {
+  const { eventId } = useParams<{ eventId: string }>();
+  const parsedEventId = eventId ? parseInt(eventId, 10) : undefined;
+  const isMobile = useMediaQuery('(max-width: 768px)');
+  const [viewMode, setViewMode] = useState<'attendees' | 'invitations'>('attendees');
+
+  const handleViewChange = (value: string | null) => {
+    if (value === 'attendees' || value === 'invitations') {
+      setViewMode(value);
+      // Reset pagination when switching views
+      if (value === 'invitations') {
+        setInvitationsPage(1);
+      } else {
+        setPage(1);
+      }
     }
   };
 
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
-  const [roleUpdateModal, setRoleUpdateModal] = useState({
+  const [roleUpdateModal, setRoleUpdateModal] = useState<RoleUpdateModalState>({
     open: false,
     user: null,
   });
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<FilterState>({
     search: '',
     role: 'ALL',
     sortBy: 'name',
@@ -44,26 +75,33 @@ const AttendeesManager = () => {
   });
 
   // Get current user info
-  const currentUser = useSelector((state) => state.auth.user);
+  const currentUser = useSelector((state: RootState) => state.auth.user);
   const currentUserId = currentUser?.id;
 
   // Fetch event details to get current user's role
-  const { data: eventData } = useGetEventQuery({ id: eventId }, { skip: !eventId });
-  const currentUserRole = eventData?.user_role || 'ATTENDEE';
+  const { data: eventData } = useGetEventQuery({ id: parsedEventId! }, { skip: !parsedEventId });
+  const typedEventData = eventData as Event | undefined;
+  const currentUserRole: EventUserRoleType =
+    (typedEventData?.user_role as EventUserRoleType) || 'ATTENDEE';
 
   // Fetch attendees with pagination (using admin endpoint for email/full name access)
   const [page, setPage] = useState(1);
+  const queryParams =
+    parsedEventId ?
+      {
+        eventId: parsedEventId,
+        page,
+        per_page: 50,
+        ...(filters.role !== 'ALL' && { role: filters.role }),
+      }
+    : undefined;
+
   const {
     data: attendeesData,
     isLoading: isLoadingAttendees,
     error: attendeesError,
     refetch: refetchAttendees,
-  } = useGetEventUsersAdminQuery({
-    eventId,
-    page,
-    per_page: 50,
-    role: filters.role !== 'ALL' ? filters.role : undefined,
-  });
+  } = useGetEventUsersAdminQuery(queryParams!, { skip: !parsedEventId });
 
   // Fetch pending invitations with pagination
   const [invitationsPage, setInvitationsPage] = useState(1);
@@ -71,24 +109,27 @@ const AttendeesManager = () => {
     data: invitationsData,
     isLoading: isLoadingInvitations,
     refetch: refetchInvitations,
-  } = useGetEventInvitationsQuery({
-    eventId,
-    page: invitationsPage,
-    perPage: 50,
-  });
+  } = useGetEventInvitationsQuery(
+    {
+      eventId: parsedEventId!,
+      page: invitationsPage,
+      perPage: 50,
+    },
+    { skip: !parsedEventId },
+  );
 
-  const handleSearch = (value) => {
+  const handleSearch = (value: string) => {
     setFilters((prev) => ({ ...prev, search: value }));
   };
 
-  const handleRoleFilter = (value) => {
+  const handleRoleFilter = (value: string | null) => {
     // Ensure we always have a role value - default to 'ALL' if cleared
     const roleValue = value || 'ALL';
     setFilters((prev) => ({ ...prev, role: roleValue }));
     setPage(1);
   };
 
-  const handleSort = (field) => {
+  const handleSort = (field: string) => {
     setFilters((prev) => ({
       ...prev,
       sortBy: field,
@@ -96,8 +137,15 @@ const AttendeesManager = () => {
     }));
   };
 
+  // Type the event_users response properly
+  type AdminEventUser = EventUser & {
+    organization_id?: number;
+  };
+
+  const eventUsers = (attendeesData as { event_users?: AdminEventUser[] } | undefined)?.event_users;
+
   const filteredAttendees =
-    attendeesData?.event_users?.filter((user) => {
+    eventUsers?.filter((user) => {
       if (!filters.search) return true;
       const searchLower = filters.search.toLowerCase();
       return (
@@ -108,7 +156,8 @@ const AttendeesManager = () => {
     }) || [];
 
   const sortedAttendees = [...filteredAttendees].sort((a, b) => {
-    let aVal, bVal;
+    let aVal: string;
+    let bVal: string;
     switch (filters.sortBy) {
       case 'name':
         // Use the new sorting utility for proper last name sorting
@@ -138,38 +187,42 @@ const AttendeesManager = () => {
     }
 
     // Use localeCompare for better string comparison, especially for names
-    if (typeof aVal === 'string' && typeof bVal === 'string') {
-      const comparison = aVal.localeCompare(bVal);
-      return filters.sortOrder === 'asc' ? comparison : -comparison;
-    }
-
-    // Fallback for non-string values
-    if (filters.sortOrder === 'asc') {
-      return aVal > bVal ? 1 : -1;
-    } else {
-      return aVal < bVal ? 1 : -1;
-    }
+    const comparison = aVal.localeCompare(bVal);
+    return filters.sortOrder === 'asc' ? comparison : -comparison;
   });
 
   // Use role counts from backend if available, otherwise calculate from current page
-  const roleCounts = attendeesData?.role_counts ||
-    attendeesData?.event_users?.reduce((acc, user) => {
-      acc[user.role] = (acc[user.role] || 0) + 1;
-      acc.total = (acc.total || 0) + 1;
-      return acc;
-    }, {}) || { total: 0 };
+  const roleCounts: RoleCounts = (attendeesData as { role_counts?: RoleCounts } | undefined)
+    ?.role_counts ||
+    eventUsers?.reduce<RoleCounts>(
+      (acc, user) => {
+        const role = user.role as keyof Pick<
+          RoleCounts,
+          'ADMIN' | 'ORGANIZER' | 'SPEAKER' | 'ATTENDEE'
+        >;
+        acc[role] = (acc[role] || 0) + 1;
+        acc.total = (acc.total || 0) + 1;
+        return acc;
+      },
+      { total: 0 },
+    ) || { total: 0 };
+
+  const errorMessage =
+    attendeesError && typeof attendeesError === 'object' && 'message' in attendeesError ?
+      (attendeesError as { message: string }).message
+    : 'Unknown error';
 
   if (attendeesError) {
     return (
-      <div className={styles.container}>
-        <div className={styles.bgShape1} />
-        <div className={styles.bgShape2} />
+      <div className={cn(styles.container)}>
+        <div className={cn(styles.bgShape1)} />
+        <div className={cn(styles.bgShape2)} />
 
-        <div className={styles.contentWrapper}>
-          <section className={styles.mainContent}>
+        <div className={cn(styles.contentWrapper)}>
+          <section className={cn(styles.mainContent)}>
             <div style={{ textAlign: 'center', padding: '3rem' }}>
               <Text c='red' size='lg' mb='md'>
-                Error loading attendees: {attendeesError.message}
+                Error loading attendees: {errorMessage}
               </Text>
               <Button variant='primary' onClick={refetchAttendees}>
                 Retry
@@ -182,19 +235,19 @@ const AttendeesManager = () => {
   }
 
   return (
-    <div className={styles.container}>
+    <div className={cn(styles.container)}>
       {/* Background Shapes */}
-      <div className={styles.bgShape1} />
-      <div className={styles.bgShape2} />
+      <div className={cn(styles.bgShape1)} />
+      <div className={cn(styles.bgShape2)} />
 
-      <div className={styles.contentWrapper}>
+      <div className={cn(styles.contentWrapper)}>
         {/* Header Section */}
         <HeaderSection roleCounts={roleCounts} onInviteClick={() => setInviteModalOpen(true)} />
 
         {/* Main Content Section */}
-        <section className={styles.mainContent}>
+        <section className={cn(styles.mainContent)}>
           {/* Mobile View Selector - Only visible on mobile */}
-          <div className={styles.mobileViewSelector}>
+          <div className={cn(styles.mobileViewSelector)}>
             <Select
               value={viewMode}
               onChange={handleViewChange}
@@ -212,10 +265,10 @@ const AttendeesManager = () => {
                 viewMode === 'attendees' ? <IconUsers size={16} /> : <IconMail size={16} />
               }
               rightSection={<IconChevronDown size={16} />}
-              className={styles.mobileSelect}
+              className={cn(styles.mobileSelect)}
               classNames={{
-                input: styles.mobileSelectInput,
-                dropdown: styles.mobileSelectDropdown,
+                input: styles.mobileSelectInput ?? '',
+                dropdown: styles.mobileSelectDropdown ?? '',
               }}
               searchable={false}
               allowDeselect={false}
@@ -224,18 +277,18 @@ const AttendeesManager = () => {
 
           {/* Desktop Tabs - Hidden on mobile */}
           {!isMobile && (
-            <Tabs value={viewMode} onChange={handleViewChange} className={styles.tabsContainer}>
-              <Tabs.List className={styles.tabsList}>
+            <Tabs value={viewMode} onChange={handleViewChange} className={cn(styles.tabsContainer)}>
+              <Tabs.List className={cn(styles.tabsList)}>
                 <Tabs.Tab
                   value='attendees'
-                  className={styles.tab}
+                  className={cn(styles.tab)}
                   leftSection={<IconUsers size={16} />}
                 >
                   Attendees ({roleCounts.total || 0})
                 </Tabs.Tab>
                 <Tabs.Tab
                   value='invitations'
-                  className={styles.tab}
+                  className={cn(styles.tab)}
                   leftSection={<IconMail size={16} />}
                 >
                   Pending Invitations ({invitationsData?.total_items || 0})
@@ -246,10 +299,10 @@ const AttendeesManager = () => {
 
           {/* Content based on viewMode */}
           {viewMode === 'attendees' ?
-            <div className={styles.tabPanel}>
-              <div className={styles.searchFilterContainer}>
+            <div className={cn(styles.tabPanel)}>
+              <div className={cn(styles.searchFilterContainer)}>
                 <TextInput
-                  className={styles.searchInput}
+                  className={cn(styles.searchInput)}
                   placeholder='Search by name, email, or company...'
                   leftSection={<IconSearch size={16} />}
                   value={filters.search}
@@ -257,7 +310,7 @@ const AttendeesManager = () => {
                   size='md'
                 />
                 <Select
-                  className={styles.filterSelect}
+                  className={cn(styles.filterSelect)}
                   placeholder='Filter by role'
                   leftSection={<IconFilter size={16} />}
                   value={filters.role}
@@ -280,42 +333,43 @@ const AttendeesManager = () => {
                 currentUserRole={currentUserRole}
                 currentUserId={currentUserId}
                 adminCount={
-                  attendeesData?.role_counts?.admins ||
-                  attendeesData?.event_users?.filter((u) => u.role === 'ADMIN').length ||
+                  (attendeesData as { role_counts?: RoleCounts } | undefined)?.role_counts
+                    ?.admins ||
+                  eventUsers?.filter((u) => u.role === 'ADMIN').length ||
                   1
                 }
-                eventIcebreakers={eventData?.icebreakers || []}
-                onUpdateRole={(user) => {
+                eventIcebreakers={typedEventData?.icebreakers || []}
+                onUpdateRole={(user: EventUser) => {
                   setRoleUpdateModal({ open: true, user });
                 }}
                 onSort={handleSort}
                 sortBy={filters.sortBy}
                 sortOrder={filters.sortOrder}
               />
-              {attendeesData?.total_pages > 1 && (
+              {attendeesData && attendeesData.total_pages > 1 && (
                 <Group justify='center' mt='xl'>
                   <Pagination
                     value={page}
                     onChange={setPage}
                     total={attendeesData.total_pages}
-                    className={styles.pagination}
+                    className={cn(styles.pagination)}
                   />
                 </Group>
               )}
             </div>
-          : <div className={styles.tabPanel}>
+          : <div className={cn(styles.tabPanel)}>
               <LoadingOverlay visible={isLoadingInvitations} />
               <PendingInvitations
                 invitations={invitationsData?.invitations || []}
                 onRefresh={refetchInvitations}
               />
-              {invitationsData?.total_pages > 1 && (
+              {invitationsData && invitationsData.total_pages > 1 && (
                 <Group justify='center' mt='xl'>
                   <Pagination
                     value={invitationsPage}
                     onChange={setInvitationsPage}
                     total={invitationsData.total_pages}
-                    className={styles.pagination}
+                    className={cn(styles.pagination)}
                   />
                 </Group>
               )}
@@ -326,7 +380,7 @@ const AttendeesManager = () => {
         <InviteModal
           opened={inviteModalOpen}
           onClose={() => setInviteModalOpen(false)}
-          eventId={eventId}
+          eventId={parsedEventId}
           currentUserRole={currentUserRole}
           onSuccess={() => {
             refetchInvitations();
@@ -338,12 +392,12 @@ const AttendeesManager = () => {
           opened={roleUpdateModal.open}
           onClose={() => setRoleUpdateModal({ open: false, user: null })}
           user={roleUpdateModal.user}
-          eventId={eventId}
+          eventId={parsedEventId}
           currentUserRole={currentUserRole}
           currentUserId={currentUserId}
           adminCount={
-            attendeesData?.role_counts?.admins ||
-            attendeesData?.event_users?.filter((u) => u.role === 'ADMIN').length ||
+            (attendeesData as { role_counts?: RoleCounts } | undefined)?.role_counts?.admins ||
+            eventUsers?.filter((u) => u.role === 'ADMIN').length ||
             1
           }
           onSuccess={refetchAttendees}

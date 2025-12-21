@@ -6,9 +6,18 @@ import { notifications } from '@mantine/notifications';
 import { Button } from '@/shared/components/buttons';
 import { useDeleteEventMutation } from '@/app/features/events/api';
 import { useVerifyPasswordMutation } from '@/app/features/auth/api';
+import { cn } from '@/lib/cn';
+import type { Event } from '@/types';
 import styles from './styles.module.css';
 
-const DeleteEventModal = ({ opened, onClose, event, onSuccess }) => {
+type DeleteEventModalProps = {
+  opened: boolean;
+  onClose: () => void;
+  event: Event | undefined;
+  onSuccess?: () => void;
+};
+
+const DeleteEventModal = ({ opened, onClose, event, onSuccess }: DeleteEventModalProps) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [deleteEvent, { isLoading: isDeleting }] = useDeleteEventMutation();
@@ -23,6 +32,8 @@ const DeleteEventModal = ({ opened, onClose, event, onSuccess }) => {
       return;
     }
 
+    if (!event) return;
+
     setError('');
 
     try {
@@ -30,7 +41,7 @@ const DeleteEventModal = ({ opened, onClose, event, onSuccess }) => {
       await verifyPassword({ password: password.trim() }).unwrap();
 
       // If password is correct, delete the event
-      await deleteEvent(event.id).unwrap();
+      await deleteEvent({ id: event.id }).unwrap();
 
       // Show success notification
       notifications.show({
@@ -46,11 +57,12 @@ const DeleteEventModal = ({ opened, onClose, event, onSuccess }) => {
       onClose();
     } catch (err) {
       console.error('Failed to delete event:', err);
+      const apiError = err as { status?: number; data?: { message?: string } };
 
-      if (err.status === 401 || err.data?.message?.includes('password')) {
+      if (apiError.status === 401 || apiError.data?.message?.includes('password')) {
         setError('Incorrect password. Please try again.');
       } else {
-        setError(err.data?.message || 'Failed to delete event. Please try again.');
+        setError(apiError.data?.message || 'Failed to delete event. Please try again.');
       }
     }
   };
@@ -71,32 +83,34 @@ const DeleteEventModal = ({ opened, onClose, event, onSuccess }) => {
       closeOnClickOutside={false}
       closeOnEscape={!isLoading}
       classNames={{
-        content: styles.modalContent,
-        header: styles.modalHeader,
-        body: styles.modalBody,
+        content: styles.modalContent ?? '',
+        header: styles.modalHeader ?? '',
+        body: styles.modalBody ?? '',
       }}
     >
       <Stack gap='lg'>
-        <div className={styles.dangerAlert}>
-          <div className={styles.alertHeader}>
-            <IconAlertTriangle size={20} className={styles.alertIcon} />
-            <Text fw={600} className={styles.alertTitle}>
+        <div className={cn(styles.dangerAlert)}>
+          <div className={cn(styles.alertHeader)}>
+            <IconAlertTriangle size={20} className={cn(styles.alertIcon)} />
+            <Text fw={600} className={cn(styles.alertTitle)}>
               This action cannot be undone
             </Text>
           </div>
-          <Text size='sm' className={styles.alertText}>
+          <Text size='sm' className={cn(styles.alertText)}>
             You are about to permanently delete <strong>&quot;{event?.title}&quot;</strong>. This
             will remove all event data, attendees, sessions, and chat history.
           </Text>
         </div>
 
-        <div className={styles.eventInfo}>
+        <div className={cn(styles.eventInfo)}>
           <Text size='sm' c='dimmed'>
             Event to be deleted:
           </Text>
           <Text fw={600}>{event?.title}</Text>
           <Text size='xs' c='dimmed'>
-            Organization: {event?.organization?.name || event?.company_name}
+            Organization:{' '}
+            {(event as Event & { organization?: { name: string } })?.organization?.name ||
+              event?.company_name}
           </Text>
         </div>
 
@@ -114,13 +128,13 @@ const DeleteEventModal = ({ opened, onClose, event, onSuccess }) => {
             disabled={isLoading}
             error={error}
             autoFocus
-            className={styles.passwordInput}
+            className={cn(styles.passwordInput)}
           />
         </form>
 
-        <div className={styles.buttonGroup}>
+        <div className={cn(styles.buttonGroup)}>
           <Group justify='flex-end'>
-            <Button variant='subtle' onClick={handleClose} disabled={isLoading}>
+            <Button variant='secondary' onClick={handleClose} disabled={isLoading}>
               Cancel
             </Button>
             <Button

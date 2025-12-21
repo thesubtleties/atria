@@ -4,15 +4,42 @@ import { useMediaQuery } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { openConfirmationModal } from '@/shared/components/modals/ConfirmationModal';
 import { getRoleBadgeColor, getRoleDisplayName } from '../schemas/attendeeSchemas';
-import { useCancelEventInvitationMutation } from '../../../../app/features/eventInvitations/api';
+import type { EventUserRoleType } from '../schemas/attendeeSchemas';
+import { useCancelEventInvitationMutation } from '@/app/features/eventInvitations/api';
+import { cn } from '@/lib/cn';
+import type { ApiError } from '@/types';
 import AttendeeCard from '../AttendeeCard';
 import styles from './styles.module.css';
 
-const PendingInvitations = ({ invitations, onRefresh }) => {
+type EventInvitation = {
+  id: number;
+  email: string;
+  role: string;
+  status: string;
+  created_at: string;
+  expires_at: string;
+  is_expired?: boolean;
+  message?: string;
+  invited_by?: {
+    id: number;
+    full_name: string;
+  };
+  user?: {
+    id: number;
+    full_name: string;
+  };
+};
+
+type PendingInvitationsProps = {
+  invitations: EventInvitation[];
+  onRefresh: () => void;
+};
+
+const PendingInvitations = ({ invitations, onRefresh }: PendingInvitationsProps) => {
   const [cancelInvitation] = useCancelEventInvitationMutation();
   const isMobile = useMediaQuery('(max-width: 768px)');
 
-  const handleCancel = (invitation) => {
+  const handleCancel = (invitation: EventInvitation) => {
     openConfirmationModal({
       title: 'Cancel Invitation',
       message: `Cancel invitation to ${invitation.email}?`,
@@ -21,7 +48,7 @@ const PendingInvitations = ({ invitations, onRefresh }) => {
       isDangerous: true,
       onConfirm: async () => {
         try {
-          await cancelInvitation(invitation.id).unwrap();
+          await cancelInvitation({ invitationId: invitation.id }).unwrap();
           notifications.show({
             title: 'Success',
             message: 'Invitation cancelled',
@@ -29,17 +56,19 @@ const PendingInvitations = ({ invitations, onRefresh }) => {
           });
           onRefresh?.();
         } catch (error) {
+          const apiError = error as ApiError;
           notifications.show({
             title: 'Error',
-            message: error.data?.message || 'Failed to cancel invitation',
+            message: apiError.data?.message || 'Failed to cancel invitation',
             color: 'red',
           });
         }
       },
     });
   };
-  // eslint-disable-next-line no-unused-vars
-  const handleResend = async (invitation) => {
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleResend = async (_invitation: EventInvitation) => {
     // TODO: Implement resend functionality
     notifications.show({
       title: 'Resend',
@@ -48,7 +77,7 @@ const PendingInvitations = ({ invitations, onRefresh }) => {
     });
   };
 
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string | null | undefined): string => {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
@@ -60,7 +89,7 @@ const PendingInvitations = ({ invitations, onRefresh }) => {
     });
   };
 
-  const getStatusBadge = (invitation) => {
+  const getStatusBadge = (invitation: EventInvitation) => {
     if (invitation.is_expired) {
       return (
         <Badge color='gray' variant='light' leftSection={<IconClock size={14} />}>
@@ -84,7 +113,7 @@ const PendingInvitations = ({ invitations, onRefresh }) => {
 
   if (invitations.length === 0) {
     return (
-      <div className={styles.emptyState}>
+      <div className={cn(styles.emptyState)}>
         <Text size='lg' c='dimmed' ta='center'>
           No pending invitations
         </Text>
@@ -98,7 +127,7 @@ const PendingInvitations = ({ invitations, onRefresh }) => {
   // Mobile view - cards
   if (isMobile) {
     return (
-      <div className={styles.cardsContainer}>
+      <div className={cn(styles.cardsContainer)}>
         {invitations.map((invitation) => (
           <AttendeeCard
             key={invitation.id}
@@ -109,6 +138,10 @@ const PendingInvitations = ({ invitations, onRefresh }) => {
             isInvitation={true}
             onRefresh={onRefresh}
             currentUserRole='ADMIN'
+            currentUserId={undefined}
+            adminCount={1}
+            eventIcebreakers={[]}
+            onUpdateRole={() => {}}
           />
         ))}
       </div>
@@ -117,7 +150,7 @@ const PendingInvitations = ({ invitations, onRefresh }) => {
 
   // Desktop view - table
   return (
-    <div className={styles.tableContainer}>
+    <div className={cn(styles.tableContainer)}>
       <Table horizontalSpacing='md' verticalSpacing='sm' striped highlightOnHover>
         <Table.Thead>
           <Table.Tr>
@@ -127,7 +160,7 @@ const PendingInvitations = ({ invitations, onRefresh }) => {
             <Table.Th>Invited By</Table.Th>
             <Table.Th>Sent</Table.Th>
             <Table.Th>Expires</Table.Th>
-            <Table.Th width={100}>Actions</Table.Th>
+            <Table.Th style={{ width: 100 }}>Actions</Table.Th>
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
@@ -136,7 +169,7 @@ const PendingInvitations = ({ invitations, onRefresh }) => {
               <Table.Td>
                 <Group gap='sm'>
                   <Avatar radius='xl' size='sm'>
-                    {invitation.email[0].toUpperCase()}
+                    {invitation.email?.[0]?.toUpperCase() || '?'}
                   </Avatar>
                   <div>
                     <Text size='sm' fw={500}>
@@ -154,10 +187,10 @@ const PendingInvitations = ({ invitations, onRefresh }) => {
                 <Badge
                   size='md'
                   radius='sm'
-                  color={getRoleBadgeColor(invitation.role)}
+                  color={getRoleBadgeColor(invitation.role as EventUserRoleType)}
                   variant='light'
                 >
-                  {getRoleDisplayName(invitation.role)}
+                  {getRoleDisplayName(invitation.role as EventUserRoleType)}
                 </Badge>
               </Table.Td>
               <Table.Td>{getStatusBadge(invitation)}</Table.Td>

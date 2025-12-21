@@ -1,9 +1,29 @@
 import { Table, Group, Text, ActionIcon, UnstyledButton } from '@mantine/core';
 import { IconChevronUp, IconChevronDown } from '@tabler/icons-react';
 import { useMediaQuery } from '@mantine/hooks';
+import { cn } from '@/lib/cn';
+import type { EventUser } from '@/types';
+import type { EventUserRoleType } from '../schemas/attendeeSchemas';
 import AttendeeRow from '../AttendeeRow';
 import AttendeeCard from '../AttendeeCard';
 import styles from './styles.module.css';
+
+type AttendeesListProps = {
+  attendees: EventUser[];
+  currentUserRole: EventUserRoleType;
+  currentUserId: number | undefined;
+  adminCount: number;
+  eventIcebreakers: string[];
+  onUpdateRole: (user: EventUser) => void;
+  onSort: (field: string) => void;
+  sortBy: string;
+  sortOrder: 'asc' | 'desc';
+};
+
+type SortHeaderProps = {
+  field: string;
+  children: React.ReactNode;
+};
 
 const AttendeesList = ({
   attendees,
@@ -15,10 +35,11 @@ const AttendeesList = ({
   onSort,
   sortBy,
   sortOrder,
-}) => {
+}: AttendeesListProps) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
-  const SortHeader = ({ field, children }) => (
-    <UnstyledButton onClick={() => onSort(field)} className={styles.sortHeader}>
+
+  const SortHeader = ({ field, children }: SortHeaderProps) => (
+    <UnstyledButton onClick={() => onSort(field)} className={cn(styles.sortHeader)}>
       <Group gap='xs' wrap='nowrap'>
         <Text fw={sortBy === field ? 600 : 400}>{children}</Text>
         {sortBy === field && (
@@ -34,7 +55,7 @@ const AttendeesList = ({
 
   if (attendees.length === 0) {
     return (
-      <div className={styles.emptyState}>
+      <div className={cn(styles.emptyState)}>
         <Text size='lg' c='dimmed' ta='center'>
           No attendees found
         </Text>
@@ -48,7 +69,7 @@ const AttendeesList = ({
   // Mobile view - cards
   if (isMobile) {
     return (
-      <div className={styles.cardsContainer}>
+      <div className={cn(styles.cardsContainer)}>
         {attendees.map((attendee) => (
           <AttendeeCard
             key={attendee.user_id}
@@ -68,7 +89,7 @@ const AttendeesList = ({
 
   // Desktop view - table
   return (
-    <div className={styles.tableContainer}>
+    <div className={cn(styles.tableContainer)}>
       <Table horizontalSpacing='md' verticalSpacing='sm' striped highlightOnHover>
         <Table.Thead>
           <Table.Tr>
@@ -85,9 +106,7 @@ const AttendeesList = ({
             <Table.Th style={{ textAlign: 'center' }}>
               <SortHeader field='joinDate'>Joined Event</SortHeader>
             </Table.Th>
-            <Table.Th width={100} style={{ textAlign: 'center' }}>
-              Actions
-            </Table.Th>
+            <Table.Th style={{ textAlign: 'center', width: 100 }}>Actions</Table.Th>
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>

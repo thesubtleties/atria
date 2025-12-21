@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useMediaQuery } from '@mantine/hooks';
 import { Tabs, Alert, Text, Select } from '@mantine/core';
-import { LoadingOverlay } from '../../../shared/components/loading';
+import { LoadingOverlay } from '@/shared/components/loading';
 import {
   IconInfoCircle,
   IconMapPin,
@@ -15,6 +15,10 @@ import {
 } from '@tabler/icons-react';
 import { useGetEventQuery } from '@/app/features/events/api';
 import { useGetOrganizationQuery } from '@/app/features/organizations/api';
+import { cn } from '@/lib/cn';
+import type { RootState } from '@/app/store';
+import type { Event } from '@/types';
+import type { OrganizationUserNested } from '@/types/organizations';
 import BasicInfoSection from './BasicInfoSection';
 import VenueSection from './VenueSection';
 import BrandingSection from './BrandingSection';
@@ -23,30 +27,41 @@ import NetworkingSection from './NetworkingSection';
 import DangerZoneSection from './DangerZoneSection';
 import styles from './styles/index.module.css';
 
+type TabOption = {
+  value: string;
+  label: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  icon: React.FC<any>;
+};
+
 const EventSettings = () => {
-  const { eventId } = useParams();
-  const [activeTab, setActiveTab] = useState('basic');
-  const currentUserId = useSelector((state) => state.auth.user?.id);
+  const { eventId } = useParams<{ eventId: string }>();
+  const parsedEventId = eventId ? parseInt(eventId, 10) : undefined;
+  const [activeTab, setActiveTab] = useState<string | null>('basic');
+  const currentUserId = useSelector((state: RootState) => state.auth.user?.id);
   const isMobile = useMediaQuery('(max-width: 768px)');
 
   const {
     data: event,
     isLoading,
     error,
-  } = useGetEventQuery({ id: parseInt(eventId) }, { skip: !eventId });
+  } = useGetEventQuery({ id: parsedEventId! }, { skip: !parsedEventId });
 
   // Fetch organization data to check user role
-  const { data: organization } = useGetOrganizationQuery(event?.organization_id, {
-    skip: !event?.organization_id,
-  });
+  const { data: organization } = useGetOrganizationQuery(
+    (event as Event | undefined)?.organization_id ?? 0,
+    {
+      skip: !event?.organization_id,
+    },
+  );
 
   // Check if current user is org owner
-  const isOrgOwner = organization?.users?.some(
+  const isOrgOwner = (organization?.users as OrganizationUserNested[] | undefined)?.some(
     (user) => user.id === currentUserId && user.role === 'OWNER',
   );
 
   // Tab/dropdown options
-  const tabOptions = [
+  const tabOptions: TabOption[] = [
     { value: 'basic', label: 'Basic Info', icon: IconInfoCircle },
     { value: 'venue', label: 'Format & Venue', icon: IconMapPin },
     { value: 'branding', label: 'Branding & Hero', icon: IconPalette },
@@ -63,10 +78,10 @@ const EventSettings = () => {
 
   if (isLoading) {
     return (
-      <div className={styles.container}>
-        <div className={styles.bgShape1} />
-        <div className={styles.bgShape2} />
-        <div className={styles.contentWrapper}>
+      <div className={cn(styles.container)}>
+        <div className={cn(styles.bgShape1)} />
+        <div className={cn(styles.bgShape2)} />
+        <div className={cn(styles.contentWrapper)}>
           <LoadingOverlay visible />
         </div>
       </div>
@@ -75,11 +90,11 @@ const EventSettings = () => {
 
   if (error) {
     return (
-      <div className={styles.container}>
-        <div className={styles.bgShape1} />
-        <div className={styles.bgShape2} />
-        <div className={styles.contentWrapper}>
-          <section className={styles.mainContent}>
+      <div className={cn(styles.container)}>
+        <div className={cn(styles.bgShape1)} />
+        <div className={cn(styles.bgShape2)} />
+        <div className={cn(styles.contentWrapper)}>
+          <section className={cn(styles.mainContent)}>
             <Alert color='red' title='Error'>
               Failed to load event settings. Please try again.
             </Alert>
@@ -90,25 +105,25 @@ const EventSettings = () => {
   }
 
   return (
-    <div className={styles.container}>
+    <div className={cn(styles.container)}>
       {/* Background Shapes */}
-      <div className={styles.bgShape1} />
-      <div className={styles.bgShape2} />
+      <div className={cn(styles.bgShape1)} />
+      <div className={cn(styles.bgShape2)} />
 
-      <div className={styles.contentWrapper}>
+      <div className={cn(styles.contentWrapper)}>
         {/* Header Section */}
-        <section className={styles.headerSection}>
-          <h1 className={styles.pageTitle}>Event Settings</h1>
-          <Text c='dimmed' size='sm' className={styles.pageSubtitle}>
+        <section className={cn(styles.headerSection)}>
+          <h1 className={cn(styles.pageTitle)}>Event Settings</h1>
+          <Text c='dimmed' size='sm' className={cn(styles.pageSubtitle)}>
             Manage your event configuration and preferences
           </Text>
         </section>
 
         {/* Main Content Section */}
-        <section className={styles.mainContent}>
+        <section className={cn(styles.mainContent)}>
           {/* Mobile View Selector - Only visible on mobile */}
           {isMobile && (
-            <div className={styles.mobileViewSelector}>
+            <div className={cn(styles.mobileViewSelector)}>
               <Select
                 value={activeTab}
                 onChange={setActiveTab}
@@ -118,10 +133,10 @@ const EventSettings = () => {
                 }))}
                 leftSection={getCurrentIcon()}
                 rightSection={<IconChevronDown size={16} />}
-                className={styles.mobileSelect}
+                className={cn(styles.mobileSelect)}
                 classNames={{
-                  input: styles.mobileSelectInput,
-                  dropdown: styles.mobileSelectDropdown,
+                  input: styles.mobileSelectInput ?? '',
+                  dropdown: styles.mobileSelectDropdown ?? '',
                 }}
                 searchable={false}
                 allowDeselect={false}
@@ -130,14 +145,14 @@ const EventSettings = () => {
           )}
 
           {/* Desktop Tabs - Hidden on mobile */}
-          <Tabs value={activeTab} onChange={setActiveTab} className={styles.tabsContainer}>
+          <Tabs value={activeTab} onChange={setActiveTab} className={cn(styles.tabsContainer)}>
             {!isMobile && (
-              <Tabs.List className={styles.tabsList}>
+              <Tabs.List className={cn(styles.tabsList)}>
                 {tabOptions.map((tab) => (
                   <Tabs.Tab
                     key={tab.value}
                     value={tab.value}
-                    className={styles.tab}
+                    className={cn(styles.tab)}
                     leftSection={<tab.icon size={16} />}
                   >
                     {tab.label}
@@ -146,29 +161,29 @@ const EventSettings = () => {
               </Tabs.List>
             )}
 
-            <Tabs.Panel value='basic' className={styles.tabPanel}>
-              <BasicInfoSection event={event} eventId={parseInt(eventId)} />
+            <Tabs.Panel value='basic' className={cn(styles.tabPanel)}>
+              <BasicInfoSection event={event as Event} eventId={parsedEventId!} />
             </Tabs.Panel>
 
-            <Tabs.Panel value='venue' className={styles.tabPanel}>
-              <VenueSection event={event} eventId={parseInt(eventId)} />
+            <Tabs.Panel value='venue' className={cn(styles.tabPanel)}>
+              <VenueSection event={event as Event} eventId={parsedEventId!} />
             </Tabs.Panel>
 
-            <Tabs.Panel value='branding' className={styles.tabPanel}>
-              <BrandingSection event={event} eventId={parseInt(eventId)} />
+            <Tabs.Panel value='branding' className={cn(styles.tabPanel)}>
+              <BrandingSection event={event as Event} eventId={parsedEventId!} />
             </Tabs.Panel>
 
-            <Tabs.Panel value='content' className={styles.tabPanel}>
-              <ContentSections event={event} eventId={parseInt(eventId)} />
+            <Tabs.Panel value='content' className={cn(styles.tabPanel)}>
+              <ContentSections event={event as Event} eventId={parsedEventId!} />
             </Tabs.Panel>
 
-            <Tabs.Panel value='networking' className={styles.tabPanel}>
-              <NetworkingSection event={event} eventId={parseInt(eventId)} />
+            <Tabs.Panel value='networking' className={cn(styles.tabPanel)}>
+              <NetworkingSection event={event as Event} eventId={parsedEventId!} />
             </Tabs.Panel>
 
             {isOrgOwner && (
-              <Tabs.Panel value='danger' className={styles.tabPanel}>
-                <DangerZoneSection event={event} />
+              <Tabs.Panel value='danger' className={cn(styles.tabPanel)}>
+                <DangerZoneSection event={event as Event} />
               </Tabs.Panel>
             )}
           </Tabs>

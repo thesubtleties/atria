@@ -23,27 +23,57 @@ import { useNavigate } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
 import { openConfirmationModal } from '@/shared/components/modals/ConfirmationModal';
 import { getRoleDisplayName, canChangeUserRole } from '../schemas/attendeeSchemas';
-import { useRemoveEventUserMutation } from '../../../../app/features/events/api';
+import type { EventUserRoleType } from '../schemas/attendeeSchemas';
+import { useRemoveEventUserMutation } from '@/app/features/events/api';
 import {
   useBanEventUserMutation,
   useUnbanEventUserMutation,
   useChatBanEventUserMutation,
   useChatUnbanEventUserMutation,
-} from '../../../../app/features/moderation/api';
+} from '@/app/features/moderation/api';
 import {
   useGetConnectionsQuery,
   useCreateDirectMessageThreadMutation,
-} from '../../../../app/features/networking/api';
-import { useCancelEventInvitationMutation } from '../../../../app/features/eventInvitations/api';
-import { IcebreakerModal } from '../../../../shared/components/IcebreakerModal';
+} from '@/app/features/networking/api';
+import { useCancelEventInvitationMutation } from '@/app/features/eventInvitations/api';
+import { IcebreakerModal } from '@/shared/components/IcebreakerModal';
 import { useDispatch } from 'react-redux';
-import { openThread } from '../../../../app/store/chatSlice';
+import { openThread } from '@/app/store/chatSlice';
 import {
   getModerationPermissions,
   getModerationStyles,
   createModerationHandlers,
 } from '@/shared/utils/moderation';
+import { cn } from '@/lib/cn';
+import type { EventUser } from '@/types';
+import type { ApiError } from '@/types';
 import styles from './styles.module.css';
+
+type EventInvitation = {
+  id: number;
+  email: string;
+  role: string;
+  status: string;
+  created_at: string;
+  expires_at: string;
+  message?: string;
+  is_expired?: boolean;
+  inviter_name?: string;
+  event_id?: number;
+};
+
+type AttendeeCardData = EventUser | EventInvitation;
+
+type AttendeeCardProps = {
+  data: AttendeeCardData;
+  isInvitation?: boolean;
+  onUpdateRole: (user: EventUser) => void;
+  currentUserRole: EventUserRoleType;
+  currentUserId: number | undefined;
+  adminCount: number;
+  eventIcebreakers: string[];
+  onRefresh?: () => void;
+};
 
 const AttendeeCard = ({
   data,
@@ -54,11 +84,15 @@ const AttendeeCard = ({
   adminCount,
   eventIcebreakers,
   onRefresh,
-}) => {
+}: AttendeeCardProps) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [modalOpened, setModalOpened] = useState(false);
   const [detailsExpanded, setDetailsExpanded] = useState(false);
+
+  // Type guards and assertions
+  const attendeeData = data as EventUser;
+  const invitationData = data as EventInvitation;
 
   // Mutations
   const [removeUser] = useRemoveEventUserMutation();
@@ -77,27 +111,30 @@ const AttendeeCard = ({
   const isConnected =
     !isInvitation &&
     connectionsData?.connections?.some(
-      (conn) =>
-        (conn.requester.id === data.user_id || conn.recipient.id === data.user_id) &&
+      (conn: { requester: { id: number }; recipient: { id: number }; status: string }) =>
+        (conn.requester.id === attendeeData.user_id ||
+          conn.recipient.id === attendeeData.user_id) &&
         conn.status === 'ACCEPTED',
     );
 
   // Get moderation permissions
   const { canModerateUser, canUnbanUser, canChatModerateUser, canChatUnmuteUser } =
-    getModerationPermissions(currentUserId, currentUserRole, data);
+    getModerationPermissions(currentUserId ?? 0, currentUserRole, attendeeData);
 
-  // Create moderation handlers
+  // Create moderation handlers with typed wrapper functions
   const { handleBan, handleUnban, handleChatBan, handleChatUnban } = createModerationHandlers({
-    user: data,
+    user: attendeeData,
     currentUserRole,
-    banUser,
+    banUser: (params) =>
+      banUser({ ...params, reason: params.reason || 'Violation of event guidelines' }),
     unbanUser,
-    chatBanUser,
+    chatBanUser: (params) =>
+      chatBanUser({ ...params, reason: params.reason || 'Inappropriate chat behavior' }),
     chatUnbanUser,
   });
 
   // Format date for display
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string | null | undefined): string => {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
@@ -111,8 +148,8 @@ const AttendeeCard = ({
   const handleRemove = () => {
     const confirmMessage =
       isInvitation ?
-        `Cancel invitation to ${data.email}?`
-      : `Remove ${data.full_name} from the event?`;
+        `Cancel invitation to ${invitationData.email}?`
+      : `Remove ${attendeeData.full_name} from the event?`;
 
     openConfirmationModal({
       title: isInvitation ? 'Cancel Invitation' : 'Remove Attendee',
@@ -123,7 +160,7 @@ const AttendeeCard = ({
       onConfirm: async () => {
         try {
           if (isInvitation) {
-            await cancelInvitation(data.id).unwrap();
+            await cancelInvitation({ invitationId: invitationData.id }).unwrap();
             notifications.show({
               title: 'Success',
               message: 'Invitation cancelled',
@@ -131,20 +168,21 @@ const AttendeeCard = ({
             });
           } else {
             await removeUser({
-              eventId: data.event_id,
-              userId: data.user_id,
+              eventId: attendeeData.event_id,
+              userId: attendeeData.user_id,
             }).unwrap();
             notifications.show({
               title: 'Success',
-              message: `${data.full_name} removed from event`,
+              message: `${attendeeData.full_name} removed from event`,
               color: 'green',
             });
           }
           onRefresh?.();
         } catch (error) {
+          const apiError = error as ApiError;
           notifications.show({
             title: 'Error',
-            message: error.data?.message || 'Failed to perform action',
+            message: apiError.data?.message || 'Failed to perform action',
             color: 'red',
           });
         }
@@ -159,8 +197,8 @@ const AttendeeCard = ({
   const handleMessage = async () => {
     try {
       const result = await createThread({
-        userId: data.user_id,
-        eventId: data.event_id, // Include event context for proper thread creation
+        userId: attendeeData.user_id,
+        eventId: attendeeData.event_id, // Include event context for proper thread creation
       }).unwrap();
 
       dispatch(openThread(result));
@@ -171,9 +209,10 @@ const AttendeeCard = ({
         color: 'green',
       });
     } catch (error) {
+      const apiError = error as ApiError;
       notifications.show({
         title: 'Error',
-        message: error.data?.message || 'Failed to create message thread',
+        message: apiError.data?.message || 'Failed to create message thread',
         color: 'red',
       });
     }
@@ -185,14 +224,14 @@ const AttendeeCard = ({
   const getInvitationStatus = () => {
     if (!isInvitation) return null;
 
-    if (data.is_expired) {
+    if (invitationData.is_expired) {
       return (
         <Badge color='gray' variant='light' leftSection={<IconClock size={14} />}>
           Expired
         </Badge>
       );
     }
-    if (data.status === 'ACCEPTED') {
+    if (invitationData.status === 'ACCEPTED') {
       return (
         <Badge color='green' variant='light' leftSection={<IconCheck size={14} />}>
           Accepted
@@ -206,14 +245,17 @@ const AttendeeCard = ({
     );
   };
 
+  const roleValue = isInvitation ? invitationData.role : attendeeData.role;
+  const roleClassName = styles[`${roleValue?.toLowerCase()}Badge`] || styles.roleBadge;
+
   return (
-    <div className={styles.card} style={getModerationStyles(data)}>
+    <div className={cn(styles.card)} style={getModerationStyles(attendeeData)}>
       {/* Card Actions - Top right corner */}
       {canManage && (
-        <div className={styles.cardActions}>
+        <div className={cn(styles.cardActions)}>
           <Menu position='bottom-end' withinPortal>
             <Menu.Target>
-              <ActionIcon variant='subtle' className={styles.actionButton}>
+              <ActionIcon variant='subtle' className={cn(styles.actionButton)}>
                 <IconDots size={16} />
               </ActionIcon>
             </Menu.Target>
@@ -221,30 +263,37 @@ const AttendeeCard = ({
               {!isInvitation ?
                 <>
                   {/* Only show View Profile if connected or own profile */}
-                  {(isConnected || currentUserId === data.user_id) && (
+                  {(isConnected || currentUserId === attendeeData.user_id) && (
                     <Menu.Item
                       leftSection={<IconUserCircle size={16} />}
-                      onClick={() => navigate(`/app/users/${data.user_id}`)}
+                      onClick={() => navigate(`/app/users/${attendeeData.user_id}`)}
                     >
                       View Profile
                     </Menu.Item>
                   )}
 
-                  {canChangeUserRole(currentUserRole, data.role, adminCount) && (
+                  {canChangeUserRole(
+                    currentUserRole,
+                    currentUserId!,
+                    attendeeData.user_id,
+                    attendeeData.role as EventUserRoleType,
+                    attendeeData.role as EventUserRoleType,
+                    adminCount,
+                  ).allowed && (
                     <Menu.Item
                       leftSection={<IconEdit size={16} />}
-                      onClick={() => onUpdateRole(data)}
+                      onClick={() => onUpdateRole(attendeeData)}
                     >
                       Change Role
                     </Menu.Item>
                   )}
 
-                  {data.role === 'SPEAKER' && (
+                  {attendeeData.role === 'SPEAKER' && (
                     <Menu.Item
                       leftSection={<IconMicrophone size={16} />}
                       onClick={() =>
                         navigate(
-                          `/app/organizations/${data.organization_id}/events/${data.event_id}/admin/speakers`,
+                          `/app/organizations/${(data as EventUser & { organization_id?: number }).organization_id}/events/${attendeeData.event_id}/admin/speakers`,
                         )
                       }
                     >
@@ -270,7 +319,7 @@ const AttendeeCard = ({
                     </Menu.Item>
                   )}
 
-                  {canChatModerateUser && !data.is_chat_banned && (
+                  {canChatModerateUser && !attendeeData.is_chat_banned && (
                     <Menu.Item
                       leftSection={<IconVolumeOff size={16} />}
                       onClick={handleChatBan}
@@ -301,7 +350,7 @@ const AttendeeCard = ({
                   )}
 
                   {/* Connection Actions */}
-                  {currentUserId !== data.user_id && (
+                  {currentUserId !== attendeeData.user_id && (
                     <>
                       <Menu.Divider />
                       {isConnected ?
@@ -342,22 +391,22 @@ const AttendeeCard = ({
       )}
 
       {/* User/Invitation Info Section */}
-      <div className={styles.userInfo}>
+      <div className={cn(styles.userInfo)}>
         <Avatar
-          src={!isInvitation ? data.image_url : null}
-          alt={!isInvitation ? data.full_name : data.email}
+          src={!isInvitation ? attendeeData.image_url : null}
+          alt={!isInvitation ? attendeeData.full_name : invitationData.email}
           radius='xl'
           size={50}
-          className={styles.avatar}
+          className={cn(styles.avatar)}
         >
           {!isInvitation ?
-            `${data.first_name?.[0] || ''}${data.last_name?.[0] || ''}`
-          : data.email?.[0]?.toUpperCase()}
+            `${attendeeData.first_name?.[0] || ''}${attendeeData.last_name?.[0] || ''}`
+          : invitationData.email?.[0]?.toUpperCase()}
         </Avatar>
-        <div className={styles.userDetails}>
+        <div className={cn(styles.userDetails)}>
           <Group gap='xs' wrap='nowrap' align='center'>
-            <Text fw={600} className={styles.userName}>
-              {!isInvitation ? data.full_name : data.email}
+            <Text fw={600} className={cn(styles.userName)}>
+              {!isInvitation ? attendeeData.full_name : invitationData.email}
             </Text>
             {!isInvitation && isConnected && (
               <IconUserCheck
@@ -367,17 +416,15 @@ const AttendeeCard = ({
               />
             )}
           </Group>
-          <Text size='sm' className={styles.userEmail}>
-            {!isInvitation ? data.email : `Invited by: ${data.inviter_name || 'Unknown'}`}
+          <Text size='sm' className={cn(styles.userEmail)}>
+            {!isInvitation ?
+              attendeeData.email
+            : `Invited by: ${invitationData.inviter_name || 'Unknown'}`}
           </Text>
           {/* Role badges inline */}
           <Group gap='xs' mt={4}>
-            <Badge
-              className={styles[`${data.role?.toLowerCase()}Badge`] || styles.roleBadge}
-              radius='sm'
-              size='sm'
-            >
-              {getRoleDisplayName(data.role)}
+            <Badge className={cn(roleClassName)} radius='sm' size='sm'>
+              {getRoleDisplayName(roleValue as EventUserRoleType)}
             </Badge>
             {isInvitation && getInvitationStatus()}
           </Group>
@@ -386,7 +433,7 @@ const AttendeeCard = ({
 
       {/* Additional Info - Expandable on mobile */}
       <div
-        className={styles.expandableSection}
+        className={cn(styles.expandableSection)}
         onClick={() => setDetailsExpanded(!detailsExpanded)}
       >
         <Group justify='space-between' wrap='nowrap'>
@@ -402,34 +449,34 @@ const AttendeeCard = ({
       </div>
 
       <Collapse in={detailsExpanded}>
-        <div className={styles.detailsList}>
+        <div className={cn(styles.detailsList)}>
           {!isInvitation ?
             <>
-              {data.company_name && (
-                <div className={styles.detailItem}>
+              {attendeeData.company_name && (
+                <div className={cn(styles.detailItem)}>
                   <Text size='xs' c='dimmed'>
                     Company
                   </Text>
-                  <Text size='sm'>{data.company_name}</Text>
+                  <Text size='sm'>{attendeeData.company_name}</Text>
                 </div>
               )}
-              {data.title && (
-                <div className={styles.detailItem}>
+              {attendeeData.title && (
+                <div className={cn(styles.detailItem)}>
                   <Text size='xs' c='dimmed'>
                     Title
                   </Text>
-                  <Text size='sm'>{data.title}</Text>
+                  <Text size='sm'>{attendeeData.title}</Text>
                 </div>
               )}
-              <div className={styles.detailItem}>
+              <div className={cn(styles.detailItem)}>
                 <Text size='xs' c='dimmed'>
                   Joined Event
                 </Text>
-                <Text size='sm'>{formatDate(data.created_at)}</Text>
+                <Text size='sm'>{formatDate(attendeeData.created_at)}</Text>
               </div>
-              {data.is_banned && (
+              {attendeeData.is_banned && (
                 <Badge
-                  className={styles.bannedBadge}
+                  className={cn(styles.bannedBadge)}
                   radius='sm'
                   size='sm'
                   leftSection={<IconBan size={12} />}
@@ -437,9 +484,9 @@ const AttendeeCard = ({
                   Banned
                 </Badge>
               )}
-              {data.is_chat_banned && (
+              {attendeeData.is_chat_banned && (
                 <Badge
-                  className={styles.chatBannedBadge}
+                  className={cn(styles.chatBannedBadge)}
                   radius='sm'
                   size='sm'
                   leftSection={<IconVolumeOff size={12} />}
@@ -449,25 +496,25 @@ const AttendeeCard = ({
               )}
             </>
           : <>
-              <div className={styles.detailItem}>
+              <div className={cn(styles.detailItem)}>
                 <Text size='xs' c='dimmed'>
                   Sent
                 </Text>
-                <Text size='sm'>{formatDate(data.created_at)}</Text>
+                <Text size='sm'>{formatDate(invitationData.created_at)}</Text>
               </div>
-              <div className={styles.detailItem}>
+              <div className={cn(styles.detailItem)}>
                 <Text size='xs' c='dimmed'>
                   Expires
                 </Text>
-                <Text size='sm'>{formatDate(data.expires_at)}</Text>
+                <Text size='sm'>{formatDate(invitationData.expires_at)}</Text>
               </div>
-              {data.message && (
-                <div className={styles.detailItem}>
+              {invitationData.message && (
+                <div className={cn(styles.detailItem)}>
                   <Text size='xs' c='dimmed'>
                     Message
                   </Text>
                   <Text size='sm' lineClamp={2}>
-                    {data.message}
+                    {invitationData.message}
                   </Text>
                 </div>
               )}
@@ -481,9 +528,19 @@ const AttendeeCard = ({
         <IcebreakerModal
           opened={modalOpened}
           onClose={() => setModalOpened(false)}
-          recipientId={data.user_id}
-          recipientName={data.full_name}
+          recipient={{
+            firstName: attendeeData.first_name,
+            lastName: attendeeData.last_name,
+            title: attendeeData.title || undefined,
+            avatarUrl: attendeeData.image_url,
+          }}
           eventIcebreakers={eventIcebreakers}
+          onSend={async (icebreaker: string) => {
+            // TODO: Implement connection request with icebreaker
+            console.log('Send icebreaker:', icebreaker);
+            setModalOpened(false);
+          }}
+          isLoading={false}
         />
       )}
     </div>

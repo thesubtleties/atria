@@ -1,8 +1,15 @@
 export type SessionType = 'keynote' | 'workshop' | 'panel' | 'PRESENTATION' | 'networking' | 'qa';
 
-export type EventType = 'conference' | 'single_session';
+export type EventType = 'CONFERENCE' | 'SINGLE_SESSION' | 'conference' | 'single_session';
 
-export type EventStatus = 'draft' | 'published' | 'archived' | 'deleted';
+export type EventStatus =
+  | 'DRAFT'
+  | 'PUBLISHED'
+  | 'ARCHIVED'
+  | 'draft'
+  | 'published'
+  | 'archived'
+  | 'deleted';
 
 export type SessionStatus = 'scheduled' | 'starting_soon' | 'live' | 'completed' | 'cancelled';
 
@@ -12,7 +19,7 @@ export type OrganizationUserRole = 'ADMIN' | 'MEMBER' | 'OWNER';
 
 export type SessionSpeakerRole = 'host' | 'speaker' | 'panelist' | 'moderator' | 'keynote';
 
-export type EventFormat = 'virtual' | 'in_person' | 'hybrid';
+export type EventFormat = 'VIRTUAL' | 'IN_PERSON' | 'HYBRID' | 'virtual' | 'in_person' | 'hybrid';
 
 export type ConnectionStatus = 'pending' | 'accepted' | 'rejected' | 'removed' | 'blocked';
 

@@ -5,7 +5,7 @@ import { format, parseISO, isToday } from 'date-fns';
  * Parse a date-only string (YYYY-MM-DD) without timezone issues
  * Creates a Date object at midnight in the LOCAL timezone
  */
-export const parseDateOnly = (dateString: string): Date | null => {
+export const parseDateOnly = (dateString: string | null | undefined): Date | null => {
   if (!dateString) return null;
 
   // For date-only strings (no time component), parse manually to avoid timezone issues
@@ -23,7 +23,7 @@ export const parseDateOnly = (dateString: string): Date | null => {
  * Convert a Date object to YYYY-MM-DD string in local timezone
  * Avoids timezone shifts when converting to string for API submission
  */
-export const formatDateOnly = (date: Date): string | null => {
+export const formatDateOnly = (date: Date | null | undefined): string | null => {
   if (!date) return null;
 
   const year = date.getFullYear();

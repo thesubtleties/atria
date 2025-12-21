@@ -28,21 +28,89 @@ import { useSortable } from '@dnd-kit/react/sortable';
 import { Button } from '@/shared/components/buttons';
 import { useUpdateEventMutation } from '@/app/features/events/api';
 import { highlightSchema, faqSchema } from '../schemas/eventSettingsSchemas';
+import { cn } from '@/lib/cn';
+import type { Event, ApiError } from '@/types';
 import styles from './styles.module.css';
 import parentStyles from '../styles/index.module.css';
 
+type Highlight = {
+  title: string;
+  description: string;
+  icon?: string | null;
+  _id: string;
+};
+
+type FAQ = {
+  question: string;
+  answer: string;
+  _id: string;
+};
+
+type HighlightFormValues = {
+  title: string;
+  description: string;
+};
+
+type FAQFormValues = {
+  question: string;
+  answer: string;
+};
+
+type ModalState = {
+  open: boolean;
+  mode: 'create' | 'edit';
+  id: string | null;
+};
+
+type DraggableHighlightProps = {
+  id: string;
+  highlight: Highlight;
+  onEdit: (id: string) => void;
+  onDelete: (id: string) => void;
+  isMobile: boolean | undefined;
+};
+
+type DesktopHighlightCardProps = {
+  id: string;
+  highlight: Highlight;
+  onEdit: (id: string) => void;
+  onDelete: (id: string) => void;
+};
+
+type DesktopFAQCardProps = {
+  id: string;
+  faq: FAQ;
+  onEdit: (id: string) => void;
+  onDelete: (id: string) => void;
+};
+
+type DraggableFAQProps = {
+  id: string;
+  faq: FAQ;
+  onEdit: (id: string) => void;
+  onDelete: (id: string) => void;
+  isMobile: boolean | undefined;
+};
+
+type ContentSectionsProps = {
+  event: Event | undefined;
+  eventId: number;
+};
+
 // Draggable Highlight Card Component
-const DraggableHighlight = ({ id, highlight, onEdit, onDelete, isMobile }) => {
-  const { ref, isDragging } = useSortable({
-    id,
-    type: 'highlight',
-    accept: ['highlight'],
-  });
+const DraggableHighlight = ({
+  id,
+  highlight,
+  onEdit,
+  onDelete,
+  isMobile,
+}: DraggableHighlightProps) => {
+  const { ref, isDragging } = useSortable({ id, index: 0 });
 
   return (
     <div
       ref={ref}
-      className={`${styles.draggableCard} ${isDragging ? styles.dragging : ''}`}
+      className={cn(styles.draggableCard, isDragging && styles.dragging)}
       style={{
         cursor:
           isMobile ? 'default'
@@ -50,13 +118,13 @@ const DraggableHighlight = ({ id, highlight, onEdit, onDelete, isMobile }) => {
           : 'grab',
       }}
     >
-      <div className={styles.cardInner}>
-        <div className={styles.cardTopRow}>
+      <div className={cn(styles.cardInner)}>
+        <div className={cn(styles.cardTopRow)}>
           {!isMobile && (
             <ActionIcon
               variant='subtle'
               size='lg'
-              className={styles.dragHandle}
+              className={cn(styles.dragHandle)}
               style={{ cursor: 'grab' }}
             >
               <IconGripVertical size={20} />
@@ -64,7 +132,7 @@ const DraggableHighlight = ({ id, highlight, onEdit, onDelete, isMobile }) => {
           )}
           <Menu position='bottom-end' withinPortal>
             <Menu.Target>
-              <ActionIcon variant='subtle' className={styles.menuButton}>
+              <ActionIcon variant='subtle' className={cn(styles.menuButton)}>
                 <IconDots size={16} />
               </ActionIcon>
             </Menu.Target>
@@ -82,11 +150,11 @@ const DraggableHighlight = ({ id, highlight, onEdit, onDelete, isMobile }) => {
             </Menu.Dropdown>
           </Menu>
         </div>
-        <Text fw={600} className={styles.cardTitle}>
+        <Text fw={600} className={cn(styles.cardTitle)}>
           {highlight.title}
         </Text>
-        <div className={styles.cardDivider} />
-        <Text size='sm' c='dimmed' className={styles.cardDescription}>
+        <div className={cn(styles.cardDivider)} />
+        <Text size='sm' c='dimmed' className={cn(styles.cardDescription)}>
           {highlight.description}
         </Text>
       </div>
@@ -95,17 +163,13 @@ const DraggableHighlight = ({ id, highlight, onEdit, onDelete, isMobile }) => {
 };
 
 // Desktop Highlight Card Component
-const DesktopHighlightCard = ({ id, highlight, onEdit, onDelete }) => {
-  const { ref, isDragging } = useSortable({
-    id,
-    type: 'highlight',
-    accept: ['highlight'],
-  });
+const DesktopHighlightCard = ({ id, highlight, onEdit, onDelete }: DesktopHighlightCardProps) => {
+  const { ref, isDragging } = useSortable({ id, index: 0 });
 
   return (
     <div
       ref={ref}
-      className={`${styles.desktopCard} ${isDragging ? styles.dragging : ''}`}
+      className={cn(styles.desktopCard, isDragging && styles.dragging)}
       style={{
         cursor: isDragging ? 'grabbing' : 'grab',
       }}
@@ -114,17 +178,17 @@ const DesktopHighlightCard = ({ id, highlight, onEdit, onDelete }) => {
         align='center'
         justify='space-between'
         wrap='nowrap'
-        className={styles.desktopCardInner}
+        className={cn(styles.desktopCardInner)}
       >
         <Group wrap='nowrap' gap='md' align='center'>
-          <div className={styles.desktopCardIcon}>
+          <div className={cn(styles.desktopCardIcon)}>
             <IconBolt size={24} style={{ color: '#FFC107' }} />
           </div>
-          <div className={styles.desktopCardTextContent}>
-            <Text fw={600} size='md' className={styles.desktopCardTitle}>
+          <div className={cn(styles.desktopCardTextContent)}>
+            <Text fw={600} size='md' className={cn(styles.desktopCardTitle)}>
               {highlight.title}
             </Text>
-            <Text size='sm' c='dimmed' className={styles.desktopCardDescription}>
+            <Text size='sm' c='dimmed' className={cn(styles.desktopCardDescription)}>
               {highlight.description}
             </Text>
           </div>
@@ -132,7 +196,7 @@ const DesktopHighlightCard = ({ id, highlight, onEdit, onDelete }) => {
 
         <Menu position='bottom-end' withinPortal>
           <Menu.Target>
-            <ActionIcon variant='subtle' className={styles.desktopMenuButton}>
+            <ActionIcon variant='subtle' className={cn(styles.desktopMenuButton)}>
               <IconDots size={18} />
             </ActionIcon>
           </Menu.Target>
@@ -155,17 +219,13 @@ const DesktopHighlightCard = ({ id, highlight, onEdit, onDelete }) => {
 };
 
 // Desktop FAQ Card Component
-const DesktopFAQCard = ({ id, faq, onEdit, onDelete }) => {
-  const { ref, isDragging } = useSortable({
-    id,
-    type: 'faq',
-    accept: ['faq'],
-  });
+const DesktopFAQCard = ({ id, faq, onEdit, onDelete }: DesktopFAQCardProps) => {
+  const { ref, isDragging } = useSortable({ id, index: 0 });
 
   return (
     <div
       ref={ref}
-      className={`${styles.desktopCard} ${isDragging ? styles.dragging : ''}`}
+      className={cn(styles.desktopCard, isDragging && styles.dragging)}
       style={{
         cursor: isDragging ? 'grabbing' : 'grab',
       }}
@@ -174,17 +234,17 @@ const DesktopFAQCard = ({ id, faq, onEdit, onDelete }) => {
         align='center'
         justify='space-between'
         wrap='nowrap'
-        className={styles.desktopCardInner}
+        className={cn(styles.desktopCardInner)}
       >
         <Group wrap='nowrap' gap='md' align='center'>
-          <div className={styles.desktopCardIcon}>
+          <div className={cn(styles.desktopCardIcon)}>
             <IconQuestionMark size={24} style={{ color: 'var(--color-primary)' }} />
           </div>
-          <div className={styles.desktopCardTextContent}>
-            <Text fw={600} size='md' className={styles.desktopCardTitle}>
+          <div className={cn(styles.desktopCardTextContent)}>
+            <Text fw={600} size='md' className={cn(styles.desktopCardTitle)}>
               {faq.question}
             </Text>
-            <Text size='sm' c='dimmed' className={styles.desktopCardDescription}>
+            <Text size='sm' c='dimmed' className={cn(styles.desktopCardDescription)}>
               {faq.answer}
             </Text>
           </div>
@@ -192,7 +252,7 @@ const DesktopFAQCard = ({ id, faq, onEdit, onDelete }) => {
 
         <Menu position='bottom-end' withinPortal>
           <Menu.Target>
-            <ActionIcon variant='subtle' className={styles.desktopMenuButton}>
+            <ActionIcon variant='subtle' className={cn(styles.desktopMenuButton)}>
               <IconDots size={18} />
             </ActionIcon>
           </Menu.Target>
@@ -215,17 +275,13 @@ const DesktopFAQCard = ({ id, faq, onEdit, onDelete }) => {
 };
 
 // Draggable FAQ Card Component (Mobile)
-const DraggableFAQ = ({ id, faq, onEdit, onDelete, isMobile }) => {
-  const { ref, isDragging } = useSortable({
-    id,
-    type: 'faq',
-    accept: ['faq'],
-  });
+const DraggableFAQ = ({ id, faq, onEdit, onDelete, isMobile }: DraggableFAQProps) => {
+  const { ref, isDragging } = useSortable({ id, index: 0 });
 
   return (
     <div
       ref={ref}
-      className={`${styles.draggableCard} ${isDragging ? styles.dragging : ''}`}
+      className={cn(styles.draggableCard, isDragging && styles.dragging)}
       style={{
         cursor:
           isMobile ? 'default'
@@ -233,13 +289,13 @@ const DraggableFAQ = ({ id, faq, onEdit, onDelete, isMobile }) => {
           : 'grab',
       }}
     >
-      <div className={styles.cardInner}>
-        <div className={styles.cardTopRow}>
+      <div className={cn(styles.cardInner)}>
+        <div className={cn(styles.cardTopRow)}>
           {!isMobile && (
             <ActionIcon
               variant='subtle'
               size='lg'
-              className={styles.dragHandle}
+              className={cn(styles.dragHandle)}
               style={{ cursor: 'grab' }}
             >
               <IconGripVertical size={20} />
@@ -247,7 +303,7 @@ const DraggableFAQ = ({ id, faq, onEdit, onDelete, isMobile }) => {
           )}
           <Menu position='bottom-end' withinPortal>
             <Menu.Target>
-              <ActionIcon variant='subtle' className={styles.menuButton}>
+              <ActionIcon variant='subtle' className={cn(styles.menuButton)}>
                 <IconDots size={16} />
               </ActionIcon>
             </Menu.Target>
@@ -265,11 +321,11 @@ const DraggableFAQ = ({ id, faq, onEdit, onDelete, isMobile }) => {
             </Menu.Dropdown>
           </Menu>
         </div>
-        <Text fw={600} className={styles.cardTitle}>
+        <Text fw={600} className={cn(styles.cardTitle)}>
           {faq.question}
         </Text>
-        <div className={styles.cardDivider} />
-        <Text size='sm' c='dimmed' className={styles.cardDescription}>
+        <div className={cn(styles.cardDivider)} />
+        <Text size='sm' c='dimmed' className={cn(styles.cardDescription)}>
           {faq.answer}
         </Text>
       </div>
@@ -277,18 +333,22 @@ const DraggableFAQ = ({ id, faq, onEdit, onDelete, isMobile }) => {
   );
 };
 
-const ContentSections = ({ event, eventId }) => {
+const ContentSections = ({ event, eventId }: ContentSectionsProps) => {
   const [updateEvent, { isLoading }] = useUpdateEventMutation();
   const [hasChanges, setHasChanges] = useState(false);
   const isMobile = useMediaQuery('(max-width: 768px)');
 
   // Modal states
-  const [highlightModal, setHighlightModal] = useState({ open: false, mode: 'create', id: null });
-  const [faqModal, setFaqModal] = useState({ open: false, mode: 'create', id: null });
+  const [highlightModal, setHighlightModal] = useState<ModalState>({
+    open: false,
+    mode: 'create',
+    id: null,
+  });
+  const [faqModal, setFaqModal] = useState<ModalState>({ open: false, mode: 'create', id: null });
 
   // Local state for drag and drop
-  const [localHighlights, setLocalHighlights] = useState({});
-  const [localFaqs, setLocalFaqs] = useState({});
+  const [localHighlights, setLocalHighlights] = useState<Record<string, string[]>>({});
+  const [localFaqs, setLocalFaqs] = useState<Record<string, string[]>>({});
 
   // ID generation counter (persists across renders)
   const [nextHighlightId, setNextHighlightId] = useState(1);
@@ -303,43 +363,43 @@ const ContentSections = ({ event, eventId }) => {
   });
 
   // Form for highlights
-  const highlightForm = useForm({
+  const highlightForm = useForm<HighlightFormValues>({
     initialValues: {
       title: '',
       description: '',
     },
-    resolver: zodResolver(highlightSchema),
+    validate: zodResolver(highlightSchema),
   });
 
   // Form for FAQs
-  const faqForm = useForm({
+  const faqForm = useForm<FAQFormValues>({
     initialValues: {
       question: '',
       answer: '',
     },
-    resolver: zodResolver(faqSchema),
+    validate: zodResolver(faqSchema),
   });
 
   // State for lists with stable IDs
-  const [highlights, setHighlights] = useState(() => {
+  const [highlights, setHighlights] = useState<Highlight[]>(() => {
     const initialHighlights = event?.sections?.highlights || [];
     return initialHighlights.map((highlight, index) => ({
       ...highlight,
-      _id: `h-${Date.now()}-${index}`, // Stable ID
+      _id: `h-${Date.now()}-${index}`,
     }));
   });
 
-  const [faqs, setFaqs] = useState(() => {
+  const [faqs, setFaqs] = useState<FAQ[]>(() => {
     const initialFaqs = event?.sections?.faqs || [];
     return initialFaqs.map((faq, index) => ({
       ...faq,
-      _id: `f-${Date.now()}-${index}`, // Stable ID
+      _id: `f-${Date.now()}-${index}`,
     }));
   });
 
   // Create lookup maps
   const highlightLookup = useMemo(() => {
-    const lookup = {};
+    const lookup: Record<string, Highlight> = {};
     highlights.forEach((highlight) => {
       lookup[highlight._id] = highlight;
     });
@@ -347,7 +407,7 @@ const ContentSections = ({ event, eventId }) => {
   }, [highlights]);
 
   const faqLookup = useMemo(() => {
-    const lookup = {};
+    const lookup: Record<string, FAQ> = {};
     faqs.forEach((faq) => {
       lookup[faq._id] = faq;
     });
@@ -355,18 +415,17 @@ const ContentSections = ({ event, eventId }) => {
   }, [faqs]);
 
   // Initialize local items for drag and drop (only on mount or when items added/removed)
-  // We intentionally only depend on length to avoid resetting drag state during reorders
   useEffect(() => {
     const highlightIds = highlights.map((h) => h._id);
     setLocalHighlights({ default: highlightIds });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [highlights.length]); // Only re-run when count changes
+  }, [highlights.length]);
 
   useEffect(() => {
     const faqIds = faqs.map((f) => f._id);
     setLocalFaqs({ default: faqIds });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [faqs.length]); // Only re-run when count changes
+  }, [faqs.length]);
 
   // Track changes
   useEffect(() => {
@@ -374,11 +433,8 @@ const ContentSections = ({ event, eventId }) => {
       welcomeForm.values.welcome_title !== event?.sections?.welcome?.title ||
       welcomeForm.values.welcome_content !== event?.sections?.welcome?.content;
 
-    // Compare without _id field
-    // eslint-disable-next-line no-unused-vars
-    const highlightsWithoutId = highlights.map(({ _id, ...rest }) => rest);
-    // eslint-disable-next-line no-unused-vars
-    const faqsWithoutId = faqs.map(({ _id, ...rest }) => rest);
+    const highlightsWithoutId = highlights.map(({ _id: _, ...rest }) => rest);
+    const faqsWithoutId = faqs.map(({ _id: _, ...rest }) => rest);
 
     const highlightsChanged =
       JSON.stringify(highlightsWithoutId) !== JSON.stringify(event?.sections?.highlights || []);
@@ -394,19 +450,18 @@ const ContentSections = ({ event, eventId }) => {
     setHighlightModal({ open: true, mode: 'create', id: null });
   };
 
-  const handleEditHighlight = (highlightId) => {
+  const handleEditHighlight = (highlightId: string) => {
     const highlight = highlightLookup[highlightId];
     if (highlight) {
-      // eslint-disable-next-line no-unused-vars
-      const { _id, ...rest } = highlight;
+      const { _id: _, ...rest } = highlight;
       highlightForm.setValues(rest);
       setHighlightModal({ open: true, mode: 'edit', id: highlightId });
     }
   };
 
-  const handleSaveHighlight = (values) => {
+  const handleSaveHighlight = (values: HighlightFormValues) => {
     if (highlightModal.mode === 'create') {
-      const newHighlight = {
+      const newHighlight: Highlight = {
         ...values,
         _id: `h-${Date.now()}-${nextHighlightId}`,
       };
@@ -421,17 +476,19 @@ const ContentSections = ({ event, eventId }) => {
     setHighlightModal({ open: false, mode: 'create', id: null });
   };
 
-  const handleDeleteHighlight = (highlightId) => {
+  const handleDeleteHighlight = (highlightId: string) => {
     setHighlights(highlights.filter((h) => h._id !== highlightId));
   };
 
   // Highlight drag handlers
-  const handleHighlightDragOver = (event) => {
-    setLocalHighlights((items) => move(items, event));
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleHighlightDragOver = (dragEvent: any) => {
+    setLocalHighlights((items) => move(items, dragEvent));
   };
 
-  const handleHighlightDragEnd = (event) => {
-    const { operation } = event;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleHighlightDragEnd = (dragEvent: any) => {
+    const { operation } = dragEvent;
     if (!operation) return;
 
     const draggedId = operation.source.id;
@@ -442,9 +499,8 @@ const ContentSections = ({ event, eventId }) => {
       return;
     }
 
-    // Find new position based on the current order in localHighlights
     const newOrder = localHighlights.default || [];
-    const newHighlights = newOrder.map((id) => highlightLookup[id]).filter(Boolean);
+    const newHighlights = newOrder.map((id) => highlightLookup[id]).filter(Boolean) as Highlight[];
 
     setHighlights(newHighlights);
   };
@@ -455,19 +511,18 @@ const ContentSections = ({ event, eventId }) => {
     setFaqModal({ open: true, mode: 'create', id: null });
   };
 
-  const handleEditFAQ = (faqId) => {
+  const handleEditFAQ = (faqId: string) => {
     const faq = faqLookup[faqId];
     if (faq) {
-      // eslint-disable-next-line no-unused-vars
-      const { _id, ...rest } = faq;
+      const { _id: _, ...rest } = faq;
       faqForm.setValues(rest);
       setFaqModal({ open: true, mode: 'edit', id: faqId });
     }
   };
 
-  const handleSaveFAQ = (values) => {
+  const handleSaveFAQ = (values: FAQFormValues) => {
     if (faqModal.mode === 'create') {
-      const newFaq = {
+      const newFaq: FAQ = {
         ...values,
         _id: `f-${Date.now()}-${nextFaqId}`,
       };
@@ -480,17 +535,19 @@ const ContentSections = ({ event, eventId }) => {
     setFaqModal({ open: false, mode: 'create', id: null });
   };
 
-  const handleDeleteFAQ = (faqId) => {
+  const handleDeleteFAQ = (faqId: string) => {
     setFaqs(faqs.filter((f) => f._id !== faqId));
   };
 
   // FAQ drag handlers
-  const handleFAQDragOver = (event) => {
-    setLocalFaqs((items) => move(items, event));
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleFAQDragOver = (dragEvent: any) => {
+    setLocalFaqs((items) => move(items, dragEvent));
   };
 
-  const handleFAQDragEnd = (event) => {
-    const { operation } = event;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleFAQDragEnd = (dragEvent: any) => {
+    const { operation } = dragEvent;
     if (!operation) return;
 
     const draggedId = operation.source.id;
@@ -501,9 +558,8 @@ const ContentSections = ({ event, eventId }) => {
       return;
     }
 
-    // Find new position based on the current order in localFaqs
     const newOrder = localFaqs.default || [];
-    const newFaqs = newOrder.map((id) => faqLookup[id]).filter(Boolean);
+    const newFaqs = newOrder.map((id) => faqLookup[id]).filter(Boolean) as FAQ[];
 
     setFaqs(newFaqs);
   };
@@ -511,11 +567,11 @@ const ContentSections = ({ event, eventId }) => {
   // Save all changes
   const handleSubmit = async () => {
     try {
-      // Strip _id fields before sending to API
-      // eslint-disable-next-line no-unused-vars
-      const highlightsForApi = highlights.map(({ _id, ...rest }) => rest);
-      // eslint-disable-next-line no-unused-vars
-      const faqsForApi = faqs.map(({ _id, ...rest }) => rest);
+      const highlightsForApi = highlights.map(({ _id: _, ...rest }) => ({
+        ...rest,
+        icon: rest.icon ?? null,
+      }));
+      const faqsForApi = faqs.map(({ _id: _, ...rest }) => rest);
 
       await updateEvent({
         id: eventId,
@@ -536,9 +592,10 @@ const ContentSections = ({ event, eventId }) => {
       });
       setHasChanges(false);
     } catch (error) {
+      const apiError = error as ApiError;
       notifications.show({
         title: 'Error',
-        message: error.data?.message || 'Failed to update content sections',
+        message: apiError.data?.message || 'Failed to update content sections',
         color: 'red',
       });
     }
@@ -549,7 +606,6 @@ const ContentSections = ({ event, eventId }) => {
       welcome_title: event?.sections?.welcome?.title || '',
       welcome_content: event?.sections?.welcome?.content || '',
     });
-    // Re-add stable IDs when resetting
     const timestamp = Date.now();
     const resetHighlights = (event?.sections?.highlights || []).map((highlight, index) => ({
       ...highlight,
@@ -562,13 +618,11 @@ const ContentSections = ({ event, eventId }) => {
     setHighlights(resetHighlights);
     setFaqs(resetFaqs);
 
-    // Reset the local drag state with new IDs
     const resetHighlightIds = resetHighlights.map((h) => h._id);
     const resetFaqIds = resetFaqs.map((f) => f._id);
     setLocalHighlights({ default: resetHighlightIds });
     setLocalFaqs({ default: resetFaqIds });
 
-    // Reset the ID counters
     setNextHighlightId(resetHighlights.length + 1);
     setNextFaqId(resetFaqs.length + 1);
 
@@ -577,46 +631,46 @@ const ContentSections = ({ event, eventId }) => {
 
   return (
     <>
-      <div className={`${parentStyles.section} ${styles.glassSection}`}>
-        <h3 className={parentStyles.sectionTitle}>Content Sections</h3>
+      <div className={cn(parentStyles.section, styles.glassSection)}>
+        <h3 className={cn(parentStyles.sectionTitle)}>Content Sections</h3>
         <Text c='dimmed' size='sm' mb='xl'>
           Customize highlights, FAQs, and welcome messages for your event
         </Text>
 
-        <Stack spacing='xl'>
+        <Stack gap='xl'>
           {/* Welcome Section */}
-          <div className={styles.welcomeSection}>
-            <Title order={4} className={styles.subsectionTitle}>
+          <div className={cn(styles.welcomeSection)}>
+            <Title order={4} className={cn(styles.subsectionTitle)}>
               Welcome Section
             </Title>
-            <Stack spacing='md'>
+            <Stack gap='md'>
               <TextInput
                 label='Welcome Title'
                 placeholder='Welcome to our event'
-                classNames={{ input: styles.formInput }}
+                classNames={{ input: styles.formInput ?? '' }}
                 {...welcomeForm.getInputProps('welcome_title')}
               />
               <Textarea
                 label='Welcome Content'
                 placeholder='Enter welcome message for attendees'
                 minRows={3}
-                classNames={{ input: styles.formTextarea }}
+                classNames={{ input: styles.formTextarea ?? '' }}
                 {...welcomeForm.getInputProps('welcome_content')}
               />
             </Stack>
           </div>
 
-          <div className={styles.divider} />
+          <div className={cn(styles.divider)} />
 
           {/* Highlights Section */}
-          <div className={styles.sectionWrapper}>
+          <div className={cn(styles.sectionWrapper)}>
             <Group
               justify={isMobile ? 'center' : 'space-between'}
               mb='md'
-              className={styles.sectionHeader}
+              className={cn(styles.sectionHeader)}
             >
-              <div className={isMobile ? styles.mobileCenter : ''}>
-                <Title order={4} className={styles.subsectionTitle}>
+              <div className={isMobile ? cn(styles.mobileCenter) : ''}>
+                <Title order={4} className={cn(styles.subsectionTitle)}>
                   Event Highlights
                 </Title>
                 <Text size='sm' c='dimmed' mt='xs'>
@@ -626,22 +680,22 @@ const ContentSections = ({ event, eventId }) => {
               <Button
                 variant='primary'
                 onClick={handleAddHighlight}
-                className={isMobile ? styles.centerButton : ''}
+                className={isMobile ? cn(styles.centerButton) : ''}
               >
                 <IconPlus size={16} />
                 Add Highlight
               </Button>
             </Group>
 
-            <Text className={styles.dragHint}>Press down on cards and drag to reorder</Text>
+            <Text className={cn(styles.dragHint)}>Press down on cards and drag to reorder</Text>
 
             <DragDropProvider
               onDragOver={handleHighlightDragOver}
               onDragEnd={handleHighlightDragEnd}
             >
-              <div className={styles.draggableList}>
+              <div className={cn(styles.draggableList)}>
                 {highlights.length === 0 ?
-                  <div className={styles.emptyState}>
+                  <div className={cn(styles.emptyState)}>
                     <Text c='dimmed' ta='center'>
                       No highlights added yet
                     </Text>
@@ -672,17 +726,17 @@ const ContentSections = ({ event, eventId }) => {
             </DragDropProvider>
           </div>
 
-          <div className={styles.divider} />
+          <div className={cn(styles.divider)} />
 
           {/* FAQs Section */}
-          <div className={styles.sectionWrapper}>
+          <div className={cn(styles.sectionWrapper)}>
             <Group
               justify={isMobile ? 'center' : 'space-between'}
               mb='md'
-              className={styles.sectionHeader}
+              className={cn(styles.sectionHeader)}
             >
-              <div className={isMobile ? styles.mobileCenter : ''}>
-                <Title order={4} className={styles.subsectionTitle}>
+              <div className={isMobile ? cn(styles.mobileCenter) : ''}>
+                <Title order={4} className={cn(styles.subsectionTitle)}>
                   Frequently Asked Questions
                 </Title>
                 <Text size='sm' c='dimmed' mt='xs'>
@@ -692,19 +746,19 @@ const ContentSections = ({ event, eventId }) => {
               <Button
                 variant='primary'
                 onClick={handleAddFAQ}
-                className={isMobile ? styles.centerButton : ''}
+                className={isMobile ? cn(styles.centerButton) : ''}
               >
                 <IconPlus size={16} />
                 Add FAQ
               </Button>
             </Group>
 
-            <Text className={styles.dragHint}>Press down on cards and drag to reorder</Text>
+            <Text className={cn(styles.dragHint)}>Press down on cards and drag to reorder</Text>
 
             <DragDropProvider onDragOver={handleFAQDragOver} onDragEnd={handleFAQDragEnd}>
-              <div className={styles.draggableList}>
+              <div className={cn(styles.draggableList)}>
                 {faqs.length === 0 ?
-                  <div className={styles.emptyState}>
+                  <div className={cn(styles.emptyState)}>
                     <Text c='dimmed' ta='center'>
                       No FAQs added yet
                     </Text>
@@ -737,7 +791,7 @@ const ContentSections = ({ event, eventId }) => {
 
           {hasChanges && (
             <Group justify='flex-end' mt='xl'>
-              <Button variant='subtle' onClick={handleReset}>
+              <Button variant='secondary' onClick={handleReset}>
                 Cancel
               </Button>
               <Button variant='primary' onClick={handleSubmit} disabled={isLoading}>
@@ -755,8 +809,8 @@ const ContentSections = ({ event, eventId }) => {
         title={highlightModal.mode === 'create' ? 'Add Highlight' : 'Edit Highlight'}
         lockScroll={false}
         classNames={{
-          content: styles.modalContent,
-          header: styles.modalHeader,
+          content: styles.modalContent ?? '',
+          header: styles.modalHeader ?? '',
         }}
       >
         <form onSubmit={highlightForm.onSubmit(handleSaveHighlight)}>
@@ -765,19 +819,19 @@ const ContentSections = ({ event, eventId }) => {
               label='Title'
               placeholder='Enter highlight title'
               required
-              classNames={{ input: styles.formInput }}
+              classNames={{ input: styles.formInput ?? '' }}
               {...highlightForm.getInputProps('title')}
             />
             <Textarea
               label='Description'
               placeholder='Enter highlight description'
               required
-              classNames={{ input: styles.formTextarea }}
+              classNames={{ input: styles.formTextarea ?? '' }}
               {...highlightForm.getInputProps('description')}
             />
             <Group justify='flex-end'>
               <Button
-                variant='subtle'
+                variant='secondary'
                 onClick={() => setHighlightModal({ open: false, mode: 'create', id: null })}
               >
                 Cancel
@@ -797,8 +851,8 @@ const ContentSections = ({ event, eventId }) => {
         title={faqModal.mode === 'create' ? 'Add FAQ' : 'Edit FAQ'}
         lockScroll={false}
         classNames={{
-          content: styles.modalContent,
-          header: styles.modalHeader,
+          content: styles.modalContent ?? '',
+          header: styles.modalHeader ?? '',
         }}
       >
         <form onSubmit={faqForm.onSubmit(handleSaveFAQ)}>
@@ -807,7 +861,7 @@ const ContentSections = ({ event, eventId }) => {
               label='Question'
               placeholder='Enter question'
               required
-              classNames={{ input: styles.formInput }}
+              classNames={{ input: styles.formInput ?? '' }}
               {...faqForm.getInputProps('question')}
             />
             <Textarea
@@ -815,12 +869,12 @@ const ContentSections = ({ event, eventId }) => {
               placeholder='Enter answer'
               minRows={3}
               required
-              classNames={{ input: styles.formTextarea }}
+              classNames={{ input: styles.formTextarea ?? '' }}
               {...faqForm.getInputProps('answer')}
             />
             <Group justify='flex-end'>
               <Button
-                variant='subtle'
+                variant='secondary'
                 onClick={() => setFaqModal({ open: false, mode: 'create', id: null })}
               >
                 Cancel

@@ -17,23 +17,36 @@ import { useNavigate } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
 import { openConfirmationModal } from '@/shared/components/modals/ConfirmationModal';
 import { getRoleDisplayName } from '../schemas/attendeeSchemas';
-import { useRemoveEventUserMutation } from '../../../../app/features/events/api';
+import type { EventUserRoleType } from '../schemas/attendeeSchemas';
+import { useRemoveEventUserMutation } from '@/app/features/events/api';
 import {
   useBanEventUserMutation,
   useUnbanEventUserMutation,
   useChatBanEventUserMutation,
   useChatUnbanEventUserMutation,
-} from '../../../../app/features/moderation/api';
+} from '@/app/features/moderation/api';
 import {
   useGetConnectionsQuery,
   useCreateConnectionMutation,
   useCreateDirectMessageThreadMutation,
-} from '../../../../app/features/networking/api';
-import { IcebreakerModal } from '../../../../shared/components/IcebreakerModal';
+} from '@/app/features/networking/api';
+import { IcebreakerModal } from '@/shared/components/IcebreakerModal';
 import { getModerationPermissions, getModerationRowStyles } from '@/shared/utils/moderation';
 import { useDispatch } from 'react-redux';
-import { openThread } from '../../../../app/store/chatSlice';
+import { openThread } from '@/app/store/chatSlice';
+import { cn } from '@/lib/cn';
+import type { EventUser } from '@/types';
+import type { ApiError } from '@/types';
 import styles from './styles.module.css';
+
+type AttendeeRowProps = {
+  attendee: EventUser;
+  onUpdateRole: (user: EventUser) => void;
+  currentUserRole: EventUserRoleType;
+  currentUserId: number | undefined;
+  adminCount: number;
+  eventIcebreakers: string[];
+};
 
 const AttendeeRow = ({
   attendee,
@@ -42,7 +55,7 @@ const AttendeeRow = ({
   currentUserId,
   adminCount,
   eventIcebreakers,
-}) => {
+}: AttendeeRowProps) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [modalOpened, setModalOpened] = useState(false);
@@ -61,7 +74,7 @@ const AttendeeRow = ({
     per_page: 1000,
   });
   const isConnected = connectionsData?.connections?.some(
-    (conn) =>
+    (conn: { requester: { id: number }; recipient: { id: number }; status: string }) =>
       (conn.requester.id === attendee.user_id || conn.recipient.id === attendee.user_id) &&
       conn.status === 'ACCEPTED',
   );
@@ -86,9 +99,10 @@ const AttendeeRow = ({
             color: 'green',
           });
         } catch (error) {
+          const apiError = error as ApiError;
           notifications.show({
             title: 'Error',
-            message: error.data?.message || 'Failed to remove user',
+            message: apiError.data?.message || 'Failed to remove user',
             color: 'red',
           });
         }
@@ -118,9 +132,10 @@ const AttendeeRow = ({
             color: 'orange',
           });
         } catch (error) {
+          const apiError = error as ApiError;
           notifications.show({
             title: 'Error',
-            message: error.data?.message || 'Failed to ban user',
+            message: apiError.data?.message || 'Failed to ban user',
             color: 'red',
           });
         }
@@ -139,7 +154,6 @@ const AttendeeRow = ({
           await unbanUser({
             eventId: attendee.event_id,
             userId: attendee.user_id,
-            moderation_notes: `Unbanned by ${currentUserRole}`,
           }).unwrap();
 
           notifications.show({
@@ -148,9 +162,10 @@ const AttendeeRow = ({
             color: 'green',
           });
         } catch (error) {
+          const apiError = error as ApiError;
           notifications.show({
             title: 'Error',
-            message: error.data?.message || 'Failed to unban user',
+            message: apiError.data?.message || 'Failed to unban user',
             color: 'red',
           });
         }
@@ -179,9 +194,10 @@ const AttendeeRow = ({
             color: 'yellow',
           });
         } catch (error) {
+          const apiError = error as ApiError;
           notifications.show({
             title: 'Error',
-            message: error.data?.message || 'Failed to mute user from chat',
+            message: apiError.data?.message || 'Failed to mute user from chat',
             color: 'red',
           });
         }
@@ -200,7 +216,6 @@ const AttendeeRow = ({
           await chatUnbanUser({
             eventId: attendee.event_id,
             userId: attendee.user_id,
-            moderation_notes: `Chat unmuted by ${currentUserRole}`,
           }).unwrap();
 
           notifications.show({
@@ -209,9 +224,10 @@ const AttendeeRow = ({
             color: 'green',
           });
         } catch (error) {
+          const apiError = error as ApiError;
           notifications.show({
             title: 'Error',
-            message: error.data?.message || 'Failed to unmute user from chat',
+            message: apiError.data?.message || 'Failed to unmute user from chat',
             color: 'red',
           });
         }
@@ -228,7 +244,16 @@ const AttendeeRow = ({
       }).unwrap();
 
       // Get the thread ID from various possible response formats
-      const threadId = result.thread_id || result.id || result.data?.thread_id || result.data?.id;
+      const typedResult = result as {
+        thread_id?: number;
+        id?: number;
+        data?: { thread_id?: number; id?: number };
+      };
+      const threadId =
+        typedResult.thread_id ||
+        typedResult.id ||
+        typedResult.data?.thread_id ||
+        typedResult.data?.id;
 
       if (threadId) {
         // Add a small delay to ensure the thread is in the cache before opening
@@ -260,12 +285,12 @@ const AttendeeRow = ({
     setModalOpened(true);
   };
 
-  const handleSendConnectionRequest = async (icebreakerMessage) => {
+  const handleSendConnectionRequest = async (icebreakerMessage: string) => {
     try {
       await createConnection({
         recipientId: attendee.user_id,
-        icebreakerMessage,
-        originatingEventId: attendee.event_id,
+        icebreaker_message: icebreakerMessage,
+        originating_event_id: attendee.event_id,
       }).unwrap();
 
       notifications.show({
@@ -276,15 +301,16 @@ const AttendeeRow = ({
 
       setModalOpened(false);
     } catch (error) {
+      const apiError = error as ApiError;
       notifications.show({
         title: 'Error',
-        message: error.data?.message || 'Failed to send connection request. Please try again.',
+        message: apiError.data?.message || 'Failed to send connection request. Please try again.',
         color: 'red',
       });
     }
   };
 
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string | null | undefined): string => {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
@@ -308,7 +334,9 @@ const AttendeeRow = ({
 
   // Get moderation permissions using shared utility
   const { canModerateUser, canUnbanUser, canChatModerateUser, canChatUnmuteUser } =
-    getModerationPermissions(currentUserId, currentUserRole, attendee);
+    getModerationPermissions(currentUserId ?? 0, currentUserRole, attendee);
+
+  const roleClassName = styles[`${attendee.role.toLowerCase()}Badge`] || styles.roleBadge;
 
   return (
     <>
@@ -320,7 +348,7 @@ const AttendeeRow = ({
               alt={attendee.full_name}
               radius='xl'
               size='md'
-              className={styles.userAvatar}
+              className={cn(styles.userAvatar)}
             >
               {attendee.first_name?.[0]}
               {attendee.last_name?.[0]}
@@ -345,12 +373,8 @@ const AttendeeRow = ({
           </Group>
         </Table.Td>
         <Table.Td style={{ textAlign: 'center' }}>
-          <Badge
-            size='md'
-            radius='sm'
-            className={styles[`${attendee.role.toLowerCase()}Badge`] || styles.roleBadge}
-          >
-            {getRoleDisplayName(attendee.role)}
+          <Badge size='md' radius='sm' className={cn(roleClassName)}>
+            {getRoleDisplayName(attendee.role as EventUserRoleType)}
           </Badge>
         </Table.Td>
         <Table.Td>
@@ -367,13 +391,13 @@ const AttendeeRow = ({
         <Table.Td style={{ textAlign: 'center' }}>
           <Menu shadow='md' width={200} position='bottom-end'>
             <Menu.Target>
-              <ActionIcon variant='subtle' color='gray' className={styles.actionIcon}>
+              <ActionIcon variant='subtle' color='gray' className={cn(styles.actionIcon)}>
                 <IconDots size={16} />
               </ActionIcon>
             </Menu.Target>
-            <Menu.Dropdown className={styles.menuDropdown}>
+            <Menu.Dropdown className={cn(styles.menuDropdown)}>
               <Menu.Item
-                className={styles.menuItem}
+                className={cn(styles.menuItem)}
                 leftSection={<IconUserCircle size={16} />}
                 onClick={
                   isConnected || currentUserId === attendee.user_id ?
@@ -381,14 +405,13 @@ const AttendeeRow = ({
                   : undefined
                 }
                 disabled={!isConnected && currentUserId !== attendee.user_id}
-                color={isConnected || currentUserId === attendee.user_id ? undefined : 'gray'}
               >
                 View Profile
               </Menu.Item>
 
               {canChangeThisUserRole && (
                 <Menu.Item
-                  className={styles.menuItem}
+                  className={cn(styles.menuItem)}
                   leftSection={<IconEdit size={16} />}
                   onClick={() => onUpdateRole(attendee)}
                 >
@@ -398,7 +421,7 @@ const AttendeeRow = ({
 
               {attendee.role === 'SPEAKER' && currentUserRole === 'ADMIN' && (
                 <Menu.Item
-                  className={styles.menuItem}
+                  className={cn(styles.menuItem)}
                   leftSection={<IconMicrophone size={16} />}
                   onClick={() => navigate(`/app/events/${attendee.event_id}/admin/speakers`)}
                 >
@@ -413,7 +436,7 @@ const AttendeeRow = ({
 
               {canUnbanUser && (
                 <Menu.Item
-                  className={styles.menuItem}
+                  className={cn(styles.menuItem)}
                   leftSection={<IconUserCheck size={16} />}
                   onClick={handleUnban}
                 >
@@ -423,7 +446,7 @@ const AttendeeRow = ({
 
               {canModerateUser && (
                 <Menu.Item
-                  className={styles.menuItem}
+                  className={cn(styles.menuItem)}
                   leftSection={<IconBan size={16} />}
                   onClick={handleBan}
                 >
@@ -433,7 +456,7 @@ const AttendeeRow = ({
 
               {canChatUnmuteUser && (
                 <Menu.Item
-                  className={styles.menuItem}
+                  className={cn(styles.menuItem)}
                   leftSection={<IconVolume3 size={16} />}
                   onClick={handleChatUnban}
                 >
@@ -443,7 +466,7 @@ const AttendeeRow = ({
 
               {canChatModerateUser && !attendee.is_chat_banned && (
                 <Menu.Item
-                  className={styles.menuItem}
+                  className={cn(styles.menuItem)}
                   leftSection={<IconVolumeOff size={16} />}
                   onClick={handleChatBan}
                 >
@@ -455,7 +478,7 @@ const AttendeeRow = ({
                 <>
                   <Menu.Divider />
                   <Menu.Item
-                    className={styles.menuItemDanger}
+                    className={cn(styles.menuItemDanger)}
                     leftSection={<IconTrash size={16} />}
                     onClick={handleRemove}
                   >
@@ -467,7 +490,7 @@ const AttendeeRow = ({
               {/* Add Connect option if not connected and not self */}
               {!isConnected && currentUserId !== attendee.user_id && (
                 <Menu.Item
-                  className={styles.menuItem}
+                  className={cn(styles.menuItem)}
                   leftSection={<IconUserPlus size={16} />}
                   onClick={handleConnect}
                 >
@@ -478,7 +501,7 @@ const AttendeeRow = ({
               {/* Send Message - always available except to self */}
               {currentUserId !== attendee.user_id && (
                 <Menu.Item
-                  className={styles.menuItem}
+                  className={cn(styles.menuItem)}
                   leftSection={<IconMessage size={16} />}
                   onClick={handleMessage}
                 >
@@ -495,11 +518,9 @@ const AttendeeRow = ({
         opened={modalOpened}
         onClose={() => setModalOpened(false)}
         recipient={{
-          id: attendee.user_id,
           firstName: attendee.first_name,
           lastName: attendee.last_name,
-          title: attendee.title,
-          company: attendee.company_name,
+          title: attendee.title || undefined,
           avatarUrl: attendee.image_url,
         }}
         eventIcebreakers={eventIcebreakers || []}
