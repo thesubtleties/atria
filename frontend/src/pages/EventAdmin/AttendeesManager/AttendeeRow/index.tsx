@@ -71,9 +71,9 @@ const AttendeeRow = ({
   // Check connection status
   const { data: connectionsData } = useGetConnectionsQuery({
     page: 1,
-    per_page: 1000,
+    perPage: 1000,
   });
-  const isConnected = connectionsData?.connections?.some(
+  const isConnected = connectionsData?.items?.some(
     (conn: { requester: { id: number }; recipient: { id: number }; status: string }) =>
       (conn.requester.id === attendee.user_id || conn.recipient.id === attendee.user_id) &&
       conn.status === 'ACCEPTED',
@@ -288,7 +288,7 @@ const AttendeeRow = ({
   const handleSendConnectionRequest = async (icebreakerMessage: string) => {
     try {
       await createConnection({
-        recipientId: attendee.user_id,
+        recipient_id: attendee.user_id,
         icebreaker_message: icebreakerMessage,
         originating_event_id: attendee.event_id,
       }).unwrap();

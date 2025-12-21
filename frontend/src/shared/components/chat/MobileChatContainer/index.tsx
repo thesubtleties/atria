@@ -113,7 +113,8 @@ function MobileChatContainer(): React.ReactElement {
 
   // Extract threads array from the response
   // Backend returns threads with event_scope_id and shared_event_ids properties
-  const threadsArray = (data?.threads || data || []) as DirectMessageThreadWithScope[];
+  // data is already DirectMessageThread[] (not wrapped in an object)
+  const threadsArray = (data || []) as DirectMessageThreadWithScope[];
 
   // Filter threads based on context using shared hook
   const filteredThreads = useThreadFiltering(threadsArray, currentEventId);

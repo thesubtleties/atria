@@ -12,6 +12,7 @@ import {
   registerMessageCallback,
   unregisterMessageCallback,
 } from '@/app/features/networking/socketClient';
+import type { ChatMessageCallbackEvent } from '@/app/features/networking/socketTypes';
 import { notifications } from '@mantine/notifications';
 import MessageList from './MessageList';
 import MessageInput from './MessageInput';
@@ -48,28 +49,7 @@ type ChatMessagesResponse = {
   pages?: number;
 };
 
-/** Socket message update for new messages */
-type NewMessageUpdate = {
-  type: 'new_message';
-  message: ChatMessage;
-};
-
-/** Socket message update for moderated messages */
-type MessageModeratedUpdate = {
-  type: 'message_moderated';
-  messageId: number;
-  deleted_at: string;
-  deleted_by: { id: number; full_name: string } | null;
-};
-
-/** Socket message update for removed messages */
-type MessageRemovedUpdate = {
-  type: 'message_removed';
-  messageId: number;
-};
-
-/** Union type for all socket message updates */
-type SocketMessageUpdate = NewMessageUpdate | MessageModeratedUpdate | MessageRemovedUpdate;
+// Use ChatMessageCallbackEvent from socketTypes instead of local types
 
 /**
  * Full-screen chat room window for mobile devices
@@ -174,28 +154,28 @@ function MobileChatRoomWindow({ room, eventData, onClose }: MobileChatRoomWindow
         try {
           await setActiveChatRoom(room.id);
 
-          registerMessageCallback(room.id, (update: SocketMessageUpdate) => {
-            if (update.type === 'new_message') {
+          registerMessageCallback(room.id, (update: ChatMessageCallbackEvent) => {
+            if (update.type === 'new_message' && update.message) {
               setLoadedMessages((prev) => {
-                if (prev.some((msg) => msg.id === update.message.id)) {
+                if (prev.some((msg) => msg.id === update.message!.id)) {
                   return prev;
                 }
-                return [...prev, update.message];
+                return [...prev, update.message!];
               });
-            } else if (update.type === 'message_moderated') {
+            } else if (update.type === 'message_moderated' && update.messageId) {
               setLoadedMessages((prev) =>
                 prev.map((msg) =>
                   msg.id === update.messageId ?
                     {
                       ...msg,
                       is_deleted: true,
-                      deleted_at: update.deleted_at,
+                      deleted_at: update.deleted_at ?? null,
                       deleted_by: update.deleted_by,
                     }
                   : msg,
                 ),
               );
-            } else if (update.type === 'message_removed') {
+            } else if (update.type === 'message_removed' && update.messageId) {
               setLoadedMessages((prev) => prev.filter((msg) => msg.id !== update.messageId));
             }
           });

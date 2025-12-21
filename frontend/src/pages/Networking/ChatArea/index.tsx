@@ -12,6 +12,7 @@ import {
   registerMessageCallback,
   unregisterMessageCallback,
 } from '@/app/features/networking/socketClient';
+import type { ChatMessageCallbackEvent } from '@/app/features/networking/socketTypes';
 import { ChatRoom as ChatRoomComponent } from './ChatRoom';
 import styles from './styles/index.module.css';
 import type { ChatRoom } from '@/types/chat';
@@ -34,11 +35,7 @@ interface RoomTypeLabel {
   className: string;
 }
 
-/** Socket message update callback payload */
-interface SocketMessageUpdate {
-  type: 'new_message' | 'message_deleted' | 'message_updated';
-  message?: unknown;
-}
+// Use ChatMessageCallbackEvent from socketTypes
 
 /**
  * Chat rooms API response wrapper
@@ -181,7 +178,7 @@ function ChatAreaComponent({ eventId: eventIdProp }: ChatAreaProps): ReactNode {
         }
 
         // Register callback for socket message updates
-        registerMessageCallback(activeRoom, (update: SocketMessageUpdate) => {
+        registerMessageCallback(activeRoom, (update: ChatMessageCallbackEvent) => {
           if (!isMounted) return;
 
           // Message updates will be handled by ChatRoom component

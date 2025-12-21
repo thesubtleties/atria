@@ -276,6 +276,21 @@
   line-height: 1.4;
   position: relative;
   z-index: 2;
+  /* Hide by default, show on hover */
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition:
+    max-height 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    opacity 0.3s ease-out,
+    margin-top 0.3s ease-out;
+  margin-top: 0;
+}
+
+.sessionCard:hover .description {
+  max-height: 100px;
+  opacity: 1;
+  margin-top: 4px;
 }
 
 /* Role group styles */

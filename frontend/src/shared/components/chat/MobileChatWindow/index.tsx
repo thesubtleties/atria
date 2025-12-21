@@ -120,7 +120,7 @@ function MobileChatWindow({ threadId, onClose }: MobileChatWindowProps) {
       {/* Chat Header */}
       <div className={styles.header}>
         <Group gap='sm' wrap='nowrap' style={{ flex: 1 }}>
-          <Avatar src={otherUser?.image_url} radius='xl' size='sm' />
+          <Avatar src={otherUser?.image_url ?? null} radius='xl' size='sm' />
           <div className={styles.userInfo}>
             <Text size='sm' fw={500} lineClamp={1}>
               {otherUser?.full_name || 'Loading chat...'}
@@ -180,7 +180,7 @@ function MobileChatWindow({ threadId, onClose }: MobileChatWindowProps) {
           onKeyDown={handleKeyDown}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          placeholder={`Message ${otherUser?.first_name || ''}...`}
+          placeholder={`Message ${otherUser?.full_name ? otherUser.full_name.split(' ')[0] : ''}...`}
           className={styles.input}
           rows={1}
           disabled={!otherUser}

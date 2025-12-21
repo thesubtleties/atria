@@ -77,11 +77,10 @@ export const AppLayout = () => {
             console.log('Socket token data:', data);
             const { token } = data;
             console.log('Initializing socket in AppLayout with token:', token ? 'YES' : 'NO');
-            // @ts-expect-error socketClient.js not yet typed
             const socket = initializeSocket(token);
 
             // If socket is already connected, fetch data immediately
-            if (socket.connected) {
+            if (socket && socket.connected) {
               console.log('Socket already connected, fetching initial data');
               fetchInitialData().catch((err: unknown) =>
                 console.error('Error fetching initial data:', err),

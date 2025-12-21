@@ -105,12 +105,12 @@ const AttendeeCard = ({
 
   // Check connection status (for attendees only)
   const { data: connectionsData } = useGetConnectionsQuery(
-    { page: 1, per_page: 1000 },
+    { page: 1, perPage: 1000 },
     { skip: isInvitation },
   );
   const isConnected =
     !isInvitation &&
-    connectionsData?.connections?.some(
+    connectionsData?.items?.some(
       (conn: { requester: { id: number }; recipient: { id: number }; status: string }) =>
         (conn.requester.id === attendeeData.user_id ||
           conn.recipient.id === attendeeData.user_id) &&
@@ -201,7 +201,7 @@ const AttendeeCard = ({
         eventId: attendeeData.event_id, // Include event context for proper thread creation
       }).unwrap();
 
-      dispatch(openThread(result));
+      dispatch(openThread(result.id));
 
       notifications.show({
         title: 'Success',

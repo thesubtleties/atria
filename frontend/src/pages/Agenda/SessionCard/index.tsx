@@ -53,7 +53,7 @@ export const SessionCard = ({
   } = session;
 
   const session_speakers = session.session_speakers || [];
-  const sessionTypeClass = session_type ? styles[session_type.toLowerCase()] : '';
+  const sessionTypeClass = session_type ? styles[session_type.toLowerCase()] || '' : '';
 
   const speakers: Speaker[] = session_speakers.map((speaker) => {
     const socialLinks: SpeakerSocialLinks | null =
@@ -94,7 +94,9 @@ export const SessionCard = ({
   return (
     <Link to={sessionUrl} className={styles.sessionCard} style={style}>
       <div className={styles.typeTag}>
-        <span className={`${styles.sessionType} ${sessionTypeClass}`}>{session_type}</span>
+        <span className={`${styles.sessionType} ${sessionTypeClass || ''}`.trim()}>
+          {session_type}
+        </span>
       </div>
 
       <div className={styles.content}>

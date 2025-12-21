@@ -8,6 +8,7 @@ import {
   registerMessageCallback,
   unregisterMessageCallback,
 } from '@/app/features/networking/socketClient';
+import type { ChatMessageCallback } from '@/app/features/networking/socketTypes';
 import { MessageList } from '../MessageList';
 import { MessageInput } from '../MessageInput';
 import { DeleteMessageModal } from '../DeleteMessageModal';
@@ -25,26 +26,6 @@ interface ChatRoomMessagesResponse {
   per_page: number;
   pages: number;
 }
-
-// Socket message update types
-interface NewMessageUpdate {
-  type: 'new_message';
-  message: ChatMessage;
-}
-
-interface MessageModeratedUpdate {
-  type: 'message_moderated';
-  messageId: number;
-  deleted_at: string;
-  deleted_by: { id: number; full_name: string } | null;
-}
-
-interface MessageRemovedUpdate {
-  type: 'message_removed';
-  messageId: number;
-}
-
-type SocketMessageUpdate = NewMessageUpdate | MessageModeratedUpdate | MessageRemovedUpdate;
 
 // Component props interface
 interface ChatRoomProps {
@@ -158,31 +139,31 @@ export function ChatRoom({
       console.log(`🚫 ChatRoom: Socket managed by parent for room ${room.id}`);
 
       // Register for message updates (parent already joined the room)
-      const handleUpdate = (update: SocketMessageUpdate): void => {
+      const handleUpdate: ChatMessageCallback = (update) => {
         if (!isMounted) return;
 
-        if (update.type === 'new_message') {
+        if (update.type === 'new_message' && update.message) {
           setLoadedMessages((prev) => {
-            if (prev.some((msg) => msg.id === update.message.id)) {
+            if (prev.some((msg) => msg.id === update.message!.id)) {
               return prev;
             }
-            return [...prev, update.message];
+            return [...prev, update.message!];
           });
-        } else if (update.type === 'message_moderated') {
+        } else if (update.type === 'message_moderated' && update.messageId) {
           setLoadedMessages((prev) =>
             prev.map((msg) =>
               msg.id === update.messageId ?
                 {
                   ...msg,
                   is_deleted: true,
-                  deleted_at: update.deleted_at,
-                  deleted_by: update.deleted_by,
+                  deleted_at: update.deleted_at || new Date().toISOString(),
+                  deleted_by: update.deleted_by || null,
                 }
               : msg,
             ),
           );
-        } else if (update.type === 'message_removed') {
-          setLoadedMessages((prev) => prev.filter((msg) => msg.id !== update.messageId));
+        } else if (update.type === 'message_removed' && update.messageId) {
+          setLoadedMessages((prev) => prev.filter((msg) => msg.id === update.messageId));
         }
       };
 
@@ -202,31 +183,32 @@ export function ChatRoom({
             await setActiveChatRoom(room.id);
 
             // Register callback for socket message updates
-            registerMessageCallback(room.id, (update: SocketMessageUpdate) => {
-              if (update.type === 'new_message') {
+            const handleUpdate: ChatMessageCallback = (update) => {
+              if (update.type === 'new_message' && update.message) {
                 setLoadedMessages((prev) => {
-                  if (prev.some((msg) => msg.id === update.message.id)) {
+                  if (prev.some((msg) => msg.id === update.message!.id)) {
                     return prev;
                   }
-                  return [...prev, update.message];
+                  return [...prev, update.message!];
                 });
-              } else if (update.type === 'message_moderated') {
+              } else if (update.type === 'message_moderated' && update.messageId) {
                 setLoadedMessages((prev) =>
                   prev.map((msg) =>
                     msg.id === update.messageId ?
                       {
                         ...msg,
                         is_deleted: true,
-                        deleted_at: update.deleted_at,
+                        deleted_at: update.deleted_at ?? new Date().toISOString(),
                         deleted_by: update.deleted_by,
                       }
                     : msg,
                   ),
                 );
-              } else if (update.type === 'message_removed') {
-                setLoadedMessages((prev) => prev.filter((msg) => msg.id !== update.messageId));
+              } else if (update.type === 'message_removed' && update.messageId) {
+                setLoadedMessages((prev) => prev.filter((msg) => msg.id === update.messageId));
               }
-            });
+            };
+            registerMessageCallback(room.id, handleUpdate);
           } catch (error) {
             console.error('Failed to set up chat room:', error);
           }

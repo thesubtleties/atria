@@ -25,7 +25,7 @@ export default function NetworkPage() {
 
   // Filter connections based on search query
   const filteredConnections =
-    (data?.connections as Connection[] | undefined)?.filter((connection: Connection) => {
+    (data?.items as Connection[] | undefined)?.filter((connection: Connection) => {
       if (!searchQuery) return true;
 
       const query = searchQuery.toLowerCase();
@@ -74,7 +74,9 @@ export default function NetworkPage() {
           connections={filteredConnections}
           isLoading={isLoading}
           error={error as FetchBaseQueryError | SerializedError}
-          pagination={data?.pagination as { total_pages: number; current_page: number }}
+          {...(data ?
+            { pagination: { total_pages: data.total_pages, current_page: data.current_page } }
+          : {})}
           onPageChange={setPage}
         />
       </section>

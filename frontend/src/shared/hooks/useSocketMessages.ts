@@ -10,6 +10,10 @@ import {
   registerDirectMessageCallback,
   unregisterDirectMessageCallback,
 } from '../../app/features/networking/socketClient';
+import type {
+  DirectMessageCallback,
+  DirectMessageCallbackEvent,
+} from '../../app/features/networking/socketTypes';
 
 type Message = {
   id: string | number;
@@ -31,12 +35,7 @@ export function useSocketMessages(threadId: number) {
   const previousThreadIdRef = useRef<number | null>(null);
 
   // Get messages with RTK Query (but we'll manage accumulation locally)
-  const {
-    data = { messages: [], pagination: null },
-    isLoading,
-    error,
-    isFetching,
-  } = useGetDirectMessagesQuery(
+  const { data, isLoading, error, isFetching } = useGetDirectMessagesQuery(
     { threadId, page: currentPage },
     {
       skip: !threadId,
@@ -59,19 +58,32 @@ export function useSocketMessages(threadId: number) {
 
   // Accumulate messages when data changes
   useEffect(() => {
-    if (data?.messages && data.messages.length > 0) {
+    if (data && data.messages && data.messages.length > 0) {
       setLoadedMessages((prev) => {
+        // Convert DirectMessage[] to Message[]
+        const convertedMessages: Message[] = data.messages.map((msg) => ({
+          id: msg.id,
+          thread_id: msg.thread_id,
+          sender_id: msg.sender_id,
+          content: msg.content,
+          created_at: msg.created_at,
+          status: msg.status,
+          is_sender: msg.sender_id === currentUser?.id,
+        }));
+
         // For page 1, replace all messages
         // Messages come newest-first from backend, keep that order
         if (currentPage === 1) {
-          return data.messages;
+          return convertedMessages;
         }
 
         // For other pages, these are older messages
         // They come newest-first, but they're OLDER than what we have
         // So they should go at the BEGINNING (top)
         const existingIds = new Set(prev.map((msg: Message) => msg.id));
-        const uniqueNewMessages = data.messages.filter((msg: Message) => !existingIds.has(msg.id));
+        const uniqueNewMessages = convertedMessages.filter(
+          (msg: Message) => !existingIds.has(msg.id),
+        );
 
         // Prepend older messages at the beginning (they're older)
         return [...uniqueNewMessages, ...prev];
@@ -85,41 +97,53 @@ export function useSocketMessages(threadId: number) {
         setHasMore(false);
       }
     }
-  }, [data, currentPage]);
+  }, [data, currentPage, currentUser?.id]);
 
   // Register socket callbacks for real-time updates
   useEffect(() => {
     if (!threadId) return;
 
-    const handleSocketUpdate = (update: { type: string; message: Message }) => {
-      if (update.type === 'new_message') {
+    const handleSocketUpdate: DirectMessageCallback = (update: DirectMessageCallbackEvent) => {
+      if (update.type === 'new_message' && update.message) {
         setLoadedMessages((prev) => {
+          const socketMessage = update.message!;
           // Check if message already exists with real ID (prevent duplicates)
-          if (prev.some((msg) => msg.id === update.message.id)) {
-            console.log('Message already exists, skipping:', update.message.id);
+          if (prev.some((msg) => msg.id === socketMessage.id)) {
+            console.log('Message already exists, skipping:', socketMessage.id);
             return prev;
           }
 
+          // Convert DirectMessage to Message format
+          const message: Message = {
+            id: socketMessage.id,
+            thread_id: socketMessage.thread_id,
+            sender_id: socketMessage.sender_id,
+            content: socketMessage.content,
+            created_at: socketMessage.created_at,
+            status: socketMessage.status,
+            is_sender: socketMessage.sender_id === currentUser?.id,
+          };
+
           // Check if this is our own message replacing a temp message
-          if (update.message.sender_id === currentUser?.id) {
+          if (socketMessage.sender_id === currentUser?.id) {
             // Find temp message with same content sent in last 5 seconds
             const tempIndex = prev.findIndex(
               (msg) =>
                 String(msg.id).startsWith('temp-') &&
-                msg.content === update.message.content &&
+                msg.content === socketMessage.content &&
                 msg.sender_id === currentUser?.id,
             );
 
             if (tempIndex !== -1) {
               console.log('Replacing temp message with real one');
               const newMessages = [...prev];
-              newMessages[tempIndex] = update.message;
+              newMessages[tempIndex] = message;
               return newMessages;
             }
           }
 
           // Otherwise add the new message
-          return [...prev, update.message];
+          return [...prev, message];
         });
       }
     };
@@ -175,7 +199,21 @@ export function useSocketMessages(threadId: number) {
 
         // Replace optimistic message with real one
         setLoadedMessages((prev) =>
-          prev.map((msg) => (msg.id === optimisticMessage.id ? (result as Message) : msg)),
+          prev.map((msg) => {
+            if (msg.id === optimisticMessage.id) {
+              const resultMessage: Message = {
+                id: result.id,
+                thread_id: result.thread_id,
+                sender_id: result.sender_id,
+                content: result.content,
+                created_at: result.created_at,
+                status: result.status,
+                is_sender: result.sender_id === currentUser?.id,
+              };
+              return resultMessage;
+            }
+            return msg;
+          }),
         );
       } catch (error) {
         console.error('Failed to send message:', error);

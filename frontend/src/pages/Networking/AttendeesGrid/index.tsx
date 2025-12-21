@@ -215,9 +215,9 @@ export function AttendeesGrid({ eventId }: AttendeesGridProps) {
 
     try {
       await createConnection({
-        recipientId: selectedAttendee.id,
-        icebreakerMessage,
-        originatingEventId: parseInt(eventId as string),
+        recipient_id: selectedAttendee.id,
+        icebreaker_message: icebreakerMessage,
+        originating_event_id: parseInt(eventId as string),
       }).unwrap();
 
       notifications.show({

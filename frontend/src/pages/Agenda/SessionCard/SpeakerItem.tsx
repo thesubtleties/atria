@@ -43,13 +43,10 @@ export const SpeakerItem = ({ speaker, index, roleSpeakers }: SpeakerItemProps) 
     window.open(url, '_blank');
   };
 
+  const dividerClass = showDivider && index !== roleSpeakers.length - 1 ? styles.withDivider : '';
+
   return (
-    <div
-      ref={speakerRef}
-      className={`${styles.speaker} ${
-        showDivider && index !== roleSpeakers.length - 1 ? styles.withDivider : ''
-      }`}
-    >
+    <div ref={speakerRef} className={`${styles.speaker} ${dividerClass}`.trim()}>
       <div className={styles.avatarWrapper}>
         {speaker.avatar ?
           <img src={speaker.avatar} alt={speaker.name} className={styles.avatar} />
