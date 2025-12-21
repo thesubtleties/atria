@@ -1,15 +1,19 @@
 import { useEffect, useRef } from 'react';
+// @ts-expect-error - @vimeo/player doesn't have type definitions
 import Player from '@vimeo/player';
+import { cn } from '@/lib/cn';
 import styles from '../styles/index.module.css';
+
+type VimeoPlayerProps = {
+  videoId: string;
+};
 
 /**
  * VimeoPlayer - Simple Vimeo video player component
- *
- * @param {string} videoId - Vimeo video ID (normalized, stored in DB)
  */
-export const VimeoPlayer = ({ videoId }) => {
-  const containerRef = useRef(null);
-  const playerRef = useRef(null);
+export const VimeoPlayer = ({ videoId }: VimeoPlayerProps) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const playerRef = useRef<Player | null>(null);
 
   useEffect(() => {
     if (!videoId || !containerRef.current) return;
@@ -29,5 +33,5 @@ export const VimeoPlayer = ({ videoId }) => {
     };
   }, [videoId]);
 
-  return <div ref={containerRef} className={styles.videoContainer} />;
+  return <div ref={containerRef} className={cn(styles.videoContainer)} />;
 };

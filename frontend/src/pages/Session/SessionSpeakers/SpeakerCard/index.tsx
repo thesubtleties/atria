@@ -1,46 +1,71 @@
-// pages/Session/SessionSpeakers/SpeakerCard/index.jsx
 import { IconTrash, IconBrandLinkedin, IconWorld } from '@tabler/icons-react';
+import { cn } from '@/lib/cn';
 import styles from './styles/index.module.css';
 
-export const SpeakerCard = ({ speaker, canEdit, onRemove, variant = 'flow' }) => {
-  const getAvatarInitial = (name) => {
-    return name ? name[0].toUpperCase() : '?';
+type SessionSpeaker = {
+  user_id: number;
+  role: string;
+  speaker_name?: string;
+  full_name?: string;
+  title?: string;
+  company_name?: string;
+  speaker_bio?: string;
+  image_url?: string;
+  social_links?: {
+    linkedin?: string;
+    website?: string;
+  };
+};
+
+type SpeakerCardProps = {
+  speaker: SessionSpeaker;
+  canEdit: boolean | undefined;
+  onRemove?: (userId: number) => Promise<void>;
+  variant?: 'flow' | 'grid';
+};
+
+export const SpeakerCard = ({ speaker, canEdit, onRemove, variant = 'flow' }: SpeakerCardProps) => {
+  const getAvatarInitial = (name: string | undefined): string => {
+    const firstChar = name?.[0];
+    return firstChar ? firstChar.toUpperCase() : '?';
   };
 
   return (
-    <div className={`${styles.card} ${styles[variant]}`}>
-      <div className={styles.speakerLayout}>
+    <div className={cn(styles.card, styles[variant])}>
+      <div className={cn(styles.speakerLayout)}>
         {speaker.image_url ?
           <img
             src={speaker.image_url}
             alt={speaker.speaker_name || speaker.full_name}
-            className={styles.avatar}
+            className={cn(styles.avatar)}
           />
-        : <div className={styles.avatarPlaceholder}>
+        : <div className={cn(styles.avatarPlaceholder)}>
             {getAvatarInitial(speaker.speaker_name || speaker.full_name)}
           </div>
         }
 
-        <div className={styles.speakerInfo}>
-          <div className={styles.speakerName}>{speaker.speaker_name || speaker.full_name}</div>
+        <div className={cn(styles.speakerInfo)}>
+          <div className={cn(styles.speakerName)}>{speaker.speaker_name || speaker.full_name}</div>
 
           {(speaker.title || speaker.company_name) && (
-            <div className={styles.speakerDetails}>
+            <div className={cn(styles.speakerDetails)}>
               {speaker.title}
               {speaker.title && speaker.company_name && ' @ '}
               {speaker.company_name}
             </div>
           )}
 
-          {speaker.speaker_bio && <div className={styles.speakerBio}>{speaker.speaker_bio}</div>}
+          {speaker.speaker_bio && (
+            <div className={cn(styles.speakerBio)}>{speaker.speaker_bio}</div>
+          )}
 
-          <div className={styles.socialLinks}>
+          <div className={cn(styles.socialLinks)}>
             {speaker.social_links?.linkedin && (
               <a
                 href={speaker.social_links.linkedin}
                 target='_blank'
                 rel='noopener noreferrer'
-                className={styles.socialLink}
+                className={cn(styles.socialLink)}
                 onClick={(e) => e.stopPropagation()}
               >
                 <IconBrandLinkedin size={16} stroke={1.5} />
@@ -51,7 +76,7 @@ export const SpeakerCard = ({ speaker, canEdit, onRemove, variant = 'flow' }) =>
                 href={speaker.social_links.website}
                 target='_blank'
                 rel='noopener noreferrer'
-                className={styles.socialLink}
+                className={cn(styles.socialLink)}
                 onClick={(e) => e.stopPropagation()}
               >
                 <IconWorld size={16} stroke={1.5} />
@@ -61,9 +86,9 @@ export const SpeakerCard = ({ speaker, canEdit, onRemove, variant = 'flow' }) =>
         </div>
 
         {canEdit && (
-          <div className={styles.actions}>
+          <div className={cn(styles.actions)}>
             <button
-              className={styles.actionButton}
+              className={cn(styles.actionButton)}
               onClick={() => onRemove && onRemove(speaker.user_id)}
               aria-label='Remove speaker'
             >

@@ -1,22 +1,25 @@
 import { Button, Stack, Text, Paper } from '@mantine/core';
 import { IconBrandZoom, IconLock } from '@tabler/icons-react';
+import { cn } from '@/lib/cn';
 import styles from '../styles/index.module.css';
+
+type ZoomJoinCardProps = {
+  joinUrl: string;
+  passcode?: string | null;
+};
 
 /**
  * ZoomJoinCard - Card displaying Zoom meeting join button
- *
- * @param {string} joinUrl - Zoom meeting URL (normalized, stored in DB)
- * @param {string} passcode - Meeting passcode (optional)
  */
-export const ZoomJoinCard = ({ joinUrl, passcode }) => {
+export const ZoomJoinCard = ({ joinUrl, passcode }: ZoomJoinCardProps) => {
   const handleJoinMeeting = () => {
     // Open Zoom meeting in new window
     window.open(joinUrl, '_blank', 'noopener,noreferrer');
   };
 
   return (
-    <div className={styles.messageContainer}>
-      <Stack align='center' spacing='lg' style={{ width: '100%', maxWidth: '500px' }}>
+    <div className={cn(styles.messageContainer)}>
+      <Stack align='center' gap='lg' style={{ width: '100%', maxWidth: '500px' }}>
         {/* Zoom Logo Icon with brand color */}
         <div
           style={{
@@ -52,7 +55,7 @@ export const ZoomJoinCard = ({ joinUrl, passcode }) => {
               minWidth: '280px',
             }}
           >
-            <Stack spacing={8} align='center'>
+            <Stack gap={8} align='center'>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <IconLock size={18} color='#8B5CF6' />
                 <Text size='xs' fw={500} tt='uppercase' style={{ color: '#94A3B8' }}>
@@ -99,7 +102,7 @@ export const ZoomJoinCard = ({ joinUrl, passcode }) => {
               },
             },
           }}
-          leftIcon={<IconBrandZoom size={22} stroke={1.5} />}
+          leftSection={<IconBrandZoom size={22} stroke={1.5} />}
         >
           Join Zoom Meeting
         </Button>

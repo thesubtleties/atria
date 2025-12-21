@@ -1,13 +1,18 @@
 import { useEffect, useState } from 'react';
 import { Text, Stack } from '@mantine/core';
 import { IconClock } from '@tabler/icons-react';
+import { cn } from '@/lib/cn';
 import styles from './styles/index.module.css';
 
-export const SessionCountdown = ({ startTime }) => {
+type SessionCountdownProps = {
+  startTime: string;
+};
+
+export const SessionCountdown = ({ startTime }: SessionCountdownProps) => {
   const [timeLeft, setTimeLeft] = useState('');
 
   useEffect(() => {
-    const calculateTimeLeft = () => {
+    const calculateTimeLeft = (): string => {
       const now = new Date().getTime();
       const start = new Date(startTime).getTime();
       const difference = start - now;
@@ -36,13 +41,13 @@ export const SessionCountdown = ({ startTime }) => {
   }, [startTime]);
 
   return (
-    <div className={styles.countdownContainer}>
-      <Stack align='center' spacing='md'>
+    <div className={cn(styles.countdownContainer)}>
+      <Stack align='center' gap='md'>
         <IconClock size={48} stroke={1.5} />
-        <Text size='xl' weight={500}>
+        <Text size='xl' fw={500}>
           Session starts in
         </Text>
-        <Text size='xxl' weight={700}>
+        <Text size='xl' fw={700}>
           {timeLeft}
         </Text>
       </Stack>

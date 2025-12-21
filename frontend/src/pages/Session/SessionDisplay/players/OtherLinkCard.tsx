@@ -1,29 +1,32 @@
 import { Button, Stack, Text, Alert } from '@mantine/core';
 import { IconExternalLink, IconAlertCircle } from '@tabler/icons-react';
+import { cn } from '@/lib/cn';
 import styles from '../styles/index.module.css';
+
+type OtherLinkCardProps = {
+  streamUrl: string;
+};
 
 /**
  * OtherLinkCard - Card for generic external streaming platform
  *
  * Used for platforms not natively supported (MS Teams, self-hosted Jitsi, custom solutions, etc.)
- *
- * @param {string} streamUrl - External streaming platform URL
  */
-export const OtherLinkCard = ({ streamUrl }) => {
+export const OtherLinkCard = ({ streamUrl }: OtherLinkCardProps) => {
   const handleOpenStream = () => {
     // Open stream in new window
     window.open(streamUrl, '_blank', 'noopener,noreferrer');
   };
 
   // Truncate very long URLs for display
-  const truncateUrl = (url) => {
+  const truncateUrl = (url: string): string => {
     if (url.length <= 60) return url;
     return url.substring(0, 57) + '...';
   };
 
   return (
-    <div className={styles.messageContainer}>
-      <Stack align='center' spacing='lg' style={{ width: '100%', maxWidth: '500px' }}>
+    <div className={cn(styles.messageContainer)}>
+      <Stack align='center' gap='lg' style={{ width: '100%', maxWidth: '500px' }}>
         {/* External Link Icon with Atria purple gradient */}
         <div
           style={{

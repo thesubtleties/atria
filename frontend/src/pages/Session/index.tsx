@@ -14,31 +14,51 @@ import { SessionDisplay } from './SessionDisplay';
 import { SessionSpeakers } from './SessionSpeakers';
 import { SessionDetails } from './SessionDetails';
 import { SessionChat } from './SessionChat';
+import type { RootState } from '@/types';
+import type { SessionDetail, EventDetail } from '@/types/events';
+import { cn } from '@/lib/cn';
 import styles from './styles/index.module.css';
 
+type UserEventRole = 'ADMIN' | 'ORGANIZER' | 'SPEAKER' | 'ATTENDEE' | null;
+
+type SessionSpeakerWithUser = {
+  user?: {
+    id: number;
+  };
+};
+
 export const SessionPage = () => {
-  const { sessionId } = useParams();
-  const currentUser = useSelector((state) => state.auth.user);
+  const { sessionId } = useParams<{ sessionId: string }>();
+  const currentUser = useSelector((state: RootState) => state.auth.user);
   const [isChatOpen, setIsChatOpen] = useState(true); // Start open by default
 
-  const { data: session, isLoading } = useGetSessionQuery(sessionId);
-  const { data: event } = useGetEventQuery({ id: session?.event_id }, { skip: !session?.event_id });
+  const { data: session, isLoading } = useGetSessionQuery(
+    { id: Number(sessionId) },
+    { skip: !sessionId },
+  );
+  const { data: event } = useGetEventQuery(
+    { id: (session as SessionDetail | undefined)?.event_id as number },
+    { skip: !(session as SessionDetail | undefined)?.event_id },
+  );
   const [updateStatus] = useUpdateSessionStatusMutation();
   const [updateSession] = useUpdateSessionMutation();
 
+  // Cast to proper types
+  const typedSession = session as SessionDetail | undefined;
+  const typedEvent = event as EventDetail | undefined;
+
   // Get current user's role in the event
-  const getCurrentUserEventRole = () => {
-    if (!event || !currentUser) return null;
+  const getCurrentUserEventRole = (): UserEventRole => {
+    if (!typedEvent || !currentUser) return null;
 
     // Check if user is an event organizer/admin using user_role
-    if (event.user_role === 'ADMIN' || event.user_role === 'ORGANIZER') {
-      return event.user_role;
+    if (typedEvent.user_role === 'ADMIN' || typedEvent.user_role === 'ORGANIZER') {
+      return typedEvent.user_role as UserEventRole;
     }
 
     // Check if user is a speaker for this session
-    const isSpeaker = session?.session_speakers?.some(
-      (speaker) => speaker?.user?.id === currentUser.id,
-    );
+    const sessionSpeakers = typedSession?.session_speakers as SessionSpeakerWithUser[] | undefined;
+    const isSpeaker = sessionSpeakers?.some((speaker) => speaker?.user?.id === currentUser.id);
     if (isSpeaker) return 'SPEAKER';
 
     // Otherwise they're an attendee
@@ -47,13 +67,11 @@ export const SessionPage = () => {
 
   const userEventRole = getCurrentUserEventRole();
 
-  // No timing logic needed for CSS approach
-
   if (isLoading) {
     return <LoadingPage message='Loading session details...' />;
   }
 
-  if (!session) {
+  if (!typedSession) {
     return (
       <Alert color='red' title='Error'>
         Session not found
@@ -62,14 +80,14 @@ export const SessionPage = () => {
   }
 
   // Check if current user is an organizer/admin
-  const canEdit = event?.organizers?.some(
+  const canEdit = typedEvent?.organizers?.some(
     (org) => org.id === currentUser?.id && ['ADMIN', 'ORGANIZER'].includes(org.role),
   );
 
-  const handleStatusChange = async (newStatus) => {
+  const handleStatusChange = async (newStatus: string) => {
     try {
       await updateStatus({
-        id: sessionId,
+        id: Number(sessionId),
         status: newStatus,
       }).unwrap();
     } catch (error) {
@@ -77,10 +95,10 @@ export const SessionPage = () => {
     }
   };
 
-  const handleUpdate = async (updates) => {
+  const handleUpdate = async (updates: Record<string, unknown>) => {
     try {
       await updateSession({
-        id: sessionId,
+        id: Number(sessionId),
         ...updates,
       }).unwrap();
     } catch (error) {
@@ -89,17 +107,17 @@ export const SessionPage = () => {
   };
 
   // Determine if chat should be shown based on chat_mode and user role
-  const shouldShowChat = () => {
-    if (!session?.chat_mode) return true; // Default to showing chat if no mode set
+  const shouldShowChat = (): boolean => {
+    if (!typedSession?.chat_mode) return true; // Default to showing chat if no mode set
 
-    const chatMode = session.chat_mode;
+    const chatMode = typedSession.chat_mode;
 
     // If chat is disabled, don't show for anyone
     if (chatMode === 'DISABLED') return false;
 
     // If backstage only, only show for speakers, organizers, and admins
     if (chatMode === 'BACKSTAGE_ONLY') {
-      return ['ADMIN', 'ORGANIZER', 'SPEAKER'].includes(userEventRole);
+      return ['ADMIN', 'ORGANIZER', 'SPEAKER'].includes(userEventRole as string);
     }
 
     // If enabled, show for everyone
@@ -109,38 +127,45 @@ export const SessionPage = () => {
   const chatEnabled = shouldShowChat();
 
   return (
-    <div className={styles.container}>
+    <div className={cn(styles.container)}>
       {/* Background Shapes */}
-      <div className={styles.bgShape1} />
-      <div className={styles.bgShape2} />
-      <div className={styles.bgShape3} />
+      <div className={cn(styles.bgShape1)} />
+      <div className={cn(styles.bgShape2)} />
+      <div className={cn(styles.bgShape3)} />
 
       {/* Grid Layout Container */}
       <div
-        className={`${styles.layoutGrid} ${!chatEnabled || (chatEnabled && !isChatOpen) ? styles.chatClosed : ''}`}
+        className={cn(
+          styles.layoutGrid,
+          (!chatEnabled || (chatEnabled && !isChatOpen)) && styles.chatClosed,
+        )}
       >
         {/* Content Wrapper */}
-        <div className={styles.contentWrapper}>
+        <div className={cn(styles.contentWrapper)}>
           {/* Section 1 - Video Section (wrapped video player) */}
-          <section className={styles.videoSection}>
+          <section className={cn(styles.videoSection)}>
             {/* Inner video container - dark glass layer */}
-            <div className={styles.videoContainer}>
+            <div className={cn(styles.videoContainer)}>
               {/* Title at the TOP of this container */}
-              <div className={styles.sectionHeader}>
-                <Title className={styles.title}>{session.title}</Title>
-                {session.is_live && <div className={styles.liveBadge}>LIVE</div>}
+              <div className={cn(styles.sectionHeader)}>
+                <Title className={cn(styles.title)}>{typedSession.title}</Title>
+                {typedSession.is_live && <div className={cn(styles.liveBadge)}>LIVE</div>}
               </div>
 
               {/* Video Display */}
-              <div className={styles.videoWrapper}>
-                <SessionDisplay session={session} event={event} currentUser={currentUser} />
+              <div className={cn(styles.videoWrapper)}>
+                <SessionDisplay
+                  session={typedSession}
+                  event={typedEvent}
+                  currentUser={currentUser}
+                />
               </div>
 
               {/* Session Details - Under video within same container */}
-              <div className={styles.videoFooter}>
+              <div className={cn(styles.videoFooter)}>
                 <SessionDetails
-                  session={session}
-                  event={event}
+                  session={typedSession}
+                  event={typedEvent}
                   canEdit={canEdit}
                   onStatusChange={handleStatusChange}
                   onUpdate={handleUpdate}
@@ -150,28 +175,28 @@ export const SessionPage = () => {
           </section>
 
           {/* Section 2 - About Section (separate glass container) */}
-          <section className={styles.aboutSection}>
-            <h2 className={styles.sectionTitle}>About This Session</h2>
+          <section className={cn(styles.aboutSection)}>
+            <h2 className={cn(styles.sectionTitle)}>About This Session</h2>
 
             {/* Speakers */}
             <SessionSpeakers sessionId={sessionId} canEdit={canEdit} />
 
             {/* Description */}
-            {session.description && (
-              <Text className={styles.description}>{session.description}</Text>
+            {typedSession.description && (
+              <Text className={cn(styles.description)}>{typedSession.description}</Text>
             )}
           </section>
         </div>
 
         {/* Ghost spacer element - maintains grid space for chat */}
-        {chatEnabled && <div className={styles.chatGhost} aria-hidden='true' />}
+        {chatEnabled && <div className={cn(styles.chatGhost)} aria-hidden='true' />}
       </div>
 
       {/* Fixed position chat - outside of grid */}
       {chatEnabled && (
-        <div className={styles.fixedChatContainer}>
+        <div className={cn(styles.fixedChatContainer)}>
           <SessionChat
-            sessionId={sessionId}
+            sessionId={sessionId as string}
             isEnabled={true}
             isOpen={isChatOpen}
             onToggle={setIsChatOpen}
@@ -181,7 +206,7 @@ export const SessionPage = () => {
 
       {/* Floating chat button - outside grid */}
       {chatEnabled && !isChatOpen && (
-        <button onClick={() => setIsChatOpen(true)} className={styles.floatingChatButton}>
+        <button onClick={() => setIsChatOpen(true)} className={cn(styles.floatingChatButton)}>
           <IconMessage size={24} />
         </button>
       )}

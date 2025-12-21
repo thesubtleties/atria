@@ -1,19 +1,37 @@
 import MuxPlayerReact from '@mux/mux-player-react';
+import type { SessionDetail, EventDetail } from '@/types/events';
+import type { User } from '@/types/auth';
+import { cn } from '@/lib/cn';
 import styles from '../styles/index.module.css';
+
+type MuxTokens = {
+  playback?: string;
+  storyboard?: string;
+  thumbnail?: string;
+};
+
+type MuxPlayerProps = {
+  playbackId: string;
+  playbackPolicy: 'PUBLIC' | 'SIGNED';
+  tokens?: MuxTokens;
+  session: SessionDetail;
+  event: EventDetail | undefined;
+  currentUser: User | null;
+};
 
 /**
  * MuxPlayer - Mux video player component with support for signed playback
  *
  * Mux Player automatically detects stream type (live vs on-demand) so no need to specify.
- *
- * @param {string} playbackId - Mux playback ID (normalized, stored in DB)
- * @param {string} playbackPolicy - 'PUBLIC' or 'SIGNED'
- * @param {object} tokens - JWT tokens for signed playback (optional, required if policy is SIGNED)
- * @param {object} session - Session object for analytics metadata
- * @param {object} event - Event object for analytics metadata
- * @param {object} currentUser - Current user for viewer analytics
  */
-export const MuxPlayer = ({ playbackId, playbackPolicy, tokens, session, event, currentUser }) => {
+export const MuxPlayer = ({
+  playbackId,
+  playbackPolicy,
+  tokens,
+  session,
+  event,
+  currentUser,
+}: MuxPlayerProps) => {
   // Build analytics metadata for Mux
   const metadata = {
     // Viewer info
@@ -34,16 +52,16 @@ export const MuxPlayer = ({ playbackId, playbackPolicy, tokens, session, event, 
     event_id: event?.id?.toString(),
     organization_id: event?.organization_id?.toString(),
   };
+
   // For SIGNED playback, pass tokens to player
   if (playbackPolicy === 'SIGNED' && tokens) {
     return (
-      <div className={styles.videoContainer}>
+      <div className={cn(styles.videoContainer)}>
         <MuxPlayerReact
           playbackId={playbackId}
           tokens={tokens}
           metadata={metadata}
           accentColor='#8B5CF6'
-          controls
           style={{ width: '100%', aspectRatio: '16/9' }}
         />
       </div>
@@ -52,12 +70,11 @@ export const MuxPlayer = ({ playbackId, playbackPolicy, tokens, session, event, 
 
   // For PUBLIC playback, no tokens needed
   return (
-    <div className={styles.videoContainer}>
+    <div className={cn(styles.videoContainer)}>
       <MuxPlayerReact
         playbackId={playbackId}
         metadata={metadata}
         accentColor='#8B5CF6'
-        controls
         style={{ width: '100%', aspectRatio: '16/9' }}
       />
     </div>

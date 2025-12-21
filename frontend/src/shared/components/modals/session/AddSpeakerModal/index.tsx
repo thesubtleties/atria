@@ -15,25 +15,25 @@ import type { ApiError } from '@/types/api';
 
 type SessionSpeakerRole = 'host' | 'speaker' | 'panelist' | 'moderator' | 'keynote';
 
-interface SessionSpeaker {
+type SessionSpeaker = {
   user_id: number;
   full_name: string;
-  avatar_url?: string;
+  avatar_url?: string | undefined;
   role: string;
-}
+};
 
-interface AddSpeakerFormValues {
+type AddSpeakerFormValues = {
   user_id: string;
   role: SessionSpeakerRole;
-}
+};
 
-interface AddSpeakerModalProps {
+type AddSpeakerModalProps = {
   sessionId: number;
-  eventId?: number;
+  eventId?: number | undefined;
   opened: boolean;
   onClose: () => void;
-  currentSpeakers?: SessionSpeaker[];
-}
+  currentSpeakers?: SessionSpeaker[] | undefined;
+};
 
 export const AddSpeakerModal = ({
   sessionId,

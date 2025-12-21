@@ -1,16 +1,29 @@
-// pages/Session/SessionDetails/index.jsx
 import { Text, Group, Divider, ActionIcon } from '@mantine/core';
 import { IconEdit, IconClock, IconCalendar } from '@tabler/icons-react';
 import { useState } from 'react';
 import { format, parseISO, addDays } from 'date-fns';
 import { EditSessionModal } from '@/shared/components/modals/session/EditSessionModal';
 import { formatSessionTime } from '@/shared/utils/timezone';
+import type { SessionDetail, EventDetail } from '@/types/events';
+import { cn } from '@/lib/cn';
 import styles from './styles/index.module.css';
 
-export const SessionDetails = ({ session, event, canEdit }) => {
+type SessionWithLocation = SessionDetail & {
+  location?: string;
+};
+
+type SessionDetailsProps = {
+  session: SessionWithLocation;
+  event: EventDetail | undefined;
+  canEdit: boolean | undefined;
+  onStatusChange?: (status: string) => Promise<void>;
+  onUpdate?: (updates: Partial<SessionDetail>) => Promise<void>;
+};
+
+export const SessionDetails = ({ session, event, canEdit }: SessionDetailsProps) => {
   const [showEditModal, setShowEditModal] = useState(false);
 
-  const getSessionDate = () => {
+  const getSessionDate = (): string => {
     if (!event?.start_date || !session.day_number) return '';
     // Calculate session date from event start + day offset
     const sessionDate = addDays(parseISO(event.start_date), session.day_number - 1);
@@ -18,7 +31,7 @@ export const SessionDetails = ({ session, event, canEdit }) => {
   };
 
   // Format session times with timezone conversion
-  const getFormattedTimes = () => {
+  const getFormattedTimes = (): { start: string; end: string; timezone: string } => {
     if (!session.start_time || !session.end_time || !event?.start_date || !event?.timezone) {
       return { start: '', end: '', timezone: '' };
     }
@@ -47,10 +60,10 @@ export const SessionDetails = ({ session, event, canEdit }) => {
   const formattedTimes = getFormattedTimes();
 
   return (
-    <div className={styles.detailsSection}>
-      <Group gap='xl' className={styles.detailsGrid}>
+    <div className={cn(styles.detailsSection)}>
+      <Group gap='xl' className={cn(styles.detailsGrid)}>
         {/* Type - moved to first position */}
-        <div className={`${styles.typeTag} ${styles[session.session_type.toLowerCase()]}`}>
+        <div className={cn(styles.typeTag, styles[session.session_type.toLowerCase()])}>
           {session.session_type.replace(/_/g, ' ')}
         </div>
 
@@ -94,7 +107,7 @@ export const SessionDetails = ({ session, event, canEdit }) => {
             size='sm'
             variant='subtle'
             onClick={() => setShowEditModal(true)}
-            className={styles.editButton}
+            className={cn(styles.editButton)}
           >
             <IconEdit size={14} />
           </ActionIcon>

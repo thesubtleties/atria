@@ -1,13 +1,32 @@
-// pages/Session/SessionDisplay/index.jsx
 import { useState, useEffect } from 'react';
 import { VimeoPlayer, MuxPlayer, ZoomJoinCard, JitsiPlayer, OtherLinkCard } from './players';
 import { Alert, Loader } from '@mantine/core';
+import type { SessionDetail, EventDetail } from '@/types/events';
+import type { User } from '@/types/auth';
+import { cn } from '@/lib/cn';
 import styles from './styles/index.module.css';
 
-export const SessionDisplay = ({ session, event, currentUser }) => {
-  const [playbackData, setPlaybackData] = useState(null);
+type SessionDisplayProps = {
+  session: SessionDetail;
+  event: EventDetail | undefined;
+  currentUser: User | null;
+};
+
+type PlaybackData = {
+  tokens?: {
+    playback?: string;
+    storyboard?: string;
+    thumbnail?: string;
+  };
+  app_id?: string;
+  room_name?: string;
+  token?: string;
+};
+
+export const SessionDisplay = ({ session, event, currentUser }: SessionDisplayProps) => {
+  const [playbackData, setPlaybackData] = useState<PlaybackData | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   // Fetch playback data for Mux SIGNED streams and Jitsi (both need JWT tokens)
   useEffect(() => {
@@ -39,7 +58,7 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
         setPlaybackData(data);
       } catch (err) {
         console.error('Error fetching playback data:', err);
-        setError(err.message);
+        setError(err instanceof Error ? err.message : 'Unknown error');
       } finally {
         setLoading(false);
       }
@@ -55,7 +74,7 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
     // No streaming configured
     if (!platform) {
       return (
-        <div className={styles.messageContainer}>
+        <div className={cn(styles.messageContainer)}>
           <Alert
             color='blue'
             title='No stream available'
@@ -88,7 +107,7 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
     // Check platform-specific fields
     if (platform === 'VIMEO' && !session?.stream_url) {
       return (
-        <div className={styles.messageContainer}>
+        <div className={cn(styles.messageContainer)}>
           <Alert
             color='blue'
             title='No stream available'
@@ -120,7 +139,7 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
 
     if (platform === 'MUX' && !session?.stream_url) {
       return (
-        <div className={styles.messageContainer}>
+        <div className={cn(styles.messageContainer)}>
           <Alert
             color='blue'
             title='No stream available'
@@ -152,7 +171,7 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
 
     if (platform === 'ZOOM' && !session?.zoom_meeting_id) {
       return (
-        <div className={styles.messageContainer}>
+        <div className={cn(styles.messageContainer)}>
           <Alert
             color='blue'
             title='No meeting URL available'
@@ -184,7 +203,7 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
 
     // VIMEO
     if (platform === 'VIMEO') {
-      return <VimeoPlayer videoId={session.stream_url} />;
+      return <VimeoPlayer videoId={session.stream_url as string} />;
     }
 
     // MUX
@@ -195,7 +214,7 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
       if (playbackPolicy === 'PUBLIC') {
         return (
           <MuxPlayer
-            playbackId={session.stream_url}
+            playbackId={session.stream_url as string}
             playbackPolicy='PUBLIC'
             session={session}
             event={event}
@@ -207,7 +226,7 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
       // For SIGNED playback, need to fetch tokens
       if (loading) {
         return (
-          <div className={styles.messageContainer}>
+          <div className={cn(styles.messageContainer)}>
             <Loader size='lg' />
           </div>
         );
@@ -215,7 +234,7 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
 
       if (error) {
         return (
-          <div className={styles.messageContainer}>
+          <div className={cn(styles.messageContainer)}>
             <Alert
               color='red'
               title='Error loading stream'
@@ -247,7 +266,7 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
 
       if (!playbackData?.tokens) {
         return (
-          <div className={styles.messageContainer}>
+          <div className={cn(styles.messageContainer)}>
             <Alert
               color='yellow'
               title='Stream not available'
@@ -279,7 +298,7 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
 
       return (
         <MuxPlayer
-          playbackId={session.stream_url}
+          playbackId={session.stream_url as string}
           playbackPolicy='SIGNED'
           tokens={playbackData.tokens}
           session={session}
@@ -291,13 +310,18 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
 
     // ZOOM
     if (platform === 'ZOOM') {
-      return <ZoomJoinCard joinUrl={session.zoom_meeting_id} passcode={session.zoom_passcode} />;
+      return (
+        <ZoomJoinCard
+          joinUrl={session.zoom_meeting_id as string}
+          passcode={session.zoom_passcode}
+        />
+      );
     }
 
     // JITSI
     if (platform === 'JITSI' && !session?.jitsi_room_name) {
       return (
-        <div className={styles.messageContainer}>
+        <div className={cn(styles.messageContainer)}>
           <Alert
             color='blue'
             title='No meeting configured'
@@ -331,7 +355,7 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
       // Show loading state while fetching JWT tokens
       if (loading) {
         return (
-          <div className={styles.messageContainer}>
+          <div className={cn(styles.messageContainer)}>
             <Loader size='lg' />
           </div>
         );
@@ -340,7 +364,7 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
       // Show error state if fetch failed
       if (error) {
         return (
-          <div className={styles.messageContainer}>
+          <div className={cn(styles.messageContainer)}>
             <Alert
               color='red'
               title='Error loading meeting'
@@ -373,7 +397,7 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
       // Verify we have the required playback data
       if (!playbackData?.app_id || !playbackData?.room_name || !playbackData?.token) {
         return (
-          <div className={styles.messageContainer}>
+          <div className={cn(styles.messageContainer)}>
             <Alert
               color='yellow'
               title='Meeting not available'
@@ -419,7 +443,7 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
     // OTHER (External link) - uses stream_url column
     if (platform === 'OTHER' && !session?.stream_url) {
       return (
-        <div className={styles.messageContainer}>
+        <div className={cn(styles.messageContainer)}>
           <Alert
             color='blue'
             title='No stream URL available'
@@ -450,12 +474,12 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
     }
 
     if (platform === 'OTHER') {
-      return <OtherLinkCard streamUrl={session.stream_url} />;
+      return <OtherLinkCard streamUrl={session.stream_url as string} />;
     }
 
     // Unknown platform
     return (
-      <div className={styles.messageContainer}>
+      <div className={cn(styles.messageContainer)}>
         <Alert
           color='red'
           title='Unsupported platform'
@@ -485,5 +509,5 @@ export const SessionDisplay = ({ session, event, currentUser }) => {
     );
   };
 
-  return <div className={styles.displayContainer}>{renderPlayer()}</div>;
+  return <div className={cn(styles.displayContainer)}>{renderPlayer()}</div>;
 };

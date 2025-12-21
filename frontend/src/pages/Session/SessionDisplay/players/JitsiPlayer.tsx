@@ -1,27 +1,33 @@
 import { JaaSMeeting } from '@jitsi/react-sdk';
+import type { SessionDetail } from '@/types/events';
+import type { User } from '@/types/auth';
+import { cn } from '@/lib/cn';
 import styles from '../styles/index.module.css';
+
+type JitsiPlayerProps = {
+  appId: string;
+  roomName: string;
+  jwt: string;
+  session: SessionDetail;
+  currentUser: User | null;
+};
 
 /**
  * JitsiPlayer - Jitsi as a Service (JaaS) video conferencing player
  *
  * Uses organization's JaaS account (BYOA) to embed Jitsi meetings.
  * JWT token is generated server-side with user-specific permissions.
- *
- * @param {string} appId - JaaS App ID (vpaas-magic-cookie-xxx)
- * @param {string} roomName - Normalized room name
- * @param {string} jwt - Per-user JWT token (generated server-side)
- * @param {object} currentUser - Current user data
  */
-export const JitsiPlayer = ({ appId, roomName, jwt, currentUser }) => {
+export const JitsiPlayer = ({ appId, roomName, jwt, currentUser }: JitsiPlayerProps) => {
   // User information for Jitsi display
-  const userInfo = {
-    displayName: currentUser?.name || 'Anonymous',
+  const userInfo: { displayName: string; email: string; avatar?: string } = {
+    displayName: currentUser?.full_name || 'Anonymous',
     email: currentUser?.email || '',
   };
 
   // Add avatar if available
-  if (currentUser?.avatar_url) {
-    userInfo.avatar = currentUser.avatar_url;
+  if (currentUser?.image_url) {
+    userInfo.avatar = currentUser.image_url;
   }
 
   // Configuration overrides for Jitsi interface
@@ -36,7 +42,7 @@ export const JitsiPlayer = ({ appId, roomName, jwt, currentUser }) => {
   };
 
   // Handle iframe styling (make it fill the container)
-  const getIFrameRef = (node) => {
+  const getIFrameRef = (node: HTMLDivElement | null) => {
     if (node) {
       node.style.height = '100%';
       node.style.width = '100%';
@@ -44,7 +50,7 @@ export const JitsiPlayer = ({ appId, roomName, jwt, currentUser }) => {
   };
 
   return (
-    <div className={styles.videoContainer}>
+    <div className={cn(styles.videoContainer)}>
       <JaaSMeeting
         appId={appId}
         roomName={roomName}
