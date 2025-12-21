@@ -27,6 +27,7 @@
   gap: 16px;
   width: 100%;
   overflow: visible;
+  position: relative; /* Ensure proper positioning without absolute */
 }
 
 /* Add this to prevent cards from collapsing */

@@ -21,44 +21,30 @@ export const AgendaView = ({
   orgId,
   eventId,
 }: AgendaViewProps) => {
-  const { rows, getSessionWidth, getSessionHeight, getSessionTop, isKeynote } =
-    useSessionLayout(sessions);
+  const { rows, getSessionWidth, isKeynote } = useSessionLayout(sessions);
 
   return (
     <div className={styles.container}>
       <div className={styles.glassmorphicWrapper}>
         <div className={styles.agendaGrid}>
-          {rows.map((row, rowIndex) => {
-            const firstSession = row[0];
-            if (!firstSession) return null;
-            const rowTop = getSessionTop(firstSession);
-
-            return (
-              <div
-                key={rowIndex}
-                className={styles.sessionRow}
-                style={{
-                  top: rowTop,
-                }}
-              >
-                {row.map((session) => (
-                  <SessionCard
-                    key={session.id}
-                    session={session}
-                    eventStartDate={eventStartDate}
-                    eventTimezone={eventTimezone}
-                    isOrgView={isOrgView}
-                    orgId={orgId}
-                    eventId={eventId}
-                    style={{
-                      width: isKeynote(session) ? '100%' : getSessionWidth(rowIndex),
-                      height: getSessionHeight(session),
-                    }}
-                  />
-                ))}
-              </div>
-            );
-          })}
+          {rows.map((row, rowIndex) => (
+            <div key={rowIndex} className={styles.sessionRow}>
+              {row.map((session) => (
+                <SessionCard
+                  key={session.id}
+                  session={session}
+                  eventStartDate={eventStartDate}
+                  eventTimezone={eventTimezone}
+                  isOrgView={isOrgView}
+                  orgId={orgId}
+                  eventId={eventId}
+                  style={{
+                    width: isKeynote(session) ? '100%' : getSessionWidth(rowIndex),
+                  }}
+                />
+              ))}
+            </div>
+          ))}
         </div>
       </div>
     </div>

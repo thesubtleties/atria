@@ -92,8 +92,6 @@ function balanceSessionRows(sessions: Session[]): SessionRow[] {
 type UseSessionLayoutResult = {
   rows: SessionRow[];
   getSessionWidth: (rowIndex: number) => string;
-  getSessionHeight: (session: Session) => string;
-  getSessionTop: (session: Session) => string;
   isKeynote: (session: Session) => boolean;
 };
 
@@ -105,58 +103,12 @@ export function useSessionLayout(sessions: Session[]): UseSessionLayoutResult {
   const getSessionWidth = (rowIndex: number): string => {
     const row = rows[rowIndex];
     if (!row || row.length === 0) return '100%';
-    // Add console.log to debug
-    console.log('Width calc:', {
-      rowIndex,
-      rowLength: row.length,
-      width: `${100 / row.length}%`,
-    });
     return `${100 / row.length}%`;
-  };
-
-  function getSessionHeight(session: Session): string {
-    if (!session?.start_time || !session?.end_time) {
-      console.warn('Missing time data for session:', session);
-      return 'auto'; // fallback height
-    }
-
-    const startMinutes = timeToMinutes(session.start_time);
-    const endMinutes = timeToMinutes(session.end_time);
-
-    // Add validation
-    if (isNaN(startMinutes) || isNaN(endMinutes)) {
-      console.warn('Invalid time format:', {
-        start: session.start_time,
-        end: session.end_time,
-      });
-      return 'auto';
-    }
-
-    const durationMinutes = endMinutes - startMinutes;
-    return `${durationMinutes * 2}px`;
-  }
-
-  const getSessionTop = (session: Session): string => {
-    if (!session?.start_time) return '0px';
-    const dayStart = timeToMinutes('09:00');
-    const sessionStart = timeToMinutes(session.start_time);
-    const offsetMinutes = sessionStart - dayStart;
-    // Add console.log to debug
-    console.log('Top calc:', {
-      session: session.title,
-      sessionStart,
-      dayStart,
-      offset: offsetMinutes,
-      top: `${offsetMinutes * 2}px`,
-    });
-    return `${offsetMinutes * 2}px`;
   };
 
   return {
     rows,
     getSessionWidth,
-    getSessionHeight,
-    getSessionTop,
-    isKeynote: (session: Session) => session?.session_type === 'keynote',
+    isKeynote: (session: Session) => session?.session_type === 'KEYNOTE',
   };
 }
