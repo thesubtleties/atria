@@ -11,12 +11,27 @@ import { useDispatch, useSelector } from 'react-redux';
 import { openThread } from '@/app/store/chatSlice';
 import { notifications } from '@mantine/notifications';
 import { useNavigate } from 'react-router-dom';
+import type { RootState, AppDispatch } from '@/app/store';
+import type { Connection } from '@/types';
 import styles from './styles/index.module.css';
 
-export function ConnectionRow({ connection }) {
-  const dispatch = useDispatch();
+interface ConnectionRowProps {
+  connection: Connection;
+}
+
+interface ThreadResult {
+  thread_id?: number;
+  id?: number;
+  data?: {
+    thread_id?: number;
+    id?: number;
+  };
+}
+
+export function ConnectionRow({ connection }: ConnectionRowProps) {
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const currentUser = useSelector((state) => state.auth.user);
+  const currentUser = useSelector((state: RootState) => state.auth.user);
   const [createThread, { isLoading: isCreatingThread }] = useCreateDirectMessageThreadMutation();
   const [isMessaging, setIsMessaging] = useState(false);
 
@@ -27,11 +42,11 @@ export function ConnectionRow({ connection }) {
   const handleMessage = async () => {
     setIsMessaging(true);
     try {
-      const result = await createThread(otherUser.id).unwrap();
+      const result = (await createThread(otherUser.id).unwrap()) as ThreadResult;
       console.log('Create thread result:', result);
 
       // Handle different response formats
-      const threadId = result.thread_id || result.id || result.data?.thread_id || result.data?.id;
+      const threadId = result.thread_id ?? result.id ?? result.data?.thread_id ?? result.data?.id;
 
       if (threadId) {
         dispatch(openThread(threadId));
@@ -57,7 +72,7 @@ export function ConnectionRow({ connection }) {
     }
   };
 
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
       month: 'short',
@@ -96,20 +111,21 @@ export function ConnectionRow({ connection }) {
       </Table.Td>
 
       <Table.Td style={{ textAlign: 'center' }}>
-        {connection.originating_event ?
+        {connection.originating_event ? (
           <Badge variant='light' size='md' radius='sm' color='gray'>
             {connection.originating_event.title}
           </Badge>
-        : <Text size='sm' c='dimmed'>
+        ) : (
+          <Text size='sm' c='dimmed'>
             Direct connection
           </Text>
-        }
+        )}
       </Table.Td>
 
       <Table.Td>
         <Group gap={0} justify='flex-start' className={styles.socialLinks}>
           {/* LinkedIn - always render space */}
-          {otherUser.social_links?.linkedin ?
+          {otherUser.social_links?.linkedin ? (
             <div className={styles.linkedinIcon}>
               <ActionIcon
                 size='md'
@@ -122,10 +138,12 @@ export function ConnectionRow({ connection }) {
                 <IconBrandLinkedin size={18} />
               </ActionIcon>
             </div>
-          : <div className={styles.iconPlaceholder} />}
+          ) : (
+            <div className={styles.iconPlaceholder} />
+          )}
 
           {/* Twitter - always render space */}
-          {otherUser.social_links?.twitter ?
+          {otherUser.social_links?.twitter ? (
             <div className={styles.twitterIcon}>
               <ActionIcon
                 size='md'
@@ -138,10 +156,12 @@ export function ConnectionRow({ connection }) {
                 <IconBrandTwitter size={18} />
               </ActionIcon>
             </div>
-          : <div className={styles.iconPlaceholder} />}
+          ) : (
+            <div className={styles.iconPlaceholder} />
+          )}
 
           {/* Website - always render space */}
-          {otherUser.social_links?.website ?
+          {otherUser.social_links?.website ? (
             <div className={styles.websiteIcon}>
               <ActionIcon
                 size='md'
@@ -154,21 +174,24 @@ export function ConnectionRow({ connection }) {
                 <IconWorld size={18} />
               </ActionIcon>
             </div>
-          : <div className={styles.iconPlaceholder} />}
+          ) : (
+            <div className={styles.iconPlaceholder} />
+          )}
         </Group>
       </Table.Td>
 
       <Table.Td>
-        {otherUser.email && otherUser.privacy_settings?.show_email !== false ?
+        {otherUser.email ? (
           <Text size='sm'>
             <a href={`mailto:${otherUser.email}`} className={styles.emailLink}>
               {otherUser.email}
             </a>
           </Text>
-        : <Text size='sm' c='dimmed'>
+        ) : (
+          <Text size='sm' c='dimmed'>
             -
           </Text>
-        }
+        )}
       </Table.Td>
 
       <Table.Td style={{ textAlign: 'center' }}>

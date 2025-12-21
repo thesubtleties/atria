@@ -1,11 +1,18 @@
 import { Text, Textarea } from '@mantine/core';
 import styles from './styles/index.module.css';
 
-export const AboutSection = ({ bio, isEditing, value, onChange }) => {
+interface AboutSectionProps {
+  bio?: string | null;
+  isEditing: boolean;
+  value: string;
+  onChange: (value: string) => void;
+}
+
+export const AboutSection = ({ bio, isEditing, value, onChange }: AboutSectionProps) => {
   return (
     <section className={styles.profileSection}>
       <h2 className={styles.sectionTitle}>About Me</h2>
-      {isEditing ?
+      {isEditing ? (
         <Textarea
           placeholder='Tell us about yourself...'
           minRows={6}
@@ -15,14 +22,15 @@ export const AboutSection = ({ bio, isEditing, value, onChange }) => {
           onChange={(e) => onChange(e.target.value)}
           classNames={{ input: styles.formTextarea }}
         />
-      : <p className={styles.bioText}>
+      ) : (
+        <p className={styles.bioText}>
           {bio || (
-            <Text component='span' color='dimmed' size='sm'>
+            <Text component='span' c='dimmed' size='sm'>
               No bio added yet
             </Text>
           )}
         </p>
-      }
+      )}
     </section>
   );
 };

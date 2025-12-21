@@ -1,15 +1,20 @@
 import { Text } from '@mantine/core';
 import { IconBrandLinkedin, IconBrandTwitter, IconWorld } from '@tabler/icons-react';
+import type { SocialLinks as SocialLinksType } from '@/types';
 import styles from './styles/index.module.css';
 
-export const SocialLinks = ({ socialLinks }) => {
+interface SocialLinksProps {
+  socialLinks?: SocialLinksType | null;
+}
+
+export const SocialLinks = ({ socialLinks }: SocialLinksProps) => {
   const hasLinks = socialLinks?.linkedin || socialLinks?.twitter || socialLinks?.website;
 
   if (!hasLinks) {
     return (
       <section className={styles.profileSection}>
         <h2 className={styles.sectionTitle}>Social Links</h2>
-        <Text color='dimmed' size='sm'>
+        <Text c='dimmed' size='sm'>
           No social links added yet
         </Text>
       </section>
@@ -20,7 +25,7 @@ export const SocialLinks = ({ socialLinks }) => {
     <section className={styles.profileSection}>
       <h2 className={styles.sectionTitle}>Social Links</h2>
       <div className={styles.socialLinks}>
-        {socialLinks.linkedin && (
+        {socialLinks?.linkedin && (
           <a
             href={socialLinks.linkedin}
             className={styles.socialLink}
@@ -33,7 +38,7 @@ export const SocialLinks = ({ socialLinks }) => {
             LinkedIn
           </a>
         )}
-        {socialLinks.twitter && (
+        {socialLinks?.twitter && (
           <a
             href={socialLinks.twitter}
             className={styles.socialLink}
@@ -46,7 +51,7 @@ export const SocialLinks = ({ socialLinks }) => {
             Twitter
           </a>
         )}
-        {socialLinks.website && (
+        {socialLinks?.website && (
           <a
             href={socialLinks.website}
             className={styles.socialLink}

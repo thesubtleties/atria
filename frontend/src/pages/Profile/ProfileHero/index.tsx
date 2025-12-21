@@ -1,7 +1,19 @@
 import { Avatar, Menu, ActionIcon } from '@mantine/core';
 import { IconEdit, IconDots, IconUserMinus } from '@tabler/icons-react';
 import { Button } from '@/shared/components/buttons';
+import type { User, Connection } from '@/types';
 import styles from './styles/index.module.css';
+
+interface ProfileHeroProps {
+  user?: Partial<User>;
+  onEditClick: () => void;
+  isOwnProfile?: boolean;
+  isEditing?: boolean;
+  onAvatarEdit?: () => void;
+  connection?: Connection;
+  onRemoveConnection?: () => void;
+  isRemovingConnection?: boolean;
+}
 
 export const ProfileHero = ({
   user,
@@ -9,13 +21,13 @@ export const ProfileHero = ({
   isOwnProfile = true,
   isEditing = false,
   onAvatarEdit,
-  connection = null,
+  connection,
   onRemoveConnection,
   isRemovingConnection = false,
-}) => {
+}: ProfileHeroProps) => {
   if (!user) return null;
 
-  const getInitials = (name) => {
+  const getInitials = (name?: string | null): string => {
     if (!name) return '?';
     const parts = name.split(' ');
     if (parts.length >= 2) {
@@ -25,12 +37,12 @@ export const ProfileHero = ({
   };
 
   const memberSince =
-    user.created_at ?
-      new Date(user.created_at).toLocaleDateString('en-US', {
-        month: 'long',
-        year: 'numeric',
-      })
-    : null;
+    user.created_at
+      ? new Date(user.created_at).toLocaleDateString('en-US', {
+          month: 'long',
+          year: 'numeric',
+        })
+      : null;
 
   return (
     <section className={styles.profileHero}>

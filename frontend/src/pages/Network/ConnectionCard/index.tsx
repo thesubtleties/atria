@@ -12,11 +12,26 @@ import { useSelector } from 'react-redux';
 import { useOpenThread } from '@/shared/hooks/useOpenThread';
 import { notifications } from '@mantine/notifications';
 import { useNavigate } from 'react-router-dom';
+import type { RootState } from '@/app/store';
+import type { Connection } from '@/types';
 import styles from './styles/index.module.css';
 
-export function ConnectionCard({ connection }) {
+interface ConnectionCardProps {
+  connection: Connection;
+}
+
+interface ThreadResult {
+  thread_id?: number;
+  id?: number;
+  data?: {
+    thread_id?: number;
+    id?: number;
+  };
+}
+
+export function ConnectionCard({ connection }: ConnectionCardProps) {
   const navigate = useNavigate();
-  const currentUser = useSelector((state) => state.auth.user);
+  const currentUser = useSelector((state: RootState) => state.auth.user);
   const openThread = useOpenThread();
   const isMobile = useMediaQuery('(max-width: 768px)');
   const [createThread, { isLoading: isCreatingThread }] = useCreateDirectMessageThreadMutation();
@@ -29,11 +44,11 @@ export function ConnectionCard({ connection }) {
   const handleMessage = async () => {
     setIsMessaging(true);
     try {
-      const result = await createThread(otherUser.id).unwrap();
+      const result = (await createThread(otherUser.id).unwrap()) as ThreadResult;
       console.log('Create thread result:', result);
 
       // Handle different response formats
-      const threadId = result.thread_id || result.id || result.data?.thread_id || result.data?.id;
+      const threadId = result.thread_id ?? result.id ?? result.data?.thread_id ?? result.data?.id;
 
       if (threadId) {
         openThread(threadId);
@@ -62,7 +77,7 @@ export function ConnectionCard({ connection }) {
     }
   };
 
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
       month: 'short',
@@ -110,14 +125,15 @@ export function ConnectionCard({ connection }) {
       {/* Connection info */}
       <div className={styles.connectionInfo}>
         <div className={styles.connectionEvent}>
-          {connection.originating_event ?
+          {connection.originating_event ? (
             <Badge variant='light' size='sm' radius='sm' className={styles.eventBadge}>
               {connection.originating_event.title}
             </Badge>
-          : <Text size='sm' className={styles.directConnection}>
+          ) : (
+            <Text size='sm' className={styles.directConnection}>
               Direct connection
             </Text>
-          }
+          )}
         </div>
         <Text size='xs' className={styles.connectionDate}>
           Connected {formatDate(connection.created_at)}
@@ -173,7 +189,7 @@ export function ConnectionCard({ connection }) {
         </div>
 
         {/* Email */}
-        {otherUser.email && otherUser.privacy_settings?.show_email !== false && (
+        {otherUser.email && (
           <Text size='xs' className={styles.email}>
             <a href={`mailto:${otherUser.email}`} className={styles.emailLink}>
               {otherUser.email}

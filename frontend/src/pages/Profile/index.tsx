@@ -8,7 +8,7 @@ import { useGetConnectionsQuery, useRemoveConnectionMutation } from '@/app/featu
 import { useForm, zodResolver } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { updateUserProfile } from '@/app/store/authSlice';
-import { LoadingPage } from '../../shared/components/loading';
+import { LoadingPage } from '@/shared/components/loading';
 import { profileSchema } from './schemas/profileSchema';
 import { ProfileHero } from './ProfileHero';
 import { ProfessionalInfo } from './ProfessionalInfo';
@@ -18,17 +18,40 @@ import { AboutSection } from './AboutSection';
 import { Button } from '@/shared/components/buttons';
 import { openConfirmationModal } from '@/shared/components/modals/ConfirmationModal';
 import { EditAvatarModal } from '@/shared/components/modals/profile/EditAvatarModal';
+import type { RootState, AppDispatch } from '@/app/store';
+import type { Connection, User } from '@/types';
 import styles from './styles/index.module.css';
 
+interface ProfileFormValues {
+  first_name: string;
+  last_name: string;
+  company_name: string;
+  title: string;
+  bio: string;
+  image_url: string;
+  social_links: {
+    linkedin: string;
+    twitter: string;
+    website: string;
+  };
+}
+
+interface ApiError {
+  status?: number;
+  data?: {
+    message?: string;
+  };
+}
+
 export const ProfilePage = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const currentUser = useSelector((state) => state.auth.user);
-  const { userId } = useParams(); // Get userId from URL params
+  const currentUser = useSelector((state: RootState) => state.auth.user);
+  const { userId } = useParams<{ userId: string }>();
   const [isEditing, setIsEditing] = useState(false);
-  const [tempImageUrl, setTempImageUrl] = useState(null);
+  const [tempImageUrl, setTempImageUrl] = useState<string | null>(null);
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
-  const parallaxRef = useRef(null);
+  const parallaxRef = useRef<HTMLElement>(null);
 
   // Determine which user profile to load
   const profileUserId = userId ? parseInt(userId) : currentUser?.id;
@@ -39,7 +62,7 @@ export const ProfilePage = () => {
     data: userProfile,
     isLoading,
     error,
-  } = useGetUserQuery(profileUserId, {
+  } = useGetUserQuery(profileUserId as number, {
     skip: !profileUserId,
   });
 
@@ -53,16 +76,17 @@ export const ProfilePage = () => {
   );
 
   // Find the connection object if it exists
-  const connection =
-    !isOwnProfile &&
-    connectionsData?.connections?.find((conn) => {
-      const isRequester = conn.requester.id === profileUserId;
-      const isRecipient = conn.recipient.id === profileUserId;
-      const isAccepted = conn.status === 'accepted' || conn.status === 'ACCEPTED';
-      return (isRequester || isRecipient) && isAccepted;
-    });
+  const connection: Connection | undefined =
+    !isOwnProfile
+      ? connectionsData?.connections?.find((conn) => {
+          const isRequester = conn.requester.id === profileUserId;
+          const isRecipient = conn.recipient.id === profileUserId;
+          const isAccepted = conn.status === 'accepted' || conn.status === 'ACCEPTED';
+          return (isRequester || isRecipient) && isAccepted;
+        })
+      : undefined;
 
-  const form = useForm({
+  const form = useForm<ProfileFormValues>({
     initialValues: {
       first_name: '',
       last_name: '',
@@ -108,7 +132,7 @@ export const ProfilePage = () => {
       const scrolled = window.pageYOffset;
       const parallax = scrolled * 0.3;
 
-      const shapes = parallaxRef.current.querySelectorAll('.bg-shape-1, .bg-shape-2');
+      const shapes = parallaxRef.current.querySelectorAll<HTMLElement>('.bg-shape-1, .bg-shape-2');
       shapes.forEach((shape, index) => {
         shape.style.transform = `translateY(${parallax * (index + 1) * 0.1}px) rotate(${parallax * 0.05}deg)`;
       });
@@ -118,7 +142,8 @@ export const ProfilePage = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleSave = async (values) => {
+  const handleSave = async (values: ProfileFormValues) => {
+    if (!currentUser) return;
     try {
       await updateUser({
         id: currentUser.id,
@@ -140,7 +165,8 @@ export const ProfilePage = () => {
       });
       setIsEditing(false);
       setTempImageUrl(null);
-    } catch (error) {
+    } catch (err) {
+      const error = err as ApiError;
       notifications.show({
         title: 'Error',
         message: error.data?.message || 'Failed to update profile',
@@ -193,7 +219,7 @@ export const ProfilePage = () => {
     setIsAvatarModalOpen(true);
   };
 
-  const handleAvatarSave = (newAvatarUrl) => {
+  const handleAvatarSave = (newAvatarUrl: string) => {
     setTempImageUrl(newAvatarUrl);
     form.setFieldValue('image_url', newAvatarUrl);
   };
@@ -222,7 +248,8 @@ export const ProfilePage = () => {
           } else {
             navigate('/app/dashboard'); // Fallback to dashboard
           }
-        } catch (error) {
+        } catch (err) {
+          const error = err as ApiError;
           notifications.show({
             title: 'Error',
             message: error.data?.message || 'Failed to remove connection',
@@ -237,9 +264,10 @@ export const ProfilePage = () => {
     return <LoadingPage message='Loading profile...' />;
   }
 
-  if (error) {
+  const apiError = error as ApiError | undefined;
+  if (apiError) {
     // Handle 403 error for non-connected users
-    if (error?.status === 403) {
+    if (apiError?.status === 403) {
       return (
         <Container size='xl' className={styles.profileContainer}>
           <Alert color='yellow' title='Connection Required' icon={<IconUserPlus size={20} />}>
@@ -259,17 +287,17 @@ export const ProfilePage = () => {
   }
 
   // Prepare user data with form values when editing
-  const displayUser =
-    isEditing ?
-      {
-        ...userProfile,
-        full_name:
-          `${form.values.first_name} ${form.values.last_name}`.trim() || userProfile?.full_name,
-        title: form.values.title,
-        company_name: form.values.company_name,
-        image_url: tempImageUrl || form.values.image_url || userProfile?.image_url,
-      }
-    : userProfile;
+  const displayUser: Partial<User> | undefined =
+    isEditing
+      ? {
+          ...userProfile,
+          full_name:
+            `${form.values.first_name} ${form.values.last_name}`.trim() || userProfile?.full_name,
+          title: form.values.title,
+          company_name: form.values.company_name,
+          image_url: tempImageUrl || form.values.image_url || userProfile?.image_url,
+        }
+      : userProfile;
 
   return (
     <main className={styles.profileContainer} ref={parallaxRef}>
@@ -294,11 +322,11 @@ export const ProfilePage = () => {
         {/* Left Column */}
         <div>
           {/* Professional Info */}
-          {isEditing ?
+          {isEditing ? (
             <section className={styles.profileSection}>
               <h2 className={styles.sectionTitle}>Professional Information</h2>
               <form onSubmit={form.onSubmit(handleSave)}>
-                <Stack spacing='md'>
+                <Stack gap='md'>
                   <Group grow>
                     <TextInput
                       label='First Name'
@@ -335,13 +363,15 @@ export const ProfilePage = () => {
                 </Stack>
               </form>
             </section>
-          : <ProfessionalInfo user={userProfile} />}
+          ) : (
+            <ProfessionalInfo user={userProfile} />
+          )}
 
           {/* Social Links */}
-          {isEditing ?
+          {isEditing ? (
             <section className={`${styles.profileSection} ${styles.sectionMarginTop}`}>
               <h2 className={styles.sectionTitle}>Social Links</h2>
-              <Stack spacing='sm'>
+              <Stack gap='sm'>
                 <TextInput
                   label='LinkedIn'
                   placeholder='https://linkedin.com/in/username'
@@ -362,13 +392,15 @@ export const ProfilePage = () => {
                 />
               </Stack>
             </section>
-          : <SocialLinks socialLinks={userProfile?.social_links} />}
+          ) : (
+            <SocialLinks socialLinks={userProfile?.social_links} />
+          )}
         </div>
 
         {/* Right Column */}
         <div>
           {/* Activity Overview - Only show for own profile */}
-          {isOwnProfile && <ActivityOverview userId={profileUserId} />}
+          {isOwnProfile && profileUserId && <ActivityOverview userId={profileUserId} />}
 
           {/* About */}
           <AboutSection

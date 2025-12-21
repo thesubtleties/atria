@@ -1,7 +1,12 @@
 import { Text } from '@mantine/core';
+import type { User } from '@/types';
 import styles from './styles/index.module.css';
 
-export const ProfessionalInfo = ({ user }) => {
+interface ProfessionalInfoProps {
+  user?: User;
+}
+
+export const ProfessionalInfo = ({ user }: ProfessionalInfoProps) => {
   if (!user) return null;
 
   return (
@@ -29,7 +34,7 @@ export const ProfessionalInfo = ({ user }) => {
           </div>
         )}
         {!user.company_name && !user.title && (
-          <Text color='dimmed' size='sm'>
+          <Text c='dimmed' size='sm'>
             No professional information added yet
           </Text>
         )}

@@ -1,14 +1,37 @@
 import { Table, ScrollArea, Alert, Center, Pagination } from '@mantine/core';
-import { LoadingOverlay } from '../../../shared/components/loading';
+import { LoadingOverlay } from '@/shared/components/loading';
 import { ConnectionRow } from '../ConnectionRow';
 import { ConnectionCard } from '../ConnectionCard';
+import type { Connection } from '@/types';
+import type { SerializedError } from '@reduxjs/toolkit';
+import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import styles from './styles/index.module.css';
 
-export function ConnectionsList({ connections, isLoading, error, pagination, onPageChange }) {
+interface PaginationInfo {
+  total_pages: number;
+  current_page: number;
+}
+
+interface ConnectionsListProps {
+  connections: Connection[];
+  isLoading: boolean;
+  error: FetchBaseQueryError | SerializedError | undefined;
+  pagination?: PaginationInfo;
+  onPageChange: (page: number) => void;
+}
+
+export function ConnectionsList({
+  connections,
+  isLoading,
+  error,
+  pagination,
+  onPageChange,
+}: ConnectionsListProps) {
   if (error) {
+    const errorMessage = 'message' in error ? error.message : 'Failed to load connections. Please try again.';
     return (
       <Alert color='red' title='Error loading connections'>
-        {error.message || 'Failed to load connections. Please try again.'}
+        {errorMessage}
       </Alert>
     );
   }

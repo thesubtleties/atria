@@ -5,13 +5,14 @@ import { useGetConnectionsQuery } from '@/app/features/networking/api';
 import { useSelector } from 'react-redux';
 import { PageHeader } from '@/shared/components/PageHeader';
 import { ConnectionsList } from './ConnectionsList';
+import type { RootState } from '@/app/store';
 import styles from './styles/index.module.css';
 
 export default function NetworkPage() {
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const perPage = 50;
-  const currentUser = useSelector((state) => state.auth.user);
+  const currentUser = useSelector((state: RootState) => state.auth.user);
 
   const { data, isLoading, error } = useGetConnectionsQuery({
     status: 'ACCEPTED',
@@ -35,7 +36,7 @@ export default function NetworkPage() {
         otherUser.title?.toLowerCase().includes(query) ||
         connection.originating_event?.title?.toLowerCase().includes(query)
       );
-    }) || [];
+    }) ?? [];
 
   return (
     <div className={styles.pageContainer}>
@@ -52,7 +53,7 @@ export default function NetworkPage() {
       <section className={styles.contentSection}>
         <div className={styles.sectionHeader}>
           <h2 className={styles.sectionTitle}>Connections</h2>
-          <div className={styles.connectionCount}>{data?.total_items || 0} total</div>
+          <div className={styles.connectionCount}>{data?.total_items ?? 0} total</div>
         </div>
 
         <div className={styles.searchWrapper}>
