@@ -13,58 +13,77 @@ import {
   useGetOrganizationUsersQuery,
   useUpdateOrganizationUserMutation,
   useRemoveOrganizationUserMutation,
-} from '../../../../../app/features/organizations/api';
+} from '@/app/features/organizations/api';
 import { notifications } from '@mantine/notifications';
-import { Button } from '../../../../../shared/components/buttons';
+import { Button } from '@/shared/components/buttons';
 import MemberRow from '../MemberRow';
 import MemberCard from '../MemberCard';
+import { cn } from '@/lib/cn';
 import styles from './styles/index.module.css';
+import type { OrganizationUserRole, ApiError } from '@/types';
 
-const MembersList = ({ orgId, searchQuery, roleFilter, currentUserRole }) => {
+type Member = {
+  user_id: number;
+  user_name?: string;
+  first_name?: string;
+  last_name?: string;
+  email?: string;
+  image_url?: string;
+  role: string;
+  is_current_user?: boolean;
+  created_at?: string;
+};
+
+type MembersListProps = {
+  orgId?: string | undefined;
+  searchQuery: string;
+  roleFilter: string;
+  currentUserRole: OrganizationUserRole;
+};
+
+type OrganizationUsersResponse = {
+  organization_users?: Member[];
+  total_pages?: number;
+};
+
+const MembersList = ({ orgId, searchQuery, roleFilter, currentUserRole }: MembersListProps) => {
   const [page, setPage] = useState(1);
   const [roleModalOpened, setRoleModalOpened] = useState(false);
   const [removeModalOpened, setRemoveModalOpened] = useState(false);
-  const [selectedMember, setSelectedMember] = useState(null);
-  const [selectedRole, setSelectedRole] = useState('');
+  const [selectedMember, setSelectedMember] = useState<Member | null>(null);
+  const [selectedRole, setSelectedRole] = useState<string | null>('');
   const perPage = 20;
 
-  const { data, isLoading, error } = useGetOrganizationUsersQuery({
-    orgId,
-    page,
-    per_page: perPage,
-    role: roleFilter === 'all' ? undefined : roleFilter,
-  });
+  const parsedOrgId = orgId ? parseInt(orgId) : 0;
+  const roleParam = roleFilter === 'all' ? undefined : (roleFilter as OrganizationUserRole);
+
+  const queryParams =
+    roleParam ?
+      { orgId: parsedOrgId, page, per_page: perPage, role: roleParam }
+    : { orgId: parsedOrgId, page, per_page: perPage };
+
+  const { data, isLoading, error } = useGetOrganizationUsersQuery(queryParams, { skip: !orgId });
+
+  const typedData = data as OrganizationUsersResponse | undefined;
 
   const [updateRole, { isLoading: isUpdating }] = useUpdateOrganizationUserMutation();
   const [removeMember, { isLoading: isRemoving }] = useRemoveOrganizationUserMutation();
 
-  // Debug log to see the data structure
-  useEffect(() => {
-    if (data) {
-      console.log('Organization Users Data:', data);
-      console.log('First user:', data.organization_users?.[0]);
-    }
-  }, [data]);
-
-  // Reset to page 1 when filters change
   useEffect(() => {
     setPage(1);
   }, [searchQuery, roleFilter]);
 
-  // Handle role update
-  const handleRoleUpdate = (member) => {
+  const handleRoleUpdate = (member: Member) => {
     setSelectedMember(member);
     setSelectedRole(member.role);
     setRoleModalOpened(true);
   };
 
-  // Handle remove member
-  const handleRemove = (member) => {
+  const handleRemove = (member: Member) => {
     setSelectedMember(member);
     setRemoveModalOpened(true);
   };
 
-  // Submit role update
   const submitRoleUpdate = async () => {
     if (!selectedMember || selectedRole === selectedMember.role) {
       setRoleModalOpened(false);
@@ -73,9 +92,9 @@ const MembersList = ({ orgId, searchQuery, roleFilter, currentUserRole }) => {
 
     try {
       await updateRole({
-        orgId,
+        orgId: orgId ? parseInt(orgId) : 0,
         userId: selectedMember.user_id,
-        role: selectedRole,
+        role: selectedRole as OrganizationUserRole,
       }).unwrap();
 
       notifications.show({
@@ -84,22 +103,22 @@ const MembersList = ({ orgId, searchQuery, roleFilter, currentUserRole }) => {
         color: 'green',
       });
       setRoleModalOpened(false);
-    } catch (error) {
+    } catch (err) {
+      const apiError = err as ApiError;
       notifications.show({
         title: 'Error',
-        message: error.data?.message || 'Failed to update member role',
+        message: apiError.data?.message || 'Failed to update member role',
         color: 'red',
       });
     }
   };
 
-  // Submit remove member
   const submitRemove = async () => {
     if (!selectedMember) return;
 
     try {
       await removeMember({
-        orgId,
+        orgId: orgId ? parseInt(orgId) : 0,
         userId: selectedMember.user_id,
       }).unwrap();
 
@@ -109,38 +128,36 @@ const MembersList = ({ orgId, searchQuery, roleFilter, currentUserRole }) => {
         color: 'green',
       });
       setRemoveModalOpened(false);
-    } catch (error) {
+    } catch (err) {
+      const apiError = err as ApiError;
       notifications.show({
         title: 'Error',
-        message: error.data?.message || 'Failed to remove member',
+        message: apiError.data?.message || 'Failed to remove member',
         color: 'red',
       });
     }
   };
 
-  // Filter members based on search query
   const filteredMembers = useMemo(() => {
-    if (!data?.organization_users) return [];
+    if (!typedData?.organization_users) return [];
 
-    if (!searchQuery) return data.organization_users;
+    if (!searchQuery) return typedData.organization_users;
 
     const query = searchQuery.toLowerCase();
-    return data.organization_users.filter(
+    return typedData.organization_users.filter(
       (member) =>
         member.user_name?.toLowerCase().includes(query) ||
         member.first_name?.toLowerCase().includes(query) ||
         member.last_name?.toLowerCase().includes(query) ||
         member.email?.toLowerCase().includes(query),
     );
-  }, [data?.organization_users, searchQuery]);
+  }, [typedData?.organization_users, searchQuery]);
 
-  // Role options for modal
   const roleOptions = [
     { value: 'MEMBER', label: 'Member' },
     { value: 'ADMIN', label: 'Admin' },
   ];
 
-  // Owners can also change to/from owner role
   if (currentUserRole === 'OWNER') {
     roleOptions.push({ value: 'OWNER', label: 'Owner' });
   }
@@ -151,21 +168,21 @@ const MembersList = ({ orgId, searchQuery, roleFilter, currentUserRole }) => {
 
   if (error) {
     return (
-      <Center className={styles.emptyState}>
-        <Text color='red'>Failed to load members</Text>
+      <Center className={cn(styles.emptyState)}>
+        <Text c='red'>Failed to load members</Text>
       </Center>
     );
   }
 
   if (filteredMembers.length === 0) {
     return (
-      <Center className={styles.emptyState}>
-        <div className={styles.emptyContent}>
-          <Text size='lg' weight={500} color='dimmed'>
+      <Center className={cn(styles.emptyState)}>
+        <div className={cn(styles.emptyContent)}>
+          <Text size='lg' fw={500} c='dimmed'>
             {searchQuery ? 'No members found matching your search' : 'No members yet'}
           </Text>
           {!searchQuery && (
-            <Text size='sm' color='dimmed' mt='xs'>
+            <Text size='sm' c='dimmed' mt='xs'>
               Invite members to start collaborating
             </Text>
           )}
@@ -176,18 +193,18 @@ const MembersList = ({ orgId, searchQuery, roleFilter, currentUserRole }) => {
 
   return (
     <>
-      <div className={styles.membersList}>
+      <div className={cn(styles.membersList)}>
         {/* Desktop Table View */}
-        <div className={styles.tableContainer}>
-          <table className={styles.membersTable}>
+        <div className={cn(styles.tableContainer)}>
+          <table className={cn(styles.membersTable)}>
             <thead>
               <tr>
                 <th>Member</th>
                 <th>Email</th>
-                <th className={styles.centerColumn}>Role</th>
-                <th className={styles.centerColumn}>Joined</th>
+                <th className={cn(styles.centerColumn)}>Role</th>
+                <th className={cn(styles.centerColumn)}>Joined</th>
                 {(currentUserRole === 'OWNER' || currentUserRole === 'ADMIN') && (
-                  <th className={styles.centerColumn}>Actions</th>
+                  <th className={cn(styles.centerColumn)}>Actions</th>
                 )}
               </tr>
             </thead>
@@ -196,7 +213,7 @@ const MembersList = ({ orgId, searchQuery, roleFilter, currentUserRole }) => {
                 <MemberRow
                   key={member.user_id}
                   member={member}
-                  orgId={orgId}
+                  orgId={orgId ? parseInt(orgId) : undefined}
                   currentUserRole={currentUserRole}
                 />
               ))}
@@ -205,7 +222,7 @@ const MembersList = ({ orgId, searchQuery, roleFilter, currentUserRole }) => {
         </div>
 
         {/* Mobile Cards View */}
-        <div className={styles.memberCards}>
+        <div className={cn(styles.memberCards)}>
           {filteredMembers.map((member) => (
             <MemberCard
               key={member.user_id}
@@ -217,19 +234,18 @@ const MembersList = ({ orgId, searchQuery, roleFilter, currentUserRole }) => {
           ))}
         </div>
 
-        {data?.total_pages > 1 && (
-          <div className={styles.paginationWrapper}>
+        {typedData?.total_pages && typedData.total_pages > 1 && (
+          <div className={cn(styles.paginationWrapper)}>
             <Pagination
               value={page}
               onChange={setPage}
-              total={data.total_pages}
-              className={styles.pagination}
+              total={typedData.total_pages}
+              className={cn(styles.pagination)}
             />
           </div>
         )}
       </div>
 
-      {/* Role Update Modal */}
       <Modal
         opened={roleModalOpened}
         onClose={() => setRoleModalOpened(false)}
@@ -256,7 +272,7 @@ const MembersList = ({ orgId, searchQuery, roleFilter, currentUserRole }) => {
           )}
 
           <Group justify='flex-end' mt='md'>
-            <Button variant='subtle' onClick={() => setRoleModalOpened(false)}>
+            <Button variant='secondary' onClick={() => setRoleModalOpened(false)}>
               Cancel
             </Button>
             <Button
@@ -271,7 +287,6 @@ const MembersList = ({ orgId, searchQuery, roleFilter, currentUserRole }) => {
         </Stack>
       </Modal>
 
-      {/* Remove Member Modal */}
       <Modal
         opened={removeModalOpened}
         onClose={() => setRemoveModalOpened(false)}
@@ -289,7 +304,7 @@ const MembersList = ({ orgId, searchQuery, roleFilter, currentUserRole }) => {
           </Text>
 
           <Group justify='flex-end' mt='md'>
-            <Button variant='subtle' onClick={() => setRemoveModalOpened(false)}>
+            <Button variant='secondary' onClick={() => setRemoveModalOpened(false)}>
               Cancel
             </Button>
             <Button variant='danger' onClick={submitRemove} loading={isRemoving}>

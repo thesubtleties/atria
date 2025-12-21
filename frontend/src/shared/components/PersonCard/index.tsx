@@ -10,6 +10,7 @@ import {
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import type { RootState } from '@/app/store';
+import type { EventUserRole } from '@/types';
 import styles from './styles/index.module.css';
 
 interface PrivacySettings {
@@ -19,27 +20,27 @@ interface PrivacySettings {
 
 interface Person {
   id: number;
-  firstName?: string;
-  lastName?: string;
-  title?: string;
-  company?: string;
-  bio?: string;
-  avatarUrl?: string;
-  linkedin?: string;
-  twitter?: string;
-  website?: string;
-  email?: string;
-  connectionStatus?: string;
-  canSendConnectionRequest?: boolean;
-  privacySettings?: PrivacySettings;
+  firstName?: string | undefined;
+  lastName?: string | undefined;
+  title?: string | undefined;
+  company?: string | undefined;
+  bio?: string | undefined;
+  avatarUrl?: string | undefined;
+  linkedin?: string | undefined;
+  twitter?: string | undefined;
+  website?: string | undefined;
+  email?: string | undefined;
+  connectionStatus?: string | null | undefined;
+  canSendConnectionRequest?: boolean | undefined;
+  privacySettings?: PrivacySettings | undefined;
 }
 
 interface PersonCardProps {
   person: Person;
-  role?: string; // User's actual role: ADMIN, ORGANIZER, SPEAKER, ATTENDEE
-  onConnect?: (person: Person) => void;
-  onMessage?: (person: Person) => void;
-  showActions?: boolean;
+  role?: EventUserRole | undefined;
+  onConnect?: ((person: Person) => void) | undefined;
+  onMessage?: ((person: Person) => void) | undefined;
+  showActions?: boolean | undefined;
 }
 
 export function PersonCard({

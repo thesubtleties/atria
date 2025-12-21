@@ -8,15 +8,22 @@ import { AttendeesGrid } from './AttendeesGrid';
 import { RequestsList } from './RequestsList';
 import { useGetPendingConnectionsQuery } from '@/app/features/networking/api';
 import { useIsMobile } from '@/shared/hooks/useIsMobile';
+import { cn } from '@/lib/cn';
 import styles from './styles/index.module.css';
 
+type TabType = 'chat' | 'attendees' | 'requests';
+
+type PendingConnectionsResponse = {
+  total_items?: number;
+};
+
 export function Networking() {
-  const { eventId } = useParams();
+  const { eventId } = useParams<{ eventId: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
   const isMobile = useIsMobile();
-  const [activeTab, setActiveTab] = useState(() => {
+  const [activeTab, setActiveTab] = useState<TabType>(() => {
     // Initialize from URL param or default based on device
-    const tabParam = searchParams.get('tab');
+    const tabParam = searchParams.get('tab') as TabType | null;
     // On mobile, default to 'attendees' since chat is in mobile container
     // On desktop, default to 'chat'
     return tabParam || (isMobile ? 'attendees' : 'chat');
@@ -28,7 +35,8 @@ export function Networking() {
     perPage: 1,
   });
 
-  const pendingCount = pendingData?.total_items || 0;
+  const typedPendingData = pendingData as PendingConnectionsResponse | undefined;
+  const pendingCount = typedPendingData?.total_items || 0;
 
   // Sync URL params when tab changes
   useEffect(() => {
@@ -44,38 +52,39 @@ export function Networking() {
     setSearchParams(newParams, { replace: true });
   }, [activeTab, searchParams, setSearchParams]);
 
-  const handleTabChange = (tab) => {
+  const handleTabChange = (tab: TabType) => {
     setActiveTab(tab);
   };
 
   return (
-    <div
-      className={`${styles.container} ${activeTab === 'chat' && !isMobile ? styles.chatActive : ''}`}
-    >
+    <div className={cn(styles.container, activeTab === 'chat' && !isMobile && styles.chatActive)}>
       {/* Background Shapes */}
-      <div className={styles.bgShape1} />
-      <div className={styles.bgShape2} />
+      <div className={cn(styles.bgShape1)} />
+      <div className={cn(styles.bgShape2)} />
 
-      <Container size='xl' className={styles.contentWrapper}>
+      <Container size='xl' className={cn(styles.contentWrapper)}>
         <PageHeader
           title='Networking'
           subtitle='Connect with attendees, chat in rooms, and manage connection requests'
-          className={styles.headerSection}
+          className={cn(styles.headerSection)}
         />
 
         {/* Main Content Section */}
-        <section className={styles.mainContent}>
-          <div className={styles.customTabsContainer}>
+        <section className={cn(styles.mainContent)}>
+          <div className={cn(styles.customTabsContainer)}>
             {/* Conditionally wrap tabs: glass wrapper for non-chat tabs */}
             {
               activeTab !== 'chat' || isMobile ?
-                <div className={styles.tabBarWrapper}>
-                  <div className={styles.customTabsList}>
+                <div className={cn(styles.tabBarWrapper)}>
+                  <div className={cn(styles.customTabsList)}>
                     {/* Only show Chat tab on desktop */}
                     {!isMobile && (
                       <button
                         type='button'
-                        className={`${styles.customTab} ${activeTab === 'chat' ? styles.customTabActive : ''}`}
+                        className={cn(
+                          styles.customTab,
+                          activeTab === 'chat' && styles.customTabActive,
+                        )}
                         onClick={() => handleTabChange('chat')}
                       >
                         <IconMessages size={18} />
@@ -84,7 +93,10 @@ export function Networking() {
                     )}
                     <button
                       type='button'
-                      className={`${styles.customTab} ${activeTab === 'attendees' ? styles.customTabActive : ''}`}
+                      className={cn(
+                        styles.customTab,
+                        activeTab === 'attendees' && styles.customTabActive,
+                      )}
                       onClick={() => handleTabChange('attendees')}
                     >
                       <IconUsers size={18} />
@@ -92,13 +104,16 @@ export function Networking() {
                     </button>
                     <button
                       type='button'
-                      className={`${styles.customTab} ${activeTab === 'requests' ? styles.customTabActive : ''}`}
+                      className={cn(
+                        styles.customTab,
+                        activeTab === 'requests' && styles.customTabActive,
+                      )}
                       onClick={() => handleTabChange('requests')}
                     >
                       <IconUserPlus size={18} />
                       <span>Requests</span>
                       {pendingCount > 0 && (
-                        <Badge size='xs' variant='light' className={styles.customBadge}>
+                        <Badge size='xs' variant='light' className={cn(styles.customBadge)}>
                           {pendingCount}
                         </Badge>
                       )}
@@ -106,12 +121,12 @@ export function Networking() {
                   </div>
                 </div>
                 // Chat: tabs directly in container (no wrapper)
-              : <div className={styles.customTabsList}>
+              : <div className={cn(styles.customTabsList)}>
                   {/* Only show Chat tab on desktop */}
                   {!isMobile && (
                     <button
                       type='button'
-                      className={`${styles.customTab} ${activeTab === 'chat' ? styles.customTabActive : ''}`}
+                      className={cn(styles.customTab, styles.customTabActive)}
                       onClick={() => handleTabChange('chat')}
                     >
                       <IconMessages size={18} />
@@ -120,7 +135,7 @@ export function Networking() {
                   )}
                   <button
                     type='button'
-                    className={`${styles.customTab} ${activeTab === 'attendees' ? styles.customTabActive : ''}`}
+                    className={cn(styles.customTab)}
                     onClick={() => handleTabChange('attendees')}
                   >
                     <IconUsers size={18} />
@@ -128,13 +143,13 @@ export function Networking() {
                   </button>
                   <button
                     type='button'
-                    className={`${styles.customTab} ${activeTab === 'requests' ? styles.customTabActive : ''}`}
+                    className={cn(styles.customTab)}
                     onClick={() => handleTabChange('requests')}
                   >
                     <IconUserPlus size={18} />
                     <span>Requests</span>
                     {pendingCount > 0 && (
-                      <Badge size='xs' variant='light' className={styles.customBadge}>
+                      <Badge size='xs' variant='light' className={cn(styles.customBadge)}>
                         {pendingCount}
                       </Badge>
                     )}
@@ -144,13 +159,13 @@ export function Networking() {
             }
 
             {/* Custom Tab Panels */}
-            <div className={styles.customTabPanel}>
-              {activeTab === 'chat' && (
-                <div className={styles.chatWrapper}>
+            <div className={cn(styles.customTabPanel)}>
+              {activeTab === 'chat' && eventId && (
+                <div className={cn(styles.chatWrapper)}>
                   <ChatArea eventId={eventId} />
                 </div>
               )}
-              {activeTab === 'attendees' && <AttendeesGrid eventId={eventId} />}
+              {activeTab === 'attendees' && eventId && <AttendeesGrid eventId={eventId} />}
               {activeTab === 'requests' && <RequestsList />}
             </div>
           </div>

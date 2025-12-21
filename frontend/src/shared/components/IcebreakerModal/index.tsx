@@ -5,10 +5,10 @@ import { Button } from '@/shared/components/buttons';
 import styles from './styles/index.module.css';
 
 interface Recipient {
-  avatarUrl?: string | null;
-  firstName?: string;
-  lastName?: string;
-  title?: string;
+  avatarUrl?: string | null | undefined;
+  firstName?: string | undefined;
+  lastName?: string | undefined;
+  title?: string | undefined;
 }
 
 interface IcebreakerModalProps {

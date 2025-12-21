@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, type MouseEvent } from 'react';
 import { Card, Stack, Group, Avatar, Text, ActionIcon } from '@mantine/core';
-import { LoadingSpinner } from '../../../../shared/components/loading';
+import { LoadingSpinner } from '@/shared/components/loading';
 import {
   IconCheck,
   IconX,
@@ -12,9 +12,20 @@ import {
 import { notifications } from '@mantine/notifications';
 import { useUpdateConnectionStatusMutation } from '@/app/features/networking/api';
 import { useNavigate } from 'react-router-dom';
+import { cn } from '@/lib/cn';
 import styles from './styles/index.module.css';
+import type { ConnectionRequest } from '../index';
+import type { ApiError } from '@/types';
 
-export function RequestCard({ request }) {
+type RequestCardProps = {
+  request: ConnectionRequest;
+};
+
+type UpdateConnectionResult = {
+  thread_id?: number;
+};
+
+export function RequestCard({ request }: RequestCardProps) {
   const navigate = useNavigate();
   const [updateStatus, { isLoading }] = useUpdateConnectionStatusMutation();
   const [isAccepting, setIsAccepting] = useState(false);
@@ -23,12 +34,10 @@ export function RequestCard({ request }) {
   const handleAccept = async () => {
     setIsAccepting(true);
     try {
-      const result = await updateStatus({
+      const result = (await updateStatus({
         connectionId: request.id,
         status: 'ACCEPTED',
-      }).unwrap();
-
-      console.log('Connection acceptance result:', result);
+      }).unwrap()) as UpdateConnectionResult;
 
       notifications.show({
         title: 'Connection accepted',
@@ -43,7 +52,8 @@ export function RequestCard({ request }) {
           navigate(`/app/messages/${result.thread_id}`);
         }, 1000);
       }
-    } catch (error) {
+    } catch (err) {
+      const error = err as ApiError;
       console.error('Failed to accept connection:', error);
       notifications.show({
         title: 'Error',
@@ -80,11 +90,18 @@ export function RequestCard({ request }) {
   const requester = request.requester || {};
   const initial = requester.full_name?.[0]?.toUpperCase() || '?';
 
+  const stopPropagation = (e: MouseEvent) => e.stopPropagation();
+
   return (
-    <Card className={styles.card} padding='lg' radius='md' withBorder>
-      <Stack spacing='md'>
-        <Group align='flex-start' spacing='md'>
-          <Avatar src={requester.image_url} size={60} radius='xl' className={styles.avatar}>
+    <Card className={cn(styles.card)} padding='lg' radius='md' withBorder>
+      <Stack gap='md'>
+        <Group align='flex-start' gap='md'>
+          <Avatar
+            src={requester.image_url ?? null}
+            size={60}
+            radius='xl'
+            className={cn(styles.avatar)}
+          >
             {!requester.image_url && initial}
           </Avatar>
 
@@ -98,16 +115,16 @@ export function RequestCard({ request }) {
             }}
           >
             <div style={{ flex: 1 }}>
-              <Text size='lg' weight={600} className={styles.name}>
+              <Text size='lg' fw={600} className={cn(styles.name)}>
                 {requester.full_name}
               </Text>
               {requester.title && (
-                <Text size='sm' c='dimmed' className={styles.title}>
+                <Text size='sm' c='dimmed' className={cn(styles.title)}>
                   {requester.title}
                 </Text>
               )}
               {requester.company_name && (
-                <Text size='sm' c='dimmed' className={styles.company}>
+                <Text size='sm' c='dimmed' className={cn(styles.company)}>
                   {requester.company_name}
                 </Text>
               )}
@@ -118,9 +135,9 @@ export function RequestCard({ request }) {
               requester.social_links?.twitter ||
               requester.social_links?.website ||
               requester.email) && (
-              <Group gap={0} className={styles.socialsRight}>
+              <Group gap={0} className={cn(styles.socialsRight)}>
                 {requester.social_links?.linkedin && (
-                  <div className={styles.linkedinIcon}>
+                  <div className={cn(styles.linkedinIcon)}>
                     <ActionIcon
                       size='sm'
                       variant='subtle'
@@ -128,14 +145,14 @@ export function RequestCard({ request }) {
                       href={requester.social_links.linkedin}
                       target='_blank'
                       aria-label='LinkedIn'
-                      onClick={(e) => e.stopPropagation()}
+                      onClick={stopPropagation}
                     >
                       <IconBrandLinkedin size={20} />
                     </ActionIcon>
                   </div>
                 )}
                 {requester.social_links?.twitter && (
-                  <div className={styles.twitterIcon}>
+                  <div className={cn(styles.twitterIcon)}>
                     <ActionIcon
                       size='sm'
                       variant='subtle'
@@ -143,14 +160,14 @@ export function RequestCard({ request }) {
                       href={requester.social_links.twitter}
                       target='_blank'
                       aria-label='Twitter'
-                      onClick={(e) => e.stopPropagation()}
+                      onClick={stopPropagation}
                     >
                       <IconBrandTwitter size={20} />
                     </ActionIcon>
                   </div>
                 )}
                 {requester.social_links?.website && (
-                  <div className={styles.websiteIcon}>
+                  <div className={cn(styles.websiteIcon)}>
                     <ActionIcon
                       size='sm'
                       variant='subtle'
@@ -158,14 +175,14 @@ export function RequestCard({ request }) {
                       href={requester.social_links.website}
                       target='_blank'
                       aria-label='Website'
-                      onClick={(e) => e.stopPropagation()}
+                      onClick={stopPropagation}
                     >
                       <IconWorld size={20} />
                     </ActionIcon>
                   </div>
                 )}
                 {requester.email && (
-                  <div className={styles.emailIcon}>
+                  <div className={cn(styles.emailIcon)}>
                     <ActionIcon
                       size='sm'
                       variant='subtle'
@@ -173,7 +190,7 @@ export function RequestCard({ request }) {
                       href={`mailto:${requester.email}`}
                       target='_blank'
                       aria-label='Email'
-                      onClick={(e) => e.stopPropagation()}
+                      onClick={stopPropagation}
                     >
                       <IconMail size={20} />
                     </ActionIcon>
@@ -184,8 +201,8 @@ export function RequestCard({ request }) {
           </div>
         </Group>
 
-        <Card.Section className={styles.messageSection} px='lg'>
-          <Text className={styles.messageText}>{`"${request.icebreaker_message}"`}</Text>
+        <Card.Section className={cn(styles.messageSection)} px='lg'>
+          <Text className={cn(styles.messageText)}>{`"${request.icebreaker_message}"`}</Text>
         </Card.Section>
 
         <Group justify='flex-end' align='center'>
@@ -193,7 +210,7 @@ export function RequestCard({ request }) {
             <button
               onClick={handleAccept}
               disabled={isLoading || isRejecting}
-              className={styles.acceptButton}
+              className={cn(styles.acceptButton)}
             >
               {isAccepting ?
                 <LoadingSpinner size='xs' color='#16A34A' />
@@ -206,7 +223,7 @@ export function RequestCard({ request }) {
             <button
               onClick={handleReject}
               disabled={isLoading || isAccepting}
-              className={styles.declineButton}
+              className={cn(styles.declineButton)}
             >
               {isRejecting ?
                 <LoadingSpinner size='xs' color='#64748B' />
@@ -219,7 +236,7 @@ export function RequestCard({ request }) {
           </Group>
         </Group>
 
-        <Text size='xs' ta='right' className={styles.timestamp}>
+        <Text size='xs' ta='right' className={cn(styles.timestamp)}>
           Received {new Date(request.created_at).toLocaleDateString()}
         </Text>
       </Stack>

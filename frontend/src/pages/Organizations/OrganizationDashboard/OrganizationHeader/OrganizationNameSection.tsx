@@ -1,27 +1,33 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type ChangeEvent, type KeyboardEvent } from 'react';
 import { TextInput, Group, Stack, Text, ActionIcon, Collapse, Paper } from '@mantine/core';
 import { IconBuilding, IconCheck, IconX } from '@tabler/icons-react';
-import { Button } from '../../../../shared/components/buttons/Button';
-import { useUpdateOrganizationMutation } from '../../../../app/features/organizations/api';
+import { Button } from '@/shared/components/buttons/Button';
+import { useUpdateOrganizationMutation } from '@/app/features/organizations/api';
 import { notifications } from '@mantine/notifications';
+import { cn } from '@/lib/cn';
 import styles from './styles/index.module.css';
+import type { OrganizationUserRole, ApiError } from '@/types';
 
-/**
- * OrganizationNameSection - Manages organization name editing
- *
- * Features:
- * - Shows current organization name
- * - ADMIN/OWNER can edit name
- * - Proper RTK Query cache invalidation
- */
-const OrganizationNameSection = ({ organization, currentUserRole }) => {
+type Organization = {
+  id: number;
+  name: string;
+};
+
+type OrganizationNameSectionProps = {
+  organization: Organization;
+  currentUserRole: OrganizationUserRole;
+};
+
+const OrganizationNameSection = ({
+  organization,
+  currentUserRole,
+}: OrganizationNameSectionProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState(organization.name);
   const [updateOrganization, { isLoading }] = useUpdateOrganizationMutation();
 
   const canEdit = currentUserRole === 'OWNER' || currentUserRole === 'ADMIN';
 
-  // Reset form when organization changes
   useEffect(() => {
     setEditedName(organization.name);
   }, [organization.name]);
@@ -29,7 +35,6 @@ const OrganizationNameSection = ({ organization, currentUserRole }) => {
   const handleSave = async () => {
     const trimmedName = editedName.trim();
 
-    // Validation
     if (!trimmedName) {
       notifications.show({
         title: 'Validation Error',
@@ -39,7 +44,6 @@ const OrganizationNameSection = ({ organization, currentUserRole }) => {
       return;
     }
 
-    // No change
     if (trimmedName === organization.name) {
       setIsEditing(false);
       return;
@@ -58,13 +62,13 @@ const OrganizationNameSection = ({ organization, currentUserRole }) => {
       });
 
       setIsEditing(false);
-    } catch (error) {
+    } catch (err) {
+      const error = err as ApiError;
       notifications.show({
         title: 'Error',
         message: error?.data?.message || 'Failed to update organization name',
         color: 'red',
       });
-      // Reset to original name on error
       setEditedName(organization.name);
     }
   };
@@ -74,23 +78,27 @@ const OrganizationNameSection = ({ organization, currentUserRole }) => {
     setIsEditing(false);
   };
 
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') handleSave();
+    if (e.key === 'Escape') handleCancel();
+  };
+
   return (
-    <Paper className={styles.settingsCard} withBorder>
-      <Stack spacing='md'>
-        {/* Header with current name */}
-        <Group position='apart' align='center'>
-          <Group spacing='sm'>
-            <div className={styles.settingsIcon}>
+    <Paper className={cn(styles.settingsCard)} withBorder>
+      <Stack gap='md'>
+        <Group justify='space-between' align='center'>
+          <Group gap='sm'>
+            <div className={cn(styles.settingsIcon)}>
               <IconBuilding size={20} stroke={1.5} />
             </div>
             <div>
-              <Text className={styles.settingLabel}>Organization Name</Text>
-              {!isEditing && <Text className={styles.settingValue}>{organization.name}</Text>}
+              <Text className={cn(styles.settingLabel)}>Organization Name</Text>
+              {!isEditing && <Text className={cn(styles.settingValue)}>{organization.name}</Text>}
             </div>
           </Group>
 
           {canEdit && !isEditing && (
-            <Button variant='subtle' onClick={() => setIsEditing(true)}>
+            <Button variant='secondary' onClick={() => setIsEditing(true)}>
               <IconBuilding size={16} />
               Edit Name
             </Button>
@@ -102,37 +110,31 @@ const OrganizationNameSection = ({ organization, currentUserRole }) => {
               onClick={handleCancel}
               disabled={isLoading}
               size='lg'
-              className={styles.cancelButton}
+              className={cn(styles.cancelButton)}
             >
               <IconX size={18} />
             </ActionIcon>
           )}
         </Group>
 
-        {/* Info text for non-editors */}
         {!canEdit && (
-          <Text size='xs' c='dimmed' className={styles.settingHint}>
+          <Text size='xs' c='dimmed' className={cn(styles.settingHint)}>
             Only organization admins and owners can change the name
           </Text>
         )}
 
-        {/* Editing form (ADMIN/OWNER only) */}
         <Collapse in={isEditing && canEdit}>
-          <Stack spacing='sm'>
+          <Stack gap='sm'>
             <TextInput
               label='Organization Name'
               placeholder='Enter organization name'
               value={editedName}
-              onChange={(e) => setEditedName(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => setEditedName(e.target.value)}
               required
               autoFocus
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') handleSave();
-                if (e.key === 'Escape') handleCancel();
-              }}
+              onKeyDown={handleKeyDown}
             />
 
-            {/* Save button at bottom left */}
             <div>
               <Button
                 variant='primary'

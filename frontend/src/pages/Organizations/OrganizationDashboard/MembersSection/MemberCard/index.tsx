@@ -1,37 +1,54 @@
 import { Avatar, Text, Badge, Menu, ActionIcon } from '@mantine/core';
 import { IconDots, IconUserEdit, IconUserX, IconMail } from '@tabler/icons-react';
 import { formatDistanceToNow } from 'date-fns';
+import { cn } from '@/lib/cn';
 import styles from './styles/index.module.css';
+import type { OrganizationUserRole } from '@/types';
 
-const MemberCard = ({ member, currentUserRole, onRoleUpdate, onRemove }) => {
+type Member = {
+  user_id: number;
+  user_name?: string;
+  email?: string;
+  image_url?: string;
+  role: string;
+  is_current_user?: boolean;
+  created_at?: string;
+};
+
+type MemberCardProps = {
+  member: Member;
+  currentUserRole: OrganizationUserRole;
+  onRoleUpdate?: (member: Member) => void;
+  onRemove?: (member: Member) => void;
+};
+
+const MemberCard = ({ member, currentUserRole, onRoleUpdate, onRemove }: MemberCardProps) => {
   const canManage =
     currentUserRole === 'OWNER' || (currentUserRole === 'ADMIN' && member.role !== 'OWNER');
   const isCurrentUser = member.is_current_user;
 
-  const getInitials = (name) => {
+  const getInitials = (name?: string): string => {
     if (!name) return '?';
 
-    // Handle email addresses
     if (name.includes('@')) {
-      return name[0].toUpperCase();
+      return (name[0] ?? '?').toUpperCase();
     }
 
     return name
       .split(' ')
-      .map((n) => n[0])
+      .map((n) => n[0] ?? '')
       .slice(0, 2)
       .join('')
       .toUpperCase();
   };
 
   return (
-    <div className={styles.card}>
-      {/* Actions Menu - Top right corner */}
+    <div className={cn(styles.card)}>
       {canManage && !isCurrentUser && (
-        <div className={styles.cardActions}>
+        <div className={cn(styles.cardActions)}>
           <Menu position='bottom-end' withinPortal>
             <Menu.Target>
-              <ActionIcon variant='subtle' className={styles.actionButton}>
+              <ActionIcon variant='subtle' className={cn(styles.actionButton)}>
                 <IconDots size={16} />
               </ActionIcon>
             </Menu.Target>
@@ -54,19 +71,18 @@ const MemberCard = ({ member, currentUserRole, onRoleUpdate, onRemove }) => {
         </div>
       )}
 
-      {/* User Info Section */}
-      <div className={styles.userInfo}>
+      <div className={cn(styles.userInfo)}>
         <Avatar
-          src={member.image_url}
-          alt={member.user_name}
+          src={member.image_url ?? null}
+          alt={member.user_name ?? 'User'}
           radius='xl'
           size={50}
-          className={styles.avatar}
+          className={cn(styles.avatar)}
         >
           {getInitials(member.user_name)}
         </Avatar>
-        <div className={styles.userDetails}>
-          <Text fw={600} className={styles.userName}>
+        <div className={cn(styles.userDetails)}>
+          <Text fw={600} className={cn(styles.userName)}>
             {member.user_name || 'Unnamed User'}
             {isCurrentUser && (
               <Text component='span' size='xs' c='dimmed'>
@@ -76,9 +92,9 @@ const MemberCard = ({ member, currentUserRole, onRoleUpdate, onRemove }) => {
             )}
           </Text>
           {member.email && (
-            <Text size='sm' className={styles.userEmail}>
-              <a href={`mailto:${member.email}`} className={styles.emailLink}>
-                <IconMail size={14} className={styles.emailIcon} />
+            <Text size='sm' className={cn(styles.userEmail)}>
+              <a href={`mailto:${member.email}`} className={cn(styles.emailLink)}>
+                <IconMail size={14} className={cn(styles.emailIcon)} />
                 {member.email}
               </a>
             </Text>
@@ -86,18 +102,17 @@ const MemberCard = ({ member, currentUserRole, onRoleUpdate, onRemove }) => {
         </div>
       </div>
 
-      {/* Member info - Role badge and join date on same line */}
-      <div className={styles.memberInfo}>
+      <div className={cn(styles.memberInfo)}>
         <Badge
           variant='light'
           size='sm'
           radius='sm'
-          className={styles.roleBadge}
+          className={cn(styles.roleBadge)}
           data-role={member.role}
         >
           {member.role}
         </Badge>
-        <Text size='xs' className={styles.joinDate}>
+        <Text size='xs' className={cn(styles.joinDate)}>
           Joined{' '}
           {member.created_at ?
             formatDistanceToNow(new Date(member.created_at), { addSuffix: true })

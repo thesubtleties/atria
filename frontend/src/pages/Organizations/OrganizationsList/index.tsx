@@ -4,30 +4,45 @@ import { IconPlus } from '@tabler/icons-react';
 import { useState } from 'react';
 import { OrganizationCard } from './OrganizationCard';
 import { OrganizationModal } from '@/shared/components/modals/organization/OrganizationModal';
+import { cn } from '@/lib/cn';
 import styles from './styles/index.module.css';
+
+type Organization = {
+  id: number;
+  name: string;
+  created_at: string;
+  users?: Array<{
+    id: number;
+    role: string;
+  }>;
+};
+
+type OrganizationsResponse = {
+  organizations?: Organization[];
+};
 
 export const OrganizationsList = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
-  //eslint-disable-next-line no-unused-vars
-  const { data, isLoading } = useGetOrganizationsQuery();
-  const organizations = data?.organizations || [];
+  const { data } = useGetOrganizationsQuery(undefined);
+  const typedData = data as OrganizationsResponse | undefined;
+  const organizations = typedData?.organizations || [];
 
   return (
-    <Container className={styles.container}>
-      <Group position='right' mb='xl'>
+    <Container className={cn(styles.container)}>
+      <Group justify='flex-end' mb='xl'>
         <Button
           onClick={() => setShowCreateModal(true)}
-          className={styles.button}
+          className={cn(styles.button)}
           variant='default'
         >
-          <Group spacing='xs'>
-            <IconPlus size={16} className={styles.plusIcon} />
+          <Group gap='xs'>
+            <IconPlus size={16} className={cn(styles.plusIcon)} />
             <span>New Organization</span>
           </Group>
         </Button>
       </Group>
 
-      <div className={styles.grid}>
+      <div className={cn(styles.grid)}>
         {organizations.map((org) => (
           <OrganizationCard key={org.id} organization={org} />
         ))}

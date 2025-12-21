@@ -5,15 +5,33 @@ import { notifications } from '@mantine/notifications';
 import {
   useUpdateOrganizationUserMutation,
   useRemoveOrganizationUserMutation,
-} from '../../../../../app/features/organizations/api';
-import { Button } from '../../../../../shared/components/buttons';
+} from '@/app/features/organizations/api';
+import { Button } from '@/shared/components/buttons';
 import { formatDistanceToNow } from 'date-fns';
+import { cn } from '@/lib/cn';
 import styles from './styles/index.module.css';
+import type { ApiError, OrganizationUserRole } from '@/types';
 
-const MemberRow = ({ member, orgId, currentUserRole }) => {
+type Member = {
+  user_id: number;
+  user_name?: string;
+  email?: string;
+  image_url?: string;
+  role: string;
+  is_current_user?: boolean;
+  created_at?: string;
+};
+
+type MemberRowProps = {
+  member: Member;
+  orgId?: number | undefined;
+  currentUserRole: OrganizationUserRole;
+};
+
+const MemberRow = ({ member, orgId, currentUserRole }: MemberRowProps) => {
   const [roleModalOpened, setRoleModalOpened] = useState(false);
   const [removeModalOpened, setRemoveModalOpened] = useState(false);
-  const [selectedRole, setSelectedRole] = useState(member.role);
+  const [selectedRole, setSelectedRole] = useState<string | null>(member.role);
 
   const [updateRole, { isLoading: isUpdating }] = useUpdateOrganizationUserMutation();
   const [removeMember, { isLoading: isRemoving }] = useRemoveOrganizationUserMutation();
@@ -30,9 +48,9 @@ const MemberRow = ({ member, orgId, currentUserRole }) => {
 
     try {
       await updateRole({
-        orgId,
+        orgId: orgId ?? 0,
         userId: member.user_id,
-        role: selectedRole,
+        role: selectedRole as OrganizationUserRole,
       }).unwrap();
 
       notifications.show({
@@ -41,7 +59,8 @@ const MemberRow = ({ member, orgId, currentUserRole }) => {
         color: 'green',
       });
       setRoleModalOpened(false);
-    } catch (error) {
+    } catch (err) {
+      const error = err as ApiError;
       notifications.show({
         title: 'Error',
         message: error.data?.message || 'Failed to update member role',
@@ -53,7 +72,7 @@ const MemberRow = ({ member, orgId, currentUserRole }) => {
   const handleRemove = async () => {
     try {
       await removeMember({
-        orgId,
+        orgId: orgId ?? 0,
         userId: member.user_id,
       }).unwrap();
 
@@ -63,7 +82,8 @@ const MemberRow = ({ member, orgId, currentUserRole }) => {
         color: 'green',
       });
       setRemoveModalOpened(false);
-    } catch (error) {
+    } catch (err) {
+      const error = err as ApiError;
       notifications.show({
         title: 'Error',
         message: error.data?.message || 'Failed to remove member',
@@ -72,17 +92,16 @@ const MemberRow = ({ member, orgId, currentUserRole }) => {
     }
   };
 
-  const getInitials = (name) => {
+  const getInitials = (name?: string): string => {
     if (!name) return '?';
 
-    // Handle email addresses
     if (name.includes('@')) {
-      return name[0].toUpperCase();
+      return (name[0] ?? '?').toUpperCase();
     }
 
     return name
       .split(' ')
-      .map((n) => n[0])
+      .map((n) => n[0] ?? '')
       .slice(0, 2)
       .join('')
       .toUpperCase();
@@ -93,30 +112,29 @@ const MemberRow = ({ member, orgId, currentUserRole }) => {
     { value: 'ADMIN', label: 'Admin' },
   ];
 
-  // Owners can also change to/from owner role
   if (currentUserRole === 'OWNER') {
     roleOptions.push({ value: 'OWNER', label: 'Owner' });
   }
 
   return (
     <>
-      <tr className={styles.memberRow}>
+      <tr className={cn(styles.memberRow)}>
         <td>
-          <Group spacing='sm'>
+          <Group gap='sm'>
             <Avatar
-              src={member.image_url}
-              alt={member.user_name}
+              src={member.image_url ?? null}
+              alt={member.user_name ?? 'User'}
               size='md'
               radius='xl'
-              className={styles.avatar}
+              className={cn(styles.avatar)}
             >
               {getInitials(member.user_name)}
             </Avatar>
             <div>
-              <Text size='sm' weight={500} className={styles.memberName}>
+              <Text size='sm' fw={500} className={cn(styles.memberName)}>
                 {member.user_name || 'Unnamed User'}
                 {isCurrentUser && (
-                  <Text component='span' size='xs' color='dimmed'>
+                  <Text component='span' size='xs' c='dimmed'>
                     {' '}
                     (You)
                   </Text>
@@ -126,28 +144,28 @@ const MemberRow = ({ member, orgId, currentUserRole }) => {
           </Group>
         </td>
         <td>
-          <Text size='sm' color='dimmed'>
+          <Text size='sm' c='dimmed'>
             {member.email || 'No email'}
           </Text>
         </td>
-        <td className={styles.centerCell}>
-          <Badge variant='unstyled' className={styles.roleBadge} data-role={member.role}>
+        <td className={cn(styles.centerCell)}>
+          <Badge variant='light' className={cn(styles.roleBadge)} data-role={member.role}>
             {member.role}
           </Badge>
         </td>
-        <td className={styles.centerCell}>
-          <Text size='sm' color='dimmed'>
+        <td className={cn(styles.centerCell)}>
+          <Text size='sm' c='dimmed'>
             {member.created_at ?
               formatDistanceToNow(new Date(member.created_at), { addSuffix: true })
             : 'Unknown'}
           </Text>
         </td>
         {(currentUserRole === 'OWNER' || currentUserRole === 'ADMIN') && (
-          <td className={styles.centerCell}>
+          <td className={cn(styles.centerCell)}>
             {canManage && !isCurrentUser && (
               <Menu position='bottom-end' withinPortal>
                 <Menu.Target>
-                  <ActionIcon variant='subtle' className={styles.actionButton}>
+                  <ActionIcon variant='subtle' className={cn(styles.actionButton)}>
                     <IconDots size={16} />
                   </ActionIcon>
                 </Menu.Target>
@@ -172,7 +190,6 @@ const MemberRow = ({ member, orgId, currentUserRole }) => {
         )}
       </tr>
 
-      {/* Role Update Modal */}
       <Modal
         opened={roleModalOpened}
         onClose={() => setRoleModalOpened(false)}
@@ -180,7 +197,7 @@ const MemberRow = ({ member, orgId, currentUserRole }) => {
         size='sm'
         lockScroll={false}
       >
-        <Stack spacing='md'>
+        <Stack gap='md'>
           <Text size='sm'>
             Update role for <strong>{member.user_name}</strong>
           </Text>
@@ -194,13 +211,13 @@ const MemberRow = ({ member, orgId, currentUserRole }) => {
           />
 
           {selectedRole === 'OWNER' && (
-            <Text size='xs' color='orange'>
+            <Text size='xs' c='orange'>
               Warning: Owners have full control over the organization
             </Text>
           )}
 
-          <Group position='right' mt='md'>
-            <Button variant='subtle' onClick={() => setRoleModalOpened(false)}>
+          <Group justify='flex-end' mt='md'>
+            <Button variant='secondary' onClick={() => setRoleModalOpened(false)}>
               Cancel
             </Button>
             <Button
@@ -214,7 +231,6 @@ const MemberRow = ({ member, orgId, currentUserRole }) => {
         </Stack>
       </Modal>
 
-      {/* Remove Member Modal */}
       <Modal
         opened={removeModalOpened}
         onClose={() => setRemoveModalOpened(false)}
@@ -222,18 +238,18 @@ const MemberRow = ({ member, orgId, currentUserRole }) => {
         size='sm'
         lockScroll={false}
       >
-        <Stack spacing='md'>
+        <Stack gap='md'>
           <Text size='sm'>
             Are you sure you want to remove <strong>{member.user_name}</strong> from the
             organization?
           </Text>
 
-          <Text size='xs' color='dimmed'>
+          <Text size='xs' c='dimmed'>
             They will lose access to all organization events and data.
           </Text>
 
-          <Group position='right' mt='md'>
-            <Button variant='subtle' onClick={() => setRemoveModalOpened(false)}>
+          <Group justify='flex-end' mt='md'>
+            <Button variant='secondary' onClick={() => setRemoveModalOpened(false)}>
               Cancel
             </Button>
             <Button variant='danger' onClick={handleRemove} disabled={isRemoving}>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ChangeEvent } from 'react';
 import { Modal, TextInput, Select, Textarea, Stack, Tabs, Text, Alert } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconAlertCircle, IconUsers, IconUserPlus } from '@tabler/icons-react';
@@ -6,19 +6,43 @@ import { notifications } from '@mantine/notifications';
 import {
   useSendOrganizationInvitationMutation,
   useBulkSendOrganizationInvitationsMutation,
-} from '../../../../../app/features/organizations/api';
-import { Button } from '../../../../../shared/components/buttons';
+} from '@/app/features/organizations/api';
+import { Button } from '@/shared/components/buttons';
+import { cn } from '@/lib/cn';
 import styles from './styles/index.module.css';
+import type { ApiError, OrganizationUserRole } from '@/types';
 
-const InviteModal = ({ opened, onClose, orgId, onSuccess }) => {
-  const [activeTab, setActiveTab] = useState('single');
+type InviteModalProps = {
+  opened: boolean;
+  onClose: () => void;
+  orgId?: string | undefined;
+  onSuccess?: () => void;
+};
+
+type SingleFormValues = {
+  email: string;
+  role: string;
+  message: string;
+};
+
+type BulkFormValues = {
+  role: string;
+  message: string;
+};
+
+type BulkInvitationResult = {
+  successful?: Array<{ email: string }>;
+  failed?: Array<{ email: string; error: string }>;
+};
+
+const InviteModal = ({ opened, onClose, orgId, onSuccess }: InviteModalProps) => {
+  const [activeTab, setActiveTab] = useState<string | null>('single');
   const [bulkEmails, setBulkEmails] = useState('');
   const [sendInvitation, { isLoading: isSending }] = useSendOrganizationInvitationMutation();
   const [sendBulkInvitations, { isLoading: isSendingBulk }] =
     useBulkSendOrganizationInvitationsMutation();
 
-  // Single invitation form
-  const singleForm = useForm({
+  const singleForm = useForm<SingleFormValues>({
     initialValues: {
       email: '',
       role: 'MEMBER',
@@ -34,19 +58,19 @@ const InviteModal = ({ opened, onClose, orgId, onSuccess }) => {
     },
   });
 
-  // Bulk invitation form
-  const bulkForm = useForm({
+  const bulkForm = useForm<BulkFormValues>({
     initialValues: {
       role: 'MEMBER',
       message: '',
     },
   });
 
-  const handleSingleSubmit = async (values) => {
+  const handleSingleSubmit = async (values: SingleFormValues) => {
     try {
       await sendInvitation({
-        orgId,
-        ...values,
+        orgId: orgId ? parseInt(orgId) : 0,
+        email: values.email,
+        role: values.role as OrganizationUserRole,
       }).unwrap();
 
       notifications.show({
@@ -58,7 +82,8 @@ const InviteModal = ({ opened, onClose, orgId, onSuccess }) => {
       singleForm.reset();
       onClose();
       onSuccess?.();
-    } catch (error) {
+    } catch (err) {
+      const error = err as ApiError;
       if (error.data?.message) {
         singleForm.setFieldError('email', error.data.message);
       } else {
@@ -72,7 +97,6 @@ const InviteModal = ({ opened, onClose, orgId, onSuccess }) => {
   };
 
   const handleBulkSubmit = async () => {
-    // Parse emails from textarea
     const emailList = bulkEmails
       .split(/[\n,;]/)
       .map((email) => email.trim())
@@ -87,7 +111,6 @@ const InviteModal = ({ opened, onClose, orgId, onSuccess }) => {
       return;
     }
 
-    // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const invalidEmails = emailList.filter((email) => !emailRegex.test(email));
 
@@ -103,14 +126,13 @@ const InviteModal = ({ opened, onClose, orgId, onSuccess }) => {
     try {
       const invitations = emailList.map((email) => ({
         email,
-        role: bulkForm.values.role,
-        message: bulkForm.values.message || undefined,
+        role: bulkForm.values.role as OrganizationUserRole,
       }));
 
-      const result = await sendBulkInvitations({
-        orgId,
+      const result = (await sendBulkInvitations({
+        orgId: orgId ? parseInt(orgId) : 0,
         invitations,
-      }).unwrap();
+      }).unwrap()) as unknown as BulkInvitationResult;
 
       const successCount = result.successful?.length || 0;
       const failedCount = result.failed?.length || 0;
@@ -129,8 +151,6 @@ const InviteModal = ({ opened, onClose, orgId, onSuccess }) => {
           message: `${failedCount} invitation${failedCount !== 1 ? 's' : ''} failed. Check the details.`,
           color: 'yellow',
         });
-
-        // Show failed emails
         console.error('Failed invitations:', result.failed);
       }
 
@@ -171,28 +191,32 @@ const InviteModal = ({ opened, onClose, orgId, onSuccess }) => {
       size='lg'
       lockScroll={false}
       classNames={{
-        content: styles.modalContent,
-        header: styles.modalHeader,
+        content: cn(styles.modalContent),
+        header: cn(styles.modalHeader),
       }}
     >
-      <Tabs value={activeTab} onChange={setActiveTab} className={styles.tabsContainer}>
-        <Tabs.List className={styles.tabsList}>
-          <Tabs.Tab value='single' leftSection={<IconUserPlus size={16} />} className={styles.tab}>
+      <Tabs value={activeTab} onChange={setActiveTab} className={cn(styles.tabsContainer)}>
+        <Tabs.List className={cn(styles.tabsList)}>
+          <Tabs.Tab
+            value='single'
+            leftSection={<IconUserPlus size={16} />}
+            className={cn(styles.tab)}
+          >
             Single Invitation
           </Tabs.Tab>
-          <Tabs.Tab value='bulk' leftSection={<IconUsers size={16} />} className={styles.tab}>
+          <Tabs.Tab value='bulk' leftSection={<IconUsers size={16} />} className={cn(styles.tab)}>
             Bulk Invitations
           </Tabs.Tab>
         </Tabs.List>
 
-        <Tabs.Panel value='single' className={styles.tabPanel}>
+        <Tabs.Panel value='single' className={cn(styles.tabPanel)}>
           <form onSubmit={singleForm.onSubmit(handleSingleSubmit)}>
-            <Stack spacing='md'>
+            <Stack gap='md'>
               <TextInput
                 label='Email Address'
                 placeholder='member@example.com'
                 required
-                className={styles.formInput}
+                className={cn(styles.formInput)}
                 {...singleForm.getInputProps('email')}
               />
 
@@ -200,7 +224,7 @@ const InviteModal = ({ opened, onClose, orgId, onSuccess }) => {
                 label='Role'
                 data={roleOptions}
                 required
-                className={styles.formSelect}
+                className={cn(styles.formSelect)}
                 description='Choose the level of access for this member'
                 {...singleForm.getInputProps('role')}
               />
@@ -209,11 +233,11 @@ const InviteModal = ({ opened, onClose, orgId, onSuccess }) => {
                 label='Personal Message'
                 placeholder='Add a personal message to the invitation (optional)'
                 rows={3}
-                className={styles.formTextarea}
+                className={cn(styles.formTextarea)}
                 {...singleForm.getInputProps('message')}
               />
 
-              <Alert icon={<IconAlertCircle size={16} />} className={styles.infoAlert}>
+              <Alert icon={<IconAlertCircle size={16} />} className={cn(styles.infoAlert)}>
                 <Text size='sm'>
                   {
                     "The recipient will receive an email invitation to join your organization. If they don't have an account, they'll be prompted to create one."
@@ -221,15 +245,15 @@ const InviteModal = ({ opened, onClose, orgId, onSuccess }) => {
                 </Text>
               </Alert>
 
-              <Text size='xs' color='dimmed'>
+              <Text size='xs' c='dimmed'>
                 <strong>Role Permissions:</strong>
                 <br />• <strong>Member:</strong> Can view organization content and create events
                 <br />• <strong>Admin:</strong> Can manage members and organization settings
                 <br />• <strong>Owner:</strong> Full control including billing and deletion
               </Text>
             </Stack>
-            <div className={styles.buttonGroup}>
-              <Button variant='subtle' onClick={handleClose}>
+            <div className={cn(styles.buttonGroup)}>
+              <Button variant='secondary' onClick={handleClose}>
                 Cancel
               </Button>
               <Button type='submit' variant='primary' disabled={isSending}>
@@ -239,17 +263,17 @@ const InviteModal = ({ opened, onClose, orgId, onSuccess }) => {
           </form>
         </Tabs.Panel>
 
-        <Tabs.Panel value='bulk' className={styles.tabPanel}>
-          <Stack spacing='md'>
+        <Tabs.Panel value='bulk' className={cn(styles.tabPanel)}>
+          <Stack gap='md'>
             <Textarea
               label='Email Addresses'
               placeholder='Enter email addresses separated by commas, semicolons, or new lines'
               description='Example: john@example.com, jane@example.com'
               rows={6}
               value={bulkEmails}
-              onChange={(e) => setBulkEmails(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setBulkEmails(e.target.value)}
               required
-              className={styles.formTextarea}
+              className={cn(styles.formTextarea)}
             />
 
             <Select
@@ -257,7 +281,7 @@ const InviteModal = ({ opened, onClose, orgId, onSuccess }) => {
               description='All invitees will be assigned this role'
               data={roleOptions}
               required
-              className={styles.formSelect}
+              className={cn(styles.formSelect)}
               {...bulkForm.getInputProps('role')}
             />
 
@@ -265,19 +289,19 @@ const InviteModal = ({ opened, onClose, orgId, onSuccess }) => {
               label='Personal Message'
               placeholder='Add a personal message to all invitations (optional)'
               rows={3}
-              className={styles.formTextarea}
+              className={cn(styles.formTextarea)}
               {...bulkForm.getInputProps('message')}
             />
 
-            <Alert icon={<IconAlertCircle size={16} />} className={styles.infoAlert}>
+            <Alert icon={<IconAlertCircle size={16} />} className={cn(styles.infoAlert)}>
               <Text size='sm'>
                 You can invite up to 100 people at once. Each person will receive an individual
                 invitation email.
               </Text>
             </Alert>
           </Stack>
-          <div className={styles.buttonGroup}>
-            <Button variant='subtle' onClick={handleClose}>
+          <div className={cn(styles.buttonGroup)}>
+            <Button variant='secondary' onClick={handleClose}>
               Cancel
             </Button>
             <Button onClick={handleBulkSubmit} variant='primary' disabled={isSendingBulk}>

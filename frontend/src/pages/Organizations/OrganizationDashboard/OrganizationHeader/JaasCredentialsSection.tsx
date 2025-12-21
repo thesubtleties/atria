@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type ChangeEvent } from 'react';
 import {
   TextInput,
   Textarea,
@@ -19,29 +19,38 @@ import {
   IconShieldCheck,
   IconShieldX,
 } from '@tabler/icons-react';
-import { Button } from '../../../../shared/components/buttons/Button';
+import { Button } from '@/shared/components/buttons/Button';
 import {
   useUpdateJaasCredentialsMutation,
   useDeleteJaasCredentialsMutation,
-} from '../../../../app/features/organizations/api';
+} from '@/app/features/organizations/api';
 import { notifications } from '@mantine/notifications';
+import { cn } from '@/lib/cn';
 import styles from './styles/index.module.css';
+import type { OrganizationUserRole, ApiError } from '@/types';
 
-/**
- * JaasCredentialsSection - Manages JaaS (Jitsi as a Service) credentials for organization
- *
- * Features:
- * - Shows credential status to all org members
- * - ADMIN/OWNER can edit credentials
- * - Masked credential display (never exposes real keys)
- * - All three fields required together
- */
-const JaasCredentialsSection = ({ organization, currentUserRole }) => {
+type Organization = {
+  id: number;
+  has_jaas_credentials?: boolean;
+};
+
+type JaasCredentialsSectionProps = {
+  organization: Organization;
+  currentUserRole: OrganizationUserRole;
+};
+
+type DirtyFields = {
+  appId: boolean;
+  apiKey: boolean;
+  privateKey: boolean;
+};
+
+const JaasCredentialsSection = ({ organization, currentUserRole }: JaasCredentialsSectionProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [appId, setAppId] = useState('');
   const [apiKey, setApiKey] = useState('');
   const [privateKey, setPrivateKey] = useState('');
-  const [dirtyFields, setDirtyFields] = useState({
+  const [dirtyFields, setDirtyFields] = useState<DirtyFields>({
     appId: false,
     apiKey: false,
     privateKey: false,
@@ -53,10 +62,8 @@ const JaasCredentialsSection = ({ organization, currentUserRole }) => {
   const canEdit = currentUserRole === 'OWNER' || currentUserRole === 'ADMIN';
   const hasCredentials = organization.has_jaas_credentials;
 
-  // Reset form when switching edit mode
   useEffect(() => {
     if (isEditing && hasCredentials) {
-      // Show empty fields - user must type new values
       setAppId('');
       setApiKey('');
       setPrivateKey('');
@@ -69,23 +76,22 @@ const JaasCredentialsSection = ({ organization, currentUserRole }) => {
     }
   }, [isEditing, hasCredentials]);
 
-  const handleAppIdChange = (e) => {
+  const handleAppIdChange = (e: ChangeEvent<HTMLInputElement>) => {
     setAppId(e.target.value);
     setDirtyFields((prev) => ({ ...prev, appId: true }));
   };
 
-  const handleApiKeyChange = (e) => {
+  const handleApiKeyChange = (e: ChangeEvent<HTMLInputElement>) => {
     setApiKey(e.target.value);
     setDirtyFields((prev) => ({ ...prev, apiKey: true }));
   };
 
-  const handlePrivateKeyChange = (e) => {
+  const handlePrivateKeyChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setPrivateKey(e.target.value);
     setDirtyFields((prev) => ({ ...prev, privateKey: true }));
   };
 
   const handleSave = async () => {
-    // Validate: All three fields must be provided together
     if (dirtyFields.appId || dirtyFields.apiKey || dirtyFields.privateKey) {
       if (!appId.trim() || !apiKey.trim() || !privateKey.trim()) {
         notifications.show({
@@ -97,7 +103,6 @@ const JaasCredentialsSection = ({ organization, currentUserRole }) => {
       }
     }
 
-    // If nothing changed, just close edit mode
     if (!dirtyFields.appId && !dirtyFields.apiKey && !dirtyFields.privateKey) {
       setIsEditing(false);
       return;
@@ -122,7 +127,8 @@ const JaasCredentialsSection = ({ organization, currentUserRole }) => {
       setApiKey('');
       setPrivateKey('');
       setDirtyFields({ appId: false, apiKey: false, privateKey: false });
-    } catch (error) {
+    } catch (err) {
+      const error = err as ApiError;
       notifications.show({
         title: 'Error',
         message: error?.data?.message || 'Failed to update JaaS credentials',
@@ -150,7 +156,8 @@ const JaasCredentialsSection = ({ organization, currentUserRole }) => {
       setApiKey('');
       setPrivateKey('');
       setDirtyFields({ appId: false, apiKey: false, privateKey: false });
-    } catch (error) {
+    } catch (err) {
+      const error = err as ApiError;
       notifications.show({
         title: 'Error',
         message: error?.data?.message || 'Failed to remove JaaS credentials',
@@ -168,15 +175,14 @@ const JaasCredentialsSection = ({ organization, currentUserRole }) => {
   };
 
   return (
-    <Paper className={styles.settingsCard} withBorder>
-      <Stack spacing='md'>
-        {/* Header with status */}
-        <Group position='apart' align='center'>
-          <Group spacing='sm'>
-            <div className={styles.settingsIcon}>
+    <Paper className={cn(styles.settingsCard)} withBorder>
+      <Stack gap='md'>
+        <Group justify='space-between' align='center'>
+          <Group gap='sm'>
+            <div className={cn(styles.settingsIcon)}>
               <IconKey size={20} stroke={1.5} />
             </div>
-            <Text className={styles.settingLabel}>Jitsi Video Conferencing (JaaS)</Text>
+            <Text className={cn(styles.settingLabel)}>Jitsi Video Conferencing (JaaS)</Text>
             {hasCredentials ?
               <Badge
                 leftSection={<IconShieldCheck size={14} />}
@@ -193,7 +199,7 @@ const JaasCredentialsSection = ({ organization, currentUserRole }) => {
           </Group>
 
           {canEdit && !isEditing && (
-            <Button variant='subtle' onClick={() => setIsEditing(true)}>
+            <Button variant='secondary' onClick={() => setIsEditing(true)}>
               <IconKey size={16} />
               {hasCredentials ? 'Update Credentials' : 'Add Credentials'}
             </Button>
@@ -205,23 +211,21 @@ const JaasCredentialsSection = ({ organization, currentUserRole }) => {
               onClick={handleCancel}
               disabled={isUpdating || isDeleting}
               size='lg'
-              className={styles.cancelButton}
+              className={cn(styles.cancelButton)}
             >
               <IconX size={18} />
             </ActionIcon>
           )}
         </Group>
 
-        {/* Info text for non-editors */}
         {!canEdit && (
-          <Text size='xs' c='dimmed' className={styles.settingHint}>
+          <Text size='xs' c='dimmed' className={cn(styles.settingHint)}>
             JaaS enables Jitsi video conferencing in sessions
           </Text>
         )}
 
-        {/* Editing form (ADMIN/OWNER only) */}
         <Collapse in={isEditing && canEdit}>
-          <Stack spacing='sm'>
+          <Stack gap='sm'>
             <Alert icon={<IconAlertCircle size={16} />} color='blue' variant='light'>
               <Text size='xs' style={{ color: '#64748B' }}>
                 Credentials are encrypted and never exposed. All three fields are required.
@@ -259,7 +263,6 @@ const JaasCredentialsSection = ({ organization, currentUserRole }) => {
               description='Paste the complete RSA private key in PEM format'
             />
 
-            {/* Action buttons */}
             <div>
               <Button
                 variant='primary'
@@ -272,7 +275,6 @@ const JaasCredentialsSection = ({ organization, currentUserRole }) => {
               </Button>
             </div>
 
-            {/* Remove button below save if credentials exist */}
             {hasCredentials && (
               <div>
                 <Button

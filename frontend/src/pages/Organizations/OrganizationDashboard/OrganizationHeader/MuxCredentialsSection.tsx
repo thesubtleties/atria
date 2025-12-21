@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type ChangeEvent } from 'react';
 import {
   TextInput,
   Group,
@@ -18,28 +18,36 @@ import {
   IconShieldCheck,
   IconShieldX,
 } from '@tabler/icons-react';
-import { Button } from '../../../../shared/components/buttons/Button';
+import { Button } from '@/shared/components/buttons/Button';
 import {
   useUpdateMuxCredentialsMutation,
   useDeleteMuxCredentialsMutation,
-} from '../../../../app/features/organizations/api';
+} from '@/app/features/organizations/api';
 import { notifications } from '@mantine/notifications';
+import { cn } from '@/lib/cn';
 import styles from './styles/index.module.css';
+import type { OrganizationUserRole, ApiError } from '@/types';
 
-/**
- * MuxCredentialsSection - Manages Mux signing credentials for organization
- *
- * Features:
- * - Shows signing status to all org members
- * - ADMIN/OWNER can edit credentials
- * - Masked credential display (never exposes real keys)
- * - Smart save: Only sends fields that user actually changes
- */
-const MuxCredentialsSection = ({ organization, currentUserRole }) => {
+type Organization = {
+  id: number;
+  has_mux_signing_credentials?: boolean;
+};
+
+type MuxCredentialsSectionProps = {
+  organization: Organization;
+  currentUserRole: OrganizationUserRole;
+};
+
+type DirtyFields = {
+  keyId: boolean;
+  privateKey: boolean;
+};
+
+const MuxCredentialsSection = ({ organization, currentUserRole }: MuxCredentialsSectionProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [keyId, setKeyId] = useState('');
   const [privateKey, setPrivateKey] = useState('');
-  const [dirtyFields, setDirtyFields] = useState({ keyId: false, privateKey: false });
+  const [dirtyFields, setDirtyFields] = useState<DirtyFields>({ keyId: false, privateKey: false });
 
   const [updateMuxCredentials, { isLoading: isUpdating }] = useUpdateMuxCredentialsMutation();
   const [deleteMuxCredentials, { isLoading: isDeleting }] = useDeleteMuxCredentialsMutation();
@@ -47,12 +55,10 @@ const MuxCredentialsSection = ({ organization, currentUserRole }) => {
   const canEdit = currentUserRole === 'OWNER' || currentUserRole === 'ADMIN';
   const hasCredentials = organization.has_mux_signing_credentials;
 
-  // Reset form when switching edit mode
   useEffect(() => {
     if (isEditing && hasCredentials) {
-      // Show masked placeholders
-      setKeyId(''); // User must type new value
-      setPrivateKey(''); // User must type new value
+      setKeyId('');
+      setPrivateKey('');
       setDirtyFields({ keyId: false, privateKey: false });
     } else {
       setKeyId('');
@@ -61,18 +67,17 @@ const MuxCredentialsSection = ({ organization, currentUserRole }) => {
     }
   }, [isEditing, hasCredentials]);
 
-  const handleKeyIdChange = (e) => {
+  const handleKeyIdChange = (e: ChangeEvent<HTMLInputElement>) => {
     setKeyId(e.target.value);
     setDirtyFields((prev) => ({ ...prev, keyId: true }));
   };
 
-  const handlePrivateKeyChange = (e) => {
+  const handlePrivateKeyChange = (e: ChangeEvent<HTMLInputElement>) => {
     setPrivateKey(e.target.value);
     setDirtyFields((prev) => ({ ...prev, privateKey: true }));
   };
 
   const handleSave = async () => {
-    // Validate: Both fields must be provided if either is dirty
     if (dirtyFields.keyId || dirtyFields.privateKey) {
       if (!keyId.trim() || !privateKey.trim()) {
         notifications.show({
@@ -84,7 +89,6 @@ const MuxCredentialsSection = ({ organization, currentUserRole }) => {
       }
     }
 
-    // If nothing changed, just close edit mode
     if (!dirtyFields.keyId && !dirtyFields.privateKey) {
       setIsEditing(false);
       return;
@@ -107,7 +111,8 @@ const MuxCredentialsSection = ({ organization, currentUserRole }) => {
       setKeyId('');
       setPrivateKey('');
       setDirtyFields({ keyId: false, privateKey: false });
-    } catch (error) {
+    } catch (err) {
+      const error = err as ApiError;
       notifications.show({
         title: 'Error',
         message: error?.data?.message || 'Failed to update Mux credentials',
@@ -134,7 +139,8 @@ const MuxCredentialsSection = ({ organization, currentUserRole }) => {
       setKeyId('');
       setPrivateKey('');
       setDirtyFields({ keyId: false, privateKey: false });
-    } catch (error) {
+    } catch (err) {
+      const error = err as ApiError;
       notifications.show({
         title: 'Error',
         message: error?.data?.message || 'Failed to remove Mux credentials',
@@ -151,15 +157,14 @@ const MuxCredentialsSection = ({ organization, currentUserRole }) => {
   };
 
   return (
-    <Paper className={styles.settingsCard} withBorder>
-      <Stack spacing='md'>
-        {/* Header with status */}
-        <Group position='apart' align='center'>
-          <Group spacing='sm'>
-            <div className={styles.settingsIcon}>
+    <Paper className={cn(styles.settingsCard)} withBorder>
+      <Stack gap='md'>
+        <Group justify='space-between' align='center'>
+          <Group gap='sm'>
+            <div className={cn(styles.settingsIcon)}>
               <IconKey size={20} stroke={1.5} />
             </div>
-            <Text className={styles.settingLabel}>Mux Video Signing</Text>
+            <Text className={cn(styles.settingLabel)}>Mux Video Signing</Text>
             {hasCredentials ?
               <Badge
                 leftSection={<IconShieldCheck size={14} />}
@@ -176,7 +181,7 @@ const MuxCredentialsSection = ({ organization, currentUserRole }) => {
           </Group>
 
           {canEdit && !isEditing && (
-            <Button variant='subtle' onClick={() => setIsEditing(true)}>
+            <Button variant='secondary' onClick={() => setIsEditing(true)}>
               <IconKey size={16} />
               {hasCredentials ? 'Update Credentials' : 'Add Credentials'}
             </Button>
@@ -188,23 +193,21 @@ const MuxCredentialsSection = ({ organization, currentUserRole }) => {
               onClick={handleCancel}
               disabled={isUpdating || isDeleting}
               size='lg'
-              className={styles.cancelButton}
+              className={cn(styles.cancelButton)}
             >
               <IconX size={18} />
             </ActionIcon>
           )}
         </Group>
 
-        {/* Info text for non-editors */}
         {!canEdit && (
-          <Text size='xs' c='dimmed' className={styles.settingHint}>
+          <Text size='xs' c='dimmed' className={cn(styles.settingHint)}>
             Mux signing protects video streams with JWT authentication
           </Text>
         )}
 
-        {/* Editing form (ADMIN/OWNER only) */}
         <Collapse in={isEditing && canEdit}>
-          <Stack spacing='sm'>
+          <Stack gap='sm'>
             <Alert icon={<IconAlertCircle size={16} />} color='blue' variant='light'>
               <Text size='xs' style={{ color: '#64748B' }}>
                 Credentials are encrypted and never exposed. Enter new values to update.
@@ -238,7 +241,6 @@ const MuxCredentialsSection = ({ organization, currentUserRole }) => {
               }
             />
 
-            {/* Action buttons at bottom left */}
             <div>
               <Button
                 variant='primary'
@@ -251,7 +253,6 @@ const MuxCredentialsSection = ({ organization, currentUserRole }) => {
               </Button>
             </div>
 
-            {/* Remove button below save if credentials exist */}
             {hasCredentials && (
               <div>
                 <Button

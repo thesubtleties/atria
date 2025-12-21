@@ -6,41 +6,67 @@ import {
   useGetOrganizationInvitationsQuery,
   useCancelOrganizationInvitationMutation,
   useSendOrganizationInvitationMutation,
-} from '../../../../../app/features/organizations/api';
+} from '@/app/features/organizations/api';
 import { formatDistanceToNow } from 'date-fns';
+import { cn } from '@/lib/cn';
 import styles from './styles/index.module.css';
+import type { ApiError, OrganizationUserRole } from '@/types';
 
-const PendingInvitations = ({ orgId, searchQuery }) => {
+type PendingInvitationsProps = {
+  orgId?: string | undefined;
+  searchQuery: string;
+};
+
+type Invitation = {
+  id: number;
+  email: string;
+  role: string;
+  message?: string;
+  created_at: string;
+  expires_at: string;
+};
+
+type InvitationsResponse = {
+  invitations?: Invitation[];
+  total_pages?: number;
+};
+
+const PendingInvitations = ({ orgId, searchQuery }: PendingInvitationsProps) => {
   const [page, setPage] = useState(1);
   const perPage = 20;
 
-  const { data, isLoading, error, refetch } = useGetOrganizationInvitationsQuery({
-    orgId,
-    page,
-    per_page: perPage,
-  });
+  const { data, isLoading, error, refetch } = useGetOrganizationInvitationsQuery(
+    {
+      orgId: orgId ? parseInt(orgId) : 0,
+      page,
+      per_page: perPage,
+    },
+    { skip: !orgId },
+  );
+
+  const typedData = data as InvitationsResponse | undefined;
 
   const [cancelInvitation] = useCancelOrganizationInvitationMutation();
   const [resendInvitation] = useSendOrganizationInvitationMutation();
 
-  // Reset to page 1 when search changes
   useEffect(() => {
     setPage(1);
   }, [searchQuery]);
 
-  // Filter invitations based on search query
   const filteredInvitations = useMemo(() => {
-    if (!data?.invitations) return [];
+    if (!typedData?.invitations) return [];
 
-    if (!searchQuery) return data.invitations;
+    if (!searchQuery) return typedData.invitations;
 
     const query = searchQuery.toLowerCase();
-    return data.invitations.filter((invitation) => invitation.email?.toLowerCase().includes(query));
-  }, [data?.invitations, searchQuery]);
+    return typedData.invitations.filter((invitation) =>
+      invitation.email?.toLowerCase().includes(query),
+    );
+  }, [typedData?.invitations, searchQuery]);
 
-  const handleCancel = async (invitationId, email) => {
+  const handleCancel = async (invitationId: number, email: string) => {
     try {
-      await cancelInvitation({ orgId, invitationId }).unwrap();
+      await cancelInvitation({ orgId: orgId ? parseInt(orgId) : 0, invitationId }).unwrap();
       notifications.show({
         title: 'Success',
         message: `Cancelled invitation to ${email}`,
@@ -56,13 +82,12 @@ const PendingInvitations = ({ orgId, searchQuery }) => {
     }
   };
 
-  const handleResend = async (invitation) => {
+  const handleResend = async (invitation: Invitation) => {
     try {
       await resendInvitation({
-        orgId,
+        orgId: orgId ? parseInt(orgId) : 0,
         email: invitation.email,
-        role: invitation.role,
-        message: invitation.message,
+        role: invitation.role as OrganizationUserRole,
       }).unwrap();
 
       notifications.show({
@@ -71,7 +96,8 @@ const PendingInvitations = ({ orgId, searchQuery }) => {
         color: 'green',
       });
       refetch();
-    } catch (error) {
+    } catch (err) {
+      const error = err as ApiError;
       notifications.show({
         title: 'Error',
         message: error.data?.message || 'Failed to resend invitation',
@@ -80,20 +106,20 @@ const PendingInvitations = ({ orgId, searchQuery }) => {
     }
   };
 
-  const getStatusBadge = (invitation) => {
+  const getStatusBadge = (invitation: Invitation) => {
     const now = new Date();
     const expiresAt = new Date(invitation.expires_at);
 
     if (expiresAt < now) {
       return (
-        <Badge variant='unstyled' className={styles.statusBadge} data-status='expired'>
+        <Badge variant='light' className={cn(styles.statusBadge)} data-status='expired'>
           Expired
         </Badge>
       );
     }
 
     return (
-      <Badge variant='unstyled' className={styles.statusBadge} data-status='active'>
+      <Badge variant='light' className={cn(styles.statusBadge)} data-status='active'>
         Active
       </Badge>
     );
@@ -105,22 +131,22 @@ const PendingInvitations = ({ orgId, searchQuery }) => {
 
   if (error) {
     return (
-      <Center className={styles.emptyState}>
-        <Text color='red'>Failed to load invitations</Text>
+      <Center className={cn(styles.emptyState)}>
+        <Text c='red'>Failed to load invitations</Text>
       </Center>
     );
   }
 
   if (filteredInvitations.length === 0) {
     return (
-      <Center className={styles.emptyState}>
-        <div className={styles.emptyContent}>
+      <Center className={cn(styles.emptyState)}>
+        <div className={cn(styles.emptyContent)}>
           <IconMail size={48} color='#94a3b8' stroke={1.5} />
-          <Text size='lg' weight={500} color='dimmed' mt='md'>
+          <Text size='lg' fw={500} c='dimmed' mt='md'>
             {searchQuery ? 'No invitations found matching your search' : 'No pending invitations'}
           </Text>
           {!searchQuery && (
-            <Text size='sm' color='dimmed' mt='xs'>
+            <Text size='sm' c='dimmed' mt='xs'>
               Invitations you send will appear here
             </Text>
           )}
@@ -130,52 +156,52 @@ const PendingInvitations = ({ orgId, searchQuery }) => {
   }
 
   return (
-    <div className={styles.invitationsList}>
-      <div className={styles.tableContainer}>
-        <table className={styles.invitationsTable}>
+    <div className={cn(styles.invitationsList)}>
+      <div className={cn(styles.tableContainer)}>
+        <table className={cn(styles.invitationsTable)}>
           <thead>
             <tr>
               <th>Email</th>
-              <th className={styles.centerColumn}>Role</th>
-              <th className={styles.centerColumn}>Status</th>
-              <th className={styles.centerColumn}>Sent</th>
-              <th className={styles.centerColumn}>Actions</th>
+              <th className={cn(styles.centerColumn)}>Role</th>
+              <th className={cn(styles.centerColumn)}>Status</th>
+              <th className={cn(styles.centerColumn)}>Sent</th>
+              <th className={cn(styles.centerColumn)}>Actions</th>
             </tr>
           </thead>
           <tbody>
             {filteredInvitations.map((invitation) => (
-              <tr key={invitation.id} className={styles.invitationRow}>
+              <tr key={invitation.id} className={cn(styles.invitationRow)}>
                 <td>
-                  <Group spacing='xs'>
+                  <Group gap='xs'>
                     <IconMail size={16} color='#64748b' />
                     <Text size='sm'>{invitation.email}</Text>
                   </Group>
                 </td>
-                <td className={styles.centerCell}>
+                <td className={cn(styles.centerCell)}>
                   <Badge
-                    variant='unstyled'
-                    className={styles.roleBadge}
+                    variant='light'
+                    className={cn(styles.roleBadge)}
                     data-role={invitation.role}
                   >
                     {invitation.role}
                   </Badge>
                 </td>
-                <td className={styles.centerCell}>{getStatusBadge(invitation)}</td>
-                <td className={styles.centerCell}>
-                  <Group spacing='xs' justify='center'>
+                <td className={cn(styles.centerCell)}>{getStatusBadge(invitation)}</td>
+                <td className={cn(styles.centerCell)}>
+                  <Group gap='xs' justify='center'>
                     <IconClock size={14} color='#94a3b8' />
-                    <Text size='sm' color='dimmed'>
+                    <Text size='sm' c='dimmed'>
                       {formatDistanceToNow(new Date(invitation.created_at), { addSuffix: true })}
                     </Text>
                   </Group>
                 </td>
-                <td className={styles.centerCell}>
+                <td className={cn(styles.centerCell)}>
                   <Group gap={4} justify='center'>
                     <ActionIcon
                       variant='subtle'
                       onClick={() => handleResend(invitation)}
                       title='Resend invitation'
-                      className={styles.actionButton}
+                      className={cn(styles.actionButton)}
                     >
                       <IconRefresh size={16} />
                     </ActionIcon>
@@ -183,7 +209,7 @@ const PendingInvitations = ({ orgId, searchQuery }) => {
                       variant='subtle'
                       onClick={() => handleCancel(invitation.id, invitation.email)}
                       title='Cancel invitation'
-                      className={styles.cancelActionButton}
+                      className={cn(styles.cancelActionButton)}
                     >
                       <IconX size={16} />
                     </ActionIcon>
@@ -195,13 +221,13 @@ const PendingInvitations = ({ orgId, searchQuery }) => {
         </table>
       </div>
 
-      {data?.total_pages > 1 && (
-        <div className={styles.paginationWrapper}>
+      {typedData?.total_pages && typedData.total_pages > 1 && (
+        <div className={cn(styles.paginationWrapper)}>
           <Pagination
             value={page}
             onChange={setPage}
-            total={data.total_pages}
-            className={styles.pagination}
+            total={typedData.total_pages}
+            className={cn(styles.pagination)}
           />
         </div>
       )}
