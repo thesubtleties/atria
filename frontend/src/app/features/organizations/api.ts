@@ -111,6 +111,20 @@ interface UpdateJaasCredentialsParams extends OrganizationJaasCredentialsData {
   orgId: number;
 }
 
+/** Response for getOrganizations - paginated */
+interface GetOrganizationsResponse {
+  organizations: Organization[];
+  total_items: number;
+  total_pages: number;
+  current_page: number;
+  per_page: number;
+  self?: string;
+  first?: string;
+  last?: string;
+  next?: string;
+  prev?: string;
+}
+
 /** Generic message response */
 interface MessageResponse {
   message: string;
@@ -125,7 +139,7 @@ interface BulkInvitationResponse {
 
 export const organizationsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getOrganizations: builder.query<Organization[], void>({
+    getOrganizations: builder.query<GetOrganizationsResponse, void>({
       query: () => ({
         url: '/organizations',
       }),

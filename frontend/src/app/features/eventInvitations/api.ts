@@ -11,18 +11,21 @@ interface EventInvitation {
   email: string;
   role: string;
   status: string;
-  sent_at: string;
+  created_at: string;
   expires_at: string;
 }
 
 interface GetEventInvitationsResponse {
   invitations: EventInvitation[];
-  pagination: {
-    page: number;
-    per_page: number;
-    total: number;
-    total_pages: number;
-  };
+  total_items: number;
+  total_pages: number;
+  current_page: number;
+  per_page: number;
+  self?: string;
+  first?: string;
+  last?: string;
+  next?: string;
+  prev?: string;
 }
 
 interface SendEventInvitationParams {

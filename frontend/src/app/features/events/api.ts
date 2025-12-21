@@ -15,12 +15,15 @@ interface GetEventsParams {
 
 interface GetEventsResponse {
   events: Event[];
-  pagination: {
-    page: number;
-    per_page: number;
-    total: number;
-    total_pages: number;
-  };
+  total_items: number;
+  total_pages: number;
+  current_page: number;
+  per_page: number;
+  self?: string;
+  first?: string;
+  last?: string;
+  next?: string;
+  prev?: string;
 }
 
 interface GetEventParams {
@@ -45,12 +48,15 @@ interface GetEventUsersParams {
 
 interface GetEventUsersResponse {
   users: EventUser[];
-  pagination: {
-    page: number;
-    per_page: number;
-    total: number;
-    total_pages: number;
-  };
+  total_items: number;
+  total_pages: number;
+  current_page: number;
+  per_page: number;
+  self?: string;
+  first?: string;
+  last?: string;
+  next?: string;
+  prev?: string;
 }
 
 interface AddEventUserParams {

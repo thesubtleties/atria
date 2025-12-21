@@ -10,6 +10,25 @@ import type {
   PaginatedResponse,
 } from '@/types';
 
+/** Response for getChatRooms - paginated */
+interface GetChatRoomsResponse {
+  chat_rooms: ChatRoom[];
+  total_items: number;
+  total_pages: number;
+  current_page: number;
+  per_page: number;
+  self?: string;
+  first?: string;
+  last?: string;
+  next?: string;
+  prev?: string;
+}
+
+/** Response for getEventAdminChatRooms - wrapped object */
+interface GetEventAdminChatRoomsResponse {
+  chat_rooms: ChatRoomAdmin[];
+}
+
 /** Get chat rooms query parameters */
 interface GetChatRoomMessagesParams {
   chatRoomId: number;
@@ -47,7 +66,7 @@ interface ReorderChatRoomParams {
 export const chatApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // Get all chat rooms for an event
-    getChatRooms: builder.query<ChatRoom[], number>({
+    getChatRooms: builder.query<GetChatRoomsResponse, number>({
       query: (eventId) => ({
         url: `/events/${eventId}/chat-rooms`,
         method: 'GET',
@@ -56,7 +75,7 @@ export const chatApi = baseApi.injectEndpoints({
     }),
 
     // Get admin chat rooms (non-session)
-    getEventAdminChatRooms: builder.query<ChatRoomAdmin[], number>({
+    getEventAdminChatRooms: builder.query<GetEventAdminChatRoomsResponse, number>({
       query: (eventId) => ({
         url: `/events/${eventId}/chat-rooms/admin`,
         method: 'GET',

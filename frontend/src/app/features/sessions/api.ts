@@ -1,4 +1,5 @@
 import { baseApi } from '../api';
+import type { SessionSpeaker } from '@/types';
 
 interface Session {
   id: number;
@@ -16,15 +17,6 @@ interface Session {
   updated_at: string;
 }
 
-interface SessionSpeaker {
-  user_id: number;
-  full_name: string;
-  avatar_url?: string;
-  role: string;
-  order: number;
-  bio?: string;
-}
-
 interface GetSessionsParams {
   eventId: number;
   dayNumber?: number;
@@ -34,12 +26,15 @@ interface GetSessionsParams {
 
 interface GetSessionsResponse {
   sessions: Session[];
-  pagination: {
-    page: number;
-    per_page: number;
-    total: number;
-    total_pages: number;
-  };
+  total_items: number;
+  total_pages: number;
+  current_page: number;
+  per_page: number;
+  self?: string;
+  first?: string;
+  last?: string;
+  next?: string;
+  prev?: string;
 }
 
 interface GetSessionParams {
@@ -91,12 +86,15 @@ interface GetSessionSpeakersParams {
 
 interface GetSessionSpeakersResponse {
   speakers: SessionSpeaker[];
-  pagination: {
-    page: number;
-    per_page: number;
-    total: number;
-    total_pages: number;
-  };
+  total_items: number;
+  total_pages: number;
+  current_page: number;
+  per_page: number;
+  self?: string;
+  first?: string;
+  last?: string;
+  next?: string;
+  prev?: string;
 }
 
 interface AddSessionSpeakerParams {

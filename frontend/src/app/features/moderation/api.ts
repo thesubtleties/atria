@@ -8,10 +8,12 @@ interface ModerationStatusParams {
 interface ModerationStatusResponse {
   is_banned: boolean;
   is_chat_banned: boolean;
-  ban_reason?: string;
-  chat_ban_reason?: string;
-  banned_at?: string;
-  chat_banned_at?: string;
+  ban_reason: string | null;
+  chat_ban_reason: string | null;
+  banned_at: string | null;
+  chat_ban_until: string | null;
+  banned_by: number | null;
+  can_use_chat: boolean;
 }
 
 interface BanUserParams {
@@ -31,6 +33,7 @@ interface ChatBanUserParams {
   userId: number;
   reason: string;
   moderation_notes?: string;
+  duration_hours?: number;
 }
 
 interface ChatUnbanUserParams {
