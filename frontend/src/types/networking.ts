@@ -1,6 +1,16 @@
+/**
+ * Networking and connection types
+ *
+ * Convention: Response types use `| null` for nullable API fields.
+ */
+
 import type { ConnectionStatus, MessageStatus } from './enums';
 import type { SocialLinks } from './auth';
 import type { Patch } from './utils';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Connections
+// ─────────────────────────────────────────────────────────────────────────────
 
 /** User info in connection response (privacy-filtered) */
 export type ConnectionUser = {
@@ -45,6 +55,13 @@ export type ConnectionUpdateData = Patch<{ status: ConnectionStatus }>;
 // Direct Messages
 // ─────────────────────────────────────────────────────────────────────────────
 
+/** Other user in thread */
+export type ThreadParticipant = {
+  id: number;
+  full_name: string;
+  image_url: string | null;
+};
+
 /** Direct message thread between two users */
 export type DirectMessageThread = {
   id: number;
@@ -53,25 +70,18 @@ export type DirectMessageThread = {
   last_message_at: string;
   created_at: string;
   updated_at: string | null;
-
-  // Usually populated in response
-  other_user?: {
-    id: number;
-    full_name: string;
-    image_url: string | null;
-  };
-  last_message?: DirectMessage;
-  unread_count?: number;
-  /** Event IDs shared between both users - ALWAYS present from backend (empty array if none) */
-  shared_event_ids: number[];
-  other_user_in_event?: boolean;
-  is_new?: boolean;
+  // Populated by API - null if not included
+  other_user: ThreadParticipant | null;
+  last_message: DirectMessage | null;
+  unread_count: number;
+  shared_event_ids: number[]; // Empty array if none
+  other_user_in_event: boolean;
+  is_new: boolean;
 };
 
 /**
  * Thread with event scope metadata for filtering.
  * Extends DirectMessageThread with scope information returned by API.
- * Use this type for threads that can be filtered by event context.
  */
 export type FilterableThread = DirectMessageThread & {
   /** Event ID this thread is scoped to, or null for global threads */
@@ -87,11 +97,8 @@ export type DirectMessage = {
   encrypted_content: string | null;
   status: MessageStatus;
   created_at: string;
-  sender?: {
-    id: number;
-    full_name: string;
-    image_url: string | null;
-  };
+  // Populated by API - null if not included
+  sender: ThreadParticipant | null;
 };
 
 /** Direct message creation payload */
@@ -99,3 +106,22 @@ export type DirectMessageCreateData = {
   content: string;
   encrypted_content?: string;
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Type Guards
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Check if connection is pending */
+export function isPendingConnection(connection: Connection): boolean {
+  return connection.status === 'pending';
+}
+
+/** Check if connection is accepted */
+export function isAcceptedConnection(connection: Connection): boolean {
+  return connection.status === 'accepted';
+}
+
+/** Check if thread has unread messages */
+export function hasUnreadMessages(thread: DirectMessageThread): boolean {
+  return thread.unread_count > 0;
+}

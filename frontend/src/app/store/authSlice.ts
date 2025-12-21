@@ -1,11 +1,14 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import type { User, AuthState } from '@/types';
+import type { User, AuthState, UserProfileUpdate, SocialLinks } from '@/types';
 
 const initialState: AuthState = {
   user: null,
   isAuthenticated: false,
   authChecked: false,
 };
+
+/** Profile update payload with computed full_name */
+type ProfileUpdatePayload = UserProfileUpdate & { full_name?: string };
 
 const authSlice = createSlice({
   name: 'auth',
@@ -16,9 +19,20 @@ const authSlice = createSlice({
       state.isAuthenticated = !!action.payload;
       state.authChecked = true;
     },
-    updateUserProfile: (state, action: PayloadAction<Partial<User>>) => {
+    updateUserProfile: (state, action: PayloadAction<ProfileUpdatePayload>) => {
       if (state.user) {
-        state.user = { ...state.user, ...action.payload };
+        const { social_links, ...rest } = action.payload;
+        // Merge social_links properly (partial update)
+        const mergedSocialLinks: SocialLinks | undefined =
+          social_links ?
+            { ...state.user.social_links, ...social_links }
+          : undefined;
+
+        state.user = {
+          ...state.user,
+          ...rest,
+          ...(mergedSocialLinks && { social_links: mergedSocialLinks }),
+        };
       }
     },
     logout: (state) => {

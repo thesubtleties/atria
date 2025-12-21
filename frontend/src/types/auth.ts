@@ -1,17 +1,41 @@
+/**
+ * Authentication and user-related types
+ *
+ * Convention: Properties use `| null` for values that may not exist in the database.
+ * Optional parameters (`?:`) are only used for function/API params that can be omitted.
+ */
+
 import type { EventUserRole } from './enums';
 
-/** Social links structure stored as JSON */
+// ─────────────────────────────────────────────────────────────────────────────
+// Social & Privacy
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Social links stored as JSON - all fields nullable */
 export type SocialLinks = {
-  linkedin?: string | null;
-  twitter?: string | null;
-  github?: string | null;
-  website?: string | null;
-  youtube?: string | null;
-  tiktok?: string | null;
-  instagram?: string | null;
-  facebook?: string | null;
-  other?: string | null;
+  linkedin: string | null;
+  twitter: string | null;
+  github: string | null;
+  website: string | null;
+  youtube: string | null;
+  tiktok: string | null;
+  instagram: string | null;
+  facebook: string | null;
+  other: string | null;
 };
+
+/** Empty social links for initialization */
+export const EMPTY_SOCIAL_LINKS: SocialLinks = {
+  linkedin: null,
+  twitter: null,
+  github: null,
+  website: null,
+  youtube: null,
+  tiktok: null,
+  instagram: null,
+  facebook: null,
+  other: null,
+} as const;
 
 /** Privacy settings stored as JSON on user */
 export type PrivacySettings = {
@@ -23,6 +47,21 @@ export type PrivacySettings = {
   show_company: boolean;
   show_bio: boolean;
 };
+
+/** Default privacy settings */
+export const DEFAULT_PRIVACY_SETTINGS: PrivacySettings = {
+  email_visibility: 'connections_organizers',
+  show_public_email: false,
+  public_email: null,
+  allow_connection_requests: 'event_attendees',
+  show_social_links: 'connections',
+  show_company: true,
+  show_bio: true,
+} as const;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// User Types
+// ─────────────────────────────────────────────────────────────────────────────
 
 /** Core user model returned by API */
 export type User = {
@@ -61,12 +100,7 @@ export type UserDetail = User & {
 };
 
 /** Basic user info for nested responses */
-export type UserBasic = {
-  id: number;
-  email: string;
-  first_name: string;
-  last_name: string;
-};
+export type UserBasic = Pick<User, 'id' | 'email' | 'first_name' | 'last_name'>;
 
 /** User with role info */
 export type UserWithRole = {
@@ -76,7 +110,11 @@ export type UserWithRole = {
   role: EventUserRole;
 };
 
-/** User profile update payload */
+// ─────────────────────────────────────────────────────────────────────────────
+// API Payloads
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** User profile update payload - optional fields can be omitted */
 export type UserProfileUpdate = {
   first_name?: string;
   last_name?: string;
@@ -93,7 +131,7 @@ export type LoginCredentials = {
   password: string;
 };
 
-/** Signup data */
+/** Signup data - optional fields can be omitted */
 export type SignupData = {
   email: string;
   password: string;
@@ -114,3 +152,22 @@ export type PasswordResetData = {
   token: string;
   password: string;
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Type Guards
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Check if user has a specific role */
+export function hasRole(user: UserWithRole, role: EventUserRole): boolean {
+  return user.role === role;
+}
+
+/** Check if user is admin or organizer */
+export function isAdminOrOrganizer(user: UserWithRole): boolean {
+  return user.role === 'ADMIN' || user.role === 'ORGANIZER';
+}
+
+/** Check if user can manage event (admin, organizer, or moderator) */
+export function canManageEvent(user: UserWithRole): boolean {
+  return ['ADMIN', 'ORGANIZER', 'MODERATOR'].includes(user.role);
+}

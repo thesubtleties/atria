@@ -1,5 +1,15 @@
+/**
+ * Chat-related types
+ *
+ * Convention: Response types use `| null` for nullable API fields.
+ */
+
 import type { ChatRoomType } from './enums';
 import type { Patch } from './utils';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Chat Rooms
+// ─────────────────────────────────────────────────────────────────────────────
 
 /** Chat room */
 export type ChatRoom = {
@@ -39,6 +49,41 @@ export type ChatRoomAdmin = ChatRoomDetail & {
   last_activity: string | null;
 };
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Chat Messages
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** User info in chat context */
+export type ChatUser = {
+  id: number;
+  full_name: string;
+  image_url: string | null;
+};
+
+/** Chat message */
+export type ChatMessage = {
+  id: number;
+  room_id: number;
+  user_id: number;
+  content: string;
+  created_at: string;
+  deleted_at: string | null;
+  deleted_by_id: number | null;
+  is_deleted: boolean;
+  user: ChatUser;
+  deleted_by: Pick<ChatUser, 'id' | 'full_name'> | null;
+};
+
+/** Chat message for real-time socket events - subset of ChatMessage */
+export type ChatMessageSocket = Pick<
+  ChatMessage,
+  'id' | 'room_id' | 'user_id' | 'content' | 'created_at' | 'user'
+>;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// API Payloads
+// ─────────────────────────────────────────────────────────────────────────────
+
 /** Chat room creation payload */
 export type ChatRoomCreateData = {
   name: string;
@@ -58,38 +103,36 @@ type ChatRoomMutableFields = {
 /** Chat room update payload - requires at least one field */
 export type ChatRoomUpdateData = Patch<ChatRoomMutableFields>;
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Chat Messages
-// ─────────────────────────────────────────────────────────────────────────────
-
-/** Chat message */
-export type ChatMessage = {
-  id: number;
-  room_id: number;
-  user_id: number;
-  content: string;
-  created_at: string;
-  deleted_at: string | null;
-  deleted_by_id: number | null;
-  is_deleted: boolean;
-  user: {
-    id: number;
-    full_name: string;
-    image_url: string | null;
-  };
-  deleted_by: {
-    id: number;
-    full_name: string;
-  } | null;
-};
-
 /** Chat message creation payload */
 export type ChatMessageCreateData = {
   content: string;
 };
 
-/** Chat message for real-time socket events - subset of ChatMessage */
-export type ChatMessageSocket = Pick<
-  ChatMessage,
-  'id' | 'room_id' | 'user_id' | 'content' | 'created_at' | 'user'
->;
+// ─────────────────────────────────────────────────────────────────────────────
+// Type Guards
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Check if chat room is session-specific */
+export function isSessionRoom(room: ChatRoom): room is ChatRoom & { session_id: number } {
+  return room.session_id !== null;
+}
+
+/** Check if chat room is event-wide */
+export function isEventRoom(room: ChatRoom): boolean {
+  return room.session_id === null;
+}
+
+/** Check if message was deleted */
+export function isDeletedMessage(message: ChatMessage): boolean {
+  return message.is_deleted || message.deleted_at !== null;
+}
+
+/** Check if room is public type */
+export function isPublicRoom(room: ChatRoom): boolean {
+  return room.room_type === 'PUBLIC' || room.room_type === 'GLOBAL';
+}
+
+/** Check if room is backstage/private type */
+export function isPrivateRoom(room: ChatRoom): boolean {
+  return room.room_type === 'BACKSTAGE' || room.room_type === 'ADMIN' || room.room_type === 'GREEN_ROOM';
+}
