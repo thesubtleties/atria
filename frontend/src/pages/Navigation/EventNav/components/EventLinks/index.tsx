@@ -1,12 +1,12 @@
 import { NavLink } from '@mantine/core';
 import { NavLink as RouterNavLink, useLocation } from 'react-router-dom';
 import { useMemo } from 'react';
-import type { EventDetail } from '@/types/events';
+import type { Event, EventDetail } from '@/types/events';
 import styles from './EventLinks.module.css';
 
 type EventLinksProps = {
   eventId: string | number;
-  event: EventDetail | null;
+  event: Event | EventDetail | null;
   onMobileNavClick?: () => void;
 };
 
@@ -38,7 +38,7 @@ export const EventLinks = ({ eventId, event, onMobileNavClick }: EventLinksProps
       };
     }
 
-    if (event.sessions && event.sessions.length > 0) {
+    if ('sessions' in event && event.sessions && event.sessions.length > 0) {
       const sortedSessions = [...event.sessions].sort((a, b) => {
         if (a.day_number !== b.day_number) {
           return a.day_number - b.day_number;
@@ -46,16 +46,19 @@ export const EventLinks = ({ eventId, event, onMobileNavClick }: EventLinksProps
         return a.start_time.localeCompare(b.start_time);
       });
 
-      return {
-        id: sortedSessions[0].id,
-        label: 'Main Stage',
-      };
+      const firstSession = sortedSessions[0];
+      if (firstSession) {
+        return {
+          id: firstSession.id,
+          label: 'Main Stage',
+        };
+      }
     }
 
     return null;
   }, [event]);
 
-  const hasActiveSponsors = (event?.sponsors_count ?? 0) > 0;
+  const hasActiveSponsors = ('sponsors_count' in (event ?? {}) ? (event as EventDetail).sponsors_count : 0) > 0;
 
   return (
     <div className={styles.container ?? ''}>

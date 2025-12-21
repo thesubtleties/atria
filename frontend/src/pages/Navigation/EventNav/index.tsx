@@ -4,16 +4,20 @@ import { IconHeart } from '@tabler/icons-react';
 import styles from './EventNav.module.css';
 import { EventLinks } from './components/EventLinks';
 import { AdminSection } from './components/AdminSection';
-import type { Event } from '@/types/events';
+import type { Event, EventDetail } from '@/types/events';
 
 type EventNavProps = {
-  eventId: string | number;
-  event: Event | null;
+  eventId: string | number | undefined;
+  event: Event | EventDetail | null | undefined;
   isAdmin: boolean;
   onMobileNavClick?: () => void;
 };
 
 const EventNavComponent = ({ eventId, event, isAdmin, onMobileNavClick }: EventNavProps) => {
+  if (!eventId) {
+    return null;
+  }
+
   return (
     <div className={styles.navWrapper ?? ''}>
       <ScrollArea className={styles.container ?? ''}>
@@ -23,8 +27,17 @@ const EventNavComponent = ({ eventId, event, isAdmin, onMobileNavClick }: EventN
               Event Menu
             </Text>
           </div>
-          <EventLinks eventId={eventId} event={event} onMobileNavClick={onMobileNavClick} />
-          {isAdmin && <AdminSection eventId={eventId} onMobileNavClick={onMobileNavClick} />}
+          <EventLinks
+            eventId={eventId}
+            event={event ?? null}
+            {...(onMobileNavClick ? { onMobileNavClick } : {})}
+          />
+          {isAdmin && (
+            <AdminSection
+              eventId={eventId}
+              {...(onMobileNavClick ? { onMobileNavClick } : {})}
+            />
+          )}
         </Stack>
       </ScrollArea>
 

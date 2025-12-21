@@ -20,7 +20,7 @@ export const CenterContent = (_props: CenterContentProps) => {
 
   return (
     <div className={styles.centerContent ?? ''}>
-      {'subtitle' in titleData && titleData.subtitle ?
+      {titleData.subtitle ?
         <TitleWithSubtitle title={titleData.text} subtitle={titleData.subtitle} />
       : <SimpleTitle>{titleData.text}</SimpleTitle>}
     </div>
