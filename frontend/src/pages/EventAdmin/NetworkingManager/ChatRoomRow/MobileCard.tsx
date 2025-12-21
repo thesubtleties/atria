@@ -98,4 +98,3 @@ const MobileCard = ({ room, color, onEdit, onViewChat, onToggle, onDelete }: Mob
 };
 
 export default MobileCard;
-

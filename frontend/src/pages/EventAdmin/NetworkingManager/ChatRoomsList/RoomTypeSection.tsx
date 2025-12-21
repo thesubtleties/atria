@@ -93,4 +93,3 @@ const RoomTypeSection = ({
 };
 
 export default RoomTypeSection;
-

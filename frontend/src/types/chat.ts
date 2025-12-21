@@ -134,5 +134,7 @@ export function isPublicRoom(room: ChatRoom): boolean {
 
 /** Check if room is backstage/private type */
 export function isPrivateRoom(room: ChatRoom): boolean {
-  return room.room_type === 'BACKSTAGE' || room.room_type === 'ADMIN' || room.room_type === 'GREEN_ROOM';
+  return (
+    room.room_type === 'BACKSTAGE' || room.room_type === 'ADMIN' || room.room_type === 'GREEN_ROOM'
+  );
 }

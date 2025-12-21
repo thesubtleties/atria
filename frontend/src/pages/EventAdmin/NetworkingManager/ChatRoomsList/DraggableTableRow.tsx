@@ -28,4 +28,3 @@ const DraggableTableRow = ({ id, room: _room, children }: DraggableTableRowProps
 };
 
 export default DraggableTableRow;
-

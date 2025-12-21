@@ -4,6 +4,7 @@ import { ROUTES } from '../constants/routes';
 
 type TitleData = {
   text: string;
+  subtitle?: string;
 };
 
 type UseNavigationTitleResult = {

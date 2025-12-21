@@ -23,4 +23,3 @@ const DraggableCard = ({ id, room, color, onEdit }: DraggableCardProps) => {
 };
 
 export default DraggableCard;
-

@@ -24,9 +24,16 @@ import { notifications } from '@mantine/notifications';
 import { openConfirmationModal } from '@/shared/components/modals/ConfirmationModal';
 import { useUpdateEventUserMutation } from '@/app/features/events/api';
 import { formatTime, capitalizeWords, truncateText } from '@/shared/utils/formatting';
+import type { EventUser, EventUserRole } from '@/types';
 import styles from './styles.module.css';
 
-const SpeakerRow = ({ speaker, onEditSpeaker, currentUserRole }) => {
+type SpeakerRowProps = {
+  speaker: EventUser;
+  onEditSpeaker: (speaker: EventUser) => void;
+  currentUserRole: EventUserRole;
+};
+
+const SpeakerRow = ({ speaker, onEditSpeaker, currentUserRole }: SpeakerRowProps) => {
   const navigate = useNavigate();
   const [updateUser] = useUpdateEventUserMutation();
 
@@ -37,19 +44,19 @@ const SpeakerRow = ({ speaker, onEditSpeaker, currentUserRole }) => {
       cancelLabel: 'Cancel',
       isDangerous: true,
       children: (
-        <Stack spacing='md'>
+        <Stack gap='md'>
           <Text size='sm'>
             Remove {speaker.full_name} as a speaker? They will become a regular attendee.
           </Text>
-          {speaker.session_count > 0 && (
+          {(speaker.session_count ?? 0) > 0 && (
             <Alert icon={<IconAlertCircle size={16} />} color='red' variant='light'>
               <Text size='sm' fw={500}>
                 Warning: Session Removal
               </Text>
               <Text size='sm' mt='xs'>
                 This will also remove them from {speaker.session_count} session
-                {speaker.session_count > 1 ? 's' : ''} they are currently assigned to speak at. This
-                action cannot be undone automatically.
+                {(speaker.session_count ?? 0) > 1 ? 's' : ''} they are currently assigned to speak
+                at. This action cannot be undone automatically.
               </Text>
             </Alert>
           )}
@@ -69,9 +76,20 @@ const SpeakerRow = ({ speaker, onEditSpeaker, currentUserRole }) => {
             color: 'green',
           });
         } catch (error) {
+          const errorMessage =
+            (
+              error &&
+              typeof error === 'object' &&
+              'data' in error &&
+              error.data &&
+              typeof error.data === 'object' &&
+              'message' in error.data
+            ) ?
+              String(error.data.message)
+            : 'Failed to update role';
           notifications.show({
             title: 'Error',
-            message: error.data?.message || 'Failed to update role',
+            message: errorMessage,
             color: 'red',
           });
         }
@@ -81,20 +99,19 @@ const SpeakerRow = ({ speaker, onEditSpeaker, currentUserRole }) => {
 
   const canManage = ['ADMIN', 'ORGANIZER'].includes(currentUserRole);
 
-  // Display the speaker-specific title/bio or fall back to user profile
-  const displayTitle = speaker.speaker_title || speaker.title || 'No title';
-  const displayBio = speaker.speaker_bio || speaker.bio || '';
+  const displayTitle = speaker.speaker_title ?? speaker.title ?? 'No title';
+  const displayBio = speaker.speaker_bio ?? '';
 
   return (
     <Table.Tr>
       <Table.Td>
         <Group gap='sm' wrap='nowrap'>
           <Avatar
-            src={speaker.image_url}
+            src={speaker.image_url ?? null}
             alt={speaker.full_name}
             radius='xl'
             size='md'
-            className={styles.userAvatar}
+            className={styles.userAvatar ?? ''}
           >
             {speaker.first_name?.[0]}
             {speaker.last_name?.[0]}
@@ -111,7 +128,7 @@ const SpeakerRow = ({ speaker, onEditSpeaker, currentUserRole }) => {
       </Table.Td>
       <Table.Td>
         <Group gap='xs' wrap='nowrap'>
-          <Text size='sm' className={styles.titleText}>
+          <Text size='sm' className={styles.titleText ?? ''}>
             {displayTitle}
           </Text>
           {speaker.speaker_title && speaker.title && speaker.speaker_title !== speaker.title && (
@@ -138,10 +155,10 @@ const SpeakerRow = ({ speaker, onEditSpeaker, currentUserRole }) => {
         </Group>
       </Table.Td>
       <Table.Td>
-        <Text size='sm'>{speaker.company_name || '-'}</Text>
+        <Text size='sm'>{speaker.company_name ?? '-'}</Text>
       </Table.Td>
       <Table.Td style={{ textAlign: 'center' }}>
-        {speaker.session_count > 0 ?
+        {(speaker.session_count ?? 0) > 0 ?
           <Tooltip
             label={
               <Stack gap='xs'>
@@ -173,7 +190,7 @@ const SpeakerRow = ({ speaker, onEditSpeaker, currentUserRole }) => {
               variant='light'
               color='green'
               radius='sm'
-              className={styles.sessionBadge}
+              className={styles.sessionBadge ?? ''}
               style={{ cursor: 'pointer' }}
             >
               {speaker.session_count}
@@ -191,7 +208,7 @@ const SpeakerRow = ({ speaker, onEditSpeaker, currentUserRole }) => {
       </Table.Td>
       <Table.Td>
         <Tooltip label={displayBio} multiline maw={300}>
-          <Text size='sm' lineClamp={2} className={styles.bioText}>
+          <Text size='sm' lineClamp={2} className={styles.bioText ?? ''}>
             {truncateText(displayBio, {
               maxLength: 100,
               fallback: 'No bio provided',
@@ -203,7 +220,7 @@ const SpeakerRow = ({ speaker, onEditSpeaker, currentUserRole }) => {
       <Table.Td style={{ textAlign: 'center' }}>
         <Menu shadow='md' width={200} position='bottom-end'>
           <Menu.Target>
-            <ActionIcon variant='subtle' color='gray' className={styles.actionButton}>
+            <ActionIcon variant='subtle' color='gray' className={styles.actionButton ?? ''}>
               <IconDots size={16} />
             </ActionIcon>
           </Menu.Target>
@@ -246,7 +263,6 @@ const SpeakerRow = ({ speaker, onEditSpeaker, currentUserRole }) => {
             <Menu.Item
               leftSection={<IconMessage size={16} />}
               onClick={() => {
-                // TODO: Implement direct message
                 notifications.show({
                   title: 'Coming Soon',
                   message: 'Direct messaging will be available soon',

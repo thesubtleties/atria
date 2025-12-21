@@ -89,11 +89,7 @@ const EventCard = ({ event }: EventCardProps) => {
       </div>
 
       <div className={cn(styles.cardFooter)}>
-        <Badge
-          variant='light'
-          className={cn(styles.typeBadge)}
-          data-type={event.event_type}
-        >
+        <Badge variant='light' className={cn(styles.typeBadge)} data-type={event.event_type}>
           {event.event_type === 'conference' ? 'Conference' : 'Single Session'}
         </Badge>
       </div>

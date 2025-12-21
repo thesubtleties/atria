@@ -195,4 +195,3 @@ const ChatRoomModal = ({ opened, onClose, mode, room, eventId }: ChatRoomModalPr
 };
 
 export default ChatRoomModal;
-

@@ -1,39 +1,53 @@
 import { useState } from 'react';
 import { Modal, Select, Group, Stack, Text, Alert, Box } from '@mantine/core';
-import { LoadingContent } from '../../../../shared/components/loading';
+import { LoadingContent } from '@/shared/components/loading';
 import { useMediaQuery } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { useGetEventUsersAdminQuery, useUpdateEventUserMutation } from '@/app/features/events/api';
 import { IconInfoCircle, IconUserPlus } from '@tabler/icons-react';
-import { Button } from '../../../../shared/components/buttons';
+import { Button } from '@/shared/components/buttons';
+import type { EventUser } from '@/types';
 import styles from './styles.module.css';
 
-const AddSpeakerModal = ({ opened, onClose, eventId, onSuccess }) => {
-  const [selectedUserId, setSelectedUserId] = useState(null);
+type AddSpeakerModalProps = {
+  opened: boolean;
+  onClose: () => void;
+  eventId: number;
+  onSuccess?: () => void;
+};
+
+type UserOption = {
+  value: string;
+  label: string;
+  email: string;
+  role: string;
+};
+
+const AddSpeakerModal = ({ opened, onClose, eventId, onSuccess }: AddSpeakerModalProps) => {
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
   const [updateUser, { isLoading: isUpdating }] = useUpdateEventUserMutation();
   const isMobile = useMediaQuery('(max-width: 768px)');
 
-  // Fetch non-speaker users
   const { data: usersData, isLoading } = useGetEventUsersAdminQuery(
     {
       eventId,
-      per_page: 100, // Get more users for selection
+      per_page: 100,
     },
     {
       skip: !opened,
     },
   );
 
-  // Filter out speakers and format for select
-  const availableUsers =
-    usersData?.event_users
-      ?.filter((user) => user.role !== 'SPEAKER')
+  const eventUsers = (usersData as { event_users?: EventUser[] })?.event_users ?? [];
+  const availableUsers: UserOption[] =
+    eventUsers
+      .filter((user) => user.role !== 'SPEAKER')
       .map((user) => ({
         value: user.user_id.toString(),
         label: `${user.full_name} (${user.role})`,
         email: user.email,
         role: user.role,
-      })) || [];
+      })) ?? [];
 
   const handleSubmit = async () => {
     if (!selectedUserId) {
@@ -58,11 +72,22 @@ const AddSpeakerModal = ({ opened, onClose, eventId, onSuccess }) => {
         color: 'green',
       });
 
-      onSuccess();
+      onSuccess?.();
     } catch (error) {
+      const errorMessage =
+        (
+          error &&
+          typeof error === 'object' &&
+          'data' in error &&
+          error.data &&
+          typeof error.data === 'object' &&
+          'message' in error.data
+        ) ?
+          String(error.data.message)
+        : 'Failed to add speaker';
       notifications.show({
         title: 'Error',
-        message: error.data?.message || 'Failed to add speaker',
+        message: errorMessage,
         color: 'red',
       });
     }
@@ -82,16 +107,16 @@ const AddSpeakerModal = ({ opened, onClose, eventId, onSuccess }) => {
       centered
       lockScroll={false}
       classNames={{
-        content: styles.modalContent,
-        header: styles.modalHeader,
-        body: styles.modalBody,
+        content: styles.modalContent ?? '',
+        header: styles.modalHeader ?? '',
+        body: styles.modalBody ?? '',
       }}
     >
-      <Stack className={styles.formStack}>
+      <Stack className={styles.formStack ?? ''}>
         <Alert
           icon={<IconInfoCircle size={14} />}
           color='blue'
-          className={styles.infoAlert}
+          className={styles.infoAlert ?? ''}
           styles={{
             root: { padding: 'var(--space-sm) !important' },
             message: { fontSize: 'var(--text-xs) !important' },
@@ -108,7 +133,7 @@ const AddSpeakerModal = ({ opened, onClose, eventId, onSuccess }) => {
             <LoadingContent message='Loading attendees...' />
           </Box>
         : availableUsers.length === 0 ?
-          <Alert color='yellow' className={styles.warningAlert}>
+          <Alert color='yellow' className={styles.warningAlert ?? ''}>
             <Text size='sm'>
               No non-speaker attendees found. Invite more people to your event first.
             </Text>
@@ -118,23 +143,23 @@ const AddSpeakerModal = ({ opened, onClose, eventId, onSuccess }) => {
               label='Select User'
               placeholder='Choose an attendee to make speaker'
               data={availableUsers}
-              value={selectedUserId?.toString()}
-              onChange={(value) => setSelectedUserId(value ? parseInt(value) : null)}
+              value={selectedUserId?.toString() ?? null}
+              onChange={(value) => setSelectedUserId(value ? parseInt(value, 10) : null)}
               searchable
               nothingFoundMessage='No users found'
               required
               leftSection={<IconUserPlus size={16} />}
-              className={styles.selectInput}
+              className={styles.selectInput ?? ''}
               size='sm'
               classNames={{
-                dropdown: styles.selectDropdown,
+                dropdown: styles.selectDropdown ?? '',
               }}
               renderOption={({ option }) => (
                 <Group justify='space-between' wrap='nowrap'>
                   <div>
                     <Text size='xs'>{option.label}</Text>
                     <Text size='xs' c='dimmed'>
-                      {option.email}
+                      {(option as UserOption).email}
                     </Text>
                   </div>
                 </Group>
@@ -145,7 +170,7 @@ const AddSpeakerModal = ({ opened, onClose, eventId, onSuccess }) => {
       </Stack>
 
       {availableUsers.length > 0 && !isLoading && (
-        <div className={styles.buttonGroup}>
+        <div className={styles.buttonGroup ?? ''}>
           <Button variant='subtle' onClick={handleClose}>
             Cancel
           </Button>

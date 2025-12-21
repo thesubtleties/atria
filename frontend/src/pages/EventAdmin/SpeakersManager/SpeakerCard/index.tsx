@@ -27,9 +27,16 @@ import { notifications } from '@mantine/notifications';
 import { openConfirmationModal } from '@/shared/components/modals/ConfirmationModal';
 import { useUpdateEventUserMutation } from '@/app/features/events/api';
 import { formatTime, capitalizeWords, truncateBio } from '@/shared/utils/formatting';
+import type { EventUser, EventUserRole } from '@/types';
 import styles from './styles.module.css';
 
-const SpeakerCard = ({ speaker, onEditSpeaker, currentUserRole }) => {
+type SpeakerCardProps = {
+  speaker: EventUser;
+  onEditSpeaker: (speaker: EventUser) => void;
+  currentUserRole: EventUserRole;
+};
+
+const SpeakerCard = ({ speaker, onEditSpeaker, currentUserRole }: SpeakerCardProps) => {
   const navigate = useNavigate();
   const [updateUser] = useUpdateEventUserMutation();
   const [sessionsExpanded, setSessionsExpanded] = useState(false);
@@ -41,19 +48,19 @@ const SpeakerCard = ({ speaker, onEditSpeaker, currentUserRole }) => {
       cancelLabel: 'Cancel',
       isDangerous: true,
       children: (
-        <Stack spacing='md'>
+        <Stack gap='md'>
           <Text size='sm'>
             Remove {speaker.full_name} as a speaker? They will become a regular attendee.
           </Text>
-          {speaker.session_count > 0 && (
+          {(speaker.session_count ?? 0) > 0 && (
             <Alert icon={<IconAlertCircle size={16} />} color='red' variant='light'>
               <Text size='sm' fw={500}>
                 Warning: Session Removal
               </Text>
               <Text size='sm' mt='xs'>
                 This will also remove them from {speaker.session_count} session
-                {speaker.session_count > 1 ? 's' : ''} they are currently assigned to speak at. This
-                action cannot be undone automatically.
+                {(speaker.session_count ?? 0) > 1 ? 's' : ''} they are currently assigned to speak
+                at. This action cannot be undone automatically.
               </Text>
             </Alert>
           )}
@@ -73,9 +80,20 @@ const SpeakerCard = ({ speaker, onEditSpeaker, currentUserRole }) => {
             color: 'green',
           });
         } catch (error) {
+          const errorMessage =
+            (
+              error &&
+              typeof error === 'object' &&
+              'data' in error &&
+              error.data &&
+              typeof error.data === 'object' &&
+              'message' in error.data
+            ) ?
+              String(error.data.message)
+            : 'Failed to update role';
           notifications.show({
             title: 'Error',
-            message: error.data?.message || 'Failed to update role',
+            message: errorMessage,
             color: 'red',
           });
         }
@@ -84,17 +102,16 @@ const SpeakerCard = ({ speaker, onEditSpeaker, currentUserRole }) => {
   };
 
   const canManage = ['ADMIN', 'ORGANIZER'].includes(currentUserRole);
-  const displayTitle = speaker.speaker_title || speaker.title || 'No title';
-  const displayBio = speaker.speaker_bio || speaker.bio || '';
+  const displayTitle = speaker.speaker_title ?? speaker.title ?? 'No title';
+  const displayBio = speaker.speaker_bio ?? '';
 
   return (
-    <div className={styles.card}>
-      {/* Card Actions - Top right corner */}
+    <div className={styles.card ?? ''}>
       {canManage && (
-        <div className={styles.cardActions}>
+        <div className={styles.cardActions ?? ''}>
           <Menu position='bottom-end' withinPortal>
             <Menu.Target>
-              <ActionIcon variant='subtle' className={styles.actionButton}>
+              <ActionIcon variant='subtle' className={styles.actionButton ?? ''}>
                 <IconDots size={16} />
               </ActionIcon>
             </Menu.Target>
@@ -147,32 +164,30 @@ const SpeakerCard = ({ speaker, onEditSpeaker, currentUserRole }) => {
         </div>
       )}
 
-      {/* User Info Section */}
-      <div className={styles.userInfo}>
+      <div className={styles.userInfo ?? ''}>
         <Avatar
-          src={speaker.image_url}
+          src={speaker.image_url ?? null}
           alt={speaker.full_name}
           radius='xl'
           size={50}
-          className={styles.avatar}
+          className={styles.avatar ?? ''}
         >
           {speaker.first_name?.[0]}
           {speaker.last_name?.[0]}
         </Avatar>
-        <div className={styles.userDetails}>
-          <Text fw={600} className={styles.userName}>
+        <div className={styles.userDetails ?? ''}>
+          <Text fw={600} className={styles.userName ?? ''}>
             {speaker.full_name}
           </Text>
-          <Text size='sm' className={styles.userEmail}>
+          <Text size='sm' className={styles.userEmail ?? ''}>
             {speaker.email}
           </Text>
         </div>
       </div>
 
-      {/* Title and Company Section */}
-      <div className={styles.professionalInfo}>
+      <div className={styles.professionalInfo ?? ''}>
         <Group gap='xs' wrap='nowrap'>
-          <Text size='sm' className={styles.titleText}>
+          <Text size='sm' className={styles.titleText ?? ''}>
             {displayTitle}
           </Text>
           {speaker.speaker_title && speaker.title && speaker.speaker_title !== speaker.title && (
@@ -182,7 +197,7 @@ const SpeakerCard = ({ speaker, onEditSpeaker, currentUserRole }) => {
                 variant='light'
                 color='blue'
                 radius='sm'
-                className={styles.customBadge}
+                className={styles.customBadge ?? ''}
               >
                 Custom
               </Badge>
@@ -190,47 +205,45 @@ const SpeakerCard = ({ speaker, onEditSpeaker, currentUserRole }) => {
           )}
         </Group>
         {speaker.company_name && (
-          <Text size='sm' className={styles.companyText}>
+          <Text size='sm' className={styles.companyText ?? ''}>
             {speaker.company_name}
           </Text>
         )}
       </div>
 
-      {/* Sessions Section */}
-      <div className={styles.sessionsSection}>
-        <Text size='sm' fw={500} className={styles.sessionLabel}>
+      <div className={styles.sessionsSection ?? ''}>
+        <Text size='sm' fw={500} className={styles.sessionLabel ?? ''}>
           Sessions
         </Text>
-        {speaker.session_count > 0 ?
+        {(speaker.session_count ?? 0) > 0 ?
           <Badge
             variant='light'
             color='green'
             radius='sm'
-            className={styles.sessionBadge}
+            className={styles.sessionBadge ?? ''}
             style={{ cursor: 'pointer' }}
             onClick={() => setSessionsExpanded(!sessionsExpanded)}
             rightSection={
               sessionsExpanded ? <IconChevronUp size={14} /> : <IconChevronDown size={14} />
             }
           >
-            {speaker.session_count} Session{speaker.session_count > 1 ? 's' : ''}
+            {speaker.session_count} Session{(speaker.session_count ?? 0) > 1 ? 's' : ''}
           </Badge>
-        : <Badge variant='light' color='gray' radius='sm' className={styles.sessionBadge}>
+        : <Badge variant='light' color='gray' radius='sm' className={styles.sessionBadge ?? ''}>
             No Sessions
           </Badge>
         }
       </div>
 
-      {/* Expandable Sessions List */}
-      {speaker.session_count > 0 && (
+      {(speaker.session_count ?? 0) > 0 && (
         <Collapse in={sessionsExpanded}>
-          <div className={styles.sessionsList}>
+          <div className={styles.sessionsList ?? ''}>
             {speaker.sessions?.map((session) => (
-              <div key={session.id} className={styles.sessionItem}>
-                <Text size='sm' fw={500} className={styles.sessionTitle}>
+              <div key={session.id} className={styles.sessionItem ?? ''}>
+                <Text size='sm' fw={500} className={styles.sessionTitle ?? ''}>
                   {session.title}
                 </Text>
-                <Text size='xs' c='dimmed' className={styles.sessionDetails}>
+                <Text size='xs' c='dimmed' className={styles.sessionDetails ?? ''}>
                   {session.day_number ? `Day ${session.day_number}` : 'Day TBD'}
                   {session.start_time && session.end_time && (
                     <>
@@ -247,11 +260,10 @@ const SpeakerCard = ({ speaker, onEditSpeaker, currentUserRole }) => {
         </Collapse>
       )}
 
-      {/* Bio Section */}
       {displayBio && (
-        <div className={styles.bioSection}>
+        <div className={styles.bioSection ?? ''}>
           <Tooltip label={displayBio} multiline maw={300}>
-            <Text size='sm' className={styles.bioText}>
+            <Text size='sm' className={styles.bioText ?? ''}>
               {truncateBio(displayBio)}
             </Text>
           </Tooltip>

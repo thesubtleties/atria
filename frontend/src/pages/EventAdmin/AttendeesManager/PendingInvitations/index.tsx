@@ -67,7 +67,6 @@ const PendingInvitations = ({ invitations, onRefresh }: PendingInvitationsProps)
     });
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleResend = async (_invitation: EventInvitation) => {
     // TODO: Implement resend functionality
     notifications.show({

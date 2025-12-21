@@ -1,8 +1,12 @@
 import { Text } from '@mantine/core';
 import { Button } from '@/shared/components/buttons';
 import styles from './styles/index.module.css';
-// eslint-disable-next-line no-unused-vars
-export const SessionErrorState = ({ error: _error, onRetry }) => {
+
+type SessionErrorStateProps = {
+  onRetry: () => void;
+};
+
+export const SessionErrorState = ({ onRetry }: SessionErrorStateProps) => {
   return (
     <div className={styles.container}>
       <div className={styles.bgShape1} />

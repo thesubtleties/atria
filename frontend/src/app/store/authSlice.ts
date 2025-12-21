@@ -24,9 +24,7 @@ const authSlice = createSlice({
         const { social_links, ...rest } = action.payload;
         // Merge social_links properly (partial update)
         const mergedSocialLinks: SocialLinks | undefined =
-          social_links ?
-            { ...state.user.social_links, ...social_links }
-          : undefined;
+          social_links ? { ...state.user.social_links, ...social_links } : undefined;
 
         state.user = {
           ...state.user,

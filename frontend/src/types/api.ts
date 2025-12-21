@@ -95,9 +95,7 @@ export type BaseQueryRequest = {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** RTK Query result shapes */
-export type QueryResult<T> =
-  | { data: T; error: null }
-  | { data: null; error: ApiError };
+export type QueryResult<T> = { data: T; error: null } | { data: null; error: ApiError };
 
 /** Upload response from the API */
 export type UploadResponse = {

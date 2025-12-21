@@ -4,15 +4,25 @@ import { useState, useMemo } from 'react';
 import { useMediaQuery } from '@mantine/hooks';
 import SpeakerRow from '../SpeakerRow';
 import SpeakerCard from '../SpeakerCard';
-import { getNameSortValue } from '../../../../shared/utils/sorting';
+import { getNameSortValue } from '@/shared/utils/sorting';
+import type { EventUser, EventUserRole } from '@/types';
 import styles from './styles.module.css';
 
-const SpeakersList = ({ speakers, currentUserRole, onEditSpeaker }) => {
-  const [sortBy, setSortBy] = useState('name');
-  const [sortOrder, setSortOrder] = useState('asc');
+type SpeakersListProps = {
+  speakers: EventUser[];
+  currentUserRole: EventUserRole;
+  onEditSpeaker: (speaker: EventUser) => void;
+};
+
+type SortField = 'name' | 'title' | 'company' | 'sessions';
+type SortOrder = 'asc' | 'desc';
+
+const SpeakersList = ({ speakers, currentUserRole, onEditSpeaker }: SpeakersListProps) => {
+  const [sortBy, setSortBy] = useState<SortField>('name');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
   const isMobile = useMediaQuery('(max-width: 768px)');
 
-  const handleSort = (field) => {
+  const handleSort = (field: SortField) => {
     if (sortBy === field) {
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
     } else {
@@ -23,38 +33,35 @@ const SpeakersList = ({ speakers, currentUserRole, onEditSpeaker }) => {
 
   const sortedSpeakers = useMemo(() => {
     return [...speakers].sort((a, b) => {
-      let aVal, bVal;
+      let aVal: string | number;
+      let bVal: string | number;
       switch (sortBy) {
         case 'name':
-          // Use the new sorting utility for proper last name sorting
           aVal = getNameSortValue(a);
           bVal = getNameSortValue(b);
           break;
         case 'title':
-          aVal = a.speaker_title || a.title || '';
-          bVal = b.speaker_title || b.title || '';
+          aVal = a.speaker_title ?? a.title ?? '';
+          bVal = b.speaker_title ?? b.title ?? '';
           break;
         case 'company':
-          aVal = a.company_name || '';
-          bVal = b.company_name || '';
+          aVal = a.company_name ?? '';
+          bVal = b.company_name ?? '';
           break;
         case 'sessions':
-          aVal = a.session_count || 0;
-          bVal = b.session_count || 0;
+          aVal = a.session_count ?? 0;
+          bVal = b.session_count ?? 0;
           break;
         default:
-          // Default to name sorting with last name first
           aVal = getNameSortValue(a);
           bVal = getNameSortValue(b);
       }
 
-      // Use localeCompare for better string comparison, especially for names
       if (typeof aVal === 'string' && typeof bVal === 'string') {
         const comparison = aVal.localeCompare(bVal);
         return sortOrder === 'asc' ? comparison : -comparison;
       }
 
-      // Fallback for non-string values (like session counts)
       if (sortOrder === 'asc') {
         return aVal > bVal ? 1 : -1;
       } else {
@@ -63,8 +70,13 @@ const SpeakersList = ({ speakers, currentUserRole, onEditSpeaker }) => {
     });
   }, [speakers, sortBy, sortOrder]);
 
-  const SortHeader = ({ field, children }) => (
-    <UnstyledButton onClick={() => handleSort(field)} className={styles.sortHeader}>
+  type SortHeaderProps = {
+    field: SortField;
+    children: React.ReactNode;
+  };
+
+  const SortHeader = ({ field, children }: SortHeaderProps) => (
+    <UnstyledButton onClick={() => handleSort(field)} className={styles.sortHeader ?? ''}>
       <Group gap='xs' wrap='nowrap'>
         <Text fw={sortBy === field ? 600 : 400}>{children}</Text>
         {sortBy === field && (
@@ -80,7 +92,7 @@ const SpeakersList = ({ speakers, currentUserRole, onEditSpeaker }) => {
 
   if (speakers.length === 0) {
     return (
-      <div className={styles.emptyState}>
+      <div className={styles.emptyState ?? ''}>
         <Text size='lg' c='dimmed' ta='center'>
           No speakers found
         </Text>
@@ -91,18 +103,19 @@ const SpeakersList = ({ speakers, currentUserRole, onEditSpeaker }) => {
     );
   }
 
-  // Mobile: Card layout with sorting dropdown
   if (isMobile) {
     return (
-      <div className={styles.mobileContainer}>
-        <div className={styles.mobileSortControls}>
+      <div className={styles.mobileContainer ?? ''}>
+        <div className={styles.mobileSortControls ?? ''}>
           <Select
             label='Sort by'
             value={`${sortBy}-${sortOrder}`}
             onChange={(value) => {
-              const [field, order] = value.split('-');
-              setSortBy(field);
-              setSortOrder(order);
+              if (value) {
+                const [field, order] = value.split('-') as [SortField, SortOrder];
+                setSortBy(field);
+                setSortOrder(order);
+              }
             }}
             data={[
               { value: 'name-asc', label: 'Name (A-Z)' },
@@ -114,10 +127,10 @@ const SpeakersList = ({ speakers, currentUserRole, onEditSpeaker }) => {
               { value: 'sessions-desc', label: 'Most Sessions' },
               { value: 'sessions-asc', label: 'Least Sessions' },
             ]}
-            className={styles.sortSelect}
+            className={styles.sortSelect ?? ''}
           />
         </div>
-        <div className={styles.cardList}>
+        <div className={styles.cardList ?? ''}>
           {sortedSpeakers.map((speaker) => (
             <SpeakerCard
               key={speaker.user_id}
@@ -131,9 +144,8 @@ const SpeakersList = ({ speakers, currentUserRole, onEditSpeaker }) => {
     );
   }
 
-  // Desktop: Table layout
   return (
-    <div className={styles.tableContainer}>
+    <div className={styles.tableContainer ?? ''}>
       <Table horizontalSpacing='md' verticalSpacing='sm' striped highlightOnHover>
         <Table.Thead>
           <Table.Tr>
@@ -150,9 +162,7 @@ const SpeakersList = ({ speakers, currentUserRole, onEditSpeaker }) => {
               <SortHeader field='sessions'>Sessions</SortHeader>
             </Table.Th>
             <Table.Th style={{ minWidth: '150px' }}>Bio</Table.Th>
-            <Table.Th width={80} style={{ textAlign: 'center' }}>
-              Actions
-            </Table.Th>
+            <Table.Th style={{ textAlign: 'center', width: 80 }}>Actions</Table.Th>
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>

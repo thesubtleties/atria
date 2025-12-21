@@ -35,7 +35,11 @@ const NetworkingManager = () => {
   const [disableAllPublic, { isLoading: isDisablingAll }] = useDisableAllPublicRoomsMutation();
 
   const numericEventId = eventId ? parseInt(eventId, 10) : 0;
-  const { data: response, isLoading, error } = useGetEventAdminChatRoomsQuery(numericEventId, {
+  const {
+    data: response,
+    isLoading,
+    error,
+  } = useGetEventAdminChatRoomsQuery(numericEventId, {
     skip: !eventId,
   });
 
@@ -184,4 +188,3 @@ const NetworkingManager = () => {
 };
 
 export default NetworkingManager;
-

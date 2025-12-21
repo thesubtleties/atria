@@ -168,4 +168,3 @@ const ChatRoomRow = ({ room, color, onEdit, isTableRow, isMobile }: ChatRoomRowP
 };
 
 export default ChatRoomRow;
-

@@ -114,86 +114,83 @@ const ChatRoomsList = ({ chatRooms, isLoading, onEdit }: ChatRoomsListProps) => 
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleDragEnd = (roomType: ChatRoomType) => async (event: any) => {
-      const { operation } = event;
-      if (!operation) return;
+    const { operation } = event;
+    if (!operation) return;
 
-      const draggedId = operation.source.id;
-      const draggedRoom = roomLookup[draggedId];
+    const draggedId = operation.source.id;
+    const draggedRoom = roomLookup[draggedId];
 
-      if (!draggedRoom) return;
+    if (!draggedRoom) return;
 
-      const newOrder = localRooms[roomType] || [];
-      const newIndex = newOrder.indexOf(draggedId);
+    const newOrder = localRooms[roomType] || [];
+    const newIndex = newOrder.indexOf(draggedId);
 
-      if (newIndex === -1) return;
+    if (newIndex === -1) return;
 
-      // Calculate new display_order
-      let newDisplayOrder: number;
-      const roomsInType = newOrder.map((id) => roomLookup[id]).filter(Boolean);
+    // Calculate new display_order
+    let newDisplayOrder: number;
+    const roomsInType = newOrder.map((id) => roomLookup[id]).filter(Boolean);
 
-      if (newIndex === 0) {
-        const nextRoom = roomsInType[1];
-        newDisplayOrder = nextRoom ? nextRoom.display_order / 2 : 1;
-      } else if (newIndex === roomsInType.length - 1) {
-        const prevRoom = roomsInType[newIndex - 1];
-        newDisplayOrder = prevRoom ? prevRoom.display_order + 10 : (newIndex + 1) * 10;
+    if (newIndex === 0) {
+      const nextRoom = roomsInType[1];
+      newDisplayOrder = nextRoom ? nextRoom.display_order / 2 : 1;
+    } else if (newIndex === roomsInType.length - 1) {
+      const prevRoom = roomsInType[newIndex - 1];
+      newDisplayOrder = prevRoom ? prevRoom.display_order + 10 : (newIndex + 1) * 10;
+    } else {
+      const prevRoom = roomsInType[newIndex - 1];
+      const nextRoom = roomsInType[newIndex + 1];
+
+      if (prevRoom && nextRoom) {
+        newDisplayOrder = (prevRoom.display_order + nextRoom.display_order) / 2;
       } else {
-        const prevRoom = roomsInType[newIndex - 1];
-        const nextRoom = roomsInType[newIndex + 1];
-
-        if (prevRoom && nextRoom) {
-          newDisplayOrder = (prevRoom.display_order + nextRoom.display_order) / 2;
-        } else {
-          newDisplayOrder = (newIndex + 1) * 10;
-        }
+        newDisplayOrder = (newIndex + 1) * 10;
       }
+    }
 
-      try {
-        await reorderChatRoom({
-          roomId: draggedRoom.id,
-          display_order: newDisplayOrder,
-        }).unwrap();
+    try {
+      await reorderChatRoom({
+        roomId: draggedRoom.id,
+        display_order: newDisplayOrder,
+      }).unwrap();
 
-        notifications.show({
-          title: 'Success',
-          message: `Moved ${draggedRoom.name} successfully`,
-          color: 'green',
-        });
-      } catch (err) {
-        const error = err as ApiError;
-        notifications.show({
-          title: 'Error',
-          message: error.data?.message || 'Failed to reorder chat room',
-          color: 'red',
-        });
+      notifications.show({
+        title: 'Success',
+        message: `Moved ${draggedRoom.name} successfully`,
+        color: 'green',
+      });
+    } catch (err) {
+      const error = err as ApiError;
+      notifications.show({
+        title: 'Error',
+        message: error.data?.message || 'Failed to reorder chat room',
+        color: 'red',
+      });
 
-        // Revert on error
-        const grouped: LocalRooms = {
-          GLOBAL: [],
-          PUBLIC: [],
-          BACKSTAGE: [],
-          ADMIN: [],
-          GREEN_ROOM: [],
-        };
+      // Revert on error
+      const grouped: LocalRooms = {
+        GLOBAL: [],
+        PUBLIC: [],
+        BACKSTAGE: [],
+        ADMIN: [],
+        GREEN_ROOM: [],
+      };
 
-        (Object.entries(roomsByType) as [ChatRoomType, RoomWithId[]][]).forEach(
-          ([type, typeRooms]) => {
-            grouped[type] = typeRooms.map((room) => room._id);
-          },
-        );
+      (Object.entries(roomsByType) as [ChatRoomType, RoomWithId[]][]).forEach(
+        ([type, typeRooms]) => {
+          grouped[type] = typeRooms.map((room) => room._id);
+        },
+      );
 
-        setLocalRooms(grouped);
-      }
-    };
+      setLocalRooms(grouped);
+    }
+  };
 
   if (chatRooms.length === 0 && !isLoading) {
     return <EmptyState />;
   }
 
-  const roomTypeInfo: Record<
-    string,
-    { title: string; color: string; help: string }
-  > = {
+  const roomTypeInfo: Record<string, { title: string; color: string; help: string }> = {
     GLOBAL: {
       title: 'General Chat Rooms',
       color: 'blue',
@@ -245,4 +242,3 @@ const ChatRoomsList = ({ chatRooms, isLoading, onEdit }: ChatRoomsListProps) => 
 };
 
 export default ChatRoomsList;
-
