@@ -21,21 +21,35 @@ type GetFeaturedSponsorsParams = {
 type CreateSponsorParams = {
   eventId: number;
   name: string;
-  description?: string;
-  logo_url?: string;
-  website_url?: string;
-  tier?: string;
+  description?: string | null;
+  logo_url?: string | null;
+  website_url?: string | null;
+  contact_name?: string | null;
+  contact_email?: string | null;
+  contact_phone?: string | null;
+  tier_id?: string | null;
+  custom_benefits?: Record<string, unknown> | null;
+  display_order?: number | null;
+  is_active?: boolean;
+  featured?: boolean;
+  social_links?: Record<string, string | null> | null;
 };
 
 type UpdateSponsorParams = {
   sponsorId: number;
   name?: string;
-  description?: string;
-  logo_url?: string;
-  website_url?: string;
-  tier?: string;
-  is_active?: boolean;
-  is_featured?: boolean;
+  description?: string | null;
+  logo_url?: string | null;
+  website_url?: string | null;
+  contact_name?: string | null;
+  contact_email?: string | null;
+  contact_phone?: string | null;
+  tier_id?: string | null;
+  custom_benefits?: Record<string, unknown> | null;
+  display_order?: number | null;
+  is_active?: boolean | null;
+  featured?: boolean | null;
+  social_links?: Record<string, string | null> | null;
 };
 
 type ToggleSponsorParams = {

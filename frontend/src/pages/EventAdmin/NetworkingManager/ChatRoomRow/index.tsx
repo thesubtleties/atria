@@ -6,19 +6,28 @@ import { notifications } from '@mantine/notifications';
 import { openConfirmationModal } from '@/shared/components/modals/ConfirmationModal';
 import { useToggleChatRoomMutation, useDeleteChatRoomMutation } from '@/app/features/chat/api';
 import { useRoomPresence } from '@/shared/hooks/useRoomPresence';
+import { cn } from '@/lib/cn';
 import MobileCard from './MobileCard';
+import type { ChatRoom } from '@/types';
 import styles from './styles.module.css';
 
-const ChatRoomRow = ({ room, color, onEdit, isTableRow, isMobile }) => {
+type ChatRoomRowProps = {
+  room: ChatRoom & { message_count?: number };
+  color: string;
+  onEdit: (room: ChatRoom) => void;
+  isTableRow?: boolean;
+  isMobile?: boolean;
+};
+
+const ChatRoomRow = ({ room, color, onEdit, isTableRow, isMobile }: ChatRoomRowProps) => {
   const navigate = useNavigate();
   const [toggleRoom] = useToggleChatRoomMutation();
   const [deleteRoom] = useDeleteChatRoomMutation();
   const [isToggling, setIsToggling] = useState(false);
 
-  // Get live user count from presence tracking
   const { userCount } = useRoomPresence(room.id);
 
-  const handleToggle = async (checked) => {
+  const handleToggle = async (checked: boolean) => {
     setIsToggling(true);
     try {
       await toggleRoom(room.id).unwrap();
@@ -45,6 +54,7 @@ const ChatRoomRow = ({ room, color, onEdit, isTableRow, isMobile }) => {
       confirmLabel: 'Delete Room',
       cancelLabel: 'Cancel',
       isDangerous: true,
+      children: null,
       onConfirm: async () => {
         try {
           await deleteRoom(room.id).unwrap();
@@ -65,7 +75,6 @@ const ChatRoomRow = ({ room, color, onEdit, isTableRow, isMobile }) => {
   };
 
   const handleViewChat = () => {
-    // Navigate to the networking page with chat tab and this room selected
     navigate(`/app/events/${room.event_id}/networking?tab=chat&room=${room.id}`);
   };
 
@@ -95,7 +104,7 @@ const ChatRoomRow = ({ room, color, onEdit, isTableRow, isMobile }) => {
         </Text>
       </Table.Td>
       <Table.Td style={{ textAlign: 'center' }}>
-        <Text size='sm'>{room.message_count || 0}</Text>
+        <Text size='sm'>{room.message_count ?? 0}</Text>
       </Table.Td>
       <Table.Td style={{ textAlign: 'center' }}>
         {userCount > 0 ?
@@ -117,20 +126,20 @@ const ChatRoomRow = ({ room, color, onEdit, isTableRow, isMobile }) => {
       <Table.Td style={{ textAlign: 'center' }}>
         <Menu shadow='md' width={200} position='bottom-end'>
           <Menu.Target>
-            <ActionIcon variant='subtle' color='gray' className={styles.actionIcon}>
+            <ActionIcon variant='subtle' color='gray' className={cn(styles.actionIcon)}>
               <IconDots size={16} />
             </ActionIcon>
           </Menu.Target>
-          <Menu.Dropdown className={styles.menuDropdown}>
+          <Menu.Dropdown className={cn(styles.menuDropdown)}>
             <Menu.Item
-              className={styles.menuItem}
+              className={cn(styles.menuItem)}
               leftSection={<IconMessages size={14} />}
               onClick={handleViewChat}
             >
               View Chat
             </Menu.Item>
             <Menu.Item
-              className={styles.menuItem}
+              className={cn(styles.menuItem)}
               leftSection={<IconEdit size={14} />}
               onClick={() => onEdit(room)}
             >
@@ -138,7 +147,7 @@ const ChatRoomRow = ({ room, color, onEdit, isTableRow, isMobile }) => {
             </Menu.Item>
             <Menu.Divider />
             <Menu.Item
-              className={styles.menuItem}
+              className={cn(styles.menuItem)}
               leftSection={<IconTrash size={14} />}
               color='red'
               onClick={handleDelete}
@@ -151,13 +160,12 @@ const ChatRoomRow = ({ room, color, onEdit, isTableRow, isMobile }) => {
     </>
   );
 
-  // If isTableRow, return just the cells (parent provides the row)
   if (isTableRow) {
     return content;
   }
 
-  // Otherwise, wrap in a table row
   return <Table.Tr>{content}</Table.Tr>;
 };
 
 export default ChatRoomRow;
+

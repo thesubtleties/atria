@@ -6,21 +6,29 @@ import {
   IconMessages,
   IconMessageCircle,
 } from '@tabler/icons-react';
+import { cn } from '@/lib/cn';
+import type { ChatRoom } from '@/types';
 import styles from './styles.module.css';
 
-const MobileCard = ({ room, color, onEdit, onViewChat, onToggle, onDelete }) => {
-  // Determine icon color based on room type
+type MobileCardProps = {
+  room: ChatRoom & { message_count?: number };
+  color: string;
+  onEdit: (room: ChatRoom) => void;
+  onViewChat: () => void;
+  onToggle: (checked: boolean) => void;
+  onDelete: () => void;
+};
+
+const MobileCard = ({ room, color, onEdit, onViewChat, onToggle, onDelete }: MobileCardProps) => {
   const iconColor =
     color === 'blue' ? '#3B82F6'
     : color === 'violet' ? '#8B5CF6'
     : '#14B8A6';
 
-  // Determine border color based on status and type
   const getBorderColor = () => {
     if (!room.is_enabled) {
-      return 'rgba(239, 68, 68, 0.5)'; // Red for inactive
+      return 'rgba(239, 68, 68, 0.5)';
     }
-    // Use room type color for active
     return (
       color === 'blue' ? 'rgba(59, 130, 246, 0.5)'
       : color === 'violet' ? 'rgba(139, 92, 246, 0.5)'
@@ -31,48 +39,44 @@ const MobileCard = ({ room, color, onEdit, onViewChat, onToggle, onDelete }) => 
   return (
     <div className={styles.mobileCardInner} style={{ borderLeft: `3px solid ${getBorderColor()}` }}>
       <div className={styles.mobileCardContent}>
-        {/* Icon */}
         <div className={styles.mobileCardIcon}>
           <IconMessageCircle size={28} color={iconColor} />
         </div>
 
-        {/* Room Info */}
         <div className={styles.mobileCardInfo}>
-          <Text fw={600} size='md' className={styles.mobileCardTitle}>
+          <Text fw={600} size='md' className={cn(styles.mobileCardTitle)}>
             {room.name}
           </Text>
 
-          {/* Status and Stats */}
-          <Text size='xs' c='dimmed' className={styles.mobileCardStats}>
-            {room.message_count || 0} messages
+          <Text size='xs' c='dimmed' className={cn(styles.mobileCardStats)}>
+            {room.message_count ?? 0} messages
           </Text>
         </div>
       </div>
 
-      {/* Menu in corner */}
       <Menu position='bottom-end' withinPortal>
         <Menu.Target>
-          <ActionIcon variant='subtle' className={styles.mobileCardMenu}>
+          <ActionIcon variant='subtle' className={cn(styles.mobileCardMenu)}>
             <IconDots size={16} />
           </ActionIcon>
         </Menu.Target>
-        <Menu.Dropdown className={styles.menuDropdown}>
+        <Menu.Dropdown className={cn(styles.menuDropdown)}>
           <Menu.Item
-            className={styles.menuItem}
+            className={cn(styles.menuItem)}
             leftSection={<IconMessages size={14} />}
             onClick={onViewChat}
           >
             View Chat
           </Menu.Item>
           <Menu.Item
-            className={styles.menuItem}
+            className={cn(styles.menuItem)}
             leftSection={<IconEdit size={14} />}
             onClick={() => onEdit(room)}
           >
             Edit
           </Menu.Item>
           <Menu.Item
-            className={styles.menuItem}
+            className={cn(styles.menuItem)}
             leftSection={<Switch size='xs' checked={room.is_enabled} color={color} readOnly />}
             onClick={() => onToggle(!room.is_enabled)}
           >
@@ -80,7 +84,7 @@ const MobileCard = ({ room, color, onEdit, onViewChat, onToggle, onDelete }) => 
           </Menu.Item>
           <Menu.Divider />
           <Menu.Item
-            className={styles.menuItem}
+            className={cn(styles.menuItem)}
             leftSection={<IconTrash size={14} />}
             color='red'
             onClick={onDelete}
@@ -94,3 +98,4 @@ const MobileCard = ({ room, color, onEdit, onViewChat, onToggle, onDelete }) => 
 };
 
 export default MobileCard;
+

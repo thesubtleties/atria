@@ -3,21 +3,40 @@ import { Modal, TextInput, Textarea, Select, Switch, Stack } from '@mantine/core
 import { notifications } from '@mantine/notifications';
 import { Button } from '@/shared/components/buttons';
 import { useCreateChatRoomMutation, useUpdateChatRoomMutation } from '@/app/features/chat/api';
-import { chatRoomSchema } from '../schemas/chatRoomSchema';
+import { chatRoomSchema, type ChatRoomFormData } from '../schemas/chatRoomSchema';
+import { cn } from '@/lib/cn';
+import type { ChatRoom, ChatRoomType, ApiError } from '@/types';
 import styles from './styles/index.module.css';
 
-const ChatRoomModal = ({ opened, onClose, mode, room, eventId }) => {
+type ChatRoomModalProps = {
+  opened: boolean;
+  onClose: () => void;
+  mode: 'create' | 'edit';
+  room: ChatRoom | null;
+  eventId: string;
+};
+
+type FormData = {
+  name: string;
+  description: string;
+  roomType: ChatRoomType;
+  isEnabled: boolean;
+};
+
+type FormErrors = Partial<Record<keyof ChatRoomFormData, string>>;
+
+const ChatRoomModal = ({ opened, onClose, mode, room, eventId }: ChatRoomModalProps) => {
   const [createChatRoom, { isLoading: isCreating }] = useCreateChatRoomMutation();
   const [updateChatRoom, { isLoading: isUpdating }] = useUpdateChatRoomMutation();
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     name: '',
     description: '',
     roomType: 'GLOBAL',
     isEnabled: false,
   });
 
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<FormErrors>({});
 
   useEffect(() => {
     if (mode === 'edit' && room) {
@@ -28,7 +47,6 @@ const ChatRoomModal = ({ opened, onClose, mode, room, eventId }) => {
         isEnabled: room.is_enabled || false,
       });
     } else {
-      // Reset form when creating new room
       setFormData({
         name: '',
         description: '',
@@ -40,13 +58,15 @@ const ChatRoomModal = ({ opened, onClose, mode, room, eventId }) => {
   }, [mode, room, opened]);
 
   const handleSubmit = async () => {
-    // Validate form data
     const validation = chatRoomSchema.safeParse(formData);
 
     if (!validation.success) {
-      const fieldErrors = {};
+      const fieldErrors: FormErrors = {};
       validation.error.errors.forEach((error) => {
-        fieldErrors[error.path[0]] = error.message;
+        const path = error.path[0];
+        if (typeof path === 'string') {
+          fieldErrors[path as keyof ChatRoomFormData] = error.message;
+        }
       });
       setErrors(fieldErrors);
       return;
@@ -55,7 +75,7 @@ const ChatRoomModal = ({ opened, onClose, mode, room, eventId }) => {
     try {
       if (mode === 'create') {
         await createChatRoom({
-          eventId,
+          eventId: parseInt(eventId, 10),
           name: formData.name,
           description: formData.description,
           room_type: formData.roomType,
@@ -66,8 +86,7 @@ const ChatRoomModal = ({ opened, onClose, mode, room, eventId }) => {
           message: 'Chat room created successfully',
           color: 'green',
         });
-      } else {
-        // Don't send room_type on update - it's not editable
+      } else if (room) {
         await updateChatRoom({
           roomId: room.id,
           name: formData.name,
@@ -81,7 +100,8 @@ const ChatRoomModal = ({ opened, onClose, mode, room, eventId }) => {
         });
       }
       onClose();
-    } catch (error) {
+    } catch (err) {
+      const error = err as ApiError;
       notifications.show({
         title: 'Error',
         message: error.data?.message || 'Failed to save chat room',
@@ -94,7 +114,7 @@ const ChatRoomModal = ({ opened, onClose, mode, room, eventId }) => {
     { value: 'GLOBAL', label: 'General Chat (All attendees)' },
     { value: 'ADMIN', label: 'Admin Only (Admins & Organizers)' },
     { value: 'GREEN_ROOM', label: 'Green Room (Speakers & Admins)' },
-  ];
+  ] as const;
 
   return (
     <Modal
@@ -104,11 +124,11 @@ const ChatRoomModal = ({ opened, onClose, mode, room, eventId }) => {
       size='md'
       lockScroll={false}
       classNames={{
-        content: styles.modalContent,
-        header: styles.modalHeader,
+        content: cn(styles.modalContent),
+        header: cn(styles.modalHeader),
       }}
     >
-      <Stack spacing='md' p='lg'>
+      <Stack gap='md' p='lg'>
         <TextInput
           label='Room Name'
           placeholder='Enter room name'
@@ -117,8 +137,8 @@ const ChatRoomModal = ({ opened, onClose, mode, room, eventId }) => {
           error={errors.name}
           required
           classNames={{
-            input: styles.formInput,
-            label: styles.formLabel,
+            input: cn(styles.formInput),
+            label: cn(styles.formLabel),
           }}
         />
 
@@ -130,23 +150,25 @@ const ChatRoomModal = ({ opened, onClose, mode, room, eventId }) => {
           error={errors.description}
           rows={3}
           classNames={{
-            input: styles.formTextarea,
-            label: styles.formLabel,
+            input: cn(styles.formTextarea),
+            label: cn(styles.formLabel),
           }}
         />
 
         <Select
           label='Room Type'
           placeholder='Select room type'
-          data={roomTypeOptions}
+          data={[...roomTypeOptions]}
           value={formData.roomType}
-          onChange={(value) => setFormData({ ...formData, roomType: value })}
+          onChange={(value) =>
+            setFormData({ ...formData, roomType: (value as ChatRoomType) || 'GLOBAL' })
+          }
           error={errors.roomType}
           required
-          disabled={mode === 'edit'} // Can't change room type after creation
+          disabled={mode === 'edit'}
           classNames={{
-            input: styles.formSelect,
-            label: styles.formLabel,
+            input: cn(styles.formSelect),
+            label: cn(styles.formLabel),
           }}
         />
 
@@ -160,10 +182,10 @@ const ChatRoomModal = ({ opened, onClose, mode, room, eventId }) => {
         </div>
 
         <div className={styles.buttonGroup}>
-          <Button variant='subtle' onClick={onClose}>
+          <Button variant='secondary' onClick={onClose}>
             Cancel
           </Button>
-          <Button variant='primary' onClick={handleSubmit} disabled={isCreating || isUpdating}>
+          <Button variant='primary' onClick={handleSubmit} loading={isCreating || isUpdating}>
             {mode === 'create' ? 'Create' : 'Update'}
           </Button>
         </div>
@@ -173,3 +195,4 @@ const ChatRoomModal = ({ opened, onClose, mode, room, eventId }) => {
 };
 
 export default ChatRoomModal;
+

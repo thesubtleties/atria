@@ -8,9 +8,10 @@ type SponsorLookup = Record<string, Sponsor>;
 type TierInfo = Record<
   string,
   {
+    id: string;
     name: string;
-    order: number;
-    color: string;
+    tier_order: number;
+    tier_color: string | null;
   }
 >;
 
@@ -18,10 +19,10 @@ type LocalItems = Record<string, string[]>;
 
 type DragEndEvent = Parameters<typeof move>[1];
 
-type UpdateSponsorMutation = {
-  (args: { sponsorId: number; tier_id: string; display_order: number }): {
-    unwrap: () => Promise<void>;
-  };
+type UpdateSponsorMutation = (
+  args: { sponsorId: number; tier_id: string; display_order: number },
+) => {
+  unwrap: () => Promise<unknown>;
 };
 
 type UseSponsorDragDropResult = {

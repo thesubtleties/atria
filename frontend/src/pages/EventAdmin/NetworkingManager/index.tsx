@@ -10,57 +10,54 @@ import {
   useDisableAllPublicRoomsMutation,
 } from '@/app/features/chat/api';
 import { joinEventAdmin, getSocket } from '@/app/features/networking/socketClient';
+import { cn } from '@/lib/cn';
+import { isApiError } from '@/types';
 import ChatRoomsList from './ChatRoomsList';
 import ChatRoomModal from './ChatRoomModal';
+import type { ChatRoom } from '@/types';
 import styles from './styles/index.module.css';
 
+type ModalMode = 'create' | 'edit';
+
+type ModalState = {
+  open: boolean;
+  mode: ModalMode;
+  room: ChatRoom | null;
+};
+
 const NetworkingManager = () => {
-  const { eventId } = useParams();
-  const [modalState, setModalState] = useState({
+  const { eventId } = useParams<{ eventId: string }>();
+  const [modalState, setModalState] = useState<ModalState>({
     open: false,
     mode: 'create',
     room: null,
   });
   const [disableAllPublic, { isLoading: isDisablingAll }] = useDisableAllPublicRoomsMutation();
 
-  const { data: response, isLoading, error } = useGetEventAdminChatRoomsQuery(eventId);
+  const numericEventId = eventId ? parseInt(eventId, 10) : 0;
+  const { data: response, isLoading, error } = useGetEventAdminChatRoomsQuery(numericEventId, {
+    skip: !eventId,
+  });
 
-  const chatRooms = response?.chat_rooms || [];
+  const chatRooms = (response as { chat_rooms?: ChatRoom[] })?.chat_rooms ?? [];
 
   // Join event admin monitoring room for real-time presence updates
-  // Poll for socket availability since socket might not exist yet on hard refresh
   useEffect(() => {
-    console.log('🔍 NetworkingManager useEffect triggered');
-    console.log('  - eventId:', eventId);
-
-    if (!eventId) {
-      console.log('  ❌ No eventId, returning');
-      return;
-    }
+    if (!eventId) return;
 
     let joined = false;
-    let pollInterval = null;
+    let pollInterval: ReturnType<typeof setInterval> | null = null;
     let cleanedUp = false;
 
     const attemptJoin = () => {
       if (joined || cleanedUp) return;
 
       const socket = getSocket();
-      console.log(
-        '  🔄 Attempting to join - socket:',
-        socket?.connected ? 'connected'
-        : socket ? 'exists but not connected'
-        : 'null',
-      );
 
-      if (!socket) {
-        console.log('  ⏳ Socket not initialized yet, will retry...');
-        return;
-      }
+      if (!socket) return;
 
       if (socket.connected) {
-        console.log('  ✅ Socket connected! Joining event admin');
-        joinEventAdmin(parseInt(eventId));
+        joinEventAdmin(parseInt(eventId, 10));
         joined = true;
         if (pollInterval) {
           clearInterval(pollInterval);
@@ -70,11 +67,9 @@ const NetworkingManager = () => {
       }
 
       // Socket exists but not connected, listen for connection
-      console.log('  ⏳ Socket exists but not connected, listening for connection_success');
       const handleConnectionSuccess = () => {
         if (joined || cleanedUp) return;
-        console.log('  ✨ connection_success received! Calling joinEventAdmin');
-        joinEventAdmin(parseInt(eventId));
+        joinEventAdmin(parseInt(eventId, 10));
         joined = true;
         socket.off('connection_success', handleConnectionSuccess);
       };
@@ -82,18 +77,15 @@ const NetworkingManager = () => {
       socket.once('connection_success', handleConnectionSuccess);
     };
 
-    // Try immediately
     attemptJoin();
 
     // If not joined, poll every 500ms for up to 5 seconds
     if (!joined) {
-      console.log('  🔁 Starting poll interval');
       let attempts = 0;
       pollInterval = setInterval(() => {
         attempts++;
         if (attempts > 10) {
-          console.log('  ⏱️ Giving up after 10 attempts');
-          clearInterval(pollInterval);
+          if (pollInterval) clearInterval(pollInterval);
           return;
         }
         attemptJoin();
@@ -101,7 +93,6 @@ const NetworkingManager = () => {
     }
 
     return () => {
-      console.log('  🧹 Cleanup');
       cleanedUp = true;
       if (pollInterval) {
         clearInterval(pollInterval);
@@ -110,6 +101,8 @@ const NetworkingManager = () => {
   }, [eventId]);
 
   const handleDisableAllPublic = () => {
+    if (!eventId) return;
+
     openConfirmationModal({
       title: 'Disable All Public Chat Rooms',
       message:
@@ -117,12 +110,13 @@ const NetworkingManager = () => {
       confirmLabel: 'Disable All',
       cancelLabel: 'Cancel',
       isDangerous: true,
+      children: null,
       onConfirm: async () => {
         try {
-          const result = await disableAllPublic(eventId).unwrap();
+          await disableAllPublic(numericEventId).unwrap();
           notifications.show({
             title: 'Success',
-            message: `Disabled ${result.disabled_count} public chat rooms`,
+            message: 'Disabled public chat rooms',
             color: 'green',
           });
         } catch {
@@ -147,7 +141,7 @@ const NetworkingManager = () => {
         <section className={styles.headerSection}>
           <div className={styles.headerContent}>
             <h2 className={styles.pageTitle}>Networking & Chat Management</h2>
-            <Group className={styles.buttonGroup}>
+            <Group className={cn(styles.buttonGroup)}>
               <Button variant='danger' onClick={handleDisableAllPublic} disabled={isDisablingAll}>
                 Disable All Public Rooms
               </Button>
@@ -164,7 +158,7 @@ const NetworkingManager = () => {
 
         {/* Main Content Section */}
         <section className={styles.mainContent}>
-          {error && (
+          {isApiError(error) && (
             <Alert color='red' mb='lg'>
               Failed to load chat rooms. Please try again.
             </Alert>
@@ -182,7 +176,7 @@ const NetworkingManager = () => {
           onClose={() => setModalState({ open: false, mode: 'create', room: null })}
           mode={modalState.mode}
           room={modalState.room}
-          eventId={eventId}
+          eventId={eventId ?? ''}
         />
       </div>
     </div>
@@ -190,3 +184,4 @@ const NetworkingManager = () => {
 };
 
 export default NetworkingManager;
+
