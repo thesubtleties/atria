@@ -109,6 +109,6 @@ export function useSessionLayout(sessions: Session[]): UseSessionLayoutResult {
   return {
     rows,
     getSessionWidth,
-    isKeynote: (session: Session) => session?.session_type === 'KEYNOTE',
+    isKeynote: (session: Session) => session?.session_type === 'keynote',
   };
 }

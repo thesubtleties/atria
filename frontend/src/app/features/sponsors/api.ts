@@ -60,16 +60,12 @@ type GetSponsorTiersParams = {
   eventId: number;
 };
 
-// API returns tier data without id (id is the record key)
-type SponsorTierData = Omit<SponsorTier, 'id'>;
-
-type GetSponsorTiersResponse = {
-  tiers: Record<string, SponsorTierData>;
-};
+// Backend returns array of tier objects directly
+type GetSponsorTiersResponse = SponsorTier[];
 
 type UpdateSponsorTiersParams = {
   eventId: number;
-  tiers: Record<string, SponsorTierData>;
+  tiers: SponsorTier[]; // Backend expects an array of tier objects with id, name, order, color
 };
 
 export const sponsorsApi = baseApi.injectEndpoints({

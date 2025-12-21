@@ -54,12 +54,11 @@ const SponsorModal = ({
 
   const { data: tiersResponse } = useGetSponsorTiersQuery({ eventId });
 
-  // Convert tiers record to array
+  // Backend returns array directly, map to include order_index for compatibility
   const sponsorTiers =
-    tiersResponse?.tiers ?
-      Object.entries(tiersResponse.tiers).map(([id, tier]) => ({
+    tiersResponse ?
+      tiersResponse.map((tier) => ({
         ...tier,
-        id,
         order_index: tier.order,
       }))
     : [];

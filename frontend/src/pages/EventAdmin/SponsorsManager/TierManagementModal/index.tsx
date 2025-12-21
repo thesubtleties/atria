@@ -29,17 +29,16 @@ const TierManagementModal = ({ opened, onClose, eventId }: TierManagementModalPr
   const { data: tiersResponse } = useGetSponsorTiersQuery({ eventId });
   const [updateSponsorTiers] = useUpdateSponsorTiersMutation();
 
-  // Convert tiers record to array
+  // Backend returns array directly, map to include order_index for compatibility
   const sponsorTiers = useMemo(
     () =>
-      tiersResponse?.tiers ?
-        Object.entries(tiersResponse.tiers).map(([id, tier]) => ({
+      tiersResponse ?
+        tiersResponse.map((tier) => ({
           ...tier,
-          id,
           order_index: tier.order,
         }))
       : [],
-    [tiersResponse?.tiers],
+    [tiersResponse],
   );
 
   useEffect(() => {
@@ -84,19 +83,17 @@ const TierManagementModal = ({ opened, onClose, eventId }: TierManagementModalPr
     }
 
     try {
-      // Convert array back to record format for API
-      const tiersRecord: Record<string, { name: string; order: number; color: string }> = {};
-      tierFormData.forEach((tier) => {
-        tiersRecord[tier.id] = {
-          name: tier.name,
-          order: tier.order,
-          color: tier.color,
-        };
-      });
+      // Send array format as expected by backend
+      const tiersArray = tierFormData.map((tier) => ({
+        id: tier.id,
+        name: tier.name,
+        order: tier.order,
+        color: tier.color,
+      }));
 
       await updateSponsorTiers({
         eventId,
-        tiers: tiersRecord,
+        tiers: tiersArray,
       }).unwrap();
 
       notifications.show({

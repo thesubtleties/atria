@@ -63,6 +63,9 @@ const BasicInfoSection = ({
             }}
             error={errors.tierId}
             classNames={{ input: styles.formSelect ?? '' }}
+            comboboxProps={{
+              withinPortal: true,
+            }}
           />
         </Grid.Col>
       </Grid>

@@ -28,17 +28,16 @@ const SponsorsList = ({ sponsors, eventId }: SponsorsListProps) => {
   const [updateSponsor] = useUpdateSponsorMutation();
   const { data: tiersResponse } = useGetSponsorTiersQuery({ eventId });
 
-  // Convert tiers record to array
+  // Backend returns array directly, map to include order_index for compatibility
   const allTiers = useMemo(
     () =>
-      tiersResponse?.tiers ?
-        Object.entries(tiersResponse.tiers).map(([id, tier]) => ({
+      tiersResponse ?
+        tiersResponse.map((tier) => ({
           ...tier,
-          id,
           order_index: tier.order,
         }))
       : [],
-    [tiersResponse?.tiers],
+    [tiersResponse],
   );
 
   const tierInfo = useMemo<TierInfo>(() => {

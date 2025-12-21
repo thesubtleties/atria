@@ -35,11 +35,8 @@ export const SponsorsPage = () => {
   );
 
   const sponsors = sponsorsResponse?.sponsors ?? [];
-  // Convert tiers record to array
-  const tiers =
-    tiersResponse?.tiers ?
-      Object.entries(tiersResponse.tiers).map(([id, tier]) => ({ ...tier, id }))
-    : [];
+  // Backend returns array directly
+  const tiers = tiersResponse ?? [];
 
   const isLoading = sponsorsLoading || tiersLoading;
 
