@@ -10,12 +10,12 @@ import {
   List,
   Group,
 } from '@mantine/core';
-import { Button } from '../../../../shared/components/buttons';
+import { Button } from '@/shared/components/buttons';
 import { useForm, zodResolver } from '@mantine/form';
 import { IconCheck, IconX, IconLock, IconMail } from '@tabler/icons-react';
 import { useDispatch } from 'react-redux';
-import { useRegisterAndAcceptInvitationsMutation } from '../../../../app/features/invitations/api';
-import { setUser } from '../../../../app/store/authSlice';
+import { useRegisterAndAcceptInvitationsMutation } from '@/app/features/invitations/api';
+import { setUser } from '@/app/store/authSlice';
 import { registrationSchema } from '../schemas/registrationSchema';
 import type { RegistrationFormData } from '../schemas/registrationSchema';
 import type { SelectedInvitations } from '../index';

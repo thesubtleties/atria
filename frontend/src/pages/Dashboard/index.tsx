@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
 import { Container, Text } from '@mantine/core';
 import { useGetUserDashboardQuery } from '@/app/features/users/api';
-import { LoadingPage } from '../../shared/components/loading';
+import { LoadingPage } from '@/shared/components/loading';
 import { ProfileHeader } from './ProfileHeader';
 import { StatsSection } from './StatsSection';
 import { OrganizationsSection } from './OrganizationsSection';

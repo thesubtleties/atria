@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Card, Text, Badge, Group, Stack } from '@mantine/core';
-import { LoadingSpinner } from '../../../../shared/components/loading';
+import { LoadingSpinner } from '@/shared/components/loading';
 import { IconCalendar, IconMapPin, IconUsers } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';

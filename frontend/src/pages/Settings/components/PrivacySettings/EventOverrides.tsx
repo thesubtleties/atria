@@ -1,6 +1,6 @@
 import { useState, useEffect, type ChangeEvent } from 'react';
 import { Alert, Text, Group, Select, Switch, Stack, Card, Divider, Center } from '@mantine/core';
-import { LoadingSpinner } from '../../../../shared/components/loading';
+import { LoadingSpinner } from '@/shared/components/loading';
 import { IconAlertCircle, IconCalendarEvent } from '@tabler/icons-react';
 import { useSelector } from 'react-redux';
 import { useForm, zodResolver } from '@mantine/form';
@@ -16,7 +16,7 @@ import type { EventPrivacyOverrideFormData } from '../../schemas/privacySchema';
 import EmailSection from './EmailSection';
 import ConnectionSection from './ConnectionSection';
 import ProfileSection from './ProfileSection';
-import { Button } from '../../../../shared/components/buttons';
+import { Button } from '@/shared/components/buttons';
 import type { RootState, ApiError } from '@/types';
 import { cn } from '@/lib/cn';
 import styles from './styles.module.css';

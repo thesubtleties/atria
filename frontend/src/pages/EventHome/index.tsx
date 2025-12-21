@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
-import { useGetEventQuery } from '../../app/features/events/api';
-import { LoadingPage } from '../../shared/components/loading';
+import { useGetEventQuery } from '@/app/features/events/api';
+import { LoadingPage } from '@/shared/components/loading';
 import Hero from './Hero';
 import Welcome from './Welcome';
 import Highlights from './Highlights';

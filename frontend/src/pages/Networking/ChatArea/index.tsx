@@ -1,6 +1,6 @@
 import { useState, useEffect, memo, useRef, type ReactNode } from 'react';
 import { Text, Stack, Center } from '@mantine/core';
-import { LoadingSpinner } from '../../../shared/components/loading';
+import { LoadingSpinner } from '@/shared/components/loading';
 import { IconHash, IconLock, IconGlobe, IconMicrophone } from '@tabler/icons-react';
 import { useSearchParams } from 'react-router-dom';
 import { useGetChatRoomsQuery, useSendMessageMutation } from '@/app/features/chat/api';

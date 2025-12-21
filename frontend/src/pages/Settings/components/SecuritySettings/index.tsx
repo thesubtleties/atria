@@ -14,7 +14,7 @@ import { useForm, zodResolver } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { IconCheck, IconX, IconLock, IconShield } from '@tabler/icons-react';
 import { useChangePasswordMutation } from '@/app/features/auth/api';
-import { Button } from '../../../../shared/components/buttons';
+import { Button } from '@/shared/components/buttons';
 import { securitySettingsSchema } from '../../schemas/securitySchema';
 import type { SecuritySettingsFormData } from '../../schemas/securitySchema';
 import type { ApiError } from '@/types';

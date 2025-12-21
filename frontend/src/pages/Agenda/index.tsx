@@ -1,8 +1,8 @@
 // pages/Agenda/index.tsx
 import { useParams, useLocation, useSearchParams } from 'react-router-dom';
-import { useGetEventQuery } from '../../app/features/events/api';
-import { useGetSessionsQuery } from '../../app/features/sessions/api';
-import { LoadingSection } from '../../shared/components/loading';
+import { useGetEventQuery } from '@/app/features/events/api';
+import { useGetSessionsQuery } from '@/app/features/sessions/api';
+import { LoadingSection } from '@/shared/components/loading';
 import { DateNavigation } from './DateNavigation';
 import { AgendaView } from './AgendaView';
 import { useEffect } from 'react';

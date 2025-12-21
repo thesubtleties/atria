@@ -8,7 +8,7 @@ import {
   useUpdateSessionStatusMutation,
   useUpdateSessionMutation,
 } from '@/app/features/sessions/api';
-import { LoadingPage } from '../../shared/components/loading';
+import { LoadingPage } from '@/shared/components/loading';
 import { useGetEventQuery } from '@/app/features/events/api';
 import { SessionDisplay } from './SessionDisplay';
 import { SessionSpeakers } from './SessionSpeakers';

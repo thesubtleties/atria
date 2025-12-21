@@ -1,6 +1,6 @@
 import { Modal, Text, Alert, Stack, Group } from '@mantine/core';
 import { IconAlertTriangle } from '@tabler/icons-react';
-import { Button } from '../../../../shared/components/buttons';
+import { Button } from '@/shared/components/buttons';
 import type { ChatMessage } from '@/types/chat';
 import styles from './styles/index.module.css';
 

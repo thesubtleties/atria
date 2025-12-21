@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { LoadingOverlay, Alert } from '@mantine/core';
-import { useGetInvitationDetailsQuery } from '../../../app/features/invitations/api';
+import { useGetInvitationDetailsQuery } from '@/app/features/invitations/api';
 import InvitationHeader from './components/InvitationHeader';
 import AllInvitations from './components/AllInvitations';
 import RegistrationForm from './components/RegistrationForm';

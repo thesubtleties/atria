@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Stack, Title, Text, Divider, Group, Center, Tabs } from '@mantine/core';
-import { LoadingContent } from '../../../../shared/components/loading';
+import { LoadingContent } from '@/shared/components/loading';
 import { useForm, zodResolver } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { IconCheck, IconX, IconWorld, IconCalendarEvent } from '@tabler/icons-react';
@@ -9,7 +9,7 @@ import {
   useGetUserPrivacySettingsQuery,
   useUpdateUserPrivacySettingsMutation,
 } from '@/app/features/users/api';
-import { Button } from '../../../../shared/components/buttons';
+import { Button } from '@/shared/components/buttons';
 import { privacySettingsSchema } from '../../schemas/privacySchema';
 import type { PrivacySettingsFormData } from '../../schemas/privacySchema';
 import EmailSection from './EmailSection';

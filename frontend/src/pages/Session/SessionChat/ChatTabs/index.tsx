@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Tabs, Badge, Center, Text } from '@mantine/core';
-import { LoadingContent } from '../../../../shared/components/loading';
+import { LoadingContent } from '@/shared/components/loading';
 import { IconUsers, IconUserShield } from '@tabler/icons-react';
 import { useSendMessageMutation } from '@/app/features/chat/api';
 import { ChatRoomView } from '../ChatRoomView';

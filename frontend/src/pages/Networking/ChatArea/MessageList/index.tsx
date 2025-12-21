@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react';
 import { Text } from '@mantine/core';
-import { LoadingSpinner } from '../../../../shared/components/loading';
+import { LoadingSpinner } from '@/shared/components/loading';
 import { MessageBubble } from '../MessageBubble';
 import styles from './styles/index.module.css';
 import type { ChatRoom, ChatMessage } from '@/types/chat';

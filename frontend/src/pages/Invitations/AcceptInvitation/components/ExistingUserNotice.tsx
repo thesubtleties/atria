@@ -1,5 +1,5 @@
 import { Title, Text, Group, ThemeIcon } from '@mantine/core';
-import { Button } from '../../../../shared/components/buttons';
+import { Button } from '@/shared/components/buttons';
 import { IconUserCheck, IconLogin } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/cn';

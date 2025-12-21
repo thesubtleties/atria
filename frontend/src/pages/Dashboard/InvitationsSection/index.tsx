@@ -1,7 +1,7 @@
-import { useGetUserInvitationsQuery } from '../../../app/features/users/api';
+import { useGetUserInvitationsQuery } from '@/app/features/users/api';
 import { Alert } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
-import { LoadingCard } from '../../../shared/components/loading';
+import { LoadingCard } from '@/shared/components/loading';
 import InvitationCard from './InvitationCard';
 import styles from './styles/index.module.css';
 import dashboardStyles from '../styles/index.module.css';

@@ -1,4 +1,4 @@
-import { LoadingContent } from '../../../../shared/components/loading';
+import { LoadingContent } from '@/shared/components/loading';
 import styles from '../styles/index.module.css';
 
 const LoadingState = () => {

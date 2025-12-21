@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Paper, Stack, Title, Text, Button, Alert, Center } from '@mantine/core';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { useVerifyEmailQuery } from '@/app/features/auth/api';
-import { LoadingContent } from '../../../shared/components/loading';
+import { LoadingContent } from '@/shared/components/loading';
 import type { ApiError } from '@/types';
 import styles from './styles/index.module.css';
 

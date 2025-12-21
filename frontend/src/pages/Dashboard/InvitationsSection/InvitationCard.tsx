@@ -1,17 +1,17 @@
 import { useState } from 'react';
 import { Badge, Text, Group } from '@mantine/core';
-import { LoadingSpinner } from '../../../shared/components/loading';
+import { LoadingSpinner } from '@/shared/components/loading';
 import { notifications } from '@mantine/notifications';
 import { useNavigate } from 'react-router-dom';
 import {
   useAcceptOrganizationInvitationMutation,
   useDeclineOrganizationInvitationMutation,
-} from '../../../app/features/organizations/api';
+} from '@/app/features/organizations/api';
 import {
   useAcceptInvitationMutation as useAcceptEventInvitationMutation,
   useDeclineInvitationMutation as useDeclineEventInvitationMutation,
-} from '../../../app/features/eventInvitations/api';
-import { Button } from '../../../shared/components/buttons/Button';
+} from '@/app/features/eventInvitations/api';
+import { Button } from '@/shared/components/buttons/Button';
 import { formatDistanceToNow } from 'date-fns';
 import { parseDateOnly } from '@/shared/hooks/formatDate';
 // Helper to display role names

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Center } from '@mantine/core';
-import { LoadingSpinner } from '../../../../shared/components/loading';
+import { LoadingSpinner } from '@/shared/components/loading';
 import { useSelector } from 'react-redux';
 import { useGetChatRoomMessagesQuery, useDeleteMessageMutation } from '@/app/features/chat/api';
 import {
