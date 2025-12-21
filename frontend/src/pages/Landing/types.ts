@@ -5,19 +5,10 @@ import type { AudienceItem } from './AudienceCards/audienceData';
 // Animation Types
 // ─────────────────────────────────────────────────────────────────────────────
 
-// Import as values to access namespace types (gsap.core.Timeline, ScrollTrigger.Vars)
-// These are only used in type definitions, but TypeScript requires value imports
-// to access namespace properties in types. The unused variable warnings are
-// suppressed because the imports are used in type positions below.
-
-// @ts-expect-error TS6133: gsap is used in type definition (gsap.core.Timeline)
-import type { gsap } from 'gsap';
-
-// @ts-expect-error TS6133: ScrollTrigger is used in type definition (ScrollTrigger.Vars)
-import type { ScrollTrigger } from 'gsap/ScrollTrigger';
+// Note: GSAPTimeline and ScrollTrigger.Vars are global types defined by GSAP
 
 export type AnimationContextValue = {
-  masterTimeline: gsap.core.Timeline | undefined;
+  masterTimeline: GSAPTimeline | undefined;
   registerSection: (name: string, ref: HTMLElement | null) => void;
   animationState: {
     currentSection: number;
@@ -86,6 +77,45 @@ export type OverflowType = 'hidden' | 'visible' | 'auto';
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type StatsObject = Record<string, number>;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Platform Demo Types
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type PlatformDemoCard = {
+  id: string;
+  title: string;
+  subtitle: string;
+  Component: React.ComponentType<{ isFirefox: boolean }>;
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Panel Types (OpenSourceSplit)
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type PanelType = 'intro' | 'opensource' | 'enterprise' | 'philosophy';
+export type CtaIconType = 'github' | 'calendar';
+
+export type Panel = {
+  id: string;
+  type: PanelType;
+  title: string;
+  subtitle?: string;
+  description?: string;
+  gradient?: string;
+  cta?: string;
+  ctaIcon?: CtaIconType;
+  quote?: string;
+  content?: string;
+  footer?: string;
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Custom Event Types
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type CardActiveEventDetail = { index: number };
+export type CardActiveEvent = CustomEvent<CardActiveEventDetail>;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Re-export AudienceItem for convenience

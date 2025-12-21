@@ -1,11 +1,12 @@
 import type { ReactNode, MouseEvent } from 'react';
 import { useRef, useState, useEffect } from 'react';
 import { motion } from 'motion/react';
+import type { ButtonVariant } from '../../types';
 import styles from './MagneticButton.module.css';
 
 type MagneticButtonProps = {
   children: ReactNode;
-  variant?: 'primary' | 'secondary' | 'outline';
+  variant?: Exclude<ButtonVariant, 'ghost'>;
   onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
   className?: string;
   magnetStrength?: number;

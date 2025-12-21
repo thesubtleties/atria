@@ -3,6 +3,7 @@ import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import type { Observer } from 'gsap/Observer';
+import type { PlatformDemoCard, CardActiveEventDetail } from '../types';
 import { AgendaDemo } from './components/AgendaDemo';
 import { NetworkingDemo } from './components/NetworkingDemo';
 import { SessionDemo } from './components/SessionDemo';
@@ -10,14 +11,7 @@ import styles from './PlatformDemo.module.css';
 
 gsap.registerPlugin(ScrollTrigger);
 
-type DemoCard = {
-  id: string;
-  title: string;
-  subtitle: string;
-  Component: React.ComponentType<{ isFirefox: boolean }>;
-};
-
-const demoCards: DemoCard[] = [
+const demoCards: PlatformDemoCard[] = [
   {
     id: 'agenda',
     title: 'Smart Agenda Management',
@@ -122,7 +116,9 @@ const PlatformDemo = () => {
           // Trigger animation when starting to move to the card
           const targetCard = cards[index];
           if (targetCard) {
-            const event = new CustomEvent('card-active', { detail: { index } });
+            const event = new CustomEvent<CardActiveEventDetail>('card-active', {
+              detail: { index },
+            });
             targetCard.dispatchEvent(event);
           }
         },
@@ -286,7 +282,7 @@ const PlatformDemo = () => {
         });
 
         // Trigger animations for all cards on mobile
-        const event = new CustomEvent('card-active', { detail: { index } });
+        const event = new CustomEvent<CardActiveEventDetail>('card-active', { detail: { index } });
         card.dispatchEvent(event);
       });
     }

@@ -26,11 +26,10 @@
     /* JSX */
     "jsx": "react-jsx",
 
-    /* Transition: Allow JS files during migration */
-    "allowJs": true,
-    "checkJs": false,
+    /* JavaScript */
+    "allowJs": false,
 
-    /* Path Aliases (matching jsconfig.json) */
+    /* Path Aliases */
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]

@@ -2,24 +2,11 @@ import { useRef } from 'react';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import type { Panel, ScrollTriggerConfig } from '../types';
 import { IntroPanel, OptionPanel, PhilosophyPanel } from './components';
 import styles from './OpenSourceSplit.module.css';
 
 gsap.registerPlugin(ScrollTrigger);
-
-type Panel = {
-  id: string;
-  type: 'intro' | 'opensource' | 'enterprise' | 'philosophy';
-  title: string;
-  subtitle?: string;
-  description?: string;
-  gradient?: string;
-  cta?: string;
-  ctaIcon?: 'github' | 'calendar';
-  quote?: string;
-  content?: string;
-  footer?: string;
-};
 
 const panels: Panel[] = [
   {
@@ -151,7 +138,7 @@ const OpenSourceSplit = () => {
               end: 'center center',
               scrub: 1,
               id: `panel-content-${i}`,
-            } as ScrollTrigger.Vars,
+            } as ScrollTriggerConfig,
           });
         }
 
@@ -171,7 +158,7 @@ const OpenSourceSplit = () => {
               start: 'left 40%',
               end: 'center center',
               scrub: 1,
-            } as ScrollTrigger.Vars,
+            } as ScrollTriggerConfig,
           });
         }
       });

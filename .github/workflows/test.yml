@@ -156,11 +156,15 @@ jobs:
           cd frontend
           npx playwright install chromium --with-deps
 
-      - name: Run linting
-        continue-on-error: true
+      - name: Run type check
         run: |
           cd frontend
-          npm run lint || echo "::warning::Linting completed with warnings"
+          npm run typecheck
+
+      - name: Run linting
+        run: |
+          cd frontend
+          npm run lint
 
       - name: Check for test script
         id: check_tests
