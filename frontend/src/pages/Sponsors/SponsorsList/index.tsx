@@ -1,17 +1,25 @@
 import { SimpleGrid, Title, Text } from '@mantine/core';
-import SponsorCard from '@/shared/components/SponsorCard';
+import { SponsorCard } from '@/shared/components/SponsorCard';
+import type { Sponsor, SponsorTier } from '@/types';
 import styles from './styles/index.module.css';
 
-export default function SponsorsList({ sponsors, tiers }) {
+interface SponsorsListProps {
+  sponsors: Sponsor[];
+  tiers: SponsorTier[];
+}
+
+export default function SponsorsList({ sponsors, tiers }: SponsorsListProps) {
   // Filter out sponsors without tiers and group by tier
   const sponsorsByTier = sponsors
     .filter((sponsor) => sponsor.tier_id) // Only include sponsors with tiers
-    .reduce((acc, sponsor) => {
+    .reduce<Record<string, Sponsor[]>>((acc, sponsor) => {
       const tierId = sponsor.tier_id;
-      if (!acc[tierId]) {
-        acc[tierId] = [];
+      if (tierId) {
+        if (!acc[tierId]) {
+          acc[tierId] = [];
+        }
+        acc[tierId].push(sponsor);
       }
-      acc[tierId].push(sponsor);
       return acc;
     }, {});
 
@@ -26,7 +34,7 @@ export default function SponsorsList({ sponsors, tiers }) {
 
         // Sort sponsors within tier by display_order (create a copy to avoid mutating)
         const sortedSponsors = [...tiersSponsors].sort(
-          (a, b) => (a.display_order || 999) - (b.display_order || 999),
+          (a, b) => (a.display_order ?? 999) - (b.display_order ?? 999),
         );
 
         return (

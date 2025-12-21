@@ -1,15 +1,14 @@
-// pages/Speakers/index.jsx
 import { useParams } from 'react-router-dom';
 import { Container } from '@mantine/core';
-import { useGetEventUsersQuery } from '../../app/features/events/api';
-import { PageHeader } from '../../shared/components/PageHeader';
+import { useGetEventUsersQuery } from '@/app/features/events/api';
+import { PageHeader } from '@/shared/components/PageHeader';
 import SpeakersList from './SpeakersList';
 import styles from './Speakers.module.css';
 
 export const SpeakersPage = () => {
-  const { eventId } = useParams();
+  const { eventId } = useParams<{ eventId: string }>();
   const { data, isLoading } = useGetEventUsersQuery({
-    eventId: eventId,
+    eventId: Number(eventId),
     role: 'SPEAKER',
   });
 
@@ -22,7 +21,7 @@ export const SpeakersPage = () => {
   }
 
   // Backend already sorts by last name, then first name - no need to re-sort
-  const speakers = data?.event_users || [];
+  const speakers = data?.users ?? [];
 
   return (
     <div className={styles.pageContainer}>
@@ -39,12 +38,13 @@ export const SpeakersPage = () => {
           }
         />
 
-        {speakers.length > 0 ?
+        {speakers.length > 0 ? (
           <SpeakersList speakers={speakers} />
-        : <div className={styles.emptyState}>
+        ) : (
+          <div className={styles.emptyState}>
             <p>No speakers have been announced yet.</p>
           </div>
-        }
+        )}
       </Container>
     </div>
   );

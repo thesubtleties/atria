@@ -1,9 +1,13 @@
-// pages/Speakers/SpeakersList/index.jsx
 import { SimpleGrid, Text } from '@mantine/core';
-import SpeakerCard from '@/shared/components/SpeakerCard';
+import { SpeakerCard } from '@/shared/components/SpeakerCard';
+import type { EventUser } from '@/types';
 import styles from './styles/index.module.css';
 
-export default function SpeakersList({ speakers }) {
+interface SpeakersListProps {
+  speakers: EventUser[];
+}
+
+export default function SpeakersList({ speakers }: SpeakersListProps) {
   // Group speakers by type if needed (keynote, featured, etc.)
   // For now, we'll show all speakers in one grid
 

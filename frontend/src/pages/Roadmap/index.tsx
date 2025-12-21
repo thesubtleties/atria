@@ -1,10 +1,30 @@
-// src/pages/Roadmap/index.jsx
-
 import styles from './styles/index.module.css';
+
+type RoadmapStatus = 'complete' | 'partial' | 'in-progress' | 'planned';
+
+interface RoadmapDetail {
+  text: string;
+  status: RoadmapStatus;
+}
+
+interface RoadmapItem {
+  title: string;
+  status: RoadmapStatus;
+  description: string;
+  details?: RoadmapDetail[];
+}
+
+interface RoadmapPhase {
+  id: string;
+  title: string;
+  status: RoadmapStatus;
+  description: string;
+  items: RoadmapItem[];
+}
 
 const RoadmapPage = () => {
   // Define the roadmap phases
-  const roadmapPhases = [
+  const roadmapPhases: RoadmapPhase[] = [
     {
       id: 'phase1',
       title: 'Phase 1: Networking Integration',
@@ -429,7 +449,7 @@ const RoadmapPage = () => {
   ];
 
   // Helper function to get label for status
-  const getStatusLabel = (status) => {
+  const getStatusLabel = (status: RoadmapStatus): string => {
     switch (status) {
       case 'complete':
         return 'Complete';
@@ -495,11 +515,11 @@ const RoadmapPage = () => {
                           className={`${styles.detailItem} ${styles[detail.status]}`}
                         >
                           <span className={styles.detailStatus}>
-                            {detail.status === 'complete' ?
-                              '✓'
-                            : detail.status === 'in-progress' ?
-                              '⟳'
-                            : '○'}
+                            {detail.status === 'complete'
+                              ? '✓'
+                              : detail.status === 'in-progress'
+                                ? '⟳'
+                                : '○'}
                           </span>
                           {detail.text}
                         </li>

@@ -1,6 +1,12 @@
-import { useRouteError, useNavigate } from 'react-router-dom';
+import { useRouteError, useNavigate, isRouteErrorResponse } from 'react-router-dom';
 import { Button } from '@/shared/components/buttons';
 import styles from './styles.module.css';
+
+interface ErrorInfo {
+  title: string;
+  message: string;
+  showDetails: boolean;
+}
 
 /**
  * ErrorPage - Generic route error page
@@ -13,29 +19,31 @@ export const ErrorPage = () => {
   const navigate = useNavigate();
 
   // Determine error type and message
-  const getErrorInfo = () => {
-    if (error?.status === 404) {
-      return {
-        title: 'Page Not Found',
-        message: "The page you're looking for doesn't exist.",
-        showDetails: false,
-      };
-    }
+  const getErrorInfo = (): ErrorInfo => {
+    if (isRouteErrorResponse(error)) {
+      if (error.status === 404) {
+        return {
+          title: 'Page Not Found',
+          message: "The page you're looking for doesn't exist.",
+          showDetails: false,
+        };
+      }
 
-    if (error?.status === 403) {
-      return {
-        title: 'Access Denied',
-        message: "You don't have permission to access this page.",
-        showDetails: false,
-      };
-    }
+      if (error.status === 403) {
+        return {
+          title: 'Access Denied',
+          message: "You don't have permission to access this page.",
+          showDetails: false,
+        };
+      }
 
-    if (error?.status === 500) {
-      return {
-        title: 'Server Error',
-        message: "We're experiencing technical difficulties. Please try again later.",
-        showDetails: true,
-      };
+      if (error.status === 500) {
+        return {
+          title: 'Server Error',
+          message: "We're experiencing technical difficulties. Please try again later.",
+          showDetails: true,
+        };
+      }
     }
 
     // Generic error
@@ -47,6 +55,10 @@ export const ErrorPage = () => {
   };
 
   const errorInfo = getErrorInfo();
+
+  // Type guard for route error response
+  const routeError = isRouteErrorResponse(error) ? error : null;
+  const errorMessage = error instanceof Error ? error.message : null;
 
   return (
     <div className={styles.errorContainer}>
@@ -78,19 +90,19 @@ export const ErrorPage = () => {
           <details className={styles.errorDetails}>
             <summary className={styles.errorDetailsSummary}>Technical Details</summary>
             <div className={styles.errorDetailsContent}>
-              {error.status && (
+              {routeError && (
                 <p className={styles.errorName}>
-                  Status: {error.status} {error.statusText}
+                  Status: {routeError.status} {routeError.statusText}
                 </p>
               )}
-              {error.data && (
+              {routeError?.data && (
                 <p className={styles.errorData}>
-                  {typeof error.data === 'string' ?
-                    error.data
-                  : JSON.stringify(error.data, null, 2)}
+                  {typeof routeError.data === 'string'
+                    ? routeError.data
+                    : JSON.stringify(routeError.data, null, 2)}
                 </p>
               )}
-              {error.message && <p className={styles.errorData}>{error.message}</p>}
+              {errorMessage && <p className={styles.errorData}>{errorMessage}</p>}
             </div>
           </details>
         )}

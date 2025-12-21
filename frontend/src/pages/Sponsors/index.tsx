@@ -1,13 +1,13 @@
 import { useParams } from 'react-router-dom';
 import { Alert, Container } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
-import { useGetSponsorsQuery, useGetSponsorTiersQuery } from '../../app/features/sponsors/api';
-import { LoadingPage } from '../../shared/components/loading';
+import { useGetSponsorsQuery, useGetSponsorTiersQuery } from '@/app/features/sponsors/api';
+import { LoadingPage } from '@/shared/components/loading';
 import SponsorsList from './SponsorsList';
 import styles from './Sponsors.module.css';
 
 export const SponsorsPage = () => {
-  const { eventId } = useParams();
+  const { eventId } = useParams<{ eventId: string }>();
 
   // Debug logging
   console.log('SponsorsPage - eventId from params:', eventId);
@@ -17,7 +17,7 @@ export const SponsorsPage = () => {
     isLoading: sponsorsLoading,
     error: sponsorsError,
   } = useGetSponsorsQuery(
-    { eventId },
+    { eventId: Number(eventId) },
     {
       skip: !eventId, // Skip query if no eventId
     },
@@ -28,7 +28,7 @@ export const SponsorsPage = () => {
     isLoading: tiersLoading,
     error: tiersError,
   } = useGetSponsorTiersQuery(
-    { eventId },
+    { eventId: Number(eventId) },
     {
       skip: !eventId, // Skip query if no eventId
     },

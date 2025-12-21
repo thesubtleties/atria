@@ -1,6 +1,14 @@
+import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/shared/components/buttons';
 import styles from './styles.module.css';
+
+interface Suggestion {
+  title: string;
+  description: string;
+  path: string;
+  icon: ReactNode;
+}
 
 /**
  * NotFound - Branded 404 page
@@ -10,7 +18,7 @@ import styles from './styles.module.css';
 export const NotFound = () => {
   const navigate = useNavigate();
 
-  const suggestions = [
+  const suggestions: Suggestion[] = [
     {
       title: 'Dashboard',
       description: 'View your events and connections',
