@@ -19,9 +19,11 @@ type LocalItems = Record<string, string[]>;
 
 type DragEndEvent = Parameters<typeof move>[1];
 
-type UpdateSponsorMutation = (
-  args: { sponsorId: number; tier_id: string; display_order: number },
-) => {
+type UpdateSponsorMutation = (args: {
+  sponsorId: number;
+  tier_id: string;
+  display_order: number;
+}) => {
   unwrap: () => Promise<unknown>;
 };
 

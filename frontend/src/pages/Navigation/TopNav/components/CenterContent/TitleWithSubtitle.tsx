@@ -11,4 +11,3 @@ export const TitleWithSubtitle = ({ title, subtitle }: TitleWithSubtitleProps) =
     <div className={styles.subtitle ?? ''}>{subtitle}</div>
   </div>
 );
-

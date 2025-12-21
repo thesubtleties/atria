@@ -26,4 +26,3 @@ export const CenterContent = (_props: CenterContentProps) => {
     </div>
   );
 };
-

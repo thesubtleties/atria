@@ -17,10 +17,10 @@ const TopNavComponent = ({ context, leftContent }: TopNavProps) => {
 
   return (
     <nav
-      className={`${styles.navbar ?? ''} ${hasLeftContent && isInEvent ? styles.navbarWithBurger ?? '' : ''}`}
+      className={`${styles.navbar ?? ''} ${hasLeftContent && isInEvent ? (styles.navbarWithBurger ?? '') : ''}`}
     >
       <div
-        className={`${styles.navContent ?? ''} ${hasLeftContent && isInEvent ? styles.navContentWithBurger ?? '' : ''}`}
+        className={`${styles.navContent ?? ''} ${hasLeftContent && isInEvent ? (styles.navContentWithBurger ?? '') : ''}`}
       >
         <div className={styles.navLeft ?? ''}>
           {!isInEvent && (
@@ -43,4 +43,3 @@ const TopNavComponent = ({ context, leftContent }: TopNavProps) => {
 
 export const TopNav = memo(TopNavComponent);
 TopNav.displayName = 'TopNav';
-

@@ -71,4 +71,3 @@ export const AdminSection = ({ eventId, onMobileNavClick }: AdminSectionProps) =
     </div>
   );
 };
-

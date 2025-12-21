@@ -33,10 +33,7 @@ const EventNavComponent = ({ eventId, event, isAdmin, onMobileNavClick }: EventN
             {...(onMobileNavClick ? { onMobileNavClick } : {})}
           />
           {isAdmin && (
-            <AdminSection
-              eventId={eventId}
-              {...(onMobileNavClick ? { onMobileNavClick } : {})}
-            />
+            <AdminSection eventId={eventId} {...(onMobileNavClick ? { onMobileNavClick } : {})} />
           )}
         </Stack>
       </ScrollArea>
@@ -68,4 +65,3 @@ const EventNavComponent = ({ eventId, event, isAdmin, onMobileNavClick }: EventN
 
 export const EventNav = memo(EventNavComponent);
 EventNav.displayName = 'EventNav';
-

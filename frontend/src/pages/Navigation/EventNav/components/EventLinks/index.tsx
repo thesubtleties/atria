@@ -58,7 +58,8 @@ export const EventLinks = ({ eventId, event, onMobileNavClick }: EventLinksProps
     return null;
   }, [event]);
 
-  const hasActiveSponsors = ('sponsors_count' in (event ?? {}) ? (event as EventDetail).sponsors_count : 0) > 0;
+  const hasActiveSponsors =
+    ('sponsors_count' in (event ?? {}) ? (event as EventDetail).sponsors_count : 0) > 0;
 
   return (
     <div className={styles.container ?? ''}>
@@ -69,7 +70,7 @@ export const EventLinks = ({ eventId, event, onMobileNavClick }: EventLinksProps
         active={isActive(`/app/events/${eventId}`)}
         onClick={handleNavClick}
       />
-      {event?.event_type === 'single_session' && mainSessionInfo ? (
+      {event?.event_type === 'single_session' && mainSessionInfo ?
         <NavLink
           component={RouterNavLink}
           to={`/app/events/${eventId}/sessions/${mainSessionInfo.id}`}
@@ -77,15 +78,14 @@ export const EventLinks = ({ eventId, event, onMobileNavClick }: EventLinksProps
           active={isActive(`/app/events/${eventId}/sessions/${mainSessionInfo.id}`)}
           onClick={handleNavClick}
         />
-      ) : (
-        <NavLink
+      : <NavLink
           component={RouterNavLink}
           to={`/app/events/${eventId}/agenda`}
           label='Agenda'
           active={isActive(`/app/events/${eventId}/agenda`)}
           onClick={handleNavClick}
         />
-      )}
+      }
       <NavLink
         component={RouterNavLink}
         to={`/app/events/${eventId}/speakers`}
@@ -112,4 +112,3 @@ export const EventLinks = ({ eventId, event, onMobileNavClick }: EventLinksProps
     </div>
   );
 };
-

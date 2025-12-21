@@ -44,7 +44,13 @@ export const MenuButton = () => {
     >
       <Menu.Target>
         <Button variant='subtle' className={styles.menuButton ?? ''}>
-          <img src={AtriaLogo} alt='Atria' className={styles.menuIcon ?? ''} width='24' height='24' />
+          <img
+            src={AtriaLogo}
+            alt='Atria'
+            className={styles.menuIcon ?? ''}
+            width='24'
+            height='24'
+          />
         </Button>
       </Menu.Target>
 
@@ -128,4 +134,3 @@ export const MenuButton = () => {
     </Menu>
   );
 };
-

@@ -119,7 +119,7 @@ const TierManagementModal = ({ opened, onClose, eventId }: TierManagementModalPr
     const newTiers = [...tierFormData];
     const currentTier = newTiers[index];
     if (!currentTier) return;
-    
+
     const updatedTier: TierFormData = {
       id: field === 'id' ? (value as string) : currentTier.id,
       name: field === 'name' ? (value as string) : currentTier.name,
