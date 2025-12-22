@@ -1,4 +1,5 @@
 import { baseApi } from '../api';
+import type { EventUserRole, InvitationStatus } from '@/types/enums';
 
 type GetEventInvitationsParams = {
   eventId: number;
@@ -9,8 +10,8 @@ type GetEventInvitationsParams = {
 type EventInvitation = {
   id: number;
   email: string;
-  role: string;
-  status: string;
+  role: EventUserRole;
+  status: InvitationStatus;
   created_at: string;
   expires_at: string;
 };
@@ -31,7 +32,7 @@ type GetEventInvitationsResponse = {
 type SendEventInvitationParams = {
   eventId: number;
   email: string;
-  role: string;
+  role: EventUserRole;
   message?: string;
 };
 
@@ -39,7 +40,7 @@ type SendBulkEventInvitationsParams = {
   eventId: number;
   invitations: Array<{
     email: string;
-    role: string;
+    role: EventUserRole;
     message?: string;
   }>;
 };

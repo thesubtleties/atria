@@ -106,6 +106,10 @@ export type Event = {
   last_session_time: string | null;
   event_hours: { start: string; end: string } | null;
   user_role: EventUserRole | null; // Current user's role if authenticated
+
+  // Optional computed properties (may be present in some API responses)
+  location?: string | null;
+  attendee_count?: number;
 };
 
 /** Detailed event with relationships */

@@ -8,17 +8,7 @@ import MembersSection from './MembersSection';
 import EventsSection from './EventsSection';
 import { cn } from '@/lib/cn';
 import styles from './styles/index.module.css';
-import type { OrganizationUserRole } from '@/types';
-
-type OrganizationData = {
-  id: number;
-  name: string;
-  description?: string;
-  member_count?: number;
-  current_user_role: OrganizationUserRole;
-  has_mux_signing_credentials?: boolean;
-  has_jaas_credentials?: boolean;
-};
+import type { OrganizationDetail } from '@/types';
 
 const OrganizationDashboard = () => {
   const { orgId } = useParams<{ orgId: string }>();
@@ -30,7 +20,7 @@ const OrganizationDashboard = () => {
     isLoading,
     error,
   } = useGetOrganizationQuery(orgId ? parseInt(orgId) : 0, { skip: !orgId });
-  const typedOrganization = organization as OrganizationData | undefined;
+  const typedOrganization = organization as OrganizationDetail | undefined;
 
   useEffect(() => {
     if (error) {
@@ -63,19 +53,22 @@ const OrganizationDashboard = () => {
         {/* Header Section */}
         <OrganizationHeader
           organization={typedOrganization}
-          currentUserRole={typedOrganization.current_user_role}
+          currentUserRole={typedOrganization.current_user_role ?? 'MEMBER'}
         />
 
         {/* Main Content */}
         <MembersSection
           orgId={orgId}
-          currentUserRole={typedOrganization.current_user_role}
+          currentUserRole={typedOrganization.current_user_role ?? 'MEMBER'}
           activeTab={activeTab}
           onTabChange={setActiveTab}
         />
 
         {/* Events Section */}
-        <EventsSection orgId={orgId} currentUserRole={typedOrganization.current_user_role} />
+        <EventsSection
+          orgId={orgId}
+          currentUserRole={typedOrganization.current_user_role ?? 'MEMBER'}
+        />
       </div>
     </div>
   );

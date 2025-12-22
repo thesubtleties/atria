@@ -1,17 +1,18 @@
 import { baseApi } from '../api';
 import type { SessionSpeaker } from '@/types';
+import type { SessionType, SessionStatus, SessionSpeakerRole } from '@/types/enums';
 
 type Session = {
   id: number;
   title: string;
   description?: string;
-  session_type: string;
+  session_type: SessionType;
   day_number: number;
   start_time: string;
   end_time: string;
   location?: string;
   capacity?: number;
-  status: string;
+  status: SessionStatus;
   event_id: number;
   created_at: string;
   updated_at: string;
@@ -45,7 +46,7 @@ type CreateSessionParams = {
   eventId: number;
   title: string;
   description?: string;
-  session_type: string;
+  session_type: SessionType;
   day_number: number;
   start_time: string;
   end_time: string;
@@ -57,18 +58,18 @@ type UpdateSessionParams = {
   id: number;
   title?: string;
   description?: string;
-  session_type?: string;
+  session_type?: SessionType;
   day_number?: number;
   start_time?: string;
   end_time?: string;
   location?: string;
   capacity?: number;
-  status?: string;
+  status?: SessionStatus;
 };
 
 type UpdateSessionStatusParams = {
   id: number;
-  status: string;
+  status: SessionStatus;
 };
 
 type UpdateSessionTimesParams = {
@@ -79,7 +80,7 @@ type UpdateSessionTimesParams = {
 
 type GetSessionSpeakersParams = {
   sessionId: number;
-  role?: string;
+  role?: SessionSpeakerRole;
   page?: number;
   per_page?: number;
 };
@@ -100,14 +101,14 @@ type GetSessionSpeakersResponse = {
 type AddSessionSpeakerParams = {
   sessionId: number;
   user_id: number;
-  role: string;
+  role: SessionSpeakerRole;
   order?: number;
 };
 
 type UpdateSessionSpeakerParams = {
   sessionId: number;
   userId: number;
-  role?: string;
+  role?: SessionSpeakerRole;
   order?: number;
   bio?: string;
 };

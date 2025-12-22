@@ -12,8 +12,7 @@ import { useMemo } from 'react';
 import { SPEAKER_ROLES, SPEAKER_ROLE_OPTIONS } from '@/shared/constants/speakerRoles';
 import styles from './styles/index.module.css';
 import type { ApiError } from '@/types/api';
-
-type SessionSpeakerRole = 'host' | 'speaker' | 'panelist' | 'moderator' | 'keynote';
+import type { SessionSpeakerRole } from '@/types/enums';
 
 type SessionSpeaker = {
   user_id: number;

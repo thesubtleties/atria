@@ -12,6 +12,7 @@ import { getNameSortValue } from '@/shared/utils/sorting';
 import { cn } from '@/lib/cn';
 import type { RootState } from '@/app/store';
 import type { EventUser, Event } from '@/types';
+import type { EventUserRole } from '@/types/enums';
 import type { EventUserRoleType } from './schemas/attendeeSchemas';
 import HeaderSection from './HeaderSection';
 import AttendeesList from './AttendeesList';
@@ -34,7 +35,7 @@ type RoleCounts = {
 
 type FilterState = {
   search: string;
-  role: string;
+  role: 'ALL' | EventUserRole;
   sortBy: string;
   sortOrder: 'asc' | 'desc';
 };
@@ -92,7 +93,7 @@ const AttendeesManager = () => {
         eventId: parsedEventId,
         page,
         per_page: 50,
-        ...(filters.role !== 'ALL' && { role: filters.role }),
+        ...(filters.role !== 'ALL' && { role: filters.role as EventUserRole }),
       }
     : undefined;
 
@@ -124,7 +125,7 @@ const AttendeesManager = () => {
 
   const handleRoleFilter = (value: string | null) => {
     // Ensure we always have a role value - default to 'ALL' if cleared
-    const roleValue = value || 'ALL';
+    const roleValue = (value || 'ALL') as 'ALL' | EventUserRole;
     setFilters((prev) => ({ ...prev, role: roleValue }));
     setPage(1);
   };

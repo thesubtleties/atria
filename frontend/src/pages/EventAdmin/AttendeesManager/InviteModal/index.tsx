@@ -13,6 +13,7 @@ import {
 import { Button } from '@/shared/components/buttons';
 import { cn } from '@/lib/cn';
 import styles from './styles.module.css';
+import type { EventUserRole } from '@/types/enums';
 
 type InviteModalProps = {
   opened: boolean;
@@ -67,10 +68,10 @@ const InviteModal = ({
     if (!eventId) return;
 
     try {
-      const params: { eventId: number; email: string; role: string; message?: string } = {
+      const params: { eventId: number; email: string; role: EventUserRole; message?: string } = {
         eventId,
         email: values.email,
-        role: values.role,
+        role: values.role as EventUserRole,
       };
       if (values.message) {
         params.message = values.message;
@@ -134,7 +135,7 @@ const InviteModal = ({
     try {
       const invitations = emailList.map((email) => ({
         email,
-        role: bulkForm.values.role as string,
+        role: bulkForm.values.role as EventUserRole,
         ...(bulkForm.values.message && { message: bulkForm.values.message }),
       }));
 

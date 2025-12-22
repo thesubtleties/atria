@@ -16,23 +16,11 @@ import { parseDateOnly } from '@/shared/hooks/formatDate';
 import EventCard from './EventCard';
 import { cn } from '@/lib/cn';
 import styles from './styles/index.module.css';
-import type { OrganizationUserRole } from '@/types';
+import type { OrganizationUserRole, Event } from '@/types';
 
 type EventsSectionProps = {
   orgId?: string | undefined;
   currentUserRole: OrganizationUserRole;
-};
-
-type Event = {
-  id: number;
-  title: string;
-  description?: string;
-  start_date: string;
-  end_date: string;
-  location?: string;
-  status?: string;
-  event_type?: string;
-  attendee_count?: number;
 };
 
 type EventsResponse = {

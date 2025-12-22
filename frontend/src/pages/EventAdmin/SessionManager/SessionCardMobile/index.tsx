@@ -33,13 +33,8 @@ import {
   type SessionTypeValue,
 } from '../schemas/sessionCardSchema';
 import { formatTime } from '@/shared/utils/formatting';
-import type {
-  Session,
-  SessionChatMode,
-  StreamingPlatform,
-  SessionSpeaker,
-  SessionType,
-} from '@/types';
+import type { Session, StreamingPlatform, SessionSpeaker } from '@/types';
+import type { SessionType, SessionChatMode, SessionStatus } from '@/types/enums';
 import styles from '../styles/index.module.css';
 
 const SESSION_TYPES = [
@@ -118,11 +113,12 @@ export const SessionCardMobile = ({ session, hasConflict }: SessionCardMobilePro
           id: number;
           title?: string;
           description?: string;
-          session_type?: string;
-          chat_mode?: string;
+          session_type?: SessionType;
+          chat_mode?: SessionChatMode;
+          status?: SessionStatus;
           start_time?: string;
           end_time?: string;
-          streaming_platform?: string | null;
+          streaming_platform?: StreamingPlatform | null;
           stream_url?: string | null;
           zoom_meeting_id?: string | null;
           zoom_passcode?: string | null;
@@ -135,7 +131,7 @@ export const SessionCardMobile = ({ session, hasConflict }: SessionCardMobilePro
               value === null ? undefined : value,
             ]),
           ),
-        };
+        } as typeof updateParams;
         await updateSession(updateParams).unwrap();
       } catch {
         notifications.show({ title: 'Error', message: 'Failed to update session', color: 'red' });

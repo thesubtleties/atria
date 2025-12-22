@@ -4,24 +4,10 @@ import { Link } from 'react-router-dom';
 import { useState, type MouseEvent } from 'react';
 import { useSelector } from 'react-redux';
 import { OrganizationModal } from '@/shared/components/modals/organization/OrganizationModal';
-import type { Organization as OrganizationType } from '@/types';
 import { useDeleteOrganizationMutation } from '@/app/features/organizations/api';
 import { cn } from '@/lib/cn';
 import styles from './styles/index.module.css';
-import type { RootState } from '@/types';
-
-type OrganizationUser = {
-  id: number;
-  role: string;
-};
-
-type Organization = {
-  id: number;
-  name: string;
-  created_at: string;
-  updated_at?: string;
-  users?: OrganizationUser[];
-};
+import type { RootState, Organization } from '@/types';
 
 type OrganizationCardProps = {
   organization: Organization;
@@ -108,7 +94,7 @@ export const OrganizationCard = ({ organization }: OrganizationCardProps) => {
           name: organization.name,
           created_at: organization.created_at,
           updated_at: organization.updated_at ?? organization.created_at,
-          users: (organization.users ?? []) as OrganizationType['users'],
+          users: organization.users ?? [],
         }}
         opened={showEditModal}
         onClose={() => setShowEditModal(false)}

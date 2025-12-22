@@ -6,6 +6,7 @@ import type {
   EventBrandingUpdate,
   EventUser,
 } from '@/types';
+import type { EventUserRole } from '@/types/enums';
 
 type GetEventsParams = {
   orgId: number;
@@ -41,7 +42,7 @@ type UpdateEventBrandingParams = { id: number } & EventBrandingUpdate;
 
 type GetEventUsersParams = {
   eventId: number;
-  role?: string;
+  role?: EventUserRole;
   page?: number;
   per_page?: number;
 };
@@ -62,7 +63,7 @@ type GetEventUsersResponse = {
 type AddEventUserParams = {
   eventId: number;
   user_id: number;
-  role: string;
+  role: EventUserRole;
 };
 
 /** Add or create event user */
@@ -72,13 +73,13 @@ type AddOrCreateEventUserParams = {
   first_name: string;
   last_name: string;
   password?: string | undefined; // Optional - used only for new user creation
-  role: string;
+  role: EventUserRole;
 };
 
 type UpdateEventUserParams = {
   eventId: number;
   userId: number;
-  role?: string;
+  role?: EventUserRole;
 };
 
 type UpdateEventSpeakerInfoParams = {

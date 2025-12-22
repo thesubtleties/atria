@@ -9,29 +9,28 @@ import { EmptyState } from './EmptyState';
 import { categorizeEvents } from './utils/eventCategorization';
 import type { RootState } from '@/types';
 import type { Event } from '@/types/events';
+import type { EventUserRole } from '@/types/enums';
 import { cn } from '@/lib/cn';
 import styles from './styles/index.module.css';
 
 type EventInvitation = {
   id: number;
   token: string;
-  role: string;
-  message?: string;
+  role: EventUserRole;
+  message: string | null;
   created_at: string;
   event: {
     id: number;
     title: string;
-    start_date?: string;
-    end_date?: string;
-    location?: string;
+    start_date: string | null;
     organization: {
       id: number;
       name: string;
     };
   };
-  invited_by?: {
+  invited_by: {
     name: string;
-  };
+  } | null;
 };
 
 type EventsResponse = {

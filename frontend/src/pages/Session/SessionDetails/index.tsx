@@ -5,6 +5,7 @@ import { format, parseISO, addDays } from 'date-fns';
 import { EditSessionModal } from '@/shared/components/modals/session/EditSessionModal';
 import { formatSessionTime } from '@/shared/utils/timezone';
 import type { SessionDetail, EventDetail } from '@/types/events';
+import type { SessionStatus } from '@/types/enums';
 import { cn } from '@/lib/cn';
 import styles from './styles/index.module.css';
 
@@ -16,7 +17,7 @@ type SessionDetailsProps = {
   session: SessionWithLocation;
   event: EventDetail | undefined;
   canEdit: boolean | undefined;
-  onStatusChange?: (status: string) => Promise<void>;
+  onStatusChange?: (status: SessionStatus) => Promise<void>;
   onUpdate?: (updates: Partial<SessionDetail>) => Promise<void>;
 };
 

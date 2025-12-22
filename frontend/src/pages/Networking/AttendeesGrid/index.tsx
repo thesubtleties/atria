@@ -118,7 +118,7 @@ export function AttendeesGrid({ eventId }: AttendeesGridProps) {
   const computedRole =
     filterRole === 'all' ? undefined
     : filterRole === 'organizer' ? undefined
-    : filterRole?.toUpperCase();
+    : (filterRole?.toUpperCase() as EventUserRole | undefined);
 
   const {
     data: regularData,

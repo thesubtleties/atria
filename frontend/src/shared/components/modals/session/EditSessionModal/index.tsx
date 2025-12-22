@@ -18,8 +18,7 @@ import { useGetEventQuery } from '@/app/features/events/api';
 import { Button } from '@/shared/components/buttons';
 import { editSessionSchema } from './schemas/editSessionSchema';
 import styles from './styles/index.module.css';
-
-type SessionChatMode = 'ENABLED' | 'BACKSTAGE_ONLY' | 'DISABLED';
+import type { SessionType, SessionChatMode, StreamingPlatform } from '@/types/enums';
 
 interface SessionData {
   id: number;
@@ -27,12 +26,12 @@ interface SessionData {
   title: string;
   short_description?: string | null;
   description?: string | null;
-  session_type: string;
+  session_type: SessionType;
   start_time: string;
   end_time: string;
   day_number: number;
   chat_mode?: SessionChatMode;
-  streaming_platform?: string | null;
+  streaming_platform?: StreamingPlatform | null;
   stream_url?: string | null;
   zoom_meeting_id?: string | null;
   zoom_passcode?: string | null;
@@ -108,12 +107,12 @@ interface SessionFormValues {
   title: string;
   short_description: string;
   description: string;
-  session_type: string;
+  session_type: SessionType;
   start_time: string;
   end_time: string;
   day_number: string;
   chat_mode: SessionChatMode;
-  streaming_platform: string;
+  streaming_platform: StreamingPlatform | '';
   stream_url: string;
   zoom_meeting_id: string;
   zoom_passcode: string;

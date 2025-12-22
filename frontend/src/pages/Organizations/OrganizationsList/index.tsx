@@ -6,16 +6,7 @@ import { OrganizationCard } from './OrganizationCard';
 import { OrganizationModal } from '@/shared/components/modals/organization/OrganizationModal';
 import { cn } from '@/lib/cn';
 import styles from './styles/index.module.css';
-
-type Organization = {
-  id: number;
-  name: string;
-  created_at: string;
-  users?: Array<{
-    id: number;
-    role: string;
-  }>;
-};
+import type { Organization } from '@/types';
 
 type OrganizationsResponse = {
   organizations?: Organization[];

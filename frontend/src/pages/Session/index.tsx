@@ -16,6 +16,7 @@ import { SessionDetails } from './SessionDetails';
 import { SessionChat } from './SessionChat';
 import type { RootState } from '@/types';
 import type { SessionDetail, EventDetail } from '@/types/events';
+import type { SessionStatus } from '@/types/enums';
 import { cn } from '@/lib/cn';
 import styles from './styles/index.module.css';
 
@@ -84,7 +85,7 @@ export const SessionPage = () => {
     (org) => org.id === currentUser?.id && ['ADMIN', 'ORGANIZER'].includes(org.role),
   );
 
-  const handleStatusChange = async (newStatus: string) => {
+  const handleStatusChange = async (newStatus: SessionStatus) => {
     try {
       await updateStatus({
         id: Number(sessionId),

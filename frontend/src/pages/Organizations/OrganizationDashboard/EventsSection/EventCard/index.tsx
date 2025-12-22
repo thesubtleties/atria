@@ -4,18 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useFormatDate } from '@/shared/hooks/formatDate';
 import { cn } from '@/lib/cn';
 import styles from './styles/index.module.css';
-
-type Event = {
-  id: number;
-  title: string;
-  description?: string;
-  start_date: string;
-  end_date: string;
-  location?: string;
-  status?: string;
-  event_type?: string;
-  attendee_count?: number;
-};
+import type { Event } from '@/types';
 
 type EventCardProps = {
   event: Event;
@@ -90,7 +79,7 @@ const EventCard = ({ event }: EventCardProps) => {
 
       <div className={cn(styles.cardFooter)}>
         <Badge variant='light' className={cn(styles.typeBadge)} data-type={event.event_type}>
-          {event.event_type === 'conference' ? 'Conference' : 'Single Session'}
+          {event.event_type === 'CONFERENCE' ? 'Conference' : 'Single Session'}
         </Badge>
       </div>
     </div>
