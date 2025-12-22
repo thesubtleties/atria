@@ -25,13 +25,13 @@ import { COMMON_TIMEZONES } from '@/shared/constants/timezones';
 import type { ApiError } from '@/types/api';
 
 const EVENT_TYPES = [
-  { value: 'conference', label: 'Conference' },
-  { value: 'single_session', label: 'Single Session' },
+  { value: 'CONFERENCE', label: 'Conference' },
+  { value: 'SINGLE_SESSION', label: 'Single Session' },
 ] as const;
 
-const SINGLE_SESSION_TYPE = 'single_session';
+const SINGLE_SESSION_TYPE = 'SINGLE_SESSION';
 
-type EventTypeValue = 'conference' | 'single_session';
+type EventTypeValue = 'CONFERENCE' | 'SINGLE_SESSION';
 
 interface EventFormValues {
   title: string;

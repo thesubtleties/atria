@@ -113,12 +113,12 @@ export type DirectMessageCreateData = {
 
 /** Check if connection is pending */
 export function isPendingConnection(connection: Connection): boolean {
-  return connection.status === 'pending';
+  return connection.status === 'PENDING';
 }
 
 /** Check if connection is accepted */
 export function isAcceptedConnection(connection: Connection): boolean {
-  return connection.status === 'accepted';
+  return connection.status === 'ACCEPTED';
 }
 
 /** Check if thread has unread messages */

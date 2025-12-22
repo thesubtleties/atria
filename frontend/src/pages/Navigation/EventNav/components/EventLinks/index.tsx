@@ -27,7 +27,7 @@ export const EventLinks = ({ eventId, event, onMobileNavClick }: EventLinksProps
   };
 
   const mainSessionInfo = useMemo(() => {
-    if (event?.event_type !== 'single_session') {
+    if (event?.event_type !== 'SINGLE_SESSION') {
       return null;
     }
 
@@ -70,7 +70,7 @@ export const EventLinks = ({ eventId, event, onMobileNavClick }: EventLinksProps
         active={isActive(`/app/events/${eventId}`)}
         onClick={handleNavClick}
       />
-      {event?.event_type === 'single_session' && mainSessionInfo ?
+      {event?.event_type === 'SINGLE_SESSION' && mainSessionInfo ?
         <NavLink
           component={RouterNavLink}
           to={`/app/events/${eventId}/sessions/${mainSessionInfo.id}`}

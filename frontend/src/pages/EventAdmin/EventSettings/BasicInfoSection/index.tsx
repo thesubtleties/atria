@@ -42,7 +42,7 @@ const BasicInfoSection = ({ event, eventId }: BasicInfoSectionProps) => {
   // Fetch sessions when event_type is single_session
   const { data: sessionsData } = useGetSessionsQuery(
     { eventId },
-    { skip: event?.event_type !== 'single_session' },
+    { skip: event?.event_type !== 'SINGLE_SESSION' },
   );
 
   const form = useForm<FormValues>({

@@ -23,8 +23,8 @@ const SectionWrapper = ({
     <section
       id={id}
       className={`
-        ${styles.section} 
-        ${styles[`bg-${background}`]} 
+        ${styles.section}
+        ${styles[`bg-${background}`]}
         ${styles[`padding-${padding}`]}
         ${styles[`overflow-${overflow}`]}
         ${className}

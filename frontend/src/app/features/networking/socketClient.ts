@@ -416,7 +416,7 @@ export const initializeSocket = (token: string | null = null): Socket | null => 
 
             draft.messages.forEach((msg) => {
               if (msg.sender_id !== data.reader_id) {
-                msg.status = 'read'; // lowercase to match backend enum and UI
+                msg.status = 'READ';
               }
             });
             // Don't return - Immer handles it
@@ -434,7 +434,7 @@ export const initializeSocket = (token: string | null = null): Socket | null => 
 
             draft.messages.forEach((msg) => {
               if (msg.sender_id !== data.reader_id) {
-                msg.status = 'read'; // lowercase to match backend enum and UI
+                msg.status = 'READ';
               }
             });
             // Don't return - Immer handles it

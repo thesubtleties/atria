@@ -81,7 +81,7 @@ export const ProfilePage = () => {
       (connectionsData?.items as Connection[] | undefined)?.find((conn: Connection) => {
         const isRequester = conn.requester.id === profileUserId;
         const isRecipient = conn.recipient.id === profileUserId;
-        const isAccepted = conn.status === 'accepted';
+        const isAccepted = conn.status === 'ACCEPTED';
         return (isRequester || isRecipient) && isAccepted;
       })
     : undefined;

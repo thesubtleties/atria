@@ -36,7 +36,7 @@ export function RequestCard({ request }: RequestCardProps) {
     try {
       const result = (await updateStatus({
         connectionId: request.id,
-        status: 'accepted',
+        status: 'ACCEPTED',
       }).unwrap()) as UpdateConnectionResult;
 
       notifications.show({
@@ -69,7 +69,7 @@ export function RequestCard({ request }: RequestCardProps) {
     try {
       await updateStatus({
         connectionId: request.id,
-        status: 'rejected',
+        status: 'REJECTED',
       }).unwrap();
 
       notifications.show({

@@ -1,21 +1,16 @@
 /**
- * Enum types matching backend API values exactly.
- *
- * Convention:
- * - Types use the exact string values returned by the API
- * - Most domain enums use lowercase (event_type, status, format)
- * - Role/system enums use UPPERCASE (EventUserRole, ChatRoomType)
+ * Enum types matching backend API values.
  */
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Session Types
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type SessionType = 'keynote' | 'workshop' | 'panel' | 'PRESENTATION' | 'networking' | 'qa';
+export type SessionType = 'KEYNOTE' | 'WORKSHOP' | 'PANEL' | 'PRESENTATION' | 'NETWORKING' | 'QA';
 
-export type SessionStatus = 'scheduled' | 'starting_soon' | 'live' | 'completed' | 'cancelled';
+export type SessionStatus = 'SCHEDULED' | 'STARTING_SOON' | 'LIVE' | 'COMPLETED' | 'CANCELLED';
 
-export type SessionSpeakerRole = 'host' | 'speaker' | 'panelist' | 'moderator' | 'keynote';
+export type SessionSpeakerRole = 'HOST' | 'SPEAKER' | 'PANELIST' | 'MODERATOR' | 'KEYNOTE';
 
 export type SessionChatMode = 'ENABLED' | 'BACKSTAGE_ONLY' | 'DISABLED';
 
@@ -23,14 +18,14 @@ export type SessionChatMode = 'ENABLED' | 'BACKSTAGE_ONLY' | 'DISABLED';
 // Event Types
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type EventType = 'conference' | 'single_session';
+export type EventType = 'CONFERENCE' | 'SINGLE_SESSION';
 
-export type EventStatus = 'draft' | 'published' | 'archived' | 'deleted';
+export type EventStatus = 'DRAFT' | 'PUBLISHED' | 'ARCHIVED' | 'DELETED';
 
-export type EventFormat = 'virtual' | 'in_person' | 'hybrid';
+export type EventFormat = 'VIRTUAL' | 'IN_PERSON' | 'HYBRID';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// User Roles (UPPERCASE - matches backend)
+// User Roles
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type EventUserRole = 'ADMIN' | 'ORGANIZER' | 'MODERATOR' | 'SPEAKER' | 'ATTENDEE';
@@ -41,19 +36,19 @@ export type OrganizationUserRole = 'ADMIN' | 'MEMBER' | 'OWNER';
 // Networking & Connections
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type ConnectionStatus = 'pending' | 'accepted' | 'rejected' | 'removed' | 'blocked';
+export type ConnectionStatus = 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'REMOVED' | 'BLOCKED';
 
-export type EmailVisibility = 'event_attendees' | 'connections_organizers' | 'organizers_only';
+export type EmailVisibility = 'EVENT_ATTENDEES' | 'CONNECTIONS_ORGANIZERS' | 'ORGANIZERS_ONLY';
 
-export type ConnectionRequestPermission = 'event_attendees' | 'speakers_organizers' | 'none';
+export type ConnectionRequestPermission = 'EVENT_ATTENDEES' | 'SPEAKERS_ORGANIZERS' | 'NONE';
 
-export type SocialLinksVisibility = 'event_attendees' | 'connections' | 'hidden';
+export type SocialLinksVisibility = 'EVENT_ATTENDEES' | 'CONNECTIONS' | 'HIDDEN';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Messaging
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type MessageStatus = 'sent' | 'delivered' | 'read';
+export type MessageStatus = 'SENT' | 'DELIVERED' | 'READ';
 
 export type ChatRoomType = 'GLOBAL' | 'PUBLIC' | 'BACKSTAGE' | 'ADMIN' | 'GREEN_ROOM';
 
@@ -61,7 +56,7 @@ export type ChatRoomType = 'GLOBAL' | 'PUBLIC' | 'BACKSTAGE' | 'ADMIN' | 'GREEN_
 // Invitations
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type InvitationStatus = 'pending' | 'accepted' | 'expired' | 'declined' | 'cancelled';
+export type InvitationStatus = 'PENDING' | 'ACCEPTED' | 'EXPIRED' | 'DECLINED' | 'CANCELLED';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Streaming & Media
