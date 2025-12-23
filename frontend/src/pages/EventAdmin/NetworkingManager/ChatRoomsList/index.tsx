@@ -8,7 +8,7 @@ import { useReorderChatRoomMutation } from '@/app/features/chat/api';
 import { cn } from '@/lib/cn';
 import RoomTypeSection from './RoomTypeSection';
 import EmptyState from './EmptyState';
-import type { ChatRoom, ChatRoomType, ApiError } from '@/types';
+import type { ChatRoom, ChatRoomType, ApiError, DragOverEvent, DragEndEvent } from '@/types';
 import styles from './styles.module.css';
 
 type RoomWithId = ChatRoom & { _id: string; message_count?: number };
@@ -98,8 +98,7 @@ const ChatRoomsList = ({ chatRooms, isLoading, onEdit }: ChatRoomsListProps) => 
     setLocalRooms(grouped);
   }, [roomsByType]);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleDragOver = (roomType: ChatRoomType) => (event: any) => {
+  const handleDragOver = (roomType: ChatRoomType) => (event: DragOverEvent) => {
     setLocalRooms((current) => {
       const result = move(current, event);
       if (result && result[roomType]) {
@@ -112,12 +111,11 @@ const ChatRoomsList = ({ chatRooms, isLoading, onEdit }: ChatRoomsListProps) => 
     });
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleDragEnd = (roomType: ChatRoomType) => async (event: any) => {
+  const handleDragEnd = (roomType: ChatRoomType) => async (event: DragEndEvent) => {
     const { operation } = event;
-    if (!operation) return;
+    if (!operation?.source) return;
 
-    const draggedId = operation.source.id;
+    const draggedId = String(operation.source.id);
     const draggedRoom = roomLookup[draggedId];
 
     if (!draggedRoom) return;

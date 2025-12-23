@@ -14,7 +14,7 @@ import styles from './styles/index.module.css';
 import type { ApiError } from '@/types/api';
 import type { SessionSpeakerRole } from '@/types/enums';
 
-type SessionSpeaker = {
+type CurrentSpeaker = {
   user_id: number;
   full_name: string;
   avatar_url?: string | undefined;
@@ -31,7 +31,7 @@ type AddSpeakerModalProps = {
   eventId?: number | undefined;
   opened: boolean;
   onClose: () => void;
-  currentSpeakers?: SessionSpeaker[] | undefined;
+  currentSpeakers?: CurrentSpeaker[] | undefined;
 };
 
 export const AddSpeakerModal = ({
@@ -51,24 +51,18 @@ export const AddSpeakerModal = ({
 
   const finalEventId = eventId || session?.event_id;
 
-  // Note: API types may be incomplete - using any for response
   const { data: eventSpeakersData } = useGetEventUsersQuery(
     finalEventId ? { eventId: finalEventId, role: 'SPEAKER' } : skipToken,
     { skip: !finalEventId },
   );
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const eventSpeakers = eventSpeakersData as any;
 
   // Use passed currentSpeakers if available, otherwise fetch them
   const { data: fetchedSpeakersData } = useGetSessionSpeakersQuery(
     { sessionId },
     { skip: !sessionId || !!currentSpeakers }, // Skip if we have passed speakers
   );
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const fetchedSpeakers = fetchedSpeakersData as any;
 
-  const speakersData =
-    currentSpeakers || fetchedSpeakers?.session_speakers || fetchedSpeakers?.speakers;
+  const speakersData = currentSpeakers || fetchedSpeakersData?.speakers;
 
   const form = useForm<AddSpeakerFormValues>({
     initialValues: {
@@ -79,23 +73,18 @@ export const AddSpeakerModal = ({
 
   // Get list of speakers not already assigned to this session
   const availableSpeakers = useMemo(() => {
-    const eventUsers = eventSpeakers?.event_users || eventSpeakers?.users;
+    const eventUsers = eventSpeakersData?.users;
     if (!eventUsers) return [];
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const currentSpeakerIds = speakersData?.map((s: any) => s.user_id) || [];
+    const currentSpeakerIds = speakersData?.map((s) => s.user_id) || [];
 
-    return (
-      eventUsers
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .filter((user: any) => !currentSpeakerIds.includes(user.user_id))
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .map((user: any) => ({
-          value: user.user_id.toString(),
-          label: `${user.first_name || ''} ${user.last_name || user.full_name || ''}${user.title ? ` - ${user.title}` : ''}`,
-        }))
-    );
-  }, [eventSpeakers, speakersData]);
+    return eventUsers
+      .filter((user) => !currentSpeakerIds.includes(user.user_id))
+      .map((user) => ({
+        value: user.user_id.toString(),
+        label: `${user.first_name || ''} ${user.last_name || user.full_name || ''}${user.title ? ` - ${user.title}` : ''}`,
+      }));
+  }, [eventSpeakersData, speakersData]);
 
   const handleSubmit = async (values: AddSpeakerFormValues) => {
     try {

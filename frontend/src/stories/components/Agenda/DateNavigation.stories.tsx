@@ -1,8 +1,11 @@
 // src/stories/components/DateNavigation/DateNavigation.stories.tsx
 import type { Meta, StoryObj } from '@storybook/react';
+import type { ComponentProps } from 'react';
 import { fn } from '@storybook/test';
 import { DateNavigation } from '../../../pages/Agenda/DateNavigation';
 import { useState } from 'react';
+
+type DateNavigationProps = ComponentProps<typeof DateNavigation>;
 
 const meta = {
   title: 'Agenda/DateNavigation',
@@ -31,7 +34,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 // Wrapper component to handle state
-const DateNavigationWrapper = (args: any) => {
+const DateNavigationWrapper = (args: DateNavigationProps) => {
   const [currentDay, setCurrentDay] = useState(args.currentDay);
 
   return <DateNavigation {...args} currentDay={currentDay} onDateChange={setCurrentDay} />;

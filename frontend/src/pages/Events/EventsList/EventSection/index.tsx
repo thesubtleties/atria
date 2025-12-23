@@ -4,11 +4,38 @@ import { EventInvitationCard } from '../EventInvitationCard';
 import { cn } from '@/lib/cn';
 import styles from '../styles/index.module.css';
 
+type EventInvitation = {
+  id: number;
+  token: string;
+  role: string;
+  message?: string;
+  created_at: string;
+  event: {
+    id: number;
+    title: string;
+    start_date?: string;
+    end_date?: string;
+    location?: string;
+    organization: {
+      id: number;
+      name: string;
+    };
+  };
+  invited_by?: {
+    name: string;
+  };
+};
+
+type EventItem = {
+  id: number;
+  title?: string;
+  [key: string]: unknown;
+};
+
 type EventSectionProps = {
   icon: Icon;
   title: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  items: any[];
+  items: EventInvitation[] | EventItem[];
   type: 'invitation' | 'event';
   status?: 'live' | 'upcoming' | 'past' | undefined;
 };
@@ -26,8 +53,8 @@ export const EventSection = ({ icon: Icon, title, items, type, status }: EventSe
       <div className={cn(styles.eventsGrid)}>
         {items.map((item) =>
           type === 'invitation' ?
-            <EventInvitationCard key={item.id} invitation={item} />
-          : <AttendeeEventCard key={item.id} event={item} status={status} />,
+            <EventInvitationCard key={item.id} invitation={item as EventInvitation} />
+          : <AttendeeEventCard key={item.id} event={item as EventItem} status={status} />,
         )}
       </div>
     </section>

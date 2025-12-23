@@ -29,7 +29,7 @@ import { Button } from '@/shared/components/buttons';
 import { useUpdateEventMutation } from '@/app/features/events/api';
 import { highlightSchema, faqSchema } from '../schemas/eventSettingsSchemas';
 import { cn } from '@/lib/cn';
-import type { Event, ApiError } from '@/types';
+import type { Event, ApiError, DragOverEvent, DragEndEvent } from '@/types';
 import styles from './styles.module.css';
 import parentStyles from '../styles/index.module.css';
 
@@ -481,15 +481,13 @@ const ContentSections = ({ event, eventId }: ContentSectionsProps) => {
   };
 
   // Highlight drag handlers
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleHighlightDragOver = (dragEvent: any) => {
+  const handleHighlightDragOver = (dragEvent: DragOverEvent) => {
     setLocalHighlights((items) => move(items, dragEvent));
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleHighlightDragEnd = (dragEvent: any) => {
+  const handleHighlightDragEnd = (dragEvent: DragEndEvent) => {
     const { operation } = dragEvent;
-    if (!operation) return;
+    if (!operation?.source) return;
 
     const draggedId = operation.source.id;
     const draggedHighlight = highlightLookup[draggedId];
@@ -540,15 +538,13 @@ const ContentSections = ({ event, eventId }: ContentSectionsProps) => {
   };
 
   // FAQ drag handlers
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleFAQDragOver = (dragEvent: any) => {
+  const handleFAQDragOver = (dragEvent: DragOverEvent) => {
     setLocalFaqs((items) => move(items, dragEvent));
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleFAQDragEnd = (dragEvent: any) => {
+  const handleFAQDragEnd = (dragEvent: DragEndEvent) => {
     const { operation } = dragEvent;
-    if (!operation) return;
+    if (!operation?.source) return;
 
     const draggedId = operation.source.id;
     const draggedFaq = faqLookup[draggedId];

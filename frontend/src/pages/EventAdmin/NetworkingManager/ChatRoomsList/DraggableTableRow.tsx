@@ -12,11 +12,13 @@ type DraggableTableRowProps = {
 };
 
 const DraggableTableRow = ({ id, room: _room, children }: DraggableTableRowProps) => {
-  // @ts-expect-error - dnd-kit types are not fully compatible with our usage
-  const { ref, isDragging } = useSortable({ id });
+  const { ref, isDragging } = useSortable({ id, index: 0 });
 
   return (
-    <Table.Tr ref={ref} className={cn(styles.draggableRow, isDragging && styles.dragging)}>
+    <Table.Tr
+      ref={ref as React.RefCallback<HTMLTableRowElement>}
+      className={cn(styles.draggableRow, isDragging && styles.dragging)}
+    >
       <Table.Td className={cn(styles.dragHandleCell)}>
         <ActionIcon variant='subtle' size='sm' className={cn(styles.dragHandle)}>
           <IconGripVertical size={16} />

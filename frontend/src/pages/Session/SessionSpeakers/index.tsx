@@ -13,6 +13,7 @@ import { AddSpeakerModal } from '@/shared/components/modals/session/AddSpeakerMo
 import { SpeakerCard } from './SpeakerCard';
 import { SPEAKER_ROLE_ORDER, formatSpeakerRole } from '@/shared/constants/speakerRoles';
 import { cn } from '@/lib/cn';
+import type { DragOverEvent, DragEndEvent } from '@/types';
 import styles from './styles/index.module.css';
 
 type SessionSpeaker = {
@@ -161,8 +162,7 @@ export const SessionSpeakers = ({
   };
 
   // Handle drag operations for a specific role
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleDragOver = (role: string) => (event: any) => {
+  const handleDragOver = (role: string) => (event: DragOverEvent) => {
     if (!canEdit) return;
 
     setLocalSpeakersByRole((current) => {
@@ -178,8 +178,7 @@ export const SessionSpeakers = ({
     });
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleDragEnd = (role: string) => async (event: any) => {
+  const handleDragEnd = (role: string) => async (event: DragEndEvent) => {
     if (!canEdit) return;
 
     const { operation } = event;

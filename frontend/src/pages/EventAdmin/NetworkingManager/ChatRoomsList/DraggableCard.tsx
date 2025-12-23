@@ -12,11 +12,13 @@ type DraggableCardProps = {
 };
 
 const DraggableCard = ({ id, room, color, onEdit }: DraggableCardProps) => {
-  // @ts-expect-error - dnd-kit types are not fully compatible with our usage
-  const { ref, isDragging } = useSortable({ id });
+  const { ref, isDragging } = useSortable({ id, index: 0 });
 
   return (
-    <div ref={ref} className={cn(styles.mobileCard, isDragging && styles.dragging)}>
+    <div
+      ref={ref as React.RefCallback<HTMLDivElement>}
+      className={cn(styles.mobileCard, isDragging && styles.dragging)}
+    >
       <ChatRoomRow room={room} color={color} onEdit={onEdit} isMobile={true} />
     </div>
   );

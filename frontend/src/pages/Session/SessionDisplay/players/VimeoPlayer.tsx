@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react';
-// @ts-expect-error - @vimeo/player doesn't have type definitions
 import Player from '@vimeo/player';
 import { cn } from '@/lib/cn';
 import styles from '../styles/index.module.css';

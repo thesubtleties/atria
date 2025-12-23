@@ -4,7 +4,7 @@ import DraggableTableRow from './DraggableTableRow';
 import DraggableCard from './DraggableCard';
 import ChatRoomRow from '../ChatRoomRow';
 import { cn } from '@/lib/cn';
-import type { ChatRoom, ChatRoomType } from '@/types';
+import type { ChatRoom, ChatRoomType, DragOverEvent, DragEndEvent } from '@/types';
 import styles from './styles.module.css';
 
 type RoomWithId = ChatRoom & { _id: string; message_count?: number };
@@ -19,10 +19,8 @@ type RoomTypeSectionProps = {
   roomLookup: Record<string, RoomWithId>;
   isMobile: boolean;
   onEdit: (room: ChatRoom) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onDragOver: (event: any) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onDragEnd: (event: any) => void;
+  onDragOver: (event: DragOverEvent) => void;
+  onDragEnd: (event: DragEndEvent) => void;
 };
 
 const RoomTypeSection = ({

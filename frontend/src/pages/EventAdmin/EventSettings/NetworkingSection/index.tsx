@@ -18,7 +18,7 @@ import { Button } from '@/shared/components/buttons';
 import { useUpdateEventMutation } from '@/app/features/events/api';
 import { icebreakersSchema } from '../schemas/eventSettingsSchemas';
 import { cn } from '@/lib/cn';
-import type { Event, ApiError } from '@/types';
+import type { Event, ApiError, DragOverEvent, DragEndEvent } from '@/types';
 import styles from './styles.module.css';
 import parentStyles from '../styles/index.module.css';
 
@@ -284,15 +284,13 @@ const NetworkingSection = ({ event, eventId }: NetworkingSectionProps) => {
   };
 
   // Drag handlers
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleDragOver = (dragEvent: any) => {
+  const handleDragOver = (dragEvent: DragOverEvent) => {
     setLocalIcebreakers((items) => move(items, dragEvent));
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleDragEnd = (dragEvent: any) => {
+  const handleDragEnd = (dragEvent: DragEndEvent) => {
     const { operation } = dragEvent;
-    if (!operation) return;
+    if (!operation?.source) return;
 
     const draggedId = operation.source.id;
     const draggedIcebreaker = icebreakerLookup[draggedId];
