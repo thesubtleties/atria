@@ -482,7 +482,7 @@ class TestDirectMessageModel:
             db.session.commit()
 
             assert message.status == status
-            assert message.status.value in ['sent', 'delivered', 'read']
+            assert message.status.value in ['SENT', 'DELIVERED', 'READ']
 
     def test_conversation_flow(self, db, user_factory):
         """Test a realistic conversation flow.
