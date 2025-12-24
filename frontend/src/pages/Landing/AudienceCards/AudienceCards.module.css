@@ -36,10 +36,11 @@
   transform: translateX(-50%);
   width: 80px;
   height: 3px;
-  background: linear-gradient(90deg, 
-    transparent 0%, 
-    var(--color-accent-yellow) 20%, 
-    var(--color-accent-yellow) 80%, 
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--color-accent-yellow) 20%,
+    var(--color-accent-yellow) 80%,
     transparent 100%
   );
   border-radius: 2px;
@@ -78,7 +79,9 @@
   border-radius: var(--radius-large);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
   overflow: hidden;
-  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+  transition:
+    transform 0.2s ease-out,
+    box-shadow 0.2s ease-out;
   transform-origin: center center;
   will-change: transform, opacity;
   transform-style: preserve-3d;
@@ -161,14 +164,13 @@
 .backgroundPattern {
   width: 100%;
   height: 100%;
-  background-image: 
-    repeating-linear-gradient(
-      45deg,
-      currentColor,
-      currentColor 1px,
-      transparent 1px,
-      transparent 15px
-    );
+  background-image: repeating-linear-gradient(
+    45deg,
+    currentColor,
+    currentColor 1px,
+    transparent 1px,
+    transparent 15px
+  );
 }
 
 /* Accent color variations */
@@ -177,7 +179,7 @@
 }
 
 .green {
-  border-top: 6px solid #10B981;
+  border-top: 6px solid #10b981;
 }
 
 .yellow {
@@ -185,11 +187,11 @@
 }
 
 .red {
-  border-top: 6px solid #EF4444;
+  border-top: 6px solid #ef4444;
 }
 
 .pink {
-  border-top: 6px solid #EC4899;
+  border-top: 6px solid #ec4899;
 }
 
 /* Mobile responsive */
@@ -197,23 +199,23 @@
   .audienceCard {
     margin: 0 auto 60px;
   }
-  
+
   .cardContent {
     padding: var(--space-comfort);
   }
-  
+
   .cardTitle {
     font-size: var(--text-heading);
   }
-  
+
   .cardDescription {
     font-size: var(--text-body);
   }
-  
+
   .cardFeatures {
     font-size: var(--text-small);
   }
-  
+
   .cardBackground {
     display: none;
   }
@@ -234,7 +236,7 @@
   .audienceCard {
     position: relative !important;
     top: unset !important;
-    transform: scale(1) translate3d(0,0,0) !important;
+    transform: scale(1) translate3d(0, 0, 0) !important;
     transform-origin: unset !important;
   }
 }

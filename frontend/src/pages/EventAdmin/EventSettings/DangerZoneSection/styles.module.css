@@ -87,21 +87,21 @@
   .dangerZone {
     padding: 1rem;
   }
-  
+
   .warningSection {
     margin-bottom: 1rem;
     padding-bottom: 0.875rem;
   }
-  
+
   .deleteSection {
     padding: 0.875rem;
   }
-  
+
   .deleteButton {
     width: 100%;
     justify-content: center;
   }
-  
+
   .warningText {
     font-size: 0.8125rem;
   }
@@ -112,15 +112,15 @@
   .dangerZone {
     padding: 0.875rem;
   }
-  
+
   .sectionTitle {
     font-size: 1rem;
   }
-  
+
   .warningText {
     font-size: 0.75rem;
   }
-  
+
   .deleteCode {
     font-size: 0.7rem;
     padding: 0.15rem 0.3rem;

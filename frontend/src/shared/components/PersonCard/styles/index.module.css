@@ -93,19 +93,19 @@
 }
 
 .name {
-  color: #1E293B;
+  color: #1e293b;
   line-height: 1.2;
   font-weight: 600;
 }
 
 .title {
   line-height: 1.3;
-  color: #64748B;
+  color: #64748b;
   font-size: 0.875rem;
 }
 
 .bio {
-  color: #64748B;
+  color: #64748b;
   line-height: 1.5;
   flex: 1;
   font-size: 0.875rem;
@@ -155,7 +155,7 @@
   margin: 0;
   background: rgba(139, 92, 246, 0.08);
   border: 1px solid rgba(139, 92, 246, 0.15);
-  color: #8B5CF6;
+  color: #8b5cf6;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
@@ -181,13 +181,13 @@
   font-weight: 500;
   transition: all 0.2s ease;
   margin: 0;
-  background: #8B5CF6;
+  background: #8b5cf6;
   color: white;
   box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2);
 }
 
 .messageButton:hover:not(:disabled) {
-  background: #7C3AED;
+  background: #7c3aed;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
 }
@@ -208,7 +208,7 @@
   margin: 0;
   background: rgba(245, 158, 11, 0.08);
   border: 1px solid rgba(245, 158, 11, 0.15);
-  color: #F59E0B;
+  color: #f59e0b;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   cursor: default;
@@ -237,7 +237,7 @@
 
 /* Social media icon styling */
 .socials :global(.mantine-ActionIcon-root) {
-  color: #64748B;
+  color: #64748b;
   transition: all 0.2s ease;
   width: 36px;
   height: 36px;
@@ -246,7 +246,7 @@
 }
 
 .socials :global(.mantine-ActionIcon-root:hover) {
-  color: #8B5CF6;
+  color: #8b5cf6;
   background: rgba(139, 92, 246, 0.05);
   transform: translateY(-1px);
 }
@@ -257,7 +257,7 @@
 }
 
 .linkedinIcon :global(.mantine-ActionIcon-root:hover) {
-  color: #0077B5;
+  color: #0077b5;
   background: transparent;
   transform: scale(1.1);
 }
@@ -268,7 +268,7 @@
 }
 
 .twitterIcon :global(.mantine-ActionIcon-root:hover) {
-  color: #1DA1F2;
+  color: #1da1f2;
   background: transparent;
   transform: scale(1.1);
 }
@@ -279,7 +279,7 @@
 }
 
 .websiteIcon :global(.mantine-ActionIcon-root:hover) {
-  color: #8B5CF6;
+  color: #8b5cf6;
   background: transparent;
   transform: scale(1.1);
 }
@@ -290,7 +290,7 @@
 }
 
 .emailIcon :global(.mantine-ActionIcon-root:hover) {
-  color: #8B5CF6;
+  color: #8b5cf6;
   background: transparent;
   transform: scale(1.1);
 }

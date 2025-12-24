@@ -10,7 +10,7 @@
 .modalHeader {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #1E293B;
+  color: #1e293b;
   padding: 1.5rem;
   border-bottom: 1px solid rgba(139, 92, 246, 0.04);
 }
@@ -35,7 +35,7 @@
   flex: 1;
   padding: 1rem 1.5rem;
   transition: all 0.2s ease;
-  color: #64748B;
+  color: #64748b;
   font-weight: 500;
   border: none;
   border-bottom: 2px solid transparent;
@@ -44,13 +44,13 @@
 }
 
 .tab:hover {
-  color: #8B5CF6;
+  color: #8b5cf6;
   background: rgba(139, 92, 246, 0.02);
 }
 
 .tab[data-active] {
-  color: #8B5CF6;
-  border-bottom-color: #8B5CF6;
+  color: #8b5cf6;
+  border-bottom-color: #8b5cf6;
   background: rgba(255, 255, 255, 1);
 }
 

@@ -162,7 +162,7 @@
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   flex-shrink: 0;
-  
+
   /* Safe area for devices with notches */
   padding-bottom: calc(var(--space-sm) + env(safe-area-inset-bottom));
 }

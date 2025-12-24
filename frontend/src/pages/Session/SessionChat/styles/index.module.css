@@ -3,7 +3,9 @@
   height: 100%;
   position: relative; /* Changed from absolute since parent is now fixed */
   overflow: hidden;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+  transition:
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.3s ease;
 }
 
 .chatContainer.chatClosed {
@@ -17,7 +19,12 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: rgba(255, 255, 255, 0.6) !important; /* White glass with more transparency for slide-in */
+  background: rgba(
+    255,
+    255,
+    255,
+    0.6
+  ) !important; /* White glass with more transparency for slide-in */
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-radius: 8px;

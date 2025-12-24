@@ -17,7 +17,7 @@
 
 .tableContainer th {
   font-weight: 500;
-  color: #64748B;
+  color: #64748b;
   padding: 1rem;
   font-size: 0.85rem;
   text-transform: uppercase;
@@ -40,7 +40,7 @@
 
 .tableContainer td {
   padding: 1rem;
-  color: #1E293B;
+  color: #1e293b;
   font-size: 0.9rem;
 }
 
@@ -48,7 +48,7 @@
 .emptyState {
   padding: 4rem 2rem;
   text-align: center;
-  color: #64748B;
+  color: #64748b;
 }
 
 /* Status Badge */
@@ -68,7 +68,7 @@
 
 .resendButton {
   background: transparent;
-  color: #8B5CF6;
+  color: #8b5cf6;
   border: 1px solid rgba(139, 92, 246, 0.2);
 }
 
@@ -80,7 +80,7 @@
 
 .cancelButton {
   background: transparent;
-  color: #DC2626;
+  color: #dc2626;
   border: 1px solid rgba(220, 38, 38, 0.2);
 }
 
@@ -92,7 +92,7 @@
 
 /* Date Text */
 .dateText {
-  color: #94A3B8;
+  color: #94a3b8;
   font-size: 0.875rem;
 }
 

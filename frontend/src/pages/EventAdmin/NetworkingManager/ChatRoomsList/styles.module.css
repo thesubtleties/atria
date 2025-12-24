@@ -4,7 +4,7 @@
   background: rgba(139, 92, 246, 0.04);
   border-radius: 8px;
   border: 2px dashed rgba(139, 92, 246, 0.2);
-  color: #64748B;
+  color: #64748b;
 }
 
 .roomsList {
@@ -29,14 +29,14 @@
 
 .typeHeader h4 {
   margin: 0 0 0.25rem 0;
-  color: #1E293B;
+  color: #1e293b;
   font-size: 1.1rem;
   font-weight: 600;
 }
 
 .typeHeader p {
   margin: 0;
-  color: #64748B;
+  color: #64748b;
   font-size: 0.875rem;
 }
 
@@ -100,8 +100,8 @@
 .draggableRow button,
 .draggableRow input,
 .draggableRow a,
-.draggableRow [role="switch"],
-.draggableRow [role="button"] {
+.draggableRow [role='switch'],
+.draggableRow [role='button'] {
   cursor: pointer !important;
 }
 
@@ -113,7 +113,7 @@
 
 .dragHandle {
   cursor: grab !important;
-  color: #94A3B8 !important; /* Gray color for the dots */
+  color: #94a3b8 !important; /* Gray color for the dots */
   transition: all 0.2s ease;
   min-width: 40px;
   min-height: 40px;
@@ -125,7 +125,7 @@
 .dragHandle:hover {
   cursor: grab !important;
   background: rgba(139, 92, 246, 0.08) !important; /* Light purple background on hover */
-  color: #94A3B8 !important; /* Keep dots gray on hover */
+  color: #94a3b8 !important; /* Keep dots gray on hover */
 }
 
 /* Drag overlay for table rows */
@@ -191,23 +191,23 @@
     border: 1px solid var(--glass-border);
     box-shadow: var(--shadow-sm);
   }
-  
+
   .typeHeader {
     margin-bottom: var(--space-md);
     padding-bottom: var(--space-sm);
     border-bottom: 1px solid var(--primary-alpha-8);
   }
-  
+
   .typeHeader h4 {
     font-size: 1rem;
     color: var(--color-text-primary);
   }
-  
+
   .typeHeader p {
     font-size: 0.75rem;
     color: var(--color-text-muted);
   }
-  
+
   /* Hide table on mobile */
   .typeSection table {
     display: none;

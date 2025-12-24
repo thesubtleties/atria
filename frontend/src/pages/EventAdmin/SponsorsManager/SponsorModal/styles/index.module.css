@@ -109,37 +109,37 @@
     max-height: 90vh;
     overflow-y: auto;
   }
-  
+
   .modalHeader {
     font-size: 1.125rem;
     padding: 1rem;
   }
-  
+
   .sectionTitle {
     font-size: 0.95rem;
     margin-top: 0.75rem;
     margin-bottom: 0.5rem;
   }
-  
+
   .logoSection {
     gap: 0.75rem;
   }
-  
+
   .logoPreview {
     max-width: 60px !important;
     max-height: 60px !important;
   }
-  
+
   .buttonGroup {
     padding: 1rem;
     gap: 0.5rem;
     flex-direction: column-reverse;
   }
-  
+
   .buttonGroup button {
     width: 100%;
   }
-  
+
   /* Compact form spacing on mobile */
   .formInput,
   .formSelect,

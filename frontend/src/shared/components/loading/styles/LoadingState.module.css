@@ -50,11 +50,11 @@
   .loadingContent {
     padding: var(--space-lg);
   }
-  
+
   .loadingSection {
     padding: var(--space-md);
   }
-  
+
   .loadingCard {
     padding: var(--space-md);
   }

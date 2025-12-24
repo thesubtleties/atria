@@ -91,16 +91,16 @@
   .footerContent {
     padding: var(--space-breath) 0;
   }
-  
+
   .socialLinks {
     gap: var(--space-cozy);
   }
-  
+
   .socialLink {
     width: 36px;
     height: 36px;
   }
-  
+
   .copyright,
   .attribution,
   .license {

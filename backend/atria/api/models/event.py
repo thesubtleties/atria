@@ -1,7 +1,9 @@
-from api.extensions import db
-from api.models.enums import EventType, EventStatus, EventUserRole, EventFormat, USState
 from datetime import datetime, timezone
+
 from slugify import slugify
+
+from api.extensions import db
+from api.models.enums import EventFormat, EventStatus, EventType, EventUserRole, USState
 
 
 class Event(db.Model):
@@ -20,12 +22,10 @@ class Event(db.Model):
     )  # enum: 'conference', 'single_session',
     start_date = db.Column(db.Date, nullable=False)
     end_date = db.Column(db.Date, nullable=False)
-    timezone = db.Column(db.String(50), nullable=False, default='UTC')
+    timezone = db.Column(db.String(50), nullable=False, default="UTC")
     company_name = db.Column(db.Text, nullable=False)
     slug = db.Column(db.Text, nullable=False, unique=True)
-    status = db.Column(
-        db.Enum(EventStatus), nullable=False, default="draft"
-    )  # enum: 'draft', 'published', 'archived'
+    status = db.Column(db.Enum(EventStatus), nullable=False, default=EventStatus.DRAFT)
     branding = db.Column(
         db.JSON,
         nullable=False,
@@ -93,17 +93,29 @@ class Event(db.Model):
         db.JSON,
         nullable=True,
         default=[
-            {"id": "platinum", "name": "Platinum Sponsor", "order": 1, "color": "#E5E4E2"},
+            {
+                "id": "platinum",
+                "name": "Platinum Sponsor",
+                "order": 1,
+                "color": "#E5E4E2",
+            },
             {"id": "gold", "name": "Gold Sponsor", "order": 2, "color": "#DEAE4A"},
             {"id": "silver", "name": "Silver Sponsor", "order": 3, "color": "#C7D3DB"},
             {"id": "bronze", "name": "Bronze Sponsor", "order": 4, "color": "#BB8F4C"},
-            {"id": "community", "name": "Community Partner", "order": 5, "color": "#8B5CF6"},
+            {
+                "id": "community",
+                "name": "Community Partner",
+                "order": 5,
+                "color": "#8B5CF6",
+            },
         ],
     )
 
     # Relationships
     organization = db.relationship("Organization", back_populates="events")
-    main_session = db.relationship("Session", foreign_keys=[main_session_id], post_update=True)
+    main_session = db.relationship(
+        "Session", foreign_keys=[main_session_id], post_update=True
+    )
 
     sessions = db.relationship(
         "Session",
@@ -121,7 +133,7 @@ class Event(db.Model):
         back_populates="events",
         overlaps="event_users",
         passive_deletes=True,
-        viewonly=True
+        viewonly=True,
     )
 
     event_users = db.relationship(
@@ -193,9 +205,7 @@ class Event(db.Model):
         if self.get_user_role(user) == EventUserRole.ADMIN and self.admin_count == 1:
             raise ValueError("Cannot remove last admin")
 
-        EventUser.query.filter_by(
-            event_id=self.id, user_id=user.id
-        ).delete()
+        EventUser.query.filter_by(event_id=self.id, user_id=user.id).delete()
 
     def add_speaker(self, user, **kwargs):
         """Convenience method to add speaker with optional bio and title"""
@@ -230,6 +240,7 @@ class Event(db.Model):
 
         # Check if user is organization owner
         from api.models.enums import OrganizationUserRole
+
         if self.organization.get_user_role(user) == OrganizationUserRole.OWNER:
             return True
 
@@ -237,7 +248,7 @@ class Event(db.Model):
 
     def get_user_role(self, user) -> EventUserRole:
         """Get user's role in event
-        
+
         #! SPECIAL CASE: Organization owners who are not event members are
         #! treated as having ADMIN role in all their organization's events.
         #! This provides org owners with full control over their events.
@@ -249,14 +260,14 @@ class Event(db.Model):
         event_user = EventUser.query.filter_by(
             event_id=self.id, user_id=user.id
         ).first()
-        
+
         if event_user:
             return event_user.role
-        
+
         # Check if user is organization owner - treat as ADMIN
         if self.organization.get_user_role(user) == OrganizationUserRole.OWNER:
             return EventUserRole.ADMIN
-        
+
         return None
 
     def get_users_by_role(self, *roles: EventUserRole):
@@ -332,7 +343,7 @@ class Event(db.Model):
                     is_enabled=True,
                 )
                 db.session.add(room)
-        
+
         # Create ADMIN room
         admin_room = ChatRoom.query.filter_by(
             event_id=self.id, room_type=ChatRoomType.ADMIN
@@ -346,7 +357,7 @@ class Event(db.Model):
                 is_enabled=True,
             )
             db.session.add(admin_room)
-        
+
         # Create GREEN_ROOM
         green_room = ChatRoom.query.filter_by(
             event_id=self.id, room_type=ChatRoomType.GREEN_ROOM
@@ -377,9 +388,7 @@ class Event(db.Model):
         """Get number of active sponsors"""
         from api.models import Sponsor
 
-        return Sponsor.query.filter_by(
-            event_id=self.id, is_active=True
-        ).count()
+        return Sponsor.query.filter_by(event_id=self.id, is_active=True).count()
 
     @property
     def speakers(self):
@@ -396,9 +405,7 @@ class Event(db.Model):
     @property
     def organizer_users(self):
         """Get all organizer users - for user-only contexts"""
-        return self.get_users_by_role(
-            EventUserRole.ORGANIZER, EventUserRole.ADMIN
-        )
+        return self.get_users_by_role(EventUserRole.ORGANIZER, EventUserRole.ADMIN)
 
     @property
     def attendees(self):
@@ -416,7 +423,7 @@ class Event(db.Model):
     @property
     def is_archived(self) -> bool:
         return self.status == EventStatus.ARCHIVED
-    
+
     @property
     def is_deleted(self) -> bool:
         return self.status == EventStatus.DELETED
@@ -524,13 +531,17 @@ class Event(db.Model):
 
     def can_user_edit(self, user) -> bool:
         """Check if user can edit event
-        
+
         #! NOTE: Organization owners can edit via get_user_role() returning ADMIN.
         #! This method checks for ORGANIZER/MODERATOR, but ADMIN (including org owners)
         #! have separate, higher-level permissions.
         """
         role = self.get_user_role(user)
-        return role in [EventUserRole.ADMIN, EventUserRole.ORGANIZER, EventUserRole.MODERATOR]
+        return role in [
+            EventUserRole.ADMIN,
+            EventUserRole.ORGANIZER,
+            EventUserRole.MODERATOR,
+        ]
 
     def validate_dates(self, new_start_date=None, new_end_date=None):
         """Validate event dates and session conflicts"""
@@ -565,9 +576,7 @@ class Event(db.Model):
 
         self.slug = slug
 
-    def update_hero(
-        self, description=None, desktop_image=None, mobile_image=None
-    ):
+    def update_hero(self, description=None, desktop_image=None, mobile_image=None):
         """Update hero content"""
         if description is not None:
             self.hero_description = description
@@ -614,9 +623,7 @@ class Event(db.Model):
     def remove_highlight(self, index):
         """Remove a highlight by index"""
         sections = self.sections or {}
-        if "highlights" in sections and 0 <= index < len(
-            sections["highlights"]
-        ):
+        if "highlights" in sections and 0 <= index < len(sections["highlights"]):
             sections["highlights"].pop(index)
             self.sections = sections
 
@@ -640,7 +647,7 @@ class Event(db.Model):
         self.status = EventStatus.DELETED
         self.deleted_at = datetime.now(timezone.utc)
         self.deleted_by_id = deleted_by_user_id
-        
+
         # Clear sensitive/unnecessary data
         self.description = None
         self.hero_description = None
@@ -653,5 +660,5 @@ class Event(db.Model):
             "banner_url": None,
         }
         self.icebreakers = []
-        
+
         # Keep: title, dates, venue info, company_name for connection context

@@ -9,7 +9,7 @@
 .modalHeader {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #1E293B;
+  color: #1e293b;
   padding: 1.5rem 1.5rem 0;
 }
 
@@ -24,13 +24,13 @@
 .userName {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #1E293B;
+  color: #1e293b;
   margin: 0;
 }
 
 .userEmail {
   font-size: 0.875rem;
-  color: #64748B;
+  color: #64748b;
   margin: 0.25rem 0 0 0;
 }
 

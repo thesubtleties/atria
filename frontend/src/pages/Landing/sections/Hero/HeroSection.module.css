@@ -86,11 +86,11 @@
   .logo {
     font-size: clamp(3rem, 10vw, 5rem);
   }
-  
+
   .tagline {
     font-size: clamp(1.2rem, 3.5vw, 1.8rem);
   }
-  
+
   .ctaButton {
     font-size: var(--text-small);
     padding: var(--space-tight) var(--space-cozy);

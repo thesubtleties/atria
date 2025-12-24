@@ -49,7 +49,6 @@
   }
 }
 
-
 .footerWrapper {
   position: absolute;
   bottom: 0;
@@ -62,7 +61,6 @@
   justify-content: center;
   pointer-events: auto;
 }
-
 
 .sectionTitle {
   font-size: var(--text-display);
@@ -108,7 +106,7 @@
 }
 
 .mainButton:hover {
-  background: #FFD666 !important; /* Match logo golden yellow */
+  background: #ffd666 !important; /* Match logo golden yellow */
   color: var(--color-text-shout) !important;
   transform: translateY(clamp(-3px, -0.3vw, -2px)) !important;
   box-shadow: 0 clamp(10px, 2vw, 15px) clamp(30px, 4vw, 40px) rgba(0, 0, 0, 0.3) !important;
@@ -133,27 +131,26 @@
   color: rgba(255, 255, 255, 0.8);
 }
 
-
 /* Mobile responsive */
 @media (max-width: 767px) {
   .finalSection {
     height: auto;
     min-height: 100vh;
   }
-  
+
   .drapeContent {
     top: 50%; /* Center content in drape area on mobile */
     padding: 0 var(--space-tight);
   }
-  
+
   .footerWrapper {
     height: clamp(25vh, 30vh, 35vh); /* More room for footer text on mobile */
   }
-  
+
   .sectionTitle {
     font-size: var(--text-title);
   }
-  
+
   .mainButton {
     font-size: var(--text-body) !important;
     padding: var(--space-tight) var(--space-cozy) !important;
@@ -165,7 +162,7 @@
   .drapeContent {
     top: 45%; /* Bring content up just a tiny touch on MacBook Air */
   }
-  
+
   .footerWrapper {
     height: clamp(25vh, 28vh, 32vh); /* More room for AGPL3 Licensed text on MacBook Air */
   }

@@ -10,7 +10,7 @@
 .modalHeader {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #1E293B;
+  color: #1e293b;
   padding: 1.5rem;
   border-bottom: 1px solid rgba(139, 92, 246, 0.04);
 }
@@ -31,13 +31,13 @@
 .orderText {
   font-size: 1.125rem;
   font-weight: 600;
-  color: #64748B;
+  color: #64748b;
   text-align: center;
 }
 
 /* Description Text */
 .description {
-  color: #64748B;
+  color: #64748b;
   font-size: 0.875rem;
   margin-bottom: 1rem;
 }
@@ -82,13 +82,13 @@
 
 .deleteButton:hover {
   background: rgba(220, 38, 38, 0.08);
-  color: #DC2626;
+  color: #dc2626;
 }
 
 /* Add Tier Button */
 .addTierButton {
   border: 1px dashed rgba(139, 92, 246, 0.3);
-  color: #8B5CF6;
+  color: #8b5cf6;
   background: transparent;
   transition: all 0.2s ease;
 }

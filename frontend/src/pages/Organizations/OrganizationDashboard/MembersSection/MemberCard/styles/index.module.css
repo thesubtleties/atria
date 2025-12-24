@@ -90,19 +90,19 @@
   flex-shrink: 0;
 }
 
-.roleBadge[data-role="OWNER"] {
+.roleBadge[data-role='OWNER'] {
   background: rgba(139, 92, 246, 0.1) !important;
   color: var(--color-primary) !important;
   border: 1px solid rgba(139, 92, 246, 0.2) !important;
 }
 
-.roleBadge[data-role="ADMIN"] {
+.roleBadge[data-role='ADMIN'] {
   background: rgba(34, 197, 94, 0.1) !important;
   color: var(--color-success) !important;
   border: 1px solid rgba(34, 197, 94, 0.2) !important;
 }
 
-.roleBadge[data-role="MEMBER"] {
+.roleBadge[data-role='MEMBER'] {
   background: rgba(100, 116, 139, 0.1) !important;
   color: var(--color-text-secondary) !important;
   border: 1px solid rgba(100, 116, 139, 0.2) !important;
@@ -120,7 +120,7 @@
   .userInfo {
     gap: 0.5rem;
   }
-  
+
   .userEmail {
     font-size: var(--text-xs);
   }

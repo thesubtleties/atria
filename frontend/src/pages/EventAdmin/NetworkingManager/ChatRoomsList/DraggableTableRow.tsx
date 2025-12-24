@@ -1,0 +1,32 @@
+import { Table, ActionIcon } from '@mantine/core';
+import { IconGripVertical } from '@tabler/icons-react';
+import { useSortable } from '@dnd-kit/react/sortable';
+import { cn } from '@/lib/cn';
+import type { ChatRoom } from '@/types';
+import styles from './styles.module.css';
+
+type DraggableTableRowProps = {
+  id: string;
+  room: ChatRoom;
+  children: React.ReactNode;
+};
+
+const DraggableTableRow = ({ id, room: _room, children }: DraggableTableRowProps) => {
+  const { ref, isDragging } = useSortable({ id, index: 0 });
+
+  return (
+    <Table.Tr
+      ref={ref as React.RefCallback<HTMLTableRowElement>}
+      className={cn(styles.draggableRow, isDragging && styles.dragging)}
+    >
+      <Table.Td className={cn(styles.dragHandleCell)}>
+        <ActionIcon variant='subtle' size='sm' className={cn(styles.dragHandle)}>
+          <IconGripVertical size={16} />
+        </ActionIcon>
+      </Table.Td>
+      {children}
+    </Table.Tr>
+  );
+};
+
+export default DraggableTableRow;

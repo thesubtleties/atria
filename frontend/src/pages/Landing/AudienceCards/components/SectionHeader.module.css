@@ -22,11 +22,7 @@
   transform: translateX(-50%);
   width: 80px;
   height: 3px;
-  background: linear-gradient(90deg, 
-    transparent 0%, 
-    var(--color-primary) 50%, 
-    transparent 100%
-  );
+  background: linear-gradient(90deg, transparent 0%, var(--color-primary) 50%, transparent 100%);
   opacity: 0.6;
 }
 
@@ -46,7 +42,7 @@
   .sectionTitle {
     font-size: 2rem;
   }
-  
+
   .sectionSubtitle {
     font-size: 1.125rem;
   }

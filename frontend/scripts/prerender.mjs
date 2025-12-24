@@ -204,10 +204,7 @@ ${criticalCSS}    </style>
     // Fix the scramble text glitch - GSAP captures mid-animation
     // Target the specific element by ID and set it to "community"
     // React hydration will reconcile this without issues
-    html = html.replace(
-      /(<p[^>]*id="hero-scramble-text"[^>]*>)[^<]*(<\/p>)/,
-      '$1community$2'
-    );
+    html = html.replace(/(<p[^>]*id="hero-scramble-text"[^>]*>)[^<]*(<\/p>)/, '$1community$2');
 
     // Save it
     writeFileSync(INDEX_PATH, html, 'utf-8');
@@ -225,7 +222,6 @@ ${criticalCSS}    </style>
     } else {
       console.warn('⚠️  Warning: Expected landing page content not found in HTML\n');
     }
-
   } catch (error) {
     console.error('❌ Pre-render failed:', error.message);
     process.exit(1);

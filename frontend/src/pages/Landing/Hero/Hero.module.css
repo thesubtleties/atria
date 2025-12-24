@@ -16,7 +16,7 @@
   left: 0;
   width: 100%;
   height: 100vh; /* Full viewport height */
-  background: #F3EACE; /* Light yellow background */
+  background: #f3eace; /* Light yellow background */
   z-index: 0;
   overflow: visible; /* Allow drape to extend beyond container */
   will-change: transform;
@@ -231,7 +231,7 @@
   display: block;
   min-height: 1.2em;
   margin: 0 auto;
-  text-shadow: 
+  text-shadow:
     0 0 10px rgba(253, 224, 71, 0.6),
     0 0 20px rgba(253, 224, 71, 0.3);
   animation: goldPulse 3s ease-in-out infinite;
@@ -243,13 +243,14 @@
 }
 
 @keyframes goldPulse {
-  0%, 100% {
-    text-shadow: 
+  0%,
+  100% {
+    text-shadow:
       0 0 10px rgba(253, 224, 71, 0.6),
       0 0 20px rgba(253, 224, 71, 0.3);
   }
   50% {
-    text-shadow: 
+    text-shadow:
       0 0 15px rgba(253, 224, 71, 0.8),
       0 0 30px rgba(253, 224, 71, 0.4);
   }
@@ -331,7 +332,8 @@
 
 /* CSS animation for scroll indicator - lighter than GSAP for simple animations */
 @keyframes scrollBounce {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateX(-50%) translateY(0);
   }
   50% {
@@ -348,14 +350,14 @@
   .scrollIndicator {
     will-change: auto; /* Remove will-change to reduce memory usage in Firefox */
   }
-  
+
   /* Performance: Hardware acceleration for animated elements */
   .heroBackground,
   .heroContent > div:not(.scrollIndicator) {
     transform: translateZ(0);
     backface-visibility: hidden;
   }
-  
+
   /* Optimize text rendering */
   .heroTitle,
   .heroTagline,
@@ -363,7 +365,6 @@
     text-rendering: geometricPrecision;
   }
 }
-
 
 /* Mobile First Responsive Design */
 @media (max-width: 767px) {
@@ -374,12 +375,13 @@
 
   /* Adjust navigation for mobile */
   .nav {
-    padding: calc(env(safe-area-inset-top, 0) + var(--space-cozy)) var(--space-tight) var(--space-tight); /* Add safe area + extra space on top */
+    padding: calc(env(safe-area-inset-top, 0) + var(--space-cozy)) var(--space-tight)
+      var(--space-tight); /* Add safe area + extra space on top */
     position: relative;
     z-index: 25; /* Higher z-index to ensure clickability */
     overflow: visible; /* Allow buttons to extend beyond container */
   }
-  
+
   .navContent {
     overflow: visible; /* Allow buttons to extend to top edge */
   }
@@ -440,7 +442,9 @@
   /* CTA positioning - ensure it stays above drape */
   .ctaWrapper {
     margin-top: var(--space-cozy); /* Reduce top spacing to bring button higher */
-    margin-bottom: var(--space-comfort); /* Reduce bottom margin to make room for scroll indicator */
+    margin-bottom: var(
+      --space-comfort
+    ); /* Reduce bottom margin to make room for scroll indicator */
   }
 
   .ctaButton {
@@ -457,11 +461,15 @@
   /* Navigation touch-friendly */
   .navLinks {
     gap: var(--space-tight);
-    margin-top: calc(-1 * (env(safe-area-inset-top, 0) + var(--space-cozy))); /* Pull buttons up to edge */
+    margin-top: calc(
+      -1 * (env(safe-area-inset-top, 0) + var(--space-cozy))
+    ); /* Pull buttons up to edge */
   }
 
   .navLink {
-    padding-top: calc(env(safe-area-inset-top, 0) + var(--space-cozy) + 0.75rem); /* Extend padding to top edge */
+    padding-top: calc(
+      env(safe-area-inset-top, 0) + var(--space-cozy) + 0.75rem
+    ); /* Extend padding to top edge */
     padding-bottom: 0.75rem;
     padding-left: 1rem;
     padding-right: 1rem;

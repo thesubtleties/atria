@@ -1,1 +1,0 @@
-export { EventCard } from './index.jsx';

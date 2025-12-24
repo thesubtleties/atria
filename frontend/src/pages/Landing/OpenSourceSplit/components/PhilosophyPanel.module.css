@@ -96,27 +96,27 @@
   .philosophyTitle {
     font-size: 2rem;
   }
-  
+
   /* Hide footer text on mobile */
   .philosophyFooter {
     display: none;
   }
-  
+
   .philosophyQuote {
     font-size: 1.25rem;
     margin-bottom: 1rem; /* Tighten gap between quote and content */
   }
-  
+
   .philosophyContent {
     font-size: 0.9rem; /* Make content slightly smaller */
     padding: 1.5rem;
     margin-bottom: 1rem; /* Reduce bottom margin */
   }
-  
+
   .philosophyContent p {
     font-size: 0.9rem; /* Make "No vendor lock-in..." text smaller */
   }
-  
+
   .philosophyFooter {
     font-size: 0.875rem;
   }

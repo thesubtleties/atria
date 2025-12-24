@@ -56,6 +56,7 @@ If you find a bug or have a feature request:
 ### Development Setup
 
 #### Prerequisites
+
 - Docker and Docker Compose
 - Node.js 20+ and npm
 - Python 3.13+
@@ -64,26 +65,32 @@ If you find a bug or have a feature request:
 #### Local Development
 
 1. Clone your fork:
+
    ```bash
    git clone https://github.com/YOUR-USERNAME/atria.git
    cd atria
    ```
 
 2. Copy environment files:
+
    ```bash
    cp .env.example .env.development
    ```
+
    Edit `.env.development` and configure at minimum: database credentials, MinIO/S3 storage, JWT secret keys.
 
 3. Start development environment:
 
    **Option A: Using the interactive chooser (recommended)**
+
    ```bash
    ./dev-environment-chooser.sh
    ```
+
    Select option **1) Standard Local Development** for the simplest setup.
 
    **Option B: Direct Docker Compose (no tmux required)**
+
    ```bash
    docker-compose -f docker-compose.local-dev.yml up
    ```
@@ -98,12 +105,14 @@ If you find a bug or have a feature request:
 ### Coding Standards
 
 #### Backend (Python/Flask)
+
 - Follow PEP 8 style guide
 - Use type hints where possible
 - Run `black` and `isort` for formatting
 - Write docstrings for all functions and classes
 
 #### Frontend (React/JavaScript)
+
 - Follow existing ESLint configuration
 - Use functional components with hooks
 - Maintain consistent file organization
@@ -138,6 +147,7 @@ If you find a bug or have a feature request:
 ## Questions?
 
 If you have questions about contributing, feel free to:
+
 - Open a discussion in our [GitHub Discussions](https://github.com/thesubtleties/atria/discussions)
 - Contact us at steven@sbtl.dev
 

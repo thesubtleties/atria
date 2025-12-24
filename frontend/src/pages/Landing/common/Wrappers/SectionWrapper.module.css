@@ -17,10 +17,7 @@
 }
 
 .bg-gradient-subtle {
-  background: linear-gradient(180deg, 
-    var(--color-almost-white) 0%, 
-    var(--color-background) 100%
-  );
+  background: linear-gradient(180deg, var(--color-almost-white) 0%, var(--color-background) 100%);
 }
 
 /* Padding variations */

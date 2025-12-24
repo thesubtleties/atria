@@ -39,7 +39,7 @@
   .container {
     gap: var(--space-xs);
   }
-  
+
   .container :global(.mantine-NavLink-root) {
     padding: var(--space-sm) var(--space-sm);
     font-size: var(--text-sm);
@@ -51,7 +51,7 @@
   .container {
     gap: var(--space-xs) !important; /* Tighter gaps on laptops */
   }
-  
+
   .container :global(.mantine-NavLink-root) {
     padding: 6px var(--space-md) !important; /* A bit more breathing room on laptops */
     font-size: var(--text-sm) !important; /* Slightly smaller text */

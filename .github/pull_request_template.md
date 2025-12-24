@@ -1,17 +1,22 @@
 ## Problem
+
 What issue does this PR solve? What was broken/missing?
 
 ## Solution
+
 How does this PR fix it? What approach did you take?
 
 ## Changes
+
 - `file/path`: what changed
 - `file/path`: what changed
 
 ## Testing
+
 How did you verify this works?
 
 ## Breaking Changes
+
 Does this break existing functionality? How should users migrate?
 
 (If none, write "None")

@@ -46,7 +46,11 @@
 }
 
 .atriaTextLogo {
-  font-family: 'M Plus 2', system-ui, -apple-system, sans-serif;
+  font-family:
+    'M Plus 2',
+    system-ui,
+    -apple-system,
+    sans-serif;
   font-size: 1.5rem;
   font-weight: 300;
   color: #ffffff;
@@ -149,7 +153,8 @@
 }
 
 @keyframes fadeLoop {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.5;
   }
   50% {
@@ -158,7 +163,8 @@
 }
 
 @keyframes bounce {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
@@ -170,15 +176,15 @@
   .dashboardHeader {
     padding: 0 1rem;
   }
-  
+
   .dashboardContent {
     padding: 1rem;
   }
-  
+
   .dashboardTitle {
     font-size: 1.25rem;
   }
-  
+
   .eventCard {
     padding: 1rem;
   }

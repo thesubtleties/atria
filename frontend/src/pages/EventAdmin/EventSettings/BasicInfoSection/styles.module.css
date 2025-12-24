@@ -31,14 +31,14 @@
 }
 
 /* Date Input Calendar Icon */
-.formInput[type="button"] {
+.formInput[type='button'] {
   cursor: pointer;
 }
 
 /* Status-specific styling */
 .statusDraft {
   background: rgba(107, 114, 128, 0.08);
-  color: #6B7280;
+  color: #6b7280;
   padding: 0.25rem 0.75rem;
   border-radius: var(--radius-sm);
   font-size: clamp(0.75rem, 2vw, 0.8rem);
@@ -74,13 +74,13 @@
     align-items: stretch !important;
     gap: var(--space-md) !important;
   }
-  
+
   :global(.mantine-Group-root[data-grow] > *) {
     flex: 1 1 100% !important;
     max-width: 100% !important;
     width: 100% !important;
   }
-  
+
   /* Ensure proper spacing between stacked fields */
   :global(.mantine-InputWrapper-root) {
     width: 100% !important;

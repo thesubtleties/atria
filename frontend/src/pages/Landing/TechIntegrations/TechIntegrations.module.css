@@ -1,10 +1,7 @@
 .techIntegrations {
   position: relative;
   padding: calc(var(--space-breath) * 2) 0;
-  background: linear-gradient(180deg, 
-    var(--color-almost-white) 0%, 
-    var(--color-almost-white) 100%
-  );
+  background: linear-gradient(180deg, var(--color-almost-white) 0%, var(--color-almost-white) 100%);
   overflow: hidden;
 }
 
@@ -169,7 +166,8 @@
 
 /* Animations */
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     opacity: 0.8;
   }
@@ -192,20 +190,20 @@
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: var(--space-cozy);
   }
-  
+
   .integrationCard {
     min-height: 150px;
     padding: var(--space-cozy);
   }
-  
+
   .logoEmoji {
     font-size: 2rem;
   }
-  
+
   .apiVisualization {
     padding: 0;
   }
-  
+
   .featureGrid {
     grid-template-columns: 1fr;
   }

@@ -68,7 +68,8 @@
 }
 
 @keyframes gradientShift {
-  0%, 100% {
+  0%,
+  100% {
     background-position: 0% 50%;
   }
   50% {
@@ -112,7 +113,7 @@
   .contentWrapper {
     padding: 1.5rem 0;
   }
-  
+
   .bgShape1,
   .bgShape2,
   .bgShape3 {
@@ -132,7 +133,7 @@
   .bgShape3 {
     display: none; /* Hide decorative elements on mobile */
   }
-  
+
   .emptyState {
     padding: var(--space-lg) var(--space-md);
   }

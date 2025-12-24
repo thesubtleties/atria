@@ -17,7 +17,6 @@
   border-bottom: 1px solid rgba(139, 92, 246, 0.04);
 }
 
-
 /* Form Label Styling - Matching BasicInfoSection */
 .formLabel {
   color: var(--color-text-primary, #1e293b) !important;
@@ -65,7 +64,6 @@
   color: #8b5cf6;
 }
 
-
 /* Alert Styling - Matching RoleUpdateModal */
 .warningAlert {
   background: rgba(252, 211, 77, 0.06) !important;
@@ -94,8 +92,6 @@
   padding-top: 1rem;
 }
 
-
-
 /* Override Mantine Modal Styles for Glassmorphism */
 :global(.mantine-Modal-overlay) {
   background: rgba(30, 41, 59, 0.4);
@@ -104,7 +100,13 @@
 }
 
 :global(.mantine-Modal-content) {
-  overflow: visible;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+:global(.mantine-Modal-body) {
+  overflow-y: auto;
+  max-height: calc(90vh - 80px); /* Account for header */
 }
 
 :global(.mantine-Modal-close) {
@@ -149,4 +151,3 @@
     padding-top: 0.75rem;
   }
 }
-

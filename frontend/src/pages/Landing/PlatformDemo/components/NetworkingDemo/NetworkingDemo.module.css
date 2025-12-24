@@ -88,7 +88,7 @@
 }
 
 .connectionCard:hover .personName {
-  color: #8B5CF6;
+  color: #8b5cf6;
 }
 
 .personTitle {
@@ -120,7 +120,7 @@
 /* Connect button - light purple with outline */
 .actionButton.connect {
   background: rgba(139, 92, 246, 0.08);
-  color: #8B5CF6;
+  color: #8b5cf6;
   border: 1px solid rgba(139, 92, 246, 0.2);
 }
 
@@ -133,7 +133,7 @@
 /* Pending button - gray and disabled */
 .actionButton.pending {
   background: rgba(148, 163, 184, 0.1);
-  color: #94A3B8;
+  color: #94a3b8;
   border: 1px solid rgba(148, 163, 184, 0.15);
   cursor: default;
   opacity: 0.6;
@@ -145,14 +145,14 @@
 
 /* Message button - purple like old connect */
 .actionButton.connected {
-  background: #8B5CF6;
+  background: #8b5cf6;
   color: white;
   border: none;
   box-shadow: 0 2px 6px rgba(139, 92, 246, 0.2);
 }
 
 .actionButton.connected:hover {
-  background: #7C3AED;
+  background: #7c3aed;
   transform: translateY(-1px);
   box-shadow: 0 3px 8px rgba(139, 92, 246, 0.25);
 }
@@ -186,7 +186,7 @@
     backface-visibility: hidden;
     will-change: auto;
   }
-  
+
   .personName,
   .personTitle,
   .personCompany {
@@ -200,11 +200,11 @@
   .networkingContent {
     max-width: 100%;
   }
-  
+
   .connectionMain {
     padding: 10px;
   }
-  
+
   .avatar {
     width: 40px;
     height: 40px;

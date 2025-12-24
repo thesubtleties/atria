@@ -34,10 +34,11 @@
   transform: translateX(-50%);
   width: 80px;
   height: 3px;
-  background: linear-gradient(90deg, 
-    transparent 0%, 
-    var(--color-accent-yellow) 20%, 
-    var(--color-accent-yellow) 80%, 
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--color-accent-yellow) 20%,
+    var(--color-accent-yellow) 80%,
     transparent 100%
   );
   border-radius: 2px;
@@ -230,7 +231,7 @@
 }
 
 .greenLight {
-  color: #10B981;
+  color: #10b981;
   font-size: var(--text-small);
   font-weight: 500;
   display: flex;
@@ -253,7 +254,7 @@
 .avatar {
   width: 48px;
   height: 48px;
-  background: linear-gradient(135deg, #E0E7FF 0%, #C7D2FE 100%);
+  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
   border-radius: 50%;
   position: relative;
   display: flex;
@@ -278,15 +279,15 @@
 }
 
 .statusIndicator.green {
-  background: #10B981;
+  background: #10b981;
 }
 
 .statusIndicator.pending {
-  background: #F59E0B;
+  background: #f59e0b;
 }
 
 .statusIndicator.connected {
-  background: #3B82F6;
+  background: #3b82f6;
 }
 
 .personInfo h4 {
@@ -336,18 +337,18 @@
 }
 
 .actionButton.green:hover {
-  background: #7C3AED;
+  background: #7c3aed;
   transform: translateY(-1px);
 }
 
 .actionButton.pending {
-  background: #FEF3C7;
-  color: #92400E;
+  background: #fef3c7;
+  color: #92400e;
 }
 
 .actionButton.connected {
-  background: #DBEAFE;
-  color: #1E40AF;
+  background: #dbeafe;
+  color: #1e40af;
 }
 
 /* Session Card Styles */
@@ -368,7 +369,7 @@
 
 .videoContainer {
   width: 100%;
-  background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
   border-radius: 12px;
   overflow: hidden;
   position: relative;
@@ -378,7 +379,7 @@
 .videoPlayer {
   aspect-ratio: 16 / 9;
   position: relative;
-  background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -407,7 +408,7 @@
   position: absolute;
   top: 16px;
   left: 16px;
-  background: #EF4444;
+  background: #ef4444;
   color: white;
   padding: 4px 12px;
   border-radius: 20px;
@@ -427,7 +428,8 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -657,7 +659,7 @@
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(139, 92, 246, 0.15);
   border-radius: 12px;
-  box-shadow: 
+  box-shadow:
     0 2px 15px rgba(139, 92, 246, 0.08),
     inset 0 1px 1px rgba(255, 255, 255, 0.8);
   display: flex;
@@ -749,7 +751,10 @@
   max-height: 0;
   opacity: 0;
   overflow: hidden;
-  transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+  transition:
+    max-height 0.3s ease,
+    opacity 0.3s ease,
+    padding 0.3s ease;
   border-top: 1px solid transparent;
 }
 
@@ -774,7 +779,7 @@
     /* Disable will-change for better performance */
     will-change: auto;
   }
-  
+
   .demoCard {
     /* Hardware acceleration for cards */
     transform: translateZ(0);
@@ -782,14 +787,14 @@
     /* Remove will-change to reduce memory usage */
     will-change: auto;
   }
-  
+
   .smartAgendaItem {
     /* Optimize text rendering */
     text-rendering: optimizeLegibility;
     /* Disable will-change for text elements */
     will-change: auto;
   }
-  
+
   .sessionTitle,
   .sessionTime,
   .speakerName,
@@ -799,14 +804,14 @@
     text-rendering: geometricPrecision;
     -moz-osx-font-smoothing: grayscale;
   }
-  
+
   .videoContainer,
   .interactionPanel {
     /* Hardware acceleration for containers only */
     transform: translateZ(0);
     backface-visibility: hidden;
   }
-  
+
   /* Disable blur effects if performance is poor */
   @media (prefers-reduced-motion: reduce) {
     .smartAgendaItem,
@@ -824,15 +829,15 @@
     grid-template-columns: 1fr;
     gap: var(--space-cozy);
   }
-  
+
   .cardContent {
     text-align: center;
   }
-  
+
   .demoInterface {
     min-height: 400px;
   }
-  
+
   .sessionContent {
     grid-template-columns: 1fr;
     max-width: 100%;
@@ -844,13 +849,13 @@
   .demoWrapper {
     height: auto; /* Remove fixed height */
   }
-  
+
   .cardsContainer {
     height: auto; /* Remove fixed height */
     overflow: visible; /* Allow normal scrolling */
     position: relative;
   }
-  
+
   .demoCard {
     position: relative !important; /* Override absolute positioning */
     transform: none !important; /* Override GSAP transforms */
@@ -863,29 +868,29 @@
     align-items: center;
     justify-content: center;
   }
-  
+
   .cardInner {
     padding: var(--space-cozy);
   }
-  
+
   /* Tighter spacing between title and subtitle on mobile */
   .cardContent {
     padding: var(--space-tight); /* Reduce padding */
   }
-  
+
   .cardTitle {
     font-size: var(--text-body-lg);
     margin-bottom: var(--space-tight); /* Reduce from var(--space-tight) to tighter */
   }
-  
+
   .cardSubtitle {
     display: none; /* Hide subtitle on mobile to save space */
   }
-  
+
   .agendaGrid {
     height: 280px;
   }
-  
+
   .smartAgendaItem {
     font-size: 11px;
   }

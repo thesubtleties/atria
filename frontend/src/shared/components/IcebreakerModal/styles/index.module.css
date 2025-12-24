@@ -12,7 +12,7 @@
 .modalHeader {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #1E293B;
+  color: #1e293b;
   padding: 1.5rem;
   border-bottom: 1px solid rgba(139, 92, 246, 0.04);
 }
@@ -27,7 +27,7 @@
 
 /* Instruction Text */
 .instructionText {
-  color: #64748B;
+  color: #64748b;
   font-weight: 500;
   margin-bottom: 0.5rem;
 }
@@ -116,16 +116,16 @@
   .modalContent {
     padding: 0;
   }
-  
+
   .modalHeader {
     padding: 1rem;
     font-size: 1.125rem;
   }
-  
+
   .recipientSection {
     padding: 0.75rem;
   }
-  
+
   .icebreakerList {
     max-height: 250px;
   }

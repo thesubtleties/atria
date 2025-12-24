@@ -30,11 +30,11 @@
   .welcome {
     padding: var(--space-lg) var(--space-md);
   }
-  
+
   .title {
     font-size: clamp(var(--text-xl), 3.5vw, var(--text-2xl)) !important;
   }
-  
+
   .content {
     font-size: clamp(var(--text-sm), 2.2vw, var(--text-base));
   }

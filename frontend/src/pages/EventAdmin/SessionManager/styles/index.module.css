@@ -55,7 +55,9 @@
   max-width: var(--container-xl);
   margin: 0 auto;
   padding: clamp(var(--space-md), 4vw, var(--space-xl));
-  padding-bottom: calc(clamp(var(--space-md), 4vw, var(--space-xl)) + 50px) !important; /* Extra space for chat widget */
+  padding-bottom: calc(
+    clamp(var(--space-md), 4vw, var(--space-xl)) + 50px
+  ) !important; /* Extra space for chat widget */
 }
 
 /* Glass Section for Header */
@@ -113,13 +115,13 @@
     gap: 0.5rem;
     margin: 0.75rem auto 0;
   }
-  
+
   .badgeRow {
     justify-content: center;
     flex-wrap: wrap;
     gap: 0.375rem;
   }
-  
+
   .badgeRow:first-child {
     margin-bottom: 0.25rem;
   }
@@ -205,12 +207,12 @@
   .mainContent {
     padding: clamp(1rem, 3vw, 1.5rem);
   }
-  
+
   .pageTitle {
     font-size: 1.25rem;
     text-align: center;
   }
-  
+
   /* Center header content on mobile */
   .headerContent {
     flex-direction: column;
@@ -218,12 +220,12 @@
     text-align: center;
     gap: var(--space-md);
   }
-  
+
   .headerLeft,
   .headerRight {
     width: 100%;
   }
-  
+
   .headerRight {
     justify-content: center;
   }
@@ -233,7 +235,7 @@
   .contentWrapper {
     padding: var(--space-sm);
   }
-  
+
   .headerSection,
   .mainContent {
     padding: clamp(0.75rem, 2.5vw, 1rem);
@@ -445,27 +447,27 @@
   .sessionCard {
     padding: clamp(0.75rem, 2vw, 1rem);
   }
-  
+
   .timeBlock {
     flex-direction: column;
     align-items: flex-start;
   }
-  
+
   .infoBar {
     flex-direction: column;
     gap: var(--space-sm);
   }
-  
+
   .infoBar select,
   .infoBar input {
     width: 100% !important;
   }
-  
+
   /* Hide complex elements on mobile by default */
   .content.hiddenOnMobile {
     display: none;
   }
-  
+
   .content.expandedOnMobile {
     display: flex;
   }

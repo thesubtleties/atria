@@ -84,11 +84,11 @@
   .container {
     padding: var(--space-sm);
   }
-  
+
   .header {
     padding: 0 var(--space-sm);
   }
-  
+
   .attribution {
     display: none; /* Hide attribution on mobile for cleaner UX */
   }
@@ -99,11 +99,11 @@
   .container {
     padding: var(--space-sm); /* Tighter padding on laptops to prevent scroll */
   }
-  
+
   .header {
     padding: 0 var(--space-md) !important; /* Match admin section padding */
   }
-  
+
   .attribution {
     bottom: var(--space-sm); /* Reduce bottom space */
     padding: var(--space-sm);
@@ -114,7 +114,7 @@
   .container {
     padding: var(--space-xl);
   }
-  
+
   .header {
     padding: 0 var(--space-xl);
   }

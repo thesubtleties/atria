@@ -31,7 +31,7 @@
 }
 
 .infoCard:last-child {
-  margin-bottom: clamp(.75rem, 2vw, var(--space-md)) !important;
+  margin-bottom: clamp(0.75rem, 2vw, var(--space-md)) !important;
 }
 
 .iconWrapper {

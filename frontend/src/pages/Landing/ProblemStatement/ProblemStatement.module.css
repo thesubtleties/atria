@@ -48,20 +48,20 @@
 }
 
 /* Initial state - off-white purple background with purple text */
-.problemStatement[style*="background-color: rgb(251, 250, 255)"] .word {
+.problemStatement[style*='background-color: rgb(251, 250, 255)'] .word {
   color: var(--color-primary);
 }
 
-.problemStatement[style*="background-color: rgb(251, 250, 255)"] .word.highlighted {
+.problemStatement[style*='background-color: rgb(251, 250, 255)'] .word.highlighted {
   color: #7c3aed; /* Darker purple for emphasis */
 }
 
 /* Final state - purple background with white/yellow text */
-.problemStatement[style*="background-color: rgb(139, 92, 246)"] .word {
+.problemStatement[style*='background-color: rgb(139, 92, 246)'] .word {
   color: white;
 }
 
-.problemStatement[style*="background-color: rgb(139, 92, 246)"] .word.highlighted {
+.problemStatement[style*='background-color: rgb(139, 92, 246)'] .word.highlighted {
   color: var(--color-accent-yellow);
   text-shadow: 0 0 20px rgba(255, 217, 61, 0.5);
 }
@@ -74,17 +74,17 @@
     transform: translateZ(0);
     backface-visibility: hidden;
   }
-  
+
   .word {
     /* Reduce will-change to improve memory usage */
     will-change: auto;
   }
-  
+
   .word.highlighted {
     /* Only use will-change during animation */
     will-change: auto;
   }
-  
+
   /* Optimize text rendering */
   .textContent {
     text-rendering: optimizeLegibility;
@@ -97,7 +97,7 @@
     font-size: clamp(1.5rem, 5vw, 2rem);
     padding: 0 var(--space-cozy);
   }
-  
+
   .word {
     margin-right: 0.2em;
   }
