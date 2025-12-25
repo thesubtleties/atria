@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Center } from '@mantine/core';
 import { LoadingSpinner } from '@/shared/components/loading';
 import { useSelector } from 'react-redux';
@@ -32,7 +32,7 @@ interface ChatRoomProps {
   room: ChatRoomType;
   inputValue: string;
   onInputChange: (value: string) => void;
-  onSendMessage: () => void;
+  onSendMessage: () => Promise<ChatMessage | null>;
   isActive: boolean;
   canModerate: boolean;
   canSendMessages?: boolean;
@@ -58,6 +58,9 @@ export function ChatRoom({
   const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
   const perPage = 50;
 
+  // Track last synced room/page to avoid overwriting local state on RTK cache updates
+  const lastSyncedRef = useRef<{ roomId: number; page: number } | null>(null);
+
   // Cast the response to our expected type since the API returns { messages: [...] }
   // instead of the generic PaginatedResponse { items: [...] }
   const { data, isLoading, isFetching } = useGetChatRoomMessagesQuery(
@@ -75,52 +78,66 @@ export function ChatRoom({
   const [deleteMessage, { isLoading: isDeleting }] = useDeleteMessageMutation();
 
   // Update loaded messages when new data arrives
+  // IMPORTANT: Only sync from RTK Query when room or page ACTUALLY changes
+  // Don't sync when RTK cache is updated by socket handlers - that would overwrite local state
   useEffect(() => {
     // Only process if we have data and not loading
     if (!isLoading && data) {
+      const lastSync = lastSyncedRef.current;
+      const isNewRoomOrPage =
+        !lastSync || lastSync.roomId !== room.id || lastSync.page !== currentPage;
+
+      // Skip if we already synced this room/page combo (RTK cache update from socket)
+      if (!isNewRoomOrPage && currentPage === 1) {
+        return;
+      }
+
       if (data.messages && Array.isArray(data.messages)) {
         if (currentPage === 1) {
           // Initial load or room change - replace all messages
           setLoadedMessages(data.messages);
           setHasMore(data.messages.length === perPage);
+          // Mark as synced
+          lastSyncedRef.current = { roomId: room.id, page: currentPage };
         } else {
           // Loading older messages - prepend to existing
-
-          // Create a Set of existing message IDs to prevent duplicates
-          const existingIds = new Set(loadedMessages.map((msg) => msg.id));
-
-          // Filter out any messages we already have
-          const uniqueNewMessages = data.messages.filter(
-            (msg: ChatMessage) => !existingIds.has(msg.id),
-          );
-
-          // If we got no new unique messages, we've reached the end
-          if (uniqueNewMessages.length === 0) {
-            setHasMore(false);
-            setIsLoadingMore(false);
-            return;
-          }
-
+          // Use functional update to access prev state without adding to deps
           setLoadedMessages((prev) => {
-            // Combine: new messages first (older), then existing messages
-            const newMessages = [...uniqueNewMessages, ...prev];
+            // Create a Set of existing message IDs to prevent duplicates
+            const existingIds = new Set(prev.map((msg) => msg.id));
 
-            return newMessages;
+            // Filter out any messages we already have
+            const uniqueNewMessages = data.messages.filter(
+              (msg: ChatMessage) => !existingIds.has(msg.id),
+            );
+
+            // If we got no new unique messages, we've reached the end
+            if (uniqueNewMessages.length === 0) {
+              return prev; // Return unchanged to prevent unnecessary re-render
+            }
+
+            // Combine: new messages first (older), then existing messages
+            return [...uniqueNewMessages, ...prev];
           });
 
-          // Has more if we got a full page of messages (some might be duplicates though)
+          // Check if we got a full page (might still have more)
+          // Note: Can't check uniqueNewMessages.length here since it's inside the setter
+          // so we just check if we got a full page from the API
           setHasMore(data.messages.length === perPage);
           setIsLoadingMore(false);
+          // Mark as synced
+          lastSyncedRef.current = { roomId: room.id, page: currentPage };
         }
       } else if (data.messages === undefined || data.messages === null) {
         // Set empty array if no messages
         if (currentPage === 1) {
           setLoadedMessages([]);
           setHasMore(false);
+          lastSyncedRef.current = { roomId: room.id, page: currentPage };
         }
       }
     }
-  }, [data, currentPage, perPage, room.id, isLoading, loadedMessages]);
+  }, [data, currentPage, perPage, room.id, isLoading]);
 
   // Reset when room changes - but don't clear messages until new ones arrive
   useEffect(() => {
@@ -128,6 +145,8 @@ export function ChatRoom({
     setCurrentPage(1);
     setHasMore(true);
     setIsLoadingMore(false);
+    // Reset sync tracking so new room will sync from RTK Query
+    lastSyncedRef.current = null;
   }, [room.id]);
 
   // Set up socket subscription for this room
@@ -163,7 +182,17 @@ export function ChatRoom({
             ),
           );
         } else if (update.type === 'message_removed' && update.messageId) {
-          setLoadedMessages((prev) => prev.filter((msg) => msg.id === update.messageId));
+          // For regular users: remove message entirely
+          // For admins who just deleted: message is already marked is_deleted locally, keep it
+          setLoadedMessages((prev) => {
+            const message = prev.find((msg) => msg.id === update.messageId);
+            // If message is already marked deleted (admin just deleted it), keep showing it
+            if (message?.is_deleted) {
+              return prev;
+            }
+            // Otherwise (regular user), remove it from view
+            return prev.filter((msg) => msg.id !== update.messageId);
+          });
         }
       };
 
@@ -205,7 +234,17 @@ export function ChatRoom({
                   ),
                 );
               } else if (update.type === 'message_removed' && update.messageId) {
-                setLoadedMessages((prev) => prev.filter((msg) => msg.id === update.messageId));
+                // For regular users: remove message entirely
+                // For admins who just deleted: message is already marked is_deleted locally, keep it
+                setLoadedMessages((prev) => {
+                  const message = prev.find((msg) => msg.id === update.messageId);
+                  // If message is already marked deleted (admin just deleted it), keep showing it
+                  if (message?.is_deleted) {
+                    return prev;
+                  }
+                  // Otherwise (regular user), remove it from view
+                  return prev.filter((msg) => msg.id !== update.messageId);
+                });
               }
             };
             registerMessageCallback(room.id, handleUpdate);
@@ -245,33 +284,35 @@ export function ChatRoom({
   const handleConfirmDelete = async (): Promise<void> => {
     if (!messageToDelete) return;
 
+    // Optimistically mark as deleted BEFORE the HTTP request
+    // This ensures the socket event (which arrives before HTTP response) sees it as deleted
+    const deletedBy =
+      currentUser ?
+        {
+          id: currentUser.id,
+          full_name:
+            currentUser.full_name || `${currentUser.first_name} ${currentUser.last_name}`.trim(),
+        }
+      : { id: 0, full_name: 'Moderator' };
+
+    setLoadedMessages((prev) =>
+      prev.map((msg) =>
+        msg.id === messageToDelete.id ?
+          {
+            ...msg,
+            is_deleted: true,
+            deleted_at: new Date().toISOString(),
+            deleted_by: deletedBy,
+          }
+        : msg,
+      ),
+    );
+
     try {
       await deleteMessage({
         chatRoomId: room.id,
         messageId: messageToDelete.id,
       }).unwrap();
-
-      // Update the local state to mark the message as deleted
-      setLoadedMessages((prev) =>
-        prev.map((msg) =>
-          msg.id === messageToDelete.id ?
-            {
-              ...msg,
-              is_deleted: true,
-              deleted_at: new Date().toISOString(),
-              deleted_by:
-                currentUser ?
-                  {
-                    id: currentUser.id,
-                    full_name:
-                      currentUser.full_name ||
-                      `${currentUser.first_name} ${currentUser.last_name}`.trim(),
-                  }
-                : { id: 0, full_name: 'Moderator' },
-            }
-          : msg,
-        ),
-      );
 
       notifications.show({
         title: 'Message deleted',
@@ -282,6 +323,20 @@ export function ChatRoom({
       setDeleteModalOpen(false);
       setMessageToDelete(null);
     } catch {
+      // Revert the optimistic update on failure
+      setLoadedMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === messageToDelete.id ?
+            {
+              ...msg,
+              is_deleted: false,
+              deleted_at: null,
+              deleted_by: null,
+            }
+          : msg,
+        ),
+      );
+
       notifications.show({
         title: 'Error',
         message: 'Failed to delete the message. Please try again.',
@@ -305,6 +360,28 @@ export function ChatRoom({
 
   // Note: Scroll position restoration is handled by MessageList component
   // which has access to the actual scroll container
+
+  // Handle sending message - wraps parent's onSendMessage and adds result to local state
+  // This ensures the message appears immediately even without socket
+  const handleSendMessage = async (): Promise<void> => {
+    try {
+      const sentMessage = await onSendMessage();
+      if (!sentMessage) return; // Empty content or other no-op case
+
+      // Add the sent message to local state (HTTP fallback for when socket is disabled)
+      // Socket callback would normally handle this, but we need it for HTTP-only mode
+      setLoadedMessages((prev) => {
+        // Check if message already exists (socket might have added it)
+        if (prev.some((msg) => msg.id === sentMessage.id)) {
+          return prev;
+        }
+        return [...prev, sentMessage];
+      });
+    } catch (error) {
+      // Error is already handled in parent's onSendMessage
+      console.error('Failed to send message:', error);
+    }
+  };
 
   if (isLoading && currentPage === 1) {
     return (
@@ -331,7 +408,7 @@ export function ChatRoom({
           roomName={room.name}
           value={inputValue}
           onChange={onInputChange}
-          onSend={onSendMessage}
+          onSend={handleSendMessage}
           canSendMessages={canSendMessages}
           muteReason={canSendMessages ? null : 'You are muted from chat'}
         />

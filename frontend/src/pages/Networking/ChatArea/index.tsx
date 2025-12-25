@@ -12,7 +12,7 @@ import {
 } from '@/app/features/networking/socketClient';
 import { ChatRoom as ChatRoomComponent } from './ChatRoom';
 import styles from './styles/index.module.css';
-import type { ChatRoom } from '@/types/chat';
+import type { ChatRoom, ChatMessage } from '@/types/chat';
 import type { ChatRoomType } from '@/types/enums';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -260,9 +260,9 @@ function ChatAreaComponent({ eventId: eventIdProp }: ChatAreaProps): ReactNode {
     }
   }, [eventId]);
 
-  const handleSendMessage = async (roomId: number): Promise<void> => {
+  const handleSendMessage = async (roomId: number): Promise<ChatMessage | null> => {
     const content = inputValues[roomId]?.trim();
-    if (!content) return;
+    if (!content) return null;
 
     console.log('📤 Sending message to room:', roomId, 'Content:', content);
 
@@ -275,8 +275,10 @@ function ChatAreaComponent({ eventId: eventIdProp }: ChatAreaProps): ReactNode {
 
       console.log('📤 Message sent successfully:', result);
       setInputValues((prev) => ({ ...prev, [roomId]: '' }));
+      return result;
     } catch (sendError) {
       console.error('📤 Failed to send message:', sendError);
+      throw sendError; // Re-throw so ChatRoom can handle it
     }
   };
 

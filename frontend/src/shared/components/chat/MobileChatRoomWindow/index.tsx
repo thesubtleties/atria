@@ -201,12 +201,21 @@ function MobileChatRoomWindow({ room, eventData, onClose }: MobileChatRoomWindow
     if (!content || !canSendMessages) return;
 
     try {
-      await sendMessage({
+      const sentMessage = await sendMessage({
         chatRoomId: room.id,
         content,
       }).unwrap();
 
       setInputValue('');
+
+      // Add the sent message to local state (HTTP fallback for when socket is disabled)
+      setLoadedMessages((prev) => {
+        // Check if message already exists (socket might have added it)
+        if (prev.some((msg) => msg.id === sentMessage.id)) {
+          return prev;
+        }
+        return [...prev, sentMessage];
+      });
 
       // Scroll to bottom after sending
       if (scrollAreaRef.current) {
