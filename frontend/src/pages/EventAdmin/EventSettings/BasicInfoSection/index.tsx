@@ -49,12 +49,12 @@ const BasicInfoSection = ({ event, eventId }: BasicInfoSectionProps) => {
     initialValues: {
       title: event?.title || '',
       description: event?.description || '',
-      event_type: event?.event_type || 'conference',
+      event_type: event?.event_type || 'CONFERENCE',
       start_date: parseDateOnly(event?.start_date),
       end_date: parseDateOnly(event?.end_date),
       timezone: event?.timezone || 'UTC',
       company_name: event?.company_name || '',
-      status: event?.status || 'draft',
+      status: event?.status || 'DRAFT',
       main_session_id: event?.main_session_id?.toString() || null,
     },
     validate: zodResolver(eventUpdateSchema),
@@ -125,12 +125,12 @@ const BasicInfoSection = ({ event, eventId }: BasicInfoSectionProps) => {
     form.setValues({
       title: event?.title || '',
       description: event?.description || '',
-      event_type: event?.event_type || 'conference',
+      event_type: event?.event_type || 'CONFERENCE',
       start_date: parseDateOnly(event?.start_date),
       end_date: parseDateOnly(event?.end_date),
       timezone: event?.timezone || 'UTC',
       company_name: event?.company_name || '',
-      status: event?.status || 'draft',
+      status: event?.status || 'DRAFT',
       main_session_id: event?.main_session_id?.toString() || null,
     });
     setHasChanges(false);
@@ -171,8 +171,8 @@ const BasicInfoSection = ({ event, eventId }: BasicInfoSectionProps) => {
             <Select
               label='Event Type'
               data={[
-                { value: 'conference', label: 'Conference' },
-                { value: 'single_session', label: 'Single Session' },
+                { value: 'CONFERENCE', label: 'Conference' },
+                { value: 'SINGLE_SESSION', label: 'Single Session' },
               ]}
               required
               classNames={{
@@ -185,9 +185,9 @@ const BasicInfoSection = ({ event, eventId }: BasicInfoSectionProps) => {
             <Select
               label='Status'
               data={[
-                { value: 'draft', label: 'Draft' },
-                { value: 'published', label: 'Published' },
-                { value: 'archived', label: 'Archived' },
+                { value: 'DRAFT', label: 'Draft' },
+                { value: 'PUBLISHED', label: 'Published' },
+                { value: 'ARCHIVED', label: 'Archived' },
               ]}
               required
               allowDeselect={false}
@@ -253,7 +253,7 @@ const BasicInfoSection = ({ event, eventId }: BasicInfoSectionProps) => {
             {...form.getInputProps('timezone')}
           />
 
-          {form.values.event_type === 'single_session' && sessionOptions.length > 0 && (
+          {form.values.event_type === 'SINGLE_SESSION' && sessionOptions.length > 0 && (
             <Select
               label='Main Session'
               placeholder='Select the main session to link to'
