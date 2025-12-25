@@ -32,7 +32,7 @@ interface ChatRoomProps {
   room: ChatRoomType;
   inputValue: string;
   onInputChange: (value: string) => void;
-  onSendMessage: () => void;
+  onSendMessage: () => Promise<ChatMessage | null>;
   isActive: boolean;
   canModerate: boolean;
   canSendMessages?: boolean;
@@ -361,6 +361,28 @@ export function ChatRoom({
   // Note: Scroll position restoration is handled by MessageList component
   // which has access to the actual scroll container
 
+  // Handle sending message - wraps parent's onSendMessage and adds result to local state
+  // This ensures the message appears immediately even without socket
+  const handleSendMessage = async (): Promise<void> => {
+    try {
+      const sentMessage = await onSendMessage();
+      if (!sentMessage) return; // Empty content or other no-op case
+
+      // Add the sent message to local state (HTTP fallback for when socket is disabled)
+      // Socket callback would normally handle this, but we need it for HTTP-only mode
+      setLoadedMessages((prev) => {
+        // Check if message already exists (socket might have added it)
+        if (prev.some((msg) => msg.id === sentMessage.id)) {
+          return prev;
+        }
+        return [...prev, sentMessage];
+      });
+    } catch (error) {
+      // Error is already handled in parent's onSendMessage
+      console.error('Failed to send message:', error);
+    }
+  };
+
   if (isLoading && currentPage === 1) {
     return (
       <Center className={styles.chatContainer ?? ''}>
@@ -386,7 +408,7 @@ export function ChatRoom({
           roomName={room.name}
           value={inputValue}
           onChange={onInputChange}
-          onSend={onSendMessage}
+          onSend={handleSendMessage}
           canSendMessages={canSendMessages}
           muteReason={canSendMessages ? null : 'You are muted from chat'}
         />
