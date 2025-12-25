@@ -53,8 +53,8 @@ const PrivacySettings = () => {
 
   // Update form when data loads
   useEffect(() => {
-    if (privacyData) {
-      const settings = privacyData as unknown as PrivacySettingsFormData;
+    if (privacyData?.privacy_settings) {
+      const settings = privacyData.privacy_settings as PrivacySettingsFormData;
       form.setValues(settings);
       setOriginalValues(settings);
     }

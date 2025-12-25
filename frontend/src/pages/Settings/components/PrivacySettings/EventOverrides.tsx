@@ -196,7 +196,7 @@ const EventOverrides = () => {
 
   // Prepare events for dropdown
   type EventItem = { id: number; title: string };
-  const events = (eventsData?.items || []) as EventItem[];
+  const events = (eventsData?.events || []) as EventItem[];
   const eventOptions = events.map((event) => ({
     value: event.id.toString(),
     label: event.title,

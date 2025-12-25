@@ -18,7 +18,7 @@ export const NewUserCheck = () => {
     { skip: !userId },
   );
 
-  const events = eventsData?.items ?? [];
+  const events = eventsData?.events ?? [];
 
   if (orgsLoading || eventsLoading) {
     return null;

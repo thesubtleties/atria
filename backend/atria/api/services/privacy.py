@@ -110,7 +110,7 @@ class PrivacyService:
         elif context['is_organizer']:
             # Organizers always see real email for event management
             result['show_real_email'] = True
-        elif email_visibility == 'event_attendees':
+        elif email_visibility == 'EVENT_ATTENDEES':
             # Most permissive setting - but context matters:
             show_email = False
             if event_id:
@@ -119,23 +119,23 @@ class PrivacyService:
             else:
                 # Outside event context: connections are "higher tier"
                 show_email = context['is_connected']
-            
+
             if show_email:
                 if show_public_email and public_email:
                     result['show_public_email'] = True
                     result['public_email'] = public_email
                 else:
                     result['show_real_email'] = True
-        elif email_visibility == 'connections_organizers' and context['is_connected']:
+        elif email_visibility == 'CONNECTIONS_ORGANIZERS' and context['is_connected']:
             if show_public_email and public_email:
                 result['show_public_email'] = True
                 result['public_email'] = public_email
             else:
                 result['show_real_email'] = True
-        elif email_visibility == 'organizers_only':
+        elif email_visibility == 'ORGANIZERS_ONLY':
             # Already handled in is_organizer check above
             pass
-        # 'hidden' - no email shown unless organizer/self
+        # 'HIDDEN' - no email shown unless organizer/self
         
         return result
     
@@ -178,12 +178,12 @@ class PrivacyService:
                 # Merge event overrides with global settings
                 privacy = {**privacy, **event_user.privacy_overrides}
         
-        # Extract privacy settings with defaults
-        email_visibility = privacy.get('email_visibility', 'connections_organizers')
+        # Extract privacy settings with defaults (normalize to UPPERCASE for consistency)
+        email_visibility = (privacy.get('email_visibility') or 'CONNECTIONS_ORGANIZERS').upper()
         show_company = privacy.get('show_company', True)
         show_bio = privacy.get('show_bio', True)
-        show_social_links = privacy.get('show_social_links', 'event_attendees')
-        allow_connection_requests = privacy.get('allow_connection_requests', 'event_attendees')
+        show_social_links = (privacy.get('show_social_links') or 'EVENT_ATTENDEES').upper()
+        allow_connection_requests = (privacy.get('allow_connection_requests') or 'EVENT_ATTENDEES').upper()
         
         # Apply email visibility rules
         email_data = PrivacyService._determine_email_visibility(user, context, privacy, email_visibility, event_id)
@@ -215,10 +215,10 @@ class PrivacyService:
         if context['is_self']:
             # Always show to self
             filtered['social_links'] = user.social_links or {}
-        elif show_social_links == 'hidden':
+        elif show_social_links == 'HIDDEN':
             # Explicitly hidden from EVERYONE except self (even organizers)
             filtered['social_links'] = None
-        elif show_social_links == 'event_attendees':
+        elif show_social_links == 'EVENT_ATTENDEES':
             # Most permissive setting - but context matters:
             if event_id:
                 # In event context: show only to actual event attendees
@@ -233,7 +233,7 @@ class PrivacyService:
                     filtered['social_links'] = user.social_links or {}
                 else:
                     filtered['social_links'] = None
-        elif show_social_links == 'connections' and context['is_connected']:
+        elif show_social_links == 'CONNECTIONS' and context['is_connected']:
             # Show only to connections
             filtered['social_links'] = user.social_links or {}
         else:
@@ -254,13 +254,13 @@ class PrivacyService:
             # Check if viewer can actually send a connection request
             can_connect = False
 
-            if allow_connection_requests == 'event_attendees':
+            if allow_connection_requests == 'EVENT_ATTENDEES':
                 # Allow if viewer is an event attendee (in shared event context)
                 can_connect = context.get('is_event_attendee', False)
-            elif allow_connection_requests == 'speakers_organizers':
+            elif allow_connection_requests == 'SPEAKERS_ORGANIZERS':
                 # Allow only if viewer is a speaker or organizer
                 can_connect = context['is_organizer'] or context['is_co_speaker']
-            elif allow_connection_requests == 'none':
+            elif allow_connection_requests == 'NONE':
                 # Block all connection requests
                 can_connect = False
                 
@@ -325,9 +325,9 @@ class PrivacyService:
             elif existing_connection.status == ConnectionStatus.BLOCKED:
                 return False, "Connection blocked"
 
-        # Get recipient's privacy settings
+        # Get recipient's privacy settings (normalize to UPPERCASE)
         privacy = recipient.privacy_settings or {}
-        allow_requests = privacy.get('allow_connection_requests', 'event_attendees')
+        allow_requests = (privacy.get('allow_connection_requests') or 'EVENT_ATTENDEES').upper()
 
         # Check event-specific overrides (use pre-loaded or query)
         if event_id:
@@ -339,10 +339,12 @@ class PrivacyService:
 
             if recipient_event_user and recipient_event_user.privacy_overrides:
                 event_privacy = recipient_event_user.privacy_overrides
-                allow_requests = event_privacy.get('allow_connection_requests', allow_requests)
+                override_value = event_privacy.get('allow_connection_requests')
+                if override_value:
+                    allow_requests = override_value.upper()
 
         # Apply connection request rules
-        if allow_requests == 'none':
+        if allow_requests == 'NONE':
             return False, "User has disabled connection requests"
 
         # Need event context for all other permission levels
@@ -360,11 +362,11 @@ class PrivacyService:
             return False, "Must be active event participant"
 
         # Now check permission level (requester is confirmed to be in the event)
-        if allow_requests == 'event_attendees':
+        if allow_requests == 'EVENT_ATTENDEES':
             # Allow any active event participant
             return True, None
 
-        if allow_requests == 'speakers_organizers':
+        if allow_requests == 'SPEAKERS_ORGANIZERS':
             if requester_event_user.role in [
                 EventUserRole.SPEAKER,
                 EventUserRole.ORGANIZER,
@@ -379,58 +381,69 @@ class PrivacyService:
     def get_default_privacy_settings() -> Dict[str, Any]:
         """Get default privacy settings for new users"""
         return {
-            'email_visibility': 'connections_organizers',
+            'email_visibility': 'CONNECTIONS_ORGANIZERS',
             'show_public_email': False,
             'public_email': '',
-            'allow_connection_requests': 'event_attendees',
-            'show_social_links': 'event_attendees',
+            'allow_connection_requests': 'EVENT_ATTENDEES',
+            'show_social_links': 'EVENT_ATTENDEES',
             'show_company': True,
             'show_bio': True
         }
-    
+
     @staticmethod
     def get_speaker_default_privacy_settings() -> Dict[str, Any]:
         """Get recommended privacy settings for speakers"""
         return {
-            'email_visibility': 'connections_organizers',
+            'email_visibility': 'CONNECTIONS_ORGANIZERS',
             'show_public_email': False,
             'public_email': '',
-            'allow_connection_requests': 'event_attendees',
-            'show_social_links': 'event_attendees',
+            'allow_connection_requests': 'EVENT_ATTENDEES',
+            'show_social_links': 'EVENT_ATTENDEES',
             'show_company': True,
             'show_bio': True
         }
     
     @staticmethod
+    def _normalize_privacy_settings(settings: Dict[str, Any]) -> Dict[str, Any]:
+        """Normalize enum values to UPPERCASE for consistency."""
+        normalized = dict(settings)
+        enum_fields = ['email_visibility', 'allow_connection_requests', 'show_social_links']
+        for field in enum_fields:
+            if field in normalized and isinstance(normalized[field], str):
+                normalized[field] = normalized[field].upper()
+        return normalized
+
+    @staticmethod
     def get_user_privacy_settings(user_id: int) -> Dict[str, Any]:
         """
         Get user's privacy settings with event overrides.
-        
+
         Args:
             user_id: ID of the user
-            
+
         Returns:
             Dictionary containing privacy_settings and event_overrides
         """
         from api.models import User, EventUser
-        
+
         user = User.query.get_or_404(user_id)
+
+        # Get base privacy settings and normalize to UPPERCASE
+        raw_settings = user.privacy_settings or PrivacyService.get_default_privacy_settings()
+        privacy_settings = PrivacyService._normalize_privacy_settings(raw_settings)
         
-        # Get base privacy settings
-        privacy_settings = user.privacy_settings or PrivacyService.get_default_privacy_settings()
-        
-        # Get event-specific overrides
+        # Get event-specific overrides (normalized to UPPERCASE)
         event_overrides = []
         event_users = EventUser.query.filter_by(user_id=user_id).filter(
             EventUser.privacy_overrides.isnot(None)
         ).all()
-        
+
         for event_user in event_users:
             if event_user.privacy_overrides:
                 event_overrides.append({
                     'event_id': event_user.event_id,
                     'event_name': event_user.event.title if event_user.event else None,
-                    'overrides': event_user.privacy_overrides
+                    'overrides': PrivacyService._normalize_privacy_settings(event_user.privacy_overrides)
                 })
         
         return {
@@ -489,23 +502,23 @@ class PrivacyService:
     def get_event_privacy_overrides(user_id: int, event_id: int) -> Optional[Dict[str, Any]]:
         """
         Get event-specific privacy overrides for a user.
-        
+
         Args:
             user_id: ID of the user
             event_id: ID of the event
-            
+
         Returns:
-            Privacy overrides if they exist, None otherwise
+            Privacy overrides if they exist (normalized to UPPERCASE), None otherwise
         """
         from api.models import EventUser
-        
+
         event_user = EventUser.query.filter_by(
             user_id=user_id,
             event_id=event_id
         ).first()
-        
-        if event_user:
-            return event_user.privacy_overrides
+
+        if event_user and event_user.privacy_overrides:
+            return PrivacyService._normalize_privacy_settings(event_user.privacy_overrides)
         return None
     
     @staticmethod
