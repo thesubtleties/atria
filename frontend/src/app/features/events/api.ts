@@ -48,7 +48,7 @@ type GetEventUsersParams = {
 };
 
 type GetEventUsersResponse = {
-  users: EventUser[];
+  event_users: EventUser[];
   total_items: number;
   total_pages: number;
   current_page: number;

@@ -78,7 +78,7 @@ export const ProfilePage = () => {
   // Find the connection object if it exists
   const connection: Connection | undefined =
     !isOwnProfile ?
-      (connectionsData?.items as Connection[] | undefined)?.find((conn: Connection) => {
+      connectionsData?.connections?.find((conn) => {
         const isRequester = conn.requester.id === profileUserId;
         const isRecipient = conn.recipient.id === profileUserId;
         const isAccepted = conn.status === 'ACCEPTED';

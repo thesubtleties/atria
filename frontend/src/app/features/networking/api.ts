@@ -151,6 +151,15 @@ type GetConnectionsArg = {
   perPage?: number;
 };
 
+/** Connections paginated response (backend returns 'connections' not 'items') */
+type ConnectionsResponse = {
+  connections: Connection[];
+  total_items: number;
+  total_pages: number;
+  current_page: number;
+  per_page: number;
+};
+
 /** Update connection status mutation argument */
 type UpdateConnectionStatusArg = {
   connectionId: number;
@@ -541,7 +550,7 @@ export const networkingApi = baseApi.injectEndpoints({
       invalidatesTags: ['Connection', 'EventUsers'],
     }),
 
-    getConnections: builder.query<PaginatedResponse<Connection>, GetConnectionsArg>({
+    getConnections: builder.query<ConnectionsResponse, GetConnectionsArg>({
       query: ({ status, page = 1, perPage = 50 }) => ({
         url: '/connections',
         params: {

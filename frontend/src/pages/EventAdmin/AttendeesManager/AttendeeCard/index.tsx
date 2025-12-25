@@ -110,7 +110,7 @@ const AttendeeCard = ({
   );
   const isConnected =
     !isInvitation &&
-    connectionsData?.items?.some(
+    connectionsData?.connections?.some(
       (conn: { requester: { id: number }; recipient: { id: number }; status: string }) =>
         (conn.requester.id === attendeeData.user_id ||
           conn.recipient.id === attendeeData.user_id) &&

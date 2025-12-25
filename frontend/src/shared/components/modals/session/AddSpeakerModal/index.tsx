@@ -73,7 +73,7 @@ export const AddSpeakerModal = ({
 
   // Get list of speakers not already assigned to this session
   const availableSpeakers = useMemo(() => {
-    const eventUsers = eventSpeakersData?.users;
+    const eventUsers = eventSpeakersData?.event_users;
     if (!eventUsers) return [];
 
     const currentSpeakerIds = speakersData?.map((s) => s.user_id) || [];

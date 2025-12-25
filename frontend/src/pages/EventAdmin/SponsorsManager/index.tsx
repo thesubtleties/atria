@@ -32,7 +32,8 @@ const SponsorsManager = () => {
     },
   );
 
-  const sponsors = sponsorsResponse?.sponsors ?? [];
+  // Backend returns array directly
+  const sponsors = sponsorsResponse ?? [];
 
   if (error) {
     return (
