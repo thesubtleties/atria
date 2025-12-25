@@ -17,6 +17,12 @@ type DeleteUploadParams = {
   objectKey: string;
 };
 
+/** Response from presigned URL endpoints */
+type PresignedUrlResponse = {
+  url: string;
+  expires_in: number;
+};
+
 export const uploadsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     uploadImage: builder.mutation<UploadImageResponse, UploadImageParams>({
@@ -49,17 +55,15 @@ export const uploadsApi = baseApi.injectEndpoints({
       },
     }),
 
-    getAuthenticatedContent: builder.query<Blob, string>({
+    getAuthenticatedContent: builder.query<PresignedUrlResponse, string>({
       query: (objectKey) => ({
         url: `/content/${objectKey}`,
-        responseHandler: (response: Response) => response.blob(),
       }),
     }),
 
-    getPrivateContent: builder.query<Blob, string>({
+    getPrivateContent: builder.query<PresignedUrlResponse, string>({
       query: (objectKey) => ({
         url: `/private/${objectKey}`,
-        responseHandler: (response: Response) => response.blob(),
       }),
     }),
 
