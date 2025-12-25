@@ -1,6 +1,5 @@
 import type { Draft } from 'immer';
 import { baseApi } from '../api';
-import type { BaseQueryError } from '../api/baseQuery';
 import type { DirectMessagesPayload, DirectMessageThreadsPayload } from './socketTypes';
 import type {
   DirectMessage,
@@ -187,7 +186,7 @@ export const networkingApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // Get all direct message threads
     getDirectMessageThreads: builder.query<DirectMessageThread[], GetDirectMessageThreadsArg>({
-      queryFn: async (arg, _api) => {
+      queryFn: async (arg, api) => {
         const socket = getSocket();
         const eventId = arg?.eventId;
 
@@ -201,15 +200,12 @@ export const networkingApi = baseApi.injectEndpoints({
           }
         }
 
-        // HTTP fallback
+        // HTTP fallback - must use api.dispatch() to properly execute the query
         try {
           const customQueryEndpoint = (
             baseApi.endpoints as {
               customQuery?: {
-                initiate: (
-                  args: unknown,
-                  options?: unknown,
-                ) => Promise<{ data: unknown } | { error: BaseQueryError }>;
+                initiate: (args: unknown) => unknown;
               };
             }
           ).customQuery;
@@ -217,19 +213,16 @@ export const networkingApi = baseApi.injectEndpoints({
             return { error: { status: 500, message: 'Custom query endpoint not available' } };
           }
 
-          const queryResult = await customQueryEndpoint.initiate(
-            {
+          const result = (await api.dispatch(
+            customQueryEndpoint.initiate({
               url: '/direct-messages/threads',
               method: 'GET',
               ...(eventId ? { params: { event_id: eventId } } : {}),
-            },
-            {},
-          );
+            }),
+          )) as { data?: unknown; error?: unknown };
 
-          // RTK Query initiate returns a promise that resolves to { data } or { error }
-          const result = await queryResult;
-          if ('error' in result) {
-            return result;
+          if (result.error) {
+            return { error: { status: 500, message: 'HTTP request failed' } };
           }
 
           return { data: normalizeThreadsResponse(result.data) };
@@ -251,7 +244,7 @@ export const networkingApi = baseApi.injectEndpoints({
 
     // Get messages for a thread with pagination
     getDirectMessages: builder.query<DirectMessagesPayload, GetDirectMessagesArg>({
-      queryFn: async ({ threadId, page = 1, perPage = 50 }, _api) => {
+      queryFn: async ({ threadId, page = 1, perPage = 50 }, api) => {
         const socket = getSocket();
 
         // Try socket first if available
@@ -264,15 +257,12 @@ export const networkingApi = baseApi.injectEndpoints({
           }
         }
 
-        // HTTP fallback
+        // HTTP fallback - must use api.dispatch() to properly execute the query
         try {
           const customQueryEndpoint = (
             baseApi.endpoints as {
               customQuery?: {
-                initiate: (
-                  args: unknown,
-                  options?: unknown,
-                ) => Promise<{ data: unknown } | { error: BaseQueryError }>;
+                initiate: (args: unknown) => unknown;
               };
             }
           ).customQuery;
@@ -280,21 +270,19 @@ export const networkingApi = baseApi.injectEndpoints({
             return { error: { status: 500, message: 'Custom query endpoint not available' } };
           }
 
-          const queryResult = await customQueryEndpoint.initiate(
-            {
+          const result = (await api.dispatch(
+            customQueryEndpoint.initiate({
               url: `/direct-messages/threads/${threadId}/messages`,
               method: 'GET',
               params: {
                 page,
                 per_page: perPage,
               },
-            },
-            {},
-          );
+            }),
+          )) as { data?: unknown; error?: unknown };
 
-          const result = await queryResult;
-          if ('error' in result) {
-            return result;
+          if (result.error) {
+            return { error: { status: 500, message: 'HTTP request failed' } };
           }
 
           return { data: normalizeMessagesResponse(result.data) };
@@ -316,7 +304,7 @@ export const networkingApi = baseApi.injectEndpoints({
 
     // Send a direct message
     sendDirectMessage: builder.mutation<DirectMessage, SendDirectMessageArg>({
-      queryFn: async ({ threadId, content, encryptedContent }, _api) => {
+      queryFn: async ({ threadId, content, encryptedContent }, api) => {
         const socket = getSocket();
 
         // Try socket first if available
@@ -329,15 +317,12 @@ export const networkingApi = baseApi.injectEndpoints({
           }
         }
 
-        // HTTP fallback
+        // HTTP fallback - must use api.dispatch() to properly execute the query
         try {
           const customQueryEndpoint = (
             baseApi.endpoints as {
               customQuery?: {
-                initiate: (
-                  args: unknown,
-                  options?: unknown,
-                ) => Promise<{ data: unknown } | { error: BaseQueryError }>;
+                initiate: (args: unknown) => unknown;
               };
             }
           ).customQuery;
@@ -345,21 +330,19 @@ export const networkingApi = baseApi.injectEndpoints({
             return { error: { status: 500, message: 'Custom query endpoint not available' } };
           }
 
-          const queryResult = await customQueryEndpoint.initiate(
-            {
+          const result = (await api.dispatch(
+            customQueryEndpoint.initiate({
               url: `/direct-messages/threads/${threadId}/messages`,
               method: 'POST',
               body: {
                 content,
                 encrypted_content: encryptedContent,
               },
-            },
-            {},
-          );
+            }),
+          )) as { data?: unknown; error?: unknown };
 
-          const result = await queryResult;
-          if ('error' in result) {
-            return result;
+          if (result.error) {
+            return { error: { status: 500, message: 'HTTP request failed' } };
           }
 
           return { data: result.data as DirectMessage };
@@ -381,7 +364,7 @@ export const networkingApi = baseApi.injectEndpoints({
 
     // Create a new thread
     createDirectMessageThread: builder.mutation<DirectMessageThread, CreateDirectMessageThreadArg>({
-      queryFn: async (arg, _api) => {
+      queryFn: async (arg, api) => {
         const socket = getSocket();
         // Support both old format (just userId) and new format (object with userId and eventId)
         const body = typeof arg === 'object' ? arg : { userId: arg };
@@ -397,15 +380,12 @@ export const networkingApi = baseApi.injectEndpoints({
           }
         }
 
-        // HTTP fallback
+        // HTTP fallback - must use api.dispatch() to properly execute the query
         try {
           const customQueryEndpoint = (
             baseApi.endpoints as {
               customQuery?: {
-                initiate: (
-                  args: unknown,
-                  options?: unknown,
-                ) => Promise<{ data: unknown } | { error: BaseQueryError }>;
+                initiate: (args: unknown) => unknown;
               };
             }
           ).customQuery;
@@ -418,18 +398,16 @@ export const networkingApi = baseApi.injectEndpoints({
             httpBody.event_id = eventId;
           }
 
-          const queryResult = await customQueryEndpoint.initiate(
-            {
+          const result = (await api.dispatch(
+            customQueryEndpoint.initiate({
               url: '/direct-messages/threads',
               method: 'POST',
               body: httpBody,
-            },
-            {},
-          );
+            }),
+          )) as { data?: unknown; error?: unknown };
 
-          const result = await queryResult;
-          if ('error' in result) {
-            return result;
+          if (result.error) {
+            return { error: { status: 500, message: 'HTTP request failed' } };
           }
 
           return { data: result.data as DirectMessageThread };
@@ -451,7 +429,7 @@ export const networkingApi = baseApi.injectEndpoints({
 
     // Mark messages as read
     markMessagesRead: builder.mutation<{ thread_id: number }, number>({
-      queryFn: async (threadId, _api) => {
+      queryFn: async (threadId, api) => {
         const socket = getSocket();
 
         // Try socket first if available
@@ -464,15 +442,12 @@ export const networkingApi = baseApi.injectEndpoints({
           }
         }
 
-        // HTTP fallback
+        // HTTP fallback - must use api.dispatch() to properly execute the query
         try {
           const customQueryEndpoint = (
             baseApi.endpoints as {
               customQuery?: {
-                initiate: (
-                  args: unknown,
-                  options?: unknown,
-                ) => Promise<{ data: unknown } | { error: BaseQueryError }>;
+                initiate: (args: unknown) => unknown;
               };
             }
           ).customQuery;
@@ -480,17 +455,15 @@ export const networkingApi = baseApi.injectEndpoints({
             return { error: { status: 500, message: 'Custom query endpoint not available' } };
           }
 
-          const queryResult = await customQueryEndpoint.initiate(
-            {
+          const result = (await api.dispatch(
+            customQueryEndpoint.initiate({
               url: `/direct-messages/threads/${threadId}/read`,
               method: 'POST',
-            },
-            {},
-          );
+            }),
+          )) as { data?: unknown; error?: unknown };
 
-          const result = await queryResult;
-          if ('error' in result) {
-            return result;
+          if (result.error) {
+            return { error: { status: 500, message: 'HTTP request failed' } };
           }
 
           return { data: result.data as { thread_id: number } };
