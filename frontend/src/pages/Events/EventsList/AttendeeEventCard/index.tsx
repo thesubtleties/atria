@@ -68,7 +68,7 @@ export const AttendeeEventCard = ({ event, status }: AttendeeEventCardProps) => 
           {getStatusBadgeLabel()}
         </Badge>
         <Badge variant='subtle' className={cn(styles.typeBadge)} data-type={event.event_type}>
-          {event.event_type === 'conference' ? 'Conference' : 'Single Session'}
+          {event.event_type === 'CONFERENCE' ? 'Conference' : 'Single Session'}
         </Badge>
       </div>
 

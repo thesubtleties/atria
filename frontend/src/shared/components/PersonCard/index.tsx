@@ -73,10 +73,7 @@ export function PersonCard({
 
   // Check if we can view this person's full profile
   const isOwnProfile = currentUser?.id === person.id;
-  const isConnected =
-    connectionStatus === 'connected' ||
-    connectionStatus === 'accepted' ||
-    connectionStatus === 'ACCEPTED';
+  const isConnected = connectionStatus === 'ACCEPTED';
   const canViewProfile = isOwnProfile || isConnected;
 
   const handleCardClick = () => {
@@ -200,11 +197,7 @@ export function PersonCard({
 
           {showActions && currentUser?.id !== person.id && (
             <div className={styles.actionButtonWrapper}>
-              {(
-                connectionStatus === 'connected' ||
-                connectionStatus === 'accepted' ||
-                connectionStatus === 'ACCEPTED'
-              ) ?
+              {connectionStatus === 'ACCEPTED' ?
                 <Button
                   size='xs'
                   variant='filled'
@@ -218,7 +211,7 @@ export function PersonCard({
                 >
                   Message
                 </Button>
-              : connectionStatus === 'pending' || connectionStatus === 'PENDING' ?
+              : connectionStatus === 'PENDING' ?
                 <Button
                   size='xs'
                   variant='light'

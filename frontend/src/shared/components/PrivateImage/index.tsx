@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { Image, Box } from '@mantine/core';
 import type { ImageProps } from '@mantine/core';
 import { LoadingSpinner } from '../loading';
@@ -22,20 +21,9 @@ const PrivateImage = ({
   placeholder,
   ...props
 }: PrivateImageProps) => {
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
-
   const { data, isLoading, error } = useGetPrivateContentQuery(objectKey, {
     skip: !objectKey,
   });
-
-  useEffect(() => {
-    // The query returns a Blob, we need to create a URL from it
-    if (data instanceof Blob) {
-      const url = URL.createObjectURL(data);
-      setImageUrl(url);
-      return () => URL.revokeObjectURL(url);
-    }
-  }, [data]);
 
   if (!objectKey) {
     return <>{placeholder}</> || null;
@@ -57,11 +45,11 @@ const PrivateImage = ({
     );
   }
 
-  if (error || !imageUrl) {
+  if (error || !data?.url) {
     return <>{placeholder}</> || null;
   }
 
-  return <Image src={imageUrl} alt={alt} w={width} h={height} fit={fit} {...props} />;
+  return <Image src={data.url} alt={alt} w={width} h={height} fit={fit} {...props} />;
 };
 
 export default PrivateImage;
