@@ -73,7 +73,7 @@ const AttendeeRow = ({
     page: 1,
     perPage: 1000,
   });
-  const isConnected = connectionsData?.items?.some(
+  const isConnected = connectionsData?.connections?.some(
     (conn: { requester: { id: number }; recipient: { id: number }; status: string }) =>
       (conn.requester.id === attendee.user_id || conn.recipient.id === attendee.user_id) &&
       conn.status === 'ACCEPTED',

@@ -9,10 +9,7 @@ import {
   joinEventNotifications,
   leaveEventNotifications,
   setActiveChatRoom,
-  registerMessageCallback,
-  unregisterMessageCallback,
 } from '@/app/features/networking/socketClient';
-import type { ChatMessageCallbackEvent } from '@/app/features/networking/socketTypes';
 import { ChatRoom as ChatRoomComponent } from './ChatRoom';
 import styles from './styles/index.module.css';
 import type { ChatRoom } from '@/types/chat';
@@ -98,10 +95,8 @@ function ChatAreaComponent({ eventId: eventIdProp }: ChatAreaProps): ReactNode {
 
       if (currentRoom) {
         console.log(`🚪 ChatArea unmounting: Leaving room ${currentRoom}`);
-        // Clean up message callbacks first
-        unregisterMessageCallback(currentRoom);
-
-        // Clean up socket room membership
+        // NOTE: ChatRoom components handle their own callback cleanup on unmount
+        // We just need to clean up socket room membership
         setActiveChatRoom(null)
           .then(() => {
             console.log(`✅ ChatArea unmount: Successfully left room ${currentRoom}`);
@@ -177,17 +172,8 @@ function ChatAreaComponent({ eventId: eventIdProp }: ChatAreaProps): ReactNode {
           return;
         }
 
-        // Register callback for socket message updates
-        registerMessageCallback(activeRoom, (update: ChatMessageCallbackEvent) => {
-          if (!isMounted) return;
-
-          // Message updates will be handled by ChatRoom component
-          // Log only important events to reduce noise
-          if (update.type === 'new_message') {
-            console.log(`💬 Parent: New message in room ${activeRoom}`);
-          }
-        });
-
+        // NOTE: Don't register a callback here - ChatRoom component handles message updates
+        // Registering here would overwrite the child's callback since the Map only stores one per room
         console.log(`✅ Parent: Room ${activeRoom} setup complete`);
       } catch (setupError) {
         console.error(`❌ Parent: Failed to set up room ${activeRoom}:`, setupError);
@@ -196,19 +182,12 @@ function ChatAreaComponent({ eventId: eventIdProp }: ChatAreaProps): ReactNode {
 
     setupRoom();
 
-    // Cleanup function - only clean up callbacks when room changes
-    // The actual socket leave is handled by the next room join (auto-leaves previous)
+    // Cleanup function
+    // NOTE: Don't unregister callbacks here - ChatRoom manages its own callback lifecycle
+    // The socket room leave is handled by the next room join (auto-leaves previous)
     return () => {
       isMounted = false;
-      const roomToClean = activeRoom;
-      console.log(`🧹 Parent: Room change cleanup for room ${roomToClean}`);
-
-      // Only unregister message callback - don't leave the room here
-      // Room leave happens either:
-      // 1. When joining next room (auto-leaves previous)
-      // 2. When component unmounts (handled by unmount effect)
-      unregisterMessageCallback(roomToClean);
-      console.log(`✅ Parent: Unregistered callbacks for room ${roomToClean}`);
+      console.log(`🧹 Parent: Room change cleanup for room ${activeRoom}`);
     };
   }, [activeRoom]); // Only depends on activeRoom changing
 

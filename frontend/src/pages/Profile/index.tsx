@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Container, Stack, Group, TextInput, Alert, Button as MantineButton } from '@mantine/core';
+import { Container, Stack, Group, TextInput, Alert } from '@mantine/core';
 import { IconCheck, IconX, IconUserPlus } from '@tabler/icons-react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -78,7 +78,7 @@ export const ProfilePage = () => {
   // Find the connection object if it exists
   const connection: Connection | undefined =
     !isOwnProfile ?
-      (connectionsData?.items as Connection[] | undefined)?.find((conn: Connection) => {
+      connectionsData?.connections?.find((conn) => {
         const isRequester = conn.requester.id === profileUserId;
         const isRecipient = conn.recipient.id === profileUserId;
         const isAccepted = conn.status === 'ACCEPTED';
@@ -413,10 +413,10 @@ export const ProfilePage = () => {
         <div className={styles.editActions}>
           <form onSubmit={form.onSubmit(handleSave)} className={styles.editForm}>
             <div className={styles.editButtonGroup}>
-              <MantineButton variant='subtle' onClick={handleCancel}>
+              <Button variant='secondary' onClick={handleCancel}>
                 <IconX size={16} />
                 Cancel
-              </MantineButton>
+              </Button>
               <Button type='submit' variant='primary' disabled={isUpdating}>
                 <IconCheck size={16} />
                 Save Changes

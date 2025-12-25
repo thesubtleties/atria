@@ -5,6 +5,31 @@ All notable changes to Atria will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2025-12-24
+
+### Added
+
+- **Full TypeScript migration** - Complete frontend codebase converted from JavaScript to TypeScript (764 files)
+- Comprehensive type definitions for all API responses, Redux state, and component props
+- Strict type checking with `allowJs: false` and `verbatimModuleSyntax` enabled
+- Custom type definitions for drag-and-drop (`dnd.ts`) and Vimeo player (`vimeo-player.d.ts`)
+
+### Changed
+
+- All RTK Query API slices now have full type coverage
+- Socket.IO client fully typed with event payloads and callbacks
+- Enum values standardized to UPPERCASE across frontend and backend for consistency
+- Redux store, slices, and hooks converted to TypeScript with proper typing
+
+### Fixed
+
+- Type safety improvements eliminate runtime type errors
+- Consistent enum handling between frontend and backend
+- Modal Cancel buttons now use consistent custom Button styling across all modals
+- Backend privacy service normalizes stored enum values to UPPERCASE for legacy data compatibility
+
+[0.4.0]: https://github.com/thesubtleties/atria/releases/tag/v0.4.0
+
 ## [0.3.0] - 2025-11-26
 
 ### Added

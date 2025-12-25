@@ -4,7 +4,7 @@ export const eventSchema = z
   .object({
     title: z.string().min(3, 'Title must be at least 3 characters'),
     description: z.string().optional().nullable(),
-    event_type: z.enum(['conference', 'single_session']),
+    event_type: z.enum(['CONFERENCE', 'SINGLE_SESSION']),
     start_date: z.string().min(1, 'Start date is required'),
     end_date: z.string().min(1, 'End date is required'),
     timezone: z.string().min(1, 'Timezone is required'),
@@ -13,7 +13,7 @@ export const eventSchema = z
   .refine(
     (data) => {
       // For single session, end_date must equal start_date
-      if (data.event_type === 'single_session') {
+      if (data.event_type === 'SINGLE_SESSION') {
         return data.end_date === data.start_date;
       }
       // For conferences, end_date must be >= start_date
@@ -21,7 +21,7 @@ export const eventSchema = z
     },
     (data) => ({
       message:
-        data.event_type === 'single_session' ?
+        data.event_type === 'SINGLE_SESSION' ?
           'Single session events must start and end on the same day'
         : 'End date must be after or equal to start date',
       path: ['end_date'],
@@ -43,7 +43,7 @@ export const eventUpdateSchema = z
   .object({
     title: z.string().min(3, 'Title must be at least 3 characters').optional(),
     description: z.string().optional().nullable(),
-    event_type: z.enum(['conference', 'single_session']).optional(),
+    event_type: z.enum(['CONFERENCE', 'SINGLE_SESSION']).optional(),
     start_date: z.string().optional(),
     end_date: z.string().optional(),
     timezone: z.string().optional(),
@@ -59,7 +59,7 @@ export const eventUpdateSchema = z
       if (!data.start_date && data.end_date) return false;
 
       // For single session, end_date must equal start_date
-      if (data.event_type === 'single_session') {
+      if (data.event_type === 'SINGLE_SESSION') {
         return data.end_date === data.start_date;
       }
 
@@ -70,7 +70,7 @@ export const eventUpdateSchema = z
       message:
         (data.start_date && !data.end_date) || (!data.start_date && data.end_date) ?
           'Both start and end dates must be provided together'
-        : data.event_type === 'single_session' ?
+        : data.event_type === 'SINGLE_SESSION' ?
           'Single session events must start and end on the same day'
         : 'End date must be after or equal to start date',
       path: ['end_date'],

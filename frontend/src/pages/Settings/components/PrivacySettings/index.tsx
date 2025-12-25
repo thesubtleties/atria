@@ -40,11 +40,11 @@ const PrivacySettings = () => {
   // Form setup
   const form = useForm<PrivacySettingsFormData>({
     initialValues: {
-      email_visibility: 'connections_organizers',
+      email_visibility: 'CONNECTIONS_ORGANIZERS',
       show_public_email: false,
       public_email: '',
-      allow_connection_requests: 'event_attendees',
-      show_social_links: 'event_attendees',
+      allow_connection_requests: 'EVENT_ATTENDEES',
+      show_social_links: 'EVENT_ATTENDEES',
       show_company: true,
       show_bio: true,
     },
@@ -53,8 +53,8 @@ const PrivacySettings = () => {
 
   // Update form when data loads
   useEffect(() => {
-    if (privacyData) {
-      const settings = privacyData as unknown as PrivacySettingsFormData;
+    if (privacyData?.privacy_settings) {
+      const settings = privacyData.privacy_settings as PrivacySettingsFormData;
       form.setValues(settings);
       setOriginalValues(settings);
     }

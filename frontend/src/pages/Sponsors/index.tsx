@@ -34,8 +34,8 @@ export const SponsorsPage = () => {
     },
   );
 
-  const sponsors = sponsorsResponse?.sponsors ?? [];
   // Backend returns array directly
+  const sponsors = sponsorsResponse ?? [];
   const tiers = tiersResponse ?? [];
 
   const isLoading = sponsorsLoading || tiersLoading;

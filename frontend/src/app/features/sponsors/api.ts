@@ -6,9 +6,8 @@ type GetSponsorsParams = {
   activeOnly?: boolean;
 };
 
-type GetSponsorsResponse = {
-  sponsors: Sponsor[];
-};
+/** Backend returns a raw array of sponsors */
+type GetSponsorsResponse = Sponsor[];
 
 type GetSponsorParams = {
   sponsorId: number;
@@ -76,9 +75,9 @@ export const sponsorsApi = baseApi.injectEndpoints({
         params: { active_only: activeOnly ? 1 : 0 },
       }),
       providesTags: (result) =>
-        result?.sponsors ?
+        result ?
           [
-            ...result.sponsors.map((sponsor) => ({ type: 'Sponsor' as const, id: sponsor.id })),
+            ...result.map((sponsor) => ({ type: 'Sponsor' as const, id: sponsor.id })),
             { type: 'Sponsor' as const, id: 'LIST' },
           ]
         : [{ type: 'Sponsor' as const, id: 'LIST' }],

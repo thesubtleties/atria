@@ -1,5 +1,5 @@
 import { useState, type KeyboardEvent } from 'react';
-import { Modal, Stack, Text, Group, Avatar, Alert, Button as MantineButton } from '@mantine/core';
+import { Modal, Stack, Text, Group, Avatar, Alert } from '@mantine/core';
 import { IconSend, IconInfoCircle } from '@tabler/icons-react';
 import { Button } from '@/shared/components/buttons';
 import styles from './styles/index.module.css';
@@ -116,9 +116,9 @@ export function IcebreakerModal({
         : null}
 
         <div className={styles.buttonGroup || ''}>
-          <MantineButton variant='subtle' onClick={handleClose} disabled={isLoading}>
+          <Button variant='secondary' onClick={handleClose} disabled={isLoading}>
             Cancel
-          </MantineButton>
+          </Button>
           <Button
             variant='primary'
             onClick={handleSend}

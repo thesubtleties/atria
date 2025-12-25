@@ -5,7 +5,6 @@ import type {
   UserProfileUpdate,
   PrivacySettings,
   EventUserRole,
-  PaginatedResponse,
 } from '@/types';
 
 /** User basic info (from UserCheckResponse) */
@@ -38,6 +37,15 @@ type UserEvent = {
   end_date: string;
   role: EventUserRole;
   status: string;
+};
+
+/** User events response - backend returns 'events' not 'items' */
+type UserEventsResponse = {
+  events: UserEvent[];
+  total_items: number;
+  total_pages: number;
+  current_page: number;
+  per_page: number;
 };
 
 /** User speaking session */
@@ -133,8 +141,8 @@ type UserInvitations = {
   }>;
 };
 
-/** Privacy overrides for a specific event */
-type EventPrivacyOverrides = {
+/** Privacy overrides for a specific event (the actual override values) */
+type EventPrivacyOverrideValues = {
   email_visibility?: string;
   show_public_email?: boolean;
   public_email?: string | null;
@@ -142,6 +150,23 @@ type EventPrivacyOverrides = {
   show_social_links?: string;
   show_company?: boolean;
   show_bio?: boolean;
+};
+
+/** Response from GET /users/{id}/privacy-settings */
+type UserPrivacySettingsResponse = {
+  privacy_settings: PrivacySettings;
+  event_overrides: Array<{
+    event_id: number;
+    event_name: string | null;
+    overrides: EventPrivacyOverrideValues;
+  }>;
+};
+
+/** Response from GET /users/{userId}/events/{eventId}/privacy-overrides */
+type EventPrivacyOverridesResponse = {
+  event_id: number;
+  user_id: number;
+  privacy_overrides: EventPrivacyOverrideValues;
 };
 
 /** Update user params */
@@ -161,7 +186,7 @@ type GetEventPrivacyOverridesParams = {
 };
 
 /** Update event privacy overrides params */
-type UpdateEventPrivacyOverridesParams = EventPrivacyOverrides & {
+type UpdateEventPrivacyOverridesParams = EventPrivacyOverrideValues & {
   userId: number;
   eventId: number;
 };
@@ -206,7 +231,7 @@ export const usersApi = baseApi.injectEndpoints({
       ],
     }),
 
-    getUserEvents: builder.query<PaginatedResponse<UserEvent>, GetUserEventsParams>({
+    getUserEvents: builder.query<UserEventsResponse, GetUserEventsParams>({
       query: ({ userId, role, page = 1, per_page = 50 }) => ({
         url: `/users/${userId}/events`,
         params: { role, page, per_page },
@@ -242,7 +267,7 @@ export const usersApi = baseApi.injectEndpoints({
       providesTags: ['Organizations'],
     }),
 
-    getUserPrivacySettings: builder.query<PrivacySettings, number>({
+    getUserPrivacySettings: builder.query<UserPrivacySettingsResponse, number>({
       query: (id) => ({ url: `/users/${id}/privacy-settings` }),
       providesTags: (_result, _error, id) => [{ type: 'Users', id }],
     }),
@@ -259,7 +284,10 @@ export const usersApi = baseApi.injectEndpoints({
       ],
     }),
 
-    getEventPrivacyOverrides: builder.query<EventPrivacyOverrides, GetEventPrivacyOverridesParams>({
+    getEventPrivacyOverrides: builder.query<
+      EventPrivacyOverridesResponse,
+      GetEventPrivacyOverridesParams
+    >({
       query: ({ userId, eventId }) => ({
         url: `/users/${userId}/events/${eventId}/privacy-overrides`,
       }),
@@ -269,7 +297,7 @@ export const usersApi = baseApi.injectEndpoints({
     }),
 
     updateEventPrivacyOverrides: builder.mutation<
-      EventPrivacyOverrides,
+      EventPrivacyOverrideValues,
       UpdateEventPrivacyOverridesParams
     >({
       query: ({ userId, eventId, ...overrides }) => ({

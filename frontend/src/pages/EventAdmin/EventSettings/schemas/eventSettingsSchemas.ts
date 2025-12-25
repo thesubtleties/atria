@@ -4,7 +4,7 @@ export const eventUpdateSchema = z
   .object({
     title: z.string().min(3, 'Title must be at least 3 characters'),
     description: z.string().optional(),
-    event_type: z.enum(['conference', 'single_session']),
+    event_type: z.enum(['CONFERENCE', 'SINGLE_SESSION']),
     start_date: z.date({
       required_error: 'Start date is required',
     }),
@@ -13,7 +13,7 @@ export const eventUpdateSchema = z
     }),
     timezone: z.string().min(1, 'Timezone is required'),
     company_name: z.string().min(1, 'Company name is required'),
-    status: z.enum(['draft', 'published', 'archived']),
+    status: z.enum(['DRAFT', 'PUBLISHED', 'ARCHIVED']),
     main_session_id: z.string().nullable().optional(),
   })
   .refine((data) => data.end_date >= data.start_date, {
@@ -23,7 +23,7 @@ export const eventUpdateSchema = z
 
 export const eventFormatSchema = z
   .object({
-    event_format: z.enum(['virtual', 'in_person', 'hybrid']),
+    event_format: z.enum(['VIRTUAL', 'IN_PERSON', 'HYBRID']),
     is_private: z.boolean(),
     venue_name: z.string().optional(),
     venue_address: z.string().optional(),
@@ -34,7 +34,7 @@ export const eventFormatSchema = z
   .refine(
     (data) => {
       // If event is in-person or hybrid, venue details are required
-      if (data.event_format === 'in_person' || data.event_format === 'hybrid') {
+      if (data.event_format === 'IN_PERSON' || data.event_format === 'HYBRID') {
         return data.venue_name && data.venue_city && data.venue_country;
       }
       return true;

@@ -21,7 +21,7 @@ export const SpeakersPage = () => {
   }
 
   // Backend already sorts by last name, then first name - no need to re-sort
-  const speakers = data?.users ?? [];
+  const speakers = data?.event_users ?? [];
 
   return (
     <div className={styles.pageContainer}>

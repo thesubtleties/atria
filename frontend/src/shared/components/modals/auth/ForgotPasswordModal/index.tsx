@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { TextInput, Stack, Alert, Text, Button as MantineButton } from '@mantine/core';
+import { TextInput, Stack, Alert, Text } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { IconMail } from '@tabler/icons-react';
 import { useForgotPasswordMutation } from '@/app/features/auth/api';
@@ -53,9 +53,9 @@ export const ForgotPasswordModal = ({ onClose }: ForgotPasswordModalProps) => {
           }
         </Text>
         <div className={styles.buttonGroup}>
-          <MantineButton variant='subtle' onClick={onClose}>
+          <Button variant='secondary' onClick={onClose}>
             Close
-          </MantineButton>
+          </Button>
         </div>
       </Stack>
     );
@@ -82,9 +82,9 @@ export const ForgotPasswordModal = ({ onClose }: ForgotPasswordModalProps) => {
         />
 
         <div className={styles.buttonGroup}>
-          <MantineButton variant='subtle' onClick={onClose} disabled={isLoading}>
+          <Button variant='secondary' onClick={onClose} disabled={isLoading}>
             Cancel
-          </MantineButton>
+          </Button>
           <Button type='submit' loading={isLoading}>
             {isLoading ? 'Sending...' : 'Send Reset Link'}
           </Button>

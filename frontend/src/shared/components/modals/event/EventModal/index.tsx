@@ -1,13 +1,4 @@
-import {
-  TextInput,
-  Stack,
-  Modal,
-  Select,
-  Textarea,
-  Text,
-  Alert,
-  Button as MantineButton,
-} from '@mantine/core';
+import { TextInput, Stack, Modal, Select, Textarea, Text, Alert } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { skipToken } from '@reduxjs/toolkit/query';
@@ -307,9 +298,9 @@ export const EventModal = ({
           )}
 
           <div className={styles.buttonGroup || ''}>
-            <MantineButton variant='subtle' onClick={onClose} disabled={isLoading}>
+            <Button variant='secondary' onClick={onClose} disabled={isLoading}>
               Cancel
-            </MantineButton>
+            </Button>
             <Button type='submit' variant='primary' disabled={isLoading}>
               {isLoading ?
                 isEditing ?

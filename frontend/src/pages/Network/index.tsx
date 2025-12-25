@@ -6,7 +6,6 @@ import { useSelector } from 'react-redux';
 import { PageHeader } from '@/shared/components/PageHeader';
 import { ConnectionsList } from './ConnectionsList';
 import type { RootState } from '@/app/store';
-import type { Connection } from '@/types';
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import styles from './styles/index.module.css';
@@ -25,7 +24,7 @@ export default function NetworkPage() {
 
   // Filter connections based on search query
   const filteredConnections =
-    (data?.items as Connection[] | undefined)?.filter((connection: Connection) => {
+    data?.connections?.filter((connection) => {
       if (!searchQuery) return true;
 
       const query = searchQuery.toLowerCase();

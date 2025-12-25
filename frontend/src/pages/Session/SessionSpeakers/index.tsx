@@ -36,6 +36,7 @@ type SessionSpeaker = {
 
 type DraggableSpeakerCardProps = {
   id: string;
+  index: number;
   speaker: SessionSpeaker;
   canEdit: boolean | undefined;
   onRemove: (userId: number) => Promise<void>;
@@ -47,6 +48,7 @@ type DraggableSpeakerCardProps = {
 // Draggable speaker wrapper component - now includes role for scoped dragging
 const DraggableSpeakerCard = ({
   id,
+  index,
   speaker,
   canEdit,
   onRemove,
@@ -57,7 +59,7 @@ const DraggableSpeakerCard = ({
   // Call useSortable unconditionally
   const sortableResult = useSortable({
     id,
-    index: 0, // Index is required but we manage position separately
+    index, // Position within the role group for sorting
     type: `speaker-${role}`, // Unique type per role
     accept: [`speaker-${role}`], // Only accept same role
   });
@@ -262,6 +264,7 @@ export const SessionSpeakers = ({
                         <DraggableSpeakerCard
                           key={speakerId}
                           id={speakerId}
+                          index={index}
                           speaker={speaker}
                           canEdit={canEdit}
                           onRemove={handleRemoveSpeaker}
