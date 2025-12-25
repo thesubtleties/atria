@@ -91,11 +91,11 @@
     gap: var(--space-sm);
     align-items: stretch;
   }
-  
+
   .buttonGroup > * {
     width: 100%;
   }
-  
+
   .passwordCard,
   .tipsCard {
     padding: var(--space-md);

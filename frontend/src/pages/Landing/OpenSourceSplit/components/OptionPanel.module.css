@@ -51,7 +51,7 @@
 
 .opensourcePanel .panelTitle {
   font-weight: 300;
-  color: #14B8A6; /* Teal color */
+  color: #14b8a6; /* Teal color */
 }
 
 .enterprisePanel .panelTitle {
@@ -93,13 +93,13 @@
 }
 
 .opensourcePanel .ctaButton {
-  background: #14B8A6; /* Teal */
+  background: #14b8a6; /* Teal */
   border-radius: 8px;
   box-shadow: 0 4px 16px rgba(20, 184, 166, 0.2);
 }
 
 .opensourcePanel .ctaButton:hover {
-  background: #10B981; /* Darker teal on hover */
+  background: #10b981; /* Darker teal on hover */
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(20, 184, 166, 0.3);
   text-decoration: none;
@@ -136,15 +136,15 @@
   .panelTitle {
     font-size: 2rem;
   }
-  
+
   .panelSubtitle {
     font-size: 1.25rem;
   }
-  
+
   .panelDescription {
     font-size: 1rem;
   }
-  
+
   .ctaButton {
     font-size: 1rem;
     padding: 0.875rem 1.5rem;

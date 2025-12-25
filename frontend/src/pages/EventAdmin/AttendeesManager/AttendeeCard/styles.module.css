@@ -1,11 +1,7 @@
 /* AttendeeCard Component Styles - Enhanced glassmorphism matching SpeakerCard */
 .card {
   position: relative;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.95) 0%,
-    rgba(251, 250, 255, 0.9) 100%
-  );
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(251, 250, 255, 0.9) 100%);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.85);
@@ -19,11 +15,7 @@
 }
 
 .card:hover {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 1) 0%,
-    rgba(251, 250, 255, 0.95) 100%
-  );
+  background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(251, 250, 255, 0.95) 100%);
   transform: translateY(-2px) scale(1.01);
   box-shadow:
     0 8px 24px rgba(139, 92, 246, 0.12),

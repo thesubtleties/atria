@@ -13,7 +13,11 @@
   align-items: center !important;
   flex-wrap: nowrap !important; /* Prevent wrapping on desktop */
   width: 100% !important;
-  gap: clamp(0.375rem, 2vw, var(--space-lg)) !important; /* Slightly more breathing room (6px minimum) */
+  gap: clamp(
+    0.375rem,
+    2vw,
+    var(--space-lg)
+  ) !important; /* Slightly more breathing room (6px minimum) */
 }
 
 /* Push edit button to the far right on desktop */
@@ -65,7 +69,8 @@
   composes: badge-base badge-presentation from '../../../../styles/design-tokens.css' !important;
 }
 
-.qa, .q_a {
+.qa,
+.q_a {
   composes: badge-base badge-qa from '../../../../styles/design-tokens.css' !important;
 }
 
@@ -93,7 +98,7 @@
   .detailsGrid {
     gap: 0.25rem !important; /* A bit more gap in narrow containers (4px) */
   }
-  
+
   .detailsGrid > :global(.mantine-Group-root) {
     gap: 0.1875rem !important; /* Slight gap within groups (3px) */
   }
@@ -104,7 +109,7 @@
     flex-wrap: wrap !important;
     gap: 0.1875rem !important; /* Small gap when wrapped (3px) */
   }
-  
+
   .typeTag {
     font-size: 0.65rem !important;
     padding: 3px 6px !important;
@@ -123,7 +128,7 @@
 /* Very narrow desktop view (chat open) */
 @media (min-width: 769px) {
   .detailsSection:has(+ * + * + *) .detailsGrid,
-  .detailsSection[data-narrow="true"] .detailsGrid {
+  .detailsSection[data-narrow='true'] .detailsGrid {
     flex-wrap: wrap !important;
     gap: 0.25rem !important;
   }
@@ -135,42 +140,42 @@
   .detailsSection {
     position: relative;
   }
-  
+
   .detailsGrid {
     gap: 0 !important; /* No gap - we'll use margin instead for finer control */
     flex-direction: column;
     align-items: flex-start !important; /* Force left alignment */
     padding-right: 40px; /* Make room for the edit button */
   }
-  
+
   /* Add small bottom margin to each item except last */
   .detailsGrid > *:not(:last-child) {
     margin-bottom: 0.25rem !important;
   }
-  
+
   /* Hide ALL dividers on mobile - both vertical and any others */
   .detailsGrid :global(.mantine-Divider-root) {
     display: none !important;
   }
-  
+
   /* Force each Group to be block-level so they stack vertically */
   .detailsGrid > :global(.mantine-Group-root) {
     display: flex !important;
     width: 100% !important;
     justify-content: flex-start !important;
   }
-  
+
   /* Stack items vertically on mobile - but let typeTag be natural width */
   .detailsGrid > * {
     width: 100%; /* Full width to ensure each item gets its own line */
   }
-  
+
   /* Session type badge should only be as wide as needed */
   .typeTag {
     width: auto !important;
     display: inline-block !important;
   }
-  
+
   /* Position edit button absolutely in top right on mobile */
   .editButton {
     position: absolute !important;
@@ -186,23 +191,23 @@
     padding: var(--space-xs) 0;
     position: relative;
   }
-  
+
   .detailsGrid {
     gap: 0 !important;
     padding-right: 36px; /* Slightly less room needed for smaller edit button */
   }
-  
+
   /* Even tighter spacing on very small screens */
   .detailsGrid > *:not(:last-child) {
     margin-bottom: 0.2rem !important;
   }
-  
+
   /* Smaller text on very small screens */
   .typeTag {
     font-size: 0.7rem !important;
     padding: 4px 8px !important;
   }
-  
+
   /* Slightly smaller edit button on very small screens */
   .editButton {
     width: 28px !important;

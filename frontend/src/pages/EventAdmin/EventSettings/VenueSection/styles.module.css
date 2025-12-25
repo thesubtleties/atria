@@ -123,18 +123,18 @@
     align-items: stretch !important;
     gap: var(--space-md) !important;
   }
-  
+
   :global(.mantine-Group-root[data-grow] > *) {
     flex: 1 1 100% !important;
     max-width: 100% !important;
     width: 100% !important;
   }
-  
+
   /* Ensure proper spacing between stacked fields */
   :global(.mantine-InputWrapper-root) {
     width: 100% !important;
   }
-  
+
   /* Stack location fields (city, state, country) on mobile */
   :global(.mantine-Select-root),
   :global(.mantine-TextInput-root) {

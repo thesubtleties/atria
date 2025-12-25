@@ -96,7 +96,9 @@
 
 .speakerWrapper {
   position: relative;
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
 }
 
 /* Flow variant wrapper styling */
@@ -123,12 +125,12 @@
   user-select: none;
 }
 
-.speakerWrapper[draggable="true"] {
+.speakerWrapper[draggable='true'] {
   cursor: grab;
 }
 
 /* Adjust cursor for flow variant */
-.flowRow .speakerWrapper[draggable="true"] {
+.flowRow .speakerWrapper[draggable='true'] {
   cursor: move;
 }
 
@@ -178,21 +180,21 @@
   .speakersRow {
     grid-template-columns: 1fr;
   }
-  
+
   /* Flow variant on mobile - vertical list without dividers */
   .speakersRow.flowRow {
     flex-direction: column !important;
     align-items: stretch !important;
     width: 100% !important;
   }
-  
+
   .flowRow .speakerWrapper {
     width: 100% !important;
     margin-right: 0 !important;
     margin-bottom: 6px !important;
     display: block !important;
   }
-  
+
   /* Hide dividers on mobile for better layout */
   .flowRow .speakerWrapper.withDivider::after {
     display: none !important;

@@ -170,21 +170,21 @@
     gap: var(--space-sm);
     align-items: stretch;
   }
-  
+
   .buttonGroup > * {
     width: 100%;
   }
-  
+
   .privacyTabs :global(.mantine-Tabs-list) {
     overflow-x: auto;
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
-  
+
   .privacyTabs :global(.mantine-Tabs-list)::-webkit-scrollbar {
     display: none;
   }
-  
+
   .privacyTabs :global(.mantine-Tabs-tab) {
     white-space: nowrap;
     min-width: 120px;

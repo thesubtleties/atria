@@ -62,7 +62,13 @@
 }
 
 .brandingTitle {
-  font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family:
+    'Nunito',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
   font-size: 3rem;
   font-weight: 300;
   color: #8b5cf6;
@@ -250,34 +256,34 @@
   .contentWrapper {
     padding: 1rem;
   }
-  
+
   .brandingTitle {
     font-size: 2.5rem;
   }
-  
+
   .mainContent,
   .loadingSection,
   .errorSection,
   .successSection {
     padding: 1.5rem;
   }
-  
+
   .pageTitle,
   .errorTitle,
   .successTitle {
     font-size: 1.25rem;
   }
-  
+
   .iconWrapper {
     width: 60px;
     height: 60px;
   }
-  
+
   .iconWrapper svg {
     width: 32px;
     height: 32px;
   }
-  
+
   /* Hide decorative shapes on mobile */
   .bgShape1,
   .bgShape2 {
@@ -289,18 +295,18 @@
   .contentWrapper {
     padding: 0.75rem;
   }
-  
+
   .brandingTitle {
     font-size: 2rem;
   }
-  
+
   .mainContent,
   .loadingSection,
   .errorSection,
   .successSection {
     padding: 1.25rem;
   }
-  
+
   .formFields {
     gap: 0.75rem;
   }

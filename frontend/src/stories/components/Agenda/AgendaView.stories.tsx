@@ -133,8 +133,7 @@ const mockSessions = {
     session_type: 'PRESENTATION',
     start_time: '10:00 AM',
     end_time: '11:00 AM',
-    description:
-      'Deep dive into GraphQL schema design and performance optimization strategies',
+    description: 'Deep dive into GraphQL schema design and performance optimization strategies',
     speakers: [mockSpeakers.emilyJohnson],
   },
   aiPanel: {
@@ -143,8 +142,7 @@ const mockSessions = {
     session_type: 'PANEL',
     start_time: '11:00 AM',
     end_time: '12:00 PM',
-    description:
-      'Industry experts discuss the impact of AI on software development practices',
+    description: 'Industry experts discuss the impact of AI on software development practices',
     speakers: [mockSpeakers.davidKim, mockSpeakers.lisaChen],
   },
   lunch: {
@@ -162,8 +160,7 @@ const mockSessions = {
     session_type: 'WORKSHOP',
     start_time: '1:00 PM',
     end_time: '3:00 PM',
-    description:
-      'Hands-on workshop covering advanced TypeScript features and design patterns',
+    description: 'Hands-on workshop covering advanced TypeScript features and design patterns',
     speakers: [mockSpeakers.michaelPark],
   },
   qa: {
@@ -173,11 +170,7 @@ const mockSessions = {
     start_time: '3:00 PM',
     end_time: '4:00 PM',
     description: 'Open Q&A session with our expert panel',
-    speakers: [
-      mockSpeakers.sarahChen,
-      mockSpeakers.marcusRodriguez,
-      mockSpeakers.davidKim,
-    ],
+    speakers: [mockSpeakers.sarahChen, mockSpeakers.marcusRodriguez, mockSpeakers.davidKim],
   },
   complexPanel: {
     id: 8,
@@ -185,8 +178,7 @@ const mockSessions = {
     session_type: 'PANEL',
     start_time: '2:00 PM',
     end_time: '3:00 PM',
-    description:
-      'Industry leaders discuss the evolution of cloud computing and emerging trends',
+    description: 'Industry leaders discuss the evolution of cloud computing and emerging trends',
     speakers: [
       mockSpeakers.carolZhang, // HOST
       mockSpeakers.lisaChen, // MODERATOR
@@ -202,8 +194,7 @@ const mockSessions = {
     session_type: 'WORKSHOP',
     start_time: '10:00 AM',
     end_time: '12:00 PM',
-    description:
-      'Comprehensive workshop covering modern full-stack development practices',
+    description: 'Comprehensive workshop covering modern full-stack development practices',
     speakers: [
       mockSpeakers.marcusRodriguez, // SPEAKER
       mockSpeakers.emilyJohnson, // SPEAKER
@@ -232,8 +223,7 @@ const mockSessions = {
     session_type: 'PANEL',
     start_time: '1:00 PM',
     end_time: '2:30 PM',
-    description:
-      'Comprehensive discussion about current state and future of tech industry',
+    description: 'Comprehensive discussion about current state and future of tech industry',
     speakers: [
       mockSpeakers.carolZhang, // HOST
       mockSpeakers.lisaChen, // MODERATOR
@@ -414,11 +404,7 @@ export const MorningSessions: Story = {
 // Afternoon sessions only
 export const AfternoonSessions: Story = {
   args: {
-    sessions: [
-      mockSessions.lunch,
-      mockSessions.typescriptWorkshop,
-      mockSessions.qa,
-    ],
+    sessions: [mockSessions.lunch, mockSessions.typescriptWorkshop, mockSessions.qa],
   },
 };
 
@@ -549,10 +535,6 @@ export const SevenConcurrentSessions: Story = {
 
 export const ComplexTimeSlot: Story = {
   args: {
-    sessions: [
-      mockSessions.keynote,
-      ...Object.values(concurrentMockSessions),
-      mockSessions.lunch,
-    ],
+    sessions: [mockSessions.keynote, ...Object.values(concurrentMockSessions), mockSessions.lunch],
   },
 };

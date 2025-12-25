@@ -11,7 +11,9 @@ import { LoadingSpinner, LoadingContent } from 'shared/components/loading';
 ## Component Catalog
 
 ### 1. LoadingSpinner
+
 **Use for:** Inline loading indicators, buttons, small areas
+
 ```jsx
 // Default
 <LoadingSpinner />
@@ -25,7 +27,9 @@ import { LoadingSpinner, LoadingContent } from 'shared/components/loading';
 ```
 
 ### 2. LoadingContent
+
 **Use for:** Card content, modal content, centered loading states
+
 ```jsx
 // Default with message
 <LoadingContent />
@@ -41,7 +45,9 @@ import { LoadingSpinner, LoadingContent } from 'shared/components/loading';
 ```
 
 ### 3. LoadingSection
+
 **Use for:** Full sections, tab panels, empty containers
+
 ```jsx
 // Default
 <LoadingSection />
@@ -51,7 +57,9 @@ import { LoadingSpinner, LoadingContent } from 'shared/components/loading';
 ```
 
 ### 4. LoadingOverlay
+
 **Use for:** Forms being submitted, content being updated, modals
+
 ```jsx
 // Basic usage
 <div style={{ position: 'relative' }}>
@@ -64,7 +72,9 @@ import { LoadingSpinner, LoadingContent } from 'shared/components/loading';
 ```
 
 ### 5. LoadingSkeleton
+
 **Use for:** Text content placeholders
+
 ```jsx
 // Default 3 lines
 <LoadingSkeleton />
@@ -77,64 +87,74 @@ import { LoadingSpinner, LoadingContent } from 'shared/components/loading';
 ```
 
 ### 6. LoadingCard
+
 **Use for:** Card list placeholders
+
 ```jsx
 // In a list
-{isLoading ? (
-  <>
-    <LoadingCard />
-    <LoadingCard />
-    <LoadingCard />
-  </>
-) : (
-  events.map(event => <EventCard key={event.id} event={event} />)
-)}
+{
+  isLoading ?
+    <>
+      <LoadingCard />
+      <LoadingCard />
+      <LoadingCard />
+    </>
+  : events.map((event) => <EventCard key={event.id} event={event} />);
+}
 ```
 
 ### 7. LoadingTableRow
+
 **Use for:** Table loading states
+
 ```jsx
 <tbody>
-  {isLoading ? (
+  {isLoading ?
     <>
       <LoadingTableRow columns={5} />
       <LoadingTableRow columns={5} />
       <LoadingTableRow columns={5} />
     </>
-  ) : (
-    data.map(row => <tr>...</tr>)
-  )}
+  : data.map((row) => <tr>...</tr>)}
 </tbody>
 ```
 
 ### 8. LoadingPage
+
 **Use for:** Initial page loads, route transitions
+
 ```jsx
 if (isLoading) {
-  return <LoadingPage message="Loading event details..." />;
+  return <LoadingPage message='Loading event details...' />;
 }
 ```
 
 ### 9. ButtonLoader
+
 **Use for:** Inside button components
+
 ```jsx
 <Button disabled={isSubmitting}>
-  {isSubmitting ? <ButtonLoader /> : 'Submit'}
+  {isSubmitting ?
+    <ButtonLoader />
+  : 'Submit'}
 </Button>
 ```
 
 ## Common Patterns
 
 ### RTK Query Loading States
+
 ```jsx
 const { data, isLoading } = useGetEventsQuery();
 
 if (isLoading) {
-  return <LoadingSection message="Loading events..." />;
+  return <LoadingSection message='Loading events...' />;
 }
 ```
 
 ### Form Submission
+
 ```jsx
 const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -143,8 +163,10 @@ return (
     <LoadingOverlay visible={isSubmitting} />
     <form onSubmit={handleSubmit}>
       {/* form fields */}
-      <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? <ButtonLoader /> : 'Save Changes'}
+      <Button type='submit' disabled={isSubmitting}>
+        {isSubmitting ?
+          <ButtonLoader />
+        : 'Save Changes'}
       </Button>
     </form>
   </div>
@@ -152,26 +174,22 @@ return (
 ```
 
 ### List Loading with Skeletons
+
 ```jsx
 const { data: attendees, isLoading } = useGetAttendeesQuery();
 
 return (
   <div className={styles.cardList}>
-    {isLoading ? (
+    {isLoading ?
       // Show 3 skeleton cards while loading
-      Array.from({ length: 3 }).map((_, i) => (
-        <LoadingCard key={i} />
-      ))
-    ) : (
-      attendees.map(attendee => (
-        <AttendeeCard key={attendee.id} data={attendee} />
-      ))
-    )}
+      Array.from({ length: 3 }).map((_, i) => <LoadingCard key={i} />)
+    : attendees.map((attendee) => <AttendeeCard key={attendee.id} data={attendee} />)}
   </div>
 );
 ```
 
 ### Conditional Content Loading
+
 ```jsx
 const [activeTab, setActiveTab] = useState('details');
 const { data, isLoading } = useGetEventDetailsQuery(eventId);
@@ -179,31 +197,30 @@ const { data, isLoading } = useGetEventDetailsQuery(eventId);
 return (
   <Tabs value={activeTab} onChange={setActiveTab}>
     <Tabs.List>
-      <Tabs.Tab value="details">Details</Tabs.Tab>
-      <Tabs.Tab value="attendees">Attendees</Tabs.Tab>
+      <Tabs.Tab value='details'>Details</Tabs.Tab>
+      <Tabs.Tab value='attendees'>Attendees</Tabs.Tab>
     </Tabs.List>
 
-    <Tabs.Panel value="details">
-      {isLoading ? (
-        <LoadingContent message="Loading event details..." />
-      ) : (
-        <EventDetails data={data} />
-      )}
+    <Tabs.Panel value='details'>
+      {isLoading ?
+        <LoadingContent message='Loading event details...' />
+      : <EventDetails data={data} />}
     </Tabs.Panel>
   </Tabs>
 );
 ```
 
 ### Empty State vs Loading
+
 ```jsx
 const { data: events = [], isLoading } = useGetEventsQuery();
 
 if (isLoading) {
-  return <LoadingSection message="Loading events..." />;
+  return <LoadingSection message='Loading events...' />;
 }
 
 if (events.length === 0) {
-  return <EmptyState message="No events found" />;
+  return <EmptyState message='No events found' />;
 }
 
 return <EventsList events={events} />;
@@ -212,6 +229,7 @@ return <EventsList events={events} />;
 ## Migration Guide
 
 ### Replacing Generic Loading Text
+
 ```jsx
 // Before
 if (isLoading) return <div>Loading...</div>;
@@ -221,6 +239,7 @@ if (isLoading) return <LoadingContent />;
 ```
 
 ### Replacing Mantine Loader
+
 ```jsx
 // Before
 <Loader size="sm" />
@@ -230,6 +249,7 @@ if (isLoading) return <LoadingContent />;
 ```
 
 ### Replacing Custom Loading States
+
 ```jsx
 // Before
 <div className={styles.loadingContainer}>
@@ -244,21 +264,27 @@ if (isLoading) return <LoadingContent />;
 ## Best Practices
 
 1. **Use semantic messages** - Be specific about what's loading
+
    - ❌ "Loading..."
    - ✅ "Loading event details..."
 
 2. **Match size to context**
+
    - Buttons: `size="xs"`
    - Cards: `size="sm"` or `size="md"`
    - Pages: `size="lg"`
 
 3. **Show skeletons for lists** - Better perceived performance
+
    ```jsx
    // Good - shows structure while loading
-   {isLoading ? <LoadingCard /> : <EventCard />}
+   {
+     isLoading ? <LoadingCard /> : <EventCard />;
+   }
    ```
 
 4. **Use overlays for updates** - Keep content visible
+
    ```jsx
    // Good - shows form is being submitted
    <LoadingOverlay visible={isSubmitting} />

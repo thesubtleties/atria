@@ -59,7 +59,9 @@
 
 /* Bounce animation - smooth up and down motion */
 @keyframes bounce {
-  0%, 60%, 100% {
+  0%,
+  60%,
+  100% {
     transform: translateY(0);
   }
   30% {

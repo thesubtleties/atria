@@ -6,10 +6,14 @@
 }
 
 .title {
-  font-family: 'M Plus 2', system-ui, -apple-system, sans-serif;
+  font-family:
+    'M Plus 2',
+    system-ui,
+    -apple-system,
+    sans-serif;
   font-size: clamp(var(--text-lg), 4vw, var(--text-2xl));
   font-weight: 300;
-  color: #FFFFFF;
+  color: #ffffff;
   letter-spacing: -0.02em;
   margin: 0;
   text-align: center;
@@ -33,11 +37,11 @@
   .centerContent {
     padding: 0 var(--space-md);
   }
-  
+
   .title {
     font-size: var(--text-lg); /* Bigger on mobile for better readability */
   }
-  
+
   .subtitle {
     font-size: var(--text-sm); /* Bigger on mobile for better readability */
   }

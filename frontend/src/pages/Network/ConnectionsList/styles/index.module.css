@@ -61,11 +61,11 @@
   .desktopView {
     display: none;
   }
-  
+
   .mobileView {
     display: block;
   }
-  
+
   .connectionGrid {
     gap: var(--space-sm);
   }

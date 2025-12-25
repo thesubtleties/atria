@@ -6,21 +6,13 @@
   flex-direction: column;
   overflow: hidden;
   cursor: pointer;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.95) 0%,
-    rgba(251, 250, 255, 0.9) 100%
-  );
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(251, 250, 255, 0.9) 100%);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .card:hover {
   box-shadow: 0 8px 28px rgba(139, 92, 246, 0.12) !important;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 1) 0%,
-    rgba(251, 250, 255, 0.95) 100%
-  );
+  background: linear-gradient(180deg, rgba(255, 255, 255, 1) 0%, rgba(251, 250, 255, 0.95) 100%);
   transform: translateY(-2px) scale(1.01);
   cursor: auto !important;
 }
@@ -89,11 +81,7 @@
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(
-    circle at center,
-    rgba(139, 92, 246, 0.05) 0%,
-    transparent 70%
-  );
+  background: radial-gradient(circle at center, rgba(139, 92, 246, 0.05) 0%, transparent 70%);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -118,11 +106,7 @@
   width: clamp(70px, 12vw, 100px);
   height: clamp(70px, 12vw, 100px);
   border-radius: var(--radius-lg);
-  background: linear-gradient(
-    135deg,
-    rgba(139, 92, 246, 0.1),
-    rgba(168, 85, 247, 0.1)
-  );
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(168, 85, 247, 0.1));
   display: flex;
   align-items: center;
   justify-content: center;

@@ -9,8 +9,8 @@ const mockEvent = {
   start_date: '2025-02-08',
   end_date: '2025-02-10',
   day_count: 3,
-  event_type: 'CONFERENCE',
-  status: 'DRAFT',
+  event_type: 'conference',
+  status: 'draft',
   branding: {
     banner_url: null,
     logo_url: null,

@@ -14,6 +14,13 @@ dist/
 .DS_Store
 *.local
 
+# TypeScript
+*.tsbuildinfo
+
+# ESLint/Prettier cache
+.eslintcache
+.prettiercache
+
 # IDE
 .idea/
 .vscode/
@@ -47,3 +54,4 @@ CLAUDE.md
 # Local development scripts
 start-dev-tmux.sh
 stop-dev-tmux.sh
+

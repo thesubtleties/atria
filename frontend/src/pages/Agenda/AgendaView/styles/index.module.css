@@ -27,6 +27,7 @@
   gap: 16px;
   width: 100%;
   overflow: visible;
+  position: relative; /* Ensure proper positioning without absolute */
 }
 
 /* Add this to prevent cards from collapsing */
@@ -66,12 +67,12 @@
     flex-direction: column !important;
     gap: var(--space-sm) !important;
   }
-  
+
   .sessionRow > * {
     width: 100% !important;
     flex: none !important;
   }
-  
+
   .agendaGrid {
     gap: var(--space-sm);
     padding-bottom: var(--space-2xl); /* Reduce excess bottom padding on mobile */

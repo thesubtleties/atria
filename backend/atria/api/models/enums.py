@@ -2,39 +2,39 @@ from enum import Enum
 
 
 class SessionType(str, Enum):
-    KEYNOTE = "keynote"
-    WORKSHOP = "workshop"
-    PANEL = "panel"
+    KEYNOTE = "KEYNOTE"
+    WORKSHOP = "WORKSHOP"
+    PANEL = "PANEL"
     PRESENTATION = "PRESENTATION"
-    NETWORKING = "networking"
-    QA = "qa"
+    NETWORKING = "NETWORKING"
+    QA = "QA"
 
 
 class EventType(str, Enum):
-    CONFERENCE = "conference"
-    SINGLE_SESSION = "single_session"
+    CONFERENCE = "CONFERENCE"
+    SINGLE_SESSION = "SINGLE_SESSION"
 
 
 class EventStatus(str, Enum):
-    DRAFT = "draft"
-    PUBLISHED = "published"
-    ARCHIVED = "archived"
-    DELETED = "deleted"
+    DRAFT = "DRAFT"
+    PUBLISHED = "PUBLISHED"
+    ARCHIVED = "ARCHIVED"
+    DELETED = "DELETED"
 
 
 class UserRole(str, Enum):
-    ADMIN = "admin"
-    ORGANIZER = "organizer"
-    SPEAKER = "speaker"
-    ATTENDEE = "attendee"
+    ADMIN = "ADMIN"
+    ORGANIZER = "ORGANIZER"
+    SPEAKER = "SPEAKER"
+    ATTENDEE = "ATTENDEE"
 
 
 class SessionStatus(str, Enum):
-    SCHEDULED = "scheduled"
-    STARTING_SOON = "starting_soon"
-    LIVE = "live"
-    COMPLETED = "completed"
-    CANCELLED = "cancelled"
+    SCHEDULED = "SCHEDULED"
+    STARTING_SOON = "STARTING_SOON"
+    LIVE = "LIVE"
+    COMPLETED = "COMPLETED"
+    CANCELLED = "CANCELLED"
 
 
 class EventUserRole(str, Enum):
@@ -52,71 +52,71 @@ class OrganizationUserRole(str, Enum):
 
 
 class SessionSpeakerRole(str, Enum):
-    HOST = "host"
-    SPEAKER = "speaker"
-    PANELIST = "panelist"
-    MODERATOR = "moderator"
-    KEYNOTE = "keynote"
+    HOST = "HOST"
+    SPEAKER = "SPEAKER"
+    PANELIST = "PANELIST"
+    MODERATOR = "MODERATOR"
+    KEYNOTE = "KEYNOTE"
 
 
 class EventFormat(str, Enum):
-    VIRTUAL = "virtual"
-    IN_PERSON = "in_person"
-    HYBRID = "hybrid"
+    VIRTUAL = "VIRTUAL"
+    IN_PERSON = "IN_PERSON"
+    HYBRID = "HYBRID"
 
 
 class ConnectionStatus(str, Enum):
-    PENDING = "pending"
-    ACCEPTED = "accepted"
-    REJECTED = "rejected"
-    REMOVED = "removed"  # User voluntarily removed connection
-    BLOCKED = "blocked"
+    PENDING = "PENDING"
+    ACCEPTED = "ACCEPTED"
+    REJECTED = "REJECTED"
+    REMOVED = "REMOVED"  # User voluntarily removed connection
+    BLOCKED = "BLOCKED"
 
 
 class EmailVisibility(str, Enum):
-    EVENT_ATTENDEES = "event_attendees"
-    CONNECTIONS_ORGANIZERS = "connections_organizers"
-    ORGANIZERS_ONLY = "organizers_only"
+    EVENT_ATTENDEES = "EVENT_ATTENDEES"
+    CONNECTIONS_ORGANIZERS = "CONNECTIONS_ORGANIZERS"
+    ORGANIZERS_ONLY = "ORGANIZERS_ONLY"
 
 
 class ConnectionRequestPermission(str, Enum):
-    EVENT_ATTENDEES = "event_attendees"
-    SPEAKERS_ORGANIZERS = "speakers_organizers"
-    NONE = "none"
+    EVENT_ATTENDEES = "EVENT_ATTENDEES"
+    SPEAKERS_ORGANIZERS = "SPEAKERS_ORGANIZERS"
+    NONE = "NONE"
 
 
 class SocialLinksVisibility(str, Enum):
-    EVENT_ATTENDEES = "event_attendees"
-    CONNECTIONS = "connections"
-    HIDDEN = "hidden"
+    EVENT_ATTENDEES = "EVENT_ATTENDEES"
+    CONNECTIONS = "CONNECTIONS"
+    HIDDEN = "HIDDEN"
 
 
 class MessageStatus(str, Enum):
-    SENT = "sent"
-    DELIVERED = "delivered"
-    READ = "read"
+    SENT = "SENT"
+    DELIVERED = "DELIVERED"
+    READ = "READ"
 
 
 class ChatRoomType(str, Enum):
-    GLOBAL = "GLOBAL"           # Event-wide, all attendees
-    PUBLIC = "PUBLIC"           # Session-specific, all attendees
-    BACKSTAGE = "BACKSTAGE"     # Session-specific, speakers/organizers only
-    ADMIN = "ADMIN"             # Event-wide, admins/organizers only
-    GREEN_ROOM = "GREEN_ROOM"   # Event-wide, speakers/admins/organizers only
+    GLOBAL = "GLOBAL"  # Event-wide, all attendees
+    PUBLIC = "PUBLIC"  # Session-specific, all attendees
+    BACKSTAGE = "BACKSTAGE"  # Session-specific, speakers/organizers only
+    ADMIN = "ADMIN"  # Event-wide, admins/organizers only
+    GREEN_ROOM = "GREEN_ROOM"  # Event-wide, speakers/admins/organizers only
 
 
 class SessionChatMode(str, Enum):
-    ENABLED = "ENABLED"             # Both PUBLIC and BACKSTAGE chat enabled
+    ENABLED = "ENABLED"  # Both PUBLIC and BACKSTAGE chat enabled
     BACKSTAGE_ONLY = "BACKSTAGE_ONLY"  # Only BACKSTAGE chat enabled
-    DISABLED = "DISABLED"           # No chat rooms enabled
+    DISABLED = "DISABLED"  # No chat rooms enabled
 
 
 class InvitationStatus(str, Enum):
-    PENDING = "pending"
-    ACCEPTED = "accepted"
-    EXPIRED = "expired"
-    DECLINED = "declined"
-    CANCELLED = "cancelled"
+    PENDING = "PENDING"
+    ACCEPTED = "ACCEPTED"
+    EXPIRED = "EXPIRED"
+    DECLINED = "DECLINED"
+    CANCELLED = "CANCELLED"
 
 
 class StreamingPlatform(str, Enum):

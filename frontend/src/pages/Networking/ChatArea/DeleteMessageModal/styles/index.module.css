@@ -20,7 +20,7 @@
 :global(.mantine-Modal-title) {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #1E293B;
+  color: #1e293b;
 }
 
 :global(.mantine-Modal-body) {
@@ -28,7 +28,7 @@
 }
 
 :global(.mantine-Modal-close) {
-  color: #64748B;
+  color: #64748b;
   background: rgba(139, 92, 246, 0.04);
   border: 1px solid rgba(139, 92, 246, 0.08);
   border-radius: 6px;
@@ -38,7 +38,7 @@
 :global(.mantine-Modal-close:hover) {
   background: rgba(139, 92, 246, 0.1);
   border-color: rgba(139, 92, 246, 0.2);
-  color: #8B5CF6;
+  color: #8b5cf6;
 }
 
 /* Component specific styles */
@@ -49,7 +49,7 @@
 .modalHeader {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #1E293B;
+  color: #1e293b;
   padding: 1.5rem 1.5rem 0;
 }
 
@@ -68,7 +68,7 @@
 
 .messageContent {
   margin-top: 0.25rem;
-  color: #64748B;
+  color: #64748b;
   font-style: italic;
   word-wrap: break-word;
   white-space: pre-wrap;

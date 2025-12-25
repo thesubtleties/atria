@@ -107,7 +107,7 @@
 
 .logoutItem:hover {
   background-color: rgba(220, 38, 38, 0.08) !important;
-  color: #B91C1C !important;
+  color: #b91c1c !important;
 }
 
 /* Responsive menu adjustments */
@@ -116,12 +116,12 @@
     min-width: 180px; /* Slightly bigger on mobile */
     padding: var(--space-sm);
   }
-  
+
   .menuItem {
     font-size: var(--text-sm); /* Bigger text on mobile for better touch targets */
     padding: var(--space-sm) var(--space-md); /* More padding for better touch targets */
   }
-  
+
   .menuLabel {
     font-size: 11px; /* Slightly bigger */
     padding: var(--space-sm) var(--space-md);

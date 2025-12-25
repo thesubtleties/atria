@@ -9,7 +9,7 @@
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-top: 1px solid var(--primary-alpha-8);
-  box-shadow: 
+  box-shadow:
     0 -4px 20px rgba(139, 92, 246, 0.04),
     0 -2px 8px rgba(0, 0, 0, 0.04);
   z-index: 100; /* Reduced from 1000 to be below modals */
@@ -126,7 +126,7 @@
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
-  
+
   /* Single tab list - don't stretch */
   .singleTabList :global(.mantine-Tabs-tab) {
     font-size: 0.75rem;
@@ -136,7 +136,7 @@
     white-space: nowrap;
     gap: 0.25rem !important;
   }
-  
+
   /* Multiple tabs list - stretch to fill */
   .multipleTabsList :global(.mantine-Tabs-tab) {
     font-size: 0.75rem;
@@ -146,12 +146,12 @@
     white-space: nowrap;
     gap: 0.25rem !important;
   }
-  
+
   .tabsContainer :global(.mantine-Tabs-tab) svg {
     width: 12px;
     height: 12px;
   }
-  
+
   /* Hide scrollbar but keep functionality */
   .tabsContainer :global(.mantine-Tabs-list)::-webkit-scrollbar {
     display: none;

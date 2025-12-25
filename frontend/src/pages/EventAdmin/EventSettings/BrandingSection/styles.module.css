@@ -52,7 +52,7 @@
 .subsectionTitle {
   font-size: 1rem;
   font-weight: 600;
-  color: #1E293B;
+  color: #1e293b;
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;
   border-bottom: 1px solid rgba(139, 92, 246, 0.08);
@@ -129,7 +129,7 @@
 .heroTab {
   padding: 0.75rem 1.25rem;
   transition: all 0.2s ease;
-  color: #64748B;
+  color: #64748b;
   font-weight: 500;
   border: none;
   border-bottom: 2px solid transparent;
@@ -140,13 +140,13 @@
 }
 
 .heroTab:hover {
-  color: #8B5CF6;
+  color: #8b5cf6;
   background: rgba(139, 92, 246, 0.06);
 }
 
 .heroTab[data-active] {
-  color: #8B5CF6;
-  border-bottom-color: #8B5CF6;
+  color: #8b5cf6;
+  border-bottom-color: #8b5cf6;
   background: rgba(255, 255, 255, 0.8);
 }
 
@@ -202,34 +202,34 @@
     font-size: 0.85rem;
     padding: 0.5rem 0.75rem;
   }
-  
+
   /* Show short text on mobile */
   .tabTextFull {
     display: none;
   }
-  
+
   .tabTextShort {
     display: inline;
   }
-  
+
   /* Override Mantine's Group grow behavior on mobile to stack fields */
   :global(.mantine-Group-root[data-grow]) {
     flex-direction: column !important;
     align-items: stretch !important;
     gap: var(--space-md) !important;
   }
-  
+
   :global(.mantine-Group-root[data-grow] > *) {
     flex: 1 1 100% !important;
     max-width: 100% !important;
     width: 100% !important;
   }
-  
+
   /* Ensure proper spacing between stacked fields */
   :global(.mantine-InputWrapper-root) {
     width: 100% !important;
   }
-  
+
   /* Optimize tab list for mobile */
   .heroTabsList {
     padding: 0.125rem;

@@ -289,8 +289,7 @@
 /* Empty State */
 .empty-state {
   text-align: center;
-  padding: clamp(var(--space-lg), 4vw, var(--space-xl))
-    clamp(var(--space-md), 3vw, var(--space-lg));
+  padding: clamp(var(--space-lg), 4vw, var(--space-xl)) clamp(var(--space-md), 3vw, var(--space-lg));
   color: var(--color-text-secondary);
 }
 
@@ -409,15 +408,9 @@
 
 /* Hover state - not disabled */
 .pagination-styled
-  :global(
-    .mantine-Pagination-control:hover:not([data-disabled]):not([data-active])
-  ),
+  :global(.mantine-Pagination-control:hover:not([data-disabled]):not([data-active])),
 .pagination-styled
-  :global(
-    button.mantine-Pagination-control:hover:not([data-disabled]):not(
-        [data-active]
-      )
-  ) {
+  :global(button.mantine-Pagination-control:hover:not([data-disabled]):not([data-active])) {
   background: rgba(139, 92, 246, 0.08) !important;
   border-color: rgba(139, 92, 246, 0.15) !important;
   color: #8b5cf6 !important;
@@ -437,8 +430,7 @@
 
 /* Active page hover - maintain active state */
 .pagination-styled :global(.mantine-Pagination-control[data-active]:hover),
-.pagination-styled
-  :global(button.mantine-Pagination-control[data-active]:hover) {
+.pagination-styled :global(button.mantine-Pagination-control[data-active]:hover) {
   background: rgba(124, 58, 237, 0.95) !important;
   color: white !important;
   transform: translateY(-1px) !important;

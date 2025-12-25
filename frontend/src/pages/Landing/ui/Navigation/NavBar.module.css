@@ -32,7 +32,7 @@
   color: var(--color-text-shout);
 }
 
-.navLink[data-animated="true"]::after {
+.navLink[data-animated='true']::after {
   content: '';
   position: absolute;
   bottom: -2px;
@@ -43,6 +43,6 @@
   transition: width 0.3s ease;
 }
 
-.navLink[data-animated="true"]:hover::after {
+.navLink[data-animated='true']:hover::after {
   width: 100%;
 }

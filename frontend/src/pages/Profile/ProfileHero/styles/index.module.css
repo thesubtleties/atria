@@ -101,11 +101,11 @@
     flex-direction: column;
     text-align: center;
   }
-  
+
   .profileActions {
     margin-top: var(--space-md);
   }
-  
+
   .profileMeta {
     flex-direction: column;
     gap: var(--space-sm);

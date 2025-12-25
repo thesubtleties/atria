@@ -35,19 +35,19 @@
 }
 
 /* Badge color variants */
-.roleBadge[data-role="OWNER"] {
+.roleBadge[data-role='OWNER'] {
   background: rgba(139, 92, 246, 0.08) !important;
   color: #8b5cf6 !important;
   border-color: rgba(139, 92, 246, 0.12) !important;
 }
 
-.roleBadge[data-role="ADMIN"] {
+.roleBadge[data-role='ADMIN'] {
   background: rgba(236, 72, 153, 0.08) !important;
   color: #ec4899 !important;
   border-color: rgba(236, 72, 153, 0.12) !important;
 }
 
-.roleBadge[data-role="MEMBER"] {
+.roleBadge[data-role='MEMBER'] {
   background: rgba(59, 130, 246, 0.08) !important;
   color: #3b82f6 !important;
   border-color: rgba(59, 130, 246, 0.12) !important;

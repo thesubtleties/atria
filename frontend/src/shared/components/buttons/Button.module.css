@@ -61,7 +61,7 @@
 /* Subtle button variant */
 .btn-subtle {
   background: transparent;
-  color: #6B7280;
+  color: #6b7280;
   border: 1px solid transparent;
 }
 
@@ -77,7 +77,7 @@
 /* Danger button variant */
 .btn-danger {
   background: rgba(220, 38, 38, 0.08);
-  color: #DC2626;
+  color: #dc2626;
   border: 1px solid rgba(220, 38, 38, 0.15);
 }
 

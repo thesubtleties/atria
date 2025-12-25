@@ -341,10 +341,20 @@ class DashboardService:
             {
                 'id': 7,
                 'title': 'v0.3.0 - Jitsi & External Platform Support',
-                'description': 'Added Jitsi (JaaS) video conferencing with JWT authentication, plus external link support to use your preferred streaming platform.',
+                'description': 'Added Jitsi (JaaS) video conferencing with JWT authentication, plus external link support. Read the full announcement at docs.atria.gg/blog/v0.3.0-release',
                 'date': datetime(2025, 11, 26, tzinfo=timezone.utc),
                 'type': 'feature_release',
-                'is_new': True
+                'is_new': False,
+                'link': 'https://docs.atria.gg/blog/v0.3.0-release'
+            },
+            {
+                'id': 8,
+                'title': 'v0.4.0 - TypeScript Migration',
+                'description': 'Complete frontend TypeScript migration with full type safety and standardized enum handling. Read the full announcement at docs.atria.gg/blog/v0.4.0-release',
+                'date': datetime(2025, 12, 24, tzinfo=timezone.utc),
+                'type': 'platform_update',
+                'is_new': True,
+                'link': 'https://docs.atria.gg/blog/v0.4.0-release'
             }
         ]
 

@@ -1,58 +1,127 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block title %}You're invited to {{ event_title }}{%
+endblock %} {% block header_subtitle %}
+<p
+  style="
+    margin: 12px 0 0 0;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 16px;
+    font-weight: 400;
+  "
+>
+  Event Invitation
+</p>
+{% endblock %} {% block content %}
+<h2
+  style="
+    font-size: 24px;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0 0 24px 0;
+    line-height: 1.3;
+  "
+>
+  You're invited to join {{ event_title }}!
+</h2>
 
-{% block title %}You're invited to {{ event_title }}{% endblock %}
+<p
+  style="font-size: 16px; color: #64748b; line-height: 1.6; margin: 0 0 20px 0"
+>
+  Hi there,
+</p>
 
-{% block header_subtitle %}
-<p style="margin: 12px 0 0 0; color: rgba(255, 255, 255, 0.9); font-size: 16px; font-weight: 400;">Event Invitation</p>
-{% endblock %}
+<p
+  style="font-size: 16px; color: #64748b; line-height: 1.6; margin: 0 0 24px 0"
+>
+  {{ inviter_name }} has invited you to join
+  <strong style="color: #8b5cf6">{{ event_title }}</strong> as a
+  <strong style="color: #8b5cf6">{{ role }}</strong>.
+</p>
 
-{% block content %}
-<h2 style="font-size: 24px; font-weight: 600; color: #1e293b; margin: 0 0 24px 0; line-height: 1.3;">You're invited to join {{ event_title }}!</h2>
-
-<p style="font-size: 16px; color: #64748b; line-height: 1.6; margin: 0 0 20px 0;">Hi there,</p>
-
-<p style="font-size: 16px; color: #64748b; line-height: 1.6; margin: 0 0 24px 0;">{{ inviter_name }} has invited you to join <strong style="color: #8b5cf6;">{{ event_title }}</strong> as a <strong style="color: #8b5cf6;">{{ role }}</strong>.</p>
-
-<div style="background-color: rgba(139, 92, 246, 0.04); border: 1px solid rgba(139, 92, 246, 0.08); border-radius: 8px; padding: 20px; margin: 24px 0;">
-    <h3 style="font-size: 18px; font-weight: 600; color: #1e293b; margin: 0 0 16px 0; line-height: 1.4;">Event Details</h3>
-    <table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
-        <tr>
-            <td style="padding: 8px 0; color: #64748b;">
-                <strong style="color: #8b5cf6;">Event:</strong> {{ event_title }}
-            </td>
-        </tr>
-        <tr>
-            <td style="padding: 8px 0; color: #64748b;">
-                <strong style="color: #8b5cf6;">Company:</strong> {{ company_name }}
-            </td>
-        </tr>
-        <tr>
-            <td style="padding: 8px 0; color: #64748b;">
-                <strong style="color: #8b5cf6;">Dates:</strong> {{ event_start_date }} - {{ event_end_date }}
-            </td>
-        </tr>
-        <tr>
-            <td style="padding: 8px 0; color: #64748b;">
-                <strong style="color: #8b5cf6;">Your Role:</strong> {{ role }}
-            </td>
-        </tr>
-    </table>
+<div
+  style="
+    background-color: rgba(139, 92, 246, 0.04);
+    border: 1px solid rgba(139, 92, 246, 0.08);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 24px 0;
+  "
+>
+  <h3
+    style="
+      font-size: 18px;
+      font-weight: 600;
+      color: #1e293b;
+      margin: 0 0 16px 0;
+      line-height: 1.4;
+    "
+  >
+    Event Details
+  </h3>
+  <table cellpadding="0" cellspacing="0" border="0" style="width: 100%">
+    <tr>
+      <td style="padding: 8px 0; color: #64748b">
+        <strong style="color: #8b5cf6">Event:</strong> {{ event_title }}
+      </td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0; color: #64748b">
+        <strong style="color: #8b5cf6">Company:</strong> {{ company_name }}
+      </td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0; color: #64748b">
+        <strong style="color: #8b5cf6">Dates:</strong> {{ event_start_date }} -
+        {{ event_end_date }}
+      </td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0; color: #64748b">
+        <strong style="color: #8b5cf6">Your Role:</strong> {{ role }}
+      </td>
+    </tr>
+  </table>
 </div>
 
 {% if event_description %}
-<div style="background-color: rgba(139, 92, 246, 0.02); border-radius: 6px; padding: 16px; margin: 24px 0;">
-    <p style="font-size: 16px; color: #64748b; line-height: 1.6; margin: 0;">{{ event_description }}</p>
+<div
+  style="
+    background-color: rgba(139, 92, 246, 0.02);
+    border-radius: 6px;
+    padding: 16px;
+    margin: 24px 0;
+  "
+>
+  <p style="font-size: 16px; color: #64748b; line-height: 1.6; margin: 0">
+    {{ event_description }}
+  </p>
 </div>
 {% endif %}
 
-<p style="font-size: 16px; color: #64748b; line-height: 1.6; margin: 24px 0;">Since you already have an Atria account, you can accept this invitation with just one click!</p>
+<p style="font-size: 16px; color: #64748b; line-height: 1.6; margin: 24px 0">
+  Since you already have an Atria account, you can accept this invitation with
+  just one click!
+</p>
 
-<div style="text-align: center; margin: 32px 0;">
-    <a href="{{ invitation_url }}" style="display: inline-block; padding: 14px 32px; background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%); color: #ffffff !important; text-decoration: none; border-radius: 6px; font-weight: 500; font-size: 16px; box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2);">Accept Invitation</a>
+<div style="text-align: center; margin: 32px 0">
+  <a
+    href="{{ invitation_url }}"
+    style="
+      display: inline-block;
+      padding: 14px 32px;
+      background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+      color: #ffffff !important;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 500;
+      font-size: 16px;
+      box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2);
+    "
+    >Accept Invitation</a
+  >
 </div>
 
-<p style="color: #94a3b8; font-size: 14px; text-align: center; margin: 20px 0;">
-    This invitation will expire in 7 days. If you don't want to join this event, 
-    you can safely ignore this email.
+<p style="color: #94a3b8; font-size: 14px; text-align: center; margin: 20px 0">
+  This invitation will expire in 7 days. If you don't want to join this event,
+  you can safely ignore this email.
 </p>
 {% endblock %}

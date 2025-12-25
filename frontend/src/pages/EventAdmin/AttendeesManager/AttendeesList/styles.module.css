@@ -17,7 +17,7 @@
 
 .tableContainer th {
   font-weight: 500;
-  color: #64748B;
+  color: #64748b;
   padding: 1rem;
   font-size: 0.85rem;
   text-transform: uppercase;
@@ -40,7 +40,7 @@
 
 .tableContainer td {
   padding: 1rem;
-  color: #1E293B;
+  color: #1e293b;
   font-size: 0.9rem;
 }
 
@@ -48,7 +48,7 @@
 .emptyState {
   padding: 4rem 2rem;
   text-align: center;
-  color: #64748B;
+  color: #64748b;
 }
 
 /* Sort Header */
@@ -63,7 +63,7 @@
 }
 
 .sortHeader:hover {
-  color: #8B5CF6;
+  color: #8b5cf6;
   transform: translateY(-1px);
 }
 
@@ -88,7 +88,7 @@
 
 .actionButton:hover {
   background: rgba(139, 92, 246, 0.08);
-  color: #8B5CF6;
+  color: #8b5cf6;
 }
 
 /* Cards Container - Mobile View */

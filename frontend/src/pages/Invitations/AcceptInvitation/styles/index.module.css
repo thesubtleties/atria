@@ -126,17 +126,17 @@
   .contentWrapper {
     padding: 1rem;
   }
-  
+
   .mainContent,
   .loadingSection,
   .errorSection {
     padding: 1.5rem;
   }
-  
+
   .pageContent {
     gap: 1.5rem;
   }
-  
+
   /* Hide decorative shapes on mobile */
   .bgShape1,
   .bgShape2 {
