@@ -284,7 +284,10 @@ export const usersApi = baseApi.injectEndpoints({
       ],
     }),
 
-    getEventPrivacyOverrides: builder.query<EventPrivacyOverridesResponse, GetEventPrivacyOverridesParams>({
+    getEventPrivacyOverrides: builder.query<
+      EventPrivacyOverridesResponse,
+      GetEventPrivacyOverridesParams
+    >({
       query: ({ userId, eventId }) => ({
         url: `/users/${userId}/events/${eventId}/privacy-overrides`,
       }),
