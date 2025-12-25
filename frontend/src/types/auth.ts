@@ -39,22 +39,22 @@ export const EMPTY_SOCIAL_LINKS: SocialLinks = {
 
 /** Privacy settings stored as JSON on user */
 export type PrivacySettings = {
-  email_visibility: 'event_attendees' | 'connections_organizers' | 'organizers_only';
+  email_visibility: 'EVENT_ATTENDEES' | 'CONNECTIONS_ORGANIZERS' | 'ORGANIZERS_ONLY';
   show_public_email: boolean;
   public_email: string | null;
-  allow_connection_requests: 'event_attendees' | 'speakers_organizers' | 'none';
-  show_social_links: 'event_attendees' | 'connections' | 'hidden';
+  allow_connection_requests: 'EVENT_ATTENDEES' | 'SPEAKERS_ORGANIZERS' | 'NONE';
+  show_social_links: 'EVENT_ATTENDEES' | 'CONNECTIONS' | 'HIDDEN';
   show_company: boolean;
   show_bio: boolean;
 };
 
 /** Default privacy settings */
 export const DEFAULT_PRIVACY_SETTINGS: PrivacySettings = {
-  email_visibility: 'connections_organizers',
+  email_visibility: 'CONNECTIONS_ORGANIZERS',
   show_public_email: false,
   public_email: null,
-  allow_connection_requests: 'event_attendees',
-  show_social_links: 'connections',
+  allow_connection_requests: 'EVENT_ATTENDEES',
+  show_social_links: 'CONNECTIONS',
   show_company: true,
   show_bio: true,
 } as const;

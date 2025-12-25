@@ -55,11 +55,11 @@ const EventOverrides = () => {
   // Form for privacy settings
   const form = useForm<EventPrivacyOverrideFormData>({
     initialValues: {
-      email_visibility: 'connections_organizers',
+      email_visibility: 'CONNECTIONS_ORGANIZERS',
       show_public_email: false,
       public_email: '',
-      allow_connection_requests: 'event_attendees',
-      show_social_links: 'event_attendees',
+      allow_connection_requests: 'EVENT_ATTENDEES',
+      show_social_links: 'EVENT_ATTENDEES',
       show_company: true,
       show_bio: true,
     },

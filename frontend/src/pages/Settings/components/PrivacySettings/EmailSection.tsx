@@ -17,16 +17,16 @@ const EmailSection = ({ form }: EmailSectionProps) => {
           {...form.getInputProps('email_visibility')}
           className={cn(styles.formInput)}
           data={[
-            { value: 'event_attendees', label: 'Event Attendees' },
-            { value: 'connections_organizers', label: 'Connections & Event Organizers' },
-            { value: 'organizers_only', label: 'Event Organizers Only' },
+            { value: 'EVENT_ATTENDEES', label: 'Event Attendees' },
+            { value: 'CONNECTIONS_ORGANIZERS', label: 'Connections & Event Organizers' },
+            { value: 'ORGANIZERS_ONLY', label: 'Event Organizers Only' },
           ]}
           description='Who can see your email address'
           allowDeselect={false}
         />
       </div>
 
-      {form.values.email_visibility === 'organizers_only' && (
+      {form.values.email_visibility === 'ORGANIZERS_ONLY' && (
         <div className={cn(styles.formSection)}>
           <Switch
             {...form.getInputProps('show_public_email', { type: 'checkbox' })}

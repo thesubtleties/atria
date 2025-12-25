@@ -3,7 +3,7 @@ import { z } from 'zod';
 // Privacy settings validation schema
 export const privacySettingsSchema = z
   .object({
-    email_visibility: z.enum(['event_attendees', 'connections_organizers', 'organizers_only']),
+    email_visibility: z.enum(['EVENT_ATTENDEES', 'CONNECTIONS_ORGANIZERS', 'ORGANIZERS_ONLY']),
 
     show_public_email: z.boolean(),
 
@@ -14,9 +14,9 @@ export const privacySettingsSchema = z
       .optional()
       .nullable(),
 
-    allow_connection_requests: z.enum(['event_attendees', 'speakers_organizers', 'none']),
+    allow_connection_requests: z.enum(['EVENT_ATTENDEES', 'SPEAKERS_ORGANIZERS', 'NONE']),
 
-    show_social_links: z.enum(['event_attendees', 'connections', 'hidden']),
+    show_social_links: z.enum(['EVENT_ATTENDEES', 'CONNECTIONS', 'HIDDEN']),
 
     show_company: z.boolean(),
 
@@ -37,7 +37,7 @@ export const privacySettingsSchema = z
 export const eventPrivacyOverrideSchema = z.object({
   event_id: z.number().int().positive(),
   email_visibility: z
-    .enum(['event_attendees', 'connections_organizers', 'organizers_only'])
+    .enum(['EVENT_ATTENDEES', 'CONNECTIONS_ORGANIZERS', 'ORGANIZERS_ONLY'])
     .optional(),
   show_public_email: z.boolean().optional(),
   public_email: z
@@ -46,8 +46,8 @@ export const eventPrivacyOverrideSchema = z.object({
     .or(z.literal(''))
     .optional()
     .nullable(),
-  allow_connection_requests: z.enum(['event_attendees', 'speakers_organizers', 'none']).optional(),
-  show_social_links: z.enum(['event_attendees', 'connections', 'hidden']).optional(),
+  allow_connection_requests: z.enum(['EVENT_ATTENDEES', 'SPEAKERS_ORGANIZERS', 'NONE']).optional(),
+  show_social_links: z.enum(['EVENT_ATTENDEES', 'CONNECTIONS', 'HIDDEN']).optional(),
   show_company: z.boolean().optional(),
   show_bio: z.boolean().optional(),
 });
@@ -55,7 +55,7 @@ export const eventPrivacyOverrideSchema = z.object({
 // Event-specific privacy override form schema (without event_id)
 export const eventPrivacyOverrideFormSchema = z
   .object({
-    email_visibility: z.enum(['event_attendees', 'connections_organizers', 'organizers_only']),
+    email_visibility: z.enum(['EVENT_ATTENDEES', 'CONNECTIONS_ORGANIZERS', 'ORGANIZERS_ONLY']),
     show_public_email: z.boolean(),
     public_email: z
       .string()
@@ -63,8 +63,8 @@ export const eventPrivacyOverrideFormSchema = z
       .or(z.literal(''))
       .optional()
       .nullable(),
-    allow_connection_requests: z.enum(['event_attendees', 'speakers_organizers', 'none']),
-    show_social_links: z.enum(['event_attendees', 'connections', 'hidden']),
+    allow_connection_requests: z.enum(['EVENT_ATTENDEES', 'SPEAKERS_ORGANIZERS', 'NONE']),
+    show_social_links: z.enum(['EVENT_ATTENDEES', 'CONNECTIONS', 'HIDDEN']),
     show_company: z.boolean(),
     show_bio: z.boolean(),
   })
@@ -82,7 +82,7 @@ export const eventPrivacyOverrideFormSchema = z
 // Schema for the update request (all fields optional)
 export const privacySettingsUpdateSchema = z.object({
   email_visibility: z
-    .enum(['event_attendees', 'connections_organizers', 'organizers_only'])
+    .enum(['EVENT_ATTENDEES', 'CONNECTIONS_ORGANIZERS', 'ORGANIZERS_ONLY'])
     .optional(),
   show_public_email: z.boolean().optional(),
   public_email: z
@@ -91,8 +91,8 @@ export const privacySettingsUpdateSchema = z.object({
     .or(z.literal(''))
     .optional()
     .nullable(),
-  allow_connection_requests: z.enum(['event_attendees', 'speakers_organizers', 'none']).optional(),
-  show_social_links: z.enum(['event_attendees', 'connections', 'hidden']).optional(),
+  allow_connection_requests: z.enum(['EVENT_ATTENDEES', 'SPEAKERS_ORGANIZERS', 'NONE']).optional(),
+  show_social_links: z.enum(['EVENT_ATTENDEES', 'CONNECTIONS', 'HIDDEN']).optional(),
   show_company: z.boolean().optional(),
   show_bio: z.boolean().optional(),
 });
