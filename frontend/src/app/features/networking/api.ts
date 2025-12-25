@@ -362,7 +362,7 @@ export const networkingApi = baseApi.injectEndpoints({
             return result;
           }
 
-          return { data: (result.data as { data: DirectMessage }).data };
+          return { data: result.data as DirectMessage };
         } catch (error) {
           if (isApiError(error)) {
             return {
@@ -432,7 +432,7 @@ export const networkingApi = baseApi.injectEndpoints({
             return result;
           }
 
-          return { data: (result.data as { data: DirectMessageThread }).data };
+          return { data: result.data as DirectMessageThread };
         } catch (error) {
           if (isApiError(error)) {
             return {
@@ -493,7 +493,7 @@ export const networkingApi = baseApi.injectEndpoints({
             return result;
           }
 
-          return { data: (result.data as { data: { thread_id: number } }).data };
+          return { data: result.data as { thread_id: number } };
         } catch (error) {
           if (isApiError(error)) {
             return {
