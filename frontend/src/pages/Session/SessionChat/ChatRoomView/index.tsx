@@ -1,6 +1,6 @@
 import { Center, Text } from '@mantine/core';
 import { ChatRoom } from '@/pages/Networking/ChatArea/ChatRoom';
-import type { SessionChatRoom } from '@/types/chat';
+import type { SessionChatRoom, ChatMessage } from '@/types/chat';
 import styles from './styles/index.module.css';
 
 interface SessionData {
@@ -12,7 +12,7 @@ interface ChatRoomViewProps {
   sessionData: SessionData | undefined;
   inputValue: string;
   onInputChange: (value: string) => void;
-  onSendMessage: () => void;
+  onSendMessage: () => Promise<ChatMessage | null>;
   isActive: boolean;
   canModerate: boolean;
 }

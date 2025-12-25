@@ -4,7 +4,7 @@ import { LoadingContent } from '@/shared/components/loading';
 import { IconUsers, IconUserShield } from '@tabler/icons-react';
 import { useSendMessageMutation } from '@/app/features/chat/api';
 import { ChatRoomView } from '../ChatRoomView';
-import type { SessionChatRoom } from '@/types/chat';
+import type { SessionChatRoom, ChatMessage } from '@/types/chat';
 import type { Session } from '@/types/events';
 import styles from './styles/index.module.css';
 
@@ -37,16 +37,18 @@ export function ChatTabs({ chatRooms, sessionData, isLoading, error, canModerate
     [chatRooms],
   );
 
-  const handleSendMessage = async (roomId: number | undefined): Promise<void> => {
-    if (roomId === undefined) return;
+  const handleSendMessage = async (roomId: number | undefined): Promise<ChatMessage | null> => {
+    if (roomId === undefined) return null;
     const content = inputValues[roomId]?.trim();
-    if (!content) return;
+    if (!content) return null;
 
     try {
-      await sendMessage({ chatRoomId: roomId, content }).unwrap();
+      const result = await sendMessage({ chatRoomId: roomId, content }).unwrap();
       setInputValues((prev) => ({ ...prev, [roomId]: '' }));
+      return result;
     } catch (err) {
       console.error('Failed to send message:', err);
+      throw err;
     }
   };
 
