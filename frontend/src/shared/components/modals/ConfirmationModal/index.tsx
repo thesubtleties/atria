@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Text, Stack, Group, Button as MantineButton } from '@mantine/core';
+import { Text, Stack, Group } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { Button } from '../../buttons';
 import styles from './styles/index.module.css';
@@ -58,9 +58,9 @@ export const openConfirmationModal = ({
           </Text>
         )}
         <Group justify='flex-end' className={styles.buttonGroup || ''}>
-          <MantineButton variant='subtle' onClick={handleCancel} disabled={isLoading}>
+          <Button variant='secondary' onClick={handleCancel} disabled={isLoading}>
             {cancelLabel}
-          </MantineButton>
+          </Button>
           <Button
             variant={isDangerous ? 'danger' : 'primary'}
             onClick={handleConfirm}

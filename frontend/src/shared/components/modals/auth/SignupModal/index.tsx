@@ -1,12 +1,4 @@
-import {
-  TextInput,
-  PasswordInput,
-  Stack,
-  Alert,
-  Title,
-  Text,
-  Button as MantineButton,
-} from '@mantine/core';
+import { TextInput, PasswordInput, Stack, Alert, Title, Text } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { useState } from 'react';
 import { IconMail } from '@tabler/icons-react';
@@ -97,9 +89,9 @@ export const SignupModal = ({ onClose, onSuccess: _onSuccess }: SignupModalProps
         <Text size='sm' c='dimmed' ta='center'>
           {"Didn't receive the email? Check your spam folder or contact support."}
         </Text>
-        <MantineButton variant='subtle' onClick={onClose} className={styles.closeButton || ''}>
+        <Button variant='secondary' onClick={onClose} className={styles.closeButton || ''}>
           Close
-        </MantineButton>
+        </Button>
       </Stack>
     );
   }

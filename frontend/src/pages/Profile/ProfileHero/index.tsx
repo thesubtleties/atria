@@ -1,4 +1,4 @@
-import { Avatar, Menu, ActionIcon, Button as MantineButton } from '@mantine/core';
+import { Avatar, Menu, ActionIcon } from '@mantine/core';
 import { IconEdit, IconDots, IconUserMinus } from '@tabler/icons-react';
 import { Button } from '@/shared/components/buttons';
 import type { User, PrivacyAwareUser, Connection } from '@/types';
@@ -96,15 +96,14 @@ export const ProfileHero = ({
             {getInitials(user.full_name ?? user.email)}
           </Avatar>
           {isEditing && onAvatarEdit && (
-            <MantineButton
-              variant='subtle'
-              size='sm'
+            <Button
+              variant='secondary'
               onClick={onAvatarEdit}
               className={styles.rerollButton ?? ''}
             >
               <IconEdit size={16} />
               Edit Avatar
-            </MantineButton>
+            </Button>
           )}
         </div>
 

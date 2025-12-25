@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Modal, Select, Text, Avatar, Button as MantineButton } from '@mantine/core';
+import { Modal, Select, Text, Avatar } from '@mantine/core';
 import { Button } from '@/shared/components/buttons';
 import {
   TOP_OPTIONS,
@@ -335,9 +335,9 @@ export const EditAvatarModal = ({ opened, onClose, onSave, currentUrl }: EditAva
           />
 
           <div className={styles.buttonGroup || ''} style={{ gridColumn: '1 / -1' }}>
-            <MantineButton variant='subtle' onClick={handleCancel}>
+            <Button variant='secondary' onClick={handleCancel}>
               Cancel
-            </MantineButton>
+            </Button>
             <Button variant='primary' onClick={handleSave}>
               Save Avatar
             </Button>

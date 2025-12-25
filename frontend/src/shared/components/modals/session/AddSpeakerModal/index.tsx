@@ -1,4 +1,4 @@
-import { Select, Stack, Modal, Alert, Button as MantineButton } from '@mantine/core';
+import { Select, Stack, Modal, Alert } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { skipToken } from '@reduxjs/toolkit/query';
 import {
@@ -151,9 +151,9 @@ export const AddSpeakerModal = ({
               />
 
               <div className={styles.buttonGroup || ''}>
-                <MantineButton variant='subtle' onClick={onClose} disabled={isLoading}>
+                <Button variant='secondary' onClick={onClose} disabled={isLoading}>
                   Cancel
-                </MantineButton>
+                </Button>
                 <Button
                   type='submit'
                   variant='primary'

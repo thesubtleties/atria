@@ -1,14 +1,5 @@
 import { useEffect } from 'react';
-import {
-  TextInput,
-  Stack,
-  Modal,
-  Textarea,
-  Select,
-  Group,
-  Text,
-  Button as MantineButton,
-} from '@mantine/core';
+import { TextInput, Stack, Modal, Textarea, Select, Group, Text } from '@mantine/core';
 import { skipToken } from '@reduxjs/toolkit/query';
 import { TimeSelect } from '@/shared/components/forms/TimeSelect';
 import { useForm, zodResolver } from '@mantine/form';
@@ -440,9 +431,9 @@ export const EditSessionModal = ({
           />
 
           <div className={styles.buttonGroup || ''}>
-            <MantineButton variant='subtle' onClick={onClose} disabled={isLoading}>
+            <Button variant='secondary' onClick={onClose} disabled={isLoading}>
               Cancel
-            </MantineButton>
+            </Button>
             <Button type='submit' variant='primary' loading={isLoading}>
               {isLoading ?
                 isEditing ?
