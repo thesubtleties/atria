@@ -23,11 +23,14 @@ import {
 } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { notifications } from '@mantine/notifications';
 import { openConfirmationModal } from '@/shared/components/modals/ConfirmationModal';
 import { useUpdateEventUserMutation } from '@/app/features/events/api';
+import { useCreateDirectMessageThreadMutation } from '@/app/features/networking/api';
+import { openThread } from '@/app/store/chatSlice';
 import { formatTime, capitalizeWords, truncateBio } from '@/shared/utils/formatting';
-import type { EventUser, EventUserRole } from '@/types';
+import type { EventUser, EventUserRole, ApiError } from '@/types';
 import styles from './styles.module.css';
 
 type SpeakerCardProps = {
@@ -38,8 +41,34 @@ type SpeakerCardProps = {
 
 const SpeakerCard = ({ speaker, onEditSpeaker, currentUserRole }: SpeakerCardProps) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [updateUser] = useUpdateEventUserMutation();
+  const [createThread] = useCreateDirectMessageThreadMutation();
   const [sessionsExpanded, setSessionsExpanded] = useState(false);
+
+  const handleMessage = async () => {
+    try {
+      const result = await createThread({
+        userId: speaker.user_id,
+        eventId: speaker.event_id,
+      }).unwrap();
+
+      dispatch(openThread(result.id));
+
+      notifications.show({
+        title: 'Success',
+        message: 'Message thread opened',
+        color: 'green',
+      });
+    } catch (error) {
+      const apiError = error as ApiError;
+      notifications.show({
+        title: 'Error',
+        message: apiError?.data?.message || 'Failed to open message thread',
+        color: 'red',
+      });
+    }
+  };
 
   const handleRemoveSpeaker = () => {
     openConfirmationModal({
@@ -147,16 +176,7 @@ const SpeakerCard = ({ speaker, onEditSpeaker, currentUserRole }: SpeakerCardPro
                 Remove Speaker Role
               </Menu.Item>
 
-              <Menu.Item
-                leftSection={<IconMessage size={16} />}
-                onClick={() => {
-                  notifications.show({
-                    title: 'Coming Soon',
-                    message: 'Direct messaging will be available soon',
-                    color: 'blue',
-                  });
-                }}
-              >
+              <Menu.Item leftSection={<IconMessage size={16} />} onClick={handleMessage}>
                 Send Message
               </Menu.Item>
             </Menu.Dropdown>
