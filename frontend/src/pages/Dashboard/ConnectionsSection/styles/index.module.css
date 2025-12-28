@@ -76,15 +76,16 @@
 
 .messageButton {
   flex-shrink: 0;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
+  min-height: 36px;
   padding: 0;
   background: var(--color-primary);
   color: white;
   border: none;
   box-shadow: var(--shadow-md);
   transition: all 0.2s ease;
-  border-radius: var(--radius-sm);
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;

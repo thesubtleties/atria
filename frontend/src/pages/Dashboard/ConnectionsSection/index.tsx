@@ -136,7 +136,7 @@ export const ConnectionsSection = ({ connections }: ConnectionsSectionProps) => 
                 loading={messagingUserId === connection.user.id}
                 className={styles.messageButton}
               >
-                {messagingUserId !== connection.user.id && <IconMessageCircle size={16} />}
+                {messagingUserId !== connection.user.id && <IconMessageCircle size={20} />}
               </Button>
             </div>
           ))}
