@@ -30,7 +30,7 @@ export const Button = ({
       {loading ?
         <>
           <ButtonLoader />
-          <span style={{ marginLeft: '8px' }}>{children}</span>
+          {children && <span style={{ marginLeft: '8px' }}>{children}</span>}
         </>
       : children}
     </button>

@@ -27,7 +27,7 @@ export const ConnectionsSection = ({ connections }: ConnectionsSectionProps) => 
   const navigate = useNavigate();
   const openThread = useOpenThread();
   const isMobile = useMediaQuery('(max-width: 768px)');
-  const [createThread, { isLoading: isCreatingThread }] = useCreateDirectMessageThreadMutation();
+  const [createThread] = useCreateDirectMessageThreadMutation();
   const [messagingUserId, setMessagingUserId] = useState<number | null>(null);
 
   const getInitials = (name: string | null): string => {
@@ -126,17 +126,17 @@ export const ConnectionsSection = ({ connections }: ConnectionsSectionProps) => 
                 </div>
               </div>
               <Button
-                variant='secondary'
+                variant='primary'
                 onClick={() =>
                   handleMessage(
                     connection.user.id,
                     connection.user.display_name || connection.user.username,
                   )
                 }
-                loading={messagingUserId === connection.user.id || isCreatingThread}
+                loading={messagingUserId === connection.user.id}
                 className={styles.messageButton}
               >
-                <IconMessageCircle size={16} />
+                {messagingUserId !== connection.user.id && <IconMessageCircle size={16} />}
               </Button>
             </div>
           ))}
