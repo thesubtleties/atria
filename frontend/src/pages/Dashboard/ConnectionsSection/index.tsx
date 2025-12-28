@@ -126,12 +126,11 @@ export const ConnectionsSection = ({ connections }: ConnectionsSectionProps) => 
                   : connection.title || connection.company || ''}
                 </div>
               </div>
-              {messagingUserId === connection.user.id ? (
+              {messagingUserId === connection.user.id ?
                 <div className={styles.messageIcon}>
                   <ButtonLoader />
                 </div>
-              ) : (
-                <IconMessage
+              : <IconMessage
                   size={26}
                   className={styles.messageIcon}
                   onClick={() =>
@@ -141,7 +140,7 @@ export const ConnectionsSection = ({ connections }: ConnectionsSectionProps) => 
                     )
                   }
                 />
-              )}
+              }
             </div>
           ))}
         </div>
