@@ -5,8 +5,9 @@ import { useMediaQuery } from '@mantine/hooks';
 import { useCreateDirectMessageThreadMutation } from '@/app/features/networking/api';
 import { useOpenThread } from '@/shared/hooks/useOpenThread';
 import { notifications } from '@mantine/notifications';
-import { IconMessageCircle } from '@tabler/icons-react';
+import { IconMessage } from '@tabler/icons-react';
 import { Button } from '@/shared/components/buttons';
+import { ButtonLoader } from '@/shared/components/loading';
 import type { DashboardConnection } from '../index';
 import styles from './styles/index.module.css';
 
@@ -27,7 +28,7 @@ export const ConnectionsSection = ({ connections }: ConnectionsSectionProps) => 
   const navigate = useNavigate();
   const openThread = useOpenThread();
   const isMobile = useMediaQuery('(max-width: 768px)');
-  const [createThread, { isLoading: isCreatingThread }] = useCreateDirectMessageThreadMutation();
+  const [createThread] = useCreateDirectMessageThreadMutation();
   const [messagingUserId, setMessagingUserId] = useState<number | null>(null);
 
   const getInitials = (name: string | null): string => {
@@ -125,19 +126,21 @@ export const ConnectionsSection = ({ connections }: ConnectionsSectionProps) => 
                   : connection.title || connection.company || ''}
                 </div>
               </div>
-              <Button
-                variant='secondary'
-                onClick={() =>
-                  handleMessage(
-                    connection.user.id,
-                    connection.user.display_name || connection.user.username,
-                  )
-                }
-                loading={messagingUserId === connection.user.id || isCreatingThread}
-                className={styles.messageButton}
-              >
-                <IconMessageCircle size={16} />
-              </Button>
+              {messagingUserId === connection.user.id ?
+                <div className={styles.messageIcon}>
+                  <ButtonLoader />
+                </div>
+              : <IconMessage
+                  size={26}
+                  className={styles.messageIcon}
+                  onClick={() =>
+                    handleMessage(
+                      connection.user.id,
+                      connection.user.display_name || connection.user.username,
+                    )
+                  }
+                />
+              }
             </div>
           ))}
         </div>

@@ -5,6 +5,19 @@ All notable changes to Atria will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.1] - 2025-12-27
+
+### Fixed
+
+- DM functionality in Speakers Manager now works (was showing "Coming Soon" toast)
+- Error page issue links now point to correct repository
+
+### Changed
+
+- Message button in Dashboard connections simplified to icon-only approach for cleaner look
+
+[0.4.1]: https://github.com/thesubtleties/atria/releases/tag/v0.4.1
+
 ## [0.4.0] - 2025-12-24
 
 ### Added
