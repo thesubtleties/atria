@@ -103,7 +103,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
             <p className={styles.helpText}>
               If this problem persists, please{' '}
               <a
-                href='https://github.com/anthropics/claude-code/issues'
+                href='https://github.com/thesubtleties/atria/issues'
                 target='_blank'
                 rel='noopener noreferrer'
                 className={styles.helpLink}
