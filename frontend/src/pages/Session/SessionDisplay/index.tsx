@@ -1,5 +1,12 @@
 import { useState, useEffect } from 'react';
-import { VimeoPlayer, MuxPlayer, ZoomJoinCard, JitsiPlayer, OtherLinkCard } from './players';
+import {
+  VimeoPlayer,
+  MuxPlayer,
+  ZoomJoinCard,
+  JitsiPlayer,
+  OtherLinkCard,
+  SessionWindowCard,
+} from './players';
 import { Alert, Loader } from '@mantine/core';
 import type { SessionDetail, EventDetail } from '@/types/events';
 import type { User } from '@/types/auth';
@@ -27,6 +34,64 @@ export const SessionDisplay = ({ session, event, currentUser }: SessionDisplayPr
   const [playbackData, setPlaybackData] = useState<PlaybackData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Check visibility window state (no admin bypass for video - only chat has admin bypass)
+  const windowState = session?.window_state || 'open';
+  const isWindowOpen = session?.is_window_open ?? true;
+
+  /**
+   * Render VOD player based on vod_platform/vod_url or fallback to stream_url
+   * Priority:
+   * 1. If vod_url + vod_platform set → use that specific platform
+   * 2. If no vod_url but streaming_platform is VIMEO/MUX → use stream_url (auto-VOD)
+   */
+  const renderVodPlayer = () => {
+    const { vod_url, vod_platform, streaming_platform, stream_url } = session || {};
+
+    // Case 1: Explicit VOD URL with platform specified
+    if (vod_url && vod_platform) {
+      if (vod_platform === 'VIMEO') {
+        return <VimeoPlayer videoId={vod_url} />;
+      }
+      if (vod_platform === 'MUX') {
+        return (
+          <MuxPlayer
+            playbackId={vod_url}
+            playbackPolicy='PUBLIC'
+            session={session}
+            event={event}
+            currentUser={currentUser}
+          />
+        );
+      }
+      // OTHER platform - external link (YouTube, etc)
+      return <OtherLinkCard streamUrl={vod_url} />;
+    }
+
+    // Case 2: VOD URL set but no platform - treat as external link
+    if (vod_url && !vod_platform) {
+      return <OtherLinkCard streamUrl={vod_url} />;
+    }
+
+    // Case 3: No VOD URL - use original stream_url (Vimeo/Mux auto-VOD)
+    if (streaming_platform === 'VIMEO' && stream_url) {
+      return <VimeoPlayer videoId={stream_url} />;
+    }
+    if (streaming_platform === 'MUX' && stream_url) {
+      return (
+        <MuxPlayer
+          playbackId={stream_url}
+          playbackPolicy={session?.mux_playback_policy || 'PUBLIC'}
+          session={session}
+          event={event}
+          currentUser={currentUser}
+        />
+      );
+    }
+
+    // No VOD available - show thank you card
+    return <SessionWindowCard windowState='post' />;
+  };
 
   // Fetch playback data for Mux SIGNED streams and Jitsi (both need JWT tokens)
   useEffect(() => {
@@ -69,6 +134,27 @@ export const SessionDisplay = ({ session, event, currentUser }: SessionDisplayPr
 
   // Route to appropriate player based on platform
   const renderPlayer = () => {
+    // Check visibility window (applies to everyone - no admin bypass for video)
+    if (!isWindowOpen) {
+      if (windowState === 'pre') {
+        return (
+          <SessionWindowCard
+            windowState='pre'
+            sessionStartTime={session?.start_time}
+            eventStartDate={event?.start_date}
+            dayNumber={session?.day_number}
+            eventTimezone={event?.timezone}
+            visibilityMinutes={session?.effective_visibility_minutes}
+          />
+        );
+      }
+
+      if (windowState === 'post') {
+        // Post-session: show VOD if available, otherwise thank you card
+        return renderVodPlayer();
+      }
+    }
+
     const platform = session?.streaming_platform;
 
     // No streaming configured
