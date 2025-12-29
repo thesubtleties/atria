@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { TextInput, Textarea, Select, Group, Text, ActionIcon, Menu, Badge } from '@mantine/core';
 import { TimeSelect } from '@/shared/components/forms/TimeSelect';
 import { IconDots, IconTrash, IconAlertCircle } from '@tabler/icons-react';
@@ -11,6 +11,9 @@ import { cn } from '@/lib/cn';
 import {
   validateField,
   validateTimeOrder,
+  validateStreamUrl,
+  validateZoomMeetingId,
+  validateJitsiRoomName,
   type SessionFieldName,
   type SessionTypeValue,
 } from '../schemas/sessionCardSchema';
@@ -107,7 +110,6 @@ export const SessionCard = ({ session, hasConflict }: SessionCardProps) => {
   );
 
   const [errors, setErrors] = useState<FieldErrors>({});
-  const pendingPlatformChangeRef = useRef(false);
 
   const [debouncedTitle] = useDebouncedValue(title, 500);
   const [debouncedDescription] = useDebouncedValue(description, 500);
@@ -182,14 +184,18 @@ export const SessionCard = ({ session, hasConflict }: SessionCardProps) => {
   }, [debouncedTitle, session.title, handleUpdate, validateAndUpdate]);
 
   useEffect(() => {
-    if (debouncedDescription !== session.description) {
+    // Normalize comparison: treat null, undefined, '' as equivalent
+    const normalizedSessionDesc = session.description ?? '';
+    if (debouncedDescription !== normalizedSessionDesc) {
       handleUpdate({ description: debouncedDescription || null });
     }
   }, [debouncedDescription, session.description, handleUpdate]);
 
   useEffect(() => {
+    // Normalize comparison: treat null, undefined, '' as equivalent
+    const normalizedSessionShort = session.short_description ?? '';
     if (
-      debouncedShortDescription !== session.short_description &&
+      debouncedShortDescription !== normalizedSessionShort &&
       validateAndUpdate('short_description', debouncedShortDescription)
     ) {
       handleUpdate({ short_description: debouncedShortDescription || null });
@@ -197,79 +203,141 @@ export const SessionCard = ({ session, hasConflict }: SessionCardProps) => {
   }, [debouncedShortDescription, session.short_description, handleUpdate, validateAndUpdate]);
 
   useEffect(() => {
-    if (
-      debouncedStreamUrl !== session.stream_url &&
-      (debouncedStreamUrl === '' || validateAndUpdate('stream_url', debouncedStreamUrl))
-    ) {
-      if (pendingPlatformChangeRef.current) {
-        handleUpdate({
-          streaming_platform: (streamingPlatform || null) as StreamingPlatform | null,
-          stream_url: debouncedStreamUrl || null,
-        });
-        pendingPlatformChangeRef.current = false;
-      } else {
-        handleUpdate({ stream_url: debouncedStreamUrl || null });
-      }
+    // Normalize comparison: treat null, undefined, '' as equivalent
+    const normalizedSessionUrl = session.stream_url ?? '';
+    const hasActualChange = debouncedStreamUrl !== normalizedSessionUrl;
+
+    if (!hasActualChange) return;
+
+    // Empty value is valid (clearing the field)
+    if (debouncedStreamUrl === '') {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors.stream_url;
+        return newErrors;
+      });
+      handleUpdate({
+        streaming_platform: (streamingPlatform || null) as StreamingPlatform | null,
+        stream_url: null,
+      });
+      return;
     }
-  }, [debouncedStreamUrl, session.stream_url, streamingPlatform, handleUpdate, validateAndUpdate]);
+
+    // Validate with platform-aware schema
+    const validation = validateStreamUrl(streamingPlatform, debouncedStreamUrl);
+    if (!validation.success) {
+      const zodError = validation.error as { errors: { message: string }[] };
+      setErrors((prev) => ({ ...prev, stream_url: zodError.errors[0]?.message ?? 'Invalid value' }));
+      return;
+    }
+
+    // Clear error and send update
+    setErrors((prev) => {
+      const newErrors = { ...prev };
+      delete newErrors.stream_url;
+      return newErrors;
+    });
+    handleUpdate({
+      streaming_platform: (streamingPlatform || null) as StreamingPlatform | null,
+      stream_url: debouncedStreamUrl,
+    });
+  }, [debouncedStreamUrl, session.stream_url, streamingPlatform, handleUpdate]);
 
   useEffect(() => {
-    if (
-      debouncedZoomMeetingId !== session.zoom_meeting_id &&
-      (debouncedZoomMeetingId === '' ||
-        validateAndUpdate('zoom_meeting_id', debouncedZoomMeetingId))
-    ) {
-      if (pendingPlatformChangeRef.current) {
-        handleUpdate({
-          streaming_platform: (streamingPlatform || null) as StreamingPlatform | null,
-          zoom_meeting_id: debouncedZoomMeetingId || null,
-        });
-        pendingPlatformChangeRef.current = false;
-      } else {
-        handleUpdate({ zoom_meeting_id: debouncedZoomMeetingId || null });
-      }
+    // Normalize comparison: treat null, undefined, '' as equivalent
+    const normalizedSessionZoom = session.zoom_meeting_id ?? '';
+    const hasActualChange = debouncedZoomMeetingId !== normalizedSessionZoom;
+
+    if (!hasActualChange) return;
+
+    // Empty value is valid (clearing the field)
+    if (debouncedZoomMeetingId === '') {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors.zoom_meeting_id;
+        return newErrors;
+      });
+      handleUpdate({
+        streaming_platform: (streamingPlatform || null) as StreamingPlatform | null,
+        zoom_meeting_id: null,
+      });
+      return;
     }
-  }, [
-    debouncedZoomMeetingId,
-    session.zoom_meeting_id,
-    streamingPlatform,
-    handleUpdate,
-    validateAndUpdate,
-  ]);
+
+    // Validate with Zoom-specific schema
+    const validation = validateZoomMeetingId(debouncedZoomMeetingId);
+    if (!validation.success) {
+      const zodError = validation.error as { errors: { message: string }[] };
+      setErrors((prev) => ({ ...prev, zoom_meeting_id: zodError.errors[0]?.message ?? 'Invalid value' }));
+      return;
+    }
+
+    // Clear error and send update
+    setErrors((prev) => {
+      const newErrors = { ...prev };
+      delete newErrors.zoom_meeting_id;
+      return newErrors;
+    });
+    handleUpdate({
+      streaming_platform: (streamingPlatform || null) as StreamingPlatform | null,
+      zoom_meeting_id: debouncedZoomMeetingId,
+    });
+  }, [debouncedZoomMeetingId, session.zoom_meeting_id, streamingPlatform, handleUpdate]);
 
   useEffect(() => {
-    if (debouncedZoomPasscode !== session.zoom_passcode) {
+    // Normalize comparison: treat null, undefined, '' as equivalent
+    const normalizedSessionPasscode = session.zoom_passcode ?? '';
+    if (debouncedZoomPasscode !== normalizedSessionPasscode) {
       handleUpdate({ zoom_passcode: debouncedZoomPasscode || null });
     }
   }, [debouncedZoomPasscode, session.zoom_passcode, handleUpdate]);
 
   useEffect(() => {
-    if (
-      debouncedJitsiRoomName !== session.jitsi_room_name &&
-      (debouncedJitsiRoomName === '' ||
-        validateAndUpdate('jitsi_room_name', debouncedJitsiRoomName))
-    ) {
-      if (pendingPlatformChangeRef.current) {
-        handleUpdate({
-          streaming_platform: (streamingPlatform || null) as StreamingPlatform | null,
-          jitsi_room_name: debouncedJitsiRoomName || null,
-        });
-        pendingPlatformChangeRef.current = false;
-      } else {
-        handleUpdate({ jitsi_room_name: debouncedJitsiRoomName || null });
-      }
+    // Normalize comparison: treat null, undefined, '' as equivalent
+    const normalizedSessionJitsi = session.jitsi_room_name ?? '';
+    const hasActualChange = debouncedJitsiRoomName !== normalizedSessionJitsi;
+
+    if (!hasActualChange) return;
+
+    // Empty value is valid (clearing the field)
+    if (debouncedJitsiRoomName === '') {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors.jitsi_room_name;
+        return newErrors;
+      });
+      handleUpdate({
+        streaming_platform: (streamingPlatform || null) as StreamingPlatform | null,
+        jitsi_room_name: null,
+      });
+      return;
     }
-  }, [
-    debouncedJitsiRoomName,
-    session.jitsi_room_name,
-    streamingPlatform,
-    handleUpdate,
-    validateAndUpdate,
-  ]);
+
+    // Validate with Jitsi-specific schema
+    const validation = validateJitsiRoomName(debouncedJitsiRoomName);
+    if (!validation.success) {
+      const zodError = validation.error as { errors: { message: string }[] };
+      setErrors((prev) => ({ ...prev, jitsi_room_name: zodError.errors[0]?.message ?? 'Invalid value' }));
+      return;
+    }
+
+    // Clear error and send update
+    setErrors((prev) => {
+      const newErrors = { ...prev };
+      delete newErrors.jitsi_room_name;
+      return newErrors;
+    });
+    handleUpdate({
+      streaming_platform: (streamingPlatform || null) as StreamingPlatform | null,
+      jitsi_room_name: debouncedJitsiRoomName,
+    });
+  }, [debouncedJitsiRoomName, session.jitsi_room_name, streamingPlatform, handleUpdate]);
 
   // Auto-save VOD URL (debounced)
   useEffect(() => {
-    if (debouncedVodUrl !== session.vod_url) {
+    // Normalize comparison: treat null, undefined, '' as equivalent
+    const normalizedSessionVod = session.vod_url ?? '';
+    if (debouncedVodUrl !== normalizedSessionVod) {
       handleUpdate({ vod_url: debouncedVodUrl || null });
     }
   }, [debouncedVodUrl, session.vod_url, handleUpdate]);
@@ -358,6 +426,7 @@ export const SessionCard = ({ session, hasConflict }: SessionCardProps) => {
     setStreamingPlatform(platformValue);
 
     if (!value || value === '') {
+      // Clearing platform - reset all streaming fields and update immediately
       setStreamUrl('');
       setZoomMeetingId('');
       setZoomPasscode('');
@@ -371,10 +440,9 @@ export const SessionCard = ({ session, hasConflict }: SessionCardProps) => {
         mux_playback_policy: null,
         jitsi_room_name: null,
       });
-      pendingPlatformChangeRef.current = false;
-    } else {
-      pendingPlatformChangeRef.current = true;
     }
+    // When selecting a platform, just set local state - the URL effect will
+    // send platform+URL together when user enters the URL
   };
 
   return (
