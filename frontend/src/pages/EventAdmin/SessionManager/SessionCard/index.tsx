@@ -227,7 +227,10 @@ export const SessionCard = ({ session, hasConflict }: SessionCardProps) => {
     const validation = validateStreamUrl(streamingPlatform, debouncedStreamUrl);
     if (!validation.success) {
       const zodError = validation.error as { errors: { message: string }[] };
-      setErrors((prev) => ({ ...prev, stream_url: zodError.errors[0]?.message ?? 'Invalid value' }));
+      setErrors((prev) => ({
+        ...prev,
+        stream_url: zodError.errors[0]?.message ?? 'Invalid value',
+      }));
       return;
     }
 
@@ -268,7 +271,10 @@ export const SessionCard = ({ session, hasConflict }: SessionCardProps) => {
     const validation = validateZoomMeetingId(debouncedZoomMeetingId);
     if (!validation.success) {
       const zodError = validation.error as { errors: { message: string }[] };
-      setErrors((prev) => ({ ...prev, zoom_meeting_id: zodError.errors[0]?.message ?? 'Invalid value' }));
+      setErrors((prev) => ({
+        ...prev,
+        zoom_meeting_id: zodError.errors[0]?.message ?? 'Invalid value',
+      }));
       return;
     }
 
@@ -317,7 +323,10 @@ export const SessionCard = ({ session, hasConflict }: SessionCardProps) => {
     const validation = validateJitsiRoomName(debouncedJitsiRoomName);
     if (!validation.success) {
       const zodError = validation.error as { errors: { message: string }[] };
-      setErrors((prev) => ({ ...prev, jitsi_room_name: zodError.errors[0]?.message ?? 'Invalid value' }));
+      setErrors((prev) => ({
+        ...prev,
+        jitsi_room_name: zodError.errors[0]?.message ?? 'Invalid value',
+      }));
       return;
     }
 

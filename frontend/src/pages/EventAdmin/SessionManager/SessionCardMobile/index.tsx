@@ -206,7 +206,10 @@ export const SessionCardMobile = ({ session, hasConflict }: SessionCardMobilePro
     const validation = validateStreamUrl(streamingPlatform, debouncedStreamUrl);
     if (!validation.success) {
       const zodError = validation.error as { errors: { message: string }[] };
-      setErrors((prev) => ({ ...prev, stream_url: zodError.errors[0]?.message ?? 'Invalid value' }));
+      setErrors((prev) => ({
+        ...prev,
+        stream_url: zodError.errors[0]?.message ?? 'Invalid value',
+      }));
       return;
     }
 
@@ -247,7 +250,10 @@ export const SessionCardMobile = ({ session, hasConflict }: SessionCardMobilePro
     const validation = validateZoomMeetingId(debouncedZoomMeetingId);
     if (!validation.success) {
       const zodError = validation.error as { errors: { message: string }[] };
-      setErrors((prev) => ({ ...prev, zoom_meeting_id: zodError.errors[0]?.message ?? 'Invalid value' }));
+      setErrors((prev) => ({
+        ...prev,
+        zoom_meeting_id: zodError.errors[0]?.message ?? 'Invalid value',
+      }));
       return;
     }
 

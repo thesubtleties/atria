@@ -21,9 +21,7 @@ const muxSchema = z
     'Enter Mux Playback ID (10+ alphanumeric chars) or stream URL',
   );
 
-const otherUrlSchema = z
-  .string()
-  .regex(/^https:\/\/.+/, 'Must be a valid HTTPS URL');
+const otherUrlSchema = z.string().regex(/^https:\/\/.+/, 'Must be a valid HTTPS URL');
 
 const zoomSchema = z
   .string()
@@ -131,17 +129,13 @@ export const validateStreamUrl = (
 };
 
 // Platform-aware validation for Zoom meeting ID
-export const validateZoomMeetingId = (
-  value: string,
-): z.SafeParseReturnType<string, string> => {
+export const validateZoomMeetingId = (value: string): z.SafeParseReturnType<string, string> => {
   if (!value) return { success: true, data: '' } as z.SafeParseSuccess<string>;
   return zoomSchema.safeParse(value);
 };
 
 // Platform-aware validation for Jitsi room name
-export const validateJitsiRoomName = (
-  value: string,
-): z.SafeParseReturnType<string, string> => {
+export const validateJitsiRoomName = (value: string): z.SafeParseReturnType<string, string> => {
   if (!value) return { success: true, data: '' } as z.SafeParseSuccess<string>;
   return jitsiSchema.safeParse(value);
 };
