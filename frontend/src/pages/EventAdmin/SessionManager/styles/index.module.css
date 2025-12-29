@@ -331,6 +331,16 @@
   min-height: 60px;
 }
 
+/* Section labels for inline form groups */
+.sectionLabel {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+  margin-bottom: 0.35rem;
+}
+
 /* Form inputs within modals - Subtle and clean */
 .formInput,
 .formSelect,

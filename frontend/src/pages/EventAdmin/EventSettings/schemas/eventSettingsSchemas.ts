@@ -5,16 +5,19 @@ export const eventUpdateSchema = z
     title: z.string().min(3, 'Title must be at least 3 characters'),
     description: z.string().optional(),
     event_type: z.enum(['CONFERENCE', 'SINGLE_SESSION']),
-    start_date: z.date({
-      required_error: 'Start date is required',
-    }),
-    end_date: z.date({
-      required_error: 'End date is required',
-    }),
+    start_date: z
+      .string()
+      .min(1, 'Start date is required')
+      .regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format'),
+    end_date: z
+      .string()
+      .min(1, 'End date is required')
+      .regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format'),
     timezone: z.string().min(1, 'Timezone is required'),
     company_name: z.string().min(1, 'Company name is required'),
     status: z.enum(['DRAFT', 'PUBLISHED', 'ARCHIVED']),
     main_session_id: z.string().nullable().optional(),
+    session_visibility_minutes: z.string().optional(),
   })
   .refine((data) => data.end_date >= data.start_date, {
     message: 'End date must be after start date',
