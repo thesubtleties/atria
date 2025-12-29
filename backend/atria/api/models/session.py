@@ -35,6 +35,14 @@ class Session(db.Model):
     jitsi_room_name = db.Column(db.String(255), nullable=True)  # JaaS room identifier
     # Note: OTHER platform uses stream_url (same as VIMEO/MUX) - no separate column needed
 
+    # Visibility window override (in minutes before/after session times)
+    # NULL = use event default, 0 = always on, 5/10/15/30 = minutes
+    visibility_minutes_override = db.Column(db.Integer, nullable=True)
+
+    # VOD (Video on Demand) for post-session playback
+    vod_url = db.Column(db.Text, nullable=True)
+    vod_platform = db.Column(db.String(20), nullable=True)  # VIMEO, MUX, OTHER
+
     day_number = db.Column(db.BigInteger, nullable=False)
     created_at = db.Column(
         db.DateTime(timezone=True), server_default=db.func.current_timestamp()
@@ -254,6 +262,82 @@ class Session(db.Model):
     def has_backstage_chat_enabled(self):
         """Check if backstage chat is enabled for this session"""
         return self.chat_mode in [SessionChatMode.ENABLED, SessionChatMode.BACKSTAGE_ONLY]
+
+    # Visibility Window Properties
+    @property
+    def effective_visibility_minutes(self) -> int | None:
+        """Get the effective visibility window in minutes.
+
+        Returns:
+            int: Minutes before/after session time (0 = always on explicitly)
+            None: Always on (from NULL event default)
+        """
+        # Session override takes priority
+        if self.visibility_minutes_override is not None:
+            return self.visibility_minutes_override if self.visibility_minutes_override > 0 else None
+        # Fall back to event default
+        if self.event and self.event.session_visibility_minutes is not None:
+            return self.event.session_visibility_minutes if self.event.session_visibility_minutes > 0 else None
+        # Default: always on
+        return None
+
+    @property
+    def window_opens_at(self) -> datetime | None:
+        """Get datetime when visibility window opens, or None if always open."""
+        minutes = self.effective_visibility_minutes
+        if minutes is None:
+            return None
+        return self.start_datetime - timedelta(minutes=minutes)
+
+    @property
+    def window_closes_at(self) -> datetime | None:
+        """Get datetime when visibility window closes, or None if always open."""
+        minutes = self.effective_visibility_minutes
+        if minutes is None:
+            return None
+        return self.end_datetime + timedelta(minutes=minutes)
+
+    @property
+    def is_window_open(self) -> bool:
+        """Check if the session visibility window is currently open."""
+        opens_at = self.window_opens_at
+        closes_at = self.window_closes_at
+
+        if opens_at is None or closes_at is None:
+            return True  # Always on
+
+        now = datetime.now(timezone.utc)
+        return opens_at <= now <= closes_at
+
+    @property
+    def window_state(self) -> str:
+        """Get current window state: 'pre', 'open', or 'post'."""
+        if self.effective_visibility_minutes is None:
+            return 'open'  # Always on
+
+        now = datetime.now(timezone.utc)
+
+        if now < self.window_opens_at:
+            return 'pre'
+        elif now > self.window_closes_at:
+            return 'post'
+        else:
+            return 'open'
+
+    @property
+    def has_vod(self) -> bool:
+        """Check if VOD is available for this session."""
+        # Manual VOD URL takes priority
+        if self.vod_url:
+            return True
+        # Vimeo embeds work as VOD after stream ends
+        if self.streaming_platform == 'VIMEO' and self.stream_url:
+            return True
+        # Mux playback IDs work for VOD
+        if self.streaming_platform == 'MUX' and self.stream_url:
+            return True
+        # Jitsi/Zoom/Other - no automatic VOD
+        return False
 
     def get_speakers_by_role(self, role: SessionSpeakerRole):
         """Get all speakers with specific role"""

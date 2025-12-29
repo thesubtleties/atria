@@ -28,6 +28,11 @@ interface SessionData {
   zoom_passcode?: string | null;
   mux_playback_policy?: 'PUBLIC' | 'SIGNED' | null;
   jitsi_room_name?: string | null;
+  // Visibility window fields
+  visibility_minutes_override?: number | null;
+  // VOD fields
+  vod_url?: string | null;
+  vod_platform?: StreamingPlatform | null;
 }
 
 interface EventData {
@@ -63,6 +68,24 @@ const STREAMING_PLATFORMS = [
 const MUX_PLAYBACK_POLICIES = [
   { value: 'PUBLIC', label: 'Public (Anyone with link)' },
   { value: 'SIGNED', label: 'Signed (Requires authentication)' },
+] as const;
+
+// Visibility window options (stored as integer minutes, NULL = use event default)
+const VISIBILITY_WINDOW_OPTIONS = [
+  { value: '', label: 'Use event default' }, // NULL - use event-level setting
+  { value: '0', label: 'Always visible' }, // 0 = always on
+  { value: '2', label: '2 minutes before/after' },
+  { value: '5', label: '5 minutes before/after' },
+  { value: '10', label: '10 minutes before/after' },
+  { value: '15', label: '15 minutes before/after' },
+] as const;
+
+// VOD platform options (for post-session recording)
+const VOD_PLATFORMS = [
+  { value: '', label: 'Auto-detect from stream' }, // NULL - use streaming platform
+  { value: 'VIMEO', label: 'Vimeo' },
+  { value: 'MUX', label: 'Mux Video' },
+  { value: 'OTHER', label: 'Other (External Link)' },
 ] as const;
 
 interface EventDay {
@@ -109,6 +132,11 @@ interface SessionFormValues {
   zoom_passcode: string;
   mux_playback_policy: 'PUBLIC' | 'SIGNED';
   jitsi_room_name: string;
+  // Visibility window (stored as string for Select, converted to int on submit)
+  visibility_minutes_override: string;
+  // VOD fields
+  vod_url: string;
+  vod_platform: StreamingPlatform | '';
 }
 
 interface EditSessionModalProps {
@@ -156,6 +184,14 @@ export const EditSessionModal = ({
         zoom_passcode: session.zoom_passcode || '',
         mux_playback_policy: session.mux_playback_policy || 'PUBLIC',
         jitsi_room_name: session.jitsi_room_name || '',
+        // Visibility window: null = use event default (empty string in form)
+        visibility_minutes_override:
+          session.visibility_minutes_override != null ?
+            session.visibility_minutes_override.toString()
+          : '',
+        // VOD fields
+        vod_url: session.vod_url || '',
+        vod_platform: session.vod_platform || '',
       };
     }
     return {
@@ -173,6 +209,9 @@ export const EditSessionModal = ({
       zoom_passcode: '',
       mux_playback_policy: 'PUBLIC',
       jitsi_room_name: '',
+      visibility_minutes_override: '', // Empty = use event default
+      vod_url: '',
+      vod_platform: '',
     };
   };
 
@@ -221,7 +260,14 @@ export const EditSessionModal = ({
         zoom_passcode: values.zoom_passcode || null,
         mux_playback_policy: values.mux_playback_policy || null,
         jitsi_room_name: values.jitsi_room_name || null,
-        // Note: OTHER platform uses stream_url (sent above)
+        // Visibility window: empty string → null (use event default), otherwise parse int
+        visibility_minutes_override:
+          values.visibility_minutes_override === '' ?
+            null
+          : parseInt(values.visibility_minutes_override, 10),
+        // VOD fields
+        vod_url: values.vod_url || null,
+        vod_platform: values.vod_platform || null,
       };
 
       let result: { id: number };
@@ -429,6 +475,38 @@ export const EditSessionModal = ({
             classNames={{ input: styles.formSelect || '' }}
             {...form.getInputProps('chat_mode')}
           />
+
+          <Select
+            label='Visibility Window'
+            placeholder='When attendees can access this session'
+            description='Controls when video and chat become available relative to session times'
+            data={[...VISIBILITY_WINDOW_OPTIONS]}
+            allowDeselect={false}
+            classNames={{ input: styles.formSelect || '' }}
+            {...form.getInputProps('visibility_minutes_override')}
+          />
+
+          <Text className={styles.sectionTitle || ''}>Recording (VOD)</Text>
+
+          <TextInput
+            label='Recording URL (Optional)'
+            placeholder='https://vimeo.com/... or Mux playback ID'
+            description='Add a recording URL for attendees to watch after the session ends'
+            classNames={{ input: styles.formInput || '' }}
+            {...form.getInputProps('vod_url')}
+          />
+
+          {form.values.vod_url && (
+            <Select
+              label='Recording Platform'
+              placeholder='Select platform for the recording'
+              description='Leave as auto-detect to use the same platform as the live stream'
+              data={[...VOD_PLATFORMS]}
+              allowDeselect={false}
+              classNames={{ input: styles.formSelect || '' }}
+              {...form.getInputProps('vod_platform')}
+            />
+          )}
 
           <div className={styles.buttonGroup || ''}>
             <Button variant='secondary' onClick={onClose} disabled={isLoading}>

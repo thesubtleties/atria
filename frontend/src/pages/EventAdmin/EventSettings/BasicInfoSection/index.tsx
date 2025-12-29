@@ -32,7 +32,16 @@ type FormValues = {
   company_name: string;
   status: string;
   main_session_id: string | null;
+  session_visibility_minutes: string;
 };
+
+const VISIBILITY_WINDOW_OPTIONS = [
+  { value: '', label: 'Always visible' },
+  { value: '2', label: '2 minutes before/after' },
+  { value: '5', label: '5 minutes before/after' },
+  { value: '10', label: '10 minutes before/after' },
+  { value: '15', label: '15 minutes before/after' },
+] as const;
 
 const BasicInfoSection = ({ event, eventId }: BasicInfoSectionProps) => {
   const [updateEvent, { isLoading }] = useUpdateEventMutation();
@@ -56,6 +65,10 @@ const BasicInfoSection = ({ event, eventId }: BasicInfoSectionProps) => {
       company_name: event?.company_name || '',
       status: event?.status || 'DRAFT',
       main_session_id: event?.main_session_id?.toString() || null,
+      session_visibility_minutes:
+        event?.session_visibility_minutes != null ?
+          event.session_visibility_minutes.toString()
+        : '',
     },
     validate: zodResolver(eventUpdateSchema),
   });
@@ -74,6 +87,13 @@ const BasicInfoSection = ({ event, eventId }: BasicInfoSectionProps) => {
         }
         if (formKey === 'main_session_id') {
           return form.values[formKey] !== (event?.main_session_id?.toString() || null);
+        }
+        if (formKey === 'session_visibility_minutes') {
+          const eventValue =
+            event?.session_visibility_minutes != null ?
+              event.session_visibility_minutes.toString()
+            : '';
+          return form.values[formKey] !== eventValue;
         }
         return form.values[formKey] !== event?.[formKey as keyof Event];
       });
@@ -103,6 +123,10 @@ const BasicInfoSection = ({ event, eventId }: BasicInfoSectionProps) => {
         company_name: values.company_name,
         status: values.status as Event['status'],
         main_session_id: values.main_session_id ? parseInt(values.main_session_id, 10) : null,
+        session_visibility_minutes:
+          values.session_visibility_minutes ?
+            parseInt(values.session_visibility_minutes, 10)
+          : null,
       }).unwrap();
 
       notifications.show({
@@ -132,6 +156,10 @@ const BasicInfoSection = ({ event, eventId }: BasicInfoSectionProps) => {
       company_name: event?.company_name || '',
       status: event?.status || 'DRAFT',
       main_session_id: event?.main_session_id?.toString() || null,
+      session_visibility_minutes:
+        event?.session_visibility_minutes != null ?
+          event.session_visibility_minutes.toString()
+        : '',
     });
     setHasChanges(false);
   };
@@ -251,6 +279,18 @@ const BasicInfoSection = ({ event, eventId }: BasicInfoSectionProps) => {
               label: styles.formLabel ?? '',
             }}
             {...form.getInputProps('timezone')}
+          />
+
+          <Select
+            label='Session Visibility Window'
+            description='Default window for when session content becomes accessible (can be overridden per session)'
+            data={[...VISIBILITY_WINDOW_OPTIONS]}
+            allowDeselect={false}
+            classNames={{
+              input: styles.formInput ?? '',
+              label: styles.formLabel ?? '',
+            }}
+            {...form.getInputProps('session_visibility_minutes')}
           />
 
           {form.values.event_type === 'SINGLE_SESSION' && sessionOptions.length > 0 && (

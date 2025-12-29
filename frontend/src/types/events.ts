@@ -92,6 +92,9 @@ export type Event = {
   icebreakers: string[];
   sponsor_tiers: SponsorTier[];
   main_session_id: number | null;
+  // Session visibility window (default for all sessions)
+  // NULL = always on, 0 = always on (explicit), 5/10/15/30 = minutes
+  session_visibility_minutes: number | null;
   created_at: string;
   updated_at: string | null;
   deleted_at: string | null;
@@ -169,6 +172,7 @@ type EventMutableFields = {
   sections: Partial<EventSections>;
   icebreakers: string[];
   main_session_id: number | null;
+  session_visibility_minutes: number | null;
 };
 
 /** Event update payload - requires at least one field */
@@ -232,6 +236,11 @@ export type Session = {
   mux_playback_policy: 'PUBLIC' | 'SIGNED' | null;
   jitsi_room_name: string | null;
   day_number: number;
+  // Visibility window override (NULL = use event default, 0 = always on)
+  visibility_minutes_override: number | null;
+  // VOD fields
+  vod_url: string | null;
+  vod_platform: StreamingPlatform | null;
   created_at: string;
   updated_at: string | null;
 
@@ -246,6 +255,13 @@ export type Session = {
   has_chat_enabled: boolean;
   has_public_chat_enabled: boolean;
   has_backstage_chat_enabled: boolean;
+  // Visibility window computed properties
+  effective_visibility_minutes: number | null;
+  window_opens_at: string | null; // ISO datetime
+  window_closes_at: string | null; // ISO datetime
+  is_window_open: boolean;
+  window_state: 'pre' | 'open' | 'post';
+  has_vod: boolean;
 };
 
 /** Detailed session with relationships */
@@ -276,6 +292,9 @@ export type SessionCreateData = {
   zoom_passcode?: string | null;
   mux_playback_policy?: 'PUBLIC' | 'SIGNED' | null;
   jitsi_room_name?: string | null;
+  visibility_minutes_override?: number | null;
+  vod_url?: string | null;
+  vod_platform?: StreamingPlatform | null;
 };
 
 /** Mutable fields for session updates */
@@ -295,6 +314,9 @@ type SessionMutableFields = {
   zoom_passcode: string | null;
   mux_playback_policy: 'PUBLIC' | 'SIGNED' | null;
   jitsi_room_name: string | null;
+  visibility_minutes_override: number | null;
+  vod_url: string | null;
+  vod_platform: StreamingPlatform | null;
 };
 
 /** Session update payload - requires at least one field */

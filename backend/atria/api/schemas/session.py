@@ -39,6 +39,19 @@ class SessionSchema(ma.SQLAlchemyAutoSchema):
     has_public_chat_enabled = ma.Boolean(dump_only=True)
     has_backstage_chat_enabled = ma.Boolean(dump_only=True)
 
+    # Visibility window properties
+    visibility_minutes_override = ma.Integer(allow_none=True)
+    effective_visibility_minutes = ma.Integer(dump_only=True, allow_none=True)
+    window_opens_at = ma.DateTime(dump_only=True, allow_none=True)
+    window_closes_at = ma.DateTime(dump_only=True, allow_none=True)
+    is_window_open = ma.Boolean(dump_only=True)
+    window_state = ma.String(dump_only=True)  # 'pre', 'open', 'post'
+
+    # VOD properties
+    vod_url = ma.String(allow_none=True)
+    vod_platform = ma.String(allow_none=True)
+    has_vod = ma.Boolean(dump_only=True)
+
 
 class SessionDetailSchema(SessionSchema):
     """Detailed Session Schema with relationships"""
@@ -83,6 +96,13 @@ class SessionCreateSchema(ma.Schema):
     mux_playback_policy = ma.String(allow_none=True)  # 'PUBLIC' or 'SIGNED'
     jitsi_room_name = ma.String(allow_none=True)  # JaaS room identifier
     # Note: OTHER platform uses stream_url (same as VIMEO/MUX)
+
+    # Visibility window override (NULL = use event default, 0 = always on)
+    visibility_minutes_override = ma.Integer(allow_none=True)
+
+    # VOD fields
+    vod_url = ma.String(allow_none=True)
+    vod_platform = ma.String(allow_none=True)
 
     @validates("title")
     def validate_title(self, value, **kwargs):
@@ -228,6 +248,13 @@ class SessionUpdateSchema(ma.Schema):
     mux_playback_policy = ma.String(allow_none=True)  # 'PUBLIC' or 'SIGNED'
     jitsi_room_name = ma.String(allow_none=True)  # JaaS room identifier
     # Note: OTHER platform uses stream_url (same as VIMEO/MUX)
+
+    # Visibility window override (NULL = use event default, 0 = always on)
+    visibility_minutes_override = ma.Integer(allow_none=True)
+
+    # VOD fields
+    vod_url = ma.String(allow_none=True)
+    vod_platform = ma.String(allow_none=True)
 
     @validates_schema
     def validate_streaming_config(self, data, **kwargs):

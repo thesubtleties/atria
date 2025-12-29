@@ -74,6 +74,11 @@ class Event(db.Model):
         db.BigInteger, db.ForeignKey("sessions.id", ondelete="SET NULL"), nullable=True
     )
 
+    # Session visibility window (in minutes before/after session times)
+    # NULL = always on (backward compatible default), 0 = explicitly always on
+    # 5/10/15/30 = minutes before start and after end
+    session_visibility_minutes = db.Column(db.Integer, nullable=True)
+
     icebreakers = db.Column(
         db.JSON,
         nullable=True,

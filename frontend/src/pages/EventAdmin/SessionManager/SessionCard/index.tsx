@@ -47,6 +47,22 @@ const MUX_PLAYBACK_POLICIES = [
   { value: 'SIGNED', label: 'Signed' },
 ] as const;
 
+const VISIBILITY_WINDOW_OPTIONS = [
+  { value: '', label: 'Event default' },
+  { value: '0', label: 'Always visible' },
+  { value: '2', label: '2 min' },
+  { value: '5', label: '5 min' },
+  { value: '10', label: '10 min' },
+  { value: '15', label: '15 min' },
+] as const;
+
+const VOD_PLATFORMS = [
+  { value: '', label: 'Auto-detect' },
+  { value: 'VIMEO', label: 'Vimeo' },
+  { value: 'MUX', label: 'Mux' },
+  { value: 'OTHER', label: 'Other' },
+] as const;
+
 type SessionCardProps = {
   session: Session;
   hasConflict: boolean;
@@ -79,6 +95,17 @@ export const SessionCard = ({ session, hasConflict }: SessionCardProps) => {
   );
   const [jitsiRoomName, setJitsiRoomName] = useState(session.jitsi_room_name ?? '');
 
+  // Visibility window and VOD fields
+  const [visibilityMinutesOverride, setVisibilityMinutesOverride] = useState<string>(
+    session.visibility_minutes_override != null ?
+      session.visibility_minutes_override.toString()
+    : '',
+  );
+  const [vodUrl, setVodUrl] = useState(session.vod_url ?? '');
+  const [vodPlatform, setVodPlatform] = useState<StreamingPlatform | ''>(
+    session.vod_platform ?? '',
+  );
+
   const [errors, setErrors] = useState<FieldErrors>({});
   const pendingPlatformChangeRef = useRef(false);
 
@@ -89,6 +116,7 @@ export const SessionCard = ({ session, hasConflict }: SessionCardProps) => {
   const [debouncedZoomMeetingId] = useDebouncedValue(zoomMeetingId, 500);
   const [debouncedZoomPasscode] = useDebouncedValue(zoomPasscode, 500);
   const [debouncedJitsiRoomName] = useDebouncedValue(jitsiRoomName, 500);
+  const [debouncedVodUrl] = useDebouncedValue(vodUrl, 500);
 
   const handleUpdate = useCallback(
     async (updates: Partial<Session>) => {
@@ -109,6 +137,9 @@ export const SessionCard = ({ session, hasConflict }: SessionCardProps) => {
           mux_playback_policy?: string | null;
           jitsi_room_name?: string | null;
           short_description?: string | null;
+          visibility_minutes_override?: number | null;
+          vod_url?: string | null;
+          vod_platform?: StreamingPlatform | null;
         } = {
           id: session.id,
           ...Object.fromEntries(
@@ -235,6 +266,13 @@ export const SessionCard = ({ session, hasConflict }: SessionCardProps) => {
     handleUpdate,
     validateAndUpdate,
   ]);
+
+  // Auto-save VOD URL (debounced)
+  useEffect(() => {
+    if (debouncedVodUrl !== session.vod_url) {
+      handleUpdate({ vod_url: debouncedVodUrl || null });
+    }
+  }, [debouncedVodUrl, session.vod_url, handleUpdate]);
 
   const calculateDuration = (start: string, end: string): string => {
     const startParts = start.split(':').map(Number);
@@ -541,6 +579,50 @@ export const SessionCard = ({ session, hasConflict }: SessionCardProps) => {
             />
           </Group>
         )}
+
+        {/* Visibility Window and VOD */}
+        <Group gap='xs' style={{ marginTop: 8 }}>
+          <Select
+            placeholder='Visibility'
+            value={visibilityMinutesOverride}
+            onChange={(value) => {
+              const newValue = value ?? '';
+              setVisibilityMinutesOverride(newValue);
+              handleUpdate({
+                visibility_minutes_override: newValue === '' ? null : parseInt(newValue, 10),
+              });
+            }}
+            data={[...VISIBILITY_WINDOW_OPTIONS]}
+            size='sm'
+            allowDeselect={false}
+            style={{ width: 130 }}
+            classNames={{ input: cn(styles.formSelect) }}
+          />
+          <TextInput
+            placeholder='Recording URL (optional)'
+            size='sm'
+            style={{ flex: 1 }}
+            value={vodUrl}
+            onChange={(e) => setVodUrl(e.target.value)}
+            classNames={{ input: cn(styles.formInput) }}
+          />
+          {vodUrl && (
+            <Select
+              placeholder='VOD Platform'
+              value={vodPlatform}
+              onChange={(value) => {
+                const newValue = (value ?? '') as StreamingPlatform | '';
+                setVodPlatform(newValue);
+                handleUpdate({ vod_platform: newValue || null });
+              }}
+              data={[...VOD_PLATFORMS]}
+              size='sm'
+              allowDeselect={false}
+              style={{ width: 120 }}
+              classNames={{ input: cn(styles.formSelect) }}
+            />
+          )}
+        </Group>
 
         <div className={styles.speakersSection}>
           {(() => {

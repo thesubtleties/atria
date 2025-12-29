@@ -28,6 +28,10 @@ class EventSchema(ma.SQLAlchemyAutoSchema):
     user_role = ma.String(dump_only=True)  # Current user's role in the event
     main_session_id = ma.Integer(dump_only=True)  # For single_session events
 
+    # Session visibility window (default for all sessions in this event)
+    # NULL = always on, 0 = always on (explicit), 5/10/15/30 = minutes
+    session_visibility_minutes = ma.Integer(allow_none=True)
+
 
 # Detailed Schema - Used for GET /events/<id> with all relationships
 class EventDetailSchema(EventSchema):
@@ -179,6 +183,9 @@ class EventUpdateSchema(ma.Schema):
     
     # Single session navigation
     main_session_id = ma.Integer(allow_none=True)
+
+    # Session visibility window (default for all sessions)
+    session_visibility_minutes = ma.Integer(allow_none=True)
 
     @validates("timezone")
     def validate_timezone(self, value, **kwargs):
