@@ -60,7 +60,8 @@ export const SessionWindowCard = ({
           <Stack gap='xs' align='center'>
             {startTimes && (
               <Text size='sm' ta='center' style={{ color: 'var(--color-text-primary)' }}>
-                Session starts at {startTimes.userTime || startTimes.eventTime} {startTimes.timezone}
+                Session starts at {startTimes.userTime || startTimes.eventTime}{' '}
+                {startTimes.timezone}
                 {startTimes.showUserTime && (
                   <Text span size='sm' style={{ color: 'var(--color-text-secondary)' }}>
                     {' '}
@@ -69,11 +70,11 @@ export const SessionWindowCard = ({
                 )}
               </Text>
             )}
-            {visibilityMinutes ? (
+            {visibilityMinutes ?
               <Text size='sm' ta='center' style={{ color: 'var(--color-text-secondary)' }}>
                 Room opens {visibilityMinutes} minutes before
               </Text>
-            ) : null}
+            : null}
           </Stack>
 
           <Text size='xs' ta='center' style={{ color: 'var(--color-text-muted)' }}>
@@ -108,7 +109,11 @@ export const SessionWindowCard = ({
           Thanks for Attending!
         </Text>
 
-        <Text size='sm' ta='center' style={{ color: 'var(--color-text-secondary)', maxWidth: '400px' }}>
+        <Text
+          size='sm'
+          ta='center'
+          style={{ color: 'var(--color-text-secondary)', maxWidth: '400px' }}
+        >
           This session has ended. Thank you for joining us.
         </Text>
       </Stack>

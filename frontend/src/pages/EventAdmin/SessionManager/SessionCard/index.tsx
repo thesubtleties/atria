@@ -102,7 +102,9 @@ export const SessionCard = ({ session, hasConflict }: SessionCardProps) => {
     : '',
   );
   const [vodUrl, setVodUrl] = useState(session.vod_url ?? '');
-  const [vodPlatform, setVodPlatform] = useState<StreamingPlatform | ''>(session.vod_platform ?? '');
+  const [vodPlatform, setVodPlatform] = useState<StreamingPlatform | ''>(
+    session.vod_platform ?? '',
+  );
 
   const [errors, setErrors] = useState<FieldErrors>({});
   const pendingPlatformChangeRef = useRef(false);
