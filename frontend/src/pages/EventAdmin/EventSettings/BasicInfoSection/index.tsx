@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react';
 import { TextInput, Textarea, Select, Stack, Group, Text } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
-import { DateInput } from '@mantine/dates';
 import { notifications } from '@mantine/notifications';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { useUpdateEventMutation } from '@/app/features/events/api';
 import { useGetSessionsQuery } from '@/app/features/sessions/api';
 import { useEventStatusStyle } from '@/shared/hooks/useEventStatusStyle';
-import { parseDateOnly, formatDateOnly } from '@/shared/hooks/formatDate';
+// Dates are stored as YYYY-MM-DD strings, used directly with native date input
 import { eventUpdateSchema } from '../schemas/eventSettingsSchemas';
 import { Button } from '@/shared/components/buttons';
 import { COMMON_TIMEZONES } from '@/shared/constants/timezones';
@@ -26,8 +25,8 @@ type FormValues = {
   title: string;
   description: string;
   event_type: string;
-  start_date: Date | null;
-  end_date: Date | null;
+  start_date: string;
+  end_date: string;
   timezone: string;
   company_name: string;
   status: string;
@@ -59,8 +58,8 @@ const BasicInfoSection = ({ event, eventId }: BasicInfoSectionProps) => {
       title: event?.title || '',
       description: event?.description || '',
       event_type: event?.event_type || 'CONFERENCE',
-      start_date: parseDateOnly(event?.start_date),
-      end_date: parseDateOnly(event?.end_date),
+      start_date: event?.start_date || '',
+      end_date: event?.end_date || '',
       timezone: event?.timezone || 'UTC',
       company_name: event?.company_name || '',
       status: event?.status || 'DRAFT',
@@ -79,11 +78,8 @@ const BasicInfoSection = ({ event, eventId }: BasicInfoSectionProps) => {
       const changed = Object.keys(form.values).some((key) => {
         const formKey = key as keyof FormValues;
         if (formKey === 'start_date' || formKey === 'end_date') {
-          // Compare dates as YYYY-MM-DD strings to avoid timezone issues
-          const eventKey = formKey as 'start_date' | 'end_date';
-          const eventDate = event?.[eventKey] || null;
-          const formDate = formatDateOnly(form.values[formKey] as Date | null);
-          return eventDate !== formDate;
+          // Compare as strings directly (both are YYYY-MM-DD)
+          return form.values[formKey] !== (event?.[formKey] || '');
         }
         if (formKey === 'main_session_id') {
           return form.values[formKey] !== (event?.main_session_id?.toString() || null);
@@ -117,8 +113,8 @@ const BasicInfoSection = ({ event, eventId }: BasicInfoSectionProps) => {
         title: values.title,
         description: values.description || null,
         event_type: values.event_type as Event['event_type'],
-        start_date: formatDateOnly(values.start_date) || '',
-        end_date: formatDateOnly(values.end_date) || '',
+        start_date: values.start_date,
+        end_date: values.end_date,
         timezone: values.timezone,
         company_name: values.company_name,
         status: values.status as Event['status'],
@@ -150,8 +146,8 @@ const BasicInfoSection = ({ event, eventId }: BasicInfoSectionProps) => {
       title: event?.title || '',
       description: event?.description || '',
       event_type: event?.event_type || 'CONFERENCE',
-      start_date: parseDateOnly(event?.start_date),
-      end_date: parseDateOnly(event?.end_date),
+      start_date: event?.start_date || '',
+      end_date: event?.end_date || '',
       timezone: event?.timezone || 'UTC',
       company_name: event?.company_name || '',
       status: event?.status || 'DRAFT',
@@ -234,9 +230,9 @@ const BasicInfoSection = ({ event, eventId }: BasicInfoSectionProps) => {
           </Group>
 
           <Group grow>
-            <DateInput
+            <TextInput
+              type='date'
               label='Start Date'
-              placeholder='Select start date'
               required
               classNames={{
                 input: styles.formInput ?? '',
@@ -245,10 +241,11 @@ const BasicInfoSection = ({ event, eventId }: BasicInfoSectionProps) => {
               {...form.getInputProps('start_date')}
             />
 
-            <DateInput
+            <TextInput
+              type='date'
               label='End Date'
-              placeholder='Select end date'
               required
+              min={form.values.start_date}
               classNames={{
                 input: styles.formInput ?? '',
                 label: styles.formLabel ?? '',
