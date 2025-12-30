@@ -61,7 +61,10 @@ export const editSessionSchema = z
 
     // Visibility window override (null = use event default, 0 = always visible)
     visibility_minutes_override: z.preprocess(
-      (val) => (val === '' ? null : val === null ? null : Number(val)),
+      (val) =>
+        val === '' ? null
+        : val === null ? null
+        : Number(val),
       z.number().int().min(0).max(60).nullable().optional(),
     ),
 

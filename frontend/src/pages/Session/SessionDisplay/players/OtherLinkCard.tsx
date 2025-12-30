@@ -29,8 +29,9 @@ export const OtherLinkCard = ({ streamUrl, isRecording = false }: OtherLinkCardP
   // Dynamic content based on recording vs live stream
   const title = isRecording ? 'Session Recording' : 'External Streaming Platform';
   const buttonText = isRecording ? 'View Recording' : 'Open Stream';
-  const disclaimer = isRecording
-    ? 'This recording is hosted on an external platform'
+  const disclaimer =
+    isRecording ?
+      'This recording is hosted on an external platform'
     : 'This link opens an external platform outside of Atria';
 
   // Use different icon for recording vs live stream

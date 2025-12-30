@@ -622,7 +622,9 @@ export const SessionCardMobile = ({ session, hasConflict }: SessionCardMobilePro
             {/* Video Section */}
             <div>
               <Group gap='xs' justify='space-between' align='center' mb={4}>
-                <Text size='sm' fw={500}>Video</Text>
+                <Text size='sm' fw={500}>
+                  Video
+                </Text>
                 {streamMode !== 'NONE' && (
                   <Switch
                     size='xs'
@@ -696,7 +698,11 @@ export const SessionCardMobile = ({ session, hasConflict }: SessionCardMobilePro
                       });
                     }
                   }}
-                  data={streamMode === 'VOD' ? [...VOD_STREAMING_PLATFORMS] : [...LIVE_STREAMING_PLATFORMS]}
+                  data={
+                    streamMode === 'VOD' ?
+                      [...VOD_STREAMING_PLATFORMS]
+                    : [...LIVE_STREAMING_PLATFORMS]
+                  }
                   size='sm'
                   mt='xs'
                   allowDeselect={false}
@@ -847,7 +853,9 @@ export const SessionCardMobile = ({ session, hasConflict }: SessionCardMobilePro
 
             {/* Access Window */}
             <div>
-              <Text size='sm' fw={500} mb={4}>Access Window</Text>
+              <Text size='sm' fw={500} mb={4}>
+                Access Window
+              </Text>
               <Text size='xs' c='dimmed' mb={6}>
                 Buffer time before and after session when stream and chat are accessible
               </Text>

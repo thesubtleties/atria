@@ -1,5 +1,15 @@
 import { useState, useCallback, useEffect } from 'react';
-import { TextInput, Textarea, Select, Group, Text, ActionIcon, Menu, Badge, Switch } from '@mantine/core';
+import {
+  TextInput,
+  Textarea,
+  Select,
+  Group,
+  Text,
+  ActionIcon,
+  Menu,
+  Badge,
+  Switch,
+} from '@mantine/core';
 import { TimeSelect } from '@/shared/components/forms/TimeSelect';
 import { IconDots, IconTrash, IconAlertCircle } from '@tabler/icons-react';
 import { useDebouncedValue } from '@mantine/hooks';
@@ -631,7 +641,11 @@ export const SessionCard = ({ session, hasConflict }: SessionCardProps) => {
               <Select
                 value={streamingPlatform}
                 onChange={handlePlatformChange}
-                data={streamMode === 'VOD' ? [...VOD_STREAMING_PLATFORMS] : [...LIVE_STREAMING_PLATFORMS]}
+                data={
+                  streamMode === 'VOD' ?
+                    [...VOD_STREAMING_PLATFORMS]
+                  : [...LIVE_STREAMING_PLATFORMS]
+                }
                 placeholder='Platform'
                 size='sm'
                 allowDeselect={false}
@@ -646,7 +660,9 @@ export const SessionCard = ({ session, hasConflict }: SessionCardProps) => {
             <Group gap='xs' mt={8} wrap='wrap'>
               {streamingPlatform === 'VIMEO' && (
                 <TextInput
-                  placeholder={streamMode === 'VOD' ? 'Vimeo video URL or ID' : 'Vimeo stream URL or ID'}
+                  placeholder={
+                    streamMode === 'VOD' ? 'Vimeo video URL or ID' : 'Vimeo stream URL or ID'
+                  }
                   size='sm'
                   style={{ flex: 1, minWidth: 200 }}
                   value={streamUrl}

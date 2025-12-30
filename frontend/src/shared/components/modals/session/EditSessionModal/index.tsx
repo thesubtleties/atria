@@ -446,7 +446,11 @@ export const EditSessionModal = ({
               label='Streaming Platform'
               placeholder='Select streaming platform'
               description='Choose the platform for your video content'
-              data={form.values.stream_mode === 'VOD' ? [...VOD_STREAMING_PLATFORMS] : [...LIVE_STREAMING_PLATFORMS]}
+              data={
+                form.values.stream_mode === 'VOD' ?
+                  [...VOD_STREAMING_PLATFORMS]
+                : [...LIVE_STREAMING_PLATFORMS]
+              }
               allowDeselect={false}
               classNames={{ input: styles.formSelect || '' }}
               {...form.getInputProps('streaming_platform')}
@@ -456,7 +460,11 @@ export const EditSessionModal = ({
           {/* Conditional streaming fields based on selected platform */}
           {form.values.stream_mode !== 'NONE' && form.values.streaming_platform === 'VIMEO' && (
             <TextInput
-              label={form.values.stream_mode === 'VOD' ? 'Vimeo Video URL or ID' : 'Vimeo Stream URL or ID'}
+              label={
+                form.values.stream_mode === 'VOD' ?
+                  'Vimeo Video URL or ID'
+                : 'Vimeo Stream URL or ID'
+              }
               placeholder='https://vimeo.com/123456789 or video ID'
               description="Paste Vimeo URL or video ID - we'll handle the rest"
               required
@@ -565,31 +573,33 @@ export const EditSessionModal = ({
           />
 
           {/* Recording section - only show for LIVE mode when show_recording is enabled */}
-          {form.values.stream_mode === 'LIVE' && form.values.show_recording && form.values.streaming_platform && (
-            <>
-              <Text className={styles.sectionTitle || ''}>Recording</Text>
+          {form.values.stream_mode === 'LIVE' &&
+            form.values.show_recording &&
+            form.values.streaming_platform && (
+              <>
+                <Text className={styles.sectionTitle || ''}>Recording</Text>
 
-              <TextInput
-                label='Recording URL (Optional)'
-                placeholder='https://vimeo.com/... or Mux playback ID'
-                description='Leave blank to use the stream URL for recording. Add a different URL if needed.'
-                classNames={{ input: styles.formInput || '' }}
-                {...form.getInputProps('vod_url')}
-              />
-
-              {form.values.vod_url && (
-                <Select
-                  label='Recording Platform'
-                  placeholder='Select platform for the recording'
-                  description='Leave as auto-detect to use the same platform as the live stream'
-                  data={[...VOD_PLATFORMS]}
-                  allowDeselect={false}
-                  classNames={{ input: styles.formSelect || '' }}
-                  {...form.getInputProps('vod_platform')}
+                <TextInput
+                  label='Recording URL (Optional)'
+                  placeholder='https://vimeo.com/... or Mux playback ID'
+                  description='Leave blank to use the stream URL for recording. Add a different URL if needed.'
+                  classNames={{ input: styles.formInput || '' }}
+                  {...form.getInputProps('vod_url')}
                 />
-              )}
-            </>
-          )}
+
+                {form.values.vod_url && (
+                  <Select
+                    label='Recording Platform'
+                    placeholder='Select platform for the recording'
+                    description='Leave as auto-detect to use the same platform as the live stream'
+                    data={[...VOD_PLATFORMS]}
+                    allowDeselect={false}
+                    classNames={{ input: styles.formSelect || '' }}
+                    {...form.getInputProps('vod_platform')}
+                  />
+                )}
+              </>
+            )}
 
           <div className={styles.buttonGroup || ''}>
             <Button variant='secondary' onClick={onClose} disabled={isLoading}>
