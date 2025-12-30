@@ -6,6 +6,7 @@ import {
   JitsiPlayer,
   OtherLinkCard,
   SessionWindowCard,
+  VideoStateCard,
 } from './players';
 import { Alert, Loader } from '@mantine/core';
 import type { SessionDetail, EventDetail } from '@/types/events';
@@ -35,9 +36,9 @@ export const SessionDisplay = ({ session, event, currentUser }: SessionDisplayPr
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Check visibility window state (no admin bypass for video - only chat has admin bypass)
-  const windowState = session?.window_state || 'open';
-  const isWindowOpen = session?.is_window_open ?? true;
+  // Use the computed video state from backend - handles show_video, show_recording, timing, etc.
+  // Values: 'none' | 'hidden' | 'pre' | 'live' | 'vod' | 'recording' | 'ended'
+  const videoState = session?.current_video_state || 'none';
 
   /**
    * Render VOD player based on vod_platform/vod_url or fallback to stream_url
@@ -64,16 +65,16 @@ export const SessionDisplay = ({ session, event, currentUser }: SessionDisplayPr
           />
         );
       }
-      // OTHER platform - external link (YouTube, etc)
-      return <OtherLinkCard streamUrl={vod_url} />;
+      // OTHER platform - external recording link (YouTube, etc)
+      return <OtherLinkCard streamUrl={vod_url} isRecording />;
     }
 
-    // Case 2: VOD URL set but no platform - treat as external link
+    // Case 2: VOD URL set but no platform - treat as external recording link
     if (vod_url && !vod_platform) {
-      return <OtherLinkCard streamUrl={vod_url} />;
+      return <OtherLinkCard streamUrl={vod_url} isRecording />;
     }
 
-    // Case 3: No VOD URL - use original stream_url (Vimeo/Mux auto-VOD)
+    // Case 3: No VOD URL - use original stream_url (Vimeo/Mux/Other auto-VOD)
     if (streaming_platform === 'VIMEO' && stream_url) {
       return <VimeoPlayer videoId={stream_url} />;
     }
@@ -88,8 +89,12 @@ export const SessionDisplay = ({ session, event, currentUser }: SessionDisplayPr
         />
       );
     }
+    // OTHER platform - use stream_url as recording link
+    if (streaming_platform === 'OTHER' && stream_url) {
+      return <OtherLinkCard streamUrl={stream_url} isRecording />;
+    }
 
-    // No VOD available - show thank you card
+    // No VOD available (Zoom/Jitsi or no URL) - show thank you card
     return <SessionWindowCard windowState='post' />;
   };
 
@@ -132,32 +137,52 @@ export const SessionDisplay = ({ session, event, currentUser }: SessionDisplayPr
     fetchPlaybackData();
   }, [session?.id, session?.streaming_platform, session?.mux_playback_policy]);
 
-  // Route to appropriate player based on platform
+  // Route to appropriate player/card based on current_video_state
   const renderPlayer = () => {
-    // Check visibility window (applies to everyone - no admin bypass for video)
-    if (!isWindowOpen) {
-      if (windowState === 'pre') {
-        return (
-          <SessionWindowCard
-            windowState='pre'
-            sessionStartTime={session?.start_time}
-            eventStartDate={event?.start_date}
-            dayNumber={session?.day_number}
-            eventTimezone={event?.timezone}
-            visibilityMinutes={session?.effective_visibility_minutes}
-          />
-        );
-      }
-
-      if (windowState === 'post') {
-        // Post-session: show VOD if available, otherwise thank you card
-        return renderVodPlayer();
-      }
+    // Handle video states computed by the backend
+    // 'none' = no video configured (stream_mode is NONE)
+    if (videoState === 'none') {
+      return <VideoStateCard state='none' />;
     }
 
+    // 'hidden' = video configured but temporarily disabled (show_video is false)
+    if (videoState === 'hidden') {
+      return <VideoStateCard state='hidden' />;
+    }
+
+    // 'pre' = before session visibility window opens
+    if (videoState === 'pre') {
+      return (
+        <SessionWindowCard
+          windowState='pre'
+          sessionStartTime={session?.start_time}
+          eventStartDate={event?.start_date}
+          dayNumber={session?.day_number}
+          eventTimezone={event?.timezone}
+          visibilityMinutes={session?.effective_visibility_minutes}
+        />
+      );
+    }
+
+    // 'ended' = session ended, no recording available
+    if (videoState === 'ended') {
+      return <SessionWindowCard windowState='post' />;
+    }
+
+    // 'recording' = live session ended, recording available (show_recording is true)
+    if (videoState === 'recording') {
+      return renderVodPlayer();
+    }
+
+    // 'vod' = pre-recorded content, available after start time
+    if (videoState === 'vod') {
+      return renderVodPlayer();
+    }
+
+    // 'live' = session is active and video should show
     const platform = session?.streaming_platform;
 
-    // No streaming configured
+    // Safety check: no platform configured (shouldn't happen if videoState is 'live')
     if (!platform) {
       return (
         <div className={cn(styles.messageContainer)}>

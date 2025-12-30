@@ -161,7 +161,10 @@ export const sessionsApi = baseApi.injectEndpoints({
         method: 'PUT',
         body: updates,
       }),
-      invalidatesTags: (_result, _error, { id }) => ['Sessions', { type: 'Sessions' as const, id }],
+      // Only invalidate the specific session, not the entire list
+      // This prevents full list refetch on every toggle/edit which causes lag
+      // The SessionCard manages local state for immediate visual feedback
+      invalidatesTags: (_result, _error, { id }) => [{ type: 'Sessions' as const, id }],
     }),
     updateSessionStatus: builder.mutation<void, UpdateSessionStatusParams>({
       query: ({ id, status }) => ({

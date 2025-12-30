@@ -52,6 +52,16 @@ class SessionSchema(ma.SQLAlchemyAutoSchema):
     vod_platform = ma.String(allow_none=True)
     has_vod = ma.Boolean(dump_only=True)
 
+    # Stream mode and visibility toggles
+    # stream_mode: 'NONE' (no video), 'LIVE' (live stream), 'VOD' (pre-recorded)
+    stream_mode = ma.String(allow_none=True)
+    show_video = ma.Boolean()  # Master toggle
+    show_recording = ma.Boolean()  # Recording toggle for live sessions
+
+    # Key computed property - encapsulates complex video state logic
+    # Returns: 'none', 'hidden', 'pre', 'live', 'vod', 'recording', 'ended'
+    current_video_state = ma.String(dump_only=True)
+
 
 class SessionDetailSchema(SessionSchema):
     """Detailed Session Schema with relationships"""
@@ -103,6 +113,12 @@ class SessionCreateSchema(ma.Schema):
     # VOD fields
     vod_url = ma.String(allow_none=True)
     vod_platform = ma.String(allow_none=True)
+
+    # Stream mode and visibility toggles
+    # stream_mode: 'NONE' (no video), 'LIVE' (live stream), 'VOD' (pre-recorded)
+    stream_mode = ma.String(allow_none=True)
+    show_video = ma.Boolean(load_default=True)  # Master toggle
+    show_recording = ma.Boolean(load_default=True)  # Recording toggle for live sessions
 
     @validates("title")
     def validate_title(self, value, **kwargs):
@@ -255,6 +271,12 @@ class SessionUpdateSchema(ma.Schema):
     # VOD fields
     vod_url = ma.String(allow_none=True)
     vod_platform = ma.String(allow_none=True)
+
+    # Stream mode and visibility toggles
+    # stream_mode: 'NONE' (no video), 'LIVE' (live stream), 'VOD' (pre-recorded)
+    stream_mode = ma.String(allow_none=True)
+    show_video = ma.Boolean(allow_none=True)  # Master toggle
+    show_recording = ma.Boolean(allow_none=True)  # Recording toggle for live sessions
 
     @validates_schema
     def validate_streaming_config(self, data, **kwargs):

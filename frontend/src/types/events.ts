@@ -241,6 +241,10 @@ export type Session = {
   // VOD fields
   vod_url: string | null;
   vod_platform: StreamingPlatform | null;
+  // Stream mode and visibility toggles
+  stream_mode: 'NONE' | 'LIVE' | 'VOD';
+  show_video: boolean;
+  show_recording: boolean;
   created_at: string;
   updated_at: string | null;
 
@@ -262,6 +266,8 @@ export type Session = {
   is_window_open: boolean;
   window_state: 'pre' | 'open' | 'post';
   has_vod: boolean;
+  // Video state computed property
+  current_video_state: 'none' | 'hidden' | 'pre' | 'live' | 'vod' | 'recording' | 'ended';
 };
 
 /** Detailed session with relationships */
@@ -295,6 +301,9 @@ export type SessionCreateData = {
   visibility_minutes_override?: number | null;
   vod_url?: string | null;
   vod_platform?: StreamingPlatform | null;
+  stream_mode?: 'NONE' | 'LIVE' | 'VOD';
+  show_video?: boolean;
+  show_recording?: boolean;
 };
 
 /** Mutable fields for session updates */
@@ -317,6 +326,9 @@ type SessionMutableFields = {
   visibility_minutes_override: number | null;
   vod_url: string | null;
   vod_platform: StreamingPlatform | null;
+  stream_mode: 'NONE' | 'LIVE' | 'VOD';
+  show_video: boolean;
+  show_recording: boolean;
 };
 
 /** Session update payload - requires at least one field */

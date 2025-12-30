@@ -1,20 +1,22 @@
 import { Button, Stack, Text, Alert } from '@mantine/core';
-import { IconExternalLink, IconAlertCircle } from '@tabler/icons-react';
+import { IconExternalLink, IconAlertCircle, IconVideo } from '@tabler/icons-react';
 import { cn } from '@/lib/cn';
 import styles from '../styles/index.module.css';
 
 type OtherLinkCardProps = {
   streamUrl: string;
+  isRecording?: boolean;
 };
 
 /**
- * OtherLinkCard - Card for generic external streaming platform
+ * OtherLinkCard - Card for generic external streaming/recording platform
  *
  * Used for platforms not natively supported (MS Teams, self-hosted Jitsi, custom solutions, etc.)
+ * Set isRecording=true when displaying a recording link vs a live stream
  */
-export const OtherLinkCard = ({ streamUrl }: OtherLinkCardProps) => {
-  const handleOpenStream = () => {
-    // Open stream in new window
+export const OtherLinkCard = ({ streamUrl, isRecording = false }: OtherLinkCardProps) => {
+  const handleOpenLink = () => {
+    // Open link in new window
     window.open(streamUrl, '_blank', 'noopener,noreferrer');
   };
 
@@ -24,27 +26,38 @@ export const OtherLinkCard = ({ streamUrl }: OtherLinkCardProps) => {
     return url.substring(0, 57) + '...';
   };
 
+  // Dynamic content based on recording vs live stream
+  const title = isRecording ? 'Session Recording' : 'External Streaming Platform';
+  const buttonText = isRecording ? 'View Recording' : 'Open Stream';
+  const disclaimer =
+    isRecording ?
+      'This recording is hosted on an external platform'
+    : 'This link opens an external platform outside of Atria';
+
+  // Use different icon for recording vs live stream
+  const TopIcon = isRecording ? IconVideo : IconExternalLink;
+
   return (
     <div className={cn(styles.messageContainer)}>
       <Stack align='center' gap='lg' style={{ width: '100%', maxWidth: '500px' }}>
-        {/* External Link Icon with Atria purple gradient */}
+        {/* Icon with soft purple glass */}
         <div
           style={{
-            width: '80px',
-            height: '80px',
-            borderRadius: 'var(--radius-lg)',
-            background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+            width: '72px',
+            height: '72px',
+            borderRadius: '20px',
+            background: 'rgba(139, 92, 246, 0.08)',
+            border: '1px solid rgba(139, 92, 246, 0.15)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 8px 24px rgba(139, 92, 246, 0.3)',
           }}
         >
-          <IconExternalLink size={48} stroke={1.5} color='white' />
+          <TopIcon size={36} stroke={1.5} color='#8B5CF6' />
         </div>
 
         <Text size='xl' fw={600} style={{ color: '#1E293B' }}>
-          External Streaming Platform
+          {title}
         </Text>
 
         <Text size='sm' ta='center' style={{ color: '#64748B', maxWidth: '400px' }}>
@@ -64,13 +77,13 @@ export const OtherLinkCard = ({ streamUrl }: OtherLinkCardProps) => {
           }}
         >
           <Text size='xs' style={{ color: '#64748B' }}>
-            This link opens an external platform outside of Atria
+            {disclaimer}
           </Text>
         </Alert>
 
         <Button
           size='lg'
-          onClick={handleOpenStream}
+          onClick={handleOpenLink}
           style={{
             marginTop: 'var(--space-md)',
             background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
@@ -94,7 +107,7 @@ export const OtherLinkCard = ({ streamUrl }: OtherLinkCardProps) => {
           }}
           leftSection={<IconExternalLink size={22} stroke={1.5} />}
         >
-          Open Stream
+          {buttonText}
         </Button>
       </Stack>
     </div>
