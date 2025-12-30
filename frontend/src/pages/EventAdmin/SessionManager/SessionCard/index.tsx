@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { TextInput, Textarea, Select, Group, Text, ActionIcon, Menu, Badge } from '@mantine/core';
+import { TextInput, Textarea, Select, Group, Text, ActionIcon, Menu, Badge, Switch } from '@mantine/core';
 import { TimeSelect } from '@/shared/components/forms/TimeSelect';
 import { IconDots, IconTrash, IconAlertCircle } from '@tabler/icons-react';
 import { useDebouncedValue } from '@mantine/hooks';
@@ -80,6 +80,17 @@ const RECORDING_PLATFORMS = [
   { value: 'MUX', label: 'Mux' },
   { value: 'OTHER', label: 'Other' },
 ] as const;
+
+// Memoized styles for Switch components (prevents re-renders from inline objects)
+const SWITCH_STYLES_COMPACT = {
+  label: { fontSize: '0.75rem', color: 'var(--mantine-color-dimmed)', paddingLeft: 6 },
+  track: { cursor: 'pointer' },
+} as const;
+
+const SWITCH_STYLES_REGULAR = {
+  label: { fontSize: '0.85rem' },
+  track: { cursor: 'pointer' },
+} as const;
 
 type SessionCardProps = {
   session: Session;
@@ -581,21 +592,17 @@ export const SessionCard = ({ session, hasConflict }: SessionCardProps) => {
           <Group gap='xs' justify='space-between' align='center'>
             <Text className={cn(styles.sectionLabel)}>Video</Text>
             {streamMode !== 'NONE' && (
-              <Group gap={4} align='center'>
-                <input
-                  type='checkbox'
-                  id={`showVideo-${session.id}`}
-                  checked={showVideo}
-                  onChange={(e) => {
-                    setShowVideo(e.target.checked);
-                    handleUpdate({ show_video: e.target.checked });
-                  }}
-                  style={{ margin: 0 }}
-                />
-                <label htmlFor={`showVideo-${session.id}`} style={{ fontSize: '0.75rem', color: 'var(--mantine-color-dimmed)' }}>
-                  Enabled
-                </label>
-              </Group>
+              <Switch
+                size='xs'
+                label='Enabled'
+                checked={showVideo}
+                onChange={(e) => {
+                  setShowVideo(e.currentTarget.checked);
+                  handleUpdate({ show_video: e.currentTarget.checked });
+                }}
+                color='var(--color-primary)'
+                styles={SWITCH_STYLES_COMPACT}
+              />
             )}
           </Group>
           <Group gap='xs' wrap='wrap' mt={4}>
@@ -724,20 +731,17 @@ export const SessionCard = ({ session, hasConflict }: SessionCardProps) => {
           {/* Recording options - Only for LIVE mode */}
           {streamMode === 'LIVE' && streamingPlatform && (
             <div style={{ marginTop: 8 }}>
-              <Group gap='xs' align='center'>
-                <input
-                  type='checkbox'
-                  id='showRecording'
-                  checked={showRecording}
-                  onChange={(e) => {
-                    setShowRecording(e.target.checked);
-                    handleUpdate({ show_recording: e.target.checked });
-                  }}
-                />
-                <label htmlFor='showRecording' style={{ fontSize: '0.85rem' }}>
-                  Show recording after session
-                </label>
-              </Group>
+              <Switch
+                size='sm'
+                label='Show recording after session'
+                checked={showRecording}
+                onChange={(e) => {
+                  setShowRecording(e.currentTarget.checked);
+                  handleUpdate({ show_recording: e.currentTarget.checked });
+                }}
+                color='var(--color-primary)'
+                styles={SWITCH_STYLES_REGULAR}
+              />
               {showRecording && (
                 <>
                   <Group gap='xs' mt={8} wrap='wrap' align='flex-end'>

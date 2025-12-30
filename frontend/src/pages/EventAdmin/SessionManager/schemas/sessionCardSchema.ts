@@ -6,6 +6,8 @@ const StreamingPlatform = z.enum(['VIMEO', 'MUX', 'ZOOM', 'JITSI', 'OTHER']);
 
 const MuxPlaybackPolicy = z.enum(['PUBLIC', 'SIGNED']);
 
+const StreamMode = z.enum(['NONE', 'LIVE', 'VOD']);
+
 // Platform-specific URL/ID validation patterns
 const vimeoSchema = z
   .string()
@@ -68,6 +70,18 @@ export const sessionFieldSchemas = {
     .optional()
     .or(z.literal('')),
   // Note: OTHER platform uses stream_url (validated by backend for HTTPS)
+
+  // Stream mode and visibility toggles
+  stream_mode: StreamMode,
+  show_video: z.boolean(),
+  show_recording: z.boolean(),
+
+  // Visibility window override (null = use event default, 0 = always visible)
+  visibility_minutes_override: z.number().int().min(0).max(60).nullable().optional(),
+
+  // VOD fields (for recording URL after live session)
+  vod_url: z.string().max(2000, 'URL too long').optional().or(z.literal('')),
+  vod_platform: z.enum(['VIMEO', 'MUX', 'OTHER']).nullable().optional(), // Only playback platforms, not interactive
 } as const;
 
 export type SessionFieldName = keyof typeof sessionFieldSchemas;

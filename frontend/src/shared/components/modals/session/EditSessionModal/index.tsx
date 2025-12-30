@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { TextInput, Stack, Modal, Textarea, Select, Group, Text } from '@mantine/core';
+import { TextInput, Stack, Modal, Textarea, Select, Group, Text, Switch } from '@mantine/core';
 import { skipToken } from '@reduxjs/toolkit/query';
 import { TimeSelect } from '@/shared/components/forms/TimeSelect';
 import { useForm, zodResolver } from '@mantine/form';
@@ -33,6 +33,10 @@ interface SessionData {
   // VOD fields
   vod_url?: string | null;
   vod_platform?: StreamingPlatform | null;
+  // Stream mode and visibility toggles
+  stream_mode?: 'NONE' | 'LIVE' | 'VOD';
+  show_video?: boolean;
+  show_recording?: boolean;
 }
 
 interface EventData {
@@ -56,12 +60,26 @@ const CHAT_MODES = [
   { value: 'DISABLED', label: 'Chat Disabled' },
 ] as const;
 
-const STREAMING_PLATFORMS = [
-  { value: '', label: 'No Streaming' }, // Empty string instead of null
+// Stream mode: NONE (no video), LIVE (live stream), VOD (pre-recorded)
+const STREAM_MODES = [
+  { value: 'NONE', label: 'No Video' },
+  { value: 'LIVE', label: 'Live Stream' },
+  { value: 'VOD', label: 'Pre-recorded (VOD)' },
+] as const;
+
+// Platforms available for Live mode (all platforms)
+const LIVE_STREAMING_PLATFORMS = [
   { value: 'VIMEO', label: 'Vimeo' },
   { value: 'MUX', label: 'Mux Video' },
   { value: 'ZOOM', label: 'Zoom Meeting' },
   { value: 'JITSI', label: 'Jitsi Meet (JaaS)' },
+  { value: 'OTHER', label: 'Other (External Link)' },
+] as const;
+
+// Platforms available for VOD mode (no Zoom/Jitsi)
+const VOD_STREAMING_PLATFORMS = [
+  { value: 'VIMEO', label: 'Vimeo' },
+  { value: 'MUX', label: 'Mux Video' },
   { value: 'OTHER', label: 'Other (External Link)' },
 ] as const;
 
@@ -137,6 +155,10 @@ interface SessionFormValues {
   // VOD fields
   vod_url: string;
   vod_platform: StreamingPlatform | '';
+  // Stream mode and visibility toggles
+  stream_mode: 'NONE' | 'LIVE' | 'VOD';
+  show_video: boolean;
+  show_recording: boolean;
 }
 
 interface EditSessionModalProps {
@@ -192,6 +214,10 @@ export const EditSessionModal = ({
         // VOD fields
         vod_url: session.vod_url || '',
         vod_platform: session.vod_platform || '',
+        // Stream mode and visibility toggles
+        stream_mode: session.stream_mode || 'NONE',
+        show_video: session.show_video ?? true,
+        show_recording: session.show_recording ?? true,
       };
     }
     return {
@@ -212,6 +238,10 @@ export const EditSessionModal = ({
       visibility_minutes_override: '', // Empty = use event default
       vod_url: '',
       vod_platform: '',
+      // Stream mode and visibility toggles
+      stream_mode: 'NONE',
+      show_video: true,
+      show_recording: true,
     };
   };
 
@@ -228,19 +258,22 @@ export const EditSessionModal = ({
     }),
   });
 
-  // Clear streaming fields when platform changes to "No Streaming"
+  // Clear streaming fields when stream mode changes to NONE or platform is cleared
   useEffect(() => {
-    if (!form.values.streaming_platform) {
-      // Clear all streaming fields when platform is cleared
+    if (form.values.stream_mode === 'NONE' || !form.values.streaming_platform) {
+      // Clear all streaming fields when mode is NONE or platform is cleared
       form.setFieldValue('stream_url', '');
       form.setFieldValue('zoom_meeting_id', '');
       form.setFieldValue('zoom_passcode', '');
       form.setFieldValue('mux_playback_policy', 'PUBLIC');
       form.setFieldValue('jitsi_room_name', '');
-      // Note: OTHER platform uses stream_url (cleared above)
+    }
+    // Also clear platform when stream mode is NONE
+    if (form.values.stream_mode === 'NONE' && form.values.streaming_platform) {
+      form.setFieldValue('streaming_platform', '');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form.values.streaming_platform]);
+  }, [form.values.stream_mode, form.values.streaming_platform]);
 
   const handleSubmit = async (values: SessionFormValues) => {
     try {
@@ -253,6 +286,10 @@ export const EditSessionModal = ({
         end_time: values.end_time, // Just send HH:mm
         day_number: parseInt(values.day_number, 10),
         chat_mode: values.chat_mode,
+        // Stream mode and visibility toggles
+        stream_mode: values.stream_mode,
+        show_video: values.show_video,
+        show_recording: values.show_recording,
         // Streaming platform fields (convert empty string to null for API)
         streaming_platform: values.streaming_platform || null,
         stream_url: values.stream_url || null,
@@ -378,22 +415,48 @@ export const EditSessionModal = ({
             />
           </Group>
 
-          <Text className={styles.sectionTitle || ''}>Streaming & Chat</Text>
+          <Text className={styles.sectionTitle || ''}>Video & Streaming</Text>
 
           <Select
-            label='Streaming Platform'
-            placeholder='Select streaming platform'
-            description='Choose how attendees will watch this session'
-            data={[...STREAMING_PLATFORMS]}
+            label='Stream Mode'
+            placeholder='Select how this session will be delivered'
+            description='Choose whether this session has video content'
+            data={[...STREAM_MODES]}
             allowDeselect={false}
             classNames={{ input: styles.formSelect || '' }}
-            {...form.getInputProps('streaming_platform')}
+            {...form.getInputProps('stream_mode')}
           />
 
+          {/* Show video toggle - only when stream mode is not NONE */}
+          {form.values.stream_mode !== 'NONE' && (
+            <Switch
+              label='Show Video'
+              description='When disabled, video is hidden but configuration is preserved'
+              color='var(--color-primary)'
+              styles={{
+                track: { cursor: 'pointer' },
+              }}
+              {...form.getInputProps('show_video', { type: 'checkbox' })}
+            />
+          )}
+
+          {/* Platform selector - only for LIVE and VOD modes */}
+          {form.values.stream_mode !== 'NONE' && (
+            <Select
+              label='Streaming Platform'
+              placeholder='Select streaming platform'
+              description='Choose the platform for your video content'
+              data={form.values.stream_mode === 'VOD' ? [...VOD_STREAMING_PLATFORMS] : [...LIVE_STREAMING_PLATFORMS]}
+              allowDeselect={false}
+              classNames={{ input: styles.formSelect || '' }}
+              {...form.getInputProps('streaming_platform')}
+            />
+          )}
+
           {/* Conditional streaming fields based on selected platform */}
-          {form.values.streaming_platform === 'VIMEO' && (
+          {form.values.stream_mode !== 'NONE' && form.values.streaming_platform === 'VIMEO' && (
             <TextInput
-              label='Vimeo Video'
+              label={form.values.stream_mode === 'VOD' ? 'Vimeo Video URL or ID' : 'Vimeo Stream URL or ID'}
               placeholder='https://vimeo.com/123456789 or video ID'
               description="Paste Vimeo URL or video ID - we'll handle the rest"
               required
@@ -402,7 +465,7 @@ export const EditSessionModal = ({
             />
           )}
 
-          {form.values.streaming_platform === 'MUX' && (
+          {form.values.stream_mode !== 'NONE' && form.values.streaming_platform === 'MUX' && (
             <>
               <TextInput
                 label='Mux Playback ID or Stream URL'
@@ -424,7 +487,7 @@ export const EditSessionModal = ({
             </>
           )}
 
-          {form.values.streaming_platform === 'ZOOM' && (
+          {form.values.stream_mode !== 'NONE' && form.values.streaming_platform === 'ZOOM' && (
             <>
               <TextInput
                 label='Zoom Meeting URL or ID'
@@ -444,7 +507,7 @@ export const EditSessionModal = ({
             </>
           )}
 
-          {form.values.streaming_platform === 'JITSI' && (
+          {form.values.stream_mode !== 'NONE' && form.values.streaming_platform === 'JITSI' && (
             <TextInput
               label='Jitsi Room Name'
               placeholder='my-event-session or https://8x8.vc/...'
@@ -455,7 +518,7 @@ export const EditSessionModal = ({
             />
           )}
 
-          {form.values.streaming_platform === 'OTHER' && (
+          {form.values.stream_mode !== 'NONE' && form.values.streaming_platform === 'OTHER' && (
             <TextInput
               label='External Stream URL'
               placeholder='https://...'
@@ -466,8 +529,23 @@ export const EditSessionModal = ({
             />
           )}
 
+          {/* Show recording toggle - only for LIVE mode with a platform selected */}
+          {form.values.stream_mode === 'LIVE' && form.values.streaming_platform && (
+            <Switch
+              label='Show Recording After Session'
+              description='Make a recording available after the live session ends'
+              color='var(--color-primary)'
+              styles={{
+                track: { cursor: 'pointer' },
+              }}
+              {...form.getInputProps('show_recording', { type: 'checkbox' })}
+            />
+          )}
+
+          <Text className={styles.sectionTitle || ''}>Chat Settings</Text>
+
           <Select
-            label='Chat Settings'
+            label='Chat Mode'
             placeholder='Choose chat availability'
             data={[...CHAT_MODES]}
             required
@@ -486,26 +564,31 @@ export const EditSessionModal = ({
             {...form.getInputProps('visibility_minutes_override')}
           />
 
-          <Text className={styles.sectionTitle || ''}>Recording (VOD)</Text>
+          {/* Recording section - only show for LIVE mode when show_recording is enabled */}
+          {form.values.stream_mode === 'LIVE' && form.values.show_recording && form.values.streaming_platform && (
+            <>
+              <Text className={styles.sectionTitle || ''}>Recording</Text>
 
-          <TextInput
-            label='Recording URL (Optional)'
-            placeholder='https://vimeo.com/... or Mux playback ID'
-            description='Add a recording URL for attendees to watch after the session ends'
-            classNames={{ input: styles.formInput || '' }}
-            {...form.getInputProps('vod_url')}
-          />
+              <TextInput
+                label='Recording URL (Optional)'
+                placeholder='https://vimeo.com/... or Mux playback ID'
+                description='Leave blank to use the stream URL for recording. Add a different URL if needed.'
+                classNames={{ input: styles.formInput || '' }}
+                {...form.getInputProps('vod_url')}
+              />
 
-          {form.values.vod_url && (
-            <Select
-              label='Recording Platform'
-              placeholder='Select platform for the recording'
-              description='Leave as auto-detect to use the same platform as the live stream'
-              data={[...VOD_PLATFORMS]}
-              allowDeselect={false}
-              classNames={{ input: styles.formSelect || '' }}
-              {...form.getInputProps('vod_platform')}
-            />
+              {form.values.vod_url && (
+                <Select
+                  label='Recording Platform'
+                  placeholder='Select platform for the recording'
+                  description='Leave as auto-detect to use the same platform as the live stream'
+                  data={[...VOD_PLATFORMS]}
+                  allowDeselect={false}
+                  classNames={{ input: styles.formSelect || '' }}
+                  {...form.getInputProps('vod_platform')}
+                />
+              )}
+            </>
           )}
 
           <div className={styles.buttonGroup || ''}>
