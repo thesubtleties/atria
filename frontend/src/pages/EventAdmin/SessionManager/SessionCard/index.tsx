@@ -36,15 +36,6 @@ const CHAT_MODES = [
   { value: 'DISABLED', label: 'Chat Disabled' },
 ] as const;
 
-const STREAMING_PLATFORMS = [
-  { value: '', label: 'No Streaming' },
-  { value: 'VIMEO', label: 'Vimeo' },
-  { value: 'MUX', label: 'Mux' },
-  { value: 'ZOOM', label: 'Zoom' },
-  { value: 'JITSI', label: 'Jitsi (JaaS)' },
-  { value: 'OTHER', label: 'Other' },
-] as const;
-
 const MUX_PLAYBACK_POLICIES = [
   { value: 'PUBLIC', label: 'Public' },
   { value: 'SIGNED', label: 'Signed' },
@@ -59,7 +50,31 @@ const VISIBILITY_WINDOW_OPTIONS = [
   { value: '15', label: '15 min' },
 ] as const;
 
-const VOD_PLATFORMS = [
+// Stream mode: NONE (no video), LIVE (live stream), VOD (pre-recorded)
+const STREAM_MODES = [
+  { value: 'NONE', label: 'No Video' },
+  { value: 'LIVE', label: 'Live Stream' },
+  { value: 'VOD', label: 'Pre-recorded (VOD)' },
+] as const;
+
+// Platforms available for Live mode (all platforms)
+const LIVE_STREAMING_PLATFORMS = [
+  { value: 'VIMEO', label: 'Vimeo' },
+  { value: 'MUX', label: 'Mux' },
+  { value: 'ZOOM', label: 'Zoom' },
+  { value: 'JITSI', label: 'Jitsi (JaaS)' },
+  { value: 'OTHER', label: 'Other' },
+] as const;
+
+// Platforms available for VOD mode (no Zoom/Jitsi)
+const VOD_STREAMING_PLATFORMS = [
+  { value: 'VIMEO', label: 'Vimeo' },
+  { value: 'MUX', label: 'Mux' },
+  { value: 'OTHER', label: 'Other' },
+] as const;
+
+// Recording platform options (for post-live recording URL)
+const RECORDING_PLATFORMS = [
   { value: '', label: 'Auto-detect' },
   { value: 'VIMEO', label: 'Vimeo' },
   { value: 'MUX', label: 'Mux' },
@@ -108,6 +123,11 @@ export const SessionCard = ({ session, hasConflict }: SessionCardProps) => {
   const [vodPlatform, setVodPlatform] = useState<StreamingPlatform | ''>(
     session.vod_platform ?? '',
   );
+
+  // Stream mode and visibility toggles
+  const [streamMode, setStreamMode] = useState<'NONE' | 'LIVE' | 'VOD'>(session.stream_mode);
+  const [showVideo, setShowVideo] = useState(session.show_video);
+  const [showRecording, setShowRecording] = useState(session.show_recording);
 
   const [errors, setErrors] = useState<FieldErrors>({});
 
@@ -556,131 +576,203 @@ export const SessionCard = ({ session, hasConflict }: SessionCardProps) => {
           </Group>
         </div>
 
-        {/* Streaming Row */}
+        {/* Video Section */}
         <div style={{ marginTop: 12 }}>
-          <Text className={cn(styles.sectionLabel)}>Streaming & Recording</Text>
-          <Group gap='xs' wrap='wrap'>
+          <Group gap='xs' justify='space-between' align='center'>
+            <Text className={cn(styles.sectionLabel)}>Video</Text>
+            {streamMode !== 'NONE' && (
+              <Group gap={4} align='center'>
+                <input
+                  type='checkbox'
+                  id={`showVideo-${session.id}`}
+                  checked={showVideo}
+                  onChange={(e) => {
+                    setShowVideo(e.target.checked);
+                    handleUpdate({ show_video: e.target.checked });
+                  }}
+                  style={{ margin: 0 }}
+                />
+                <label htmlFor={`showVideo-${session.id}`} style={{ fontSize: '0.75rem', color: 'var(--mantine-color-dimmed)' }}>
+                  Enabled
+                </label>
+              </Group>
+            )}
+          </Group>
+          <Group gap='xs' wrap='wrap' mt={4}>
+            {/* Stream Mode - Primary selector */}
             <Select
-              value={streamingPlatform}
-              onChange={handlePlatformChange}
-              data={[...STREAMING_PLATFORMS]}
+              value={streamMode}
+              onChange={(value) => {
+                if (value === 'NONE' || value === 'LIVE' || value === 'VOD') {
+                  setStreamMode(value);
+                  handleUpdate({ stream_mode: value });
+                  // Clear platform when switching to NONE
+                  if (value === 'NONE') {
+                    handlePlatformChange('');
+                  }
+                }
+              }}
+              data={[...STREAM_MODES]}
               size='sm'
               allowDeselect={false}
-              style={{ width: 150 }}
+              style={{ width: 140 }}
               classNames={{ input: cn(styles.formSelect) }}
             />
-            {streamingPlatform === 'VIMEO' && (
-              <TextInput
-                placeholder='Vimeo URL or video ID'
+
+            {/* Platform - Only for LIVE and VOD modes */}
+            {streamMode !== 'NONE' && (
+              <Select
+                value={streamingPlatform}
+                onChange={handlePlatformChange}
+                data={streamMode === 'VOD' ? [...VOD_STREAMING_PLATFORMS] : [...LIVE_STREAMING_PLATFORMS]}
+                placeholder='Platform'
                 size='sm'
-                style={{ flex: 1, minWidth: 200 }}
-                value={streamUrl}
-                onChange={(e) => setStreamUrl(e.target.value)}
-                error={errors.stream_url}
-                classNames={{ input: cn(styles.formInput) }}
+                allowDeselect={false}
+                style={{ width: 130 }}
+                classNames={{ input: cn(styles.formSelect) }}
               />
             )}
-            {streamingPlatform === 'MUX' && (
-              <>
+          </Group>
+
+          {/* Platform-specific fields for LIVE/VOD */}
+          {streamMode !== 'NONE' && streamingPlatform && (
+            <Group gap='xs' mt={8} wrap='wrap'>
+              {streamingPlatform === 'VIMEO' && (
                 <TextInput
-                  placeholder='Mux Playback ID'
+                  placeholder={streamMode === 'VOD' ? 'Vimeo video URL or ID' : 'Vimeo stream URL or ID'}
                   size='sm'
-                  style={{ flex: 1, minWidth: 180 }}
+                  style={{ flex: 1, minWidth: 200 }}
                   value={streamUrl}
                   onChange={(e) => setStreamUrl(e.target.value)}
                   error={errors.stream_url}
                   classNames={{ input: cn(styles.formInput) }}
                 />
-                <Select
-                  value={muxPlaybackPolicy}
-                  onChange={(value) => {
-                    if (value === 'PUBLIC' || value === 'SIGNED') {
-                      setMuxPlaybackPolicy(value);
-                      handleUpdate({ mux_playback_policy: value });
-                    }
+              )}
+              {streamingPlatform === 'MUX' && (
+                <>
+                  <TextInput
+                    placeholder='Mux Playback ID'
+                    size='sm'
+                    style={{ flex: 1, minWidth: 180 }}
+                    value={streamUrl}
+                    onChange={(e) => setStreamUrl(e.target.value)}
+                    error={errors.stream_url}
+                    classNames={{ input: cn(styles.formInput) }}
+                  />
+                  <Select
+                    value={muxPlaybackPolicy}
+                    onChange={(value) => {
+                      if (value === 'PUBLIC' || value === 'SIGNED') {
+                        setMuxPlaybackPolicy(value);
+                        handleUpdate({ mux_playback_policy: value });
+                      }
+                    }}
+                    data={[...MUX_PLAYBACK_POLICIES]}
+                    size='sm'
+                    allowDeselect={false}
+                    style={{ width: 100 }}
+                    classNames={{ input: cn(styles.formSelect) }}
+                  />
+                </>
+              )}
+              {streamingPlatform === 'ZOOM' && (
+                <>
+                  <TextInput
+                    placeholder='Zoom meeting URL or ID'
+                    size='sm'
+                    style={{ flex: 1, minWidth: 180 }}
+                    value={zoomMeetingId}
+                    onChange={(e) => setZoomMeetingId(e.target.value)}
+                    error={errors.zoom_meeting_id}
+                    classNames={{ input: cn(styles.formInput) }}
+                  />
+                  <TextInput
+                    placeholder='Passcode'
+                    size='sm'
+                    style={{ width: 120 }}
+                    value={zoomPasscode}
+                    onChange={(e) => setZoomPasscode(e.target.value)}
+                    classNames={{ input: cn(styles.formInput) }}
+                  />
+                </>
+              )}
+              {streamingPlatform === 'JITSI' && (
+                <TextInput
+                  placeholder='Jitsi room name or URL'
+                  size='sm'
+                  style={{ flex: 1, minWidth: 200 }}
+                  value={jitsiRoomName}
+                  onChange={(e) => setJitsiRoomName(e.target.value)}
+                  error={errors.jitsi_room_name}
+                  classNames={{ input: cn(styles.formInput) }}
+                />
+              )}
+              {streamingPlatform === 'OTHER' && (
+                <TextInput
+                  placeholder='External stream/video URL'
+                  size='sm'
+                  style={{ flex: 1, minWidth: 200 }}
+                  value={streamUrl}
+                  onChange={(e) => setStreamUrl(e.target.value)}
+                  error={errors.stream_url}
+                  classNames={{ input: cn(styles.formInput) }}
+                />
+              )}
+            </Group>
+          )}
+
+          {/* Recording options - Only for LIVE mode */}
+          {streamMode === 'LIVE' && streamingPlatform && (
+            <div style={{ marginTop: 8 }}>
+              <Group gap='xs' align='center'>
+                <input
+                  type='checkbox'
+                  id='showRecording'
+                  checked={showRecording}
+                  onChange={(e) => {
+                    setShowRecording(e.target.checked);
+                    handleUpdate({ show_recording: e.target.checked });
                   }}
-                  data={[...MUX_PLAYBACK_POLICIES]}
-                  size='sm'
-                  allowDeselect={false}
-                  style={{ width: 100 }}
-                  classNames={{ input: cn(styles.formSelect) }}
                 />
-              </>
-            )}
-            {streamingPlatform === 'ZOOM' && (
-              <>
-                <TextInput
-                  placeholder='Zoom meeting URL or ID'
-                  size='sm'
-                  style={{ flex: 1, minWidth: 180 }}
-                  value={zoomMeetingId}
-                  onChange={(e) => setZoomMeetingId(e.target.value)}
-                  error={errors.zoom_meeting_id}
-                  classNames={{ input: cn(styles.formInput) }}
-                />
-                <TextInput
-                  placeholder='Passcode'
-                  size='sm'
-                  style={{ width: 120 }}
-                  value={zoomPasscode}
-                  onChange={(e) => setZoomPasscode(e.target.value)}
-                  classNames={{ input: cn(styles.formInput) }}
-                />
-              </>
-            )}
-            {streamingPlatform === 'JITSI' && (
-              <TextInput
-                placeholder='Jitsi room name or URL'
-                size='sm'
-                style={{ flex: 1, minWidth: 200 }}
-                value={jitsiRoomName}
-                onChange={(e) => setJitsiRoomName(e.target.value)}
-                error={errors.jitsi_room_name}
-                classNames={{ input: cn(styles.formInput) }}
-              />
-            )}
-            {streamingPlatform === 'OTHER' && (
-              <TextInput
-                placeholder='External stream URL'
-                size='sm'
-                style={{ flex: 1, minWidth: 200 }}
-                value={streamUrl}
-                onChange={(e) => setStreamUrl(e.target.value)}
-                error={errors.stream_url}
-                classNames={{ input: cn(styles.formInput) }}
-              />
-            )}
-          </Group>
-          {/* Recording URL - Optional, Vimeo/Mux auto-detect from stream */}
-          <Group gap='xs' mt={8} wrap='wrap' align='flex-end'>
-            <TextInput
-              placeholder='Recording URL (optional)'
-              size='sm'
-              style={{ flex: 1, minWidth: 200 }}
-              value={vodUrl}
-              onChange={(e) => setVodUrl(e.target.value)}
-              classNames={{ input: cn(styles.formInput) }}
-            />
-            {vodUrl && (
-              <Select
-                value={vodPlatform}
-                onChange={(value) => {
-                  const newValue = (value ?? '') as StreamingPlatform | '';
-                  setVodPlatform(newValue);
-                  handleUpdate({ vod_platform: newValue || null });
-                }}
-                data={[...VOD_PLATFORMS]}
-                size='sm'
-                allowDeselect={false}
-                style={{ width: 120 }}
-                classNames={{ input: cn(styles.formSelect) }}
-              />
-            )}
-          </Group>
-          {(streamingPlatform === 'VIMEO' || streamingPlatform === 'MUX') && !vodUrl && (
-            <Text size='xs' c='dimmed' mt={4}>
-              Vimeo/Mux will use stream URL for recording if left blank
-            </Text>
+                <label htmlFor='showRecording' style={{ fontSize: '0.85rem' }}>
+                  Show recording after session
+                </label>
+              </Group>
+              {showRecording && (
+                <>
+                  <Group gap='xs' mt={8} wrap='wrap' align='flex-end'>
+                    <TextInput
+                      placeholder='Recording URL (optional)'
+                      size='sm'
+                      style={{ flex: 1, minWidth: 200 }}
+                      value={vodUrl}
+                      onChange={(e) => setVodUrl(e.target.value)}
+                      classNames={{ input: cn(styles.formInput) }}
+                    />
+                    {vodUrl && (
+                      <Select
+                        value={vodPlatform}
+                        onChange={(value) => {
+                          const newValue = (value ?? '') as StreamingPlatform | '';
+                          setVodPlatform(newValue);
+                          handleUpdate({ vod_platform: newValue || null });
+                        }}
+                        data={[...RECORDING_PLATFORMS]}
+                        size='sm'
+                        allowDeselect={false}
+                        style={{ width: 120 }}
+                        classNames={{ input: cn(styles.formSelect) }}
+                      />
+                    )}
+                  </Group>
+                  {(streamingPlatform === 'VIMEO' || streamingPlatform === 'MUX') && !vodUrl && (
+                    <Text size='xs' c='dimmed' mt={4}>
+                      Leave blank to use stream URL for recording
+                    </Text>
+                  )}
+                </>
+              )}
+            </div>
           )}
         </div>
 

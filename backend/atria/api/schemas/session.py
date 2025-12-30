@@ -58,15 +58,8 @@ class SessionSchema(ma.SQLAlchemyAutoSchema):
     show_video = ma.Boolean()  # Master toggle
     show_recording = ma.Boolean()  # Recording toggle for live sessions
 
-    # Computed stream mode properties (read-only)
-    effective_stream_mode = ma.String(dump_only=True)
-    is_vod_session = ma.Boolean(dump_only=True)
-    is_live_session = ma.Boolean(dump_only=True)
-    is_no_video_session = ma.Boolean(dump_only=True)
-    should_show_video = ma.Boolean(dump_only=True)
-    should_show_recording = ma.Boolean(dump_only=True)
-    is_past_start_time = ma.Boolean(dump_only=True)
-    is_past_end_time = ma.Boolean(dump_only=True)
+    # Key computed property - encapsulates complex video state logic
+    # Returns: 'none', 'hidden', 'pre', 'live', 'vod', 'recording', 'ended'
     current_video_state = ma.String(dump_only=True)
 
 
