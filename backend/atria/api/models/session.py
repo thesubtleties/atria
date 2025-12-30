@@ -43,6 +43,13 @@ class Session(db.Model):
     vod_url = db.Column(db.Text, nullable=True)
     vod_platform = db.Column(db.String(20), nullable=True)  # VIMEO, MUX, OTHER
 
+    # Stream mode and visibility toggles
+    # stream_mode: 'NONE' (no video), 'LIVE' (live stream), 'VOD' (pre-recorded)
+    # NULL = backward compat (infer from streaming_platform)
+    stream_mode = db.Column(db.String(10), nullable=True)
+    show_video = db.Column(db.Boolean, default=True, nullable=False)  # Master toggle
+    show_recording = db.Column(db.Boolean, default=True, nullable=False)  # Recording after live
+
     day_number = db.Column(db.BigInteger, nullable=False)
     created_at = db.Column(
         db.DateTime(timezone=True), server_default=db.func.current_timestamp()
@@ -338,6 +345,110 @@ class Session(db.Model):
             return True
         # Jitsi/Zoom/Other - no automatic VOD
         return False
+
+    # Stream Mode Properties
+    @property
+    def effective_stream_mode(self) -> str:
+        """Get effective stream mode (handles NULL backward compat).
+
+        Returns:
+            'NONE': No video (in-person event, chat-only)
+            'LIVE': Live streaming session
+            'VOD': Pre-recorded video session
+        """
+        if self.stream_mode:
+            return self.stream_mode
+        # NULL: infer from existing data for backward compat
+        if self.streaming_platform:
+            return 'LIVE'
+        return 'NONE'
+
+    @property
+    def is_vod_session(self) -> bool:
+        """Is this a VOD-only session (pre-recorded)?"""
+        return self.effective_stream_mode == 'VOD'
+
+    @property
+    def is_live_session(self) -> bool:
+        """Is this a live streaming session?"""
+        return self.effective_stream_mode == 'LIVE'
+
+    @property
+    def is_no_video_session(self) -> bool:
+        """Is this a no-video session (in-person, chat-only)?"""
+        return self.effective_stream_mode == 'NONE'
+
+    @property
+    def should_show_video(self) -> bool:
+        """Should video player be displayed at all?"""
+        if not self.show_video or self.is_no_video_session:
+            return False
+        return bool(self.stream_url) or bool(self.vod_url)
+
+    @property
+    def is_past_start_time(self) -> bool:
+        """Has the session's scheduled start time passed?"""
+        if not self.start_datetime:
+            return False
+        return datetime.now(timezone.utc) >= self.start_datetime
+
+    @property
+    def is_past_end_time(self) -> bool:
+        """Has the session's scheduled end time passed?"""
+        if not self.end_datetime:
+            return False
+        return datetime.now(timezone.utc) > self.end_datetime
+
+    @property
+    def should_show_recording(self) -> bool:
+        """Should recording be shown (for live sessions after end)?
+
+        Only applies to LIVE mode sessions. Returns True if:
+        - show_video and show_recording toggles are both True
+        - Session is a live session (not VOD or NONE)
+        - VOD is available (either vod_url or auto-detect from Vimeo/Mux)
+        - Session end time has passed
+        """
+        if not self.show_video or not self.show_recording:
+            return False
+        if not self.is_live_session:
+            return False
+        return self.has_vod and self.is_past_end_time
+
+    @property
+    def current_video_state(self) -> str:
+        """Get current video state for frontend rendering.
+
+        Returns one of:
+            'none': No video configured (NONE mode)
+            'hidden': Video explicitly hidden by show_video toggle
+            'pre': Before session/window opens
+            'live': Live stream is active
+            'vod': VOD content is available
+            'recording': Post-live recording available
+            'ended': Session ended, no recording available
+        """
+        if self.is_no_video_session:
+            return 'none'
+
+        if not self.show_video:
+            return 'hidden'
+
+        if self.is_vod_session:
+            # VOD: available from start_time onward, evergreen
+            if self.is_past_start_time:
+                return 'vod'
+            return 'pre'
+
+        # Live sessions
+        if self.is_window_open:
+            return 'live'
+        elif self.is_past_end_time and self.should_show_recording:
+            return 'recording'
+        elif self.is_past_end_time:
+            return 'ended'
+        else:
+            return 'pre'
 
     def get_speakers_by_role(self, role: SessionSpeakerRole):
         """Get all speakers with specific role"""
