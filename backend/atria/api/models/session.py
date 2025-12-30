@@ -343,7 +343,10 @@ class Session(db.Model):
         # Mux playback IDs work for VOD
         if self.streaming_platform == 'MUX' and self.stream_url:
             return True
-        # Jitsi/Zoom/Other - no automatic VOD
+        # OTHER platform - use stream_url as recording fallback
+        if self.streaming_platform == 'OTHER' and self.stream_url:
+            return True
+        # Jitsi/Zoom - no automatic VOD (interactive platforms)
         return False
 
     # Stream Mode Properties
@@ -440,15 +443,18 @@ class Session(db.Model):
                 return 'vod'
             return 'pre'
 
-        # Live sessions
-        if self.is_window_open:
-            return 'live'
-        elif self.is_past_end_time and self.should_show_recording:
-            return 'recording'
-        elif self.is_past_end_time:
+        # Live sessions - check timing regardless of window state
+        if self.is_past_end_time:
+            # Session has ended - show recording or thank you
+            if self.show_recording and self.has_vod:
+                return 'recording'
             return 'ended'
-        else:
+        elif not self.is_window_open:
+            # Window not open yet (before visibility window)
             return 'pre'
+        else:
+            # Session is active and window is open
+            return 'live'
 
     def get_speakers_by_role(self, role: SessionSpeakerRole):
         """Get all speakers with specific role"""
