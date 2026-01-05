@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import {
   TextInput,
   Textarea,
@@ -33,6 +33,7 @@ import {
   type SessionFieldName,
   type SessionTypeValue,
 } from '../schemas/sessionCardSchema';
+import type { AvailablePlatforms } from '../SessionList';
 import { useSessionStreaming } from '../hooks';
 import { formatTime } from '@/shared/utils/formatting';
 import type { Session, StreamingPlatform, SessionSpeaker } from '@/types';
@@ -113,11 +114,16 @@ const SWITCH_STYLES_REGULAR = {
 type SessionCardMobileProps = {
   session: Session;
   hasConflict: boolean;
+  availablePlatforms: AvailablePlatforms;
 };
 
 type FieldErrors = Partial<Record<SessionFieldName | 'time_order', string>>;
 
-export const SessionCardMobile = ({ session, hasConflict }: SessionCardMobileProps) => {
+export const SessionCardMobile = ({
+  session,
+  hasConflict,
+  availablePlatforms,
+}: SessionCardMobileProps) => {
   const [updateSession] = useUpdateSessionMutation();
   const [deleteSession] = useDeleteSessionMutation();
   const [detailsExpanded, setDetailsExpanded] = useState(false);
@@ -185,6 +191,29 @@ export const SessionCardMobile = ({ session, hasConflict }: SessionCardMobilePro
 
   // Use the streaming hook for all streaming-related state and validation
   const streaming = useSessionStreaming({ session, onUpdate: handleUpdate });
+
+  // Filter platform lists based on organization credentials
+  const filteredLivePlatforms = useMemo(() => {
+    return LIVE_STREAMING_PLATFORMS.filter((p) => {
+      if (p.value === 'MUX' && !availablePlatforms.hasMux) return false;
+      if (p.value === 'JITSI' && !availablePlatforms.hasJitsi) return false;
+      return true;
+    });
+  }, [availablePlatforms]);
+
+  const filteredVodPlatforms = useMemo(() => {
+    return VOD_STREAMING_PLATFORMS.filter((p) => {
+      if (p.value === 'MUX' && !availablePlatforms.hasMux) return false;
+      return true;
+    });
+  }, [availablePlatforms]);
+
+  const filteredRecordingPlatforms = useMemo(() => {
+    return RECORDING_PLATFORMS.filter((p) => {
+      if (p.value === 'MUX' && !availablePlatforms.hasMux) return false;
+      return true;
+    });
+  }, [availablePlatforms]);
 
   // Merge streaming errors with component errors for display
   const allErrors = { ...errors, ...streaming.streamingErrors };
@@ -482,15 +511,20 @@ export const SessionCardMobile = ({ session, hasConflict }: SessionCardMobilePro
                   value={streaming.streamingPlatform}
                   onChange={streaming.handlePlatformChange}
                   data={
-                    streaming.streamMode === 'VOD' ?
-                      [...VOD_STREAMING_PLATFORMS]
-                    : [...LIVE_STREAMING_PLATFORMS]
+                    streaming.streamMode === 'VOD' ? filteredVodPlatforms : filteredLivePlatforms
                   }
                   size='sm'
                   mt='xs'
                   allowDeselect={false}
                   classNames={{ input: cn(styles.formSelect) }}
                 />
+              )}
+
+              {/* Hint when some platforms are unavailable */}
+              {(!availablePlatforms.hasMux || !availablePlatforms.hasJitsi) && (
+                <Text size='xs' c='dimmed' mt='xs'>
+                  More platforms available via Organization settings
+                </Text>
               )}
 
               {/* Platform-specific fields for LIVE/VOD */}
@@ -620,7 +654,7 @@ export const SessionCardMobile = ({ session, hasConflict }: SessionCardMobilePro
                           label='Recording Platform'
                           value={streaming.vodPlatform}
                           onChange={streaming.handleVodPlatformChange}
-                          data={[...RECORDING_PLATFORMS]}
+                          data={filteredRecordingPlatforms}
                           size='sm'
                           mt='xs'
                           allowDeselect={false}

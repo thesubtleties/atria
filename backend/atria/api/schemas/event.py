@@ -44,8 +44,11 @@ class EventDetailSchema(EventSchema):
     sponsors_count = ma.Integer(dump_only=True)  # Number of active sponsors (detail only to avoid N+1)
 
     # Nested relationships - only include necessary fields
+    # Include credential flags so frontend can filter available streaming platforms
     organization = ma.Nested(
-        "OrganizationSchema", only=("id", "name"), dump_only=True
+        "OrganizationSchema",
+        only=("id", "name", "has_mux_credentials", "has_mux_signing_credentials", "has_jaas_credentials"),
+        dump_only=True,
     )
 
     sessions = ma.Nested(
