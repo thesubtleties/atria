@@ -121,6 +121,10 @@ export type EventDetail = Event & {
   organization: {
     id: number;
     name: string;
+    // Credential flags for filtering available streaming platforms
+    has_mux_credentials: boolean;
+    has_mux_signing_credentials: boolean;
+    has_jaas_credentials: boolean;
   };
   sessions: SessionSummary[];
   organizers: UserWithRole[];

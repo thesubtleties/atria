@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import {
   TextInput,
   Textarea,
@@ -25,6 +25,7 @@ import {
   type SessionTypeValue,
 } from '../schemas/sessionCardSchema';
 import { useSessionStreaming } from '../hooks';
+import type { AvailablePlatforms } from '../SessionList';
 import type { Session, StreamingPlatform, SessionSpeaker } from '@/types';
 import type { SessionType, SessionChatMode, SessionStatus } from '@/types/enums';
 import styles from '../styles/index.module.css';
@@ -103,11 +104,12 @@ const SWITCH_STYLES_REGULAR = {
 type SessionCardProps = {
   session: Session;
   hasConflict: boolean;
+  availablePlatforms: AvailablePlatforms;
 };
 
 type FieldErrors = Partial<Record<SessionFieldName | 'time_order', string>>;
 
-export const SessionCard = ({ session, hasConflict }: SessionCardProps) => {
+export const SessionCard = ({ session, hasConflict, availablePlatforms }: SessionCardProps) => {
   const [updateSession] = useUpdateSessionMutation();
   const [deleteSession] = useDeleteSessionMutation();
 
@@ -174,6 +176,29 @@ export const SessionCard = ({ session, hasConflict }: SessionCardProps) => {
 
   // Use the streaming hook for all streaming-related state and validation
   const streaming = useSessionStreaming({ session, onUpdate: handleUpdate });
+
+  // Filter platform options based on organization credentials
+  const filteredLivePlatforms = useMemo(() => {
+    return LIVE_STREAMING_PLATFORMS.filter((p) => {
+      if (p.value === 'MUX' && !availablePlatforms.hasMux) return false;
+      if (p.value === 'JITSI' && !availablePlatforms.hasJitsi) return false;
+      return true;
+    });
+  }, [availablePlatforms]);
+
+  const filteredVodPlatforms = useMemo(() => {
+    return VOD_STREAMING_PLATFORMS.filter((p) => {
+      if (p.value === 'MUX' && !availablePlatforms.hasMux) return false;
+      return true;
+    });
+  }, [availablePlatforms]);
+
+  const filteredRecordingPlatforms = useMemo(() => {
+    return RECORDING_PLATFORMS.filter((p) => {
+      if (p.value === 'MUX' && !availablePlatforms.hasMux) return false;
+      return true;
+    });
+  }, [availablePlatforms]);
 
   // Merge streaming errors with component errors for display
   const allErrors = { ...errors, ...streaming.streamingErrors };
@@ -424,7 +449,7 @@ export const SessionCard = ({ session, hasConflict }: SessionCardProps) => {
               data={[...STREAM_MODES]}
               size='sm'
               allowDeselect={false}
-              style={{ width: 140 }}
+              style={{ width: 165 }}
               classNames={{ input: cn(styles.formSelect) }}
             />
 
@@ -433,11 +458,7 @@ export const SessionCard = ({ session, hasConflict }: SessionCardProps) => {
               <Select
                 value={streaming.streamingPlatform}
                 onChange={streaming.handlePlatformChange}
-                data={
-                  streaming.streamMode === 'VOD' ?
-                    [...VOD_STREAMING_PLATFORMS]
-                  : [...LIVE_STREAMING_PLATFORMS]
-                }
+                data={streaming.streamMode === 'VOD' ? filteredVodPlatforms : filteredLivePlatforms}
                 placeholder='Platform'
                 size='sm'
                 allowDeselect={false}
@@ -446,6 +467,12 @@ export const SessionCard = ({ session, hasConflict }: SessionCardProps) => {
               />
             )}
           </Group>
+          {/* Hint when some platforms are unavailable */}
+          {(!availablePlatforms.hasMux || !availablePlatforms.hasJitsi) && (
+            <Text size='xs' c='dimmed' mt={4}>
+              More platforms available via Organization settings
+            </Text>
+          )}
 
           {/* Platform-specific fields for LIVE/VOD */}
           {streaming.streamMode !== 'NONE' && streaming.streamingPlatform && (
@@ -566,7 +593,7 @@ export const SessionCard = ({ session, hasConflict }: SessionCardProps) => {
                       <Select
                         value={streaming.vodPlatform}
                         onChange={streaming.handleVodPlatformChange}
-                        data={[...RECORDING_PLATFORMS]}
+                        data={filteredRecordingPlatforms}
                         size='sm'
                         allowDeselect={false}
                         style={{ width: 120 }}
