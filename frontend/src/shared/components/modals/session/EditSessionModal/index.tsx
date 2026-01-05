@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { TextInput, Stack, Modal, Textarea, Select, Group, Text, Switch } from '@mantine/core';
 import { skipToken } from '@reduxjs/toolkit/query';
 import { TimeSelect } from '@/shared/components/forms/TimeSelect';
@@ -43,6 +43,13 @@ interface EventData {
   id: number;
   start_date: string;
   end_date: string;
+  organization?: {
+    id: number;
+    name: string;
+    has_mux_credentials: boolean;
+    has_mux_signing_credentials: boolean;
+    has_jaas_credentials: boolean;
+  };
 }
 
 const SESSION_TYPES = [
@@ -188,6 +195,34 @@ export const EditSessionModal = ({
   const isLoading = isCreating || isUpdating;
 
   const availableDays = getEventDays(event);
+
+  // Filter platform lists based on organization credentials
+  const hasMux = event?.organization?.has_mux_credentials ?? false;
+  const hasJitsi = event?.organization?.has_jaas_credentials ?? false;
+
+  const filteredLivePlatforms = useMemo(() => {
+    return LIVE_STREAMING_PLATFORMS.filter((p) => {
+      if (p.value === 'MUX' && !hasMux) return false;
+      if (p.value === 'JITSI' && !hasJitsi) return false;
+      return true;
+    });
+  }, [hasMux, hasJitsi]);
+
+  const filteredVodPlatforms = useMemo(() => {
+    return VOD_STREAMING_PLATFORMS.filter((p) => {
+      if (p.value === 'MUX' && !hasMux) return false;
+      return true;
+    });
+  }, [hasMux]);
+
+  const filteredVodRecordingPlatforms = useMemo(() => {
+    return VOD_PLATFORMS.filter((p) => {
+      if (p.value === 'MUX' && !hasMux) return false;
+      return true;
+    });
+  }, [hasMux]);
+
+  const hasMissingPlatforms = !hasMux || !hasJitsi;
 
   const getInitialValues = (): SessionFormValues => {
     if (isEditing && session) {
@@ -415,6 +450,28 @@ export const EditSessionModal = ({
             />
           </Group>
 
+          <Text className={styles.sectionTitle || ''}>Chat Settings</Text>
+
+          <Select
+            label='Chat Mode'
+            placeholder='Choose chat availability'
+            data={[...CHAT_MODES]}
+            required
+            allowDeselect={false}
+            classNames={{ input: styles.formSelect || '' }}
+            {...form.getInputProps('chat_mode')}
+          />
+
+          <Select
+            label='Visibility Window'
+            placeholder='When attendees can access this session'
+            description='Controls when video and chat become available relative to session times'
+            data={[...VISIBILITY_WINDOW_OPTIONS]}
+            allowDeselect={false}
+            classNames={{ input: styles.formSelect || '' }}
+            {...form.getInputProps('visibility_minutes_override')}
+          />
+
           <Text className={styles.sectionTitle || ''}>Video & Streaming</Text>
 
           <Select
@@ -447,14 +504,19 @@ export const EditSessionModal = ({
               placeholder='Select streaming platform'
               description='Choose the platform for your video content'
               data={
-                form.values.stream_mode === 'VOD' ?
-                  [...VOD_STREAMING_PLATFORMS]
-                : [...LIVE_STREAMING_PLATFORMS]
+                form.values.stream_mode === 'VOD' ? filteredVodPlatforms : filteredLivePlatforms
               }
               allowDeselect={false}
               classNames={{ input: styles.formSelect || '' }}
               {...form.getInputProps('streaming_platform')}
             />
+          )}
+
+          {/* Hint when some platforms are unavailable */}
+          {hasMissingPlatforms && (
+            <Text size='xs' c='dimmed'>
+              More platforms available via Organization settings
+            </Text>
           )}
 
           {/* Conditional streaming fields based on selected platform */}
@@ -550,28 +612,6 @@ export const EditSessionModal = ({
             />
           )}
 
-          <Text className={styles.sectionTitle || ''}>Chat Settings</Text>
-
-          <Select
-            label='Chat Mode'
-            placeholder='Choose chat availability'
-            data={[...CHAT_MODES]}
-            required
-            allowDeselect={false}
-            classNames={{ input: styles.formSelect || '' }}
-            {...form.getInputProps('chat_mode')}
-          />
-
-          <Select
-            label='Visibility Window'
-            placeholder='When attendees can access this session'
-            description='Controls when video and chat become available relative to session times'
-            data={[...VISIBILITY_WINDOW_OPTIONS]}
-            allowDeselect={false}
-            classNames={{ input: styles.formSelect || '' }}
-            {...form.getInputProps('visibility_minutes_override')}
-          />
-
           {/* Recording section - only show for LIVE mode when show_recording is enabled */}
           {form.values.stream_mode === 'LIVE' &&
             form.values.show_recording &&
@@ -592,7 +632,7 @@ export const EditSessionModal = ({
                     label='Recording Platform'
                     placeholder='Select platform for the recording'
                     description='Leave as auto-detect to use the same platform as the live stream'
-                    data={[...VOD_PLATFORMS]}
+                    data={filteredVodRecordingPlatforms}
                     allowDeselect={false}
                     classNames={{ input: styles.formSelect || '' }}
                     {...form.getInputProps('vod_platform')}
