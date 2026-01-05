@@ -353,8 +353,17 @@ class DashboardService:
                 'description': 'Complete frontend TypeScript migration with full type safety and standardized enum handling. Read the full announcement at docs.atria.gg/blog/v0.4.0-release',
                 'date': datetime(2025, 12, 24, tzinfo=timezone.utc),
                 'type': 'platform_update',
-                'is_new': True,
+                'is_new': False,
                 'link': 'https://docs.atria.gg/blog/v0.4.0-release'
+            },
+            {
+                'id': 9,
+                'title': 'v0.5.0 - Stream Mode & Visibility Windows',
+                'description': 'New stream mode UI with LIVE/VOD/NONE options, session visibility windows, and platform credential filtering. Read the full announcement at docs.atria.gg/blog/v0.5.0-release',
+                'date': datetime(2026, 1, 5, tzinfo=timezone.utc),
+                'type': 'feature_release',
+                'is_new': True,
+                'link': 'https://docs.atria.gg/blog/v0.5.0-release'
             }
         ]
 

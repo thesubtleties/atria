@@ -5,6 +5,30 @@ All notable changes to Atria will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-01-05
+
+### Added
+
+- **Session Visibility Window** - Configure when sessions become accessible to attendees (always visible, or X minutes before/after session time)
+- **Stream Mode UI** - New video state management with NONE/LIVE/VOD modes, show/hide video toggle, and post-session recording option
+- **Platform Credential Filtering** - Streaming platform options (Mux, Jitsi) now filtered based on organization credentials configuration
+- Helper text in session forms when additional platforms are available via Organization settings
+
+### Changed
+
+- Session modal sections reordered: Chat Settings now appears before Video & Streaming for better UX
+- Streaming validation refactored into shared `useSessionStreaming` hook for consistency between SessionCard and modal
+- RTK Query cache invalidation optimized for session updates
+- Stream mode dropdown widened to properly display "Pre-recorded (VOD)" option
+
+### Fixed
+
+- Platform change with existing URL now saves correctly (was being skipped when URL matched session value)
+- Date picker accessibility improved with proper labels
+- Streaming field validation consolidated and improved
+
+[0.5.0]: https://github.com/thesubtleties/atria/releases/tag/v0.5.0
+
 ## [0.4.1] - 2025-12-27
 
 ### Fixed
