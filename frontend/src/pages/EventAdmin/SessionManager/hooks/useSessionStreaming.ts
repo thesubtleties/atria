@@ -142,18 +142,37 @@ export const useSessionStreaming = ({
           if (!validation.success) {
             const zodError = validation.error as { errors: { message: string }[] };
             setFieldError('stream_url', zodError.errors[0]?.message ?? 'URL required');
+          } else if (streamUrl) {
+            // If URL is valid and non-empty, save platform + URL together
+            // This ensures platform change isn't lost when URL matches session value
+            onUpdate({
+              streaming_platform: value as StreamingPlatform,
+              stream_url: streamUrl,
+            });
           }
         } else if (value === 'ZOOM') {
           const validation = validateZoomMeetingId(zoomMeetingId, true, value);
           if (!validation.success) {
             const zodError = validation.error as { errors: { message: string }[] };
             setFieldError('zoom_meeting_id', zodError.errors[0]?.message ?? 'Meeting ID required');
+          } else if (zoomMeetingId) {
+            // Save platform + meeting ID together
+            onUpdate({
+              streaming_platform: value as StreamingPlatform,
+              zoom_meeting_id: zoomMeetingId,
+            });
           }
         } else if (value === 'JITSI') {
           const validation = validateJitsiRoomName(jitsiRoomName, true, value);
           if (!validation.success) {
             const zodError = validation.error as { errors: { message: string }[] };
             setFieldError('jitsi_room_name', zodError.errors[0]?.message ?? 'Room name required');
+          } else if (jitsiRoomName) {
+            // Save platform + room name together
+            onUpdate({
+              streaming_platform: value as StreamingPlatform,
+              jitsi_room_name: jitsiRoomName,
+            });
           }
         }
       }
