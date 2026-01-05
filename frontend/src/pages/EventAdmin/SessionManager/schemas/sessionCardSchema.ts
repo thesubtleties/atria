@@ -124,11 +124,30 @@ export type StreamingPlatformValue = z.infer<typeof StreamingPlatform>;
 export type MuxPlaybackPolicyValue = z.infer<typeof MuxPlaybackPolicy>;
 
 // Platform-aware validation for stream URL (used by Vimeo, Mux, Other)
+// Set requireIfPlatformSet=true to require URL when platform is selected
 export const validateStreamUrl = (
   platform: string | null | undefined,
   value: string,
+  requireIfPlatformSet = false,
 ): z.SafeParseReturnType<string, string> => {
-  if (!value) return { success: true, data: '' } as z.SafeParseSuccess<string>;
+  // Check if URL is required but missing
+  if (!value) {
+    if (
+      requireIfPlatformSet &&
+      (platform === 'VIMEO' || platform === 'MUX' || platform === 'OTHER')
+    ) {
+      // Build user-friendly error message
+      const errorMessage =
+        platform === 'MUX' ? 'Mux Playback ID required'
+        : platform === 'VIMEO' ? 'Vimeo video URL or ID required'
+        : 'URL required';
+      return {
+        success: false,
+        error: { errors: [{ message: errorMessage }] },
+      } as z.SafeParseReturnType<string, string>;
+    }
+    return { success: true, data: '' } as z.SafeParseSuccess<string>;
+  }
 
   switch (platform) {
     case 'VIMEO':
@@ -143,13 +162,39 @@ export const validateStreamUrl = (
 };
 
 // Platform-aware validation for Zoom meeting ID
-export const validateZoomMeetingId = (value: string): z.SafeParseReturnType<string, string> => {
-  if (!value) return { success: true, data: '' } as z.SafeParseSuccess<string>;
+// Set requireIfPlatformSet=true to require meeting ID when platform is ZOOM
+export const validateZoomMeetingId = (
+  value: string,
+  requireIfPlatformSet = false,
+  platform?: string | null,
+): z.SafeParseReturnType<string, string> => {
+  if (!value) {
+    if (requireIfPlatformSet && platform === 'ZOOM') {
+      return {
+        success: false,
+        error: { errors: [{ message: 'Zoom meeting URL or ID required' }] },
+      } as z.SafeParseReturnType<string, string>;
+    }
+    return { success: true, data: '' } as z.SafeParseSuccess<string>;
+  }
   return zoomSchema.safeParse(value);
 };
 
 // Platform-aware validation for Jitsi room name
-export const validateJitsiRoomName = (value: string): z.SafeParseReturnType<string, string> => {
-  if (!value) return { success: true, data: '' } as z.SafeParseSuccess<string>;
+// Set requireIfPlatformSet=true to require room name when platform is JITSI
+export const validateJitsiRoomName = (
+  value: string,
+  requireIfPlatformSet = false,
+  platform?: string | null,
+): z.SafeParseReturnType<string, string> => {
+  if (!value) {
+    if (requireIfPlatformSet && platform === 'JITSI') {
+      return {
+        success: false,
+        error: { errors: [{ message: 'Jitsi room name required' }] },
+      } as z.SafeParseReturnType<string, string>;
+    }
+    return { success: true, data: '' } as z.SafeParseSuccess<string>;
+  }
   return jitsiSchema.safeParse(value);
 };

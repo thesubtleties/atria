@@ -135,7 +135,16 @@ export const sessionsApi = baseApi.injectEndpoints({
         url: `/events/${eventId}/sessions`,
         params: { day_number: dayNumber, page, per_page },
       }),
-      providesTags: ['Sessions'],
+      // Provide tags for each session + a LIST tag
+      // This allows updateSession to invalidate just the specific session in the cache
+      // without refetching the entire list
+      providesTags: (result) =>
+        result ?
+          [
+            ...result.sessions.map(({ id }) => ({ type: 'Sessions' as const, id })),
+            { type: 'Sessions' as const, id: 'LIST' },
+          ]
+        : [{ type: 'Sessions' as const, id: 'LIST' }],
     }),
     getSession: builder.query<Session, GetSessionParams>({
       query: ({ id }) => ({
@@ -152,7 +161,7 @@ export const sessionsApi = baseApi.injectEndpoints({
       invalidatesTags: (_result, _error, { eventId }) => [
         { type: 'Events' as const, id: eventId },
         'Events',
-        'Sessions',
+        { type: 'Sessions' as const, id: 'LIST' },
       ],
     }),
     updateSession: builder.mutation<Session, UpdateSessionParams>({
@@ -195,7 +204,11 @@ export const sessionsApi = baseApi.injectEndpoints({
         method: 'POST',
         body: speakerData,
       }),
-      invalidatesTags: ['SessionSpeakers', 'Sessions', 'EventUsers'],
+      invalidatesTags: (_result, _error, { sessionId }) => [
+        'SessionSpeakers',
+        { type: 'Sessions' as const, id: sessionId },
+        'EventUsers',
+      ],
     }),
     updateSessionSpeaker: builder.mutation<void, UpdateSessionSpeakerParams>({
       query: ({ sessionId, userId, ...updates }) => ({
@@ -203,7 +216,10 @@ export const sessionsApi = baseApi.injectEndpoints({
         method: 'PUT',
         body: updates,
       }),
-      invalidatesTags: ['SessionSpeakers', 'Sessions'],
+      invalidatesTags: (_result, _error, { sessionId }) => [
+        'SessionSpeakers',
+        { type: 'Sessions' as const, id: sessionId },
+      ],
     }),
     reorderSessionSpeaker: builder.mutation<void, ReorderSessionSpeakerParams>({
       query: ({ sessionId, userId, order }) => ({
@@ -211,21 +227,31 @@ export const sessionsApi = baseApi.injectEndpoints({
         method: 'PUT',
         body: { order },
       }),
-      invalidatesTags: ['SessionSpeakers', 'Sessions'],
+      invalidatesTags: (_result, _error, { sessionId }) => [
+        'SessionSpeakers',
+        { type: 'Sessions' as const, id: sessionId },
+      ],
     }),
     removeSessionSpeaker: builder.mutation<void, RemoveSessionSpeakerParams>({
       query: ({ sessionId, userId }) => ({
         url: `/sessions/${sessionId}/speakers/${userId}`,
         method: 'DELETE',
       }),
-      invalidatesTags: ['SessionSpeakers', 'Sessions', 'EventUsers'],
+      invalidatesTags: (_result, _error, { sessionId }) => [
+        'SessionSpeakers',
+        { type: 'Sessions' as const, id: sessionId },
+        'EventUsers',
+      ],
     }),
     deleteSession: builder.mutation<void, DeleteSessionParams>({
       query: ({ id }) => ({
         url: `/sessions/${id}`,
         method: 'DELETE',
       }),
-      invalidatesTags: ['Sessions'],
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: 'Sessions' as const, id },
+        { type: 'Sessions' as const, id: 'LIST' },
+      ],
     }),
   }),
 });
