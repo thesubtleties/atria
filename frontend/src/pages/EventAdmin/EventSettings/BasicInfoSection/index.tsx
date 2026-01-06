@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react';
 import { TextInput, Textarea, Select, Stack, Group, Text } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
-import { DateInput } from '@mantine/dates';
 import { notifications } from '@mantine/notifications';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { useUpdateEventMutation } from '@/app/features/events/api';
 import { useGetSessionsQuery } from '@/app/features/sessions/api';
 import { useEventStatusStyle } from '@/shared/hooks/useEventStatusStyle';
-import { parseDateOnly, formatDateOnly } from '@/shared/hooks/formatDate';
+// Dates are stored as YYYY-MM-DD strings, used directly with native date input
 import { eventUpdateSchema } from '../schemas/eventSettingsSchemas';
 import { Button } from '@/shared/components/buttons';
 import { COMMON_TIMEZONES } from '@/shared/constants/timezones';
@@ -26,13 +25,22 @@ type FormValues = {
   title: string;
   description: string;
   event_type: string;
-  start_date: Date | null;
-  end_date: Date | null;
+  start_date: string;
+  end_date: string;
   timezone: string;
   company_name: string;
   status: string;
   main_session_id: string | null;
+  session_visibility_minutes: string;
 };
+
+const VISIBILITY_WINDOW_OPTIONS = [
+  { value: '', label: 'Always visible' },
+  { value: '2', label: '2 minutes before/after' },
+  { value: '5', label: '5 minutes before/after' },
+  { value: '10', label: '10 minutes before/after' },
+  { value: '15', label: '15 minutes before/after' },
+] as const;
 
 const BasicInfoSection = ({ event, eventId }: BasicInfoSectionProps) => {
   const [updateEvent, { isLoading }] = useUpdateEventMutation();
@@ -50,12 +58,16 @@ const BasicInfoSection = ({ event, eventId }: BasicInfoSectionProps) => {
       title: event?.title || '',
       description: event?.description || '',
       event_type: event?.event_type || 'CONFERENCE',
-      start_date: parseDateOnly(event?.start_date),
-      end_date: parseDateOnly(event?.end_date),
+      start_date: event?.start_date || '',
+      end_date: event?.end_date || '',
       timezone: event?.timezone || 'UTC',
       company_name: event?.company_name || '',
       status: event?.status || 'DRAFT',
       main_session_id: event?.main_session_id?.toString() || null,
+      session_visibility_minutes:
+        event?.session_visibility_minutes != null ?
+          event.session_visibility_minutes.toString()
+        : '',
     },
     validate: zodResolver(eventUpdateSchema),
   });
@@ -66,14 +78,18 @@ const BasicInfoSection = ({ event, eventId }: BasicInfoSectionProps) => {
       const changed = Object.keys(form.values).some((key) => {
         const formKey = key as keyof FormValues;
         if (formKey === 'start_date' || formKey === 'end_date') {
-          // Compare dates as YYYY-MM-DD strings to avoid timezone issues
-          const eventKey = formKey as 'start_date' | 'end_date';
-          const eventDate = event?.[eventKey] || null;
-          const formDate = formatDateOnly(form.values[formKey] as Date | null);
-          return eventDate !== formDate;
+          // Compare as strings directly (both are YYYY-MM-DD)
+          return form.values[formKey] !== (event?.[formKey] || '');
         }
         if (formKey === 'main_session_id') {
           return form.values[formKey] !== (event?.main_session_id?.toString() || null);
+        }
+        if (formKey === 'session_visibility_minutes') {
+          const eventValue =
+            event?.session_visibility_minutes != null ?
+              event.session_visibility_minutes.toString()
+            : '';
+          return form.values[formKey] !== eventValue;
         }
         return form.values[formKey] !== event?.[formKey as keyof Event];
       });
@@ -97,12 +113,16 @@ const BasicInfoSection = ({ event, eventId }: BasicInfoSectionProps) => {
         title: values.title,
         description: values.description || null,
         event_type: values.event_type as Event['event_type'],
-        start_date: formatDateOnly(values.start_date) || '',
-        end_date: formatDateOnly(values.end_date) || '',
+        start_date: values.start_date,
+        end_date: values.end_date,
         timezone: values.timezone,
         company_name: values.company_name,
         status: values.status as Event['status'],
         main_session_id: values.main_session_id ? parseInt(values.main_session_id, 10) : null,
+        session_visibility_minutes:
+          values.session_visibility_minutes ?
+            parseInt(values.session_visibility_minutes, 10)
+          : null,
       }).unwrap();
 
       notifications.show({
@@ -126,12 +146,16 @@ const BasicInfoSection = ({ event, eventId }: BasicInfoSectionProps) => {
       title: event?.title || '',
       description: event?.description || '',
       event_type: event?.event_type || 'CONFERENCE',
-      start_date: parseDateOnly(event?.start_date),
-      end_date: parseDateOnly(event?.end_date),
+      start_date: event?.start_date || '',
+      end_date: event?.end_date || '',
       timezone: event?.timezone || 'UTC',
       company_name: event?.company_name || '',
       status: event?.status || 'DRAFT',
       main_session_id: event?.main_session_id?.toString() || null,
+      session_visibility_minutes:
+        event?.session_visibility_minutes != null ?
+          event.session_visibility_minutes.toString()
+        : '',
     });
     setHasChanges(false);
   };
@@ -206,9 +230,9 @@ const BasicInfoSection = ({ event, eventId }: BasicInfoSectionProps) => {
           </Group>
 
           <Group grow>
-            <DateInput
+            <TextInput
+              type='date'
               label='Start Date'
-              placeholder='Select start date'
               required
               classNames={{
                 input: styles.formInput ?? '',
@@ -217,10 +241,11 @@ const BasicInfoSection = ({ event, eventId }: BasicInfoSectionProps) => {
               {...form.getInputProps('start_date')}
             />
 
-            <DateInput
+            <TextInput
+              type='date'
               label='End Date'
-              placeholder='Select end date'
               required
+              min={form.values.start_date}
               classNames={{
                 input: styles.formInput ?? '',
                 label: styles.formLabel ?? '',
@@ -251,6 +276,18 @@ const BasicInfoSection = ({ event, eventId }: BasicInfoSectionProps) => {
               label: styles.formLabel ?? '',
             }}
             {...form.getInputProps('timezone')}
+          />
+
+          <Select
+            label='Session Visibility Window'
+            description='Default window for when session content becomes accessible (can be overridden per session)'
+            data={[...VISIBILITY_WINDOW_OPTIONS]}
+            allowDeselect={false}
+            classNames={{
+              input: styles.formInput ?? '',
+              label: styles.formLabel ?? '',
+            }}
+            {...form.getInputProps('session_visibility_minutes')}
           />
 
           {form.values.event_type === 'SINGLE_SESSION' && sessionOptions.length > 0 && (

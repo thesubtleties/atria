@@ -107,21 +107,33 @@ export const SessionPage = () => {
     }
   };
 
-  // Determine if chat should be shown based on chat_mode and user role
+  // Determine if chat should be shown based on chat_mode, user role, and visibility window
   const shouldShowChat = (): boolean => {
     if (!typedSession?.chat_mode) return true; // Default to showing chat if no mode set
 
     const chatMode = typedSession.chat_mode;
 
-    // If chat is disabled, don't show for anyone
+    // If chat is disabled, don't show for anyone (even admins)
     if (chatMode === 'DISABLED') return false;
 
-    // If backstage only, only show for speakers, organizers, and admins
-    if (chatMode === 'BACKSTAGE_ONLY') {
-      return ['ADMIN', 'ORGANIZER', 'SPEAKER'].includes(userEventRole as string);
+    // Admin/Organizer bypass: Always show chat for moderation purposes
+    // (even outside visibility window - they can moderate late messages, pre-post announcements)
+    const isAdminOrOrganizer = ['ADMIN', 'ORGANIZER'].includes(userEventRole as string);
+    if (isAdminOrOrganizer) {
+      return true; // Admins always see chat (except when DISABLED)
     }
 
-    // If enabled, show for everyone
+    // For non-admins: Check if visibility window is open
+    if (!typedSession.is_window_open) {
+      return false; // Chat hidden outside visibility window
+    }
+
+    // If backstage only, only show for speakers
+    if (chatMode === 'BACKSTAGE_ONLY') {
+      return ['SPEAKER'].includes(userEventRole as string);
+    }
+
+    // If enabled, show for everyone (when window is open)
     return true;
   };
 

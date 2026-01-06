@@ -1,5 +1,15 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
-import { TextInput, Textarea, Select, Group, Text, ActionIcon, Menu, Badge } from '@mantine/core';
+import { useState, useCallback, useEffect, useMemo } from 'react';
+import {
+  TextInput,
+  Textarea,
+  Select,
+  Group,
+  Text,
+  ActionIcon,
+  Menu,
+  Badge,
+  Switch,
+} from '@mantine/core';
 import { TimeSelect } from '@/shared/components/forms/TimeSelect';
 import { IconDots, IconTrash, IconAlertCircle } from '@tabler/icons-react';
 import { useDebouncedValue } from '@mantine/hooks';
@@ -14,6 +24,8 @@ import {
   type SessionFieldName,
   type SessionTypeValue,
 } from '../schemas/sessionCardSchema';
+import { useSessionStreaming } from '../hooks';
+import type { AvailablePlatforms } from '../SessionList';
 import type { Session, StreamingPlatform, SessionSpeaker } from '@/types';
 import type { SessionType, SessionChatMode, SessionStatus } from '@/types/enums';
 import styles from '../styles/index.module.css';
@@ -33,8 +45,29 @@ const CHAT_MODES = [
   { value: 'DISABLED', label: 'Chat Disabled' },
 ] as const;
 
-const STREAMING_PLATFORMS = [
-  { value: '', label: 'No Streaming' },
+const MUX_PLAYBACK_POLICIES = [
+  { value: 'PUBLIC', label: 'Public' },
+  { value: 'SIGNED', label: 'Signed' },
+] as const;
+
+const VISIBILITY_WINDOW_OPTIONS = [
+  { value: '', label: 'Event default' },
+  { value: '0', label: 'Always visible' },
+  { value: '2', label: '2 min' },
+  { value: '5', label: '5 min' },
+  { value: '10', label: '10 min' },
+  { value: '15', label: '15 min' },
+] as const;
+
+// Stream mode: NONE (no video), LIVE (live stream), VOD (pre-recorded)
+const STREAM_MODES = [
+  { value: 'NONE', label: 'No Video' },
+  { value: 'LIVE', label: 'Live Stream' },
+  { value: 'VOD', label: 'Pre-recorded (VOD)' },
+] as const;
+
+// Platforms available for Live mode (all platforms)
+const LIVE_STREAMING_PLATFORMS = [
   { value: 'VIMEO', label: 'Vimeo' },
   { value: 'MUX', label: 'Mux' },
   { value: 'ZOOM', label: 'Zoom' },
@@ -42,22 +75,45 @@ const STREAMING_PLATFORMS = [
   { value: 'OTHER', label: 'Other' },
 ] as const;
 
-const MUX_PLAYBACK_POLICIES = [
-  { value: 'PUBLIC', label: 'Public' },
-  { value: 'SIGNED', label: 'Signed' },
+// Platforms available for VOD mode (no Zoom/Jitsi)
+const VOD_STREAMING_PLATFORMS = [
+  { value: 'VIMEO', label: 'Vimeo' },
+  { value: 'MUX', label: 'Mux' },
+  { value: 'OTHER', label: 'Other' },
 ] as const;
+
+// Recording platform options (for post-live recording URL)
+const RECORDING_PLATFORMS = [
+  { value: '', label: 'Auto-detect' },
+  { value: 'VIMEO', label: 'Vimeo' },
+  { value: 'MUX', label: 'Mux' },
+  { value: 'OTHER', label: 'Other' },
+] as const;
+
+// Memoized styles for Switch components (prevents re-renders from inline objects)
+const SWITCH_STYLES_COMPACT = {
+  label: { fontSize: '0.75rem', color: 'var(--mantine-color-dimmed)', paddingLeft: 6 },
+  track: { cursor: 'pointer' },
+} as const;
+
+const SWITCH_STYLES_REGULAR = {
+  label: { fontSize: '0.85rem' },
+  track: { cursor: 'pointer' },
+} as const;
 
 type SessionCardProps = {
   session: Session;
   hasConflict: boolean;
+  availablePlatforms: AvailablePlatforms;
 };
 
 type FieldErrors = Partial<Record<SessionFieldName | 'time_order', string>>;
 
-export const SessionCard = ({ session, hasConflict }: SessionCardProps) => {
+export const SessionCard = ({ session, hasConflict, availablePlatforms }: SessionCardProps) => {
   const [updateSession] = useUpdateSessionMutation();
   const [deleteSession] = useDeleteSessionMutation();
 
+  // Non-streaming state
   const [title, setTitle] = useState(session.title);
   const [description, setDescription] = useState(session.description ?? '');
   const [shortDescription, setShortDescription] = useState(session.short_description ?? '');
@@ -67,28 +123,17 @@ export const SessionCard = ({ session, hasConflict }: SessionCardProps) => {
   const [startTime, setStartTime] = useState(session.start_time);
   const [endTime, setEndTime] = useState(session.end_time);
   const [chatMode, setChatMode] = useState<SessionChatMode>(session.chat_mode ?? 'ENABLED');
-
-  const [streamingPlatform, setStreamingPlatform] = useState<StreamingPlatform | ''>(
-    session.streaming_platform ?? '',
+  const [visibilityMinutesOverride, setVisibilityMinutesOverride] = useState<string>(
+    session.visibility_minutes_override != null ?
+      session.visibility_minutes_override.toString()
+    : '',
   );
-  const [streamUrl, setStreamUrl] = useState(session.stream_url ?? '');
-  const [zoomMeetingId, setZoomMeetingId] = useState(session.zoom_meeting_id ?? '');
-  const [zoomPasscode, setZoomPasscode] = useState(session.zoom_passcode ?? '');
-  const [muxPlaybackPolicy, setMuxPlaybackPolicy] = useState(
-    session.mux_playback_policy ?? 'PUBLIC',
-  );
-  const [jitsiRoomName, setJitsiRoomName] = useState(session.jitsi_room_name ?? '');
 
   const [errors, setErrors] = useState<FieldErrors>({});
-  const pendingPlatformChangeRef = useRef(false);
 
   const [debouncedTitle] = useDebouncedValue(title, 500);
   const [debouncedDescription] = useDebouncedValue(description, 500);
   const [debouncedShortDescription] = useDebouncedValue(shortDescription, 500);
-  const [debouncedStreamUrl] = useDebouncedValue(streamUrl, 500);
-  const [debouncedZoomMeetingId] = useDebouncedValue(zoomMeetingId, 500);
-  const [debouncedZoomPasscode] = useDebouncedValue(zoomPasscode, 500);
-  const [debouncedJitsiRoomName] = useDebouncedValue(jitsiRoomName, 500);
 
   const handleUpdate = useCallback(
     async (updates: Partial<Session>) => {
@@ -109,6 +154,9 @@ export const SessionCard = ({ session, hasConflict }: SessionCardProps) => {
           mux_playback_policy?: string | null;
           jitsi_room_name?: string | null;
           short_description?: string | null;
+          visibility_minutes_override?: number | null;
+          vod_url?: string | null;
+          vod_platform?: StreamingPlatform | null;
         } = {
           id: session.id,
           ...Object.fromEntries(
@@ -125,6 +173,35 @@ export const SessionCard = ({ session, hasConflict }: SessionCardProps) => {
     },
     [session.id, updateSession],
   );
+
+  // Use the streaming hook for all streaming-related state and validation
+  const streaming = useSessionStreaming({ session, onUpdate: handleUpdate });
+
+  // Filter platform options based on organization credentials
+  const filteredLivePlatforms = useMemo(() => {
+    return LIVE_STREAMING_PLATFORMS.filter((p) => {
+      if (p.value === 'MUX' && !availablePlatforms.hasMux) return false;
+      if (p.value === 'JITSI' && !availablePlatforms.hasJitsi) return false;
+      return true;
+    });
+  }, [availablePlatforms]);
+
+  const filteredVodPlatforms = useMemo(() => {
+    return VOD_STREAMING_PLATFORMS.filter((p) => {
+      if (p.value === 'MUX' && !availablePlatforms.hasMux) return false;
+      return true;
+    });
+  }, [availablePlatforms]);
+
+  const filteredRecordingPlatforms = useMemo(() => {
+    return RECORDING_PLATFORMS.filter((p) => {
+      if (p.value === 'MUX' && !availablePlatforms.hasMux) return false;
+      return true;
+    });
+  }, [availablePlatforms]);
+
+  // Merge streaming errors with component errors for display
+  const allErrors = { ...errors, ...streaming.streamingErrors };
 
   const validateAndUpdate = useCallback((field: SessionFieldName, value: unknown): boolean => {
     const validation = validateField(field, value);
@@ -151,90 +228,21 @@ export const SessionCard = ({ session, hasConflict }: SessionCardProps) => {
   }, [debouncedTitle, session.title, handleUpdate, validateAndUpdate]);
 
   useEffect(() => {
-    if (debouncedDescription !== session.description) {
+    const normalizedSessionDesc = session.description ?? '';
+    if (debouncedDescription !== normalizedSessionDesc) {
       handleUpdate({ description: debouncedDescription || null });
     }
   }, [debouncedDescription, session.description, handleUpdate]);
 
   useEffect(() => {
+    const normalizedSessionShort = session.short_description ?? '';
     if (
-      debouncedShortDescription !== session.short_description &&
+      debouncedShortDescription !== normalizedSessionShort &&
       validateAndUpdate('short_description', debouncedShortDescription)
     ) {
       handleUpdate({ short_description: debouncedShortDescription || null });
     }
   }, [debouncedShortDescription, session.short_description, handleUpdate, validateAndUpdate]);
-
-  useEffect(() => {
-    if (
-      debouncedStreamUrl !== session.stream_url &&
-      (debouncedStreamUrl === '' || validateAndUpdate('stream_url', debouncedStreamUrl))
-    ) {
-      if (pendingPlatformChangeRef.current) {
-        handleUpdate({
-          streaming_platform: (streamingPlatform || null) as StreamingPlatform | null,
-          stream_url: debouncedStreamUrl || null,
-        });
-        pendingPlatformChangeRef.current = false;
-      } else {
-        handleUpdate({ stream_url: debouncedStreamUrl || null });
-      }
-    }
-  }, [debouncedStreamUrl, session.stream_url, streamingPlatform, handleUpdate, validateAndUpdate]);
-
-  useEffect(() => {
-    if (
-      debouncedZoomMeetingId !== session.zoom_meeting_id &&
-      (debouncedZoomMeetingId === '' ||
-        validateAndUpdate('zoom_meeting_id', debouncedZoomMeetingId))
-    ) {
-      if (pendingPlatformChangeRef.current) {
-        handleUpdate({
-          streaming_platform: (streamingPlatform || null) as StreamingPlatform | null,
-          zoom_meeting_id: debouncedZoomMeetingId || null,
-        });
-        pendingPlatformChangeRef.current = false;
-      } else {
-        handleUpdate({ zoom_meeting_id: debouncedZoomMeetingId || null });
-      }
-    }
-  }, [
-    debouncedZoomMeetingId,
-    session.zoom_meeting_id,
-    streamingPlatform,
-    handleUpdate,
-    validateAndUpdate,
-  ]);
-
-  useEffect(() => {
-    if (debouncedZoomPasscode !== session.zoom_passcode) {
-      handleUpdate({ zoom_passcode: debouncedZoomPasscode || null });
-    }
-  }, [debouncedZoomPasscode, session.zoom_passcode, handleUpdate]);
-
-  useEffect(() => {
-    if (
-      debouncedJitsiRoomName !== session.jitsi_room_name &&
-      (debouncedJitsiRoomName === '' ||
-        validateAndUpdate('jitsi_room_name', debouncedJitsiRoomName))
-    ) {
-      if (pendingPlatformChangeRef.current) {
-        handleUpdate({
-          streaming_platform: (streamingPlatform || null) as StreamingPlatform | null,
-          jitsi_room_name: debouncedJitsiRoomName || null,
-        });
-        pendingPlatformChangeRef.current = false;
-      } else {
-        handleUpdate({ jitsi_room_name: debouncedJitsiRoomName || null });
-      }
-    }
-  }, [
-    debouncedJitsiRoomName,
-    session.jitsi_room_name,
-    streamingPlatform,
-    handleUpdate,
-    validateAndUpdate,
-  ]);
 
   const calculateDuration = (start: string, end: string): string => {
     const startParts = start.split(':').map(Number);
@@ -315,40 +323,17 @@ export const SessionCard = ({ session, hasConflict }: SessionCardProps) => {
     });
   };
 
-  const handlePlatformChange = (value: string | null) => {
-    const platformValue = value as StreamingPlatform | '';
-    setStreamingPlatform(platformValue);
-
-    if (!value || value === '') {
-      setStreamUrl('');
-      setZoomMeetingId('');
-      setZoomPasscode('');
-      setMuxPlaybackPolicy('PUBLIC');
-      setJitsiRoomName('');
-      handleUpdate({
-        streaming_platform: null,
-        stream_url: null,
-        zoom_meeting_id: null,
-        zoom_passcode: null,
-        mux_playback_policy: null,
-        jitsi_room_name: null,
-      });
-      pendingPlatformChangeRef.current = false;
-    } else {
-      pendingPlatformChangeRef.current = true;
-    }
-  };
-
   return (
     <div className={cn(styles.sessionCard, hasConflict && styles.hasConflict)}>
       <div className={styles.header}>
         <TextInput
+          name={`session_${session.id}_title`}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           variant='unstyled'
           className={cn(styles.titleInput)}
           placeholder='Session Title'
-          error={errors.title}
+          error={allErrors.title}
         />
         <Menu position='bottom-end' withinPortal>
           <Menu.Target>
@@ -371,7 +356,7 @@ export const SessionCard = ({ session, hasConflict }: SessionCardProps) => {
             onChange={(value) => handleTimeChange('start_time', value)}
             placeholder='Start time'
             classNames={{ input: cn(styles.formTimeInput) }}
-            error={errors.start_time}
+            error={allErrors.start_time}
           />
           <Text size='sm' c='dimmed'>
             to
@@ -381,7 +366,7 @@ export const SessionCard = ({ session, hasConflict }: SessionCardProps) => {
             onChange={(value) => handleTimeChange('end_time', value)}
             placeholder='End time'
             classNames={{ input: cn(styles.formTimeInput) }}
-            error={errors.end_time ?? errors.time_order}
+            error={allErrors.end_time ?? allErrors.time_order}
           />
         </Group>
 
@@ -405,8 +390,10 @@ export const SessionCard = ({ session, hasConflict }: SessionCardProps) => {
       </div>
 
       <div className={styles.content}>
-        <Group className={cn(styles.infoBar)}>
-          <Group gap='xs' align='center'>
+        {/* Type & Chat Row */}
+        <div>
+          <Text className={cn(styles.sectionLabel)}>Type & Chat</Text>
+          <Group gap='xs'>
             <Select
               value={sessionType}
               onChange={(value) => {
@@ -422,125 +409,233 @@ export const SessionCard = ({ session, hasConflict }: SessionCardProps) => {
               style={{ width: 140 }}
               classNames={{ input: cn(styles.formSelect) }}
             />
+            <Select
+              value={chatMode}
+              onChange={(value) => {
+                if (value) {
+                  setChatMode(value as SessionChatMode);
+                  handleUpdate({ chat_mode: value as SessionChatMode });
+                }
+              }}
+              data={[...CHAT_MODES]}
+              size='sm'
+              allowDeselect={false}
+              style={{ width: 160 }}
+              classNames={{ input: cn(styles.formSelect) }}
+            />
           </Group>
+        </div>
+
+        {/* Video Section */}
+        <div style={{ marginTop: 12 }}>
+          <Group gap='xs' justify='space-between' align='center'>
+            <Text className={cn(styles.sectionLabel)}>Video</Text>
+            {streaming.streamMode !== 'NONE' && (
+              <Switch
+                size='xs'
+                label='Enabled'
+                checked={streaming.showVideo}
+                onChange={(e) => streaming.handleShowVideoChange(e.currentTarget.checked)}
+                color='var(--color-primary)'
+                styles={SWITCH_STYLES_COMPACT}
+              />
+            )}
+          </Group>
+          <Group gap='xs' wrap='wrap' mt={4}>
+            {/* Stream Mode - Primary selector */}
+            <Select
+              value={streaming.streamMode}
+              onChange={streaming.handleStreamModeChange}
+              data={[...STREAM_MODES]}
+              size='sm'
+              allowDeselect={false}
+              style={{ width: 165 }}
+              classNames={{ input: cn(styles.formSelect) }}
+            />
+
+            {/* Platform - Only for LIVE and VOD modes */}
+            {streaming.streamMode !== 'NONE' && (
+              <Select
+                value={streaming.streamingPlatform}
+                onChange={streaming.handlePlatformChange}
+                data={streaming.streamMode === 'VOD' ? filteredVodPlatforms : filteredLivePlatforms}
+                placeholder='Platform'
+                size='sm'
+                allowDeselect={false}
+                style={{ width: 130 }}
+                classNames={{ input: cn(styles.formSelect) }}
+              />
+            )}
+          </Group>
+          {/* Hint when some platforms are unavailable */}
+          {(!availablePlatforms.hasMux || !availablePlatforms.hasJitsi) && (
+            <Text size='xs' c='dimmed' mt={4}>
+              More platforms available via Organization settings
+            </Text>
+          )}
+
+          {/* Platform-specific fields for LIVE/VOD */}
+          {streaming.streamMode !== 'NONE' && streaming.streamingPlatform && (
+            <Group gap='xs' mt={8} wrap='wrap'>
+              {streaming.streamingPlatform === 'VIMEO' && (
+                <TextInput
+                  name={`session_${session.id}_vimeo_url`}
+                  placeholder={
+                    streaming.streamMode === 'VOD' ?
+                      'Vimeo video URL or ID'
+                    : 'Vimeo stream URL or ID'
+                  }
+                  size='sm'
+                  style={{ flex: 1, minWidth: 200 }}
+                  value={streaming.streamUrl}
+                  onChange={(e) => streaming.setStreamUrl(e.target.value)}
+                  error={allErrors.stream_url}
+                  classNames={{ input: cn(styles.formInput) }}
+                />
+              )}
+              {streaming.streamingPlatform === 'MUX' && (
+                <>
+                  <TextInput
+                    name={`session_${session.id}_mux_playback_id`}
+                    placeholder='Mux Playback ID'
+                    size='sm'
+                    style={{ flex: 1, minWidth: 180 }}
+                    value={streaming.streamUrl}
+                    onChange={(e) => streaming.setStreamUrl(e.target.value)}
+                    error={allErrors.stream_url}
+                    classNames={{ input: cn(styles.formInput) }}
+                  />
+                  <Select
+                    value={streaming.muxPlaybackPolicy}
+                    onChange={streaming.handleMuxPolicyChange}
+                    data={[...MUX_PLAYBACK_POLICIES]}
+                    size='sm'
+                    allowDeselect={false}
+                    style={{ width: 100 }}
+                    classNames={{ input: cn(styles.formSelect) }}
+                  />
+                </>
+              )}
+              {streaming.streamingPlatform === 'ZOOM' && (
+                <>
+                  <TextInput
+                    name={`session_${session.id}_zoom_meeting_id`}
+                    placeholder='Zoom meeting URL or ID'
+                    size='sm'
+                    style={{ flex: 1, minWidth: 180 }}
+                    value={streaming.zoomMeetingId}
+                    onChange={(e) => streaming.setZoomMeetingId(e.target.value)}
+                    error={allErrors.zoom_meeting_id}
+                    classNames={{ input: cn(styles.formInput) }}
+                  />
+                  <TextInput
+                    name={`session_${session.id}_zoom_passcode`}
+                    placeholder='Passcode'
+                    size='sm'
+                    style={{ width: 120 }}
+                    value={streaming.zoomPasscode}
+                    onChange={(e) => streaming.setZoomPasscode(e.target.value)}
+                    classNames={{ input: cn(styles.formInput) }}
+                  />
+                </>
+              )}
+              {streaming.streamingPlatform === 'JITSI' && (
+                <TextInput
+                  name={`session_${session.id}_jitsi_room`}
+                  placeholder='Jitsi room name or URL'
+                  size='sm'
+                  style={{ flex: 1, minWidth: 200 }}
+                  value={streaming.jitsiRoomName}
+                  onChange={(e) => streaming.setJitsiRoomName(e.target.value)}
+                  error={allErrors.jitsi_room_name}
+                  classNames={{ input: cn(styles.formInput) }}
+                />
+              )}
+              {streaming.streamingPlatform === 'OTHER' && (
+                <TextInput
+                  name={`session_${session.id}_external_url`}
+                  placeholder='External stream/video URL'
+                  size='sm'
+                  style={{ flex: 1, minWidth: 200 }}
+                  value={streaming.streamUrl}
+                  onChange={(e) => streaming.setStreamUrl(e.target.value)}
+                  error={allErrors.stream_url}
+                  classNames={{ input: cn(styles.formInput) }}
+                />
+              )}
+            </Group>
+          )}
+
+          {/* Recording options - Only for LIVE mode */}
+          {streaming.streamMode === 'LIVE' && streaming.streamingPlatform && (
+            <div style={{ marginTop: 8 }}>
+              <Switch
+                size='sm'
+                label='Show recording after session'
+                checked={streaming.showRecording}
+                onChange={(e) => streaming.handleShowRecordingChange(e.currentTarget.checked)}
+                color='var(--color-primary)'
+                styles={SWITCH_STYLES_REGULAR}
+              />
+              {streaming.showRecording && (
+                <>
+                  <Group gap='xs' mt={8} wrap='wrap' align='flex-end'>
+                    <TextInput
+                      name={`session_${session.id}_vod_url`}
+                      placeholder='Recording URL (optional)'
+                      size='sm'
+                      style={{ flex: 1, minWidth: 200 }}
+                      value={streaming.vodUrl}
+                      onChange={(e) => streaming.setVodUrl(e.target.value)}
+                      classNames={{ input: cn(styles.formInput) }}
+                    />
+                    {streaming.vodUrl && (
+                      <Select
+                        value={streaming.vodPlatform}
+                        onChange={streaming.handleVodPlatformChange}
+                        data={filteredRecordingPlatforms}
+                        size='sm'
+                        allowDeselect={false}
+                        style={{ width: 120 }}
+                        classNames={{ input: cn(styles.formSelect) }}
+                      />
+                    )}
+                  </Group>
+                  {(streaming.streamingPlatform === 'VIMEO' ||
+                    streaming.streamingPlatform === 'MUX') &&
+                    !streaming.vodUrl && (
+                      <Text size='xs' c='dimmed' mt={4}>
+                        Leave blank to use stream URL for recording
+                      </Text>
+                    )}
+                </>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Visibility Window */}
+        <div style={{ marginTop: 12 }}>
+          <Text className={cn(styles.sectionLabel)}>Access Window</Text>
+          <Text size='xs' c='dimmed' mb={6}>
+            Buffer time before and after session when stream and chat are accessible
+          </Text>
           <Select
-            value={chatMode}
+            value={visibilityMinutesOverride}
             onChange={(value) => {
-              if (value) {
-                setChatMode(value as SessionChatMode);
-                handleUpdate({ chat_mode: value as SessionChatMode });
-              }
+              const newValue = value ?? '';
+              setVisibilityMinutesOverride(newValue);
+              handleUpdate({
+                visibility_minutes_override: newValue === '' ? null : parseInt(newValue, 10),
+              });
             }}
-            data={[...CHAT_MODES]}
+            data={[...VISIBILITY_WINDOW_OPTIONS]}
             size='sm'
             allowDeselect={false}
             style={{ width: 160 }}
             classNames={{ input: cn(styles.formSelect) }}
           />
-          <Select
-            placeholder='Streaming Platform'
-            value={streamingPlatform}
-            onChange={handlePlatformChange}
-            data={[...STREAMING_PLATFORMS]}
-            size='sm'
-            allowDeselect={false}
-            style={{ width: 180 }}
-            classNames={{ input: cn(styles.formSelect) }}
-          />
-        </Group>
-
-        {streamingPlatform === 'VIMEO' && (
-          <Group gap='xs' style={{ marginTop: 8 }}>
-            <TextInput
-              placeholder='Vimeo URL or video ID'
-              size='sm'
-              style={{ flex: 1 }}
-              value={streamUrl}
-              onChange={(e) => setStreamUrl(e.target.value)}
-              error={errors.stream_url}
-              classNames={{ input: cn(styles.formInput) }}
-            />
-          </Group>
-        )}
-
-        {streamingPlatform === 'MUX' && (
-          <Group gap='xs' style={{ marginTop: 8 }}>
-            <TextInput
-              placeholder='Mux Playback ID or stream URL'
-              size='sm'
-              style={{ flex: 1 }}
-              value={streamUrl}
-              onChange={(e) => setStreamUrl(e.target.value)}
-              error={errors.stream_url}
-              classNames={{ input: cn(styles.formInput) }}
-            />
-            <Select
-              placeholder='Policy'
-              value={muxPlaybackPolicy}
-              onChange={(value) => {
-                if (value === 'PUBLIC' || value === 'SIGNED') {
-                  setMuxPlaybackPolicy(value);
-                  handleUpdate({ mux_playback_policy: value });
-                }
-              }}
-              data={[...MUX_PLAYBACK_POLICIES]}
-              size='sm'
-              allowDeselect={false}
-              style={{ width: 120 }}
-              classNames={{ input: cn(styles.formSelect) }}
-            />
-          </Group>
-        )}
-
-        {streamingPlatform === 'ZOOM' && (
-          <Group gap='xs' style={{ marginTop: 8 }}>
-            <TextInput
-              placeholder='Zoom meeting URL or ID'
-              size='sm'
-              style={{ flex: 1 }}
-              value={zoomMeetingId}
-              onChange={(e) => setZoomMeetingId(e.target.value)}
-              error={errors.zoom_meeting_id}
-              classNames={{ input: cn(styles.formInput) }}
-            />
-            <TextInput
-              placeholder='Passcode (optional)'
-              size='sm'
-              style={{ width: 150 }}
-              value={zoomPasscode}
-              onChange={(e) => setZoomPasscode(e.target.value)}
-              classNames={{ input: cn(styles.formInput) }}
-            />
-          </Group>
-        )}
-
-        {streamingPlatform === 'JITSI' && (
-          <Group gap='xs' style={{ marginTop: 8 }}>
-            <TextInput
-              placeholder='Jitsi room name or URL'
-              size='sm'
-              style={{ flex: 1 }}
-              value={jitsiRoomName}
-              onChange={(e) => setJitsiRoomName(e.target.value)}
-              error={errors.jitsi_room_name}
-              classNames={{ input: cn(styles.formInput) }}
-            />
-          </Group>
-        )}
-
-        {streamingPlatform === 'OTHER' && (
-          <Group gap='xs' style={{ marginTop: 8 }}>
-            <TextInput
-              placeholder='External stream URL (https://...)'
-              size='sm'
-              style={{ flex: 1 }}
-              value={streamUrl}
-              onChange={(e) => setStreamUrl(e.target.value)}
-              error={errors.stream_url}
-              classNames={{ input: cn(styles.formInput) }}
-            />
-          </Group>
-        )}
+        </div>
 
         <div className={styles.speakersSection}>
           {(() => {
@@ -603,29 +698,38 @@ export const SessionCard = ({ session, hasConflict }: SessionCardProps) => {
           })()}
         </div>
 
-        <Textarea
-          value={shortDescription}
-          onChange={(e) => setShortDescription(e.target.value)}
-          placeholder='Short description for agenda (max 200 characters)'
-          maxLength={200}
-          autosize
-          minRows={1}
-          maxRows={3}
-          size='sm'
-          error={errors.short_description}
-          classNames={{ input: cn(styles.formTextarea) }}
-        />
+        {/* Descriptions */}
+        <div style={{ marginTop: 12 }}>
+          <Text className={cn(styles.sectionLabel)}>Short Description (Agenda)</Text>
+          <Textarea
+            name={`session_${session.id}_short_desc`}
+            value={shortDescription}
+            onChange={(e) => setShortDescription(e.target.value)}
+            placeholder='Brief summary shown in the schedule (max 200 characters)'
+            maxLength={200}
+            autosize
+            minRows={1}
+            maxRows={3}
+            size='sm'
+            error={allErrors.short_description}
+            classNames={{ input: cn(styles.formTextarea) }}
+          />
+        </div>
 
-        <Textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder='Full session description'
-          autosize
-          minRows={2}
-          maxRows={6}
-          classNames={{ input: cn(styles.formTextarea) }}
-          className={cn(styles.descriptionTextarea)}
-        />
+        <div style={{ marginTop: 12 }}>
+          <Text className={cn(styles.sectionLabel)}>Full Description</Text>
+          <Textarea
+            name={`session_${session.id}_description`}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder='Detailed description shown on the session page'
+            autosize
+            minRows={2}
+            maxRows={6}
+            classNames={{ input: cn(styles.formTextarea) }}
+            className={cn(styles.descriptionTextarea)}
+          />
+        </div>
       </div>
     </div>
   );

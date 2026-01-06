@@ -1,15 +1,15 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { LoadingOverlay } from '@/shared/components/loading';
 import { useParams } from 'react-router-dom';
 import { useGetEventQuery } from '@/app/features/events/api';
 import { useGetSessionsQuery } from '@/app/features/sessions/api';
 import { DateNavigation } from '@/pages/Agenda/DateNavigation';
 import { EditSessionModal } from '@/shared/components/modals/session/EditSessionModal';
-import { SessionList } from './SessionList';
+import { SessionList, type AvailablePlatforms } from './SessionList';
 import { SessionManagerHeader } from './SessionManagerHeader';
 import { SessionErrorState } from './SessionErrorState';
 import { SessionEmptyState } from './SessionEmptyState';
-import type { Session } from '@/types';
+import type { Session, EventDetail } from '@/types';
 import styles from './styles/index.module.css';
 
 type SessionStats = {
@@ -95,6 +95,15 @@ export const SessionManager = () => {
     { total: 0, overlapping: 0, speakers: 0 },
   );
 
+  // Compute available platforms based on org credentials
+  const availablePlatforms: AvailablePlatforms = useMemo(() => {
+    const eventDetail = event as EventDetail | undefined;
+    return {
+      hasMux: eventDetail?.organization?.has_mux_credentials ?? false,
+      hasJitsi: eventDetail?.organization?.has_jaas_credentials ?? false,
+    };
+  }, [event]);
+
   if (eventError) {
     return <SessionErrorState onRetry={refetchEvent} />;
   }
@@ -129,6 +138,7 @@ export const SessionManager = () => {
             sessions={sessions as Session[]}
             currentDay={currentDay}
             eventId={numericEventId}
+            availablePlatforms={availablePlatforms}
           />
         </section>
 

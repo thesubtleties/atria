@@ -5,15 +5,21 @@ import { SessionCardMobile } from '../SessionCardMobile';
 import type { Session } from '@/types';
 import styles from './styles/index.module.css';
 
+export type AvailablePlatforms = {
+  hasMux: boolean;
+  hasJitsi: boolean;
+};
+
 type SessionListProps = {
   sessions: Session[];
   currentDay: number;
   eventId: number;
+  availablePlatforms: AvailablePlatforms;
 };
 
 type SessionWithConflict = Session & { hasConflict: boolean };
 
-export const SessionList = ({ sessions, currentDay }: SessionListProps) => {
+export const SessionList = ({ sessions, currentDay, availablePlatforms }: SessionListProps) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
 
   if (!sessions || sessions.length === 0) {
@@ -66,7 +72,12 @@ export const SessionList = ({ sessions, currentDay }: SessionListProps) => {
   return (
     <div className={styles.sessionsList}>
       {sessionsWithConflicts.map((session) => (
-        <CardComponent key={session.id} session={session} hasConflict={session.hasConflict} />
+        <CardComponent
+          key={session.id}
+          session={session}
+          hasConflict={session.hasConflict}
+          availablePlatforms={availablePlatforms}
+        />
       ))}
     </div>
   );

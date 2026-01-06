@@ -8,6 +8,11 @@ const StreamingPlatform = z.enum(['VIMEO', 'MUX', 'ZOOM', 'JITSI', 'OTHER']);
 
 const MuxPlaybackPolicy = z.enum(['PUBLIC', 'SIGNED']);
 
+const StreamMode = z.enum(['NONE', 'LIVE', 'VOD']);
+
+// Platforms that only support playback (no interactive features like Zoom/Jitsi)
+const PlaybackPlatform = z.enum(['VIMEO', 'MUX', 'OTHER']);
+
 export const editSessionSchema = z
   .object({
     title: z.string().min(1, 'Title is required'),
@@ -48,6 +53,27 @@ export const editSessionSchema = z
       .optional()
       .or(z.literal('')),
     // Note: OTHER platform uses stream_url with additional HTTPS validation (see refinements below)
+
+    // Stream mode and visibility toggles
+    stream_mode: StreamMode.default('NONE'),
+    show_video: z.boolean().default(true),
+    show_recording: z.boolean().default(true),
+
+    // Visibility window override (null = use event default, 0 = always visible)
+    visibility_minutes_override: z.preprocess(
+      (val) =>
+        val === '' ? null
+        : val === null ? null
+        : Number(val),
+      z.number().int().min(0).max(60).nullable().optional(),
+    ),
+
+    // VOD fields (for recording URL after live session)
+    vod_url: z.string().max(2000, 'URL too long').optional().or(z.literal('')),
+    vod_platform: z.preprocess(
+      (val) => (val === '' ? null : val),
+      PlaybackPlatform.nullable().optional(),
+    ),
   })
   .refine(
     (data) => {
@@ -151,5 +177,50 @@ export const editSessionSchema = z
     {
       message: 'Stream URL must be a valid HTTPS URL for external platforms',
       path: ['stream_url'],
+    },
+  )
+  // Stream mode conditional validation
+  .refine(
+    (data) => {
+      // If stream_mode is LIVE or VOD, platform is required
+      if (data.stream_mode === 'LIVE' || data.stream_mode === 'VOD') {
+        return !!data.streaming_platform;
+      }
+      return true;
+    },
+    {
+      message: 'Please select a streaming platform',
+      path: ['streaming_platform'],
+    },
+  )
+  .refine(
+    (data) => {
+      // If stream_mode is VOD, platform cannot be ZOOM or JITSI (interactive-only platforms)
+      if (data.stream_mode === 'VOD') {
+        return data.streaming_platform !== 'ZOOM' && data.streaming_platform !== 'JITSI';
+      }
+      return true;
+    },
+    {
+      message: 'VOD mode only supports Vimeo, Mux, or Other platforms (not Zoom or Jitsi)',
+      path: ['streaming_platform'],
+    },
+  )
+  .refine(
+    (data) => {
+      // If vod_url is provided and not empty, it should be a valid URL
+      if (data.vod_url && data.vod_url.trim().length > 0) {
+        try {
+          new URL(data.vod_url);
+          return true;
+        } catch {
+          return false;
+        }
+      }
+      return true;
+    },
+    {
+      message: 'Recording URL must be a valid URL',
+      path: ['vod_url'],
     },
   );

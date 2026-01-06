@@ -32,6 +32,12 @@ class OrganizationSchema(ma.SQLAlchemyAutoSchema):
         include_fk = True
         name = "OrganizationBase"
 
+    # Credential status flags (computed properties from model)
+    # Boolean indicators only - no sensitive data exposed
+    has_mux_credentials = ma.Boolean(dump_only=True)
+    has_mux_signing_credentials = ma.Boolean(dump_only=True)
+    has_jaas_credentials = ma.Boolean(dump_only=True)
+
     users = ma.Nested(
         "api.schemas.organization_user.OrganizationUserNestedSchema",  # Full path
         many=True,
@@ -51,16 +57,7 @@ class OrganizationDetailSchema(OrganizationSchema):
     user_is_admin_or_owner = ma.Boolean(dump_only=True)
     current_user_role = ma.Method("get_current_user_role", dump_only=True)
 
-    # Mux credential status (OPTIONAL - visible to all org members)
-    # Just boolean flags indicating if credentials are configured
-    # has_mux_credentials: API credentials (future analytics/management)
-    # has_mux_signing_credentials: Signing credentials (for SIGNED playback)
-    has_mux_credentials = ma.Boolean(dump_only=True)
-    has_mux_signing_credentials = ma.Boolean(dump_only=True)
-
-    # JaaS credential status (OPTIONAL - visible to all org members)
-    # Boolean flag indicating if JaaS credentials are configured
-    has_jaas_credentials = ma.Boolean(dump_only=True)
+    # Credential flags inherited from OrganizationSchema
 
     users = ma.Nested(
         "api.schemas.organization_user.OrganizationUserNestedSchema",

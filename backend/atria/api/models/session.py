@@ -35,6 +35,21 @@ class Session(db.Model):
     jitsi_room_name = db.Column(db.String(255), nullable=True)  # JaaS room identifier
     # Note: OTHER platform uses stream_url (same as VIMEO/MUX) - no separate column needed
 
+    # Visibility window override (in minutes before/after session times)
+    # NULL = use event default, 0 = always on, 5/10/15/30 = minutes
+    visibility_minutes_override = db.Column(db.Integer, nullable=True)
+
+    # VOD (Video on Demand) for post-session playback
+    vod_url = db.Column(db.Text, nullable=True)
+    vod_platform = db.Column(db.String(20), nullable=True)  # VIMEO, MUX, OTHER
+
+    # Stream mode and visibility toggles
+    # stream_mode: 'NONE' (no video), 'LIVE' (live stream), 'VOD' (pre-recorded)
+    # NULL = backward compat (infer from streaming_platform)
+    stream_mode = db.Column(db.String(10), nullable=True)
+    show_video = db.Column(db.Boolean, default=True, nullable=False)  # Master toggle
+    show_recording = db.Column(db.Boolean, default=True, nullable=False)  # Recording after live
+
     day_number = db.Column(db.BigInteger, nullable=False)
     created_at = db.Column(
         db.DateTime(timezone=True), server_default=db.func.current_timestamp()
@@ -254,6 +269,192 @@ class Session(db.Model):
     def has_backstage_chat_enabled(self):
         """Check if backstage chat is enabled for this session"""
         return self.chat_mode in [SessionChatMode.ENABLED, SessionChatMode.BACKSTAGE_ONLY]
+
+    # Visibility Window Properties
+    @property
+    def effective_visibility_minutes(self) -> int | None:
+        """Get the effective visibility window in minutes.
+
+        Returns:
+            int: Minutes before/after session time (0 = always on explicitly)
+            None: Always on (from NULL event default)
+        """
+        # Session override takes priority
+        if self.visibility_minutes_override is not None:
+            return self.visibility_minutes_override if self.visibility_minutes_override > 0 else None
+        # Fall back to event default
+        if self.event and self.event.session_visibility_minutes is not None:
+            return self.event.session_visibility_minutes if self.event.session_visibility_minutes > 0 else None
+        # Default: always on
+        return None
+
+    @property
+    def window_opens_at(self) -> datetime | None:
+        """Get datetime when visibility window opens, or None if always open."""
+        minutes = self.effective_visibility_minutes
+        if minutes is None:
+            return None
+        return self.start_datetime - timedelta(minutes=minutes)
+
+    @property
+    def window_closes_at(self) -> datetime | None:
+        """Get datetime when visibility window closes, or None if always open."""
+        minutes = self.effective_visibility_minutes
+        if minutes is None:
+            return None
+        return self.end_datetime + timedelta(minutes=minutes)
+
+    @property
+    def is_window_open(self) -> bool:
+        """Check if the session visibility window is currently open."""
+        opens_at = self.window_opens_at
+        closes_at = self.window_closes_at
+
+        if opens_at is None or closes_at is None:
+            return True  # Always on
+
+        now = datetime.now(timezone.utc)
+        return opens_at <= now <= closes_at
+
+    @property
+    def window_state(self) -> str:
+        """Get current window state: 'pre', 'open', or 'post'."""
+        if self.effective_visibility_minutes is None:
+            return 'open'  # Always on
+
+        now = datetime.now(timezone.utc)
+
+        if now < self.window_opens_at:
+            return 'pre'
+        elif now > self.window_closes_at:
+            return 'post'
+        else:
+            return 'open'
+
+    @property
+    def has_vod(self) -> bool:
+        """Check if VOD is available for this session."""
+        # Manual VOD URL takes priority
+        if self.vod_url:
+            return True
+        # Vimeo embeds work as VOD after stream ends
+        if self.streaming_platform == 'VIMEO' and self.stream_url:
+            return True
+        # Mux playback IDs work for VOD
+        if self.streaming_platform == 'MUX' and self.stream_url:
+            return True
+        # OTHER platform - use stream_url as recording fallback
+        if self.streaming_platform == 'OTHER' and self.stream_url:
+            return True
+        # Jitsi/Zoom - no automatic VOD (interactive platforms)
+        return False
+
+    # Stream Mode Properties
+    @property
+    def effective_stream_mode(self) -> str:
+        """Get effective stream mode (handles NULL backward compat).
+
+        Returns:
+            'NONE': No video (in-person event, chat-only)
+            'LIVE': Live streaming session
+            'VOD': Pre-recorded video session
+        """
+        if self.stream_mode:
+            return self.stream_mode
+        # NULL: infer from existing data for backward compat
+        if self.streaming_platform:
+            return 'LIVE'
+        return 'NONE'
+
+    @property
+    def is_vod_session(self) -> bool:
+        """Is this a VOD-only session (pre-recorded)?"""
+        return self.effective_stream_mode == 'VOD'
+
+    @property
+    def is_live_session(self) -> bool:
+        """Is this a live streaming session?"""
+        return self.effective_stream_mode == 'LIVE'
+
+    @property
+    def is_no_video_session(self) -> bool:
+        """Is this a no-video session (in-person, chat-only)?"""
+        return self.effective_stream_mode == 'NONE'
+
+    @property
+    def should_show_video(self) -> bool:
+        """Should video player be displayed at all?"""
+        if not self.show_video or self.is_no_video_session:
+            return False
+        return bool(self.stream_url) or bool(self.vod_url)
+
+    @property
+    def is_past_start_time(self) -> bool:
+        """Has the session's scheduled start time passed?"""
+        if not self.start_datetime:
+            return False
+        return datetime.now(timezone.utc) >= self.start_datetime
+
+    @property
+    def is_past_end_time(self) -> bool:
+        """Has the session's scheduled end time passed?"""
+        if not self.end_datetime:
+            return False
+        return datetime.now(timezone.utc) > self.end_datetime
+
+    @property
+    def should_show_recording(self) -> bool:
+        """Should recording be shown (for live sessions after end)?
+
+        Only applies to LIVE mode sessions. Returns True if:
+        - show_video and show_recording toggles are both True
+        - Session is a live session (not VOD or NONE)
+        - VOD is available (either vod_url or auto-detect from Vimeo/Mux)
+        - Session end time has passed
+        """
+        if not self.show_video or not self.show_recording:
+            return False
+        if not self.is_live_session:
+            return False
+        return self.has_vod and self.is_past_end_time
+
+    @property
+    def current_video_state(self) -> str:
+        """Get current video state for frontend rendering.
+
+        Returns one of:
+            'none': No video configured (NONE mode)
+            'hidden': Video explicitly hidden by show_video toggle
+            'pre': Before session/window opens
+            'live': Live stream is active
+            'vod': VOD content is available
+            'recording': Post-live recording available
+            'ended': Session ended, no recording available
+        """
+        if self.is_no_video_session:
+            return 'none'
+
+        if not self.show_video:
+            return 'hidden'
+
+        if self.is_vod_session:
+            # VOD: available from start_time onward, evergreen
+            if self.is_past_start_time:
+                return 'vod'
+            return 'pre'
+
+        # Live sessions - check timing regardless of window state
+        if self.is_past_end_time:
+            # Session has ended - show recording or thank you
+            if self.show_recording and self.has_vod:
+                return 'recording'
+            return 'ended'
+        elif not self.is_window_open:
+            # Window not open yet (before visibility window)
+            return 'pre'
+        else:
+            # Session is active and window is open
+            return 'live'
 
     def get_speakers_by_role(self, role: SessionSpeakerRole):
         """Get all speakers with specific role"""

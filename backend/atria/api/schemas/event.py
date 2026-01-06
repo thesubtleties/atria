@@ -28,6 +28,10 @@ class EventSchema(ma.SQLAlchemyAutoSchema):
     user_role = ma.String(dump_only=True)  # Current user's role in the event
     main_session_id = ma.Integer(dump_only=True)  # For single_session events
 
+    # Session visibility window (default for all sessions in this event)
+    # NULL = always on, 0 = always on (explicit), 5/10/15/30 = minutes
+    session_visibility_minutes = ma.Integer(allow_none=True)
+
 
 # Detailed Schema - Used for GET /events/<id> with all relationships
 class EventDetailSchema(EventSchema):
@@ -40,8 +44,11 @@ class EventDetailSchema(EventSchema):
     sponsors_count = ma.Integer(dump_only=True)  # Number of active sponsors (detail only to avoid N+1)
 
     # Nested relationships - only include necessary fields
+    # Include credential flags so frontend can filter available streaming platforms
     organization = ma.Nested(
-        "OrganizationSchema", only=("id", "name"), dump_only=True
+        "OrganizationSchema",
+        only=("id", "name", "has_mux_credentials", "has_mux_signing_credentials", "has_jaas_credentials"),
+        dump_only=True,
     )
 
     sessions = ma.Nested(
@@ -179,6 +186,9 @@ class EventUpdateSchema(ma.Schema):
     
     # Single session navigation
     main_session_id = ma.Integer(allow_none=True)
+
+    # Session visibility window (default for all sessions)
+    session_visibility_minutes = ma.Integer(allow_none=True)
 
     @validates("timezone")
     def validate_timezone(self, value, **kwargs):
