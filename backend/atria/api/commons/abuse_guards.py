@@ -52,8 +52,8 @@ def user_is_active(user_id):
     return user is not None and user.is_active
 
 
-# Advisory lock keys for invite counting: a fixed high base plus the user id, clear of other lock users
-_LOCK_BASE = 0x41545249 << 32  # "ATRI"
+# Advisory lock key for invite counting, clear of other lock users
+_INVITE_LOCK = (0x41545249 << 32) + 1  # "ATRI" + 1
 
 
 class InviteLimitError(ValueError):
@@ -76,7 +76,9 @@ def check_invite_allowed(inviter):
     if inviter is None or not inviter.is_active:
         raise InviteLimitError("This account can't send invitations.")
 
-    db.session.execute(db.text("SELECT pg_advisory_xact_lock(:k)"), {"k": _LOCK_BASE + int(inviter.id)})
+    # One site-wide lock around count + insert (invitations are rare): neither one inviter's parallel requests nor
+    # many inviters at once can pass the per-user or site-wide counts before the others commit.
+    db.session.execute(db.text("SELECT pg_advisory_xact_lock(:k)"), {"k": _INVITE_LOCK})
 
     now = datetime.now(timezone.utc)
 
