@@ -215,3 +215,13 @@ class TestInvitedRegistrationNotCapped:
             "org_invitation_ids": [inv.id], "event_invitation_ids": [],
         }, content_type="application/json")
         assert r.status_code == 201, r.data
+
+
+class TestSiteWideInviteLimit:
+    def test_all_invites_on_the_site_are_capped_per_day(self, app, db, monkeypatch):
+        monkeypatch.setattr(abuse_guards, "SITE_DAILY_LIMIT", 5)
+        a = make_user("site-a@sbtl.ai", created_at=datetime.now(timezone.utc) - timedelta(days=30))
+        b = make_user("site-b@sbtl.ai", created_at=datetime.now(timezone.utc) - timedelta(days=30))
+        add_invites(make_org_with_owner(a), a, 5)
+        with pytest.raises(InviteLimitError):
+            check_invite_allowed(b)  # b sent nothing, but the site is at its cap

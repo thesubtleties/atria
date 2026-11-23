@@ -23,6 +23,9 @@ NEW_ACCOUNT_HOURS = 24
 NEW_ACCOUNT_LIMIT = _env_int("INVITES_NEW_ACCOUNT_LIMIT", 10)  # in an account's first day
 HOURLY_LIMIT = _env_int("INVITES_PER_HOUR", 25)
 DAILY_LIMIT = _env_int("INVITES_PER_DAY", 50)
+# All invitation emails across the site per 24 h: bounds the total however many accounts exist (an account farm built
+# through invited registration, which isn't under the signup cap). Real use: about 3 a day.
+SITE_DAILY_LIMIT = _env_int("INVITES_SITE_PER_DAY", 300)
 
 
 def token_rejected(jwt_payload):
@@ -77,14 +80,16 @@ def check_invite_allowed(inviter):
 
     now = datetime.now(timezone.utc)
 
-    def sent_since(since):
-        org = db.session.query(db.func.count(OrganizationInvitation.id)).filter(
-            OrganizationInvitation.invited_by_id == inviter.id, OrganizationInvitation.created_at >= since
-        ).scalar()
-        event = db.session.query(db.func.count(EventInvitation.id)).filter(
-            EventInvitation.invited_by_id == inviter.id, EventInvitation.created_at >= since
-        ).scalar()
-        return (org or 0) + (event or 0)
+    def sent_since(since, everyone=False):
+        org = db.session.query(db.func.count(OrganizationInvitation.id)).filter(OrganizationInvitation.created_at >= since)
+        event = db.session.query(db.func.count(EventInvitation.id)).filter(EventInvitation.created_at >= since)
+        if not everyone:
+            org = org.filter(OrganizationInvitation.invited_by_id == inviter.id)
+            event = event.filter(EventInvitation.invited_by_id == inviter.id)
+        return (org.scalar() or 0) + (event.scalar() or 0)
+
+    if sent_since(now - timedelta(hours=24), everyone=True) >= SITE_DAILY_LIMIT:
+        raise InviteLimitError("Invitations are paused for today. Please try again tomorrow.")
 
     if inviter.created_at and now - _utc(inviter.created_at) < timedelta(hours=NEW_ACCOUNT_HOURS):
         if sent_since(_utc(inviter.created_at)) >= NEW_ACCOUNT_LIMIT:
