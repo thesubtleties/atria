@@ -13,12 +13,12 @@ RUN apk add --no-cache \
 WORKDIR /app
 
 # Install Python dependencies
-COPY requirements.txt setup.py tox.ini ./
+COPY requirements.txt constraints.txt setup.py tox.ini ./
 
 RUN pip install --no-cache-dir -U pip && \
-    pip install --no-cache-dir -r requirements.txt && \
-    pip install -e . && \
-    pip install eventlet  # for socket.io
+    pip install --no-cache-dir -r requirements.txt -c constraints.txt && \
+    pip install -e . -c constraints.txt && \
+    pip install eventlet -c constraints.txt  # for socket.io
 
 
 # Copy application code
