@@ -142,6 +142,21 @@ class InvitationService:
         # Verify user doesn't exist
         if InvitationService.check_user_exists(email):
             raise ValueError("User already exists with this email")
+
+        # Accounts made here skip email verification, so they need a real pending invitation for this address
+        # (the invitation email proved the inbox); otherwise this was a free verified account for any address.
+        now = datetime.now(timezone.utc)
+        def _live(model, ids):
+            if not ids:
+                return False
+            return db.session.query(model.id).filter(
+                model.id.in_(ids), model.email == email, model.status == InvitationStatus.PENDING,
+                model.expires_at > now,
+            ).first() is not None
+        if not (_live(OrganizationInvitation, org_invitation_ids) or _live(EventInvitation, event_invitation_ids)):
+            raise ValueError("No valid invitation for this email")
+        # Not under the site-wide signup cap: the invitation proved the inbox and invitations are limited themselves,
+        # so a bot filling the hourly cap can't lock invited people out.
         
         # Create user with email already verified
         user = User(

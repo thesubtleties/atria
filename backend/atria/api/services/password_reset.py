@@ -13,8 +13,8 @@ class PasswordResetService:
         """Create password reset token and send reset email"""
         user = User.query.filter_by(email=email).first()
         
-        if not user:
-            # Don't reveal if email exists - return silently
+        if not user or not user.is_active:
+            # Don't reveal if email exists (or is turned off) - return silently
             return None
         
         # Check for recent reset requests (rate limiting)
@@ -74,6 +74,8 @@ class PasswordResetService:
         
         # Get user and update password
         user = reset.user
+        if not user.is_active:
+            raise ValueError("Invalid reset token")
         user.password = new_password  # This will be hashed by the User model setter
         
         # Mark token as used

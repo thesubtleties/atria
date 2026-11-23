@@ -8,6 +8,7 @@ from flask_jwt_extended import get_jwt_identity
 from datetime import datetime, timedelta, timezone
 import secrets
 import string
+from api.commons.abuse_guards import check_invite_allowed
 
 
 class OrganizationInvitationService:
@@ -17,6 +18,7 @@ class OrganizationInvitationService:
         organization = Organization.query.get_or_404(org_id)
         inviter_id = get_jwt_identity()
         inviter = User.query.get(inviter_id)
+        check_invite_allowed(inviter)
         
         # Check if user already in organization
         existing_user = User.query.filter_by(email=email).first()

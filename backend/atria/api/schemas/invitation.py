@@ -1,6 +1,7 @@
 # api/api/schemas/invitation.py
 from api.extensions import ma
 from marshmallow import validate
+from api.commons.abuse_guards import name_text
 
 
 class InvitationDetailsResponseSchema(ma.Schema):
@@ -14,12 +15,12 @@ class UserRegistrationDataSchema(ma.Schema):
     """Schema for user registration data"""
     email = ma.Email(required=True)
     first_name = ma.String(
-        required=True, 
-        validate=validate.Length(min=1, max=100)
+        required=True,
+        validate=[validate.Length(min=1), *name_text(50)]
     )
     last_name = ma.String(
         required=True,
-        validate=validate.Length(min=1, max=100)
+        validate=[validate.Length(min=1), *name_text(50)]
     )
     password = ma.String(
         required=True,

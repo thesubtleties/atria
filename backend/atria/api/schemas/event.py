@@ -4,6 +4,7 @@ from api.models.enums import EventType, EventStatus, EventUserRole, EventFormat,
 from marshmallow import validates, ValidationError, validates_schema
 from datetime import datetime, timezone
 import pytz
+from api.commons.abuse_guards import name_text
 
 
 class EventSchema(ma.SQLAlchemyAutoSchema):
@@ -105,12 +106,12 @@ class EventCreateSchema(ma.Schema):
         name = "EventCreate"
 
     # Required fields
-    title = ma.String(required=True)
+    title = ma.String(required=True, validate=name_text(200))
     event_type = ma.Enum(EventType, required=True)
     start_date = ma.Date(required=True)
     end_date = ma.Date(required=True)
     timezone = ma.String(required=True)
-    company_name = ma.String(required=True)
+    company_name = ma.String(required=True, validate=name_text(100))
 
     # Optional fields
     description = ma.String()
@@ -155,13 +156,13 @@ class EventUpdateSchema(ma.Schema):
     class Meta:
         name = "EventUpdate"
 
-    title = ma.String()
+    title = ma.String(validate=name_text(200))
     description = ma.String()
     event_type = ma.Enum(EventType)
     start_date = ma.Date()
     end_date = ma.Date()
     timezone = ma.String()
-    company_name = ma.String()
+    company_name = ma.String(validate=name_text(100))
     status = ma.Enum(EventStatus)
     branding = ma.Dict()
     

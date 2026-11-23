@@ -22,6 +22,10 @@ class AuthService:
         if not user or not user.verify_password(login_data["password"]):
             raise ValueError("Invalid credentials")
 
+        # A turned-off account (is_active=False) can't sign in
+        if not user.is_active:
+            raise ValueError("Invalid credentials")
+
         # Check if email is verified
         if not user.email_verified:
             raise ValueError("Email not verified. Please check your email for the verification link.")
@@ -94,6 +98,9 @@ class AuthService:
         """Register new user without auto-login (requires email verification)"""
         if User.query.filter_by(email=signup_data["email"]).first():
             raise ValueError("Email already registered")
+
+        from api.commons.abuse_guards import check_signup_allowed
+        check_signup_allowed()
 
         # Create user with email_verified=False
         user = User(**signup_data, email_verified=False)
