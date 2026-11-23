@@ -5,6 +5,24 @@ All notable changes to Atria will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.1] - 2026-11-23
+
+### Security
+
+- **Invitation emails are rate limited** - 10 in an account's first day, then 25 per hour and 50 per day per account, and 300 per day across the whole site (configurable: `INVITES_NEW_ACCOUNT_LIMIT`, `INVITES_PER_HOUR`, `INVITES_PER_DAY`, `INVITES_SITE_PER_DAY`). A new account had used bulk invitations to email a phishing message to over 1,500 addresses
+- **No links in names that go into emails** - organization names, event titles, company names and people's names can't contain links, and have length limits
+- **Event invitation emails no longer include the event description**
+- **New accounts are capped per hour across the site** (`SIGNUPS_PER_HOUR`); invited registration isn't affected
+- **Registering through an invitation needs a real invitation** - the invitation sign-up page could create a verified account for any email address
+- **Turned-off accounts are fully signed out** - login, existing sessions, live chat connections and password reset all refuse an account with `is_active` off
+
+### Fixed
+
+- Backend images install the exact dependency versions production runs (`constraints.txt`): a fresh build had pulled gunicorn 27 (no eventlet worker) and SQLAlchemy 2.1, and failed to start
+- Frontend tests run on Ubuntu 24.04 (Playwright has no Chromium for the newer runner yet)
+
+[0.5.1]: https://github.com/thesubtleties/atria/releases/tag/v0.5.1
+
 ## [0.5.0] - 2026-01-05
 
 ### Added
