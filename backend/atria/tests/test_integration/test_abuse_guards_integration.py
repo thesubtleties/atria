@@ -139,3 +139,31 @@ class TestTurnedOffAccounts:
         send = mocker.patch("api.services.password_reset.email_service.send_password_reset")
         assert PasswordResetService.create_reset_token("noreset@sbtl.ai") is None
         send.assert_not_called()
+
+
+class TestSharedTokenCheck:
+    def test_token_rejected_for_turned_off_account_and_revoked_token(self, app, db):
+        from api.commons.abuse_guards import token_rejected, user_is_active
+        from api.models import TokenBlocklist
+        on = make_user("tok-on@sbtl.ai")
+        off = make_user("tok-off@sbtl.ai", active=False)
+        assert token_rejected({"jti": "none", "sub": str(on.id)}) is False
+        assert token_rejected({"jti": "none", "sub": str(off.id)}) is True
+        db.session.add(TokenBlocklist(jti="revoked-jti", token_type="access", user_id=on.id, revoked=True,
+                                      expires=datetime.now(timezone.utc) + timedelta(hours=1)))
+        db.session.commit()
+        assert token_rejected({"jti": "revoked-jti", "sub": str(on.id)}) is True
+        assert user_is_active(on.id) is True and user_is_active(off.id) is False and user_is_active("x") is False
+
+
+class TestInviteEmailContent:
+    def test_event_invitation_email_has_no_free_form_description(self, app, mocker):
+        from api.services.email import email_service
+        send = mocker.patch.object(email_service.backend, "send")
+        event = mocker.Mock(title="Conf", description="Approved! https://calendar.app.google/x", company_name="Acme",
+                            start_date=datetime(2026, 12, 1), end_date=datetime(2026, 12, 2), id=1)
+        inviter = mocker.Mock(full_name="Pat Doe")
+        email_service.send_event_invitation(email="r@sbtl.ai", event=event, role="attendee", invitation_token="t",
+                                            inviter=inviter, has_account=False)
+        rendered = " ".join(str(a) for a in send.call_args.args) + " ".join(str(v) for v in send.call_args.kwargs.values())
+        assert "calendar.app.google" not in rendered

@@ -54,6 +54,11 @@ def handle_connect(auth=None):
         else:
             # Manually verify the token from auth object or header
             decoded_token = decode_token(token)
+            # decode_token checks signature and expiry only: also refuse revoked tokens and turned-off accounts
+            from api.commons.abuse_guards import token_rejected
+            if token_rejected(decoded_token):
+                emit("auth_error", {"message": "Authentication failed"})
+                return
             user_id = decoded_token["sub"]
 
         # Authenticate the session

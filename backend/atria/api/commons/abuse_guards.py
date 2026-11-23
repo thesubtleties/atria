@@ -25,6 +25,34 @@ HOURLY_LIMIT = _env_int("INVITES_PER_HOUR", 25)
 DAILY_LIMIT = _env_int("INVITES_PER_DAY", 50)
 
 
+def token_rejected(jwt_payload):
+    """True if a decoded JWT must not be honoured: revoked in the blocklist, or its account is turned off
+    (is_active=False). Used by the HTTP blocklist loader and the socket connect handler."""
+    from api.extensions import db
+    from api.models import TokenBlocklist, User
+
+    jti = jwt_payload.get("jti")
+    token = TokenBlocklist.query.filter_by(jti=jti).first() if jti else None
+    if token is not None and token.revoked:
+        return True
+    sub = str(jwt_payload.get("sub", ""))
+    user = db.session.get(User, int(sub)) if sub.isdigit() else None
+    return user is not None and not user.is_active
+
+
+def user_is_active(user_id):
+    """False for a turned-off or missing account (sockets check this on every event)."""
+    from api.extensions import db
+    from api.models import User
+
+    user = db.session.get(User, int(user_id)) if str(user_id).isdigit() else None
+    return user is not None and user.is_active
+
+
+# Advisory lock keys for invite counting: a fixed high base plus the user id, clear of other lock users
+_LOCK_BASE = 0x41545249 << 32  # "ATRI"
+
+
 class InviteLimitError(ValueError):
     """Raised before an invitation email would go over the inviter's limit."""
 
@@ -44,6 +72,8 @@ def check_invite_allowed(inviter):
 
     if inviter is None or not inviter.is_active:
         raise InviteLimitError("This account can't send invitations.")
+
+    db.session.execute(db.text("SELECT pg_advisory_xact_lock(:k)"), {"k": _LOCK_BASE + int(inviter.id)})
 
     now = datetime.now(timezone.utc)
 

@@ -69,6 +69,13 @@ def authenticated_only(f):
             emit("auth_required", {"message": "Authentication required"})
             return
 
+        # A connected socket stops working once its account is turned off (is_active=False)
+        from api.commons.abuse_guards import user_is_active
+        if not user_is_active(session_manager.get_user_id(request.sid)):
+            session_manager.remove_session(request.sid)
+            emit("auth_required", {"message": "Authentication required"})
+            return
+
         # Update last activity time
         session_manager.update_activity(request.sid)
 
