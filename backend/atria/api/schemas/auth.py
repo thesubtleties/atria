@@ -1,6 +1,6 @@
 from api.extensions import ma
 from marshmallow import validates, ValidationError
-from api.commons.abuse_guards import no_links
+from api.commons.abuse_guards import name_text
 
 
 class LoginSchema(ma.Schema):
@@ -28,9 +28,9 @@ class SignupSchema(ma.Schema):
 
     email = ma.Email(required=True)
     password = ma.String(required=True, load_only=True)
-    first_name = ma.String(required=True, validate=no_links)
-    last_name = ma.String(required=True, validate=no_links)
-    company_name = ma.String(validate=no_links)  # Optional
+    first_name = ma.String(required=True, validate=name_text(50))
+    last_name = ma.String(required=True, validate=name_text(50))
+    company_name = ma.String(validate=name_text(100))  # Optional
     title = ma.String()  # Optional
 
     @validates("password")

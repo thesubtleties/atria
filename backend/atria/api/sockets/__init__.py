@@ -56,7 +56,7 @@ def handle_connect(auth=None):
             decoded_token = decode_token(token)
             # decode_token checks signature and expiry only: also refuse revoked tokens and turned-off accounts
             from api.commons.abuse_guards import token_rejected
-            if token_rejected(decoded_token):
+            if decoded_token.get("type") != "access" or token_rejected(decoded_token):
                 emit("auth_error", {"message": "Authentication failed"})
                 return
             user_id = decoded_token["sub"]

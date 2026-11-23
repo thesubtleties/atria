@@ -97,12 +97,60 @@ def check_invite_allowed(inviter):
         raise InviteLimitError(f"Invitation limit reached ({DAILY_LIMIT} per day). Please try again tomorrow.")
 
 
-# A link: a scheme, www., or a domain followed by a path. Plain names with dots ("Node.js Meetup", "atria.gg") pass.
-_LINK = re.compile(r"(?i)([a-z][a-z0-9+.-]*://|\bwww\.|\b[a-z0-9-]+(\.[a-z0-9-]+)+/\S)")
+# Text that reaches emails (names, organizations, events) can't carry a link. Normalized first (NFKC folds fullwidth
+# dots/colons; format characters such as zero-width spaces are dropped), then refused on: a URL scheme, "www.", a
+# domain followed by a path/query/fragment/port, or a bare domain ending in a common TLD. Dotted words that aren't
+# domains ("Node.js Meetup", "St. Louis") pass.
+_TLDS = (
+    "com|net|org|info|biz|io|co|me|ly|app|dev|page|site|online|xyz|top|link|click|gg|tv|ru|su|cn|de|uk|us|ca|eu|"
+    "tk|ml|ga|cf|gq|shop|store|live|google|so|to|cc|ws|pw|icu|vip|club|win|bid|loan|work|today|lol|fun|space|"
+    "website|tech|cloud|ai|in|br|fr|it|es|nl|pl|ua|kz|by|uz|tr|ir|vn|id|ph|ng|pk|bd|рф|рус|бел|укр|қаз"
+)
+_SCHEME = re.compile(r"(?i)\b(https?|ftp|mailto|tel|sms|data|javascript|file|intent|market)\s*:")
+_WWW = re.compile(r"(?i)\bwww\s*\.")
+_DOMAIN_PATH = re.compile(r"(?i)[\w-]+(\.[\w-]+)+\s*[/?#:]")
+_BARE_DOMAIN = re.compile(r"(?i)[\w-]+(\.[\w-]+)*\.(" + _TLDS + r"|xn--[\w-]+)(?![\w-])")
+
+
+def _normalize(value):
+    import unicodedata
+    text = unicodedata.normalize("NFKC", value)
+    return "".join(ch for ch in text if unicodedata.category(ch) != "Cf")
+
+
+def has_link(value):
+    if not value:
+        return False
+    text = _normalize(value)
+    return bool(_SCHEME.search(text) or _WWW.search(text) or _DOMAIN_PATH.search(text) or _BARE_DOMAIN.search(text))
 
 
 def no_links(value):
     """Marshmallow validator for names that appear in emails (organizations, events, people)."""
-    if value and _LINK.search(value):
+    if has_link(value):
         raise ValidationError("Links aren't allowed here.")
     return True
+
+
+def name_text(max_len):
+    """Validators for a name that goes into emails: no links, at most max_len characters."""
+    from marshmallow import validate
+    return [no_links, validate.Length(max=max_len)]
+
+
+# New accounts across the whole site per hour. Client IPs aren't visible behind the ingress, so this is global;
+# real signups have been a handful a month.
+SIGNUPS_PER_HOUR = _env_int("SIGNUPS_PER_HOUR", 20)
+
+
+class SignupLimitError(ValueError):
+    pass
+
+
+def check_signup_allowed():
+    from api.extensions import db
+    from api.models import User
+    since = datetime.now(timezone.utc) - timedelta(hours=1)
+    recent = db.session.query(db.func.count(User.id)).filter(User.created_at >= since).scalar() or 0
+    if recent >= SIGNUPS_PER_HOUR:
+        raise SignupLimitError("Sign-ups are busy right now. Please try again in a little while.")

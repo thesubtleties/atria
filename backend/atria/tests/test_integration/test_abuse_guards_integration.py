@@ -59,12 +59,16 @@ class TestNoLinks:
     @pytest.mark.parametrize("value", [
         "Вам одобрено 545оо р. Войдите здесь- https://calendar.app.google/rLe4ZRmvUNNp277",
         "Claim at www.example.com", "calendar.app.google/abc", "ftp://files", "HTTP://X.Y",
+        # from the security review: bare domains, other separators, Unicode and zero-width tricks, other schemes
+        "Claim at secure-pay.com", "bit.ly/", "calendar.app.google?x=1", "evil.com#x", "evil.com:8080",
+        "calendar.app.google /abc", "evil\uff0ecom/abc", "https\uff1a//evil.com", "WWW\u200b.evil.com",
+        "пример.рф/путь", "пример.рф", "tel:+18005550100", "mailto:x@y.z", "atria.gg",
     ])
     def test_links_are_refused(self, value):
         with pytest.raises(ValidationError):
             no_links(value)
 
-    @pytest.mark.parametrize("value", ["Node.js Meetup", "atria.gg", "St. Louis Tech Week", "Acme Inc.", "", None])
+    @pytest.mark.parametrize("value", ["Node.js Meetup", "St. Louis Tech Week", "Acme Inc.", "Dr. Jane O'Neil", "Q3 2026: Kickoff", "", None])
     def test_plain_names_pass(self, value):
         assert no_links(value)
 
@@ -167,3 +171,31 @@ class TestInviteEmailContent:
                                             inviter=inviter, has_account=False)
         rendered = " ".join(str(a) for a in send.call_args.args) + " ".join(str(v) for v in send.call_args.kwargs.values())
         assert "calendar.app.google" not in rendered
+
+
+class TestRegisterAndAccept:
+    def test_needs_a_real_pending_invitation_for_that_address(self, client, db):
+        r = client.post("/api/invitations/register-and-accept", json={
+            "user_data": {"email": "free@sbtl.ai", "password": "SecurePass123!", "first_name": "A", "last_name": "B"},
+            "org_invitation_ids": [], "event_invitation_ids": [],
+        }, content_type="application/json")
+        assert r.status_code in (400, 422)
+        assert User.query.filter_by(email="free@sbtl.ai").first() is None
+
+
+class TestSignupCap:
+    def test_signups_pause_after_the_hourly_cap(self, app, db, monkeypatch):
+        from api.commons.abuse_guards import SignupLimitError, check_signup_allowed
+        monkeypatch.setattr(abuse_guards, "SIGNUPS_PER_HOUR", 2)
+        check_signup_allowed()
+        make_user("s1@sbtl.ai"); make_user("s2@sbtl.ai")
+        with pytest.raises(SignupLimitError):
+            check_signup_allowed()
+
+
+class TestNameLength:
+    def test_names_are_capped(self):
+        from marshmallow import ValidationError as VE
+        from api.schemas.organization import OrganizationCreateSchema
+        with pytest.raises(VE):
+            OrganizationCreateSchema().load({"name": "x" * 101})

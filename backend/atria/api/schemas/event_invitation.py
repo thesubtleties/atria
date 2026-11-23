@@ -3,7 +3,7 @@ from api.models import EventInvitation
 from api.models.enums import EventUserRole
 from marshmallow import validates, ValidationError, validate
 import re
-from api.commons.abuse_guards import no_links
+from api.commons.abuse_guards import name_text
 
 
 class EventInvitationSchema(ma.SQLAlchemyAutoSchema):
@@ -87,7 +87,7 @@ class AddUserToEventSchema(ma.Schema):
         name = "AddUserToEvent"
 
     email = ma.String(required=True)
-    first_name = ma.String(required=True, validate=no_links)
-    last_name = ma.String(required=True, validate=no_links)
+    first_name = ma.String(required=True, validate=name_text(50))
+    last_name = ma.String(required=True, validate=name_text(50))
     role = ma.Enum(EventUserRole, required=True)
     password = ma.String(allow_none=True)  # Optional

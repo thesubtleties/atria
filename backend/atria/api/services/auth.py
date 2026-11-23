@@ -99,6 +99,9 @@ class AuthService:
         if User.query.filter_by(email=signup_data["email"]).first():
             raise ValueError("Email already registered")
 
+        from api.commons.abuse_guards import check_signup_allowed
+        check_signup_allowed()
+
         # Create user with email_verified=False
         user = User(**signup_data, email_verified=False)
         db.session.add(user)
