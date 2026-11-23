@@ -62,7 +62,7 @@ class TestNoLinks:
         # from the security review: bare domains, other separators, Unicode and zero-width tricks, other schemes
         "Claim at secure-pay.com", "bit.ly/", "calendar.app.google?x=1", "evil.com#x", "evil.com:8080",
         "calendar.app.google /abc", "evil\uff0ecom/abc", "https\uff1a//evil.com", "WWW\u200b.evil.com",
-        "пример.рф/путь", "пример.рф", "tel:+18005550100", "mailto:x@y.z", "atria.gg",
+        "пример.рф/путь", "пример.рф", "tel:+18005550100", "mailto:x@y.z", "atria.gg", "evil\u3002com/x", "evil\uff61com",
     ])
     def test_links_are_refused(self, value):
         with pytest.raises(ValidationError):
@@ -199,3 +199,19 @@ class TestNameLength:
         from api.schemas.organization import OrganizationCreateSchema
         with pytest.raises(VE):
             OrganizationCreateSchema().load({"name": "x" * 101})
+
+
+class TestInvitedRegistrationNotCapped:
+    def test_signup_cap_does_not_block_a_real_invitation(self, client, db, monkeypatch):
+        monkeypatch.setattr(abuse_guards, "SIGNUPS_PER_HOUR", 0)
+        owner = make_user("cap-owner@sbtl.ai", created_at=datetime.now(timezone.utc) - timedelta(days=30))
+        org = make_org_with_owner(owner)
+        inv = OrganizationInvitation(organization_id=org.id, email="invited@sbtl.ai", role=OrganizationUserRole.MEMBER,
+                                     token=secrets.token_urlsafe(16), status=InvitationStatus.PENDING, invited_by_id=owner.id,
+                                     expires_at=datetime.now(timezone.utc) + timedelta(days=7))
+        db.session.add(inv); db.session.commit()
+        r = client.post("/api/invitations/register-and-accept", json={
+            "user_data": {"email": "invited@sbtl.ai", "password": "SecurePass123!", "first_name": "In", "last_name": "Vited"},
+            "org_invitation_ids": [inv.id], "event_invitation_ids": [],
+        }, content_type="application/json")
+        assert r.status_code == 201, r.data

@@ -145,7 +145,6 @@ class InvitationService:
 
         # Accounts made here skip email verification, so they need a real pending invitation for this address
         # (the invitation email proved the inbox); otherwise this was a free verified account for any address.
-        from api.commons.abuse_guards import check_signup_allowed
         now = datetime.now(timezone.utc)
         def _live(model, ids):
             if not ids:
@@ -156,7 +155,8 @@ class InvitationService:
             ).first() is not None
         if not (_live(OrganizationInvitation, org_invitation_ids) or _live(EventInvitation, event_invitation_ids)):
             raise ValueError("No valid invitation for this email")
-        check_signup_allowed()
+        # Not under the site-wide signup cap: the invitation proved the inbox and invitations are limited themselves,
+        # so a bot filling the hourly cap can't lock invited people out.
         
         # Create user with email already verified
         user = User(

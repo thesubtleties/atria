@@ -112,9 +112,13 @@ _DOMAIN_PATH = re.compile(r"(?i)[\w-]+(\.[\w-]+)+\s*[/?#:]")
 _BARE_DOMAIN = re.compile(r"(?i)[\w-]+(\.[\w-]+)*\.(" + _TLDS + r"|xn--[\w-]+)(?![\w-])")
 
 
+# Dots that IDNA (browsers, mail clients) treat as label separators but NFKC leaves alone
+_IDNA_DOTS = str.maketrans({"\u3002": ".", "\uff61": ".", "\uff0e": "."})
+
+
 def _normalize(value):
     import unicodedata
-    text = unicodedata.normalize("NFKC", value)
+    text = unicodedata.normalize("NFKC", value).translate(_IDNA_DOTS)
     return "".join(ch for ch in text if unicodedata.category(ch) != "Cf")
 
 
