@@ -3,6 +3,7 @@ flask
 flask-restful
 flask-migrate
 flask-sqlalchemy
+SQLAlchemy>=2.0,<2.1  # 2.1 defaults postgresql:// to psycopg 3, which we do not install (prod runs 2.0.45)
 flask-jwt-extended
 flask-socketio
 flask-cors

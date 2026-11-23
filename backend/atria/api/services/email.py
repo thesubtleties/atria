@@ -132,7 +132,6 @@ class EmailService:
         """Send event invitation email"""
         context = {
             'event_title': event.title,
-            'event_description': event.description,
             'event_start_date': event.start_date.strftime('%B %d, %Y'),
             'event_end_date': event.end_date.strftime('%B %d, %Y'),
             'company_name': event.company_name,

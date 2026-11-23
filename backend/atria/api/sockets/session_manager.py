@@ -18,8 +18,14 @@ class SessionManager:
         print(f"Authenticated session {sid} for user {user_id}")
 
     def is_authenticated(self, sid):
-        """Check if a session is authenticated"""
-        return sid in self.sessions
+        """Also False once the account is turned off (is_active=False); its session is dropped."""
+        if sid not in self.sessions:
+            return False
+        from api.commons.abuse_guards import user_is_active
+        if not user_is_active(self.sessions[sid]["user_id"]):
+            self.remove_session(sid)
+            return False
+        return True
 
     def get_user_id(self, sid):
         """Get user ID for a session"""

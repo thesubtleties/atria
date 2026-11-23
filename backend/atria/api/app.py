@@ -199,9 +199,9 @@ def configure_jwt_handlers(app):
 
     @jwt.token_in_blocklist_loader
     def check_if_token_revoked(jwt_header, jwt_payload):
-        jti = jwt_payload["jti"]
-        token = TokenBlocklist.query.filter_by(jti=jti).first()
-        return token is not None and token.revoked
+        # Revoked, or the account is turned off (is_active=False): every token it holds stops working at once
+        from api.commons.abuse_guards import token_rejected
+        return token_rejected(jwt_payload)
 
     @jwt.invalid_token_loader
     def invalid_token_callback(error):

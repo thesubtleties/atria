@@ -13,10 +13,10 @@ RUN apk add --no-cache \
 WORKDIR /app
 
 # Install Python dependencies
-COPY backend/atria/requirements.txt backend/atria/setup.py backend/atria/tox.ini ./
+COPY backend/atria/requirements.txt backend/atria/constraints.txt backend/atria/setup.py backend/atria/tox.ini ./
 RUN pip install --no-cache-dir -U pip && \
-    pip install --no-cache-dir -r requirements.txt && \
-    pip install -e .
+    pip install --no-cache-dir -r requirements.txt -c constraints.txt && \
+    pip install -e . -c constraints.txt
 
 # Copy application code
 COPY backend/atria/api api/
