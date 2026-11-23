@@ -2,6 +2,7 @@ from api.extensions import ma, db
 from api.models import OrganizationUser
 from api.models.enums import OrganizationUserRole
 from marshmallow import validates, ValidationError
+from api.commons.abuse_guards import no_links
 
 
 class OrganizationUserSchema(ma.SQLAlchemyAutoSchema):
@@ -95,6 +96,6 @@ class AddUserToOrgSchema(ma.Schema):
 
     email = ma.Email(required=True)
     password = ma.String(load_only=True)
-    first_name = ma.String(required=True)
-    last_name = ma.String(required=True)
+    first_name = ma.String(required=True, validate=no_links)
+    last_name = ma.String(required=True, validate=no_links)
     role = ma.Enum(OrganizationUserRole, required=True)

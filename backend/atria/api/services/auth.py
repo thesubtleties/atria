@@ -22,6 +22,10 @@ class AuthService:
         if not user or not user.verify_password(login_data["password"]):
             raise ValueError("Invalid credentials")
 
+        # A turned-off account (is_active=False) can't sign in
+        if not user.is_active:
+            raise ValueError("Invalid credentials")
+
         # Check if email is verified
         if not user.email_verified:
             raise ValueError("Email not verified. Please check your email for the verification link.")

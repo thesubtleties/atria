@@ -201,7 +201,12 @@ def configure_jwt_handlers(app):
     def check_if_token_revoked(jwt_header, jwt_payload):
         jti = jwt_payload["jti"]
         token = TokenBlocklist.query.filter_by(jti=jti).first()
-        return token is not None and token.revoked
+        if token is not None and token.revoked:
+            return True
+        # A turned-off account (is_active=False): every token it holds stops working at once
+        from api.models import User
+        user = db.session.get(User, int(jwt_payload["sub"])) if str(jwt_payload.get("sub", "")).isdigit() else None
+        return user is not None and not user.is_active
 
     @jwt.invalid_token_loader
     def invalid_token_callback(error):

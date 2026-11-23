@@ -3,6 +3,7 @@ from api.extensions import ma, db
 from api.models import User
 from api.models.enums import EventUserRole
 from marshmallow import validates, ValidationError
+from api.commons.abuse_guards import no_links
 
 
 class UserSchema(ma.SQLAlchemyAutoSchema):
@@ -85,8 +86,8 @@ class UserUpdateSchema(ma.Schema):
     class Meta:
         name = "UserUpdate"
 
-    first_name = ma.String()
-    last_name = ma.String()
+    first_name = ma.String(validate=no_links)
+    last_name = ma.String(validate=no_links)
     company_name = ma.String()
     title = ma.String()
     bio = ma.String()

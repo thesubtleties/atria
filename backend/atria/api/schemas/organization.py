@@ -2,6 +2,7 @@ from api.extensions import ma, db
 from api.models import Organization, User
 from api.models.enums import OrganizationUserRole
 from marshmallow import validates, ValidationError, post_dump
+from api.commons.abuse_guards import no_links
 
 
 class OrganizationUserNestedSchema(ma.SQLAlchemyAutoSchema):
@@ -93,7 +94,7 @@ class OrganizationCreateSchema(ma.Schema):
     class Meta:
         name = "OrganizationCreate"
 
-    name = ma.String(required=True)
+    name = ma.String(required=True, validate=no_links)
 
     @validates("name")
     def validate_name(self, value, **kwargs):
@@ -108,7 +109,7 @@ class OrganizationUpdateSchema(ma.Schema):
     class Meta:
         name = "OrganizationUpdate"
 
-    name = ma.String()
+    name = ma.String(validate=no_links)
 
     @validates("name")
     def validate_name(self, value, **kwargs):
